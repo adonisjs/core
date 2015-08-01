@@ -62,9 +62,7 @@ ServerHelpers.resolve_and_return_handler = function(Router, uri, method) {
 
   return new Promise(function(resolve, reject) {
     if (!resolved_route.handler) {
-      reject({
-        toStatic: true
-      });
+      throw new HttpException(404,"Route not found");
     } else {
       /**
        * ----------------------------

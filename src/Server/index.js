@@ -90,7 +90,6 @@ Server.start = function(port) {
  * @param  {Number} port
  */
 Server.cluster = function(port) {
-  Logger.info(`clustering app on port ${port}`);
 
   if(cluster.isMaster){
     
