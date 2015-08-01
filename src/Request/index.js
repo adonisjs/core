@@ -26,6 +26,7 @@ function Request(req) {
 }
 
 
+
 /**
  * returning query string values from request as object
  * @return {Object}
@@ -149,6 +150,24 @@ Request.prototype.ip = function() {
   return requestIp.getClientIp(this.request);
 };
 
+
+
+/**
+ * returns best possible return type for a request
+ * @return {String}
+ */
+Request.prototype.accepts = function(){
+  return helpers.check_http_accept_field(this.request,_.toArray(arguments));
+}
+
+
+/**
+ * tells whether request content-type falls in required typed
+ * @return {Boolean} [description]
+ */
+Request.prototype.is = function(){
+  return helpers.check_http_content_type(this.request, _.toArray(arguments));
+}
 
 
 /**

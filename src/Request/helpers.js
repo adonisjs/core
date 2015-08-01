@@ -7,7 +7,9 @@
  */
 
 // importing libs
-const _ = require("lodash");
+const _ = require("lodash"),
+  accepts = require("accepts"),
+  is = require("type-is");
 
 
 // exporting helpers 
@@ -48,4 +50,29 @@ RequestHelpers.remove_requested_keys_from_object = function(hash, keys) {
     return hash
   }
   return _.omit(hash, keys);
+}
+
+
+
+/**
+ * checks best possible return type for a request
+ * @param  {Object} req 
+ * @param  {Array} types
+ * @return {String}
+ */
+RequestHelpers.check_http_accept_field = function(req, types) {
+  let accept = accepts(req);
+  return accept.type(types);
+}
+
+
+/**
+ * check request content-type header
+ * @param  {Object} req 
+ * @param  {Array} types
+ * @return {String}
+ */
+RequestHelpers.check_http_content_type = function(req, types) {
+  let type = is.is(req, types);
+  return _.contains(types,type);
 }

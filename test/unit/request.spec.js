@@ -5,6 +5,7 @@ let Request = require("../../src/Request/index"),
   supertest = require("supertest"),
   formidable = require("formidable"),
   http = require("http"),
+  is = require("type-is"),
   path = require("path");
 
 
@@ -400,5 +401,96 @@ describe("Request", function() {
       });
   });
 
+
+
+  it("should return best match for accept header within given options", function(done) {
+
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var accepts = request.accepts("json","html");
+      res.writeHead(200, {
+        "Content-type": "application/json"
+      });
+      res.end(JSON.stringify({accepts:accepts}));
+    });
+
+    supertest(server)
+      .get("/")
+      .set("Accept", "application/json")
+      .end(function(err, res) {
+        if (err) done(err);
+        expect(res.body.accepts).toBe("json");
+        done();
+      });
+  });
+
+
+  it("should return best match for accept header without any options", function(done) {
+
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var accepts = request.accepts();
+      res.writeHead(200, {
+        "Content-type": "application/json"
+      });
+      res.end(JSON.stringify({accepts:accepts}));
+    });
+
+    supertest(server)
+      .get("/")
+      .set("Accept", "application/json")
+      .end(function(err, res) {
+        if (err) done(err);
+        expect(res.body.accepts).toEqual(["application/json"]);
+        done();
+      });
+  });
+
+
+
+  it("should tell whether request accepts particular content-type or not", function(done) {
+
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var type = request.is("json");
+
+      res.writeHead(200, {
+        "Content-type": "text/plain"
+      });
+      res.end(type.toString());
+    });
+
+    supertest(server)
+      .get("/")
+      .type("application/json")
+      .end(function(err, res) {
+        if (err) done(err);
+        expect(res.text).toBe("true");
+        done();
+      });
+  });
+
+
+  it("should tell whether request accepts particular content-type or not when multiple types have been checked", function(done) {
+
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var type = request.is("json","html");
+
+      res.writeHead(200, {
+        "Content-type": "text/plain"
+      });
+      res.end(type.toString());
+    });
+
+    supertest(server)
+      .get("/")
+      .type("application/json")
+      .end(function(err, res) {
+        if (err) done(err);
+        expect(res.text).toBe("true");
+        done();
+      });
+  });
 
 });
