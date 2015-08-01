@@ -3,8 +3,9 @@
 
 /**
  * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Extends error to generate http specefic errors.
+ * @package     - adonis-http-dispatcher
+ * @description - Extends error to generate http specific errors helps in differentiating
+ *               self invoked and system specific errors.
  */
 
 

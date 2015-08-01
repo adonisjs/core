@@ -2,8 +2,8 @@
 
 /**
  * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - App event emitter
+ * @package     - adonis-http-dispatcher
+ * @description - Event emitter for adonis app
  */
 
 

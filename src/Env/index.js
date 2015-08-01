@@ -2,7 +2,7 @@
 
 /**
  * @author      - Harminder Virk
- * @package     - adonis-dispatcher
+ * @package     - adonis-http-dispatcher
  * @description - Loads .env file into process.env for managing environment
  */
 
