@@ -110,7 +110,7 @@ ServerHelpers.resolve_and_return_handler = function(Router, uri, method) {
         resolved_route.controller = {
           is_namespaced: false,
           controller: null,
-          action: resolved_route.controller
+          action: resolved_route.handler
         };
         resolve(resolved_route);
       }

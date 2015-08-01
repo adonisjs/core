@@ -16,8 +16,15 @@ let Router = require("../Router"),
   http = require("http");
 
 
+let server = null;
+
 // exporting server
 let Server = exports = module.exports = {};
+
+
+Server.stop = function(){
+  server.close();
+}
 
 
 /**
@@ -28,7 +35,7 @@ Server.start = function(port) {
 
   Logger.info(`serving app on port ${port}`);
 
-  http.createServer(function(req, res) {
+  server = http.createServer(function(req, res) {
 
     // clear old middlewares stack of every new request
     Ware.clear();

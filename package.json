@@ -32,6 +32,7 @@
   "devDependencies": {
     "adonis-ioc-container": "^1.0.0",
     "formidable": "^1.0.17",
+    "hippie": "^0.3.0",
     "jasmine-expect": "^2.0.0-beta1",
     "lodash": "^3.10.0",
     "supertest": "^1.0.1"

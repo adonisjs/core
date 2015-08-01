@@ -4,6 +4,7 @@ require('jasmine-expect');
 
 let Namespace = require("../../src/Namespace/index"),
   path = require("path"),
+  co = require("co"),
   _ = require("lodash");
 
 
@@ -26,13 +27,18 @@ describe("Namespace", function() {
   });
 
 
-  it("should resolve controllers from namespace store", function() {
+  it("should resolve controllers from namespace store", function(done) {
 
-    let AdminController = Namespace.resolve("AdminController", "controllers");
-    let AppService = Namespace.resolve("App/AppService", "services");
-    expect(AdminController).toHaveMember("index");
-    expect(AppService).toHaveMember("shout");
-
+    co(function*(){
+      return yield [Namespace.resolve("AdminController", "controllers"), Namespace.resolve("App/AppService", "services")]
+    })
+    .then(function(resolved){
+      let AdminController = resolved[0];
+      let AppService = resolved[1];
+      expect(AdminController).toHaveMember("index");
+      expect(AppService).toHaveMember("shout"); 
+      done();
+    });
   });
 
 
