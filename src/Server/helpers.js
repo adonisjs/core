@@ -29,11 +29,19 @@ let ServerHelpers = exports = module.exports = {};
  * @return {Function}
  */
 ServerHelpers.craft_final_handler = function(method, request, response) {
+  let returned = null;
   return function*() {
     if (method.controller) {
-      yield method.action.call(method.controller, request, response);
+      returned = yield method.action.call(method.controller, request, response);
     } else {
-      yield method.action(request, response);
+      returned = yield method.action(request, response);
+    }
+    /**
+     * if returned value is a string , set it as
+     * response body
+     */
+    if ('string' === typeof(returned)) {
+      response.ok(returned);
     }
   }
 }
@@ -62,7 +70,7 @@ ServerHelpers.resolve_and_return_handler = function(Router, uri, method) {
 
   return new Promise(function(resolve, reject) {
     if (!resolved_route.handler) {
-      throw new HttpException(404,"Route not found");
+      throw new HttpException(404, "Route not found");
     } else {
       /**
        * ----------------------------
@@ -205,6 +213,7 @@ ServerHelpers.register_request_middlewares = function(Ware, named_middlewares) {
 }
 
 
+
 /**
  * finding whether request is for a static resource or not
  * @param  {String}  request_url
@@ -213,6 +222,7 @@ ServerHelpers.register_request_middlewares = function(Ware, named_middlewares) {
 ServerHelpers.is_static_resource = function(request_url) {
   return Static.isStatic(request_url);
 }
+
 
 
 /**
@@ -230,6 +240,11 @@ ServerHelpers.handle_as_static_resource = function(request, response) {
 }
 
 
+/**
+ * servers favicon from registered path
+ * @param  {Object} request
+ * @param  {Object} response
+ */
 ServerHelpers.serve_favicon = function(request, response) {
   Static.serveFavicon(request.request, response.response);
 }
