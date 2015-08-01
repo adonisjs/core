@@ -4,7 +4,7 @@
   "description": "Http dispatcher a loosely coupled http server for adonis framework , it does all the required hard work to setup a managable http server.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/jasmine-node/bin/jasmine-node test"
   },
   "author": "",
   "license": "ISC",
@@ -34,6 +34,7 @@
     "formidable": "^1.0.17",
     "hippie": "^0.3.0",
     "jasmine-expect": "^2.0.0-beta1",
+    "jasmine-node": "^1.14.5",
     "loadtest": "^1.2.11",
     "lodash": "^3.10.0",
     "supertest": "^1.0.1"
