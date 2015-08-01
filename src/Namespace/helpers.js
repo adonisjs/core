@@ -43,6 +43,10 @@ NamespaceHelpers.map = function(key, value) {
 }
 
 
+NamespaceHelpers.clean_injector = function(){
+  Ioc.destory();
+}
+
 
 /**
  * return list of mappings to the ioc container

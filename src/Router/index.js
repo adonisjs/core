@@ -171,7 +171,6 @@ Router.middlewares = function(array_of_named_middlewares) {
     return this;
   }
 
-
   /**
    * applying middlewares to a group of routes
    */

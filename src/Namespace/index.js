@@ -38,6 +38,11 @@ Namespace.add = function(key, value) {
 }
 
 
+Namespace.clear = function(){
+  namespaces = [];
+  helpers.clean_injector();
+}
+
 
 /**
  * register bunch of classes to ioc container and map to 

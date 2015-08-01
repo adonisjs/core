@@ -8,13 +8,16 @@ let Namespace = require("../../src/Namespace/index"),
   _ = require("lodash");
 
 
+Namespace.clear();
+
 describe("Namespace", function() {
 
   it("should register items to ioc container", function() {
     Namespace.add("controllers", "App/Http/Controllers").register(path.join(__dirname, "./helpers/Controllers"));
     let items = _.keys(Namespace.list());
     expect(items).toBeNonEmptyArray();
-    expect(items).toBeArrayOfSize(4);
+    expect(items).toContain("App/Http/Controllers/AdminController");
+    expect(items).toContain("App/Http/Controllers/UserController");
   });
 
 
