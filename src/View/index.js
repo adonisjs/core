@@ -22,7 +22,7 @@ let View = exports = module.exports = {};
  * @param  {String} path_to_views
  */
 View.configure = function(path_to_views) {
-  nunjucks.configure('views', {
+  nunjucks.configure(path_to_views, {
     autoescape: true
   });
 }
