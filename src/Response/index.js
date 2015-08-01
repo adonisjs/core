@@ -7,7 +7,7 @@
  */
 
 // importing libs
-let NodeRes = require("node-res"),
+const NodeRes = require("node-res"),
   View = require("../View/index");
 
 

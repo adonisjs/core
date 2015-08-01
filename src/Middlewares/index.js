@@ -7,13 +7,13 @@
  */
 
 
+// importing libs
+const _ = require("lodash");
+
+
 // storing reference to global and named middlewares
 let global_middlewares = [],
   named_middlewares = [];
-
-
-// importing libs
-let _ = require("lodash");
 
 
 // exporting Middlewares

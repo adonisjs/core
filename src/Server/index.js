@@ -6,7 +6,7 @@
  * @description - Http server for adonis app
  */
 
-let Router = require("../Router"),
+const Router = require("../Router"),
   Request = require("../Request"),
   Response = require("../Response"),
   Logger = require("../Logger"),

@@ -8,7 +8,7 @@
 
 
 // importing libs
-let nunjucks = require("nunjucks");
+const nunjucks = require("nunjucks");
 
 // from where to load views
 let views_path = null;

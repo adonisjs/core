@@ -8,7 +8,7 @@
  */
 
 // requiring dependencies
-let log = require("captains-log");
+const log = require("captains-log");
 
 /**
  * adonis specific theme for captains log

@@ -7,7 +7,7 @@
  */
 
 // importing libraries
-let pathToRegexp = require("path-to-regexp"),
+const pathToRegexp = require("path-to-regexp"),
   _ = require("lodash");
 
 

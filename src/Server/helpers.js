@@ -7,7 +7,7 @@
  */
 
 
-let Middlewares = require("../Middlewares"),
+const Middlewares = require("../Middlewares"),
   Static = require("../Static"),
   App = require("../App"),
   co = require("co"),

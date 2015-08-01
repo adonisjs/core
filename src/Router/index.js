@@ -7,6 +7,12 @@
  */
 
 
+// Importing helpers
+const helpers = require("./helpers"),
+  _ = require("lodash");
+
+
+
 /**
  * holding reference to registered routes
  * @type {Array}
@@ -25,10 +31,6 @@ let activeGroup = null;
  */
 let subdomains = [];
 
-
-// Importing helpers
-let helpers = require("./helpers"),
-  _ = require("lodash");
 
 
 /**

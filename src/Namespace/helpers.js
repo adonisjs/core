@@ -8,7 +8,7 @@
 
 
 // importing libs
-let Ioc = new(require("adonis-ioc-container").Ioc),
+const Ioc = new(require("adonis-ioc-container").Ioc),
   _ = require("lodash");
 
 

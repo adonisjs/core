@@ -13,7 +13,7 @@ let namespaces = [];
 
 
 // importing libraries
-let _ = require("lodash"),
+const _ = require("lodash"),
   loader = require("auto-loader"),
   Logger = require("../Logger"),
   helpers = require("./helpers");

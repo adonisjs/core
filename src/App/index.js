@@ -8,7 +8,7 @@
 
 
 // importing libs
-let EventEmitter2 = require("eventemitter2").EventEmitter2;
+const EventEmitter2 = require("eventemitter2").EventEmitter2;
 
 // exporting app as part of event emitter
 let App = exports = module.exports = new EventEmitter2();

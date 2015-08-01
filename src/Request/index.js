@@ -8,7 +8,7 @@
 
 
 
-let querystring = require("querystring"),
+const querystring = require("querystring"),
   parseurl = require("parseurl"),
   requestIp = require("request-ip"),
   _ = require("lodash"),
