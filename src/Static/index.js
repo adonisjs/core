@@ -44,6 +44,7 @@ Static.removePublicNamespace = function(url) {
 /**
  * register directory as a static directory to be used
  * for serving static resources.
+ * @param  {String} namespace
  * @param  {String} path_to_dir
  * @param  {Object} options
  */

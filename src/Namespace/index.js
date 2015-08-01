@@ -38,7 +38,10 @@ Namespace.add = function(key, value) {
 }
 
 
-Namespace.clear = function(){
+/**
+ * clear all namespaces created by the application so far
+ */
+Namespace.clear = function() {
   namespaces = [];
   helpers.clean_injector();
 }
