@@ -493,4 +493,25 @@ describe("Request", function() {
       });
   });
 
+  it("should return request params using params method", function(done) {
+
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      request.request.params = {id:1};
+      var id = request.params("id");
+      res.writeHead(200, {
+        "Content-type": "text/plain"
+      });
+      res.end(id.toString());
+    });
+
+    supertest(server)
+      .get("/1")
+      .end(function(err, res) {
+        if (err) done(err);
+        expect(res.text).toBe("1");
+        done();
+      });
+  });
+
 });
