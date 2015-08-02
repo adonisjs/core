@@ -37,6 +37,14 @@ Request.prototype.get = function() {
 };
 
 
+/**
+ * returning route params
+ * @return {Object}
+ */
+Request.prototype.params = function() {
+  return helpers.return_requested_keys_from_object(this.request.params, arguments);
+};
+
 
 /**
  * return post values from request as object

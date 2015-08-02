@@ -24,17 +24,27 @@ let RequestHelpers = exports = module.exports = {};
  * @return {Object}  
  */
 RequestHelpers.return_requested_keys_from_object = function(hash, keys) {
-  if (_.size(keys) == 0) {
+
+  /**
+   * if there aren't any request keys , return the hash back
+   */
+  if (_.size(keys) === 0) {
     return hash;
   }
 
-  let filteredValues = {};
+  /**
+   * if length of requested keys is 1 , then return 
+   * value of request key as a string
+   */
+  if(_.size(keys) === 1){
+    return hash[keys[0]] || null;
+  }
 
-  _.map(keys, function(arg) {
+  let filteredValues = {};
+  _.each(keys, function(arg) {
     if (!hash[arg]) hash[arg] = null
     filteredValues[arg] = hash[arg];
   })
-
   return filteredValues;
 }
 

@@ -40,13 +40,13 @@ describe("Request", function() {
       res.writeHead(200, {
         "Content-type": "application/json"
       });
-      res.end(JSON.stringify(name));
+      res.end(JSON.stringify({name:name}));
     });
 
     supertest(server)
       .get("/user?name=virk&age=26")
       .end(function(err, res) {
-        if (err) throw (err);
+        if (err) return done(err);
         expect(res.body).toBeNonEmptyObject();
         expect(res.body).toHaveMember("name");
         expect(res.body.name).toBe("virk");
@@ -126,7 +126,7 @@ describe("Request", function() {
         res.writeHead(200, {
           "Content-type": "application/json"
         });
-        res.end(JSON.stringify(postBody));
+        res.end(JSON.stringify({username:postBody}));
       });
     });
 
@@ -254,7 +254,7 @@ describe("Request", function() {
         res.writeHead(200, {
           "Content-type": "application/json"
         });
-        res.end(JSON.stringify(all));
+        res.end(JSON.stringify({email:all}));
       });
     });
 
@@ -316,7 +316,7 @@ describe("Request", function() {
         res.writeHead(200, {
           "Content-type": "application/json"
         });
-        res.end(JSON.stringify(files));
+        res.end(JSON.stringify({profile:files}));
       });
     });
 
