@@ -48,7 +48,7 @@ let serverInstance = http.createServer(function(req, res) {
   helpers
     .resolve_and_return_handler(Router, uri, method)
     .then(function(resolved_route) {
-      request.params = resolved_route.params;
+      request.request.params = resolved_route.params;
       helpers.register_request_middlewares(Ware, resolved_route.middlewares);
       let finalHandler = helpers.craft_final_handler(resolved_route.controller, request, response)
       return Ware.run(request, response, finalHandler)
