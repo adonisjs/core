@@ -1,3 +1,11 @@
+"use strict";
+
+/**
+ * @author      - Harminder Virk
+ * @package     - adonis-http-dispatcher
+ * @description - Dispatcher for adonis framework
+ */
+
 module.exports = {
   Router: require("./src/Router"),
   Response: require("./src/Response"),
