@@ -26,3 +26,23 @@ Env.load = function(path_to_env_file) {
     path: path_to_env_file
   });
 }
+
+
+/**
+ * get value of a defined key on process.emv
+ * @param  {String} key
+ * @return {Any}
+ */
+Env.get = function(key){
+  return process.env[key];
+}
+
+
+/**
+ * sets key/value pair on proccess.env
+ * @param {String} key
+ * @param {Any} value
+ */
+Env.set = function(key,value){
+  return process.env[key] = value;
+}

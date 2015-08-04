@@ -32,26 +32,53 @@ let serverInstance = http.createServer(function(req, res) {
     request = new Request(req);
 
 
-  // if request is for a static resource
+  /**
+   * if request is for a static resource , serve static resource
+   * and return
+   */
   if (helpers.is_static_resource(req.url)) {
     helpers.handle_as_static_resource(request, response)
     return
   }
 
-  // if request is favicon respond with favicon
+
+  /**
+   * if request is for favicon , serve favicon and return
+   */
   if (helpers.is_favicon_request(uri)) {
     helpers.serve_favicon(request, response);
     return
   }
 
-  // resolve route from Router
+
+  /**
+   * finally try to resolve url as one of the registered
+   * routes and serve if resolved.
+   */
   helpers
     .resolve_and_return_handler(Router, uri, method)
     .then(function(resolved_route) {
+
+      /**
+       * setup params property on request object
+       */
       request.request.params = resolved_route.params;
+
+      /**
+       * register middlewares to be invoked
+       */
       helpers.register_request_middlewares(Ware, resolved_route.middlewares);
+
+      /**
+       * create finalHandler as a generator method
+       */
       let finalHandler = helpers.craft_final_handler(resolved_route.controller, request, response)
+
+      /**
+       * return ware instance
+       */
       return Ware.run(request, response, finalHandler)
+
     })
     .then(function() {
       response.end();
@@ -93,6 +120,10 @@ Server.cluster = function(port) {
 
   if(cluster.isMaster){
     
+    /**
+     * for a new cluster equals to be number of 
+     * cpu cores
+     */
     var cpuCount = require("os").cpus().length;
     for(let i=0;i<cpuCount; i+=1){
       cluster.fork();

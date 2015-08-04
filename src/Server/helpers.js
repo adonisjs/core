@@ -37,10 +37,10 @@ ServerHelpers.craft_final_handler = function(method, request, response) {
       returned = yield method.action(request, response);
     }
     /**
-     * if returned value is a string , set it as
+     * if returned value is not undefined , set it as
      * response body
      */
-    if ('string' === typeof(returned)) {
+    if ('undefined' !== typeof(returned)) {
       response.ok(returned);
     }
   }
@@ -85,6 +85,7 @@ ServerHelpers.resolve_and_return_handler = function(Router, uri, method) {
        *       controller method. 
        */
       if (typeof(resolved_route.handler) === 'string') {
+
         resolved_route.controller = ServerHelpers.namespace_to_controller_instance(resolved_route.handler);
 
         let namespaceHandler = resolved_route.controller.is_namespaced ? co.wrap(function*() {
@@ -154,7 +155,6 @@ ServerHelpers.namespace_to_controller_instance = function(handler) {
     action,
     is_namespaced
   };
-
 }
 
 
