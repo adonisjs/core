@@ -15,6 +15,7 @@
  */
 function HttpException() {
   Error.call(this);
+  this.name = 'HttpException';
   if (arguments.length == 2) {
     this.statusCode = arguments[0];
     this.message = arguments[1];
