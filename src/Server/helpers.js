@@ -6,14 +6,14 @@
  * @description - Helper methods for adonis server
  */
 
-const Middlewares = require('../Middlewares'),
-  Static = require('../Static'),
-  App = require('../App'),
-  co = require('co'),
-  Logger = require('../Logger'),
-  HttpException = require('../HttpException'),
-  Namespace = require('../Namespace'),
-  _ = require('lodash')
+const Middlewares = require('../Middlewares')
+const Static = require('../Static')
+const App = require('../App')
+const co = require('co')
+const Logger = require('../Logger')
+const HttpException = require('../HttpException')
+const Namespace = require('../Namespace')
+const _ = require('lodash')
 
 // exporting helpers
 let ServerHelpers = exports = module.exports = {}
@@ -37,7 +37,7 @@ ServerHelpers.craft_final_handler = function (method, request, response) {
      * if returned value is not undefined , set it as
      * response body
      */
-    if ('undefined' !== typeof (returned)) {
+    if (typeof (returned) !== 'undefined') {
       response.ok(returned)
     }
   }
@@ -76,7 +76,7 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
        *   2). Resolve controller from Namespace factory and get
        *       instance to controller class
        *   3). Finally return an object with controller instance and
-       *       controller method. 
+       *       controller method.
        */
       if (typeof (resolved_route.handler) === 'string') {
         resolved_route.controller = ServerHelpers.namespace_to_controller_instance(resolved_route.handler)
@@ -125,12 +125,12 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
  * @return {Object}
  */
 ServerHelpers.namespace_to_controller_instance = function (handler) {
-  let is_namespaced = ServerHelpers.is_namespaced(handler),
-    sections = handler.split('.'),
-    controller_namespace = [],
-    action = null,
-    x = 0,
-    sections_count = _.size(sections)
+  let is_namespaced = ServerHelpers.is_namespaced(handler)
+  let sections = handler.split('.')
+  let controller_namespace = []
+  let action = null
+  let x = 0
+  let sections_count = _.size(sections)
 
   _.each(sections, function (section) {
     x++
@@ -140,10 +140,7 @@ ServerHelpers.namespace_to_controller_instance = function (handler) {
       controller_namespace.push(section)
     }
   })
-  return {
-    controller: controller_namespace.join('/'),
-    action,
-  is_namespaced}
+  return {controller: controller_namespace.join('/'), action, is_namespaced}
 }
 
 /**
@@ -186,8 +183,8 @@ ServerHelpers.handle_http_errors = function (error, request, response) {
  * @param  {Array} named_middlewares
  */
 ServerHelpers.register_request_middlewares = function (Ware, named_middlewares) {
-  let middlewares = Middlewares.get(named_middlewares),
-    filtered = Middlewares.filter(middlewares)
+  let middlewares = Middlewares.get(named_middlewares)
+  let filtered = Middlewares.filter(middlewares)
 
   _.each(filtered, function (instance) {
     Ware.use(instance)

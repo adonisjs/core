@@ -7,28 +7,27 @@
  */
 
 // importing libraries
-const pathToRegexp = require('path-to-regexp'),
-  _ = require('lodash')
+const pathToRegexp = require('path-to-regexp')
+const _ = require('lodash')
 
 // exporting Helpers
 let RouterHelper = exports = module.exports = {}
 
 /**
  * construct a new route using path-to-regexp
- * @param  {String}   route   
+ * @param  {String}   route
  * @param  {String}   verb
  * @param  {Any}      handler
  * @return {Object}
  */
 RouterHelper.construct = function (route, verb, handler, group) {
-  let pattern = RouterHelper.make_route_pattern(route),
-    middlewares = [],
-    subdomain = null,
-    name = route
+  let pattern = RouterHelper.make_route_pattern(route)
+  let middlewares = []
+  let subdomain = null
+  let name = route
 
   verb = _.isArray(verb) ? verb : [verb] // a route can register for multiple verbs
-  return {
-  route, verb, handler, pattern, middlewares, name, group, subdomain}
+  return {route, verb, handler, pattern, middlewares, name, group, subdomain}
 }
 
 /**
@@ -43,9 +42,9 @@ RouterHelper.make_route_pattern = function (route) {
 /**
  * resolve route from routes store based upon current url
  * @param  {Object} routes
- * @param  {String} url   
- * @param  {String} verb  
- * @return {Object}        
+ * @param  {String} url
+ * @param  {String} verb
+ * @return {Object}
  */
 RouterHelper.return_matching_route_to_url = function (routes, urlPath, verb) {
   let maps = _.filter(routes, function (route) {

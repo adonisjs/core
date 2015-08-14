@@ -9,9 +9,6 @@
 // importing libs
 const nunjucks = require('nunjucks')
 
-// from where to load views
-let views_path = null
-
 // exporting Views class
 let View = exports = module.exports = {}
 

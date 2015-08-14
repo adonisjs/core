@@ -7,10 +7,10 @@
  */
 
 // importing libs
-const Ioc = new (require('adonis-ioc-container').Ioc),
-  _ = require('lodash')
+const Ioc = new (require('adonis-ioc-container').Ioc)
+const _ = require('lodash')
 
-// exporting helpers 
+// exporting helpers
 let NamespaceHelpers = exports = module.exports = {}
 
 /**

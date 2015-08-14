@@ -31,4 +31,4 @@ let loggerDefaults = {
 }
 
 // exporting logger
-let Logger = exports = module.exports = log(loggerDefaults)
+exports = module.exports = log(loggerDefaults)

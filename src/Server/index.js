@@ -6,15 +6,15 @@
  * @description - Http server for adonis app
  */
 
-const Router = require('../Router'),
-  Request = require('../Request'),
-  Response = require('../Response'),
-  Logger = require('../Logger'),
-  helpers = require('./helpers'),
-  Ware = require('adonis-co-ware')(),
-  url = require('url'),
-  cluster = require('cluster'),
-  http = require('http')
+const Router = require('../Router')
+const Request = require('../Request')
+const Response = require('../Response')
+const Logger = require('../Logger')
+const helpers = require('./helpers')
+const Ware = require('adonis-co-ware')()
+const url = require('url')
+const cluster = require('cluster')
+const http = require('http')
 
 /**
  * setting up a http server and saving instance
@@ -24,10 +24,10 @@ let serverInstance = http.createServer(function (req, res) {
   // clear old middlewares stack of every new request
   Ware.clear()
 
-  let uri = url.parse(req.url).path,
-    method = req.method,
-    response = new Response(req, res),
-    request = new Request(req)
+  let uri = url.parse(req.url).path
+  let method = req.method
+  let response = new Response(req, res)
+  let request = new Request(req)
 
   /**
    * if request is for a static resource , serve static resource
@@ -110,7 +110,7 @@ Server.start = function (port) {
 Server.cluster = function (port) {
   if (cluster.isMaster) {
     /**
-     * for a new cluster equals to be number of 
+     * for a new cluster equals to be number of
      * cpu cores
      */
     var cpuCount = require('os').cpus().length

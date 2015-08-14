@@ -6,11 +6,12 @@
  * @description - Adds glue to http req object by providing convience methods
  */
 
-const querystring = require('querystring'),
-  parseurl = require('parseurl'),
-  requestIp = require('request-ip'),
-  _ = require('lodash'),
-  helpers = require('./helpers')
+const querystring = require('querystring')
+const parseurl = require('parseurl')
+const requestIp = require('request-ip')
+const _ = require('lodash')
+const helpers = require('./helpers')
+const cookie = require('cookie')
 
 /**
  * Request class
@@ -61,8 +62,8 @@ Request.prototype.files = function () {
  * @return {Object}
  */
 Request.prototype.all = function () {
-  let body = this.post(),
-    query = this.get()
+  let body = this.post()
+  let query = this.get()
   return _.merge(query, body)
 }
 
@@ -124,7 +125,7 @@ Request.prototype.ajax = function () {
  */
 Request.prototype.pjax = function () {
   let xmlHeader = this.headers('X-PJAX')
-  return xmlHeader['X-PJAX'] == true
+  return xmlHeader['X-PJAX'] === true
 }
 
 /**
@@ -160,7 +161,7 @@ Request.prototype.cookies = function () {
     return {}
   }
   let cookies = cookie.parse(this.request.headers.cookie)
-  return Helpers.return_requested_keys_from_object(cookies, arguments)
+  return helpers.return_requested_keys_from_object(cookies, arguments)
 }
 
 module.exports = Request

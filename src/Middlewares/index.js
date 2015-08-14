@@ -10,8 +10,8 @@
 const _ = require('lodash')
 
 // storing reference to global and named middlewares
-let global_middlewares = [],
-  named_middlewares = []
+let global_middlewares = []
+let named_middlewares = []
 
 // exporting Middlewares
 let Middlewares = exports = module.exports = {}
@@ -57,9 +57,9 @@ Middlewares.get = function (keys) {
  * @return {Object}
  */
 Middlewares.filter = function (array_of_middlewares) {
-  return _.compact(_.map(array_of_middlewares, function (middleware) {
-    if (typeof (middleware) === 'function' && typeof (middleware.prototype) === 'object') {
-      let invoke = new middleware
+  return _.compact(_.map(array_of_middlewares, function (Middleware) {
+    if (typeof (Middleware) === 'function' && typeof (Middleware.prototype) === 'object') {
+      let invoke = new Middleware()
       if (typeof (invoke.handle) !== 'undefined') {
         return invoke
       }

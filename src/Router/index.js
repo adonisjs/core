@@ -7,8 +7,8 @@
  */
 
 // Importing helpers
-const helpers = require('./helpers'),
-  _ = require('lodash')
+const helpers = require('./helpers')
+const _ = require('lodash')
 
 /**
  * holding reference to registered routes
@@ -64,7 +64,7 @@ Router.route = function (route, verb, handler) {
 
 /**
  * register route with GET verb
- * @param  {String} route 
+ * @param  {String} route
  * @param  {Any} handler
  */
 Router.get = function (route, handler) {
@@ -74,7 +74,7 @@ Router.get = function (route, handler) {
 
 /**
  * register route with POST verb
- * @param  {String} route 
+ * @param  {String} route
  * @param  {Any} handler
  */
 Router.post = function (route, handler) {
@@ -84,7 +84,7 @@ Router.post = function (route, handler) {
 
 /**
  * register route with PUT verb
- * @param  {String} route 
+ * @param  {String} route
  * @param  {Any} handler
  */
 Router.put = function (route, handler) {
@@ -94,7 +94,7 @@ Router.put = function (route, handler) {
 
 /**
  * register route with PATCH verb
- * @param  {String} route 
+ * @param  {String} route
  * @param  {Any} handler
  */
 Router.patch = function (route, handler) {
@@ -104,7 +104,7 @@ Router.patch = function (route, handler) {
 
 /**
  * register route with DELETE verb
- * @param  {String} route 
+ * @param  {String} route
  * @param  {Any} handler
  */
 Router.delete = function (route, handler) {
@@ -114,8 +114,8 @@ Router.delete = function (route, handler) {
 
 /**
  * register route with array of verbs
- * @param  {Array} verbs 
- * @param  {String} route 
+ * @param  {Array} verbs
+ * @param  {String} route
  * @param  {Any} handler
  */
 Router.any = function (verbs, route, handler) {

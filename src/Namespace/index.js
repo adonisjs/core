@@ -11,10 +11,10 @@
 let namespaces = []
 
 // importing libraries
-const _ = require('lodash'),
-  loader = require('auto-loader'),
-  Logger = require('../Logger'),
-  helpers = require('./helpers')
+const _ = require('lodash')
+const loader = require('auto-loader')
+const Logger = require('../Logger')
+const helpers = require('./helpers')
 
 // exporting namespace
 let Namespace = exports = module.exports = {}
@@ -26,7 +26,8 @@ let Namespace = exports = module.exports = {}
  */
 Namespace.add = function (key, value) {
   namespaces.push({
-  key, value})
+    key, value
+  })
   helpers.map(key, value)
   return this
 }
@@ -40,7 +41,7 @@ Namespace.clear = function () {
 }
 
 /**
- * register bunch of classes to ioc container and map to 
+ * register bunch of classes to ioc container and map to
  * predefined namespace
  * @param  {String} path_to_deps
  */

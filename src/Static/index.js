@@ -7,8 +7,8 @@
  */
 
 // importing libraries
-const nodeStatic = require('node-static'),
-  favicon = require('serve-favicon')
+const nodeStatic = require('node-static')
+const favicon = require('serve-favicon')
 
 let fileServer = null
 let faviconServer = null

@@ -7,8 +7,8 @@
  */
 
 // importing libs
-const NodeRes = require('node-res'),
-  View = require('../View/index')
+const NodeRes = require('node-res')
+const View = require('../View/index')
 
 /**
  * extending nodeRes prototype to attach view method

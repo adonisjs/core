@@ -7,18 +7,18 @@
  */
 
 // importing libs
-const _ = require('lodash'),
-  accepts = require('accepts'),
-  is = require('type-is')
+const _ = require('lodash')
+const accepts = require('accepts')
+const is = require('type-is')
 
-// exporting helpers 
+// exporting helpers
 let RequestHelpers = exports = module.exports = {}
 
 /**
  * return values from object based upon requested keys
  * @param  {Object} hash
  * @param  {Array} keys
- * @return {Object}  
+ * @return {Object}
  */
 RequestHelpers.return_requested_keys_from_object = function (hash, keys) {
   /**
@@ -29,7 +29,7 @@ RequestHelpers.return_requested_keys_from_object = function (hash, keys) {
   }
 
   /**
-   * if length of requested keys is 1 , then return 
+   * if length of requested keys is 1 , then return
    * value of request key as a string
    */
   if (_.size(keys) === 1) {
@@ -59,7 +59,7 @@ RequestHelpers.remove_requested_keys_from_object = function (hash, keys) {
 
 /**
  * checks best possible return type for a request
- * @param  {Object} req 
+ * @param  {Object} req
  * @param  {Array} types
  * @return {String}
  */
@@ -70,7 +70,7 @@ RequestHelpers.check_http_accept_field = function (req, types) {
 
 /**
  * check request content-type header
- * @param  {Object} req 
+ * @param  {Object} req
  * @param  {Array} types
  * @return {String}
  */
