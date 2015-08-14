@@ -1,5 +1,4 @@
-"use strict";
-
+'use strict'
 
 /**
  * @author      - Harminder Virk
@@ -8,20 +7,19 @@
  *               self invoked and system specific errors.
  */
 
-
 /**
  * [HttpException]
  * @constructor
  */
-function HttpException() {
-  Error.call(this);
-  this.name = 'HttpException';
+function HttpException () {
+  Error.call(this)
+  this.name = 'HttpException'
   if (arguments.length == 2) {
-    this.statusCode = arguments[0];
-    this.message = arguments[1];
+    this.statusCode = arguments[0]
+    this.message = arguments[1]
   } else {
-    this.message = arguments[0];
+    this.message = arguments[0]
   }
 }
 
-module.exports = HttpException;
+module.exports = HttpException

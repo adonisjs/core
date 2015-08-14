@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * @author      - Harminder Virk
@@ -6,65 +6,57 @@
  * @description - Helpers for namespace store
  */
 
-
 // importing libs
-const Ioc = new(require("adonis-ioc-container").Ioc),
-  _ = require("lodash");
-
+const Ioc = new (require('adonis-ioc-container').Ioc),
+  _ = require('lodash')
 
 // exporting helpers 
-let NamespaceHelpers = exports = module.exports = {};
-
-
+let NamespaceHelpers = exports = module.exports = {}
 
 /**
  * register recursive classes to ioc container
  * @param  {String} namespace
  * @param  {Array} modules
  */
-NamespaceHelpers.register_to_ioc = function(namespace, modules) {
-  _.each(modules, function(item, key) {
-    if (typeof(item) === 'function') {
-      Ioc.register(`${namespace}/${item.name}`, item);
+NamespaceHelpers.register_to_ioc = function (namespace, modules) {
+  _.each(modules, function (item, key) {
+    if (typeof (item) === 'function') {
+      Ioc.register(`${namespace}/${item.name}`, item)
     } else {
-      NamespaceHelpers.register_to_ioc(`${namespace}/${key}`, item);
+      NamespaceHelpers.register_to_ioc(`${namespace}/${key}`, item)
     }
-  });
+  })
 }
-
 
 /**
  * add key value pairs to ioc container
  * @param  {String} key
  * @param  {Any} value
  */
-NamespaceHelpers.map = function(key, value) {
-  Ioc.map(key, value);
+NamespaceHelpers.map = function (key, value) {
+  Ioc.map(key, value)
 }
-
 
 /**
  * destorys all mapping with ioc container
  */
-NamespaceHelpers.clean_injector = function() {
-  Ioc.destory();
+NamespaceHelpers.clean_injector = function () {
+  Ioc.destory()
 }
-
 
 /**
  * return list of mappings to the ioc container
  * @return {Object}
  */
-NamespaceHelpers.ioc_list = function() {
-  return Ioc.container._mappings;
+NamespaceHelpers.ioc_list = function () {
+  return Ioc.container._mappings
 }
-
 
 /**
  * resolve item and return instance of class from ioc container
  * @param  {String} namespace
  * @return {Class}
  */
-NamespaceHelpers.resolve_from_ioc = function(namespace) {
-  return Ioc.get(namespace);
+NamespaceHelpers.resolve_from_ioc = function (namespace) {
+  return Ioc.get(namespace)
 }

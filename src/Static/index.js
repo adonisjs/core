@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * @author      - Harminder Virk
@@ -6,40 +6,35 @@
  * @description - Static assets for adonis app
  */
 
-
 // importing libraries
-const nodeStatic = require("node-static"),
-  favicon = require('serve-favicon');
+const nodeStatic = require('node-static'),
+  favicon = require('serve-favicon')
 
-let fileServer = null;
-let faviconServer = null;
-let publicNamespace = null;
+let fileServer = null
+let faviconServer = null
+let publicNamespace = null
 
 // export static module
-let Static = exports = module.exports = {};
-
-
+let Static = exports = module.exports = {}
 
 /**
  * finding whether request is for static resource or not
  * @param  {String}  url
  * @return {Boolean}
  */
-Static.isStatic = function(url) {
-  let regex = new RegExp(`^\/${publicNamespace}`);
-  return regex.test(url);
+Static.isStatic = function (url) {
+  let regex = new RegExp(`^\/${publicNamespace}`)
+  return regex.test(url)
 }
-
 
 /**
  * replacing publicNamespace from url while serving static resources
  * @param  {String}  url
  * @return {Boolean}
  */
-Static.removePublicNamespace = function(url) {
-  return url.replace(`/${publicNamespace}`, '');
+Static.removePublicNamespace = function (url) {
+  return url.replace(`/${publicNamespace}`, '')
 }
-
 
 /**
  * register directory as a static directory to be used
@@ -48,21 +43,19 @@ Static.removePublicNamespace = function(url) {
  * @param  {String} path_to_dir
  * @param  {Object} options
  */
-Static.public = function(namespace, path_to_dir, options) {
-  options = options || {};
-  publicNamespace = namespace;
-  fileServer = new nodeStatic.Server(path_to_dir, options);
+Static.public = function (namespace, path_to_dir, options) {
+  options = options || {}
+  publicNamespace = namespace
+  fileServer = new nodeStatic.Server(path_to_dir, options)
 }
-
 
 /**
  * register directory to serve favicon
  * @param  {String} path_to_favicon
  */
-Static.favicon = function(path_to_favicon) {
-  faviconServer = favicon(path_to_favicon);
+Static.favicon = function (path_to_favicon) {
+  faviconServer = favicon(path_to_favicon)
 }
-
 
 /**
  * serve request file from static directory
@@ -70,17 +63,16 @@ Static.favicon = function(path_to_favicon) {
  * @param  {Object}   response
  * @param  {Function} cb
  */
-Static.serve = function(request, response, cb) {
+Static.serve = function (request, response, cb) {
   if (fileServer) {
-    fileServer.serve(request, response, cb);
+    fileServer.serve(request, response, cb)
     return
   }
   response.writeHead(404, {
-    "content-type": "text/plain"
-  });
-  response.end("404");
+    'content-type': 'text/plain'
+  })
+  response.end('404')
 }
-
 
 /**
  * serves favicon from registered path
@@ -88,13 +80,13 @@ Static.serve = function(request, response, cb) {
  * @param  {Object}   response
  * @param  {Function} cb
  */
-Static.serveFavicon = function(request, response, cb) {
+Static.serveFavicon = function (request, response, cb) {
   if (faviconServer) {
-    faviconServer(request, response, cb);
+    faviconServer(request, response, cb)
     return
   }
   response.writeHead(404, {
-    "content-type": "text/plain"
-  });
-  response.end("404");
+    'content-type': 'text/plain'
+  })
+  response.end('404')
 }

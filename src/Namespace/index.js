@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * @author      - Harminder Virk
@@ -7,89 +7,77 @@
  *                as store key.
  */
 
-
 // holding references to namespaces
-let namespaces = [];
-
+let namespaces = []
 
 // importing libraries
-const _ = require("lodash"),
-  loader = require("auto-loader"),
-  Logger = require("../Logger"),
-  helpers = require("./helpers");
-
+const _ = require('lodash'),
+  loader = require('auto-loader'),
+  Logger = require('../Logger'),
+  helpers = require('./helpers')
 
 // exporting namespace
-let Namespace = exports = module.exports = {};
-
-
+let Namespace = exports = module.exports = {}
 
 /**
  * add item to namespace store and ioc container
  * @param {String} key
  * @param {String} value
  */
-Namespace.add = function(key, value) {
+Namespace.add = function (key, value) {
   namespaces.push({
-    key, value
-  });
-  helpers.map(key, value);
-  return this;
+  key, value})
+  helpers.map(key, value)
+  return this
 }
-
 
 /**
  * clear all namespaces created by the application so far
  */
-Namespace.clear = function() {
-  namespaces = [];
-  helpers.clean_injector();
+Namespace.clear = function () {
+  namespaces = []
+  helpers.clean_injector()
 }
-
 
 /**
  * register bunch of classes to ioc container and map to 
  * predefined namespace
  * @param  {String} path_to_deps
  */
-Namespace.register = function(path_to_deps) {
-  let lastItem = _.last(namespaces);
+Namespace.register = function (path_to_deps) {
+  let lastItem = _.last(namespaces)
   if (lastItem) {
-    Logger.verbose(`registering modules under ${path_to_deps} to ${lastItem.value} namespace`);
-    let items = loader.load(path_to_deps);
-    return helpers.register_to_ioc(lastItem.value, items);
+    Logger.verbose(`registering modules under ${path_to_deps} to ${lastItem.value} namespace`)
+    let items = loader.load(path_to_deps)
+    return helpers.register_to_ioc(lastItem.value, items)
   }
-  Logger.warn("unable to register , make sure to add key/value pair to namespace store");
+  Logger.warn('unable to register , make sure to add key/value pair to namespace store')
 }
-
-
 
 /**
  * return list of mappings to ioc container
  * @return {Object}
  */
-Namespace.list = function() {
-  return helpers.ioc_list();
+Namespace.list = function () {
+  return helpers.ioc_list()
 }
-
-
 
 /**
  * return class instance from ioc container based on keys
  * @param  {String} key namespace store key
  * @return {Object}
  */
-Namespace.resolve = function(name, identity) {
+Namespace.resolve = function (name, identity) {
   if (identity) {
-    let namespace = _.filter(namespaces, function(item) {
+    let namespace = _.filter(namespaces, function (item) {
       return item.key === identity
-    });
+    })
     if (_.size(namespace) === 0) {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         reject(`unable to resolve ${name} from ${identity}`)
-      });
+      })
     }
-    name = `${namespace[0].value}/${name}`;
+    name = `${namespace[0].value}/${name}`
   }
-  return helpers.resolve_from_ioc(name);
+  return helpers.resolve_from_ioc(name)
 }

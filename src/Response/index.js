@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * @author      - Harminder Virk
@@ -7,10 +7,8 @@
  */
 
 // importing libs
-const NodeRes = require("node-res"),
-  View = require("../View/index");
-
-
+const NodeRes = require('node-res'),
+  View = require('../View/index')
 
 /**
  * extending nodeRes prototype to attach view method
@@ -18,12 +16,11 @@ const NodeRes = require("node-res"),
  * @param  {Object} data          data to pass to template
  * @return {String}               Compiled template
  */
-NodeRes.prototype.view = function(template_path, data) {
-  let compiled_template = View.make(template_path, data);
-  this.send(compiled_template);
-  return this;
+NodeRes.prototype.view = function (template_path, data) {
+  let compiled_template = View.make(template_path, data)
+  this.send(compiled_template)
+  return this
 }
-
 
 /**
  * Response class
@@ -31,11 +28,11 @@ NodeRes.prototype.view = function(template_path, data) {
  * @param {Object} response
  * @constructor
  */
-function Response(request, response) {
-  NodeRes.call(this, request, response);
+function Response (request, response) {
+  NodeRes.call(this, request, response)
 }
 
-Response.prototype = Object.create(NodeRes.prototype);
-Response.prototype.constructor = Response;
+Response.prototype = Object.create(NodeRes.prototype)
+Response.prototype.constructor = Response
 
-module.exports = Response;
+module.exports = Response

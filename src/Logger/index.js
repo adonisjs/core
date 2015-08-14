@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 /**
  * @author      - Harminder Virk
@@ -8,7 +8,7 @@
  */
 
 // requiring dependencies
-const log = require("captains-log");
+const log = require('captains-log')
 
 /**
  * adonis specific theme for captains log
@@ -27,8 +27,8 @@ let loggerDefaults = {
       crit: 'adonis-http-dispatcher:[CRITICAL] '
     }
   },
-  prefixTheme: "adonis"
-};
+  prefixTheme: 'adonis'
+}
 
 // exporting logger
-let Logger = exports = module.exports = log(loggerDefaults);
+let Logger = exports = module.exports = log(loggerDefaults)

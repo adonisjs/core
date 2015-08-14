@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * @author      - Harminder Virk
@@ -6,31 +6,28 @@
  * @description - Http server for adonis app
  */
 
-const Router = require("../Router"),
-  Request = require("../Request"),
-  Response = require("../Response"),
-  Logger = require("../Logger"),
-  helpers = require("./helpers"),
-  Ware = require("adonis-co-ware")(),
-  url = require("url"),
-  cluster = require("cluster"),
-  http = require("http");
-
+const Router = require('../Router'),
+  Request = require('../Request'),
+  Response = require('../Response'),
+  Logger = require('../Logger'),
+  helpers = require('./helpers'),
+  Ware = require('adonis-co-ware')(),
+  url = require('url'),
+  cluster = require('cluster'),
+  http = require('http')
 
 /**
  * setting up a http server and saving instance
  * locally.
  */
-let serverInstance = http.createServer(function(req, res) {
-
+let serverInstance = http.createServer(function (req, res) {
   // clear old middlewares stack of every new request
-  Ware.clear();
+  Ware.clear()
 
   let uri = url.parse(req.url).path,
     method = req.method,
     response = new Response(req, res),
-    request = new Request(req);
-
+    request = new Request(req)
 
   /**
    * if request is for a static resource , serve static resource
@@ -41,15 +38,13 @@ let serverInstance = http.createServer(function(req, res) {
     return
   }
 
-
   /**
    * if request is for favicon , serve favicon and return
    */
   if (helpers.is_favicon_request(uri)) {
-    helpers.serve_favicon(request, response);
+    helpers.serve_favicon(request, response)
     return
   }
-
 
   /**
    * finally try to resolve url as one of the registered
@@ -57,17 +52,16 @@ let serverInstance = http.createServer(function(req, res) {
    */
   helpers
     .resolve_and_return_handler(Router, uri, method)
-    .then(function(resolved_route) {
-
+    .then(function (resolved_route) {
       /**
        * setup params property on request object
        */
-      request.request.params = resolved_route.params;
+      request.request.params = resolved_route.params
 
       /**
        * register middlewares to be invoked
        */
-      helpers.register_request_middlewares(Ware, resolved_route.middlewares);
+      helpers.register_request_middlewares(Ware, resolved_route.middlewares)
 
       /**
        * create finalHandler as a generator method
@@ -80,61 +74,56 @@ let serverInstance = http.createServer(function(req, res) {
       return Ware.run(request, response, finalHandler)
 
     })
-    .then(function() {
-      response.end();
+    .then(function () {
+      response.end()
     })
-    .catch(function(error) {
-      helpers.handle_http_errors(error, request, response);
+    .catch(function (error) {
+      helpers.handle_http_errors(error, request, response)
     })
-});
+})
 
 /**
  * exporting Server module
  */
-let Server = exports = module.exports = {};
-
+let Server = exports = module.exports = {}
 
 /**
  * stops currently running http server
  */
-Server.stop = function() {
-  serverInstance.close();
+Server.stop = function () {
+  serverInstance.close()
 }
-
 
 /**
  * start http server on a given port
  * @param  {Number} port
  */
-Server.start = function(port) {
-  Logger.info(`serving app on port ${port}`);
-  serverInstance.listen(port);
+Server.start = function (port) {
+  Logger.info(`serving app on port ${port}`)
+  serverInstance.listen(port)
 }
-
 
 /**
  * start http server in cluster mode on a given port
  * @param  {Number} port
  */
-Server.cluster = function(port) {
-
-  if(cluster.isMaster){
-    
+Server.cluster = function (port) {
+  if (cluster.isMaster) {
     /**
      * for a new cluster equals to be number of 
      * cpu cores
      */
-    var cpuCount = require("os").cpus().length;
-    for(let i=0;i<cpuCount; i+=1){
-      cluster.fork();
+    var cpuCount = require('os').cpus().length
+    for (let i = 0;i < cpuCount; i += 1) {
+      cluster.fork()
     }
 
-    cluster.on("exit",function(worker){
-      Logger.warn(`worker ${worker.process.pid} died`);
-      cluster.fork();      
-    });
+    cluster.on('exit', function (worker) {
+      Logger.warn(`worker ${worker.process.pid} died`)
+      cluster.fork()
+    })
 
-  }else{
-    Server.start(port);
+  } else {
+    Server.start(port)
   }
 }
