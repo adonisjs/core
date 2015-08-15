@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="1">
+
+  <testsuite name="basic"
+    errors="0" failures="0" hostname="" id="" package="basic" skipped="0"
+    tests="1" time="2.623" timestamp="Sat, 15 Aug 2015 10:15:16 GMT">
+  
+    <testcase name="Basic server hello world" time="2.623" assertions="1">
+
+    
+    </testcase>
+  
+  
+  </testsuite>
+</testsuites>
