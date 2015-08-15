@@ -4,7 +4,8 @@
   "description": "Http dispatcher a loosely coupled http server for adonis framework , it does all the required hard work to setup a managable http server.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/jasmine-node/bin/jasmine-node test"
+    "test": "./node_modules/jasmine-node/bin/jasmine-node test",
+    "selenium": "./node_modules/nightwatch/bin/nightwatch test/nightwatch/basic.js --config test/nightwatch.json"
   },
   "author": "",
   "license": "ISC",
