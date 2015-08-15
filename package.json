@@ -40,6 +40,7 @@
     "jasmine-node": "^1.14.5",
     "loadtest": "^1.2.11",
     "lodash": "^3.10.0",
+    "nightwatch": "^0.7.11",
     "supertest": "^1.0.1"
   }
 }
