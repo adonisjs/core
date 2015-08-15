@@ -199,7 +199,7 @@
 
     it("should resolve controllers using controller string and using resource method", function(done) {
 
-      Namespace.add("controllers","App/Http/Controllers").register(path.join(__dirname,"./Controllers"));
+      Namespace.identifier("controllers").namespace("App/Http/Controllers").register(path.join(__dirname,"./Controllers"));
       Routes.resource("/friends","FriendsController");
       
       let friendsToReturn = [

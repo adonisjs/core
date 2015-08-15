@@ -11,6 +11,7 @@
   "dependencies": {
     "accepts": "^1.2.12",
     "adonis-co-ware": "^1.0.2",
+    "adonis-lodge": "file:../lodge",
     "auto-loader": "^0.2.0",
     "captains-log": "^0.11.11",
     "co": "^4.6.0",

@@ -81,10 +81,8 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
       if (typeof (resolved_route.handler) === 'string') {
         resolved_route.controller = ServerHelpers.namespace_to_controller_instance(resolved_route.handler)
 
-        let namespaceHandler = resolved_route.controller.is_namespaced ? co.wrap(function *() {
-          return yield Namespace.resolve(resolved_route.controller.controller)
-        }) : co.wrap(function *() {
-          return yield Namespace.resolve(resolved_route.controller.controller, 'controllers')
+        let namespaceHandler = co.wrap(function *() {
+          return yield Namespace.under("controllers").resolve(resolved_route.controller.controller)
         })
 
         namespaceHandler()
@@ -108,7 +106,6 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
          *       will assign null values to non-required keys.
          */
         resolved_route.controller = {
-          is_namespaced: false,
           controller: null,
           action: resolved_route.handler
         }
@@ -125,7 +122,6 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
  * @return {Object}
  */
 ServerHelpers.namespace_to_controller_instance = function (handler) {
-  let is_namespaced = ServerHelpers.is_namespaced(handler)
   let sections = handler.split('.')
   let controller_namespace = []
   let action = null
@@ -140,16 +136,7 @@ ServerHelpers.namespace_to_controller_instance = function (handler) {
       controller_namespace.push(section)
     }
   })
-  return {controller: controller_namespace.join('/'), action, is_namespaced}
-}
-
-/**
- * tells whether string is pre namespaced or not
- * @param  {String}  string
- * @return {Boolean}
- */
-ServerHelpers.is_namespaced = function (string) {
-  return _.includes(string, '/')
+  return {controller: controller_namespace.join('.'), action}
 }
 
 /**

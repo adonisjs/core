@@ -12,12 +12,10 @@ describe("Utils", function() {
 
     let parsed = ServerHelpers.namespace_to_controller_instance("HomeController.index");
     expect(parsed).toBeNonEmptyObject();
-    expect(parsed).toHaveMember("is_namespaced");
     expect(parsed).toHaveMember("controller");
     expect(parsed).toHaveMember("action");
     expect(parsed.action).toBe("index");
     expect(parsed.controller).toBe("HomeController");
-    expect(parsed.is_namespaced).toBe(false);
 
   });
 
@@ -26,12 +24,10 @@ describe("Utils", function() {
 
     let parsed = ServerHelpers.namespace_to_controller_instance("App/Http/Controllers/HomeController.index");
     expect(parsed).toBeNonEmptyObject();
-    expect(parsed).toHaveMember("is_namespaced");
     expect(parsed).toHaveMember("controller");
     expect(parsed).toHaveMember("action");
     expect(parsed.action).toBe("index");
     expect(parsed.controller).toBe("App/Http/Controllers/HomeController");
-    expect(parsed.is_namespaced).toBe(true);
 
   });
 
@@ -41,12 +37,10 @@ describe("Utils", function() {
 
     let parsed = ServerHelpers.namespace_to_controller_instance("User.HomeController.index");
     expect(parsed).toBeNonEmptyObject();
-    expect(parsed).toHaveMember("is_namespaced");
     expect(parsed).toHaveMember("controller");
     expect(parsed).toHaveMember("action");
     expect(parsed.action).toBe("index");
-    expect(parsed.controller).toBe("User/HomeController");
-    expect(parsed.is_namespaced).toBe(false);
+    expect(parsed.controller).toBe("User.HomeController");
 
   });
 
