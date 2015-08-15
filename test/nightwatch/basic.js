@@ -1,7 +1,6 @@
 
 const adonisDispatcher = require("../../index");
 const Router = adonisDispatcher.Router;
-const Response = adonisDispatcher.Request;
 const Server = adonisDispatcher.Server;
 
 Router.get("/",function * (request,response){
@@ -14,6 +13,8 @@ module.exports = {
     browser
       .url('http://localhost:3000/')
       .assert.containsText('body','hello world')
-      .end(Server.stop)
+      .end(function(){
+        Server.stop()
+      })
   }
 };

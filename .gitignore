@@ -85,3 +85,8 @@ sftp-config.json
 [Ss]cripts
 pyvenv.cfg
 pip-selfcheck.json
+
+
+## nightwatch
+reports
+reports/*
