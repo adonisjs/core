@@ -7,7 +7,7 @@
     "test": "./node_modules/jasmine-node/bin/jasmine-node test",
     "selenium": "./node_modules/nightwatch/bin/nightwatch test/nightwatch/basic.js --config test/nightwatch.json"
   },
-  "author": "",
+  "author": "amanvirk",
   "license": "ISC",
   "dependencies": {
     "accepts": "^1.2.12",
