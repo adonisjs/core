@@ -7,6 +7,5 @@
  *                as store key.
  */
 
-const Lodge = require("adonis-lodge")
-
+const Lodge = require('adonis-lodge')
 exports = module.exports = Lodge

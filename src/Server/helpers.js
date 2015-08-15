@@ -82,7 +82,7 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
         resolved_route.controller = ServerHelpers.namespace_to_controller_instance(resolved_route.handler)
 
         let namespaceHandler = co.wrap(function *() {
-          return yield Namespace.under("controllers").resolve(resolved_route.controller.controller)
+          return yield Namespace.under('controllers').resolve(resolved_route.controller.controller)
         })
 
         namespaceHandler()
