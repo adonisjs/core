@@ -12,7 +12,6 @@ const accepts = require('accepts')
 const is = require('type-is')
 const File = require('../File')
 
-
 // exporting helpers
 let RequestHelpers = exports = module.exports = {}
 
@@ -81,10 +80,13 @@ RequestHelpers.check_http_content_type = function (req, types) {
   return _.contains(types, type)
 }
 
-
-
-RequestHelpers.convert_to_file_instance = function(file){
-  if(!(file instanceof File)){
+/**
+ * converting file object to a file instance.
+ * @param  {Object} file
+ * @return {Object}      instance of file class
+ */
+RequestHelpers.convert_to_file_instance = function (file) {
+  if (!(file instanceof File)) {
     file = new File(file)
   }
   return file

@@ -35,19 +35,17 @@ Request.prototype.get = function () {
  * @return {Object}
  */
 Request.prototype.params = function () {
-  return this.request.params;
+  return this.request.params
 }
-
 
 /**
- * returning route param value based on input key 
+ * returning route param value based on input key
  * @return {Object}
  */
-Request.prototype.param = function (key,defaultValue) {
+Request.prototype.param = function (key, defaultValue) {
   defaultValue = defaultValue || null
-  return this.request.params[key] || defaultValue;
+  return this.request.params[key] || defaultValue
 }
-
 
 /**
  * return post values from request as object
@@ -64,9 +62,9 @@ Request.prototype.post = function () {
 Request.prototype.files = function () {
   const self = this
   const returnData = {}
-  _.each(this.uploadedFiles,function(value,index){
+  _.each(this.uploadedFiles, function (value, index) {
     returnData[index] = self.file(index)
-  });
+  })
   return returnData
 }
 
@@ -75,18 +73,18 @@ Request.prototype.files = function () {
  * @return {Object}
  */
 Request.prototype.file = function (key) {
-  if(!this.uploadedFiles[key]){
+  if (!this.uploadedFiles[key]) {
     return null
   }
 
-  let fileToReturn = this.uploadedFiles[key].toJSON();
+  let fileToReturn = this.uploadedFiles[key].toJSON()
 
-  if(_.isArray(fileToReturn)){
-    fileToReturn = _.map(fileToReturn,function(file){
+  if (_.isArray(fileToReturn)) {
+    fileToReturn = _.map(fileToReturn, function (file) {
       return helpers.convert_to_file_instance(file)
     })
     return fileToReturn
-  }else{
+  } else {
     fileToReturn = helpers.convert_to_file_instance(fileToReturn)
     return fileToReturn
   }
@@ -96,14 +94,13 @@ Request.prototype.file = function (key) {
  * return value for a given key from all method
  * @return {Object}
  */
-Request.prototype.input = function (key,defaultValue) {
+Request.prototype.input = function (key, defaultValue) {
   defaultValue = defaultValue || null
   let body = this.post()
   let query = this.get()
   const input = _.merge(query, body)
   return input[key] || defaultValue
 }
-
 
 /**
  * merge get and post values and return them together

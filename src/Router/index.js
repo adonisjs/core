@@ -112,8 +112,6 @@ Router.delete = function (route, handler) {
   return this
 }
 
-
-
 /**
  * register route with array of verbs
  * passed while consuming
@@ -122,12 +120,10 @@ Router.delete = function (route, handler) {
  * @param  {Any} handler
  */
 Router.match = function (verbs, route, handler) {
-  verbs = _.map(verbs,function(verb) { return verb.toUpperCase() })
+  verbs = _.map(verbs, function (verb) { return verb.toUpperCase() })
   this.route(route, verbs, handler)
   return this
 }
-
-
 
 /**
  * register route with array of verbs
@@ -136,7 +132,7 @@ Router.match = function (verbs, route, handler) {
  * @param  {Any} handler
  */
 Router.any = function (route, handler) {
-  const verbs = ['GET','POST','PUT','PATCH','DELETE']
+  const verbs = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
   this.route(route, verbs, handler)
   return this
 }

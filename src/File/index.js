@@ -9,7 +9,6 @@
 const path = require('path')
 const fsExtra = require('co-fs-extra')
 
-
 function File (file) {
   this.file = file
 }
@@ -19,13 +18,13 @@ function File (file) {
  * registered public directory
  * @param {String} toPath
  */
-File.prototype.move = function * (toPath,name) {
+File.prototype.move = function * (toPath, name) {
   let self = this
   name = name || this.clientName()
   const uploadingFileName = `${toPath}/${name}`
-  try{
-    yield fsExtra.copy(self.file.path,uploadingFileName)
-  }catch(e){
+  try {
+    yield fsExtra.copy(self.file.path, uploadingFileName)
+  } catch (e) {
     self.file.error = e
   }
 }
@@ -43,7 +42,7 @@ File.prototype.mimeType = function () {
  * @return {String}
  */
 File.prototype.extension = function () {
-  return path.extname(this.clientName()).replace('.','')
+  return path.extname(this.clientName()).replace('.', '')
 }
 
 /**
@@ -51,27 +50,24 @@ File.prototype.extension = function () {
  * @return {String}
  */
 File.prototype.clientName = function () {
-  return this.file['name'];
+  return this.file['name']
 }
-
 
 /**
  * returns client size for uploaded file
  * @return {String}
  */
 File.prototype.clientSize = function () {
-  return this.file['size'];
+  return this.file['size']
 }
-
 
 /**
  * returns temporary path for a given file
  * @return {String}
  */
 File.prototype.tmpPath = function () {
-  return this.file['path'];
+  return this.file['path']
 }
-
 
 /**
  * tells whether file has been moved successfully or not
@@ -80,7 +76,6 @@ File.prototype.tmpPath = function () {
 File.prototype.moved = function () {
   return !this.errors()
 }
-
 
 /**
  * returns upload errors if any
