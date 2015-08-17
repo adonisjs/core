@@ -61,6 +61,24 @@ describe("Files", function() {
 
   });
 
+
+  it("should move file to a given path with different upload name",function(done){
+    var file = new File(dummyFileObject);
+    let uploadName = new Date().getTime();
+    uploadName = `${uploadName}.svg`
+
+    co(function *(){
+      return yield file.move(path.join(__dirname,"./uploads"),uploadName)
+    }).then(function(success){
+
+      expect(file.moved()).toBe(true)
+      expect(file.errors()).toBe(null)
+
+      done();
+    }).catch(done)
+
+  });
+
   it("should return an error when unable to move file to a given path",function(done){
     dummyFileObject.path = 'abc'
     var file = new File(dummyFileObject);
