@@ -36,7 +36,7 @@ describe("Request", function() {
   it("should return only requested get fields for a given request", function(done) {
     var server = http.createServer(function(req, res) {
       var request = new Request(req);
-      var name = request.get("name");
+      var name = request.input("name");
       res.writeHead(200, {
         "Content-type": "application/json"
       });
@@ -57,14 +57,37 @@ describe("Request", function() {
   });
 
 
-  it("should return null for keys requested by get method but does not exists as request query string", function(done) {
+  it("should return default value for field missing inside query string", function(done) {
     var server = http.createServer(function(req, res) {
       var request = new Request(req);
-      var name = request.get("name", "age");
+      var age = request.input("age",22);
       res.writeHead(200, {
         "Content-type": "application/json"
       });
-      res.end(JSON.stringify(name));
+      res.end(JSON.stringify({age}));
+    });
+
+    supertest(server)
+      .get("/user?name=virk")
+      .end(function(err, res) {
+        if (err) return done(err);
+        expect(res.body).toBeNonEmptyObject();
+        expect(res.body.age).toBe(22);
+        done();
+      });
+
+  });
+
+
+  it("should return null for key requested by input method but does not exists as request query string", function(done) {
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var age = request.input("age");
+      var name = request.input("name");
+      res.writeHead(200, {
+        "Content-type": "application/json"
+      });
+      res.end(JSON.stringify({age:age,name:name}));
     });
 
     supertest(server)
@@ -153,11 +176,12 @@ describe("Request", function() {
 
       form.parse(req, function(err, fields, files) {
         request.body = fields;
-        var postBody = request.post("username", "age");
+        var username = request.input("username");
+        var age = request.input("age");
         res.writeHead(200, {
           "Content-type": "application/json"
         });
-        res.end(JSON.stringify(postBody));
+        res.end(JSON.stringify({username,age}));
       });
     });
 
@@ -305,18 +329,18 @@ describe("Request", function() {
 
 
 
-  it("should return only requested uploaded files", function(done) {
+  it("should return all uploaded files", function(done) {
     var server = http.createServer(function(req, res) {
       var request = new Request(req);
       var form = new formidable.IncomingForm();
 
       form.parse(req, function(err, fields, files) {
         request.uploadedFiles = files;
-        var files = request.files("profile");
+        var files = request.files();
         res.writeHead(200, {
           "Content-type": "application/json"
         });
-        res.end(JSON.stringify({profile:files}));
+        res.end(JSON.stringify(files));
       });
     });
 
@@ -330,7 +354,7 @@ describe("Request", function() {
         expect(res.body).toHaveMember("profile");
         expect(res.body.profile).toHaveMember("name");
         expect(res.body.profile.name).toBe("npm-logo.svg");
-        expect(res.body.logo).toBe(undefined);
+        expect(res.body.logo).toHaveMember("name");
         done();
       });
   });
@@ -498,7 +522,29 @@ describe("Request", function() {
     var server = http.createServer(function(req, res) {
       var request = new Request(req);
       request.request.params = {id:1};
-      var id = request.params("id");
+      var id = request.params().id;
+      res.writeHead(200, {
+        "Content-type": "text/plain"
+      });
+      res.end(id.toString());
+    });
+
+    supertest(server)
+      .get("/1")
+      .end(function(err, res) {
+        if (err) done(err);
+        expect(res.text).toBe("1");
+        done();
+      });
+  });
+
+
+  it("should return selected request param using param method", function(done) {
+
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      request.request.params = {id:1};
+      var id = request.param("id");
       res.writeHead(200, {
         "Content-type": "text/plain"
       });

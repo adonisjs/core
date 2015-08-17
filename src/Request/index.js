@@ -27,8 +27,7 @@ function Request (req) {
  * @return {Object}
  */
 Request.prototype.get = function () {
-  let query = querystring.parse(parseurl(this.request).query)
-  return helpers.return_requested_keys_from_object(query, arguments)
+  return querystring.parse(parseurl(this.request).query)
 }
 
 /**
@@ -36,16 +35,26 @@ Request.prototype.get = function () {
  * @return {Object}
  */
 Request.prototype.params = function () {
-  return helpers.return_requested_keys_from_object(this.request.params, arguments)
+  return this.request.params;
 }
+
+
+/**
+ * returning route param value based on input key 
+ * @return {Object}
+ */
+Request.prototype.param = function (key,defaultValue) {
+  defaultValue = defaultValue || null
+  return this.request.params[key] || defaultValue;
+}
+
 
 /**
  * return post values from request as object
  * @return {Object}
  */
 Request.prototype.post = function () {
-  let body = this.body
-  return helpers.return_requested_keys_from_object(body, arguments)
+  return this.body
 }
 
 /**
@@ -53,9 +62,22 @@ Request.prototype.post = function () {
  * @return {Object}
  */
 Request.prototype.files = function () {
-  let files = this.uploadedFiles
-  return helpers.return_requested_keys_from_object(files, arguments)
+  return this.uploadedFiles
 }
+
+
+/**
+ * return value for a given key from all method
+ * @return {Object}
+ */
+Request.prototype.input = function (key,defaultValue) {
+  defaultValue = defaultValue || null
+  let body = this.post()
+  let query = this.get()
+  const input = _.merge(query, body)
+  return input[key] || defaultValue
+}
+
 
 /**
  * merge get and post values and return them together
