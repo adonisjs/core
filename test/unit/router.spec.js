@@ -61,7 +61,7 @@ describe("Router", function() {
 
 
   it("should resolve route registerd with multiple verbs", function(done) {
-    Router.any(["GET", "POST"], "/admin", "AdminController.setGet");
+    Router.match(["get", "post"], "/admin", "AdminController.setGet");
     let admin = Router.resolve("/admin", "GET");
     expect(admin.route).toBe("/admin");
     expect(admin.handler).toBe("AdminController.setGet");
@@ -72,10 +72,19 @@ describe("Router", function() {
 
 
   it("should not resolve route registerd with verb", function(done) {
-    Router.any(["GET", "POST"], "/admin", "AdminController.setGet");
+    Router.match(["GET", "POST"], "/admin", "AdminController.setGet");
     let admin = Router.resolve("/admin", "PUT");
     expect(admin).toBeEmptyObject();
     done()
+  });
+
+
+  it("should resolve routes for any verb when used any method for registering route",function(){
+    Router.any("/foo","FooController.index");
+    let foo = Router.resolve("/foo", "PUT");
+    expect(foo.route).toBe("/foo");
+    expect(foo.handler).toBe("FooController.index");
+    expect(foo.verb).toBe("PUT");
   });
 
 

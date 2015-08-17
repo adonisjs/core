@@ -112,13 +112,31 @@ Router.delete = function (route, handler) {
   return this
 }
 
+
+
+/**
+ * register route with array of verbs
+ * passed while consuming
+ * @param  {Array} verbs
+ * @param  {String} route
+ * @param  {Any} handler
+ */
+Router.match = function (verbs, route, handler) {
+  verbs = _.map(verbs,function(verb) { return verb.toUpperCase() })
+  this.route(route, verbs, handler)
+  return this
+}
+
+
+
 /**
  * register route with array of verbs
  * @param  {Array} verbs
  * @param  {String} route
  * @param  {Any} handler
  */
-Router.any = function (verbs, route, handler) {
+Router.any = function (route, handler) {
+  const verbs = ['GET','POST','PUT','PATCH','DELETE']
   this.route(route, verbs, handler)
   return this
 }
