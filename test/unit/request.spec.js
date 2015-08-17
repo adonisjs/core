@@ -2,6 +2,7 @@
 require('jasmine-expect');
 
 let Request = require("../../src/Request/index"),
+  File = require("../../src/File"),
   supertest = require("supertest"),
   formidable = require("formidable"),
   http = require("http"),
@@ -299,30 +300,29 @@ describe("Request", function() {
   });
 
 
-  it("should return all uploaded files", function(done) {
+  it("should return uploaded files as an instance of File object", function(done) {
     var server = http.createServer(function(req, res) {
       var request = new Request(req);
       var form = new formidable.IncomingForm();
 
       form.parse(req, function(err, fields, files) {
         request.uploadedFiles = files;
-        var files = request.files();
+        var profile = request.file("profile");
         res.writeHead(200, {
           "Content-type": "application/json"
         });
-        res.end(JSON.stringify(files));
+        res.end(JSON.stringify({name:profile.clientName(),ext:profile.extension()}));
       });
     });
 
     supertest(server)
-      .post("/user?age=22")
+      .post("/user")
       .attach("profile", path.join(__dirname, "./helpers/npm-logo.svg"))
       .end(function(err, res) {
         if (err) throw (err);
         expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("profile");
-        expect(res.body.profile).toHaveMember("name");
-        expect(res.body.profile.name).toBe("npm-logo.svg");
+        expect(res.body.name).toBe("npm-logo.svg");
+        expect(res.body.ext).toBe("svg");
         done();
       });
   });
@@ -337,10 +337,17 @@ describe("Request", function() {
       form.parse(req, function(err, fields, files) {
         request.uploadedFiles = files;
         var files = request.files();
+        let uploadedFiles = {}
+
+        Object.keys(files).forEach(function(element){
+          let file = files[element]
+          uploadedFiles[element] = {ext:file.extension()}
+        });
+
         res.writeHead(200, {
           "Content-type": "application/json"
         });
-        res.end(JSON.stringify(files));
+        res.end(JSON.stringify(uploadedFiles));
       });
     });
 
@@ -351,10 +358,8 @@ describe("Request", function() {
       .end(function(err, res) {
         if (err) throw (err);
         expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("profile");
-        expect(res.body.profile).toHaveMember("name");
-        expect(res.body.profile.name).toBe("npm-logo.svg");
-        expect(res.body.logo).toHaveMember("name");
+        expect(res.body.profile.ext).toBe('svg');
+        expect(res.body.logo.ext).toBe('svg');
         done();
       });
   });

@@ -10,6 +10,8 @@
 const _ = require('lodash')
 const accepts = require('accepts')
 const is = require('type-is')
+const File = require('../File')
+
 
 // exporting helpers
 let RequestHelpers = exports = module.exports = {}
@@ -77,4 +79,13 @@ RequestHelpers.check_http_accept_field = function (req, types) {
 RequestHelpers.check_http_content_type = function (req, types) {
   let type = is.is(req, types)
   return _.contains(types, type)
+}
+
+
+
+RequestHelpers.convert_to_file_instance = function(file){
+  if(!(file instanceof File)){
+    file = new File(file)
+  }
+  return file
 }

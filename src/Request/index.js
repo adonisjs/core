@@ -62,9 +62,35 @@ Request.prototype.post = function () {
  * @return {Object}
  */
 Request.prototype.files = function () {
-  return this.uploadedFiles
+  const self = this
+  const returnData = {}
+  _.each(this.uploadedFiles,function(value,index){
+    returnData[index] = self.file(index)
+  });
+  return returnData
 }
 
+/**
+ * return uploaded file for a given key from request
+ * @return {Object}
+ */
+Request.prototype.file = function (key) {
+  if(!this.uploadedFiles[key]){
+    return null
+  }
+
+  let fileToReturn = this.uploadedFiles[key].toJSON();
+
+  if(_.isArray(fileToReturn)){
+    fileToReturn = _.map(fileToReturn,function(file){
+      return helpers.convert_to_file_instance(file)
+    })
+    return fileToReturn
+  }else{
+    fileToReturn = helpers.convert_to_file_instance(fileToReturn)
+    return fileToReturn
+  }
+}
 
 /**
  * return value for a given key from all method
