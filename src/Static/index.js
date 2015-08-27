@@ -23,7 +23,7 @@ let Static = exports = module.exports = {}
  * @return {Boolean}
  */
 Static.isStatic = function (url) {
-  let regex = new RegExp(`^\/${publicNamespace}`)
+  let regex = new RegExp(`^${publicNamespace}`)
   return regex.test(url)
 }
 
@@ -33,7 +33,7 @@ Static.isStatic = function (url) {
  * @return {Boolean}
  */
 Static.removePublicNamespace = function (url) {
-  return url.replace(`/${publicNamespace}`, '')
+  return url.replace(publicNamespace, '')
 }
 
 /**
@@ -45,7 +45,7 @@ Static.removePublicNamespace = function (url) {
  */
 Static.public = function (namespace, path_to_dir, options) {
   options = options || {}
-  publicNamespace = namespace
+  publicNamespace = namespace.indexOf('/') > -1 ? namespace : `/${namespace}`
   fileServer = new nodeStatic.Server(path_to_dir, options)
 }
 
