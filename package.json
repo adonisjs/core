@@ -12,7 +12,6 @@
   "dependencies": {
     "accepts": "^1.2.12",
     "adonis-co-ware": "^1.0.2",
-    "adonis-lodge": "file:../lodge",
     "auto-loader": "^0.2.0",
     "captains-log": "^0.11.11",
     "co": "^4.6.0",
@@ -21,7 +20,6 @@
     "dotenv": "^1.2.0",
     "eventemitter2": "^0.4.14",
     "fold": "file:../foldRepos/fold",
-    "istanbul": "^0.3.18",
     "lodash": "^3.10.0",
     "mime": "^1.3.4",
     "node-res": "^1.0.3",
@@ -41,13 +39,12 @@
     "adonis-ioc-container": "^1.0.0",
     "chai": "^3.2.0",
     "chai-string": "^1.1.2",
-    "co": "^4.6.0",
     "formidable": "^1.0.17",
     "hippie": "^0.3.0",
     "loadtest": "^1.2.11",
-    "lodash": "^3.10.0",
     "mocha": "^2.2.5",
     "nightwatch": "^0.7.11",
+    "istanbul": "^0.3.18",
     "supertest": "^1.0.1"
   }
 }
