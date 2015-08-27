@@ -1,9 +1,8 @@
 "use strict";
-require('jasmine-expect');
 
-
-let Middlewares = require("../../src/Middlewares/index");
-
+const Middlewares = require("../../src/Middlewares/index")
+const chai = require('chai')
+const expect = chai.expect
 
 describe("Middlewares", function() {
 
@@ -27,9 +26,9 @@ describe("Middlewares", function() {
 
     let registered_middlewares = Middlewares.get();
 
-    expect(registered_middlewares).toBeNonEmptyArray();
-    expect(registered_middlewares[0]).toEqual(CSRF);
-    expect(registered_middlewares[1]).toEqual(Auth);
+    expect(registered_middlewares).to.be.an('array');
+    expect(registered_middlewares[0]).to.equal(CSRF);
+    expect(registered_middlewares[1]).to.equal(Auth);
 
 
   });
@@ -47,9 +46,9 @@ describe("Middlewares", function() {
 
     let registered_middlewares = Middlewares.get(["auth"]);
 
-    expect(registered_middlewares).toBeNonEmptyArray();
-    expect(registered_middlewares[0]).toEqual(UserAuth);
-    expect(registered_middlewares[1]).toBe(undefined);
+    expect(registered_middlewares).to.be.an('array');
+    expect(registered_middlewares[0]).to.equal(UserAuth);
+    expect(registered_middlewares[1]).to.equal(undefined);
 
   });
 
@@ -71,9 +70,9 @@ describe("Middlewares", function() {
 
     let registered_middlewares = Middlewares.get(["auth"]);
 
-    expect(registered_middlewares).toBeNonEmptyArray();
-    expect(registered_middlewares[0]).toEqual(CSRF);
-    expect(registered_middlewares[1]).toBe(UserAuth);
+    expect(registered_middlewares).to.be.an('array');
+    expect(registered_middlewares[0]).to.equal(CSRF);
+    expect(registered_middlewares[1]).to.equal(UserAuth);
 
 
   });
@@ -95,9 +94,9 @@ describe("Middlewares", function() {
     let registered_middlewares = Middlewares.get();
     let middlewares_ready_for_use = Middlewares.filter(registered_middlewares);
 
-    expect(middlewares_ready_for_use).toBeNonEmptyArray();
-    expect(middlewares_ready_for_use[0].__proto__).toBeObject();
-    expect(middlewares_ready_for_use[0].handle).toEqual(jasmine.any(Function));
+    expect(middlewares_ready_for_use).to.be.an('array');
+    expect(middlewares_ready_for_use[0].__proto__).to.be.an('object');
+    expect(middlewares_ready_for_use[0].handle).to.be.a('function');
 
   })
 

@@ -1,9 +1,8 @@
 "use strict";
 
-require('jasmine-expect');
-
-
-let ServerHelpers = require("../../src/Server/helpers");
+const ServerHelpers = require("../../src/Server/helpers")
+const chai = require('chai')
+const expect = chai.expect
 
 
 describe("Utils", function() {
@@ -11,11 +10,11 @@ describe("Utils", function() {
   it("should parse controller method string", function() {
 
     let parsed = ServerHelpers.namespace_to_controller_instance("HomeController.index");
-    expect(parsed).toBeNonEmptyObject();
-    expect(parsed).toHaveMember("controller");
-    expect(parsed).toHaveMember("action");
-    expect(parsed.action).toBe("index");
-    expect(parsed.controller).toBe("HomeController");
+    expect(parsed).to.be.an('object');
+    expect(parsed).to.have.property("controller");
+    expect(parsed).to.have.property("action");
+    expect(parsed.action).to.equal("index");
+    expect(parsed.controller).to.equal("HomeController");
 
   });
 
@@ -23,11 +22,11 @@ describe("Utils", function() {
   it("should parse pre namespaced controller method string", function() {
 
     let parsed = ServerHelpers.namespace_to_controller_instance("App/Http/Controllers/HomeController.index");
-    expect(parsed).toBeNonEmptyObject();
-    expect(parsed).toHaveMember("controller");
-    expect(parsed).toHaveMember("action");
-    expect(parsed.action).toBe("index");
-    expect(parsed.controller).toBe("App/Http/Controllers/HomeController");
+    expect(parsed).to.be.an('object');
+    expect(parsed).to.have.property("controller");
+    expect(parsed).to.have.property("action");
+    expect(parsed.action).to.equal("index");
+    expect(parsed.controller).to.equal("App/Http/Controllers/HomeController");
 
   });
 
@@ -36,11 +35,11 @@ describe("Utils", function() {
   it("should parse nested controller with dot convention", function() {
 
     let parsed = ServerHelpers.namespace_to_controller_instance("User.HomeController.index");
-    expect(parsed).toBeNonEmptyObject();
-    expect(parsed).toHaveMember("controller");
-    expect(parsed).toHaveMember("action");
-    expect(parsed.action).toBe("index");
-    expect(parsed.controller).toBe("User.HomeController");
+    expect(parsed).to.be.an('object');
+    expect(parsed).to.have.property("controller");
+    expect(parsed).to.have.property("action");
+    expect(parsed.action).to.equal("index");
+    expect(parsed.controller).to.equal("User.HomeController");
 
   });
 

@@ -1,14 +1,16 @@
 "use strict";
-require('jasmine-expect');
 
-let Request = require("../../src/Request/index"),
-  File = require("../../src/File"),
-  supertest = require("supertest"),
-  formidable = require("formidable"),
-  http = require("http"),
-  is = require("type-is"),
-  path = require("path");
 
+const Request = require("../../src/Request/index")
+const File = require("../../src/File")
+const supertest = require("supertest")
+const formidable = require("formidable")
+const http = require("http")
+const is = require("type-is")
+const path = require("path")
+const chai = require('chai')
+const expect = chai.expect
+chai.use(require('chai-string'))
 
 describe("Request", function() {
 
@@ -26,9 +28,9 @@ describe("Request", function() {
       .get("/user?name=virk")
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("name");
-        expect(res.body.name).toBe("virk");
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("name");
+        expect(res.body.name).to.equal("virk");
         done();
       });
   });
@@ -48,10 +50,10 @@ describe("Request", function() {
       .get("/user?name=virk&age=26")
       .end(function(err, res) {
         if (err) return done(err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("name");
-        expect(res.body.name).toBe("virk");
-        expect(res.body.age).toBe(undefined);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("name");
+        expect(res.body.name).to.equal("virk");
+        expect(res.body.age).to.equal(undefined);
         done();
       });
 
@@ -72,8 +74,8 @@ describe("Request", function() {
       .get("/user?name=virk")
       .end(function(err, res) {
         if (err) return done(err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body.age).toBe(22);
+        expect(res.body).to.be.an('object');
+        expect(res.body.age).to.equal(22);
         done();
       });
 
@@ -95,11 +97,11 @@ describe("Request", function() {
       .get("/user?name=virk")
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("name");
-        expect(res.body.name).toBe("virk");
-        expect(res.body).toHaveMember("age");
-        expect(res.body.age).toBe(null);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("name");
+        expect(res.body.name).to.equal("virk");
+        expect(res.body).to.have.property("age");
+        expect(res.body.age).to.equal(null);
         done();
       });
 
@@ -131,9 +133,9 @@ describe("Request", function() {
       })
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("username");
-        expect(res.body).toHaveMember("email");
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("username");
+        expect(res.body).to.have.property("email");
         done();
       });
   });
@@ -162,9 +164,9 @@ describe("Request", function() {
       })
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("username");
-        expect(res.body.email).toBe(undefined);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("username");
+        expect(res.body.email).to.equal(undefined);
         done();
       });
   });
@@ -193,10 +195,10 @@ describe("Request", function() {
       })
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("username");
-        expect(res.body).toHaveMember("age");
-        expect(res.body.age).toBe(null);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("username");
+        expect(res.body).to.have.property("age");
+        expect(res.body.age).to.equal(null);
         done();
       });
   });
@@ -225,10 +227,10 @@ describe("Request", function() {
       })
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("username");
-        expect(res.body).toHaveMember("age");
-        expect(res.body.age).toBe("22");
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("username");
+        expect(res.body).to.have.property("age");
+        expect(res.body.age).to.equal("22");
         done();
       });
   });
@@ -258,11 +260,11 @@ describe("Request", function() {
       })
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("username");
-        expect(res.body).toHaveMember("age");
-        expect(res.body.age).toBe("22");
-        expect(res.body.email).toBe(undefined);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("username");
+        expect(res.body).to.have.property("age");
+        expect(res.body.age).to.equal("22");
+        expect(res.body.email).to.equal(undefined);
         done();
       });
   });
@@ -291,10 +293,10 @@ describe("Request", function() {
       })
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("email");
-        expect(res.body.age).toBe(undefined);
-        expect(res.body.username).toBe(undefined);
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("email");
+        expect(res.body.age).to.equal(undefined);
+        expect(res.body.username).to.equal(undefined);
         done();
       });
   });
@@ -320,9 +322,9 @@ describe("Request", function() {
       .attach("profile", path.join(__dirname, "./helpers/npm-logo.svg"))
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body.name).toBe("npm-logo.svg");
-        expect(res.body.ext).toBe("svg");
+        expect(res.body).to.be.an('object');
+        expect(res.body.name).to.equal("npm-logo.svg");
+        expect(res.body.ext).to.equal("svg");
         done();
       });
   });
@@ -357,9 +359,9 @@ describe("Request", function() {
       .attach("logo", path.join(__dirname, "./helpers/npm-logo.svg"))
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body.profile.ext).toBe('svg');
-        expect(res.body.logo.ext).toBe('svg');
+        expect(res.body).to.be.an('object');
+        expect(res.body.profile.ext).to.equal('svg');
+        expect(res.body.logo.ext).to.equal('svg');
         done();
       });
   });
@@ -380,7 +382,7 @@ describe("Request", function() {
       .get("/")
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.text).toEndWith("127.0.0.1");
+        expect(res.text).to.endsWith("127.0.0.1");
         done();
       });
   });
@@ -401,7 +403,7 @@ describe("Request", function() {
       .post("/")
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.text).toBe("POST");
+        expect(res.text).to.equal("POST");
         done();
       });
   });
@@ -423,9 +425,9 @@ describe("Request", function() {
       .set("token", 123)
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body).toBeNonEmptyObject();
-        expect(res.body).toHaveMember("token");
-        expect(res.body.token).toBe("123");
+        expect(res.body).to.be.an('object');
+        expect(res.body).to.have.property("token");
+        expect(res.body.token).to.equal("123");
         done();
       });
   });
@@ -448,7 +450,7 @@ describe("Request", function() {
       .set("Accept", "application/json")
       .end(function(err, res) {
         if (err) done(err);
-        expect(res.body.accepts).toBe("json");
+        expect(res.body.accepts).to.equal("json");
         done();
       });
   });
@@ -470,7 +472,7 @@ describe("Request", function() {
       .set("Accept", "application/json")
       .end(function(err, res) {
         if (err) done(err);
-        expect(res.body.accepts).toEqual(["application/json"]);
+        expect(res.body.accepts).to.deep.equal(["application/json"]);
         done();
       });
   });
@@ -494,7 +496,7 @@ describe("Request", function() {
       .type("application/json")
       .end(function(err, res) {
         if (err) done(err);
-        expect(res.text).toBe("true");
+        expect(res.text).to.equal("true");
         done();
       });
   });
@@ -517,7 +519,7 @@ describe("Request", function() {
       .type("application/json")
       .end(function(err, res) {
         if (err) done(err);
-        expect(res.text).toBe("true");
+        expect(res.text).to.equal("true");
         done();
       });
   });
@@ -538,7 +540,7 @@ describe("Request", function() {
       .get("/1")
       .end(function(err, res) {
         if (err) done(err);
-        expect(res.text).toBe("1");
+        expect(res.text).to.equal("1");
         done();
       });
   });
@@ -560,7 +562,7 @@ describe("Request", function() {
       .get("/1")
       .end(function(err, res) {
         if (err) done(err);
-        expect(res.text).toBe("1");
+        expect(res.text).to.equal("1");
         done();
       });
   });

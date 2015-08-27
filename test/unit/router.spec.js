@@ -1,8 +1,8 @@
-"use strict";
+"use strict"
 
-require('jasmine-expect');
-
-let Router = require("../../src/Router/index");
+const Router = require("../../src/Router/index")
+const chai = require('chai')
+const expect = chai.expect
 
 describe("Router", function() {
 
@@ -15,10 +15,10 @@ describe("Router", function() {
   it("should register route with GET verb", function(done) {
     Router.get("/", "HomeController.index");
     let routes = Router.routes();
-    expect(routes).toBeArray();
-    expect(routes[0].route).toBe("/");
-    expect(routes[0].handler).toBe("HomeController.index");
-    expect(routes[0].verb).toContain("GET");
+    expect(routes).to.be.an('array');
+    expect(routes[0].route).to.equal("/");
+    expect(routes[0].handler).to.equal("HomeController.index");
+    expect(routes[0].verb).to.include("GET");
     done()
   });
 
@@ -27,10 +27,10 @@ describe("Router", function() {
   it("should register route with POST verb", function(done) {
     Router.post("/", "HomeController.store");
     let routes = Router.routes();
-    expect(routes).toBeArray();
-    expect(routes[0].route).toBe("/");
-    expect(routes[0].handler).toBe("HomeController.store");
-    expect(routes[0].verb).toContain("POST");
+    expect(routes).to.be.an('array');
+    expect(routes[0].route).to.equal("/");
+    expect(routes[0].handler).to.equal("HomeController.store");
+    expect(routes[0].verb).to.include("POST");
     done()
   });
 
@@ -39,10 +39,10 @@ describe("Router", function() {
   it("should register route with PUT verb", function(done) {
     Router.put("/:id", "HomeController.update");
     let routes = Router.routes();
-    expect(routes).toBeArray();
-    expect(routes[0].route).toBe("/:id");
-    expect(routes[0].handler).toBe("HomeController.update");
-    expect(routes[0].verb).toContain("PUT");
+    expect(routes).to.be.an('array');
+    expect(routes[0].route).to.equal("/:id");
+    expect(routes[0].handler).to.equal("HomeController.update");
+    expect(routes[0].verb).to.include("PUT");
     done()
   });
 
@@ -51,10 +51,10 @@ describe("Router", function() {
   it("should register route with DELETE verb", function(done) {
     Router.delete("/:id", "HomeController.destroy");
     let routes = Router.routes();
-    expect(routes).toBeArray();
-    expect(routes[0].route).toBe("/:id");
-    expect(routes[0].handler).toBe("HomeController.destroy");
-    expect(routes[0].verb).toContain("DELETE");
+    expect(routes).to.be.an('array');
+    expect(routes[0].route).to.equal("/:id");
+    expect(routes[0].handler).to.equal("HomeController.destroy");
+    expect(routes[0].verb).to.include("DELETE");
     done()
   });
 
@@ -63,9 +63,9 @@ describe("Router", function() {
   it("should resolve route registerd with multiple verbs", function(done) {
     Router.match(["get", "post"], "/admin", "AdminController.setGet");
     let admin = Router.resolve("/admin", "GET");
-    expect(admin.route).toBe("/admin");
-    expect(admin.handler).toBe("AdminController.setGet");
-    expect(admin.verb).toBe("GET");
+    expect(admin.route).to.equal("/admin");
+    expect(admin.handler).to.equal("AdminController.setGet");
+    expect(admin.verb).to.equal("GET");
     done()
   });
 
@@ -74,7 +74,7 @@ describe("Router", function() {
   it("should not resolve route registerd with verb", function(done) {
     Router.match(["GET", "POST"], "/admin", "AdminController.setGet");
     let admin = Router.resolve("/admin", "PUT");
-    expect(admin).toBeEmptyObject();
+    expect(admin).to.be.an('object');
     done()
   });
 
@@ -82,9 +82,9 @@ describe("Router", function() {
   it("should resolve routes for any verb when used any method for registering route",function(){
     Router.any("/foo","FooController.index");
     let foo = Router.resolve("/foo", "PUT");
-    expect(foo.route).toBe("/foo");
-    expect(foo.handler).toBe("FooController.index");
-    expect(foo.verb).toBe("PUT");
+    expect(foo.route).to.equal("/foo");
+    expect(foo.handler).to.equal("FooController.index");
+    expect(foo.verb).to.equal("PUT");
   });
 
 
@@ -92,8 +92,8 @@ describe("Router", function() {
   it("should resolve registered route", function(done) {
     Router.get("/", function() {});
     let home = Router.resolve("/", "GET");
-    expect(home.route).toBe("/");
-    expect(home.handler).toBeFunction();
+    expect(home.route).to.equal("/");
+    expect(home.handler).to.be.a('function');
     done();
   });
 
@@ -102,9 +102,9 @@ describe("Router", function() {
   it("should resolve route with route params", function(done) {
     Router.get("/user/:id", function() {});
     let user = Router.resolve("/user/1", "GET");
-    expect(user.route).toBe("/user/:id");
-    expect(user.params).toHaveMember("id");
-    expect(user.params.id).toBe("1");
+    expect(user.route).to.equal("/user/:id");
+    expect(user.params).to.have.property("id");
+    expect(user.params.id).to.equal("1");
     done();
   });
 
@@ -114,7 +114,7 @@ describe("Router", function() {
     let url = Router.url("/user/:id", {
       id: 1
     });
-    expect(url).toBe("/user/1");
+    expect(url).to.equal("/user/1");
     done();
   });
 
@@ -125,7 +125,7 @@ describe("Router", function() {
     let url = Router.url("userProfile", {
       id: 1
     });
-    expect(url).toBe("/user/1");
+    expect(url).to.equal("/user/1");
     done();
   });
 
@@ -133,7 +133,7 @@ describe("Router", function() {
 
   it("should make url with defined route without params", function(done) {
     let url = Router.url("/user");
-    expect(url).toBe("/user");
+    expect(url).to.equal("/user");
     done();
   });
 
@@ -141,8 +141,8 @@ describe("Router", function() {
   it("should attach array of middlewares to route", function(done) {
     Router.get("/secure").middlewares(["auth", "csrf"]);
     let secure = Router.resolve("/secure", "GET", "127.0.0.1");
-    expect(secure.middlewares).toBeNonEmptyArray();
-    expect(secure.middlewares).toBeArrayOfSize(2);
+    expect(secure.middlewares).to.be.an('array');
+    expect(secure.middlewares).to.have.length(2);
     done()
   });
 
@@ -157,12 +157,12 @@ describe("Router", function() {
     let secureUsers = Router.resolve("/users", "GET");
     let secureStaff = Router.resolve("/staff", "GET");
 
-    expect(secureUsers.middlewares).toBeNonEmptyArray();
-    expect(secureUsers.middlewares).toBeArrayOfSize(1);
-    expect(secureUsers.middlewares[0]).toBe("auth");
-    expect(secureStaff.middlewares).toBeNonEmptyArray();
-    expect(secureStaff.middlewares).toBeArrayOfSize(1);
-    expect(secureStaff.middlewares[0]).toBe("auth");
+    expect(secureUsers.middlewares).to.be.an('array');
+    expect(secureUsers.middlewares).to.have.length(1);
+    expect(secureUsers.middlewares[0]).to.equal("auth");
+    expect(secureStaff.middlewares).to.be.an('array');
+    expect(secureStaff.middlewares).to.have.length(1);
+    expect(secureStaff.middlewares[0]).to.equal("auth");
 
     done()
   });
@@ -172,7 +172,7 @@ describe("Router", function() {
   it("should define named routes", function(done) {
     Router.get("/cities/:id/zones", "HomeController").as("CityZones");
     let CityZones = Router.resolve("/cities/1/zones", "GET");
-    expect(CityZones.name).toBe("CityZones");
+    expect(CityZones.name).to.equal("CityZones");
     done();
   });
 
@@ -184,7 +184,7 @@ describe("Router", function() {
     }).prefix("/admin").close();
 
     let jumpingAdmin = Router.resolve("/admin/dance", "GET");
-    expect(jumpingAdmin.group).toBe("admin");
+    expect(jumpingAdmin.group).to.equal("admin");
     done();
   });
 
@@ -196,8 +196,8 @@ describe("Router", function() {
     }).domain("v1.myapp.com").close();
 
     let jumpingAdmin = Router.resolve("/dance", "GET", "v1.myapp.com");
-    expect(jumpingAdmin.subdomain).toBe("v1.myapp.com");
-    expect(jumpingAdmin.group).toBe("v1");
+    expect(jumpingAdmin.subdomain).to.equal("v1.myapp.com");
+    expect(jumpingAdmin.group).to.equal("v1");
     done();
   });
 
@@ -211,7 +211,7 @@ describe("Router", function() {
     }).domain("v1.virk.com").close();
 
     let jumpingAdmin = Router.resolve("/users", "GET", "v1.virk.com");
-    expect(jumpingAdmin.handler).toBe("V1.UsersController.index");
+    expect(jumpingAdmin.handler).to.equal("V1.UsersController.index");
     done();
   });
 
@@ -223,8 +223,8 @@ describe("Router", function() {
     }).domain(":name.app.com").close();
 
     let jumpingAdmin = Router.resolve("/users", "GET", "virk.app.com");
-    expect(jumpingAdmin.handler).toBe("V1.UsersController.profile");
-    expect(jumpingAdmin.params.name).toBe("virk");
+    expect(jumpingAdmin.handler).to.equal("V1.UsersController.profile");
+    expect(jumpingAdmin.params.name).to.equal("virk");
     done();
   });
 
@@ -238,8 +238,8 @@ describe("Router", function() {
     }).domain(":name.app.com").prefix("/v2").close();
 
     let jumpingAdmin = Router.resolve("/v2/users", "GET", "virk.app.com");
-    expect(jumpingAdmin.handler).toBe("V2.UsersController.profile");
-    expect(jumpingAdmin.params.name).toBe("virk");
+    expect(jumpingAdmin.handler).to.equal("V2.UsersController.profile");
+    expect(jumpingAdmin.params.name).to.equal("virk");
     done();
   });
 
@@ -255,11 +255,11 @@ describe("Router", function() {
     let updateUser = Router.resolve("/users/1", "PUT");
     let deleteUser = Router.resolve("/users/1", "DELETE");
 
-    expect(getUsers.handler).toBe("UsersController.index");
-    expect(makeUser.handler).toBe("UsersController.store");
-    expect(showUser.handler).toBe("UsersController.show");
-    expect(updateUser.handler).toBe("UsersController.update");
-    expect(deleteUser.handler).toBe("UsersController.destroy");
+    expect(getUsers.handler).to.equal("UsersController.index");
+    expect(makeUser.handler).to.equal("UsersController.store");
+    expect(showUser.handler).to.equal("UsersController.show");
+    expect(updateUser.handler).to.equal("UsersController.update");
+    expect(deleteUser.handler).to.equal("UsersController.destroy");
 
     done();
 
@@ -278,11 +278,11 @@ describe("Router", function() {
     let updateUser = Router.resolve("/v1/users/1", "PUT");
     let deleteUser = Router.resolve("/v1/users/1", "DELETE");
 
-    expect(getUsers.handler).toBe("UsersController.index");
-    expect(makeUser.handler).toBe("UsersController.store");
-    expect(showUser.handler).toBe("UsersController.show");
-    expect(updateUser.handler).toBe("UsersController.update");
-    expect(deleteUser.handler).toBe("UsersController.destroy");
+    expect(getUsers.handler).to.equal("UsersController.index");
+    expect(makeUser.handler).to.equal("UsersController.store");
+    expect(showUser.handler).to.equal("UsersController.show");
+    expect(updateUser.handler).to.equal("UsersController.update");
+    expect(deleteUser.handler).to.equal("UsersController.destroy");
 
     done();
 

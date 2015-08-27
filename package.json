@@ -4,7 +4,7 @@
   "description": "Http dispatcher a loosely coupled http server for adonis framework , it does all the required hard work to setup a managable http server.",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/jasmine-node/bin/jasmine-node test",
+    "test": "./node_modules/mocha/bin/mocha test/unit",
     "selenium": "./node_modules/nightwatch/bin/nightwatch test/nightwatch/basic.js --config test/nightwatch.json"
   },
   "author": "amanvirk",
@@ -20,6 +20,7 @@
     "cookie": "^0.1.3",
     "dotenv": "^1.2.0",
     "eventemitter2": "^0.4.14",
+    "istanbul": "^0.3.18",
     "lodash": "^3.10.0",
     "node-res": "^1.0.3",
     "node-static": "^0.7.7",
@@ -37,13 +38,13 @@
   "devDependencies": {
     "adonis-ioc-container": "^1.0.0",
     "chai": "^3.2.0",
+    "chai-string": "^1.1.2",
     "co": "^4.6.0",
     "formidable": "^1.0.17",
     "hippie": "^0.3.0",
-    "jasmine-expect": "^2.0.0-beta1",
-    "jasmine-node": "^1.14.5",
     "loadtest": "^1.2.11",
     "lodash": "^3.10.0",
+    "mocha": "^2.2.5",
     "nightwatch": "^0.7.11",
     "supertest": "^1.0.1"
   }
