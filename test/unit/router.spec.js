@@ -47,6 +47,18 @@ describe("Router", function() {
   });
 
 
+  it("should register route with PATCH verb", function(done) {
+    Router.patch("/:id", "HomeController.update");
+    let routes = Router.routes();
+    expect(routes).to.be.an('array');
+    expect(routes[0].route).to.equal("/:id");
+    expect(routes[0].handler).to.equal("HomeController.update");
+    expect(routes[0].verb).to.include("PATCH");
+    done()
+  });
+
+
+
 
   it("should register route with DELETE verb", function(done) {
     Router.delete("/:id", "HomeController.destroy");

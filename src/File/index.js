@@ -8,6 +8,7 @@
 
 const path = require('path')
 const fsExtra = require('co-fs-extra')
+const mime = require('mime')
 
 function File (file) {
   this.file = file
@@ -23,7 +24,10 @@ File.prototype.move = function * (toPath, name) {
   name = name || this.clientName()
   const uploadingFileName = `${toPath}/${name}`
   try {
-    yield fsExtra.copy(self.file.path, uploadingFileName)
+    yield fsExtra.move(self.file.path, uploadingFileName)
+    self.file.filename = name
+    self.file.mime = mime.lookup(uploadingFileName)
+    self.file.filepath = uploadingFileName
   } catch (e) {
     self.file.error = e
   }
