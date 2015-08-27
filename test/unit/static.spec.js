@@ -9,6 +9,10 @@ const http = require("http")
 
 describe('Static',function(){
 
+  before(function(){
+    Static.clear()
+  })
+
   it('should return 404 , when there is not static server booted',function(done){
     var server = http.createServer(function(req, res) {
       Static.serve(req,res)

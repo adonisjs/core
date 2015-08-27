@@ -8,7 +8,7 @@ describe("HttpException", function() {
 
   it("should throw an error using HttpException class", function() {
     let error = new HttpException(404, "Page not found");
-    expect(error.statusCode).to.equal(404);
+    expect(error.status).to.equal(404);
     expect(error.message).to.equal("Page not found");
   });
 
@@ -21,7 +21,7 @@ describe("HttpException", function() {
 
   it("should set error status to 503 when status has not be defined", function() {
     let error = new HttpException("Something went found");
-    expect(error.statusCode).to.equal(503);
+    expect(error.status).to.equal(503);
   });
 
 

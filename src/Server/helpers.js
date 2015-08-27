@@ -12,7 +12,6 @@ const App = require('../App')
 const co = require('co')
 const Logger = require('../Logger')
 const HttpException = require('../HttpException')
-const Namespace = require('../Namespace')
 const _ = require('lodash')
 
 // exporting helpers
@@ -37,7 +36,7 @@ ServerHelpers.craft_final_handler = function (method, request, response) {
      * if returned value is not undefined , set it as
      * response body
      */
-    if (typeof (returned) !== 'undefined') {
+    if (typeof(returned) !== 'undefined') {
       response.ok(returned)
     }
   }
@@ -59,7 +58,7 @@ ServerHelpers.is_favicon_request = function (uri) {
  * @param  {String} method
  * @return {Promise}
  */
-ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
+ServerHelpers.resolve_and_return_handler = function (Router, uri, method, baseNamespace) {
   let resolved_route = Router.resolve(uri, method)
 
   return new Promise(function (resolve, reject) {
@@ -79,10 +78,11 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
        *       controller method.
        */
       if (typeof (resolved_route.handler) === 'string') {
-        resolved_route.controller = ServerHelpers.namespace_to_controller_instance(resolved_route.handler)
+
+        resolved_route.controller = ServerHelpers.namespace_to_controller_instance(baseNamespace,resolved_route.handler)
 
         let namespaceHandler = co.wrap(function *() {
-          return yield Namespace.under('controllers').resolve(resolved_route.controller.controller)
+          return yield make(resolved_route.controller.controller)
         })
 
         namespaceHandler()
@@ -121,22 +121,16 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
  * @param  {String} handler
  * @return {Object}
  */
-ServerHelpers.namespace_to_controller_instance = function (handler) {
+ServerHelpers.namespace_to_controller_instance = function (baseNamespace,handler) {
   let sections = handler.split('.')
-  let controller_namespace = []
-  let action = null
-  let x = 0
-  let sections_count = _.size(sections)
-
-  _.each(sections, function (section) {
-    x++
-    if (x === sections_count) {
-      action = section
-    } else {
-      controller_namespace.push(section)
-    }
-  })
-  return {controller: controller_namespace.join('.'), action}
+  const controllerNamespace = `${baseNamespace}/Http/Controllers`
+  if(sections.length !== 2){
+    throw new HttpException(503,`${handler} is not a readable controller action`)
+  }
+  let controller = sections[0].replace(controllerNamespace,'')
+  controller = `${controllerNamespace}/${controller}`.replace(/\/\//g,'/')
+  const action = sections[1]
+  return {controller, action}
 }
 
 /**
@@ -157,7 +151,7 @@ ServerHelpers.handle_http_errors = function (error, request, response) {
     App.emit('error', error, request, response)
   } else {
     let error_message = error.isHttpError ? error.message : error.stack
-    let error_status = error.statusCode || 503
+    let error_status = error.status || 503
     response.status(error_status).send(error_message).end()
     Logger.error(error_message)
   }

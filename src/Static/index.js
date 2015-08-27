@@ -27,6 +27,12 @@ Static.isStatic = function (url) {
   return regex.test(url)
 }
 
+Static.clear = function(){
+  fileServer = null
+  faviconServer = null
+  publicNamespace = null
+}
+
 /**
  * replacing publicNamespace from url while serving static resources
  * @param  {String}  url

@@ -15,7 +15,6 @@ module.exports = {
   Server: require('./src/Server'),
   Middlewares: require('./src/Middlewares'),
   Static: require('./src/Static'),
-  Namespace: require('./src/Namespace'),
   HttpException: require('./src/HttpException'),
   App: require('./src/App'),
   Logger: require('./src/Logger')

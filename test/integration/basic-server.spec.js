@@ -7,18 +7,19 @@
    */
 
 
-  let Dispatcher = require("../../index"),
-    api = require("hippie"),
-    path = require("path"),
-    Routes = Dispatcher.Router,
-    HttpException = Dispatcher.HttpException,
-    Middlewares = Dispatcher.Middlewares,
-    Static = Dispatcher.Static,
-    Namespace = Dispatcher.Namespace,
-    Server = Dispatcher.Server;
-
-
-  api.assert.showDiff = true;
+const Dispatcher = require("../../index")
+const api = require("hippie")
+const path = require("path")
+const chai = require('chai')
+const expect = chai.expect
+const Routes = Dispatcher.Router
+const HttpException = Dispatcher.HttpException
+const Middlewares = Dispatcher.Middlewares
+const Static = Dispatcher.Static
+const Server = Dispatcher.Server
+const cluster = require('cluster')
+const _ = require('lodash')
+const Registerar = require('fold').Registerar
 
   let getData = function(data,timeout) {
     return new Promise(function(resolve, reject) {
@@ -34,9 +35,62 @@
 
   describe("Basic Http Server", function() {
 
-    afterEach(function() {
+    before(function(done){
+      Registerar.autoload(path.join(__dirname,'./app'),path.join(__dirname,'./app'),'App').then(done).catch(done)
+    })
+
+    beforeEach(function() {
       Server.stop();
     })
+
+
+    it("should be able to return any data type from request", function(done) {
+
+      Routes.get("/home", function*(request, response) {
+        return "hello world";
+      });
+      Server.start(4000);
+
+      api()
+        .base('http://localhost:4000')
+        .get('/home')
+        .expectStatus(200)
+        .expectBody("hello world")
+        .end(function(err, res, body) {
+          if (err) done(err)
+          else done();
+        })
+    });
+
+
+    it("should throw 404 when route is not found", function(done) {
+
+      Server.start(4000);
+
+      api()
+        .base('http://localhost:4000')
+        .get('/404')
+        .expectStatus(404)
+        .end(function(err, res, body) {
+          if (err) done(err)
+          else done();
+        })
+    });
+
+    it("should throw 503 error when route controller syntax is not readable", function(done) {
+
+      Routes.get("/foo","FooController")
+      Server.start(4000);
+
+      api()
+        .base('http://localhost:4000')
+        .get('/foo')
+        .expectStatus(503)
+        .end(function(err, res, body) {
+          if (err) done(err)
+          else done();
+        })
+    });
 
     it("should spyn a server on given port and respond to a registered route", function(done) {
 
@@ -55,21 +109,20 @@
         }
       });
 
-      Server.start(3000);
+      Server.start(4000);
 
       api()
         .json()
-        .base('http://localhost:3000')
+        .base('http://localhost:4000')
         .get('/user')
         .expectStatus(200)
         .expectBody(usersToReturn)
         .end(function(err, res, body) {
           if (err) done(err)
-          done();
+          else done();
         })
 
     });
-
 
     it("should start a server and attach multiple middlewares to a given route", function(done) {
 
@@ -113,12 +166,12 @@
         }
       }).middlewares(["auth", "admin"]);
 
-      Server.start(3000);
+      Server.start(4000);
 
       api()
         .json()
         .header("framework", "adonis")
-        .base('http://localhost:3000')
+        .base('http://localhost:4000')
         .get('/frameworks')
         .expectStatus(200)
         .expectBody(usersToReturn)
@@ -160,11 +213,11 @@
         }
       }).middlewares(["auth"]);
 
-      Server.start(3000);
+      Server.start(4000);
 
       api()
         .header("color", "red")
-        .base('http://localhost:3000')
+        .base('http://localhost:4000')
         .get('/hulk')
         .expectStatus(400)
         .expectBody(errorMessage)
@@ -180,28 +233,41 @@
 
       Static.public("dist",path.join(__dirname, "./public"));
 
-      Server.start(3000);
+      Server.start(4000);
 
       api()
-        .base('http://localhost:3000')
+        .base('http://localhost:4000')
         .get('/dist/style.css')
         .expectStatus(200)
         .end(function(err, res, body) {
           if (err) done(err.stack)
           let cssRegex = new RegExp("(?:\\s*\\S+\\s*{[^}]*})+","g");
-          expect(cssRegex.test(body)).toBe(true);
+          expect(cssRegex.test(body)).to.equal(true);
           done();
         })
 
+    });
+
+    it("should serve favicon from a given path", function(done) {
+
+      Static.favicon(path.join(__dirname, "./public/favicon.ico"));
+      Server.start(4000);
+      api()
+        .base('http://localhost:4000')
+        .get('/favicon.ico')
+        .expectStatus(200)
+        .end(function(err, res, body) {
+          if (err) done(err.stack)
+          else done();
+        })
     });
 
 
 
     it("should resolve controllers using controller string and using resource method", function(done) {
 
-      Namespace.identifier("controllers").namespace("App/Http/Controllers").register(path.join(__dirname,"./Controllers"));
-      Routes.resource("/friends","FriendsController");
-      
+      Routes.resource("/friends","Friends");
+
       let friendsToReturn = [
         {
           name: 'foo'
@@ -211,11 +277,11 @@
         }
       ];
 
-      Server.start(3000);
+      Server.start(4000);
 
       api()
         .json()
-        .base('http://localhost:3000')
+        .base('http://localhost:4000')
         .get('/friends')
         .expectStatus(200)
         .expectBody(friendsToReturn)
@@ -229,9 +295,9 @@
     it("should resolve nested controllers using controller string", function(done) {
 
       Routes.group("admin",function(){
-        Routes.resource("/friends","Admin.FriendsController");
+        Routes.resource("/friends","Admin/Friends");
       }).prefix("/admin").close();
-      
+
       let friendsToReturn = [
         {
           name: 'admin-foo'
@@ -241,11 +307,11 @@
         }
       ];
 
-      Server.start(3000);
+      Server.start(4000);
 
       api()
         .json()
-        .base('http://localhost:3000')
+        .base('http://localhost:4000')
         .get('/admin/friends')
         .expectStatus(200)
         .expectBody(friendsToReturn)
@@ -260,9 +326,9 @@
     it("should resolve nested controllers using controller string with full namespace", function(done) {
 
       Routes.group("admin",function(){
-        Routes.resource("/friends","App/Http/Controllers/Admin/FriendsController");
+        Routes.resource("/friends","App/Http/Controllers/Admin/Friends");
       }).prefix("/v1/admin").close();
-      
+
       let friendsToReturn = [
         {
           name: 'admin-foo'
@@ -272,11 +338,11 @@
         }
       ];
 
-      Server.start(3000);
+      Server.start(4000);
 
       api()
         .json()
-        .base('http://localhost:3000')
+        .base('http://localhost:4000')
         .get('/v1/admin/friends')
         .expectStatus(200)
         .expectBody(friendsToReturn)
@@ -287,8 +353,6 @@
 
     });
 
-
-
     it("should serve static resources even when all routes are listening to a single controller action", function(done) {
 
       Routes.get("*",function*(request,response){
@@ -296,17 +360,34 @@
       });
       Static.public("dist",path.join(__dirname, "./public"));
 
-      Server.start(3000);
+      Server.start(4000);
 
       api()
-        .base('http://localhost:3000')
+        .base('http://localhost:4000')
         .get('/dist/style.css')
         .expectStatus(200)
         .end(function(err, res, body) {
           if (err) done(err.stack)
           let cssRegex = new RegExp("(?:\\s*\\S+\\s*{[^}]*})+","g");
-          expect(cssRegex.test(body)).toBe(true);
+          expect(cssRegex.test(body)).to.equal(true);
           done();
+        })
+
+    });
+
+
+    it("should throw an error when unable to find static resource", function(done) {
+
+      Static.public("dist",path.join(__dirname, "./public"));
+      Server.start(4000);
+
+      api()
+        .base('http://localhost:4000')
+        .get('/dist/foo')
+        .expectStatus(404)
+        .end(function(err, res, body) {
+          if (err) done(err)
+          else done();
         })
 
     });

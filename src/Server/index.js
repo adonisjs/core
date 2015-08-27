@@ -13,7 +13,6 @@ const Logger = require('../Logger')
 const helpers = require('./helpers')
 const Ware = require('adonis-co-ware')()
 const url = require('url')
-const cluster = require('cluster')
 const http = require('http')
 
 /**
@@ -21,6 +20,7 @@ const http = require('http')
  * locally.
  */
 let serverInstance = http.createServer(function (req, res) {
+
   // clear old middlewares stack of every new request
   Ware.clear()
 
@@ -51,7 +51,7 @@ let serverInstance = http.createServer(function (req, res) {
    * routes and serve if resolved.
    */
   helpers
-    .resolve_and_return_handler(Router, uri, method)
+    .resolve_and_return_handler(Router, uri, method, 'App')
     .then(function (resolved_route) {
       /**
        * setup params property on request object
@@ -101,29 +101,4 @@ Server.stop = function () {
 Server.start = function (port) {
   Logger.info(`serving app on port ${port}`)
   serverInstance.listen(port)
-}
-
-/**
- * start http server in cluster mode on a given port
- * @param  {Number} port
- */
-Server.cluster = function (port) {
-  if (cluster.isMaster) {
-    /**
-     * for a new cluster equals to be number of
-     * cpu cores
-     */
-    var cpuCount = require('os').cpus().length
-    for (let i = 0;i < cpuCount; i += 1) {
-      cluster.fork()
-    }
-
-    cluster.on('exit', function (worker) {
-      Logger.warn(`worker ${worker.process.pid} died`)
-      cluster.fork()
-    })
-
-  } else {
-    Server.start(port)
-  }
 }
