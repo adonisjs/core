@@ -70,6 +70,14 @@ File.prototype.tmpPath = function () {
 }
 
 /**
+ * returns whether file exsits or not
+ * @return {Boolean}
+ */
+File.prototype.exists = function(){
+  return !!this.tmpPath()
+}
+
+/**
  * tells whether file has been moved successfully or not
  * @return {Boolean}
  */

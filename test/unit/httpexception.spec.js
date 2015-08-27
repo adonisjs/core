@@ -19,4 +19,10 @@ describe("HttpException", function() {
     expect(error instanceof HttpException).to.equal(true);
   });
 
+  it("should set error status to 503 when status has not be defined", function() {
+    let error = new HttpException("Something went found");
+    expect(error.statusCode).to.equal(503);
+  });
+
+
 });

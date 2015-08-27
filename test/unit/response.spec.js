@@ -12,7 +12,11 @@
 
 
 const Response = require("../../src/Response/index")
+const View = require("../../src/View/index")
+const path = require('path')
 const chai = require('chai')
+const http = require('http')
+const supertest = require("supertest")
 const expect = chai.expect
 
 describe("Response", function() {
@@ -27,4 +31,26 @@ describe("Response", function() {
       expect(proto).to.have.property("view");
     done()
   });
+
+  it("should compile a view using View class and set it as response body", function(done) {
+
+    View.configure(path.join(__dirname,'./views'))
+    const name = 'virk'
+
+    var server = http.createServer(function(req, res) {
+      let response = new Response(req, res)
+      let view = response.view('index.html',{name})
+      response.end()
+    });
+
+    supertest(server)
+      .post("/")
+      .set("token", 123)
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text.trim()).to.equal(name)
+        done();
+      });
+  });
+
 });

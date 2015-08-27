@@ -2,6 +2,7 @@
 
 
 const Request = require("../../src/Request/index")
+const RequestHelpers = require("../../src/Request/helpers")
 const File = require("../../src/File")
 const supertest = require("supertest")
 const formidable = require("formidable")
@@ -330,6 +331,32 @@ describe("Request", function() {
   });
 
 
+  it("should return false on calling exists when uploaded file does not exists", function(done) {
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var form = new formidable.IncomingForm();
+
+      form.parse(req, function(err, fields, files) {
+        request.uploadedFiles = files;
+        var doc = request.file("doc");
+        res.writeHead(200, {
+          "Content-type": "application/json"
+        });
+        res.end(JSON.stringify({exists:doc.exists()}));
+      });
+    });
+
+    supertest(server)
+      .post("/user")
+      .attach("profile", path.join(__dirname, "./helpers/npm-logo.svg"))
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.body.exists).to.equal(false);
+        done();
+      });
+  });
+
+
 
   it("should return all uploaded files", function(done) {
     var server = http.createServer(function(req, res) {
@@ -408,9 +435,7 @@ describe("Request", function() {
       });
   });
 
-
-
-  it("should return request headers", function(done) {
+  it("should parse and return request headers", function(done) {
     var server = http.createServer(function(req, res) {
       var request = new Request(req);
       var headers = request.headers();
@@ -432,6 +457,195 @@ describe("Request", function() {
       });
   });
 
+  it("should return request header for a given key", function(done) {
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var token = request.header("token");
+      res.writeHead(200, {
+        "Content-type": "application/json"
+      });
+      res.end(token);
+    });
+
+    supertest(server)
+      .post("/")
+      .set("token", 123)
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text).to.equal("123");
+        done();
+      });
+  });
+
+
+  it("should return defaultValue for a given key if it does not exists on header", function(done) {
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var token = request.header("token","sometoken");
+      res.end(token);
+    });
+
+    supertest(server)
+      .post("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text).to.equal("sometoken");
+        done();
+      });
+  });
+
+  it('should return path for a given request', function (done){
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var reqPath = request.path();
+      res.end(reqPath);
+    });
+
+    supertest(server)
+      .post("/special")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text).to.equal("/special");
+        done();
+      });
+  })
+
+
+  it('should not return query string with path for a given request', function (done){
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var reqPath = request.path();
+      res.end(reqPath);
+    });
+
+    supertest(server)
+      .post("/special?foo=bar")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text).to.equal("/special");
+        done();
+      });
+  })
+
+
+  it('should return true for ajax requests when request has X-Requested-With header', function (done){
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var isAjax = request.ajax() ? 'yes' : 'no'
+      res.end(isAjax);
+    });
+
+    supertest(server)
+      .post("/ajax")
+      .set('X-Requested-With','XMLHttpRequest')
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text).to.equal("yes");
+        done();
+      });
+  })
+
+  it('should return true for pajax requests when request has x-pjax header', function (done){
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var isPjax = request.pjax() ? 'yes' : 'no'
+      res.end(isPjax);
+    });
+
+    supertest(server)
+      .post("/pajax")
+      .set('x-pjax',true)
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text).to.equal("yes");
+        done();
+      });
+  })
+
+
+  it('should return empty object when there are no cookies attached with request', function (done){
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var cookies = request.cookies()
+      res.writeHead(200, {
+        "Content-type": "application/json"
+      });
+      res.end(JSON.stringify({cookies}));
+    });
+
+    supertest(server)
+      .post("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.body.cookies).to.be.an("object");
+        expect(res.body.cookies).deep.equal({});
+        done();
+      });
+  })
+
+
+  it('should parse cookies attached with request', function (done){
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var cookies = request.cookies()
+      res.writeHead(200, {
+        "Content-type": "application/json"
+      });
+      res.end(JSON.stringify({cookies}));
+    });
+
+    supertest(server)
+      .post("/")
+      .set('Cookie',['token=12345'])
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.body.cookies).to.be.an("object");
+        expect(res.body.cookies).to.have.property('token');
+        expect(res.body.cookies.token).to.equal('12345');
+        done();
+      });
+  })
+
+
+  it('should return cookie value for a given key', function (done){
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var token = request.cookie('token')
+      res.writeHead(200, {
+        "Content-type": "application/json"
+      });
+      res.end(JSON.stringify({token}));
+    });
+
+    supertest(server)
+      .post("/")
+      .set('Cookie',['token=12345'])
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.body.token).to.equal('12345');
+        done();
+      });
+  })
+
+
+  it('should return default value for a given key if cookie value for that key is missing', function (done){
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var token = request.cookie('token','33')
+      res.writeHead(200, {
+        "Content-type": "application/json"
+      });
+      res.end(JSON.stringify({token}));
+    });
+
+    supertest(server)
+      .post("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.body.token).to.equal('33');
+        done();
+      });
+  })
 
 
   it("should return best match for accept header within given options", function(done) {
@@ -565,6 +779,64 @@ describe("Request", function() {
         expect(res.text).to.equal("1");
         done();
       });
+  });
+
+
+  it("should return default value for param if it does not exists under params object", function(done) {
+
+    var server = http.createServer(function(req, res) {
+      var request = new Request(req);
+      var id = request.param("id",2);
+      res.writeHead(200, {
+        "Content-type": "text/plain"
+      });
+      res.end(id.toString());
+    });
+
+    supertest(server)
+      .get("/1")
+      .end(function(err, res) {
+        if (err) done(err);
+        expect(res.text).to.equal("2");
+        done();
+      });
+  });
+
+  describe("Request Helpers",function(){
+
+    it('should return selected values from an object', function(){
+      const user = {username:'foo',age:22}
+      const filtered = RequestHelpers.return_requested_keys_from_object(user,{0:'username'})
+      expect(filtered.age).to.equal(undefined)
+      expect(filtered.username).to.equal(user.username)
+    });
+
+    it('should return null for request key value if original value does not exists', function(){
+      const user = {username:'foo',age:22}
+      const filtered = RequestHelpers.return_requested_keys_from_object(user,{0:'username',1:'email'})
+      expect(filtered.email).to.equal(null)
+    });
+
+    it('should return original object back if there are no keys to be filtered', function(){
+      const user = {username:'foo',age:22}
+      const filtered = RequestHelpers.return_requested_keys_from_object(user)
+      expect(filtered).to.deep.equal(user)
+    });
+
+    it('should remove request keys from an object and only return remaining values', function(){
+      const user = {username:'foo',age:22}
+      const filtered = RequestHelpers.remove_requested_keys_from_object(user,['age'])
+      expect(filtered.age).to.equal(undefined)
+      expect(filtered.username).to.equal(user.username)
+    });
+
+    it('should return original object back if there are no keys to be removed', function(){
+      const user = {username:'foo',age:22}
+      const filtered = RequestHelpers.remove_requested_keys_from_object(user)
+      expect(filtered).to.deep.equal(user)
+    });
+
+
   });
 
 });

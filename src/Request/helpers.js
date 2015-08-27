@@ -29,14 +29,6 @@ RequestHelpers.return_requested_keys_from_object = function (hash, keys) {
     return hash
   }
 
-  /**
-   * if length of requested keys is 1 , then return
-   * value of request key as a string
-   */
-  if (_.size(keys) === 1) {
-    return hash[keys[0]] || null
-  }
-
   let filteredValues = {}
   _.each(keys, function (arg) {
     if (!hash[arg]) hash[arg] = null

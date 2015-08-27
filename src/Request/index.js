@@ -35,7 +35,7 @@ Request.prototype.get = function () {
  * @return {Object}
  */
 Request.prototype.params = function () {
-  return this.request.params
+  return this.request.params || {}
 }
 
 /**
@@ -44,7 +44,7 @@ Request.prototype.params = function () {
  */
 Request.prototype.param = function (key, defaultValue) {
   defaultValue = defaultValue || null
-  return this.request.params[key] || defaultValue
+  return this.params()[key] || defaultValue
 }
 
 /**
@@ -74,9 +74,8 @@ Request.prototype.files = function () {
  */
 Request.prototype.file = function (key) {
   if (!this.uploadedFiles[key]) {
-    return null
+    return helpers.convert_to_file_instance({})
   }
-
   let fileToReturn = this.uploadedFiles[key].toJSON()
 
   if (_.isArray(fileToReturn)) {
@@ -96,10 +95,7 @@ Request.prototype.file = function (key) {
  */
 Request.prototype.input = function (key, defaultValue) {
   defaultValue = defaultValue || null
-  let body = this.post()
-  let query = this.get()
-  const input = _.merge(query, body)
-  return input[key] || defaultValue
+  return this.all()[key] || defaultValue
 }
 
 /**
@@ -131,12 +127,22 @@ Request.prototype.except = function () {
 }
 
 /**
+ * returns a selected header key from headers object
+ * @param  {String} key
+ * @param  {*} defaultValue
+ * @return {*}
+ */
+Request.prototype.header = function (key,defaultValue) {
+  defaultValue = defaultValue || null
+  return this.headers()[key] || defaultValue
+}
+
+/**
  * return request headers
  * @return {Object}
  */
 Request.prototype.headers = function () {
-  let headers = this.request.headers
-  return helpers.return_requested_keys_from_object(headers, arguments)
+  return this.request.headers || {}
 }
 
 /**
@@ -160,8 +166,8 @@ Request.prototype.method = function () {
  * @return {Boolean}
  */
 Request.prototype.ajax = function () {
-  let xmlHeader = this.headers('X-Requested-With')
-  return xmlHeader['X-Requested-With'] === 'XMLHttpRequest'
+  let xmlHeader = this.header('x-requested-with')
+  return xmlHeader === 'XMLHttpRequest'
 }
 
 /**
@@ -169,8 +175,8 @@ Request.prototype.ajax = function () {
  * @return {Boolean}
  */
 Request.prototype.pjax = function () {
-  let xmlHeader = this.headers('X-PJAX')
-  return xmlHeader['X-PJAX'] === true
+  let pjaxHeader = this.header('x-pjax')
+  return pjaxHeader
 }
 
 /**
@@ -198,6 +204,17 @@ Request.prototype.is = function () {
 }
 
 /**
+ * returns cookie value corresponding to a given key
+ * @param  {String} key
+ * @param  {*} defaultValue
+ * @return {*}
+ */
+Request.prototype.cookie = function(key,defaultValue){
+  defaultValue = defaultValue || null
+  return this.cookies()[key] || defaultValue
+}
+
+/**
  * return request cookies
  * @return {Object}
  */
@@ -205,8 +222,7 @@ Request.prototype.cookies = function () {
   if (!this.request.headers.cookie) {
     return {}
   }
-  let cookies = cookie.parse(this.request.headers.cookie)
-  return helpers.return_requested_keys_from_object(cookies, arguments)
+  return cookie.parse(this.request.headers.cookie)
 }
 
 module.exports = Request

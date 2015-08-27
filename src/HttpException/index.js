@@ -18,6 +18,7 @@ function HttpException () {
     this.statusCode = arguments[0]
     this.message = arguments[1]
   } else {
+    this.statusCode = 503
     this.message = arguments[0]
   }
 }
