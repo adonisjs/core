@@ -150,7 +150,7 @@ ServerHelpers.handle_http_errors = function (error, request, response) {
   if (listeners > 0) {
     App.emit('error', error, request, response)
   } else {
-    let error_message = error.isHttpError ? error.message : error.stack
+    let error_message = error.isHttpError || !error.stack ? error.message : error.stack
     let error_status = error.status || 503
     response.status(error_status).send(error_message).end()
     Logger.error(error_message)

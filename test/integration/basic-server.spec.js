@@ -21,6 +21,8 @@ const cluster = require('cluster')
 const _ = require('lodash')
 const Registerar = require('fold').Registerar
 
+process.env.foldNamespace = 'App'
+
   let getData = function(data,timeout) {
     return new Promise(function(resolve, reject) {
       if (!timeout) {
@@ -36,7 +38,7 @@ const Registerar = require('fold').Registerar
   describe("Basic Http Server", function() {
 
     before(function(done){
-      Registerar.autoload(path.join(__dirname,'./app'),path.join(__dirname,'./app'),'App').then(done).catch(done)
+      Registerar.autoload(path.join(__dirname,'./app'),path.join(__dirname,'./app'),process.env.foldNamespace).then(done).catch(done)
     })
 
     beforeEach(function() {

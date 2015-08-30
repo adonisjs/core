@@ -74,6 +74,25 @@ File.prototype.tmpPath = function () {
 }
 
 /**
+ * returns uploaded name for file after file has
+ * been moved
+ * @return {String}
+ */
+File.prototype.uploadName = function(){
+  return this.file['filename']
+}
+
+/**
+ * returns uploaded path for file after file has
+ * been moved
+ * @return {String}
+ */
+File.prototype.uploadPath = function(){
+  return this.file['filepath']
+}
+
+
+/**
  * returns whether file exsits or not
  * @return {Boolean}
  */

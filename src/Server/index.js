@@ -24,7 +24,7 @@ let serverInstance = http.createServer(function (req, res) {
   // clear old middlewares stack of every new request
   Ware.clear()
 
-  let uri = url.parse(req.url).path
+  let uri = url.parse(req.url).pathname
   let method = req.method
   let response = new Response(req, res)
   let request = new Request(req)
@@ -51,7 +51,7 @@ let serverInstance = http.createServer(function (req, res) {
    * routes and serve if resolved.
    */
   helpers
-    .resolve_and_return_handler(Router, uri, method, 'App')
+    .resolve_and_return_handler(Router, uri, method, process.env.foldNamespace)
     .then(function (resolved_route) {
       /**
        * setup params property on request object

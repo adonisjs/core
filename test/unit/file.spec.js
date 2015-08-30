@@ -112,7 +112,7 @@ describe("Files", function() {
           res.writeHead(200, {
             "Content-type": "application/json"
           });
-          res.end(JSON.stringify({file:file.file}))
+          res.end(JSON.stringify({file:file.uploadName()}))
         }).catch(function(){
           res.end()
         })
@@ -124,8 +124,7 @@ describe("Files", function() {
       .attach("profile", path.join(__dirname, "./helpers/npm-logo.svg"))
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.body.file).to.be.an('object');
-        expect(res.body.file.filename).to.equal(uploadName);
+        expect(res.body.file).to.equal(uploadName);
         done();
       });
   });

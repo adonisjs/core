@@ -1,11 +1,11 @@
 'use strict'
 
-const HttpExceptionProvider = require('fold').ServiceProvider
+const ServiceProvider = require('fold').ServiceProvider
 
-class StaticProvider extends ServiceProvider{
+class HttpExceptionProvider extends ServiceProvider{
   *register(){
     this.app.singleton('Adonis/src/HttpException',function(){
-      require('../src/HttpException')
+      return require('../src/HttpException')
     })
   }
 }
