@@ -19,7 +19,7 @@ function statusCallback(result) {
 
 const Dispatcher = require("../../index"),
   Server = Dispatcher.Server,
-  Router = Dispatcher.Router
+  Router = Dispatcher.Route
 
 
 Router.get("/", function*(request, response) {

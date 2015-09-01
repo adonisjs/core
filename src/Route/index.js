@@ -2,8 +2,8 @@
 
 /**
  * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Router for adonis app
+ * @package     - adonis-http-dispatcher
+ * @description - Route for adonis app
  */
 
 // Importing helpers
@@ -29,16 +29,16 @@ let activeGroup = null
 let subdomains = []
 
 /**
- * @module Router
+ * @module Route
  */
-let Router = exports = module.exports = {}
+let Route = exports = module.exports = {}
 
 /**
  * return registered routes with application
  * @name routes
  * @return {Object}
  */
-Router.routes = function () {
+Route.routes = function () {
   return routes
 }
 
@@ -46,7 +46,7 @@ Router.routes = function () {
  * clear registered routes, almost like new instance of class
  * @name new
  */
-Router.new = function () {
+Route.new = function () {
   routes = []
 }
 
@@ -57,7 +57,7 @@ Router.new = function () {
  * @param {string} verb
  * @param {any} handler
  */
-Router.route = function (route, verb, handler) {
+Route.route = function (route, verb, handler) {
   let constructedRoute = helpers.construct(route, verb, handler, activeGroup)
   routes.push(constructedRoute)
 }
@@ -67,7 +67,7 @@ Router.route = function (route, verb, handler) {
  * @param  {String} route
  * @param  {Any} handler
  */
-Router.get = function (route, handler) {
+Route.get = function (route, handler) {
   this.route(route, 'GET', handler)
   return this
 }
@@ -77,7 +77,7 @@ Router.get = function (route, handler) {
  * @param  {String} route
  * @param  {Any} handler
  */
-Router.post = function (route, handler) {
+Route.post = function (route, handler) {
   this.route(route, 'POST', handler)
   return this
 }
@@ -87,7 +87,7 @@ Router.post = function (route, handler) {
  * @param  {String} route
  * @param  {Any} handler
  */
-Router.put = function (route, handler) {
+Route.put = function (route, handler) {
   this.route(route, 'PUT', handler)
   return this
 }
@@ -97,7 +97,7 @@ Router.put = function (route, handler) {
  * @param  {String} route
  * @param  {Any} handler
  */
-Router.patch = function (route, handler) {
+Route.patch = function (route, handler) {
   this.route(route, 'PATCH', handler)
   return this
 }
@@ -107,7 +107,7 @@ Router.patch = function (route, handler) {
  * @param  {String} route
  * @param  {Any} handler
  */
-Router.delete = function (route, handler) {
+Route.delete = function (route, handler) {
   this.route(route, 'DELETE', handler)
   return this
 }
@@ -119,7 +119,7 @@ Router.delete = function (route, handler) {
  * @param  {String} route
  * @param  {Any} handler
  */
-Router.match = function (verbs, route, handler) {
+Route.match = function (verbs, route, handler) {
   verbs = _.map(verbs, function (verb) { return verb.toUpperCase() })
   this.route(route, verbs, handler)
   return this
@@ -131,7 +131,7 @@ Router.match = function (verbs, route, handler) {
  * @param  {String} route
  * @param  {Any} handler
  */
-Router.any = function (route, handler) {
+Route.any = function (route, handler) {
   const verbs = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
   this.route(route, verbs, handler)
   return this
@@ -141,7 +141,7 @@ Router.any = function (route, handler) {
  * giving registered route as named route
  * @param  {String} name route name
  */
-Router.as = function (name) {
+Route.as = function (name) {
   let lastRoute = _.last(routes)
   if (lastRoute.route) {
     lastRoute.name = name
@@ -153,7 +153,7 @@ Router.as = function (name) {
  * assign array of named middlewares to route
  * @param  {Array} array_of_named_middlewares
  */
-Router.middlewares = function (array_of_named_middlewares) {
+Route.middlewares = function (array_of_named_middlewares) {
   /**
    * applying middlewares on a single route
    */
@@ -184,7 +184,7 @@ Router.middlewares = function (array_of_named_middlewares) {
  * @param  {String}   name
  * @param  {Function} cb
  */
-Router.group = function (name, cb) {
+Route.group = function (name, cb) {
   activeGroup = name
   cb()
   return this
@@ -194,7 +194,7 @@ Router.group = function (name, cb) {
  * prefix given group of routes
  * @param  {String} prefix
  */
-Router.prefix = function (prefix) {
+Route.prefix = function (prefix) {
   if (activeGroup) {
     routes = _.map(routes, function (route) {
       if (route.group === activeGroup) {
@@ -211,7 +211,7 @@ Router.prefix = function (prefix) {
  * set subdomain for a given group of routes
  * @param  {String} subdomain
  */
-Router.domain = function (subdomain) {
+Route.domain = function (subdomain) {
   if (activeGroup) {
     subdomains.push(helpers.make_route_pattern(subdomain))
     _.each(routes, function (route) {
@@ -224,9 +224,9 @@ Router.domain = function (subdomain) {
 }
 
 /**
- * close previously opened router group
+ * close previously opened Route group
  */
-Router.close = function () {
+Route.close = function () {
   activeGroup = null
 }
 
@@ -236,7 +236,7 @@ Router.close = function () {
  * @param  {String} verb
  * @return {Object}
  */
-Router.resolve = function (urlPath, verb, host) {
+Route.resolve = function (urlPath, verb, host) {
   if (helpers.is_host_registered_as_subdomain(subdomains, host)) {
     urlPath = `${host}${urlPath}`
   }
@@ -250,12 +250,12 @@ Router.resolve = function (urlPath, verb, host) {
  * @param  {String} pattern
  * @param  {String} handler
  */
-Router.resource = function (pattern, handler) {
-  Router.get(pattern, `${handler}.index`)
-  Router.post(pattern, `${handler}.store`)
-  Router.get(`${pattern}/:id`, `${handler}.show`)
-  Router.put(`${pattern}/:id`, `${handler}.update`)
-  Router.delete(`${pattern}/:id`, `${handler}.destroy`)
+Route.resource = function (pattern, handler) {
+  Route.get(pattern, `${handler}.index`)
+  Route.post(pattern, `${handler}.store`)
+  Route.get(`${pattern}/:id`, `${handler}.show`)
+  Route.put(`${pattern}/:id`, `${handler}.update`)
+  Route.delete(`${pattern}/:id`, `${handler}.destroy`)
 }
 
 /**
@@ -264,7 +264,7 @@ Router.resource = function (pattern, handler) {
  * @param  {Object} params
  * @return {String}
  */
-Router.url = function (pattern, params) {
+Route.url = function (pattern, params) {
   let result = null
   _.each(routes, function (route) {
     if (route.name === pattern) {

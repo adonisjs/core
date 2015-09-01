@@ -6,7 +6,7 @@
  * @description - Http server for adonis app
  */
 
-const Router = require('../Router')
+const Route = require('../Route')
 const Request = require('../Request')
 const Response = require('../Response')
 const Logger = require('../Logger')
@@ -51,7 +51,7 @@ let serverInstance = http.createServer(function (req, res) {
    * routes and serve if resolved.
    */
   helpers
-    .resolve_and_return_handler(Router, uri, method, process.env.foldNamespace)
+    .resolve_and_return_handler(Route, uri, method, process.env.foldNamespace)
     .then(function (resolved_route) {
       /**
        * setup params property on request object

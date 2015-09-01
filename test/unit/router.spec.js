@@ -1,6 +1,6 @@
 "use strict"
 
-const Router = require("../../src/Router/index")
+const Router = require("../../src/Route/index")
 const chai = require('chai')
 const expect = chai.expect
 

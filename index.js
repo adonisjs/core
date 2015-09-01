@@ -7,7 +7,7 @@
  */
 
 module.exports = {
-  Router: require('./src/Router'),
+  Route: require('./src/Route'),
   Response: require('./src/Response'),
   Request: require('./src/Request'),
   Env: require('./src/Env'),
