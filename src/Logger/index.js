@@ -17,14 +17,14 @@ const log = require('captains-log')
 let loggerDefaults = {
   prefixThemes: {
     adonis: {
-      silly: 'adonis-http-dispatcher:[silly] ',
-      verbose: 'adonis-http-dispatcher:[verbose] ',
-      info: 'adonis-http-dispatcher:[info] ',
-      blank: 'adonis-http-dispatcher:',
-      debug: 'adonis-http-dispatcher[debug] ',
-      warn: 'adonis-http-dispatcher:[warn] ',
-      error: 'adonis-http-dispatcher:[error] ',
-      crit: 'adonis-http-dispatcher:[CRITICAL] '
+      silly: 'adonis:[silly] ',
+      verbose: 'adonis:[verbose] ',
+      info: 'adonis:[info] ',
+      blank: 'adonis:',
+      debug: 'adonis:[debug] ',
+      warn: 'adonis:[warn] ',
+      error: 'adonis:[error] ',
+      crit: 'adonis:[CRITICAL] '
     }
   },
   prefixTheme: 'adonis'
