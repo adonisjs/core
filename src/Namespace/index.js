@@ -22,5 +22,5 @@ Namespace.register = function(packageFile){
   if(autoloadKeys <= 0){
     return Logger.warn('autoloading is not configured inside package.json file, which must be configured')
   }
-  process.env.foldNamespace = packageFile.autoload[autoloadKeys[0]]
+  process.env.foldNamespace = autoloadKeys[0]
 }
