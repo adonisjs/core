@@ -17,9 +17,15 @@ const View = require('../View/index')
  * @return {String}               Compiled template
  */
 NodeRes.prototype.view = function (template_path, data) {
-  let compiled_template = View.make(template_path, data)
-  this.send(compiled_template)
-  return this
+  let self = this
+
+  return new Promise(function(resolve,reject){
+    View.make(template_path, data)
+    .then(function(templateContent){
+      self.send(templateContent)
+      resolve()
+    }).catch(reject)
+  })
 }
 
 /**

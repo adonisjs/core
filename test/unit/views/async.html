@@ -1,0 +1,4 @@
+{% set Baz = use('Views/Baz') %}
+{% yield greet = Baz.greet() %}
+
+{{greet}}
