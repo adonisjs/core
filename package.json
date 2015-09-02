@@ -12,8 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "accepts": "^1.2.12",
-    "adonis-co-ware": "^1.0.2",
-    "auto-loader": "^0.2.0",
+    "adonis-co-ware": "^1.0.4",
     "captains-log": "^0.11.11",
     "co": "^4.6.0",
     "co-fs-extra": "^1.1.0",
@@ -36,7 +35,6 @@
     "fold": "git://github.com/adonisjs/fold.git"
   },
   "devDependencies": {
-    "adonis-ioc-container": "^1.0.0",
     "chai": "^3.2.0",
     "fold": "git://github.com/adonisjs/fold.git",
     "chai-string": "^1.1.2",
