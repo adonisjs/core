@@ -50,19 +50,3 @@ Middlewares.get = function (keys) {
   named = _.size(named) > 0 ? _.values(named) : []
   return _(global_middlewares).concat(named).value()
 }
-
-/**
- * return filtered middlewares with one who has handle method
- * @param  {Array} array_of_middlewares
- * @return {Object}
- */
-Middlewares.filter = function (array_of_middlewares) {
-  return _.compact(_.map(array_of_middlewares, function (Middleware) {
-    if (typeof (Middleware) === 'function' && typeof (Middleware.prototype) === 'object') {
-      let invoke = new Middleware()
-      if (typeof (invoke.handle) !== 'undefined') {
-        return invoke
-      }
-    }
-  }))
-}

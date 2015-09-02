@@ -20,6 +20,7 @@ const Server = Dispatcher.Server
 const cluster = require('cluster')
 const _ = require('lodash')
 const Registerar = require('fold').Registerar
+const Ioc = require('fold').Ioc
 
 process.env.foldNamespace = 'App'
 
@@ -136,29 +137,13 @@ process.env.foldNamespace = 'App'
         age: 25
       }];
 
-      class Auth {
 
-        * handle(request, response, next) {
-          if (request.headers().framework) {
-            yield next;
-          }
-        }
-
-      }
-
-      class Admin {
-
-        * handle(request, response, next) {
-          if (request.headers().framework === 'adonis') {
-            yield next;
-          }
-        }
-
-      }
+      Ioc.dump('App/Middleware/Auth',path.join(__dirname,'./app/Http/Middlewares/Auth'))
+      Ioc.dump('App/Middleware/Admin',path.join(__dirname,'./app/Http/Middlewares/Admin'))
 
       Middlewares.named({
-        "auth": Auth,
-        "admin": Admin
+        "auth": 'App/Middleware/Auth',
+        "admin": 'App/Middleware/Admin'
       });
 
       Routes.get("/frameworks", function*(request, response) {
@@ -188,24 +173,12 @@ process.env.foldNamespace = 'App'
 
     it("should abort request when middlewares do not yield to next", function(done) {
 
-
       let errorMessage = "Hulk should be green";
 
-      class HulkTest {
-
-        * handle(request, response, next) {
-          if (request.headers().color && request.headers().color === 'green') {
-            yield next;
-          } else {
-            throw new HttpException(400, errorMessage)
-          }
-        }
-
-      }
-
+      Ioc.dump('App/Middleware/HulkTest',path.join(__dirname,'./app/Http/Middlewares/HulkTest'))
 
       Middlewares.named({
-        "auth": HulkTest
+        "auth": 'App/Middleware/HulkTest'
       });
 
       Routes.get("/hulk", function*(request, response) {

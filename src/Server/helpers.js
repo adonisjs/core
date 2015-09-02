@@ -165,10 +165,8 @@ ServerHelpers.handle_http_errors = function (error, request, response) {
  */
 ServerHelpers.register_request_middlewares = function (Ware, named_middlewares) {
   let middlewares = Middlewares.get(named_middlewares)
-  let filtered = Middlewares.filter(middlewares)
-
-  _.each(filtered, function (instance) {
-    Ware.use(instance)
+  _.each(middlewares, function (middleware) {
+    Ware.use(middleware)
   })
 }
 

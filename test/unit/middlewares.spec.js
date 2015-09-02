@@ -78,27 +78,4 @@ describe("Middlewares", function() {
   });
 
 
-  it("should return middlewares that have handle method and are instantiable", function() {
-
-    class CSRF {
-
-    }
-
-    class UserAuth {
-
-      * handle() {}
-
-    }
-
-    Middlewares.global([CSRF, UserAuth]);
-    let registered_middlewares = Middlewares.get();
-    let middlewares_ready_for_use = Middlewares.filter(registered_middlewares);
-
-    expect(middlewares_ready_for_use).to.be.an('array');
-    expect(middlewares_ready_for_use[0].__proto__).to.be.an('object');
-    expect(middlewares_ready_for_use[0].handle).to.be.a('function');
-
-  })
-
-
 });
