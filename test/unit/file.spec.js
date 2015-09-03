@@ -60,7 +60,6 @@ describe('Files', function () {
       var form = new formidable.IncomingForm()
 
       form.parse(req, function (err, fields, files) {
-
         if (err) {
           return res.end()
         }
@@ -102,7 +101,6 @@ describe('Files', function () {
       var form = new formidable.IncomingForm()
 
       form.parse(req, function (err, fields, files) {
-
         if (err) {
           res.end()
         }

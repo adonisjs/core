@@ -11,13 +11,8 @@
 */
 
 const Response = require('../../src/Response/index')
-const View = require('../../src/View/index')
-const path = require('path')
 const chai = require('chai')
-const http = require('http')
-const supertest = require('supertest')
 const expect = chai.expect
-const co = require('co')
 
 describe('Response', function () {
   it('should extend node-res prototype', function (done) {

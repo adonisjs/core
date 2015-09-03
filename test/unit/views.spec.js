@@ -19,8 +19,8 @@ const Ioc = require('fold').Ioc
 let view = null
 
 const Helpers = {
-  viewsPath: function(){
-    return path.join(__dirname,'./views')
+  viewsPath: function () {
+    return path.join(__dirname, './views')
   }
 }
 
