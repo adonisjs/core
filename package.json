@@ -1,7 +1,7 @@
 {
   "name": "adonis-http-dispatcher",
   "version": "1.0.0",
-  "description": "Http dispatcher a loosely coupled http server for adonis framework , it does all the required hard work to setup a managable http server.",
+  "description": "Http dispatcher a loosely coupled http server for adonis framework , it does all the required hard work to setup a managable http server with depdendency injection in place.",
   "main": "index.js",
   "scripts": {
     "test": "iojs maketest",
