@@ -10,14 +10,7 @@
 const dotenv = require('dotenv')
 const Logger = require('../Logger')
 
-// exporting env
-let Env = exports = module.exports = {}
-
-/**
- * loading .env file to process.env
- * @param  {String} path_to_env_file
- */
-Env.load = function (path_to_env_file) {
+function Env(path_to_env_file){
   Logger.verbose(`loading environment config from ${path_to_env_file}`)
   dotenv.config({
     path: path_to_env_file
@@ -29,7 +22,7 @@ Env.load = function (path_to_env_file) {
  * @param  {String} key
  * @return {Any}
  */
-Env.get = function (key) {
+Env.prototype.get = function (key) {
   return process.env[key]
 }
 
@@ -38,6 +31,8 @@ Env.get = function (key) {
  * @param {String} key
  * @param {Any} value
  */
-Env.set = function (key, value) {
+Env.prototype.set = function (key, value) {
   process.env[key] = value
 }
+
+module.exports = Env
