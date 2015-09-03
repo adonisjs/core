@@ -6,12 +6,12 @@ const Namespace = require('../src/Namespace')
 class NamespaceProvider extends ServiceProvider{
 
   static get inject(){
-    return ["Adonis/Src/Env"]
+    return ["Adonis/Src/Env","Adonis/Src/Helpers"]
   }
 
   *register(){
-    this.app.singleton('Adonis/Src/Namespace',function(Env){
-      return new Namespace(Env)
+    this.app.singleton('Adonis/Src/Namespace',function(Env,Helpers){
+      return new Namespace(Env,Helpers)
     })
   }
 

@@ -51,7 +51,7 @@ let serverInstance = http.createServer(function (req, res) {
    * routes and serve if resolved.
    */
   helpers
-    .resolve_and_return_handler(Route, uri, method, process.env.foldNamespace)
+    .resolve_and_return_handler(Route, uri, method)
     .then(function (resolved_route) {
       /**
        * setup params property on request object

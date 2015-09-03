@@ -6,7 +6,17 @@ const chai = require('chai')
 const expect = chai.expect
 const path = require("path")
 
-describe("Env", function() {
+
+let Helpers = {
+  appPath: function(){
+    return path.join(__dirname,'./namespace/app')
+  },
+  appNameSpace: function(){
+    return 'App'
+  }
+}
+
+describe("Namespace", function() {
 
   before(function(done){
     Ioc.clear()
@@ -21,7 +31,7 @@ describe("Env", function() {
       }
     }
 
-    let namespace = new Namespace(Env);
+    let namespace = new Namespace(Env,Helpers);
     const packageFile = {
       autoload: {
         'App' : './app'
@@ -50,7 +60,7 @@ describe("Env", function() {
       }
     }
 
-    let namespace = new Namespace(Env);
+    let namespace = new Namespace(Env,Helpers);
     const packageFile = {
       autoload: {
         'App' : './app'

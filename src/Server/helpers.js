@@ -13,6 +13,7 @@ const co = require('co')
 const Logger = require('../Logger')
 const HttpException = require('../HttpException')
 const _ = require('lodash')
+const Helpers = require('../Helpers')
 
 // exporting helpers
 let ServerHelpers = exports = module.exports = {}
@@ -58,7 +59,7 @@ ServerHelpers.is_favicon_request = function (uri) {
  * @param  {String} method
  * @return {Promise}
  */
-ServerHelpers.resolve_and_return_handler = function (Router, uri, method, baseNamespace) {
+ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
   let resolved_route = Router.resolve(uri, method)
 
   return new Promise(function (resolve, reject) {
@@ -79,7 +80,7 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method, baseNa
        */
       if (typeof (resolved_route.handler) === 'string') {
 
-        resolved_route.controller = ServerHelpers.namespace_to_controller_instance(baseNamespace,resolved_route.handler)
+        resolved_route.controller = ServerHelpers.namespace_to_controller_instance(resolved_route.handler)
 
         let namespaceHandler = co.wrap(function *() {
           return yield make(resolved_route.controller.controller)
@@ -121,8 +122,9 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method, baseNa
  * @param  {String} handler
  * @return {Object}
  */
-ServerHelpers.namespace_to_controller_instance = function (baseNamespace,handler) {
+ServerHelpers.namespace_to_controller_instance = function (handler) {
   let sections = handler.split('.')
+  const baseNamespace = Helpers.appNameSpace()
   const controllerNamespace = `${baseNamespace}/Http/Controllers`
   if(sections.length !== 2){
     throw new HttpException(503,`${handler} is not a readable controller action`)

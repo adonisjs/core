@@ -9,11 +9,14 @@
 // importing libs
 const dotenv = require('dotenv')
 const Logger = require('../Logger')
+const path = require('path')
 
-function Env(path_to_env_file){
-  Logger.verbose(`loading environment config from ${path_to_env_file}`)
+function Env(Helpers){
+  const basePath = Helpers.basePath()
+  const pathToEnvFile = path.join(basePath,'.env')
+  Logger.verbose(`loading environment config from ${pathToEnvFile}`)
   dotenv.config({
-    path: path_to_env_file
+    path: pathToEnvFile
   })
 }
 
