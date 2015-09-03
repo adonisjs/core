@@ -16,17 +16,24 @@ const chai = require('chai')
 const expect = chai.expect
 const co = require('co')
 const Ioc = require('fold').Ioc
+let view = null
+
+const Helpers = {
+  viewsPath: function(){
+    return path.join(__dirname,'./views')
+  }
+}
 
 describe('Views', function () {
   before(function () {
-    View.configure(path.join(__dirname, './views'))
+    view = new View(Helpers)
   })
 
   it('should compile views from a given directory ', function (done) {
     let text = '<h2> Hello world </h2>'
 
     co(function *() {
-      return yield View.make('home')
+      return yield view.make('home')
     }).then(function (compiledView) {
       expect(compiledView.trim()).to.equal(text)
       done()
@@ -45,7 +52,7 @@ describe('Views', function () {
     })
 
     co(function *() {
-      return yield View.make('binding')
+      return yield view.make('binding')
     }).then(function (compiledView) {
       expect(compiledView.trim()).to.equal('bar')
       done()
@@ -72,7 +79,7 @@ describe('Views', function () {
     })
 
     co(function *() {
-      return yield View.make('async')
+      return yield view.make('async')
     }).then(function (compiledView) {
       expect(compiledView.trim()).to.equal('hello')
       done()
