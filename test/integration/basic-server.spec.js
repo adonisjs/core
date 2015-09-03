@@ -14,15 +14,15 @@ const chai = require('chai')
 const expect = chai.expect
 const Routes = Dispatcher.Route
 const HttpException = Dispatcher.HttpException
+const Env = Dispatcher.Env
+const Helpers = Dispatcher.Helpers
+const Namespace = Dispatcher.Namespace
 const Middlewares = Dispatcher.Middlewares
 const Static = Dispatcher.Static
 const Server = Dispatcher.Server
 const cluster = require('cluster')
 const _ = require('lodash')
-const Registerar = require('fold').Registerar
 const Ioc = require('fold').Ioc
-
-process.env.foldNamespace = 'App'
 
   let getData = function(data,timeout) {
     return new Promise(function(resolve, reject) {
@@ -39,7 +39,13 @@ process.env.foldNamespace = 'App'
   describe("Basic Http Server", function() {
 
     before(function(done){
-      Registerar.autoload(path.join(__dirname,'./app'),path.join(__dirname,'./app'),process.env.foldNamespace).then(done).catch(done)
+
+      this.timeout(5000)
+
+      Helpers.load(path.join(__dirname,'./package.json'))
+      let env = new Env(Helpers)
+      let namespace = new Namespace(env,Helpers)
+      namespace.autoload().then(done).catch(done)
     })
 
     beforeEach(function() {

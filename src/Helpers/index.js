@@ -19,7 +19,7 @@ Helpers.load = function(packagePath){
     throw new Error('autoload must be enable inside package.json file')
   }
   appNameSpace = autoloadSettings[0]
-  appPath = packageFile.autoload[appNameSpace]
+  appPath = path.join(rootPath,packageFile.autoload[appNameSpace])
 }
 
 Helpers.basePath = function(){
