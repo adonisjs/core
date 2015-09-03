@@ -1,6 +1,6 @@
 'use strict'
 
-const fold = require('fold')
+const fold = require('adonis-fold')
 const Registerar = fold.Registerar
 
 /**

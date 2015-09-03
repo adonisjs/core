@@ -1,7 +1,7 @@
 'use strict'
 
 const Namespace = require('../../src/Namespace/index')
-const Ioc = require('fold').Ioc
+const Ioc = require('adonis-fold').Ioc
 const chai = require('chai')
 const expect = chai.expect
 const path = require('path')

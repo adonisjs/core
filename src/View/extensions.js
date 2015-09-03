@@ -1,7 +1,7 @@
 'use strict'
 
 const co = require('co')
-const Ioc = require('fold').Ioc
+const Ioc = require('adonis-fold').Ioc
 
 /**
  * @module viewsYield

@@ -6,8 +6,8 @@ const tests = path.normalize('./node_modules/nightwatch/bin/nightwatch test/nigh
 exec(tests,function(error, stdout, stderr){
   if(error){
     console.log(error.stack)
-    process.exit(1)
+  }else{
+    console.log(stdout)
+    process.exit(0)
   }
-  console.log(stdout)
-  process.exit(0)
 })

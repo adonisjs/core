@@ -6,8 +6,8 @@ const coverage = path.normalize('./node_modules/istanbul/lib/cli.js') + ' cover 
 exec(coverage,function(error, stdout, stderr){
   if(error){
     console.log(error.stack)
-    process.exit(1)
+  }else{
+    console.log(stdout)
+    process.exit(0)
   }
-  console.log(stdout)
-  process.exit(0)
 })

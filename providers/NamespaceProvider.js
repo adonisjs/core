@@ -1,6 +1,6 @@
 'use strict'
 
-const ServiceProvider = require('fold').ServiceProvider
+const ServiceProvider = require('adonis-fold').ServiceProvider
 const Namespace = require('../src/Namespace')
 
 class NamespaceProvider extends ServiceProvider {

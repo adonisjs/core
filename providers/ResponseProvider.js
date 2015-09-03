@@ -1,6 +1,6 @@
 'use strict'
 
-const ServiceProvider = require('fold').ServiceProvider
+const ServiceProvider = require('adonis-fold').ServiceProvider
 const Response = require('../src/Response')
 
 class ResponseProvider extends ServiceProvider {

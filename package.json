@@ -32,18 +32,18 @@
     "type-is": "^1.6.6"
   },
   "peerDependencies": {
-    "fold": "git://github.com/adonisjs/fold.git"
+    "adonis-fold": "^1.0.0"
   },
   "devDependencies": {
+    "adonis-fold": "^1.0.0",
     "chai": "^3.2.0",
-    "fold": "git://github.com/adonisjs/fold.git",
     "chai-string": "^1.1.2",
     "formidable": "^1.0.17",
     "hippie": "^0.3.0",
+    "istanbul": "^0.3.18",
     "loadtest": "^1.2.11",
     "mocha": "^2.2.5",
     "nightwatch": "^0.7.11",
-    "istanbul": "^0.3.18",
     "supertest": "^1.0.1"
   }
 }

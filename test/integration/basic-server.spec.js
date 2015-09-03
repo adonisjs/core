@@ -25,7 +25,7 @@ const Middlewares = Dispatcher.Middlewares
 const Static = Dispatcher.Static
 const cluster = require('cluster')
 const _ = require('lodash')
-const Ioc = require('fold').Ioc
+const Ioc = require('adonis-fold').Ioc
 let server = null
 
   let getData = function(data,timeout) {
