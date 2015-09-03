@@ -6,23 +6,15 @@
  * @description - View class for adonis
  */
 
-let env = null
-
 // importing libs
 const nunjucks = require('nunjucks')
-const viewsLoader = require('./loader')
+const ViewsLoader = require('./loader')
 const viewsExtensions = require('./extensions')
 
-// exporting Views class
-let View = exports = module.exports = {}
-
-/**
- * configure views by registering views path
- * @param  {String} path_to_views
- */
-View.configure = function (path_to_views) {
-  env = new nunjucks.Environment(new viewsLoader(path_to_views));
-  viewsExtensions(env)
+function View (Helpers) {
+  const viewsPath = Helpers.viewsPath()
+  this.viewsEnv = new nunjucks.Environment(new ViewsLoader(viewsPath))
+  viewsExtensions(this.viewsEnv)
 }
 
 /**
@@ -31,11 +23,14 @@ View.configure = function (path_to_views) {
  * @param  {Object} data
  * @return {Promise}
  */
-View.make = function (template_path, data) {
-  return new Promise(function(resolve, reject){
-    env.render(template_path, data, function(err,templateContent){
-      if(err) return reject(err)
+View.prototype.make = function (template_path, data) {
+  let self = this
+  return new Promise(function (resolve, reject) {
+    self.viewsEnv.render(template_path, data, function (err, templateContent) {
+      if (err) return reject(err)
       resolve(templateContent)
     })
   })
 }
+
+module.exports = View

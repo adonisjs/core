@@ -3,14 +3,14 @@
 const ServiceProvider = require('fold').ServiceProvider
 const Env = require('../src/Env')
 
-class EnvProvider extends ServiceProvider{
+class EnvProvider extends ServiceProvider {
 
-  static get inject(){
-    return ["Adonis/Src/Helpers"]
+  static get inject () {
+    return ['Adonis/Src/Helpers']
   }
 
-  *register(){
-    this.app.singleton('Adonis/Src/Env',function(Helpers){
+  * register () {
+    this.app.singleton('Adonis/Src/Env', function (Helpers) {
       return new Env(Helpers)
     })
   }

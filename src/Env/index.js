@@ -11,9 +11,9 @@ const dotenv = require('dotenv')
 const Logger = require('../Logger')
 const path = require('path')
 
-function Env(Helpers){
+function Env (Helpers) {
   const basePath = Helpers.basePath()
-  const pathToEnvFile = path.join(basePath,'.env')
+  const pathToEnvFile = path.join(basePath, '.env')
   Logger.verbose(`loading environment config from ${pathToEnvFile}`)
   dotenv.config({
     path: pathToEnvFile

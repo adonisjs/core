@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /*
 |--------------------------------------------------------------------------
@@ -10,7 +10,7 @@
 |
 */
 
-const View = require("../../src/View/index")
+const View = require('../../src/View/index')
 const path = require('path')
 const chai = require('chai')
 const expect = chai.expect
@@ -18,12 +18,11 @@ const co = require('co')
 const Ioc = require('fold').Ioc
 
 describe('Views', function () {
-
-  before(function(){
-    View.configure(path.join(__dirname,'./views'))
+  before(function () {
+    View.configure(path.join(__dirname, './views'))
   })
 
-  it('should compile views from a given directory ' , function (done) {
+  it('should compile views from a given directory ', function (done) {
     let text = '<h2> Hello world </h2>'
 
     co(function *() {
@@ -34,15 +33,14 @@ describe('Views', function () {
     }).catch(done)
   })
 
-  it('should be able to use Ioc container bindings right inside the views' , function (done) {
-
-    class Foo{
-      bar(){
+  it('should be able to use Ioc container bindings right inside the views', function (done) {
+    class Foo {
+      bar () {
         return 'bar'
       }
     }
 
-    Ioc.bind('Views/Foo',function () {
+    Ioc.bind('Views/Foo', function () {
       return new Foo()
     })
 
@@ -55,16 +53,14 @@ describe('Views', function () {
 
   })
 
-  it('should be able to make generators right inside views' , function (done) {
+  it('should be able to make generators right inside views', function (done) {
+    class Baz {
 
-    class Baz{
-
-      greet(){
+      greet () {
         return new Promise(function (resolve) {
-
           setTimeout(function () {
             resolve('hello')
-          },100)
+          }, 100)
 
         })
       }

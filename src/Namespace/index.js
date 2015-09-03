@@ -2,13 +2,12 @@
 
 const fold = require('fold')
 const Registerar = fold.Registerar
-const path = require('path')
 
 /**
  * @module Namespace
  * @author Harminder Virk
  */
-function Namespace(Env,Helpers){
+function Namespace (Env, Helpers) {
   this.env = Env
   this.helpers = Helpers
 }
@@ -20,18 +19,16 @@ function Namespace(Env,Helpers){
  * @param  {Object} packageFile
  * @return {void}
  */
-Namespace.prototype.autoload = function(){
-
+Namespace.prototype.autoload = function () {
   const self = this
 
   return new Promise(function (resolve, reject) {
-
     const appDir = self.helpers.appPath()
     const foldNamespace = self.helpers.appNameSpace()
 
-    if(self.env.get('autoload')){
-      Registerar.autoload(appDir,appDir,foldNamespace).then(resolve).catch(reject)
-    }else{
+    if (self.env.get('autoload')) {
+      Registerar.autoload(appDir, appDir, foldNamespace).then(resolve).catch(reject)
+    } else {
       resolve()
     }
   })

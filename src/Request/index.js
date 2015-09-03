@@ -132,7 +132,7 @@ Request.prototype.except = function () {
  * @param  {*} defaultValue
  * @return {*}
  */
-Request.prototype.header = function (key,defaultValue) {
+Request.prototype.header = function (key, defaultValue) {
   defaultValue = defaultValue || null
   return this.headers()[key] || defaultValue
 }
@@ -209,7 +209,7 @@ Request.prototype.is = function () {
  * @param  {*} defaultValue
  * @return {*}
  */
-Request.prototype.cookie = function(key,defaultValue){
+Request.prototype.cookie = function (key, defaultValue) {
   defaultValue = defaultValue || null
   return this.cookies()[key] || defaultValue
 }

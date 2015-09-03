@@ -9,6 +9,7 @@
 const Middlewares = require('../Middlewares')
 const Static = require('../Static')
 const App = require('../App')
+const Ioc = require('fold').Ioc
 const co = require('co')
 const Logger = require('../Logger')
 const HttpException = require('../HttpException')
@@ -37,7 +38,7 @@ ServerHelpers.craft_final_handler = function (method, request, response) {
      * if returned value is not undefined , set it as
      * response body
      */
-    if (typeof(returned) !== 'undefined') {
+    if (typeof (returned) !== 'undefined') {
       response.ok(returned)
     }
   }
@@ -79,11 +80,10 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
        *       controller method.
        */
       if (typeof (resolved_route.handler) === 'string') {
-
         resolved_route.controller = ServerHelpers.namespace_to_controller_instance(resolved_route.handler)
 
         let namespaceHandler = co.wrap(function *() {
-          return yield make(resolved_route.controller.controller)
+          return yield Ioc.make(resolved_route.controller.controller)
         })
 
         namespaceHandler()
@@ -126,11 +126,11 @@ ServerHelpers.namespace_to_controller_instance = function (handler) {
   let sections = handler.split('.')
   const baseNamespace = Helpers.appNameSpace()
   const controllerNamespace = `${baseNamespace}/Http/Controllers`
-  if(sections.length !== 2){
-    throw new HttpException(503,`${handler} is not a readable controller action`)
+  if (sections.length !== 2) {
+    throw new HttpException(503, `${handler} is not a readable controller action`)
   }
-  let controller = sections[0].replace(controllerNamespace,'')
-  controller = `${controllerNamespace}/${controller}`.replace(/\/\//g,'/')
+  let controller = sections[0].replace(controllerNamespace, '')
+  controller = `${controllerNamespace}/${controller}`.replace(/\/\//g, '/')
   const action = sections[1]
   return {controller, action}
 }

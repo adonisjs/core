@@ -17,14 +17,11 @@ const View = require('../View/index')
  * @return {String}               Compiled template
  */
 NodeRes.prototype.view = function (template_path, data) {
-  let self = this
-
-  return new Promise(function(resolve,reject){
-    View.make(template_path, data)
-    .then(function(templateContent){
-      self.send(templateContent)
-      resolve()
-    }).catch(reject)
+  return new Promise(function (resolve, reject) {
+    View
+      .make(template_path, data)
+      .then(resolve)
+      .catch(reject)
   })
 }
 

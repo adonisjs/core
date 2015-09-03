@@ -27,7 +27,7 @@ Static.isStatic = function (url) {
   return regex.test(url)
 }
 
-Static.clear = function(){
+Static.clear = function () {
   fileServer = null
   faviconServer = null
   publicNamespace = null

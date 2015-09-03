@@ -2,10 +2,10 @@
 
 const ServiceProvider = require('fold').ServiceProvider
 
-class HelpersProvider extends ServiceProvider{
+class HelpersProvider extends ServiceProvider {
 
-  *register(){
-    this.app.singleton('Adonis/Src/Helpers',function(){
+  * register () {
+    this.app.singleton('Adonis/Src/Helpers', function () {
       return require('../src/Helpers')
     })
   }

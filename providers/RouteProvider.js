@@ -2,9 +2,9 @@
 
 const ServiceProvider = require('fold').ServiceProvider
 
-class RouteProvier extends ServiceProvider{
-  *register(){
-    this.app.singleton('Adonis/Src/Route',function(){
+class RouteProvier extends ServiceProvider {
+  * register () {
+    this.app.singleton('Adonis/Src/Route', function () {
       return require('../src/Route')
     })
   }

@@ -9,8 +9,7 @@ const fs = require('fs')
  * @module viewsLoader
  * @description Custom async implementation of nunjucks views loader
  */
-const viewsLoader = exports = module.exports = nunjucks.Loader.extend({
-
+exports = module.exports = nunjucks.Loader.extend({
   /**
    * @function init
    * @description Initiates views loader
@@ -33,21 +32,21 @@ const viewsLoader = exports = module.exports = nunjucks.Loader.extend({
    * @param  {Function} callback
    * @return {*}
    */
-  getSource : function (name,callback) {
+  getSource: function (name, callback) {
     name = path.extname(name) === '.html' ? name : `${name}.html`
     const viewPath = path.resolve(this.viewsPath, name)
     const self = this
 
-    fs.readFile(viewPath,function(err,content){
-      if(err) return callback(err,null)
+    fs.readFile(viewPath, function (err, content) {
+      if (err) return callback(err, null)
 
-      callback(null,{
+      callback(null, {
         src: content.toString(),
         path: viewPath,
         noCache: self.noCache
       })
 
-    });
+    })
 
   }
 

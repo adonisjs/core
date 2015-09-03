@@ -78,7 +78,7 @@ File.prototype.tmpPath = function () {
  * been moved
  * @return {String}
  */
-File.prototype.uploadName = function(){
+File.prototype.uploadName = function () {
   return this.file['filename']
 }
 
@@ -87,16 +87,15 @@ File.prototype.uploadName = function(){
  * been moved
  * @return {String}
  */
-File.prototype.uploadPath = function(){
+File.prototype.uploadPath = function () {
   return this.file['filepath']
 }
-
 
 /**
  * returns whether file exsits or not
  * @return {Boolean}
  */
-File.prototype.exists = function(){
+File.prototype.exists = function () {
   return !!this.tmpPath()
 }
 

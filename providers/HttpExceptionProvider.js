@@ -2,9 +2,9 @@
 
 const ServiceProvider = require('fold').ServiceProvider
 
-class HttpExceptionProvider extends ServiceProvider{
-  *register(){
-    this.app.singleton('Adonis/Src/HttpException',function(){
+class HttpExceptionProvider extends ServiceProvider {
+  * register () {
+    this.app.singleton('Adonis/Src/HttpException', function () {
       return require('../src/HttpException')
     })
   }

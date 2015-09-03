@@ -20,7 +20,6 @@ const http = require('http')
  * locally.
  */
 let serverInstance = http.createServer(function (req, res) {
-
   // clear old middlewares stack of every new request
   Ware.clear()
 
