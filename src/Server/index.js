@@ -6,98 +6,96 @@
  * @description - Http server for adonis app
  */
 
-const Route = require('../Route')
-const Request = require('../Request')
-const Response = require('../Response')
-const Logger = require('../Logger')
 const helpers = require('./helpers')
 const Ware = require('adonis-co-ware')()
 const url = require('url')
 const http = require('http')
 
-/**
- * setting up a http server and saving instance
- * locally.
- */
-let serverInstance = http.createServer(function (req, res) {
-  // clear old middlewares stack of every new request
-  Ware.clear()
+function Server(Route,Request,Response,Logger){
 
-  let uri = url.parse(req.url).pathname
-  let method = req.method
-  let response = new Response(req, res)
-  let request = new Request(req)
+  this.Logger = Logger
 
   /**
-   * if request is for a static resource , serve static resource
-   * and return
+   * setting up a http server and saving instance
+   * locally.
    */
-  if (helpers.is_static_resource(req.url)) {
-    helpers.handle_as_static_resource(request, response)
-    return
-  }
+   this.serverInstance = http.createServer(function (req, res) {
+      // clear old middlewares stack of every new request
+      Ware.clear()
 
-  /**
-   * if request is for favicon , serve favicon and return
-   */
-  if (helpers.is_favicon_request(uri)) {
-    helpers.serve_favicon(request, response)
-    return
-  }
-
-  /**
-   * finally try to resolve url as one of the registered
-   * routes and serve if resolved.
-   */
-  helpers
-    .resolve_and_return_handler(Route, uri, method)
-    .then(function (resolved_route) {
-      /**
-       * setup params property on request object
-       */
-      request.request.params = resolved_route.params
+      let uri = url.parse(req.url).pathname
+      let method = req.method
+      let response = new Response(req, res)
+      let request = new Request(req)
 
       /**
-       * register middlewares to be invoked
+       * if request is for a static resource , serve static resource
+       * and return
        */
-      helpers.register_request_middlewares(Ware, resolved_route.middlewares)
+      if (helpers.is_static_resource(req.url)) {
+        helpers.handle_as_static_resource(request, response)
+        return
+      }
 
       /**
-       * create finalHandler as a generator method
+       * if request is for favicon , serve favicon and return
        */
-      let finalHandler = helpers.craft_final_handler(resolved_route.controller, request, response)
+      if (helpers.is_favicon_request(uri)) {
+        helpers.serve_favicon(request, response)
+        return
+      }
 
       /**
-       * return ware instance
+       * finally try to resolve url as one of the registered
+       * routes and serve if resolved.
        */
-      return Ware.run(request, response, finalHandler)
+      helpers
+      .resolve_and_return_handler(Route, uri, method)
+      .then(function (resolved_route) {
+        /**
+         * setup params property on request object
+         */
+        request.request.params = resolved_route.params
 
-    })
-    .then(function () {
-      response.end()
-    })
-    .catch(function (error) {
-      helpers.handle_http_errors(error, request, response)
-    })
-})
+        /**
+         * register middlewares to be invoked
+         */
+        helpers.register_request_middlewares(Ware, resolved_route.middlewares)
 
-/**
- * exporting Server module
- */
-let Server = exports = module.exports = {}
+        /**
+         * create finalHandler as a generator method
+         */
+        let finalHandler = helpers.craft_final_handler(resolved_route.controller, request, response)
+
+        /**
+         * return ware instance
+         */
+        return Ware.run(request, response, finalHandler)
+
+      })
+      .then(function () {
+        response.end()
+      })
+      .catch(function (error) {
+        helpers.handle_http_errors(error, request, response)
+      })
+  })
+}
 
 /**
  * stops currently running http server
  */
-Server.stop = function () {
-  serverInstance.close()
+Server.prototype.stop = function () {
+  this.serverInstance.close()
 }
 
 /**
  * start http server on a given port
  * @param  {Number} port
  */
-Server.start = function (port) {
-  Logger.info(`serving app on port ${port}`)
-  serverInstance.listen(port)
+Server.prototype.start = function (port) {
+  this.Logger.info(`serving app on port ${port}`)
+  this.serverInstance.listen(port)
 }
+
+module.exports = Server

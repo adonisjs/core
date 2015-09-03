@@ -15,14 +15,18 @@ const expect = chai.expect
 const Routes = Dispatcher.Route
 const HttpException = Dispatcher.HttpException
 const Env = Dispatcher.Env
+const Request = Dispatcher.Request
+const Logger = Dispatcher.Logger
+const View = Dispatcher.View
+const Response = Dispatcher.Response
 const Helpers = Dispatcher.Helpers
 const Namespace = Dispatcher.Namespace
 const Middlewares = Dispatcher.Middlewares
 const Static = Dispatcher.Static
-const Server = Dispatcher.Server
 const cluster = require('cluster')
 const _ = require('lodash')
 const Ioc = require('fold').Ioc
+let server = null
 
   let getData = function(data,timeout) {
     return new Promise(function(resolve, reject) {
@@ -45,11 +49,15 @@ const Ioc = require('fold').Ioc
       Helpers.load(path.join(__dirname,'./package.json'))
       let env = new Env(Helpers)
       let namespace = new Namespace(env,Helpers)
+
+      let view = new View(Helpers)
+      let response = new Response(view)
+      server = new Dispatcher.Server(Routes,Request,response,Logger)
       namespace.autoload().then(done).catch(done)
     })
 
     beforeEach(function() {
-      Server.stop();
+      server.stop();
     })
 
 
@@ -58,7 +66,7 @@ const Ioc = require('fold').Ioc
       Routes.get("/home", function*(request, response) {
         return "hello world";
       });
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .base('http://localhost:4000')
@@ -74,7 +82,7 @@ const Ioc = require('fold').Ioc
 
     it("should throw 404 when route is not found", function(done) {
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .base('http://localhost:4000')
@@ -89,7 +97,7 @@ const Ioc = require('fold').Ioc
     it("should throw 503 error when route controller syntax is not readable", function(done) {
 
       Routes.get("/foo","FooController")
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .base('http://localhost:4000')
@@ -118,7 +126,7 @@ const Ioc = require('fold').Ioc
         }
       });
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .json()
@@ -159,7 +167,7 @@ const Ioc = require('fold').Ioc
         }
       }).middlewares(["auth", "admin"]);
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .json()
@@ -194,7 +202,7 @@ const Ioc = require('fold').Ioc
         }
       }).middlewares(["auth"]);
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .header("color", "red")
@@ -214,7 +222,7 @@ const Ioc = require('fold').Ioc
 
       Static.public("dist",path.join(__dirname, "./public"));
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .base('http://localhost:4000')
@@ -232,7 +240,7 @@ const Ioc = require('fold').Ioc
     it("should serve favicon from a given path", function(done) {
 
       Static.favicon(path.join(__dirname, "./public/favicon.ico"));
-      Server.start(4000);
+      server.start(4000);
       api()
         .base('http://localhost:4000')
         .get('/favicon.ico')
@@ -258,7 +266,7 @@ const Ioc = require('fold').Ioc
         }
       ];
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .json()
@@ -288,7 +296,7 @@ const Ioc = require('fold').Ioc
         }
       ];
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .json()
@@ -319,7 +327,7 @@ const Ioc = require('fold').Ioc
         }
       ];
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .json()
@@ -341,7 +349,7 @@ const Ioc = require('fold').Ioc
       });
       Static.public("dist",path.join(__dirname, "./public"));
 
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .base('http://localhost:4000')
@@ -360,7 +368,7 @@ const Ioc = require('fold').Ioc
     it("should throw an error when unable to find static resource", function(done) {
 
       Static.public("dist",path.join(__dirname, "./public"));
-      Server.start(4000);
+      server.start(4000);
 
       api()
         .base('http://localhost:4000')

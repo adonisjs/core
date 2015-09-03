@@ -10,32 +10,25 @@
 const NodeRes = require('node-res')
 const View = require('../View/index')
 
-/**
- * extending nodeRes prototype to attach view method
- * @param  {String} template_path path to template
- * @param  {Object} data          data to pass to template
- * @return {String}               Compiled template
- */
-NodeRes.prototype.view = function (template_path, data) {
-  return new Promise(function (resolve, reject) {
-    View
-      .make(template_path, data)
-      .then(resolve)
-      .catch(reject)
-  })
-}
+function Response(View){
 
-/**
- * Response class
- * @param {Object} request
- * @param {Object} response
- * @constructor
- */
-function Response (request, response) {
-  NodeRes.call(this, request, response)
-}
+  /**
+   * extending nodeRes prototype to attach view method
+   * @param  {String} template_path path to template
+   * @param  {Object} data          data to pass to template
+   * @return {String}               Compiled template
+   */
+  NodeRes.prototype.view = function (template_path, data) {
+    return new Promise(function (resolve, reject) {
+      View
+        .make(template_path, data)
+        .then(resolve)
+        .catch(reject)
+    })
+  }
 
-Response.prototype = Object.create(NodeRes.prototype)
-Response.prototype.constructor = Response
+  return NodeRes
+
+}
 
 module.exports = Response

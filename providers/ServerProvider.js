@@ -1,11 +1,17 @@
 'use strict'
 
 const ServiceProvider = require('fold').ServiceProvider
+const Server = require('../src/Server')
 
 class ServerProvider extends ServiceProvider {
+
+  static get inject(){
+    return ["Adonis/Src/Route","Adonis/Src/Request","Adonis/Src/Response","Adonis/Src/Logger"]
+  }
+
   * register () {
-    this.app.singleton('Adonis/Src/Server', function () {
-      return require('../src/Server')
+    this.app.bind('Adonis/Src/Server', function (Route,Request,Response,Logger) {
+      return new Server(Route,Request,Response,Logger)
     })
   }
 }
