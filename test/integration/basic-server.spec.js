@@ -50,7 +50,7 @@ let server = null
       let env = new Env(Helpers)
       let namespace = new Namespace(env,Helpers)
 
-      let view = new View(Helpers)
+      let view = new View(Helpers,env)
       let response = new Response(view)
       server = new Dispatcher.Server(Routes,Request,response,Logger)
       namespace.autoload().then(done).catch(done)
