@@ -28,8 +28,12 @@ View.prototype.make = function (template_path, data) {
   let self = this
   return new Promise(function (resolve, reject) {
     self.viewsEnv.render(template_path, data, function (err, templateContent) {
-      if (err) return reject(err)
-      resolve(templateContent)
+      if (err) {
+        reject(err)
+      }
+      else{
+        resolve(templateContent)
+      }
     })
   })
 }

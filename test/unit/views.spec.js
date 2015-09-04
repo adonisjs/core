@@ -46,6 +46,17 @@ describe('Views', function () {
     }).catch(done)
   })
 
+  it('should return an error when unable to make a view', function (done) {
+
+    co(function *() {
+      return yield view.make('foo')
+    }).catch(function(errors){
+      expect(errors instanceof Error).to.equal(true)
+      done()
+    })
+
+  })
+
   it('should be able to use Ioc container bindings right inside the views', function (done) {
     class Foo {
       bar () {
