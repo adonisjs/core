@@ -55,8 +55,8 @@ RouterHelper.return_matching_route_to_url = function (routes, urlPath, verb) {
   })
   maps = maps[0] || {}
   if (maps.verb) {
-    maps.verb = verb
-  } // replace array of verbs with matched verb
+    maps.matchedVerb = verb
+  } // define which verb has been matched while resolving route
   return maps
 }
 

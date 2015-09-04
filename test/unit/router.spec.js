@@ -64,7 +64,7 @@ describe('Router', function () {
     let admin = Router.resolve('/admin', 'GET')
     expect(admin.route).to.equal('/admin')
     expect(admin.handler).to.equal('AdminController.setGet')
-    expect(admin.verb).to.equal('GET')
+    expect(admin.matchedVerb).to.equal('GET')
     done()
   })
 
@@ -80,7 +80,7 @@ describe('Router', function () {
     let foo = Router.resolve('/foo', 'PUT')
     expect(foo.route).to.equal('/foo')
     expect(foo.handler).to.equal('FooController.index')
-    expect(foo.verb).to.equal('PUT')
+    expect(foo.matchedVerb).to.equal('PUT')
   })
 
   it('should resolve registered route', function (done) {
