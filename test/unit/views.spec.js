@@ -11,6 +11,7 @@
 */
 
 const View = require('../../src/View/index')
+let Env = require('../../src/Env/index')
 const path = require('path')
 const chai = require('chai')
 const expect = chai.expect
@@ -21,12 +22,17 @@ let view = null
 const Helpers = {
   viewsPath: function () {
     return path.join(__dirname, './views')
+  },
+  basePath: function(){
+    return path.join(__dirname,'./')
   }
 }
 
+Env = new Env(Helpers)
+
 describe('Views', function () {
   before(function () {
-    view = new View(Helpers)
+    view = new View(Helpers,Env)
   })
 
   it('should compile views from a given directory ', function (done) {

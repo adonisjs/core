@@ -381,4 +381,29 @@ let server = null
 
     });
 
+
+    it("should not call send method when returned value from controller is instance of response object", function(done) {
+
+      Routes.get("/response", function*(request, response) {
+        return response.send("foo")
+      });
+
+      server.start(4000);
+
+      api()
+        .base('http://localhost:4000')
+        .get('/response')
+        .expectStatus(200)
+        .end(function(err, res, body) {
+          if (err) {
+            done(err)
+          }
+          else{
+            expect(body.trim()).to.equal('foo')
+            done()
+          }
+        })
+
+    });
+
   });

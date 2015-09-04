@@ -11,6 +11,8 @@
 */
 
 const Response = require('../../src/Response/index')
+const Route = require('../../src/Route')
+let Env = require('../../src/Env/index')
 const View = require('../../src/View/index')
 const chai = require('chai')
 const path = require('path')
@@ -22,13 +24,18 @@ const expect = chai.expect
 let Helpers = {
   viewsPath: function(){
     return path.join(__dirname,'./views')
+  },
+  basePath: function(){
+    return path.join(__dirname,'./')
   }
 }
+
+Env = new Env(Helpers)
 
 describe('Response', function () {
   it('should extend node-res prototype', function (done) {
 
-    let view = new View(Helpers)
+    let view = new View(Helpers,Env)
     let MakeResponse = new Response(view)
 
     let response = new MakeResponse({}, {})
@@ -44,7 +51,7 @@ describe('Response', function () {
 
   it("should compile a view using View class and return compiled template", function(done) {
 
-    let view = new View(Helpers)
+    let view = new View(Helpers,Env)
     let MakeResponse = new Response(view)
 
       const name = 'virk'
@@ -67,6 +74,52 @@ describe('Response', function () {
           expect(res.text.trim()).to.equal(name)
           done();
         });
+  });
+
+  it('should redirect to a given route', function (done) {
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    Route.get('/profile/:id', 'ProfileController')
+
+    var server = http.createServer(function(req, res) {
+      let response = new MakeResponse(req, res)
+      response.route('/profile/:id',{id:1})
+      response.end()
     });
+
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers.location).to.equal('/profile/1')
+        done();
+      });
+
+  })
+
+
+  it('should redirect to named route', function (done) {
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    Route.get('/about/:id', 'ProfileController').as('me')
+
+    var server = http.createServer(function(req, res) {
+      let response = new MakeResponse(req, res)
+      response.route('me',{id:1})
+      response.end()
+    });
+
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers.location).to.equal('/about/1')
+        done();
+      });
+  })
 
 })

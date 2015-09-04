@@ -11,9 +11,10 @@ const nunjucks = require('nunjucks')
 const ViewsLoader = require('./loader')
 const viewsExtensions = require('./extensions')
 
-function View (Helpers) {
+function View (Helpers,Env) {
   const viewsPath = Helpers.viewsPath()
-  this.viewsEnv = new nunjucks.Environment(new ViewsLoader(viewsPath))
+  const viewsCache = Env.get('CACHE_VIEWS')
+  this.viewsEnv = new nunjucks.Environment(new ViewsLoader(viewsPath,false,!viewsCache))
   viewsExtensions(this.viewsEnv)
 }
 

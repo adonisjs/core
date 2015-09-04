@@ -10,7 +10,7 @@
 const NodeRes = require('node-res')
 const View = require('../View/index')
 
-function Response(View){
+function Response(View,Route){
 
   /**
    * extending nodeRes prototype to attach view method
@@ -25,6 +25,11 @@ function Response(View){
         .then(resolve)
         .catch(reject)
     })
+  }
+
+  NodeRes.prototype.route = function (route,data) {
+    const toRoute = Route.url(route,data)
+    this.redirect(toRoute).send('');
   }
 
   return NodeRes
