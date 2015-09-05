@@ -268,7 +268,8 @@ Route.url = function (pattern, params) {
   let result = null
   _.each(routes, function (route) {
     if (route.name === pattern) {
-      result = helpers.compile_route_to_url(route.route, params)
+      const resolveRoute = route.subdomain ? `${route.subdomain}${route.route}` : route.route
+      result = helpers.compile_route_to_url(resolveRoute, params)
       return false
     }
   })
