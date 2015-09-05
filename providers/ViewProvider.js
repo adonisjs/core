@@ -6,12 +6,12 @@ const View = require('../src/View')
 class ViewProvider extends ServiceProvider {
 
   static get inject () {
-    return ['Adonis/Src/Helpers']
+    return ['Adonis/Src/Helpers','Adonis/Src/Env','Adonis/Src/Route']
   }
 
   * register () {
-    this.app.singleton('Adonis/Src/View', function (Helpers) {
-      return new View(Helpers)
+    this.app.singleton('Adonis/Src/View', function (Helpers,Env,Route) {
+      return new View(Helpers,Env,Route)
     })
   }
 }

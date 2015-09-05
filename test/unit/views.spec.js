@@ -11,6 +11,7 @@
 */
 
 const View = require('../../src/View/index')
+const Route = require('../../src/Route')
 let Env = require('../../src/Env/index')
 const path = require('path')
 const chai = require('chai')
@@ -32,7 +33,7 @@ Env = new Env(Helpers)
 
 describe('Views', function () {
   before(function () {
-    view = new View(Helpers,Env)
+    view = new View(Helpers,Env,Route)
   })
 
   it('should compile views from a given directory ', function (done) {
@@ -99,6 +100,19 @@ describe('Views', function () {
       return yield view.make('async')
     }).then(function (compiledView) {
       expect(compiledView.trim()).to.equal('hello')
+      done()
+    }).catch(done)
+
+  })
+
+  it('should make url using route url builder from route filter', function (done) {
+
+    Route.get('/user/profile','Profile.me').as('me')
+
+    co(function *() {
+      return yield view.make('route')
+    }).then(function (compiledView) {
+      expect(compiledView.trim()).to.equal('/user/profile')
       done()
     }).catch(done)
 
