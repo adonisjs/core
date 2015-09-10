@@ -18,7 +18,7 @@ const viewsExtensions = require('./extensions')
  */
 function View (Helpers, Env, Route) {
   const viewsPath = Helpers.viewsPath()
-  const viewsCache = Env.get('CACHE_VIEWS')
+  const viewsCache = Boolean(Env.get('CACHE_VIEWS'))
   this.viewsEnv = new nunjucks.Environment(new ViewsLoader(viewsPath, false, !viewsCache))
   viewsExtensions(this.viewsEnv)
   viewsHelpers(this.viewsEnv, Route)
