@@ -2,7 +2,7 @@
 
 /**
  * @author      - Harminder Virk
- * @package     - adonis-http-dispatcher
+ * @package     - adonis-framework
  * @description - Dispatcher for adonis framework
  */
 
