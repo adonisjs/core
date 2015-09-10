@@ -1,14 +1,11 @@
 'use strict'
 
-/*
-|--------------------------------------------------------------------------
-|  Response Tests
-|--------------------------------------------------------------------------
-|
-|  Response makes use of nodeRes , which itself is tested so there is
-|  no point testing it's expectations.
-|
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
 */
+
 
 const Response = require('../../src/Response/index')
 const Route = require('../../src/Route')

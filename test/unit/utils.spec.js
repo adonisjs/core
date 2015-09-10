@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
+
 const ServerHelpers = require('../../src/Server/helpers')
 const Helpers = require('../../src/Helpers')
 const path = require('path')

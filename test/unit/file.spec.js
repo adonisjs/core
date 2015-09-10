@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
+
 const File = require('../../src/File/index')
 const Request = require('../../src/Request/index')
 const path = require('path')

@@ -19,14 +19,18 @@ function statusCallback(result) {
 
 const Dispatcher = require("../../index"),
   Server = Dispatcher.Server,
-  Router = Dispatcher.Route
+  Router = Dispatcher.Route,
+  Request = Dispatcher.Request,
+  Response = Dispatcher.Response,
+  Logger = Dispatcher.Logger
 
+const server = new Server(Router,Request,new Response,Logger)
 
 Router.get("/", function*(request, response) {
-  response.send("passing>>>>");
+  response.send("passing>>>>")
 });
 
-Server.start(3000);
+server.start(3000);
 
 console.log("Load testing with 10,000 requests .....")
 loadtest.loadTest(options, function(error, result) {
@@ -35,5 +39,6 @@ loadtest.loadTest(options, function(error, result) {
   }
   console.log(result);
   console.log('Tests ran successfully');
-  Server.stop();
+  server.stop();
+  process.exit(0)
 });

@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
+
 const Router = require('../../src/Route/index')
 const chai = require('chai')
 const expect = chai.expect

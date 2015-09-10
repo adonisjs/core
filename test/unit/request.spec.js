@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
+
 const Request = require('../../src/Request/index')
 const RequestHelpers = require('../../src/Request/helpers')
 const supertest = require('supertest')

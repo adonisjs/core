@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
+
 const Namespace = require('../../src/Namespace/index')
 const Ioc = require('adonis-fold').Ioc
 const chai = require('chai')
