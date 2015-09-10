@@ -4,10 +4,5 @@ const exec = require('child_process').exec
 const coverage = path.normalize('./node_modules/istanbul/lib/cli.js') + ' cover ' + path.normalize('./node_modules/.bin/_mocha') + ' ' + path.normalize('test/integration/basic-server.spec.js') + ' ' + path.normalize('test/unit') + ' --colors'
 
 exec(coverage,function(error, stdout, stderr){
-  if(error){
-    console.log(error.stack)
-  }else{
-    console.log(stdout)
-    process.exit(0)
-  }
+  console.log(stdout)
 })
