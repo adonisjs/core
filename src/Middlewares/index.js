@@ -1,52 +1,70 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Middlewares stack store for adonis
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
-// importing libs
 const _ = require('lodash')
 
-// storing reference to global and named middlewares
-let global_middlewares = []
-let named_middlewares = []
+/**
+ * storing reference to global middlewares
+ * @private
+ */
+let globalMiddleware = []
 
-// exporting Middlewares
+/**
+ * storing reference to named (key/value) middlewares
+ * @private
+ */
+let namedMiddleware = []
+
+/**
+ * @module Middleware
+ * @description Stores middleware registered on a given application.
+ */
 let Middlewares = exports = module.exports = {}
 
 /**
- * clear middlewares stack
+ * @function clear
+ * @description clear middleware stack
+ * @public
  */
 Middlewares.clear = function () {
-  global_middlewares = []
-  named_middlewares = []
+  globalMiddleware = []
+  namedMiddleware = []
 }
 
 /**
- * register global middlewares to stack
- * @param  {Array} array_of_middlewares
+ * @function global
+ * @description register an array of middleware
+ * to stack as global middleware.
+ * @param  {Array} arrayOfMiddleware
  */
-Middlewares.global = function (array_of_middlewares) {
-  global_middlewares = array_of_middlewares
+Middlewares.global = function (arrayOfMiddleware) {
+  globalMiddleware = arrayOfMiddleware
 }
 
 /**
- * register named middlewares to stack
- * @param  {Object} object_of_named_middlewares
+ * @function named
+ * @description register key/value pairs of middleware
+ * to middleware stack
+ * @param  {Object} objectOfMiddleware
  */
-Middlewares.named = function (object_of_named_middlewares) {
-  named_middlewares = object_of_named_middlewares
+Middlewares.named = function (objectOfMiddleware) {
+  namedMiddleware = objectOfMiddleware
 }
 
 /**
- * returns all global and request named middlewares
+ * @function get
+ * @description returns named middleware based upon requested
+ * keys and all global middleware
  * @param  {Array} keys
  * @return {Array}
  */
 Middlewares.get = function (keys) {
-  let named = _.pick(named_middlewares, keys)
+  let named = _.pick(namedMiddleware, keys)
   named = _.size(named) > 0 ? _.values(named) : []
-  return _(global_middlewares).concat(named).value()
+  return _(globalMiddleware).concat(named).value()
 }

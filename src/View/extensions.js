@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
+
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
 
@@ -18,6 +24,7 @@ function ViewsYield () {
    * @param  {Function} nodes
    * @param  {Object} lexer
    * @return {Object}
+   * @public
    */
   this.parse = function (parser, nodes, lexer) {
     var tok = parser.nextToken()
@@ -34,6 +41,7 @@ function ViewsYield () {
    * @param  {Object}   injections
    * @param  {Function} callback
    * @return {void}
+   * @public
    */
   this.run = function (context, injections, callback) {
     var keys = Object.keys(injections)
@@ -56,5 +64,4 @@ exports = module.exports = function (env) {
   env.addExtension('yield', new ViewsYield())
   env.addGlobal('make', Ioc.make)
   env.addGlobal('use', Ioc.use)
-
 }

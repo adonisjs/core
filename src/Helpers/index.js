@@ -1,10 +1,30 @@
 'use strict'
 
-let rootPath = null
-let appPath = null
-let appNameSpace = null
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
 const path = require('path')
+
+/**
+ * application root path
+ * @private
+ */
+let rootPath = null
+
+/**
+ * path to application app directory
+ * @private
+ */
+let appPath = null
+
+/**
+ * app directory namespace
+ * @private
+ */
+let appNameSpace = null
 
 /**
  * @module Helpers
@@ -19,6 +39,7 @@ let Helpers = exports = module.exports = {}
  * and set required paths and namespace based on same.
  * @param  {String} packagePath [description]
  * @return {void}             [description]
+ * @public
  */
 Helpers.load = function (packagePath) {
   rootPath = path.dirname(packagePath)
@@ -38,6 +59,7 @@ Helpers.load = function (packagePath) {
  * @function basePath
  * @description Returns path to application root.
  * @return {String}
+ * @public
  */
 Helpers.basePath = function () {
   return rootPath
@@ -48,6 +70,7 @@ Helpers.basePath = function () {
  * @description Returns path to application folder
  * which is defined under a given namespace.
  * @return {String}
+ * @public
  */
 Helpers.appPath = function () {
   return appPath
@@ -57,6 +80,7 @@ Helpers.appPath = function () {
  * @function publicPath
  * @description Returns path to application public folder
  * @return {String}
+ * @public
  */
 Helpers.publicPath = function () {
   return path.join(rootPath, './public')
@@ -67,6 +91,7 @@ Helpers.publicPath = function () {
  * @description Returns application namespace , under which
  * app directory is registered.
  * @return {String}
+ * @public
  */
 Helpers.appNameSpace = function () {
   return appNameSpace
@@ -76,6 +101,7 @@ Helpers.appNameSpace = function () {
  * @function configPath
  * @description returns path to config directory
  * @return {String}
+ * @public
  */
 Helpers.configPath = function () {
   return path.join(rootPath, './config')
@@ -85,6 +111,7 @@ Helpers.configPath = function () {
  * @function storagePath
  * @description returns reference to storage path of application
  * @return {String}
+ * @public
  */
 Helpers.storagePath = function () {
   return path.join(rootPath, './storage')
@@ -94,6 +121,7 @@ Helpers.storagePath = function () {
  * @function resourcesPath
  * @description returns reference to resources directory
  * @return {String}
+ * @public
  */
 Helpers.resourcesPath = function () {
   return path.join(rootPath, './resources')

@@ -1,32 +1,55 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Static assets for adonis app
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
-// importing libraries
 const nodeStatic = require('node-static')
 const favicon = require('serve-favicon')
 
+/**
+ * storing instance to static favicon
+ * server
+ * @type {Object}
+ * @private
+ */
 let fileServer = null
+
+/**
+ * storing instance to faviconServer
+ * @type {Object}
+ * @private
+ */
 let faviconServer = null
+
+/**
+ * public namespace , base path to
+ * public directory
+ * @type {String}
+ */
 let publicNamespace = null
 
-// export static module
 let Static = exports = module.exports = {}
 
 /**
- * finding whether request is for static resource or not
+ * @function isStatic
+ * @description finding whether request is for static resource or not
  * @param  {String}  url
  * @return {Boolean}
+ * @public
  */
 Static.isStatic = function (url) {
   let regex = new RegExp(`^${publicNamespace}`)
   return regex.test(url)
 }
 
+/**
+ * @function clear
+ * @description removes all internal mappings
+ * @public
+ */
 Static.clear = function () {
   fileServer = null
   faviconServer = null
@@ -34,20 +57,24 @@ Static.clear = function () {
 }
 
 /**
- * replacing publicNamespace from url while serving static resources
+ * @function removePublicNamespace
+ * @description replacing publicNamespace from url while serving static resources
  * @param  {String}  url
  * @return {Boolean}
+ * @private
  */
 Static.removePublicNamespace = function (url) {
   return url.replace(publicNamespace, '')
 }
 
 /**
- * register directory as a static directory to be used
+ * @function public
+ * @description register directory as a static directory to be used
  * for serving static resources.
  * @param  {String} namespace
  * @param  {String} path_to_dir
  * @param  {Object} options
+ * @public
  */
 Static.public = function (namespace, path_to_dir, options) {
   options = options || {}
@@ -56,18 +83,22 @@ Static.public = function (namespace, path_to_dir, options) {
 }
 
 /**
- * register directory to serve favicon
+ * @function favicon
+ * @description register directory to serve favicon
  * @param  {String} path_to_favicon
+ * @public
  */
 Static.favicon = function (path_to_favicon) {
   faviconServer = favicon(path_to_favicon)
 }
 
 /**
- * serve request file from static directory
+ * @function serve
+ * @description serve request file from static directory
  * @param  {Object}   request
  * @param  {Object}   response
  * @param  {Function} cb
+ * @public
  */
 Static.serve = function (request, response, cb) {
   if (fileServer) {
@@ -81,10 +112,12 @@ Static.serve = function (request, response, cb) {
 }
 
 /**
- * serves favicon from registered path
+ * @function serveFavicon
+ * @description serves favicon from registered path
  * @param  {Object}   request
  * @param  {Object}   response
  * @param  {Function} cb
+ * @public
  */
 Static.serveFavicon = function (request, response, cb) {
   if (faviconServer) {

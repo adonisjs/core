@@ -1,19 +1,17 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-http-dispatcher
- * @description - Extends error to generate http specific errors helps in differentiating
- *               self invoked and system specific errors.
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
-/**
- * [HttpException]
- * @constructor
- */
 function HttpException () {
+  // extending error class
   Error.call(this)
+
   this.name = 'HttpException'
+
   if (arguments.length === 2) {
     this.status = arguments[0]
     this.message = arguments[1]
@@ -21,6 +19,7 @@ function HttpException () {
     this.status = 503
     this.message = arguments[0]
   }
+
 }
 
 module.exports = HttpException

@@ -1,10 +1,10 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-http-dispatcher
- * @description - Event emitter for adonis app
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
 // importing libs
 const EventEmitter2 = require('eventemitter2').EventEmitter2

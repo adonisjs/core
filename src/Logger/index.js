@@ -1,19 +1,17 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Logger for adonis framework , mostly used
- *                by core components.
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
-// requiring dependencies
 const log = require('captains-log')
 
 /**
  * adonis specific theme for captains log
- * @type {Object}
- */
+ * @private
+*/
 let loggerDefaults = {
   prefixThemes: {
     adonis: {
@@ -30,5 +28,4 @@ let loggerDefaults = {
   prefixTheme: 'adonis'
 }
 
-// exporting logger
 exports = module.exports = log(loggerDefaults)

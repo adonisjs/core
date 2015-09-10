@@ -136,7 +136,9 @@ let server = null
         .expectBody(usersToReturn)
         .end(function(err, res, body) {
           if (err) done(err)
-          else done();
+          else{
+            done();
+          }
         })
 
     });

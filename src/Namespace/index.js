@@ -1,11 +1,18 @@
 'use strict'
 
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
+
 const fold = require('adonis-fold')
 const Registerar = fold.Registerar
 
 /**
  * @module Namespace
- * @author Harminder Virk
+ * @description Makes use of fold to autoload a given
+ * directory based upon .env configuration
  */
 function Namespace (Env, Helpers) {
   this.env = Env

@@ -1,10 +1,10 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-http-dispatcher
- * @description - File class to add helpers methods on top of uploaded file
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
 const path = require('path')
 const fsExtra = require('co-fs-extra')
@@ -15,9 +15,11 @@ function File (file) {
 }
 
 /**
- * move file to a given destination inside
+ * @function move
+ * @description move file to a given destination inside
  * registered public directory
  * @param {String} toPath
+ * @public
  */
 File.prototype.move = function * (toPath, name) {
   let self = this
@@ -34,82 +36,102 @@ File.prototype.move = function * (toPath, name) {
 }
 
 /**
- * returns mime type for uploaded file
+ * @function mimeType
+ * @description returns mime type for uploaded file
  * @return {String}
+ * @public
  */
 File.prototype.mimeType = function () {
   return this.file['type']
 }
 
 /**
- * returns file extension
+ * @function extension
+ * @description returns file extension
  * @return {String}
+ * @public
  */
 File.prototype.extension = function () {
   return path.extname(this.clientName()).replace('.', '')
 }
 
 /**
- * returns client name for uploaded file
+ * @function clientName
+ * @description returns client name for uploaded file
  * @return {String}
+ * @public
  */
 File.prototype.clientName = function () {
   return this.file['name']
 }
 
 /**
- * returns client size for uploaded file
+ * @function clientSize
+ * @description returns client size for uploaded file
  * @return {String}
+ * @public
  */
 File.prototype.clientSize = function () {
   return this.file['size']
 }
 
 /**
- * returns temporary path for a given file
+ * @function tmpPath
+ * @description returns temporary path for a given file
  * @return {String}
+ * @public
  */
 File.prototype.tmpPath = function () {
   return this.file['path']
 }
 
 /**
- * returns uploaded name for file after file has
+ * @function uploadName
+ * @description returns uploaded name for file after file has
  * been moved
  * @return {String}
+ * @public
  */
 File.prototype.uploadName = function () {
   return this.file['filename']
 }
 
 /**
- * returns uploaded path for file after file has
+ * @function uploadPath
+ * @description returns uploaded path for file after file has
  * been moved
  * @return {String}
+ * @public
  */
 File.prototype.uploadPath = function () {
   return this.file['filepath']
 }
 
 /**
- * returns whether file exsits or not
+ * @function exists
+ * @description returns whether file exsits or not
  * @return {Boolean}
+ * @public
  */
 File.prototype.exists = function () {
   return !!this.tmpPath()
 }
 
 /**
- * tells whether file has been moved successfully or not
+ * @function moved
+ * @description tells whether file has been moved successfully or not
  * @return {Boolean}
+ * @public
  */
 File.prototype.moved = function () {
   return !this.errors()
 }
 
 /**
- * returns upload errors if any
+ * @function errors
+ * @description returns upload errors if any
  * @return {Object}
+ * @public
  */
 File.prototype.errors = function () {
   return this.file.error || null

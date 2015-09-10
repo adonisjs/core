@@ -1,22 +1,21 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Add glue to http res object by adding helper methods on top of it.
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
-// importing libs
 const NodeRes = require('node-res')
-const View = require('../View/index')
 
-function Response(View,Route){
-
+function Response (View, Route) {
   /**
-   * extending nodeRes prototype to attach view method
+   * @function view
+   * @description extending nodeRes prototype to attach view method
    * @param  {String} template_path path to template
    * @param  {Object} data          data to pass to template
    * @return {String}               Compiled template
+   * @public
    */
   NodeRes.prototype.view = function (template_path, data) {
     return new Promise(function (resolve, reject) {
@@ -27,9 +26,15 @@ function Response(View,Route){
     })
   }
 
-  NodeRes.prototype.route = function (route,data) {
-    const toRoute = Route.url(route,data)
-    this.redirect(toRoute).send('');
+  /**
+   * @function route
+   * @description redirect to a given route
+   * @param  {String} route
+   * @param  {Object} data
+   */
+  NodeRes.prototype.route = function (route, data) {
+    const toRoute = Route.url(route, data)
+    this.redirect(toRoute)
   }
 
   return NodeRes

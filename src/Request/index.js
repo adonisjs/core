@@ -1,10 +1,10 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Adds glue to http req object by providing convience methods
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
 const querystring = require('querystring')
 const parseurl = require('parseurl')
@@ -23,24 +23,33 @@ function Request (req) {
 }
 
 /**
- * returning query string values from request as object
+ * @function get
+ * @description returning query string values from request as object
  * @return {Object}
+ * @public
  */
 Request.prototype.get = function () {
   return querystring.parse(parseurl(this.request).query)
 }
 
 /**
- * returning route params
+ * @function params
+ * @description returning dynamic route parameters defined while
+ * defining routes
  * @return {Object}
+ * @public
  */
 Request.prototype.params = function () {
   return this.request.params || {}
 }
 
 /**
- * returning route param value based on input key
- * @return {Object}
+ * @function param
+ * @description returning route param value based on input key
+ * @param {String} key
+ * @param {*} defaultValue
+ * @return {*}
+ * @public
  */
 Request.prototype.param = function (key, defaultValue) {
   defaultValue = defaultValue || null
@@ -48,16 +57,22 @@ Request.prototype.param = function (key, defaultValue) {
 }
 
 /**
- * return post values from request as object
+ * @function post
+ * @description return post values from request as object
  * @return {Object}
+ * @public
  */
 Request.prototype.post = function () {
   return this.body
 }
 
 /**
- * return uploaded files from request
+ * @function files
+ * @description returning uploaded files via
+ * multipart/form-date , each file will be
+ * an instance of file class.
  * @return {Object}
+ * @public
  */
 Request.prototype.files = function () {
   const self = this
@@ -69,29 +84,36 @@ Request.prototype.files = function () {
 }
 
 /**
- * return uploaded file for a given key from request
+ * @function file
+ * @description return uploaded file for a given key from request
+ * @param {String} key
  * @return {Object}
+ * @public
  */
 Request.prototype.file = function (key) {
   if (!this.uploadedFiles[key]) {
-    return helpers.convert_to_file_instance({})
+    return helpers.convertToFileInstance({})
   }
   let fileToReturn = this.uploadedFiles[key].toJSON()
 
   if (_.isArray(fileToReturn)) {
     fileToReturn = _.map(fileToReturn, function (file) {
-      return helpers.convert_to_file_instance(file)
+      return helpers.convertToFileInstance(file)
     })
     return fileToReturn
   } else {
-    fileToReturn = helpers.convert_to_file_instance(fileToReturn)
+    fileToReturn = helpers.convertToFileInstance(fileToReturn)
     return fileToReturn
   }
 }
 
 /**
- * return value for a given key from all method
- * @return {Object}
+ * @function input
+ * @description return value for a given key from all method
+ * @param {String} key
+ * @param {*} defaultValue
+ * @return {*}
+ * @public
  */
 Request.prototype.input = function (key, defaultValue) {
   defaultValue = defaultValue || null
@@ -99,8 +121,10 @@ Request.prototype.input = function (key, defaultValue) {
 }
 
 /**
- * merge get and post values and return them together
+ * @function all
+ * @description merge get and post values and return them together
  * @return {Object}
+ * @public
  */
 Request.prototype.all = function () {
   let body = this.post()
@@ -109,28 +133,36 @@ Request.prototype.all = function () {
 }
 
 /**
- * return only request keys from values returned from all method
+ * @function only
+ * @description return only request keys from values returned from all method
+ * @param {...} keys
  * @return {Object}
+ * @public
  */
 Request.prototype.only = function () {
   let all = this.all()
-  return helpers.return_requested_keys_from_object(all, arguments)
+  return helpers.returnRequestKeysFromObject(all, arguments)
 }
 
 /**
- * return all values from all method except defined keys
+ * @function except
+ * @description return all values from all method except defined keys
+ * @param {...} keys
  * @return {Object}
+ * @public
  */
 Request.prototype.except = function () {
   let all = this.all()
-  return helpers.remove_requested_keys_from_object(all, arguments)
+  return helpers.removeRequestedKeysFromObject(all, arguments)
 }
 
 /**
- * returns a selected header key from headers object
+ * @function header
+ * @description returns a selected header key from headers object
  * @param  {String} key
  * @param  {*} defaultValue
  * @return {*}
+ * @public
  */
 Request.prototype.header = function (key, defaultValue) {
   defaultValue = defaultValue || null
@@ -138,32 +170,40 @@ Request.prototype.header = function (key, defaultValue) {
 }
 
 /**
- * return request headers
+ * @function headers
+ * @description return request headers
  * @return {Object}
+ * @public
  */
 Request.prototype.headers = function () {
   return this.request.headers || {}
 }
 
 /**
- * return request path
+ * @function path
+ * @description return request path
  * @return {String}
+ * @public
  */
 Request.prototype.path = function () {
   return parseurl(this.request).pathname
 }
 
 /**
- * return request method/verb
+ * @function method
+ * @description return request method/verb
  * @return {String}
+ * @public
  */
 Request.prototype.method = function () {
   return this.request.method
 }
 
 /**
- * tell whether request is ajaxed or not
+ * @function ajax
+ * @description tell whether request is ajaxed or not
  * @return {Boolean}
+ * @public
  */
 Request.prototype.ajax = function () {
   let xmlHeader = this.header('x-requested-with')
@@ -171,8 +211,10 @@ Request.prototype.ajax = function () {
 }
 
 /**
- * tell whether request is pjax or not
+ * @function pjax
+ * @description tell whether request is pjax or not
  * @return {Boolean}
+ * @public
  */
 Request.prototype.pjax = function () {
   let pjaxHeader = this.header('x-pjax')
@@ -180,34 +222,44 @@ Request.prototype.pjax = function () {
 }
 
 /**
- * return request ip address
+ * @function ip
+ * @description return request ip address
  * @return {String}
+ * @public
  */
 Request.prototype.ip = function () {
   return requestIp.getClientIp(this.request)
 }
 
 /**
- * returns best possible return type for a request
+ * @function accepts
+ * @description returns best possible return type for a request
+ * @param {...} keys
  * @return {String}
+ * @public
  */
 Request.prototype.accepts = function () {
-  return helpers.check_http_accept_field(this.request, _.toArray(arguments))
+  return helpers.checkHttpAcceptField(this.request, _.toArray(arguments))
 }
 
 /**
- * tells whether request content-type falls in required typed
- * @return {Boolean} [description]
+ * @function is
+ * @description tells whether request content-type falls in required types
+ * @param {...} keys
+ * @return {Boolean}
+ * @public
  */
 Request.prototype.is = function () {
-  return helpers.check_http_content_type(this.request, _.toArray(arguments))
+  return helpers.checkHttpContentType(this.request, _.toArray(arguments))
 }
 
 /**
- * returns cookie value corresponding to a given key
+ * @function cookie
+ * @description returns cookie value corresponding to a given key
  * @param  {String} key
  * @param  {*} defaultValue
  * @return {*}
+ * @public
  */
 Request.prototype.cookie = function (key, defaultValue) {
   defaultValue = defaultValue || null
@@ -215,8 +267,11 @@ Request.prototype.cookie = function (key, defaultValue) {
 }
 
 /**
- * return request cookies
+ * @function cookies
+ * @description return cookies attached on a given
+ * request
  * @return {Object}
+ * @public
  */
 Request.prototype.cookies = function () {
   if (!this.request.headers.cookie) {

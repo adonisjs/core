@@ -20,13 +20,16 @@ const Helpers = require('../Helpers')
 let ServerHelpers = exports = module.exports = {}
 
 /**
- * build final handler to be consumed by co-ware
+ * @function craftFinalHandler
+ * @description calls route controller method or closure and
+ * returns a generator to be find inside co-ware
  * @param  {Function} method
  * @param  {Object} request
  * @param  {Object} response
  * @return {Function}
+ * @public
  */
-ServerHelpers.craft_final_handler = function (method, request, response) {
+ServerHelpers.craftFinalHandler = function (method, request, response) {
   let returned = null
   return function *() {
     if (method.controller) {
@@ -45,22 +48,26 @@ ServerHelpers.craft_final_handler = function (method, request, response) {
 }
 
 /**
- * figure out where request is for favicon or not
+ * @function isFaviconRequest
+ * @description figure out whether request is for favicon or not
  * @param  {String}  uri
  * @return {Boolean}
+ * @public
  */
-ServerHelpers.is_favicon_request = function (uri) {
+ServerHelpers.isFaviconRequest = function (uri) {
   return uri === '/favicon.ico'
 }
 
 /**
- * resolve and return handler attached to path using Router
+ * @function resolveAndReturnHandler
+ * @description resolve and return handler attached to path using Route provider
  * @param  {Object} Router
  * @param  {String} uri
  * @param  {String} method
  * @return {Promise}
+ * @public
  */
-ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
+ServerHelpers.resolveAndReturnHandler = function (Router, uri, method) {
   let resolved_route = Router.resolve(uri, method)
 
   return new Promise(function (resolve, reject) {
@@ -80,7 +87,7 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
        *       controller method.
        */
       if (typeof (resolved_route.handler) === 'string') {
-        resolved_route.controller = ServerHelpers.namespace_to_controller_instance(resolved_route.handler)
+        resolved_route.controller = ServerHelpers.namespaceToControllerInstance(resolved_route.handler)
 
         let namespaceHandler = co.wrap(function *() {
           return yield Ioc.make(resolved_route.controller.controller)
@@ -117,12 +124,14 @@ ServerHelpers.resolve_and_return_handler = function (Router, uri, method) {
 }
 
 /**
- * parse controller method string to build proper namespace ready
+ * @function namespaceToControllerInstance
+ * @description parse controller method string to build proper namespace ready
  * to be resolved via namespace store
  * @param  {String} handler
  * @return {Object}
+ * @public
  */
-ServerHelpers.namespace_to_controller_instance = function (handler) {
+ServerHelpers.namespaceToControllerInstance = function (handler) {
   let sections = handler.split('.')
   const baseNamespace = Helpers.appNameSpace()
   const controllerNamespace = `${baseNamespace}/Http/Controllers`
@@ -136,12 +145,16 @@ ServerHelpers.namespace_to_controller_instance = function (handler) {
 }
 
 /**
- * handle errors occured during Http call , can be process errors or self thrown one's
+ * @function handleHttpErrors
+ * @description handle errors occured during Http call , emit an
+ * event if there are any listeners , otherwise make and send
+ * error using response object.
  * @param  {Object} error
  * @param  {Object} request
  * @param  {Object} response
+ * @public
  */
-ServerHelpers.handle_http_errors = function (error, request, response) {
+ServerHelpers.handleHttpErrors = function (error, request, response) {
   error.isHttpError = false
   if (error instanceof HttpException) {
     error.isHttpError = true
@@ -161,11 +174,13 @@ ServerHelpers.handle_http_errors = function (error, request, response) {
 }
 
 /**
- * register middlewares to Ware
+ * @function registerRequestMiddleware
+ * @description register middlewares to co-ware
  * @param  {Object} Ware
  * @param  {Array} named_middlewares
+ * @public
  */
-ServerHelpers.register_request_middlewares = function (Ware, named_middlewares) {
+ServerHelpers.registerRequestMiddleware = function (Ware, named_middlewares) {
   let middlewares = Middlewares.get(named_middlewares)
   _.each(middlewares, function (middleware) {
     Ware.use(middleware)
@@ -173,33 +188,39 @@ ServerHelpers.register_request_middlewares = function (Ware, named_middlewares) 
 }
 
 /**
- * finding whether request is for a static resource or not
+ * @function isStaticResource
+ * @description see whether request is for a static resource or not
  * @param  {String}  request_url
  * @return {Boolean}
+ * @public
  */
-ServerHelpers.is_static_resource = function (request_url) {
+ServerHelpers.isStaticResource = function (request_url) {
   return Static.isStatic(request_url)
 }
 
 /**
- * handle request as a static resource using Static module
+ * @function handleAsStaticResource
+ * @description handle request as a static resource using Static module
  * @param  {Object} request
  * @param  {Object} respons
+ * @public
  */
-ServerHelpers.handle_as_static_resource = function (request, response) {
+ServerHelpers.handleAsStaticResource = function (request, response) {
   request.request.url = Static.removePublicNamespace(request.request.url)
   Static.serve(request.request, response.response, function (error) {
     if (error) {
-      ServerHelpers.handle_http_errors(error, request, response)
+      ServerHelpers.handleHttpErrors(error, request, response)
     }
   })
 }
 
 /**
- * servers favicon from registered path
+ * @function serveFavicon
+ * @description servers favicon from registered path
  * @param  {Object} request
  * @param  {Object} response
+ * @public
  */
-ServerHelpers.serve_favicon = function (request, response) {
+ServerHelpers.serveFavicon = function (request, response) {
   Static.serveFavicon(request.request, response.response)
 }

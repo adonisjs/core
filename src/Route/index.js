@@ -1,61 +1,71 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-http-dispatcher
- * @description - Route for adonis app
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
-// Importing helpers
 const helpers = require('./helpers')
 const _ = require('lodash')
 
 /**
  * holding reference to registered routes
  * @type {Array}
+ * @private
  */
 let routes = []
 
 /**
  * holding reference to active Group
  * @type {String}
+ * @private
  */
 let activeGroup = null
 
 /**
  * holding reference to subdomains
  * @type {Array}
+ * @private
  */
 let subdomains = []
 
 /**
  * @module Route
+ * @description Gives ability to bind http requests to
+ * regular expression.
  */
 let Route = exports = module.exports = {}
 
 /**
- * return registered routes with application
- * @name routes
+ * @function routes
+ * @description return registered routes with application
  * @return {Object}
+ * @public
  */
 Route.routes = function () {
   return routes
 }
 
 /**
- * clear registered routes, almost like new instance of class
- * @name new
+ * @function new
+ * @description clear registered routes and other local
+ * variables
+ * @public
  */
 Route.new = function () {
+  activeGroup = null
   routes = []
+  subdomains = []
 }
 
 /**
- * register route with path,verb and handler
- * @name  route
+ * @function route
+ * @description register route with path,verb and handler
  * @param {string} route
  * @param {string} verb
  * @param {any} handler
+ * @public
  */
 Route.route = function (route, verb, handler) {
   let constructedRoute = helpers.construct(route, verb, handler, activeGroup)
@@ -63,9 +73,11 @@ Route.route = function (route, verb, handler) {
 }
 
 /**
- * register route with GET verb
+ * @function get
+ * @description register route with GET verb
  * @param  {String} route
  * @param  {Any} handler
+ * @public
  */
 Route.get = function (route, handler) {
   this.route(route, 'GET', handler)
@@ -73,9 +85,11 @@ Route.get = function (route, handler) {
 }
 
 /**
- * register route with POST verb
+ * @function post
+ * @description register route with POST verb
  * @param  {String} route
  * @param  {Any} handler
+ * @public
  */
 Route.post = function (route, handler) {
   this.route(route, 'POST', handler)
@@ -83,9 +97,11 @@ Route.post = function (route, handler) {
 }
 
 /**
- * register route with PUT verb
+ * @function put
+ * @description register route with PUT verb
  * @param  {String} route
  * @param  {Any} handler
+ * @public
  */
 Route.put = function (route, handler) {
   this.route(route, 'PUT', handler)
@@ -93,9 +109,11 @@ Route.put = function (route, handler) {
 }
 
 /**
- * register route with PATCH verb
+ * @function patch
+ * @description register route with PATCH verb
  * @param  {String} route
  * @param  {Any} handler
+ * @public
  */
 Route.patch = function (route, handler) {
   this.route(route, 'PATCH', handler)
@@ -103,9 +121,11 @@ Route.patch = function (route, handler) {
 }
 
 /**
- * register route with DELETE verb
+ * @function delete
+ * @description register route with DELETE verb
  * @param  {String} route
  * @param  {Any} handler
+ * @public
  */
 Route.delete = function (route, handler) {
   this.route(route, 'DELETE', handler)
@@ -113,11 +133,13 @@ Route.delete = function (route, handler) {
 }
 
 /**
- * register route with array of verbs
+ * @function match
+ * @description register route with array of verbs
  * passed while consuming
  * @param  {Array} verbs
  * @param  {String} route
  * @param  {Any} handler
+ * @public
  */
 Route.match = function (verbs, route, handler) {
   verbs = _.map(verbs, function (verb) { return verb.toUpperCase() })
@@ -126,10 +148,12 @@ Route.match = function (verbs, route, handler) {
 }
 
 /**
- * register route with array of verbs
+ * @function any
+ * @description register route with array of verbs
  * @param  {Array} verbs
  * @param  {String} route
  * @param  {Any} handler
+ * @public
  */
 Route.any = function (route, handler) {
   const verbs = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
@@ -138,8 +162,10 @@ Route.any = function (route, handler) {
 }
 
 /**
- * giving registered route as named route
+ * @function as
+ * @description giving registered route as named route
  * @param  {String} name route name
+ * @public
  */
 Route.as = function (name) {
   let lastRoute = _.last(routes)
@@ -150,27 +176,29 @@ Route.as = function (name) {
 }
 
 /**
- * assign array of named middlewares to route
- * @param  {Array} array_of_named_middlewares
+ * @function middlewares
+ * @description assign array of named middlewares to route
+ * @param  {Array} arrayOfNamedMiddleware
+ * @public
  */
-Route.middlewares = function (array_of_named_middlewares) {
+Route.middlewares = function (arrayOfNamedMiddleware) {
   /**
    * applying middlewares on a single route
    */
   if (!activeGroup) {
     let lastRoute = _.last(routes)
     if (lastRoute.route) {
-      lastRoute.middlewares = array_of_named_middlewares
+      lastRoute.middlewares = arrayOfNamedMiddleware
     }
     return this
   }
 
   /**
-   * applying middlewares to a group of routes
+   * applying middleware to a group of routes
    */
   routes = _.map(routes, function (route) {
     if (route.group === activeGroup) {
-      route.middlewares = array_of_named_middlewares
+      route.middlewares = arrayOfNamedMiddleware
     }
     return route
   })
@@ -180,9 +208,11 @@ Route.middlewares = function (array_of_named_middlewares) {
 }
 
 /**
- * create a new group of routes
+ * @function group
+ * @description create a new group of routes
  * @param  {String}   name
  * @param  {Function} cb
+ * @public
  */
 Route.group = function (name, cb) {
   activeGroup = name
@@ -191,15 +221,17 @@ Route.group = function (name, cb) {
 }
 
 /**
- * prefix given group of routes
+ * @function prefix
+ * @description prefix given group of routes
  * @param  {String} prefix
+ * @public
  */
 Route.prefix = function (prefix) {
   if (activeGroup) {
     routes = _.map(routes, function (route) {
       if (route.group === activeGroup) {
         route.route = prefix + route.route
-        route.pattern = helpers.make_route_pattern(route.route)
+        route.pattern = helpers.makeRoutePattern(route.route)
       }
       return route
     })
@@ -208,12 +240,14 @@ Route.prefix = function (prefix) {
 }
 
 /**
- * set subdomain for a given group of routes
+ * @function domain
+ * @description set subdomain for a given group of routes
  * @param  {String} subdomain
+ * @public
  */
 Route.domain = function (subdomain) {
   if (activeGroup) {
-    subdomains.push(helpers.make_route_pattern(subdomain))
+    subdomains.push(helpers.makeRoutePattern(subdomain))
     _.each(routes, function (route) {
       if (route.group === activeGroup) {
         route.subdomain = subdomain
@@ -224,31 +258,37 @@ Route.domain = function (subdomain) {
 }
 
 /**
- * close previously opened Route group
+ * @function close
+ * @description close previously opened Route group
+ * @public
  */
 Route.close = function () {
   activeGroup = null
 }
 
 /**
- * resolving route with given url and method
+ * @function resolve
+ * @description resolving route with given url and method
  * @param  {String} urlPath
  * @param  {String} verb
  * @return {Object}
+ * @public
  */
 Route.resolve = function (urlPath, verb, host) {
-  if (helpers.is_host_registered_as_subdomain(subdomains, host)) {
+  if (helpers.isHostRegisteredAsSubdomain(subdomains, host)) {
     urlPath = `${host}${urlPath}`
   }
-  let resolvedRoute = helpers.return_matching_route_to_url(routes, urlPath, verb)
+  let resolvedRoute = helpers.returnMatchingRouteToUrl(routes, urlPath, verb)
   if (_.size(resolvedRoute) === 0) return {}
-  return helpers.return_route_arguments(resolvedRoute, urlPath, host)
+  return helpers.returnRouteArguments(resolvedRoute, urlPath, host)
 }
 
 /**
- * creates a resource of routes based out of conventions
+ * @function resource
+ * @description creates a resource of routes based out of conventions
  * @param  {String} pattern
  * @param  {String} handler
+ * @public
  */
 Route.resource = function (pattern, handler) {
   Route.get(pattern, `${handler}.index`)
@@ -259,22 +299,24 @@ Route.resource = function (pattern, handler) {
 }
 
 /**
- * form url based on route and params
+ * @function resource
+ * @description form url based on route and params
  * @param  {String} pattern
  * @param  {Object} params
  * @return {String}
+ * @public
  */
 Route.url = function (pattern, params) {
   let result = null
   _.each(routes, function (route) {
     if (route.name === pattern) {
       const resolveRoute = route.subdomain ? `${route.subdomain}${route.route}` : route.route
-      result = helpers.compile_route_to_url(resolveRoute, params)
+      result = helpers.compileRouteToUrl(resolveRoute, params)
       return false
     }
   })
   if (!result) {
-    result = helpers.compile_route_to_url(pattern, params)
+    result = helpers.compileRouteToUrl(pattern, params)
   }
   return result
 }

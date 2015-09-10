@@ -805,33 +805,33 @@ describe('Request', function () {
   describe('Request Helpers', function () {
     it('should return selected values from an object', function () {
       const user = {username: 'foo', age: 22}
-      const filtered = RequestHelpers.return_requested_keys_from_object(user, {0: 'username'})
+      const filtered = RequestHelpers.returnRequestKeysFromObject(user, {0: 'username'})
       expect(filtered.age).to.equal(undefined)
       expect(filtered.username).to.equal(user.username)
     })
 
     it('should return null for request key value if original value does not exists', function () {
       const user = {username: 'foo', age: 22}
-      const filtered = RequestHelpers.return_requested_keys_from_object(user, {0: 'username', 1: 'email'})
+      const filtered = RequestHelpers.returnRequestKeysFromObject(user, {0: 'username', 1: 'email'})
       expect(filtered.email).to.equal(null)
     })
 
     it('should return original object back if there are no keys to be filtered', function () {
       const user = {username: 'foo', age: 22}
-      const filtered = RequestHelpers.return_requested_keys_from_object(user)
+      const filtered = RequestHelpers.returnRequestKeysFromObject(user)
       expect(filtered).to.deep.equal(user)
     })
 
     it('should remove request keys from an object and only return remaining values', function () {
       const user = {username: 'foo', age: 22}
-      const filtered = RequestHelpers.remove_requested_keys_from_object(user, ['age'])
+      const filtered = RequestHelpers.removeRequestedKeysFromObject(user, ['age'])
       expect(filtered.age).to.equal(undefined)
       expect(filtered.username).to.equal(user.username)
     })
 
     it('should return original object back if there are no keys to be removed', function () {
       const user = {username: 'foo', age: 22}
-      const filtered = RequestHelpers.remove_requested_keys_from_object(user)
+      const filtered = RequestHelpers.removeRequestedKeysFromObject(user)
       expect(filtered).to.deep.equal(user)
     })
 

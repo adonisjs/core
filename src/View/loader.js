@@ -1,6 +1,11 @@
 'use strict'
 
-// importing libs
+/**
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
+
 const nunjucks = require('nunjucks')
 const path = require('path')
 const fs = require('fs')
@@ -17,6 +22,7 @@ exports = module.exports = nunjucks.Loader.extend({
    * @param  {Boolean} noWatch Not considered
    * @param  {Boolean} noCache
    * @return {void}
+   * @public
    */
   init: function (viewsPath, noWatch, noCache) {
     this.viewsPath = path.normalize(viewsPath)
@@ -31,6 +37,7 @@ exports = module.exports = nunjucks.Loader.extend({
    * @param  {String}   name
    * @param  {Function} callback
    * @return {*}
+   * @public
    */
   getSource: function (name, callback) {
     name = path.extname(name) === '.html' ? name : `${name}.html`

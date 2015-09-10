@@ -1,10 +1,10 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-http-dispatcher
- * @description - Loads .env file into process.env for managing environment
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
 // importing libs
 const dotenv = require('dotenv')

@@ -1,27 +1,27 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Helper methods for Request class
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
-// importing libs
 const _ = require('lodash')
 const accepts = require('accepts')
 const is = require('type-is')
 const File = require('../File')
 
-// exporting helpers
 let RequestHelpers = exports = module.exports = {}
 
 /**
- * return values from object based upon requested keys
+ * @function returnRequestKeysFromObject
+ * @description return values from object based upon requested keys
  * @param  {Object} hash
  * @param  {Array} keys
  * @return {Object}
+ * @public
  */
-RequestHelpers.return_requested_keys_from_object = function (hash, keys) {
+RequestHelpers.returnRequestKeysFromObject = function (hash, keys) {
   /**
    * if there aren't any request keys , return the hash back
    */
@@ -38,12 +38,15 @@ RequestHelpers.return_requested_keys_from_object = function (hash, keys) {
 }
 
 /**
- * remove request keys from object and return remaining data
+ * @function removeRequestedKeysFromObject
+ * @description remove request keys from object and return
+ * remaining keys/values pair
  * @param  {Object} hash
  * @param  {Array} keys
  * @return {Object}
+ * @public
  */
-RequestHelpers.remove_requested_keys_from_object = function (hash, keys) {
+RequestHelpers.removeRequestedKeysFromObject = function (hash, keys) {
   if (_.size(keys) === 0) {
     return hash
   }
@@ -51,33 +54,39 @@ RequestHelpers.remove_requested_keys_from_object = function (hash, keys) {
 }
 
 /**
+ * @function checkHttpAcceptField
  * checks best possible return type for a request
  * @param  {Object} req
  * @param  {Array} types
  * @return {String}
+ * @public
  */
-RequestHelpers.check_http_accept_field = function (req, types) {
+RequestHelpers.checkHttpAcceptField = function (req, types) {
   let accept = accepts(req)
   return accept.type(types)
 }
 
 /**
- * check request content-type header
+ * @function checkHttpContentType
+ * @description check request content-type header
  * @param  {Object} req
  * @param  {Array} types
  * @return {String}
+ * @public
  */
-RequestHelpers.check_http_content_type = function (req, types) {
+RequestHelpers.checkHttpContentType = function (req, types) {
   let type = is.is(req, types)
   return _.contains(types, type)
 }
 
 /**
- * converting file object to a file instance.
+ * @function convertToFileInstance
+ * @description converting file object to a file instance.
  * @param  {Object} file
  * @return {Object}      instance of file class
+ * @public
  */
-RequestHelpers.convert_to_file_instance = function (file) {
+RequestHelpers.convertToFileInstance = function (file) {
   if (!(file instanceof File)) {
     file = new File(file)
   }

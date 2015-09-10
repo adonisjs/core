@@ -1,27 +1,27 @@
 'use strict'
 
 /**
- * @author      - Harminder Virk
- * @package     - adonis-dispatcher
- * @description - Helper methods for adonis router
- */
+ * adonis-http-dispatcher
+ * Copyright(c) 2015-2015 Harminder Virk
+ * MIT Licensed
+*/
 
-// importing libraries
 const pathToRegexp = require('path-to-regexp')
 const _ = require('lodash')
 
-// exporting Helpers
 let RouterHelper = exports = module.exports = {}
 
 /**
- * construct a new route using path-to-regexp
+ * @function construct
+ * @description construct a new route using path-to-regexp
  * @param  {String}   route
  * @param  {String}   verb
  * @param  {Any}      handler
  * @return {Object}
+ * @public
  */
 RouterHelper.construct = function (route, verb, handler, group) {
-  let pattern = RouterHelper.make_route_pattern(route)
+  let pattern = RouterHelper.makeRoutePattern(route)
   let middlewares = []
   let subdomain = null
   let name = route
@@ -31,25 +31,29 @@ RouterHelper.construct = function (route, verb, handler, group) {
 }
 
 /**
- * make regex pattern for a given route
+ * @function makeRoutePattern
+ * @description make regex pattern for a given route
  * @param  {String} route
  * @return {Regex}
+ * @public
  */
-RouterHelper.make_route_pattern = function (route) {
+RouterHelper.makeRoutePattern = function (route) {
   return pathToRegexp(route, [])
 }
 
 /**
- * resolve route from routes store based upon current url
+ * @function returnMatchingRouteToUrl
+ * @description resolve route from routes store based upon current url
  * @param  {Object} routes
  * @param  {String} url
  * @param  {String} verb
  * @return {Object}
+ * @public
  */
-RouterHelper.return_matching_route_to_url = function (routes, urlPath, verb) {
+RouterHelper.returnMatchingRouteToUrl = function (routes, urlPath, verb) {
   let maps = _.filter(routes, function (route) {
     if (route.subdomain) {
-      route.pattern = RouterHelper.make_route_pattern(route.subdomain + route.route)
+      route.pattern = RouterHelper.makeRoutePattern(route.subdomain + route.route)
     }
     return (route.pattern.test(urlPath) && _.includes(route.verb, verb))
   })
@@ -61,12 +65,13 @@ RouterHelper.return_matching_route_to_url = function (routes, urlPath, verb) {
 }
 
 /**
- * finding whether request current host is registered as a subdomain or not
+ * @function isHostRegisteredAsSubdomain
+ * @description finding whether request current host is registered as a subdomain or not
  * @param  {Array}  subdomains
  * @param  {String}  host
  * @return {Boolean}
  */
-RouterHelper.is_host_registered_as_subdomain = function (subdomains, host) {
+RouterHelper.isHostRegisteredAsSubdomain = function (subdomains, host) {
   let is_subdomain = false
   for (let x = 0; x < subdomains.length; x++) {
     let subdomain = subdomains[x]
@@ -79,12 +84,14 @@ RouterHelper.is_host_registered_as_subdomain = function (subdomains, host) {
 }
 
 /**
- * return params passed to a given resolved route
+ * @function returnRouteArguments
+ * @description return params passed to a given resolved route
  * @param  {Object} route
  * @param  {String} url
  * @return {Object}
+ * @public
  */
-RouterHelper.return_route_arguments = function (route, urlPath) {
+RouterHelper.returnRouteArguments = function (route, urlPath) {
   let extracted = route.pattern.exec(urlPath)
   route.params = {}
 
@@ -95,11 +102,13 @@ RouterHelper.return_route_arguments = function (route, urlPath) {
 }
 
 /**
- * return compiled url based on input route
+ * @function compileRouteToUrl
+ * @description return compiled url based on input route
  * @param  {String} route
  * @param  {Object} values
  * @return {String}
+ * @public
  */
-RouterHelper.compile_route_to_url = function (route, values) {
+RouterHelper.compileRouteToUrl = function (route, values) {
   return pathToRegexp.compile(route)(values)
 }
