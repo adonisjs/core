@@ -13,7 +13,7 @@ module.exports = {
   Env: require('./src/Env'),
   View: require('./src/View'),
   Server: require('./src/Server'),
-  Middlewares: require('./src/Middlewares'),
+  Middlewares: require('./src/Middleware'),
   Static: require('./src/Static'),
   Helpers : require('./src/Helpers'),
   Namespace : require('./src/Namespace'),

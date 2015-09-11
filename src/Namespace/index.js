@@ -33,7 +33,7 @@ Namespace.prototype.autoload = function () {
     const appDir = self.helpers.appPath()
     const foldNamespace = self.helpers.appNameSpace()
 
-    if (self.env.get('autoload')) {
+    if (self.env.get('AUTOLOAD')) {
       Registerar.autoload(appDir, appDir, foldNamespace).then(resolve).catch(reject)
     } else {
       resolve()
