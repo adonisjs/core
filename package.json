@@ -1,6 +1,6 @@
 {
   "name": "adonis-framework",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adonis framework a loosely coupled http server for adonis application, it does all the required hard work to setup a managable http server with depdendency injection in place.",
   "main": "index.js",
   "scripts": {
