@@ -504,6 +504,26 @@ describe('Request', function () {
       })
   })
 
+  it('should return request content type', function (done) {
+    var server = http.createServer(function (req, res) {
+      var request = new Request(req)
+      var contentType = request.header('content-type')
+      res.writeHead(200, {
+        'Content-type': 'text/plain'
+      })
+      res.end(contentType)
+    })
+
+    supertest(server)
+      .post('/')
+      .set('content-type','text/plain;charset=utf-8')
+      .end(function (err, res) {
+        if (err) throw (err)
+        expect(res.text).to.equal('text/plain')
+        done()
+      })
+  })
+
   it('should return defaultValue for a given key if it does not exists on header', function (done) {
     var server = http.createServer(function (req, res) {
       var request = new Request(req)

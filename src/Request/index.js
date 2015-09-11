@@ -12,6 +12,7 @@ const requestIp = require('request-ip')
 const _ = require('lodash')
 const helpers = require('./helpers')
 const cookie = require('cookie')
+const contentType = require('content-type')
 
 /**
  * Request class
@@ -176,6 +177,9 @@ Request.prototype.header = function (key, defaultValue) {
  * @public
  */
 Request.prototype.headers = function () {
+  if(this.request.headers && this.request.headers['content-type']){
+    this.request.headers['content-type'] = contentType.parse(this.request.headers['content-type']).type
+  }
   return this.request.headers || {}
 }
 
