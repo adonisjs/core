@@ -45,6 +45,7 @@
     "loadtest": "^1.2.11",
     "mocha": "^2.2.5",
     "nightwatch": "^0.7.11",
+    "raw-body": "^2.1.2",
     "supertest": "^1.0.1"
   }
 }

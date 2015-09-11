@@ -13,6 +13,7 @@ const formidable = require('formidable')
 const http = require('http')
 const path = require('path')
 const chai = require('chai')
+const rawBody = require('raw-body')
 const expect = chai.expect
 chai.use(require('chai-string'))
 
@@ -77,6 +78,38 @@ describe('Request', function () {
         if (err) return done(err)
         expect(res.body).to.be.an('object')
         expect(res.body.age).to.equal(22)
+        done()
+      })
+
+  })
+
+
+  it('should return raw body on request', function (done) {
+    var server = http.createServer(function (req, res) {
+      var request = new Request(req)
+
+      rawBody(request.request)
+      .then (function (buffer) {
+        request.rawBody = buffer.toString()
+        var rawBody = request.raw()
+        res.writeHead(200, {
+          'Content-type': 'text/plain'
+        })
+        res.end(rawBody)
+
+      }).catch(function (err) {
+        res.end()
+      })
+
+    })
+
+    supertest(server)
+      .get('/user')
+      .set('content-type','text/plain')
+      .send('foo')
+      .end(function (err, res) {
+        if (err) return done(err)
+        expect(res.text).to.equal('foo')
         done()
       })
 
