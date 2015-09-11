@@ -68,6 +68,16 @@ Request.prototype.post = function () {
 }
 
 /**
+ * @function post
+ * @description return request raw body
+ * @return {*}
+ * @public
+ */
+Request.prototype.raw = function () {
+  return this.rawBody
+}
+
+/**
  * @function files
  * @description returning uploaded files via
  * multipart/form-date , each file will be
