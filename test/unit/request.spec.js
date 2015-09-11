@@ -710,7 +710,7 @@ describe('Request', function () {
   it('should tell whether request accepts particular content-type or not', function (done) {
     var server = http.createServer(function (req, res) {
       var request = new Request(req)
-      var type = request.is('json')
+      var type = !!request.is('json')
 
       res.writeHead(200, {
         'Content-type': 'text/plain'
@@ -731,7 +731,7 @@ describe('Request', function () {
   it('should tell whether request accepts particular content-type or not when multiple types have been checked', function (done) {
     var server = http.createServer(function (req, res) {
       var request = new Request(req)
-      var type = request.is('json', 'html')
+      var type = !!request.is('json', 'html')
 
       res.writeHead(200, {
         'Content-type': 'text/plain'
@@ -742,6 +742,28 @@ describe('Request', function () {
     supertest(server)
       .get('/')
       .type('application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.text).to.equal('true')
+        done()
+      })
+  })
+
+
+  it('should tell whether request accepts particular content-type or not when using wildcards', function (done) {
+    var server = http.createServer(function (req, res) {
+      var request = new Request(req)
+      var type = !!request.is('text/*')
+
+      res.writeHead(200, {
+        'Content-type': 'text/plain'
+      })
+      res.end(type.toString())
+    })
+
+    supertest(server)
+      .get('/')
+      .type('text/plain')
       .end(function (err, res) {
         if (err) done(err)
         expect(res.text).to.equal('true')

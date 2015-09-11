@@ -75,8 +75,7 @@ RequestHelpers.checkHttpAcceptField = function (req, types) {
  * @public
  */
 RequestHelpers.checkHttpContentType = function (req, types) {
-  let type = is.is(req, types)
-  return _.contains(types, type)
+  return is.is(req, types)
 }
 
 /**
