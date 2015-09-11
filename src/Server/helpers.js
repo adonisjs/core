@@ -6,7 +6,7 @@
  * @description - Helper methods for adonis server
  */
 
-const Middlewares = require('../Middlewares')
+const Middleware = require('../Middleware')
 const Static = require('../Static')
 const App = require('../App')
 const Ioc = require('adonis-fold').Ioc
@@ -203,14 +203,14 @@ ServerHelpers.handleHttpErrors = function (error, request, response) {
 
 /**
  * @function registerRequestMiddleware
- * @description register middlewares to co-ware
+ * @description register Middleware to co-ware
  * @param  {Object} Ware
- * @param  {Array} named_middlewares
+ * @param  {Array} named_Middleware
  * @public
  */
-ServerHelpers.registerRequestMiddleware = function (Ware, named_middlewares) {
-  let middlewares = Middlewares.get(named_middlewares)
-  _.each(middlewares, function (middleware) {
+ServerHelpers.registerRequestMiddleware = function (Ware, namedMiddleware) {
+  let registerMiddleware = Middleware.get(namedMiddleware)
+  _.each(registerMiddleware, function (middleware) {
     Ware.use(middleware)
   })
 }

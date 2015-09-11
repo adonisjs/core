@@ -6,7 +6,7 @@
  * MIT Licensed
 */
 
-const Middlewares = require('../../src/Middlewares/index')
+const Middlewares = require('../../src/Middleware/index')
 const chai = require('chai')
 const expect = chai.expect
 
