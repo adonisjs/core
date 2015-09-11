@@ -32,8 +32,8 @@ let ServerHelpers = exports = module.exports = {}
 ServerHelpers.craftFinalHandler = function (method, request, response) {
   let returned = null
   return function *() {
-    if (method.controller) {
-      returned = yield method.action.call(method.controller, request, response)
+    if (method.instance) {
+      returned = yield method.action.call(method.instance, request, response)
     } else {
       returned = yield method.action(request, response)
     }
@@ -87,16 +87,42 @@ ServerHelpers.resolveAndReturnHandler = function (Router, uri, method) {
        *       controller method.
        */
       if (typeof (resolved_route.handler) === 'string') {
-        resolved_route.controller = ServerHelpers.namespaceToControllerInstance(resolved_route.handler)
 
+        const controllerNamespace = ServerHelpers.namespaceToControllerInstance(resolved_route.handler)
+
+        /**
+         * here we make sure that if controller has been resolved out of Ioc container
+         * we should not re-resolve it and use the old instance , if same request
+         * is coming again. It works only if same controller is called in
+         * sequence by multiple requests.
+         */
+        if(resolved_route.controller && resolved_route.controller.resolved && resolved_route.controller.namespace === controllerNamespace.namespace){
+
+          resolved_route.controller.action = controllerNamespace.action
+          if(!resolved_route.controller.instance[resolved_route.controller.action]){
+            reject(new Error(`method ${resolved_route.controller.action} does not exists on ${resolved_route.controller.namespace}`))
+          }
+          resolved_route.controller.action = resolved_route.controller.instance[resolved_route.controller.action]
+          resolve(resolved_route)
+          return
+        }
+
+        /**
+         * here we do not have the old instance of controller so better get it from IOC container
+         */
+        resolved_route.controller = controllerNamespace
         let namespaceHandler = co.wrap(function *() {
-          return yield Ioc.make(resolved_route.controller.controller)
+          return yield Ioc.make(resolved_route.controller.namespace)
         })
 
         namespaceHandler()
           .then(function (controller_instance) {
-            resolved_route.controller.controller = controller_instance
-            resolved_route.controller.action = resolved_route.controller.controller[resolved_route.controller.action]
+            resolved_route.controller.instance = controller_instance
+            if(!resolved_route.controller.instance[resolved_route.controller.action]){
+              reject(new Error(`method ${resolved_route.controller.action} does not exists on ${resolved_route.controller.namespace}`))
+            }
+            resolved_route.controller.action = resolved_route.controller.instance[resolved_route.controller.action]
+            resolved_route.controller.resolved = true
             resolve(resolved_route)
           })
           .catch(function (error) {
@@ -138,10 +164,10 @@ ServerHelpers.namespaceToControllerInstance = function (handler) {
   if (sections.length !== 2) {
     throw new HttpException(503, `${handler} is not a readable controller action`)
   }
-  let controller = sections[0].replace(controllerNamespace, '')
-  controller = `${controllerNamespace}/${controller}`.replace(/\/\//g, '/')
+  let namespace = sections[0].replace(controllerNamespace, '')
+  namespace = `${controllerNamespace}/${namespace}`.replace(/\/\//g, '/')
   const action = sections[1]
-  return {controller, action}
+  return {namespace, action}
 }
 
 /**
@@ -159,8 +185,10 @@ ServerHelpers.handleHttpErrors = function (error, request, response) {
   if (error instanceof HttpException) {
     error.isHttpError = true
   }
+
   // counting app listeners
   let listeners = App.listeners('error').length
+
 
   if (listeners > 0) {
     App.emit('error', error, request, response)

@@ -18,30 +18,30 @@ describe('Utils', function () {
 
     let parsed = ServerHelpers.namespaceToControllerInstance('HomeController.index')
     expect(parsed).to.be.an('object')
-    expect(parsed).to.have.property('controller')
+    expect(parsed).to.have.property('namespace')
     expect(parsed).to.have.property('action')
     expect(parsed.action).to.equal('index')
-    expect(parsed.controller).to.equal('App/Http/Controllers/HomeController')
+    expect(parsed.namespace).to.equal('App/Http/Controllers/HomeController')
 
   })
 
   it('should parse pre namespaced controller method string', function () {
     let parsed = ServerHelpers.namespaceToControllerInstance('App/Http/Controllers/HomeController.index')
     expect(parsed).to.be.an('object')
-    expect(parsed).to.have.property('controller')
+    expect(parsed).to.have.property('namespace')
     expect(parsed).to.have.property('action')
     expect(parsed.action).to.equal('index')
-    expect(parsed.controller).to.equal('App/Http/Controllers/HomeController')
+    expect(parsed.namespace).to.equal('App/Http/Controllers/HomeController')
 
   })
 
   it('should parse nested controller with dot convention', function () {
     let parsed = ServerHelpers.namespaceToControllerInstance('User/HomeController.index')
     expect(parsed).to.be.an('object')
-    expect(parsed).to.have.property('controller')
+    expect(parsed).to.have.property('namespace')
     expect(parsed).to.have.property('action')
     expect(parsed.action).to.equal('index')
-    expect(parsed.controller).to.equal('App/Http/Controllers/User/HomeController')
+    expect(parsed.namespace).to.equal('App/Http/Controllers/User/HomeController')
 
   })
 
