@@ -82,8 +82,10 @@ Helpers.appPath = function () {
  * @return {String}
  * @public
  */
-Helpers.publicPath = function () {
-  return path.join(rootPath, './public')
+Helpers.publicPath = function (toFile) {
+  const configDir = './public'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${configDir}/${toFile}` : configDir
+  return Helpers._makePath(rootPath,incrementalPath)
 }
 
 /**
@@ -103,8 +105,10 @@ Helpers.appNameSpace = function () {
  * @return {String}
  * @public
  */
-Helpers.configPath = function () {
-  return path.join(rootPath, './config')
+Helpers.configPath = function (toFile) {
+  const configDir = './config'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${configDir}/${toFile}` : configDir
+  return Helpers._makePath(rootPath,incrementalPath)
 }
 
 /**
@@ -113,8 +117,10 @@ Helpers.configPath = function () {
  * @return {String}
  * @public
  */
-Helpers.storagePath = function () {
-  return path.join(rootPath, './storage')
+Helpers.storagePath = function (toFile) {
+  const configDir = './storage'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${configDir}/${toFile}` : configDir
+  return Helpers._makePath(rootPath,incrementalPath)
 }
 
 /**
@@ -123,8 +129,10 @@ Helpers.storagePath = function () {
  * @return {String}
  * @public
  */
-Helpers.resourcesPath = function () {
-  return path.join(rootPath, './resources')
+Helpers.resourcesPath = function (toFile) {
+  const configDir = './resources'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${configDir}/${toFile}` : configDir
+  return Helpers._makePath(rootPath,incrementalPath)
 }
 
 /**
@@ -133,5 +141,10 @@ Helpers.resourcesPath = function () {
  * @return {String}
  */
 Helpers.viewsPath = function () {
-  return path.join(rootPath, './resources/views')
+  return Helpers.resourcesPath('views')
+}
+
+
+Helpers._makePath = function (base,incremental) {
+  return path.join(base,incremental)
 }

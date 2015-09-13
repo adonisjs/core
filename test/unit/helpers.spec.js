@@ -38,12 +38,20 @@ describe('Helpers', function () {
     expect(Helpers.publicPath()).to.equal(path.join(__dirname, './helpers/public'))
   })
 
+  it('should return path to defined file inside application public directory', function () {
+    expect(Helpers.publicPath('style.css')).to.equal(path.join(__dirname, './helpers/public/style.css'))
+  })
+
   it('should return path to application app directory', function () {
     expect(Helpers.appPath()).to.equal(path.join(__dirname, './helpers/app'))
   })
 
   it('should return path to application storage directory', function () {
     expect(Helpers.storagePath()).to.equal(path.join(__dirname, './helpers/storage'))
+  })
+
+  it('should return path to define file inside application storage directory', function () {
+    expect(Helpers.storagePath('database.sqlite')).to.equal(path.join(__dirname, './helpers/storage/database.sqlite'))
   })
 
   it('should return path to application views directory', function () {
@@ -54,8 +62,16 @@ describe('Helpers', function () {
     expect(Helpers.resourcesPath()).to.equal(path.join(__dirname, './helpers/resources'))
   })
 
+  it('should return path to file defined inside application resources directory', function () {
+    expect(Helpers.resourcesPath('views')).to.equal(path.join(__dirname, './helpers/resources/views'))
+  })
+
   it('should return path to application config directory', function () {
     expect(Helpers.configPath()).to.equal(path.join(__dirname, './helpers/config'))
+  })
+
+  it('should return path to defined file inside application config directory', function () {
+    expect(Helpers.configPath('database.js')).to.equal(path.join(__dirname, './helpers/config/database.js'))
   })
 
   it('should return application namespace', function () {
