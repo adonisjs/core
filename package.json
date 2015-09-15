@@ -4,9 +4,9 @@
   "description": "Adonis framework a loosely coupled http server for adonis application, it does all the required hard work to setup a managable http server with depdendency injection in place.",
   "main": "index.js",
   "scripts": {
-    "test": "iojs maketest",
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test/integration test/unit && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "selenium": "iojs makeselenium",
-    "coverage": "iojs makecoverage"
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test/integration test/unit && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "author": "adonisjs",
   "license": "ISC",
@@ -39,11 +39,13 @@
     "adonis-fold": "^1.0.0",
     "chai": "^3.2.0",
     "chai-string": "^1.1.2",
+    "coveralls": "^2.11.4",
     "formidable": "^1.0.17",
     "hippie": "^0.3.0",
     "istanbul": "^0.3.18",
     "loadtest": "^1.2.11",
     "mocha": "^2.2.5",
+    "mocha-lcov-reporter": "0.0.2",
     "nightwatch": "^0.7.11",
     "raw-body": "^2.1.2",
     "supertest": "^1.0.1"
