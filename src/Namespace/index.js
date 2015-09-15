@@ -7,7 +7,7 @@
 */
 
 const fold = require('adonis-fold')
-const Registerar = fold.Registerar
+const Ioc = fold.Ioc
 
 /**
  * @module Namespace
@@ -20,25 +20,14 @@ function Namespace (Env, Helpers) {
 }
 
 /**
- * @function register
- * @description registers autoloading config to process.env
- * and autoloads given directory under a defined namespace
- * @param  {Object} packageFile
- * @return {void}
+ * @function autoload
+ * @description register appNameSpace and dir to
+  Ioc container
  */
 Namespace.prototype.autoload = function () {
-  const self = this
-
-  return new Promise(function (resolve, reject) {
-    const appDir = self.helpers.appPath()
-    const foldNamespace = self.helpers.appNameSpace()
-
-    if (self.env.get('AUTOLOAD')) {
-      Registerar.autoload(appDir, appDir, foldNamespace).then(resolve).catch(reject)
-    } else {
-      resolve()
-    }
-  })
+  const appDir = this.helpers.appPath()
+  const foldNamespace = this.helpers.appNameSpace()
+  Ioc.dumpSettings(appDir,foldNamespace)
 }
 
 module.exports = Namespace
