@@ -7,7 +7,6 @@
 */
 
 const ServiceProvider = require('adonis-fold').ServiceProvider
-const View = require('../src/View')
 
 class ViewProvider extends ServiceProvider {
 
@@ -26,6 +25,7 @@ class ViewProvider extends ServiceProvider {
   */
   * register () {
     this.app.singleton('Adonis/Src/View', function (Helpers,Env,Route) {
+      const View = require('../src/View')
       return new View(Helpers,Env,Route)
     })
   }

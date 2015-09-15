@@ -7,7 +7,6 @@
 */
 
 const ServiceProvider = require('adonis-fold').ServiceProvider
-const Server = require('../src/Server')
 
 class ServerProvider extends ServiceProvider {
 
@@ -26,6 +25,7 @@ class ServerProvider extends ServiceProvider {
   */
   * register () {
     this.app.bind('Adonis/Src/Server', function (Route,Request,Response,Logger) {
+      const Server = require('../src/Server')
       return new Server(Route,Request,Response,Logger)
     })
   }

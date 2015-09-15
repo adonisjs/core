@@ -7,7 +7,6 @@
 */
 
 const ServiceProvider = require('adonis-fold').ServiceProvider
-const Response = require('../src/Response')
 
 class ResponseProvider extends ServiceProvider {
 
@@ -26,6 +25,7 @@ class ResponseProvider extends ServiceProvider {
   */
   * register () {
     this.app.singleton('Adonis/Src/Response', function (View) {
+      const Response = require('../src/Response')
       return new Response(View)
     })
   }

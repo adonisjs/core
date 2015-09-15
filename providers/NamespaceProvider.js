@@ -7,7 +7,6 @@
 */
 
 const ServiceProvider = require('adonis-fold').ServiceProvider
-const Namespace = require('../src/Namespace')
 
 class NamespaceProvider extends ServiceProvider {
 
@@ -26,6 +25,7 @@ class NamespaceProvider extends ServiceProvider {
   */
   * register () {
     this.app.singleton('Adonis/Src/Namespace', function (Env, Helpers) {
+      const Namespace = require('../src/Namespace')
       return new Namespace(Env, Helpers)
     })
   }

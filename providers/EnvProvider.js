@@ -7,7 +7,6 @@
 */
 
 const ServiceProvider = require('adonis-fold').ServiceProvider
-const Env = require('../src/Env')
 
 class EnvProvider extends ServiceProvider {
 
@@ -26,6 +25,7 @@ class EnvProvider extends ServiceProvider {
    */
   * register () {
     this.app.singleton('Adonis/Src/Env', function (Helpers) {
+      const Env = require('../src/Env')
       return new Env(Helpers)
     })
   }
