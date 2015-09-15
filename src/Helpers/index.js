@@ -37,8 +37,8 @@ let Helpers = exports = module.exports = {}
  * @function load
  * @description loads package.json file from application
  * and set required paths and namespace based on same.
- * @param  {String} packagePath [description]
- * @return {void}             [description]
+ * @param  {String} packagePath
+ * @return {void}
  * @public
  */
 Helpers.load = function (packagePath) {
@@ -83,8 +83,8 @@ Helpers.appPath = function () {
  * @public
  */
 Helpers.publicPath = function (toFile) {
-  const configDir = './public'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${configDir}/${toFile}` : configDir
+  const toDir = './public'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
   return Helpers._makePath(rootPath,incrementalPath)
 }
 
@@ -106,8 +106,8 @@ Helpers.appNameSpace = function () {
  * @public
  */
 Helpers.configPath = function (toFile) {
-  const configDir = './config'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${configDir}/${toFile}` : configDir
+  const toDir = './config'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
   return Helpers._makePath(rootPath,incrementalPath)
 }
 
@@ -118,8 +118,8 @@ Helpers.configPath = function (toFile) {
  * @public
  */
 Helpers.storagePath = function (toFile) {
-  const configDir = './storage'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${configDir}/${toFile}` : configDir
+  const toDir = './storage'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
   return Helpers._makePath(rootPath,incrementalPath)
 }
 
@@ -130,8 +130,20 @@ Helpers.storagePath = function (toFile) {
  * @public
  */
 Helpers.resourcesPath = function (toFile) {
-  const configDir = './resources'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${configDir}/${toFile}` : configDir
+  const toDir = './resources'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
+  return Helpers._makePath(rootPath,incrementalPath)
+}
+
+/**
+ * @function migrationsPath
+ * @description returns path to migrations directory
+ * @param  {String} toFile
+ * @return {Strings}
+ */
+Helpers.migrationsPath = function (toFile) {
+  const toDir = './migrations'
+  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
   return Helpers._makePath(rootPath,incrementalPath)
 }
 
