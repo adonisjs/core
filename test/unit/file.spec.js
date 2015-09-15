@@ -29,10 +29,13 @@ let dummyFileObject = {
 }
 
 describe('Files', function () {
+
   beforeEach(function (done) {
     co(function * () {
-      return yield fse.emptyDir(path.join(__dirname, './uploads'))
-    }).then(done).catch(done)
+      return yield [fse.emptyDir(path.join(__dirname, './uploads')),fse.ensureDir(path.join(__dirname, './uploads'))]
+    }).then(function () {
+      done()
+    }).catch(done)
   })
 
   it('should return mimtype for a given file', function () {
