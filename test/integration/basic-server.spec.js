@@ -53,7 +53,10 @@ let server = null
       let view = new View(Helpers,env)
       let response = new Response(view)
       server = new Dispatcher.Server(Routes,Request,response,Logger)
-      namespace.autoload().then(done).catch(done)
+      namespace.autoload()
+
+      done()
+
     })
 
     beforeEach(function() {

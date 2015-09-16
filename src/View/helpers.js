@@ -12,15 +12,15 @@ module.exports = function (env, Route) {
    * adds route filter and makes use of route to build
    * dynamic routes out of the box
    */
-  env.addFilter('route', function (val) {
-    return Route.url(val)
+  env.addFilter('route', function (val, options) {
+    return Route.url(val, options)
   })
 
   /**
    * output input as json
    */
   env.addFilter('json', function (val) {
-    JSON.stringify(va)
+    JSON.stringify(val)
   })
 
 }

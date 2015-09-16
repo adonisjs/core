@@ -27,7 +27,7 @@ describe('Namespace', function () {
     done()
   })
 
-  it('should not autoload a given directory when autoloading is disabled inside env', function (done) {
+  it('should register app namespace and autoload directory with Ioc container', function () {
     let Env = {
       get: function () {
         return false
@@ -35,36 +35,8 @@ describe('Namespace', function () {
     }
 
     let namespace = new Namespace(Env, Helpers)
-
-    namespace
-      .autoload(path.join(__dirname, './namespace/package.json'))
-      .then(function (response) {
-        let fn = function () {
-          return Ioc.use('App/text')
-        }
-        expect(fn).to.throw(Error)
-        done()
-      })
-      .catch(done)
-
-  })
-
-  it('should autoload a given directory when autoloading is enabled inside env', function (done) {
-    let Env = {
-      get: function () {
-        return true
-      }
-    }
-
-    let namespace = new Namespace(Env, Helpers)
-
-    namespace
-      .autoload(path.join(__dirname, './namespace/package.json'))
-      .then(function (response) {
-        expect(Ioc.use('App/text')).to.equal('text')
-        done()
-      })
-      .catch(done)
+    namespace.autoload()
+    expect(Ioc.use('App/text')).to.equal('text')
 
   })
 
