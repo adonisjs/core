@@ -6,20 +6,41 @@
  * MIT Licensed
 */
 
-function HttpException () {
-  // extending error class
-  Error.call(this)
 
-  this.name = 'HttpException'
+class HttpException extends Error{
 
-  if (arguments.length === 2) {
-    this.status = arguments[0]
-    this.message = arguments[1]
-  } else {
-    this.status = 503
-    this.message = arguments[0]
+  constructor() {
+
+    let message = null
+    let status = 503
+
+    if(arguments.length === 2){
+      status = arguments[0]
+      message = arguments[1]
+    }else{
+      message = arguments[0]
+    }
+
+    super(message)
+
+    this.status = status
+
+    Object.defineProperty(this, 'name', {
+      enumerable : false,
+      value : this.constructor.name,
+    });
+
+    if (Error.hasOwnProperty('captureStackTrace')) {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      Object.defineProperty(this, 'stack', {
+        enumerable : false,
+        value : (new Error(message)).stack,
+      });
+    }
   }
 
 }
+
 
 module.exports = HttpException
