@@ -261,36 +261,11 @@ describe('Response', function () {
       .get("/")
       .end(function(err, res) {
         if (err) throw (err);
-        expect(res.headers['set-cookie']).to.equal(undefined)
+        expect(res.headers['set-cookie']).deep.equal(['foo=; Expires=Thu, 01 Jan 1970 00:00:00 GMT'])
         done();
       });
 
   })
-
-
-  it('should not throw error when deleting non-existing cookie', function (done) {
-
-    let view = new View(Helpers,Env)
-    let MakeResponse = new Response(view,Route)
-
-    var server = http.createServer(function (req, res) {
-
-      let response = new MakeResponse(req,res);
-      response.clearCookie('foo')
-      response.send('')
-      response.end()
-    })
-
-    supertest(server)
-      .get("/")
-      .end(function(err, res) {
-        if (err) throw (err);
-        expect(res.headers['set-cookie']).to.equal(undefined)
-        done();
-      });
-
-  })
-
 
   it('should encrypt and sign cookies', function (done) {
 
