@@ -69,8 +69,9 @@ function Response (View, Route) {
    * @return {Object}
    */
   NodeRes.prototype.send = function (value){
-    console.log(this._cookies)
-    Cookies.attachObject(this.response,this._cookies)
+    if(this._cookies){
+      Cookies.attachObject(this.response,this._cookies)
+    }
     this._send(value)
     return this
   }
