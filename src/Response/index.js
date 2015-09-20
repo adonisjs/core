@@ -13,8 +13,6 @@ NodeRes.prototype._send = NodeRes.prototype.send
 
 function Response (View, Route) {
 
-  NodeRes.prototype._cookies = {}
-
   /**
    * @function view
    * @description extending nodeRes prototype to attach view method
@@ -41,6 +39,9 @@ function Response (View, Route) {
    * @return {Object} reference to this for chaining
    */
   NodeRes.prototype.cookie = function (key, value, options) {
+    if(!this._cookies){
+      this._cookies = {}
+    }
     if(!key || !value){
       throw new Error('key and value is required to set cookie on request')
     }
@@ -68,6 +69,7 @@ function Response (View, Route) {
    * @return {Object}
    */
   NodeRes.prototype.send = function (value){
+    console.log(this._cookies)
     Cookies.attachObject(this.response,this._cookies)
     this._send(value)
     return this
