@@ -8,6 +8,7 @@
 
 
 const Response = require('../../src/Response/index')
+const Request = require('../../src/Request/index')
 const Route = require('../../src/Route')
 let Env = require('../../src/Env/index')
 const View = require('../../src/View/index')
@@ -143,7 +144,7 @@ describe('Response', function () {
 
   })
 
-  it('should attach multiple cookies from object to request response', function (done) {
+  it('should attach multiple cookies when using cookie method multiple times', function (done) {
 
     let view = new View(Helpers,Env)
     let MakeResponse = new Response(view,Route)
@@ -151,7 +152,8 @@ describe('Response', function () {
     var server = http.createServer(function (req, res) {
 
       let response = new MakeResponse(req,res);
-      response.cookie({foo:'bar',baz:'baz'})
+      response.cookie('foo','bar')
+      response.cookie('baz','baz')
       response.send('')
       response.end()
     })
@@ -161,6 +163,203 @@ describe('Response', function () {
       .end(function(err, res) {
         if (err) throw (err);
         expect(res.headers['set-cookie']).deep.equal(['foo=bar','baz=baz'])
+        done();
+      });
+
+  })
+
+
+  it('should set domain for cookie', function (done) {
+
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    var server = http.createServer(function (req, res) {
+
+      let response = new MakeResponse(req,res);
+      response.cookie('foo','bar',{domain: 'http://adonisjs.com'})
+      response.send('')
+      response.end()
+    })
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers['set-cookie']).deep.equal(['foo=bar; Domain=http://adonisjs.com'])
+        done();
+      });
+
+  })
+
+
+  it('should set options for multiple cookies', function (done) {
+
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    var server = http.createServer(function (req, res) {
+
+      let response = new MakeResponse(req,res);
+      response.cookie('foo','bar',{path: '/foo'})
+      response.cookie('baz','baz',{path: '/foo'})
+      response.send('')
+      response.end()
+    })
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers['set-cookie']).deep.equal(['foo=bar; Path=/foo','baz=baz; Path=/foo'])
+        done();
+      });
+
+  })
+
+
+  it('should overide existing cookie when passed new value', function (done) {
+
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    var server = http.createServer(function (req, res) {
+
+      let response = new MakeResponse(req,res);
+      response.cookie('foo','bar')
+      response.cookie('foo','baz')
+      response.send('')
+      response.end()
+    })
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers['set-cookie']).deep.equal(['foo=baz'])
+        done();
+      });
+
+  })
+
+
+  it('should clear cookie from response', function (done) {
+
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    var server = http.createServer(function (req, res) {
+
+      let response = new MakeResponse(req,res);
+      response.cookie('foo','bar')
+      response.clearCookie('foo')
+      response.send('')
+      response.end()
+    })
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers['set-cookie']).to.equal(undefined)
+        done();
+      });
+
+  })
+
+
+  it('should not throw error when deleting non-existing cookie', function (done) {
+
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    var server = http.createServer(function (req, res) {
+
+      let response = new MakeResponse(req,res);
+      response.clearCookie('foo')
+      response.send('')
+      response.end()
+    })
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers['set-cookie']).to.equal(undefined)
+        done();
+      });
+
+  })
+
+
+  it('should encrypt and sign cookies', function (done) {
+
+    process.env.APP_KEY = '12192102002201921021AABB'
+
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    var server = http.createServer(function (req, res) {
+
+      let response = new MakeResponse(req,res);
+      response.cookie('foo','bar')
+      response.send('')
+      response.end()
+
+    })
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        console.log(res.headers['set-cookie'])
+        expect(res.headers['set-cookie']).to.match(/foo=.*/g)
+        done();
+      });
+
+  })
+
+
+  it('should decrypt and unsign signed cookies', function (done) {
+
+    process.env.APP_KEY = '12192102002201921021AABB'
+
+    var server = http.createServer(function (req, res) {
+
+      var request = new Request(req)
+      const cookie = request.cookie('foo')
+      res.end(cookie)
+    })
+
+    supertest(server)
+      .get("/")
+      .set('Cookie', ['foo=BsMYi0teP2BEA%2FJoBjiveg%3D%3D.NU993JsT1wbYT4sdKw6YS6UceaO5tM3wdGqrrZ9O7OI'])
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text).to.equal('bar')
+        done();
+      });
+
+  })
+
+
+  it('should return false when cookies have been tampered', function (done) {
+
+    process.env.APP_KEY = '12192102002201921021AABB'
+
+    var server = http.createServer(function (req, res) {
+
+      var request = new Request(req)
+      const cookie = request.cookie('foo')
+      res.end(cookie)
+    })
+
+    supertest(server)
+      .get("/")
+      .set('Cookie', ['foo=BsMYi0teP2BEA%2FJoBJiveg%3D%3D.NU993JsT1wbYT4sdKw6YS6UceaO5tM3wdGqrrZ9O7OI'])
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.text).to.equal('')
         done();
       });
 

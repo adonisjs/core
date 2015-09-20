@@ -9,7 +9,11 @@
 const NodeRes = require('node-res')
 const Cookies = require('../Cookies')
 
+NodeRes.prototype._send = NodeRes.prototype.send
+
 function Response (View, Route) {
+
+  NodeRes.prototype._cookies = {}
 
   /**
    * @function view
@@ -30,21 +34,43 @@ function Response (View, Route) {
 
 
   /**
-   * attaches cookie to response
+   * @function cookie
+   * @description attaches cookie to response
    * @param  {String} key
    * @param  {*} value
    * @return {Object} reference to this for chaining
    */
-  NodeRes.prototype.cookie = function (key,value) {
-    if((key && !value && typeof(key) !== 'object') || (!key && !value)){
-      throw new Error('Pass key , value pair or an object to attach cookies to response')
+  NodeRes.prototype.cookie = function (key, value, options) {
+    if(!key || !value){
+      throw new Error('key and value is required to set cookie on request')
     }
-    if(key && !value){
-      Cookies.attachObject(this.response,key);
-    }else{
-      Cookies.attach(this.response,key,value)
-    }
+    this._cookies[key] = {key:key,options:options,value:value}
     return this;
+  }
+
+
+  /**
+   * @function clearCookie
+   * @description clears cookie from cookies array
+   * @param  {String} key
+   * @return {Object}
+   */
+  NodeRes.prototype.clearCookie = function (key) {
+    delete this._cookies[key]
+    return this
+  }
+
+  /**
+   * @function send
+   * @description overrides actual node-res send method to
+   * attach cookies while sending response
+   * @param  {*} value
+   * @return {Object}
+   */
+  NodeRes.prototype.send = function (value){
+    Cookies.attachObject(this.response,this._cookies)
+    this._send(value)
+    return this
   }
 
 
