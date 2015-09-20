@@ -7,8 +7,10 @@
 */
 
 const NodeRes = require('node-res')
+const Cookies = require('../Cookies')
 
 function Response (View, Route) {
+
   /**
    * @function view
    * @description extending nodeRes prototype to attach view method
@@ -25,6 +27,26 @@ function Response (View, Route) {
         .catch(reject)
     })
   }
+
+
+  /**
+   * attaches cookie to response
+   * @param  {String} key
+   * @param  {*} value
+   * @return {Object} reference to this for chaining
+   */
+  NodeRes.prototype.cookie = function (key,value) {
+    if((key && !value && typeof(key) !== 'object') || (!key && !value)){
+      throw new Error('Pass key , value pair or an object to attach cookies to response')
+    }
+    if(key && !value){
+      Cookies.attachObject(this.response,key);
+    }else{
+      Cookies.attach(this.response,key,value)
+    }
+    return this;
+  }
+
 
   /**
    * @function route

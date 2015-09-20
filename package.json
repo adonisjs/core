@@ -30,7 +30,8 @@
     "querystring": "^0.2.0",
     "request-ip": "^1.1.3",
     "serve-favicon": "^2.3.0",
-    "type-is": "^1.6.6"
+    "type-is": "^1.6.6",
+    "keygrip": "git://github.com/crypto-utils/keygrip.git"
   },
   "peerDependencies": {
     "adonis-fold": "^1.0.3"

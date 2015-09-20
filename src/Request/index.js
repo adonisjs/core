@@ -11,7 +11,7 @@ const parseurl = require('parseurl')
 const requestIp = require('request-ip')
 const _ = require('lodash')
 const helpers = require('./helpers')
-const cookie = require('cookie')
+const Cookies = require('../Cookies')
 const contentType = require('content-type')
 
 /**
@@ -288,10 +288,7 @@ Request.prototype.cookie = function (key, defaultValue) {
  * @public
  */
 Request.prototype.cookies = function () {
-  if (!this.request.headers.cookie) {
-    return {}
-  }
-  return cookie.parse(this.request.headers.cookie)
+  return Cookies.parse(this.request)
 }
 
 module.exports = Request

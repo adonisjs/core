@@ -119,4 +119,51 @@ describe('Response', function () {
       });
   })
 
+
+  it('should attach cookies to request response', function (done) {
+
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    var server = http.createServer(function (req, res) {
+
+      let response = new MakeResponse(req,res);
+      response.cookie('foo', 'bar')
+      response.send('')
+      response.end()
+    })
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers['set-cookie']).deep.equal(['foo=bar'])
+        done();
+      });
+
+  })
+
+  it('should attach multiple cookies from object to request response', function (done) {
+
+    let view = new View(Helpers,Env)
+    let MakeResponse = new Response(view,Route)
+
+    var server = http.createServer(function (req, res) {
+
+      let response = new MakeResponse(req,res);
+      response.cookie({foo:'bar',baz:'baz'})
+      response.send('')
+      response.end()
+    })
+
+    supertest(server)
+      .get("/")
+      .end(function(err, res) {
+        if (err) throw (err);
+        expect(res.headers['set-cookie']).deep.equal(['foo=bar','baz=baz'])
+        done();
+      });
+
+  })
+
 })
