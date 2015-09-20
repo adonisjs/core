@@ -42,8 +42,8 @@ function Response (View, Route) {
     if(!this._cookies){
       this._cookies = {}
     }
-    if(!key || !value){
-      throw new Error('key and value is required to set cookie on request')
+    if(!key){
+      throw new Error('key is required to set cookie on request')
     }
     this._cookies[key] = {key:key,options:options,value:value}
     return this;
@@ -56,9 +56,9 @@ function Response (View, Route) {
    * @param  {String} key
    * @return {Object}
    */
-  NodeRes.prototype.clearCookie = function (key) {
-    delete this._cookies[key]
-    return this
+  NodeRes.prototype.clearCookie = function (key, options) {
+    options.expires = new Date(1)
+    return this.cookie(key,'',options)
   }
 
   /**

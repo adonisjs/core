@@ -312,7 +312,6 @@ describe('Response', function () {
       .get("/")
       .end(function(err, res) {
         if (err) throw (err);
-        console.log(res.headers['set-cookie'])
         expect(res.headers['set-cookie']).to.match(/foo=.*/g)
         done();
       });
