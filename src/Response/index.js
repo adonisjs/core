@@ -52,11 +52,12 @@ function Response (View, Route) {
 
   /**
    * @function clearCookie
-   * @description clears cookie from cookies array
+   * @description clears cookie by setting it expired
    * @param  {String} key
    * @return {Object}
    */
   NodeRes.prototype.clearCookie = function (key, options) {
+    options = options || {}
     options.expires = new Date(1)
     return this.cookie(key,'',options)
   }
