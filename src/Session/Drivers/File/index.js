@@ -27,7 +27,7 @@ class FileDriver {
 		try{
 			return yield coFs.readJSON(sessionFile)
 		}catch(e){
-			return false;
+			return null;
 		}
 
 	}

@@ -18,34 +18,36 @@ let helpers = exports = module.exports = {}
  */
 helpers.typeToString = function (value) {
 
-		switch(typeof(value)){
-			
-			/**
-			 * if value is an object , convert 
-			 * it to string using stringify.
-			 */
-			case 'object':
-				value = JSON.stringify(value)
-				break
-			
-			/**
-			 * if value is a number , convert it to
-			 * string using toString method
-			 */
-			case 'number':
-				value = value.toString()
-				break
+	if(!value) return value
 
-			/**
-			 * if value is a boolean , convert it to
-			 * string using toString method
-			 */
-			case 'boolean':
-				value = value.toString()
-				break
-		}
+	switch(typeof(value)){
+		
+		/**
+		 * if value is an object , convert 
+		 * it to string using stringify.
+		 */
+		case 'object':
+			value = JSON.stringify(value)
+			break
+		
+		/**
+		 * if value is a number , convert it to
+		 * string using toString method
+		 */
+		case 'number':
+			value = value.toString()
+			break
 
-		return value
+		/**
+		 * if value is a boolean , convert it to
+		 * string using toString method
+		 */
+		case 'boolean':
+			value = value.toString()
+			break
+	}
+
+	return value
 }
 
 /**
@@ -65,7 +67,7 @@ helpers.stringToType = function (value) {
 			break
 
 		case 'boolean':
-			value.d = !!value.d === 'true'
+			value.d = (value.d === 'true' || value.d === '1') ? true : false
 			break
 	}
 	return value
