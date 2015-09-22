@@ -8,7 +8,7 @@
 
 const ServiceProvider = require('adonis-fold').ServiceProvider
 
-class ServerProvider extends ServiceProvider {
+class SessionProvider extends ServiceProvider {
 
   /**
    * @function inject
@@ -16,7 +16,7 @@ class ServerProvider extends ServiceProvider {
    * @return {Array}
   */
   static get inject(){
-    return ["Adonis/Src/Route","Adonis/Src/Request","Adonis/Src/Response","Adonis/Src/Logger","Adonis/Src/Session"]
+    return ["Adonis/Src/Helpers","Adonis/Src/Config"]
   }
 
   /**
@@ -24,11 +24,11 @@ class ServerProvider extends ServiceProvider {
    * @description Binding Server to ioc container
   */
   * register () {
-    this.app.bind('Adonis/Src/Server', function (Route,Request,Response,Logger) {
-      const Server = require('../src/Server')
-      return new Server(Route,Request,Response,Logger)
+    this.app.bind('Adonis/Src/Session', function (Helpers,Config) {
+      const Session = require('../src/Session')
+      return new Session(Helpers,Config)
     })
   }
 }
 
-module.exports = ServerProvider
+module.exports = SessionProvider

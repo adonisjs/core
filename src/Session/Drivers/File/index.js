@@ -6,8 +6,6 @@
  * MIT Licensed
 */
 
-const Keygrip = require('keygrip')
-const jsonfile = require('jsonfile')
 const coFs = require('co-fs-extra')
 const path = require('path')
 

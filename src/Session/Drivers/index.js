@@ -1,5 +1,3 @@
 module.exports = {
-
-	file: './File/'
-
+	file: require('./File/')
 }

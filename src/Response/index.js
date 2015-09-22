@@ -39,13 +39,13 @@ function Response (View, Route) {
    * @return {Object} reference to this for chaining
    */
   NodeRes.prototype.cookie = function (key, value, options) {
-    if(!this._cookies){
-      this._cookies = {}
+    if(!this.response._cookies){
+      this.response._cookies = {}
     }
     if(!key){
       throw new Error('key is required to set cookie on request')
     }
-    this._cookies[key] = {key:key,options:options,value:value}
+    this.response._cookies[key] = {key:key,options:options,value:value}
     return this;
   }
 
@@ -70,8 +70,8 @@ function Response (View, Route) {
    * @return {Object}
    */
   NodeRes.prototype.send = function (value){
-    if(this._cookies){
-      Cookies.attachObject(this.response,this._cookies)
+    if(this.response._cookies){
+      Cookies.attachObject(this.response,this.response._cookies)
     }
     this._send(value)
     return this

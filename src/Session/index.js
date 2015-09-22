@@ -7,7 +7,7 @@
 */
 
 const Drivers = require('./Drivers');
-const Manager = require('./SessionManager')
+const SessionManager = require('./SessionManager')
 
 
 /**
@@ -31,17 +31,12 @@ class Session {
 		 * Setting up driver for SessionManager
 		 * @type {[type]}
 		 */
-		Manager.driver = driver === 'cookie' ? 'cookie' : Drivers[driver](Helpers,Config)
-
-		/**
-		 * setting application key to encrypt values
-		 */
-		Manager.appKey = process.env.APP_KEY
+		SessionManager.driver = driver === 'cookie' ? 'cookie' : new Drivers[driver](Helpers,Config)
 
 		/**
 		 * return session Manager class
 		 */
-		return Manager
+		return SessionManager
 
 	}
 
