@@ -1,9 +1,8 @@
-  
-  "use strict";
 
-  class EventsService{
+'use strict'
 
+class EventsService {
 
-  }
+}
 
-  module.exports = EventsService;
+module.exports = EventsService

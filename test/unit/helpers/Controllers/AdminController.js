@@ -1,14 +1,10 @@
-  
-  "use strict";
 
-  class AdminController {
+'use strict'
 
+class AdminController {
 
-    *index(){
+  * index() {}
 
-    }
+}
 
-  }
-
-
-  module.exports = AdminController;
+module.exports = AdminController

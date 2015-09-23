@@ -19,8 +19,8 @@ const Helpers = {
   viewsPath: function () {
     return path.join(__dirname, './views')
   },
-  basePath: function(){
-    return path.join(__dirname,'./')
+  basePath: function () {
+    return path.join(__dirname, './')
   }
 }
 
@@ -28,7 +28,7 @@ Env = new Env(Helpers)
 
 describe('Views', function () {
   before(function () {
-    view = new View(Helpers,Env,Route)
+    view = new View(Helpers, Env, Route)
   })
 
   it('should compile views from a given directory ', function (done) {
@@ -43,10 +43,9 @@ describe('Views', function () {
   })
 
   it('should return an error when unable to make a view', function (done) {
-
     co(function *() {
       return yield view.make('foo')
-    }).catch(function(errors){
+    }).catch(function (errors) {
       expect(errors instanceof Error).to.equal(true)
       done()
     })
@@ -55,7 +54,7 @@ describe('Views', function () {
 
   it('should be able to use Ioc container bindings right inside the views', function (done) {
     class Foo {
-      bar () {
+      bar() {
         return 'bar'
       }
     }
@@ -76,7 +75,7 @@ describe('Views', function () {
   it('should be able to make generators right inside views', function (done) {
     class Baz {
 
-      greet () {
+      greet() {
         return new Promise(function (resolve) {
           setTimeout(function () {
             resolve('hello')
@@ -101,8 +100,7 @@ describe('Views', function () {
   })
 
   it('should make url using route url builder from route filter', function (done) {
-
-    Route.get('/user/profile','Profile.me').as('me')
+    Route.get('/user/profile', 'Profile.me').as('me')
 
     co(function *() {
       return yield view.make('route')

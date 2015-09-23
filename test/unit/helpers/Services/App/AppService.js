@@ -1,13 +1,10 @@
+'use strict'
 
-  "use strict";
 
-  
-  class AppService{
+class AppService {
 
-    *shout(){
-      
-    }
+  * shout() {}
 
-  }
+}
 
-  module.exports = AppService;
+module.exports = AppService

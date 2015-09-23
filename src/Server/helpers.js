@@ -87,7 +87,6 @@ ServerHelpers.resolveAndReturnHandler = function (Router, uri, method) {
        *       controller method.
        */
       if (typeof (resolved_route.handler) === 'string') {
-
         const controllerNamespace = ServerHelpers.namespaceToControllerInstance(resolved_route.handler)
 
         /**
@@ -96,10 +95,9 @@ ServerHelpers.resolveAndReturnHandler = function (Router, uri, method) {
          * is coming again. It works only if same controller is called in
          * sequence by multiple requests.
          */
-        if(resolved_route.controller && resolved_route.controller.resolved && resolved_route.controller.namespace === controllerNamespace.namespace){
-
+        if (resolved_route.controller && resolved_route.controller.resolved && resolved_route.controller.namespace === controllerNamespace.namespace) {
           resolved_route.controller.action = controllerNamespace.action
-          if(!resolved_route.controller.instance[resolved_route.controller.action]){
+          if (!resolved_route.controller.instance[resolved_route.controller.action]) {
             reject(new Error(`method ${resolved_route.controller.action} does not exists on ${resolved_route.controller.namespace}`))
           }
           resolved_route.controller.action = resolved_route.controller.instance[resolved_route.controller.action]
@@ -118,7 +116,7 @@ ServerHelpers.resolveAndReturnHandler = function (Router, uri, method) {
         namespaceHandler()
           .then(function (controller_instance) {
             resolved_route.controller.instance = controller_instance
-            if(!resolved_route.controller.instance[resolved_route.controller.action]){
+            if (!resolved_route.controller.instance[resolved_route.controller.action]) {
               reject(new Error(`method ${resolved_route.controller.action} does not exists on ${resolved_route.controller.namespace}`))
             }
             resolved_route.controller.action = resolved_route.controller.instance[resolved_route.controller.action]
@@ -189,7 +187,6 @@ ServerHelpers.handleHttpErrors = function (error, request, response) {
   // counting app listeners
   let listeners = App.listeners('error').length
 
-
   if (listeners > 0) {
     App.emit('error', error, request, response)
   } else {
@@ -198,7 +195,6 @@ ServerHelpers.handleHttpErrors = function (error, request, response) {
     response.status(error_status).send(error_message).end()
     Logger.error(error_message)
   }
-
 }
 
 /**

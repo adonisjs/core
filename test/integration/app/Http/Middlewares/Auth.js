@@ -2,9 +2,9 @@
 
 class Auth {
 
-  *handle(request, response, next) {
+  * handle( request, response, next) {
     if (request.headers().framework) {
-      yield next;
+      yield next
     }
   }
 

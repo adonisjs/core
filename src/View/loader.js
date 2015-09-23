@@ -52,9 +52,6 @@ exports = module.exports = nunjucks.Loader.extend({
         path: viewPath,
         noCache: self.noCache
       })
-
     })
-
   }
-
 })

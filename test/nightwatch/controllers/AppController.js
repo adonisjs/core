@@ -1,21 +1,20 @@
-'use strict';
+'use strict'
 
-class AppController{
+class AppController {
 
-  constructor(AppService){
+  constructor( AppService) {
     this.app = AppService
   }
 
-  static get inject(){
-    return ["App/Http/Services/AppService"]
+  static get inject() {
+    return ['App/Http/Services/AppService']
   }
 
-  *show(request,response){
+  * show( request, response) {
     let users = yield this.app.listUsers()
-    response.view("users.html",{users})
+    response.view('users.html', {users})
   }
 
 }
-
 
 module.exports = AppController

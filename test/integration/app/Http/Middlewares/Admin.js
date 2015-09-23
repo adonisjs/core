@@ -1,11 +1,11 @@
 'use strict'
 
 class Admin {
-  *handle(request, response, next) {
+  * handle( request, response, next) {
     if (request.headers().framework === 'adonis') {
-      yield next;
+      yield next
     }
   }
 }
 
-  module.exports = Admin
+module.exports = Admin

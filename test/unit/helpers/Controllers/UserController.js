@@ -1,9 +1,7 @@
+'use strict'
 
-  "use strict";
+class UserController {
 
-  class UserController {
+}
 
-  }
-
-
-  module.exports = UserController;
+module.exports = UserController

@@ -187,7 +187,7 @@ Request.prototype.header = function (key, defaultValue) {
  * @public
  */
 Request.prototype.headers = function () {
-  if(this.request.headers && this.request.headers['content-type']){
+  if (this.request.headers && this.request.headers['content-type']) {
     this.request.headers['content-type'] = contentType.parse(this.request.headers['content-type']).type
   }
   return this.request.headers || {}

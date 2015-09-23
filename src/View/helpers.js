@@ -7,7 +7,6 @@
 */
 
 module.exports = function (env, Route) {
-
   /**
    * adds route filter and makes use of route to build
    * dynamic routes out of the box
@@ -22,5 +21,4 @@ module.exports = function (env, Route) {
   env.addFilter('json', function (val) {
     JSON.stringify(val)
   })
-
 }

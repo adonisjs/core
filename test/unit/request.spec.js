@@ -83,21 +83,20 @@ describe('Request', function () {
 
   })
 
-
   it('should return raw body on request', function (done) {
     var server = http.createServer(function (req, res) {
       var request = new Request(req)
 
       rawBody(request.request)
-      .then (function (buffer) {
-        request.rawBody = buffer.toString()
-        var rawBody = request.raw()
-        res.writeHead(200, {
-          'Content-type': 'text/plain'
-        })
-        res.end(rawBody)
+        .then(function (buffer) {
+          request.rawBody = buffer.toString()
+          var rawBody = request.raw()
+          res.writeHead(200, {
+            'Content-type': 'text/plain'
+          })
+          res.end(rawBody)
 
-      }).catch(function (err) {
+        }).catch(function (err) {
         res.end()
       })
 
@@ -105,7 +104,7 @@ describe('Request', function () {
 
     supertest(server)
       .get('/user')
-      .set('content-type','text/plain')
+      .set('content-type', 'text/plain')
       .send('foo')
       .end(function (err, res) {
         if (err) return done(err)
@@ -549,7 +548,7 @@ describe('Request', function () {
 
     supertest(server)
       .post('/')
-      .set('content-type','text/plain;charset=utf-8')
+      .set('content-type', 'text/plain;charset=utf-8')
       .end(function (err, res) {
         if (err) throw (err)
         expect(res.text).to.equal('text/plain')
@@ -801,7 +800,6 @@ describe('Request', function () {
         done()
       })
   })
-
 
   it('should tell whether request accepts particular content-type or not when using wildcards', function (done) {
     var server = http.createServer(function (req, res) {

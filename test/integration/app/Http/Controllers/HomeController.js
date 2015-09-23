@@ -1,10 +1,9 @@
 'use strict'
 
-class HomeController{
+class HomeController {
 
-  *index(request,response){
-
-    return "foo"
+  * index( request, response) {
+    return 'foo'
 
   }
 

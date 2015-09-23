@@ -27,7 +27,7 @@ function Namespace (Env, Helpers) {
 Namespace.prototype.autoload = function () {
   const appDir = this.helpers.appPath()
   const foldNamespace = this.helpers.appNameSpace()
-  Ioc.dumpSettings(appDir,foldNamespace)
+  Ioc.dumpSettings(appDir, foldNamespace)
 }
 
 module.exports = Namespace

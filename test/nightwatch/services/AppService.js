@@ -1,10 +1,8 @@
 'use strict'
 
+class AppService {
 
-class AppService{
-
-
-  listUsers(){
+  listUsers() {
     const users = [
       {
         name: 'virk'
@@ -13,13 +11,13 @@ class AppService{
         name: 'nikk'
       }
     ]
-    return new Promise(function(resolve){
-      setTimeout(function(){
+    return new Promise(function (resolve) {
+      setTimeout(function () {
         resolve(users)
-      },100);
-    });
+      }, 100)
+    })
   }
 
 }
 
-module.exports = AppService;
+module.exports = AppService

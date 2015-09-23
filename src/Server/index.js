@@ -60,7 +60,6 @@ function Server (Route, Request, Response, Logger) {
 
         // returns ware instance
         return Ware.run(request, response, finalHandler)
-
       })
       .then(function () {
         response.end()

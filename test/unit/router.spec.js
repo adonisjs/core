@@ -130,9 +130,8 @@ describe('Router', function () {
   })
 
   it('should make url for named routes under a group', function (done) {
-
     Router.group('foo', function () {
-      Router.get('/bar','Bar.index').as('fb')
+      Router.get('/bar', 'Bar.index').as('fb')
     }).prefix('/foo').close()
 
     let url = Router.url('fb')
@@ -141,16 +140,14 @@ describe('Router', function () {
   })
 
   it('should make url for subdomain domain routes', function (done) {
-
     Router.group('dynamic', function () {
-      Router.get('/profile','Profile.index').as('bp')
+      Router.get('/profile', 'Profile.index').as('bp')
     }).domain('blog.app.com').close()
 
     let url = Router.url('bp')
     expect(url).to.equal('blog.app.com/profile')
     done()
   })
-
 
   it('should attach array of middlewares to route', function (done) {
     Router.get('/secure').middlewares(['auth', 'csrf'])

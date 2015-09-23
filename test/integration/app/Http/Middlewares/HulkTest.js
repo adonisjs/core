@@ -3,11 +3,11 @@
 const HttpException = require('../../../../../src/HttpException')
 
 class HulkTest {
-  * handle(request, response, next) {
+  * handle( request, response, next) {
     if (request.headers().color && request.headers().color === 'green') {
-      yield next;
+      yield next
     } else {
-      throw new HttpException(400, "Hulk should be green")
+      throw new HttpException(400, 'Hulk should be green')
     }
   }
 }

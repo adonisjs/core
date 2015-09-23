@@ -55,8 +55,8 @@ function ViewsYield () {
         context.ctx[index] = response
         callback()
       }).catch(function (error) {
-      throw error
-    })
+        throw error
+      })
   }
 }
 

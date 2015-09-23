@@ -1,12 +1,11 @@
 'use strict'
 
-class HomeController{
+class HomeController {
 
-  *index(request,response){
-    return "hello world from controller"
+  * index( request, response) {
+    return 'hello world from controller'
   }
 
 }
-
 
 module.exports = HomeController

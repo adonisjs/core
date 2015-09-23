@@ -1,9 +1,8 @@
-"use strict";
+'use strict'
 
-class FriendsController{
+class FriendsController {
 
-  getData(){
-
+  getData() {
     let friendsToReturn = [
       {
         name: 'admin-foo'
@@ -11,17 +10,17 @@ class FriendsController{
       {
         name: 'admin-bar'
       }
-    ];
+    ]
 
-    return new Promise(function(resolve){
-      resolve(friendsToReturn);
-    });
+    return new Promise(function (resolve) {
+      resolve(friendsToReturn)
+    })
   }
 
-  *index(request,response){
-    let friends = yield this.getData();
-    response.status(200).send(friends);
+  * index( request, response) {
+    let friends = yield this.getData()
+    response.status(200).send(friends)
   }
 }
 
-module.exports = FriendsController;
+module.exports = FriendsController

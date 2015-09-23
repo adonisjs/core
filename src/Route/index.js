@@ -204,7 +204,6 @@ Route.middlewares = function (arrayOfNamedMiddleware) {
   })
 
   return this
-
 }
 
 /**

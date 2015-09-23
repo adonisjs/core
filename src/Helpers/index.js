@@ -84,8 +84,8 @@ Helpers.appPath = function () {
  */
 Helpers.publicPath = function (toFile) {
   const toDir = './public'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath,incrementalPath)
+  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
+  return Helpers._makePath(rootPath, incrementalPath)
 }
 
 /**
@@ -107,8 +107,8 @@ Helpers.appNameSpace = function () {
  */
 Helpers.configPath = function (toFile) {
   const toDir = './config'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath,incrementalPath)
+  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
+  return Helpers._makePath(rootPath, incrementalPath)
 }
 
 /**
@@ -119,8 +119,8 @@ Helpers.configPath = function (toFile) {
  */
 Helpers.storagePath = function (toFile) {
   const toDir = './storage'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath,incrementalPath)
+  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
+  return Helpers._makePath(rootPath, incrementalPath)
 }
 
 /**
@@ -131,8 +131,8 @@ Helpers.storagePath = function (toFile) {
  */
 Helpers.resourcesPath = function (toFile) {
   const toDir = './resources'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath,incrementalPath)
+  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
+  return Helpers._makePath(rootPath, incrementalPath)
 }
 
 /**
@@ -143,8 +143,8 @@ Helpers.resourcesPath = function (toFile) {
  */
 Helpers.migrationsPath = function (toFile) {
   const toDir = './migrations'
-  const incrementalPath = typeof(toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath,incrementalPath)
+  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
+  return Helpers._makePath(rootPath, incrementalPath)
 }
 
 /**
@@ -156,7 +156,6 @@ Helpers.viewsPath = function () {
   return Helpers.resourcesPath('views')
 }
 
-
-Helpers._makePath = function (base,incremental) {
-  return path.join(base,incremental)
+Helpers._makePath = function (base, incremental) {
+  return path.join(base, incremental)
 }

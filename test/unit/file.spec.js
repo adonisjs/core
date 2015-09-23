@@ -29,10 +29,9 @@ let dummyFileObject = {
 }
 
 describe('Files', function () {
-
   beforeEach(function (done) {
     co(function * () {
-      return yield [fse.emptyDir(path.join(__dirname, './uploads')),fse.ensureDir(path.join(__dirname, './uploads'))]
+      return yield [fse.emptyDir(path.join(__dirname, './uploads')), fse.ensureDir(path.join(__dirname, './uploads'))]
     }).then(function () {
       done()
     }).catch(done)
