@@ -1,3 +1,5 @@
+/* global describe, it, beforeEach */
+
 'use strict'
 
 /**
@@ -97,7 +99,6 @@ describe('Files', function () {
         expect(res.body.errors).to.equal(null)
         done()
       })
-
   })
 
   it('should move file to a given path with different upload name', function (done) {
@@ -150,7 +151,5 @@ describe('Files', function () {
 
       done()
     }).catch(done)
-
   })
-
 })

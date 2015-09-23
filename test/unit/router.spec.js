@@ -1,3 +1,5 @@
+/* global describe, it, beforeEach */
+
 'use strict'
 
 /**
@@ -256,7 +258,6 @@ describe('Router', function () {
     expect(deleteUser.handler).to.equal('UsersController.destroy')
 
     done()
-
   })
 
   it('should make route resources based out of conventions inside groups', function (done) {
@@ -277,7 +278,5 @@ describe('Router', function () {
     expect(deleteUser.handler).to.equal('UsersController.destroy')
 
     done()
-
   })
-
 })

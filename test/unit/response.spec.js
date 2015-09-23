@@ -1,3 +1,5 @@
+/* global describe, it */
+
 'use strict'
 
 /**
@@ -35,7 +37,7 @@ describe('Response', function () {
     let MakeResponse = new Response(view)
 
     let response = new MakeResponse({}, {})
-    let proto = response.__proto__
+    let proto = Object.create(response)
 
     expect(proto).to.be.an('object')
     expect(proto).to.have.property('header')
@@ -90,7 +92,6 @@ describe('Response', function () {
         expect(res.headers.location).to.equal('/profile/1')
         done()
       })
-
   })
 
   it('should redirect to named route', function (done) {
@@ -132,7 +133,6 @@ describe('Response', function () {
         expect(res.headers['set-cookie']).deep.equal(['foo=bar'])
         done()
       })
-
   })
 
   it('should attach multiple cookies when using cookie method multiple times', function (done) {
@@ -154,7 +154,6 @@ describe('Response', function () {
         expect(res.headers['set-cookie']).deep.equal(['foo=bar', 'baz=baz'])
         done()
       })
-
   })
 
   it('should set domain for cookie', function (done) {
@@ -175,7 +174,6 @@ describe('Response', function () {
         expect(res.headers['set-cookie']).deep.equal(['foo=bar; Domain=http://adonisjs.com'])
         done()
       })
-
   })
 
   it('should set options for multiple cookies', function (done) {
@@ -197,7 +195,6 @@ describe('Response', function () {
         expect(res.headers['set-cookie']).deep.equal(['foo=bar; Path=/foo', 'baz=baz; Path=/foo'])
         done()
       })
-
   })
 
   it('should overide existing cookie when passed new value', function (done) {
@@ -219,7 +216,6 @@ describe('Response', function () {
         expect(res.headers['set-cookie']).deep.equal(['foo=baz'])
         done()
       })
-
   })
 
   it('should clear cookie from response', function (done) {
@@ -241,7 +237,6 @@ describe('Response', function () {
         expect(res.headers['set-cookie']).deep.equal(['foo=; Expires=Thu, 01 Jan 1970 00:00:00 GMT'])
         done()
       })
-
   })
 
   it('should encrypt and sign cookies', function (done) {
@@ -255,7 +250,6 @@ describe('Response', function () {
       response.cookie('foo', 'bar')
       response.send('')
       response.end()
-
     })
 
     supertest(server)
@@ -265,7 +259,6 @@ describe('Response', function () {
         expect(res.headers['set-cookie']).to.match(/foo=.*/g)
         done()
       })
-
   })
 
   it('should decrypt and unsign signed cookies', function (done) {
@@ -285,7 +278,6 @@ describe('Response', function () {
         expect(res.text).to.equal('bar')
         done()
       })
-
   })
 
   it('should return false when cookies have been tampered', function (done) {
@@ -305,7 +297,5 @@ describe('Response', function () {
         expect(res.text).to.equal('')
         done()
       })
-
   })
-
 })

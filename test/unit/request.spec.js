@@ -1,3 +1,5 @@
+/* global describe, it */
+
 'use strict'
 
 /**
@@ -59,7 +61,6 @@ describe('Request', function () {
         expect(res.body.age).to.equal(undefined)
         done()
       })
-
   })
 
   it('should return default value for field missing inside query string', function (done) {
@@ -80,7 +81,6 @@ describe('Request', function () {
         expect(res.body.age).to.equal(22)
         done()
       })
-
   })
 
   it('should return raw body on request', function (done) {
@@ -95,11 +95,9 @@ describe('Request', function () {
             'Content-type': 'text/plain'
           })
           res.end(rawBody)
-
         }).catch(function (err) {
-        res.end()
-      })
-
+          res.send(err.message).end()
+        })
     })
 
     supertest(server)
@@ -111,7 +109,6 @@ describe('Request', function () {
         expect(res.text).to.equal('foo')
         done()
       })
-
   })
 
   it('should return null for key requested by input method but does not exists as request query string', function (done) {
@@ -136,7 +133,6 @@ describe('Request', function () {
         expect(res.body.age).to.equal(null)
         done()
       })
-
   })
 
   it('should return all post values on request', function (done) {
@@ -157,7 +153,6 @@ describe('Request', function () {
         })
         res.end(JSON.stringify(postBody))
       })
-
     })
 
     supertest(server)
@@ -913,7 +908,5 @@ describe('Request', function () {
       const filtered = RequestHelpers.removeRequestedKeysFromObject(user)
       expect(filtered).to.deep.equal(user)
     })
-
   })
-
 })

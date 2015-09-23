@@ -1,3 +1,5 @@
+/* global describe, it, before */
+
 'use strict'
 
 /**
@@ -37,7 +39,5 @@ describe('Namespace', function () {
     let namespace = new Namespace(Env, Helpers)
     namespace.autoload()
     expect(Ioc.use('App/text')).to.equal('text')
-
   })
-
 })

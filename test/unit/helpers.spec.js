@@ -1,3 +1,5 @@
+/* global describe, it */
+
 'use strict'
 
 /**
@@ -77,5 +79,4 @@ describe('Helpers', function () {
   it('should return application namespace', function () {
     expect(Helpers.appNameSpace()).to.equal('App')
   })
-
 })

@@ -1,3 +1,5 @@
+/* global describe, it */
+
 'use strict'
 
 /**
@@ -27,5 +29,4 @@ describe('HttpException', function () {
     let error = new HttpException('Something went found')
     expect(error.status).to.equal(503)
   })
-
 })

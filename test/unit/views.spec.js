@@ -1,3 +1,5 @@
+/* global describe, it, before */
+
 'use strict'
 /**
  * adonis-framework
@@ -49,12 +51,11 @@ describe('Views', function () {
       expect(errors instanceof Error).to.equal(true)
       done()
     })
-
   })
 
   it('should be able to use Ioc container bindings right inside the views', function (done) {
     class Foo {
-      bar() {
+      bar () {
         return 'bar'
       }
     }
@@ -69,18 +70,16 @@ describe('Views', function () {
       expect(compiledView.trim()).to.equal('bar')
       done()
     }).catch(done)
-
   })
 
   it('should be able to make generators right inside views', function (done) {
     class Baz {
 
-      greet() {
+      greet () {
         return new Promise(function (resolve) {
           setTimeout(function () {
             resolve('hello')
           }, 100)
-
         })
       }
 
@@ -96,7 +95,6 @@ describe('Views', function () {
       expect(compiledView.trim()).to.equal('hello')
       done()
     }).catch(done)
-
   })
 
   it('should make url using route url builder from route filter', function (done) {
@@ -108,7 +106,5 @@ describe('Views', function () {
       expect(compiledView.trim()).to.equal('/user/profile')
       done()
     }).catch(done)
-
   })
-
 })

@@ -1,3 +1,5 @@
+/* global describe, it,beforeEach */
+
 'use strict'
 
 /**
@@ -31,7 +33,6 @@ describe('Middlewares', function () {
     expect(registered_middlewares).to.be.an('array')
     expect(registered_middlewares[0]).to.equal(CSRF)
     expect(registered_middlewares[1]).to.equal(Auth)
-
   })
 
   it('should register an object of named middlewares', function () {
@@ -48,7 +49,6 @@ describe('Middlewares', function () {
     expect(registered_middlewares).to.be.an('array')
     expect(registered_middlewares[0]).to.equal(UserAuth)
     expect(registered_middlewares[1]).to.equal(undefined)
-
   })
 
   it('should return all global and requested named middlewares', function () {
@@ -70,7 +70,5 @@ describe('Middlewares', function () {
     expect(registered_middlewares).to.be.an('array')
     expect(registered_middlewares[0]).to.equal(CSRF)
     expect(registered_middlewares[1]).to.equal(UserAuth)
-
   })
-
 })

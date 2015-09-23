@@ -1,3 +1,5 @@
+/* global describe, it */
+
 'use strict'
 
 /**
@@ -22,7 +24,6 @@ describe('Utils', function () {
     expect(parsed).to.have.property('action')
     expect(parsed.action).to.equal('index')
     expect(parsed.namespace).to.equal('App/Http/Controllers/HomeController')
-
   })
 
   it('should parse pre namespaced controller method string', function () {
@@ -32,7 +33,6 @@ describe('Utils', function () {
     expect(parsed).to.have.property('action')
     expect(parsed.action).to.equal('index')
     expect(parsed.namespace).to.equal('App/Http/Controllers/HomeController')
-
   })
 
   it('should parse nested controller with dot convention', function () {
@@ -42,7 +42,5 @@ describe('Utils', function () {
     expect(parsed).to.have.property('action')
     expect(parsed.action).to.equal('index')
     expect(parsed.namespace).to.equal('App/Http/Controllers/User/HomeController')
-
   })
-
 })

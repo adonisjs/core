@@ -1,3 +1,5 @@
+/* global describe, it, before */
+
 'use strict'
 
 /**
@@ -106,5 +108,4 @@ describe('Static', function () {
         done()
       })
   })
-
 })
