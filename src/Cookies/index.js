@@ -106,11 +106,19 @@ Cookies.attachObject = function (res, hash) {
   _.each(hash, function (item) {
     if (process.env.APP_KEY) {
       const keygrip = new Keygrip([process.env.APP_KEY])
+
+      /**
+       * encrypting cookie using APP_KEY
+       */
       item.value = keygrip.encrypt(item.value).toString('base64')
+
+      /**
+       * signing cookie using APP_KEY
+       * @type {[type]}
+       */
       item.value = signature.sign(item.value, process.env.APP_KEY)
     }
     cookieString.push(cookie.serialize(item.key, item.value, item.options))
   })
-
   res.setHeader('Set-Cookie', cookieString)
 }

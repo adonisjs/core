@@ -6,26 +6,37 @@
  * MIT Licensed
 */
 
-const log = require('captains-log')
+const winston = require('winston')
 
 /**
- * adonis specific theme for captains log
- * @private
-*/
-let loggerDefaults = {
-  prefixThemes: {
-    adonis: {
-      silly: 'adonis:[silly] ',
-      verbose: 'adonis:[verbose] ',
-      info: 'adonis:[info] ',
-      blank: 'adonis:',
-      debug: 'adonis:[debug] ',
-      warn: 'adonis:[warn] ',
-      error: 'adonis:[error] ',
-      crit: 'adonis:[CRITICAL] '
-    }
-  },
-  prefixTheme: 'adonis'
+ * setting up logger instance
+ */
+let Logger = new winston.Logger({
+  transports: [
+    new winston.transports.Console({
+      handleExceptions: true,
+      json: false,
+      prefixes: 'adonis',
+      prettyPrint: true,
+      colorize: true
+    })
+  ]
+})
+
+/**
+ * if --verbose flag have been passed while running script
+ * than set level of logger to verbose
+ */
+if (process.argv.indexOf('--verbose') > -1) {
+  Logger.level = 'verbose'
 }
 
-exports = module.exports = log(loggerDefaults)
+/**
+ * if --silly flag have been passed while running script
+ * than set level of logger to silly
+ */
+if (process.argv.indexOf('--silly') > -1) {
+  Logger.level = 'silly'
+}
+
+exports = module.exports = Logger

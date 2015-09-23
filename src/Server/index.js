@@ -32,12 +32,14 @@ function Server (Route, Request, Response, Logger) {
      * and return
      */
     if (helpers.isStaticResource(req.url)) {
+      Logger.verbose('served static resource at %s', req.url)
       helpers.handleAsStaticResource(request, response)
       return
     }
 
     // if request is for favicon , serve favicon and return
     if (helpers.isFaviconRequest(uri)) {
+      Logger.verbose('served favicon')
       helpers.serveFavicon(request, response)
       return
     }
@@ -86,7 +88,7 @@ Server.prototype.stop = function () {
  * @public
  */
 Server.prototype.start = function (port) {
-  this.Logger.info(`serving app on port ${port}`)
+  this.Logger.info('serving app on port %s', port)
   this.serverInstance.listen(port)
 }
 

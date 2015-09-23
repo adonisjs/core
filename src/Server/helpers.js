@@ -87,6 +87,7 @@ ServerHelpers.resolveAndReturnHandler = function (Router, uri, method) {
        *       controller method.
        */
       if (typeof (resolved_route.handler) === 'string') {
+        Logger.verbose('Making controller method from %s', resolved_route.handler)
         const controllerNamespace = ServerHelpers.namespaceToControllerInstance(resolved_route.handler)
 
         /**
@@ -164,6 +165,7 @@ ServerHelpers.namespaceToControllerInstance = function (handler) {
   }
   let namespace = sections[0].replace(controllerNamespace, '')
   namespace = `${controllerNamespace}/${namespace}`.replace(/\/\//g, '/')
+  Logger.verbose('Resolving controller using %s namespace', namespace)
   const action = sections[1]
   return {namespace, action}
 }
@@ -207,6 +209,7 @@ ServerHelpers.handleHttpErrors = function (error, request, response) {
 ServerHelpers.registerRequestMiddleware = function (Ware, namedMiddleware) {
   let registerMiddleware = Middleware.get(namedMiddleware)
   _.each(registerMiddleware, function (middleware) {
+    Logger.verbose('Registering middleware %s', middleware)
     Ware.use(middleware)
   })
 }

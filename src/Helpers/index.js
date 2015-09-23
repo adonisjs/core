@@ -7,6 +7,7 @@
 */
 
 const path = require('path')
+const Logger = require('../Logger')
 
 /**
  * application root path
@@ -42,8 +43,11 @@ let Helpers = exports = module.exports = {}
  * @public
  */
 Helpers.load = function (packagePath) {
+  Logger.verbose(`reading application config from ${packagePath}`)
+
   rootPath = path.dirname(packagePath)
   const packageFile = require(packagePath)
+
   if (!packageFile.autoload) {
     throw new Error('autoload must be enable inside package.json file')
   }

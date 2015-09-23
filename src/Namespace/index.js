@@ -7,6 +7,7 @@
 */
 
 const fold = require('adonis-fold')
+const Logger = require('../Logger')
 const Ioc = fold.Ioc
 
 /**
@@ -27,6 +28,7 @@ function Namespace (Env, Helpers) {
 Namespace.prototype.autoload = function () {
   const appDir = this.helpers.appPath()
   const foldNamespace = this.helpers.appNameSpace()
+  Logger.verbose('setting app directory to %s loaded under %s namespace', appDir, foldNamespace)
   Ioc.dumpSettings(appDir, foldNamespace)
 }
 
