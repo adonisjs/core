@@ -78,7 +78,12 @@ class SessionManager {
 		 * setting up existing session as an array.
 		 * @type {Array}
 		 */
-		let existingSession = cookies['adonis-session'] || []
+		let existingSession = []
+		try{
+			existingSession = JSON.parse(cookies['adonis-session'])
+		}catch(e){
+			// ignoring error
+		}
 
 		if(key && !value && typeof(key) !== 'object'){
 			throw new Error('session requires key/value pair of an object')
