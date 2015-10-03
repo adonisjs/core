@@ -10,6 +10,7 @@ module.exports = {
   Route: require('./src/Route'),
   Response: require('./src/Response'),
   Request: require('./src/Request'),
+  Session : require('./src/Session'),
   Env: require('./src/Env'),
   View: require('./src/View'),
   Server: require('./src/Server'),

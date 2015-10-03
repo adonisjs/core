@@ -16,6 +16,7 @@ const Routes = Dispatcher.Route
 const Env = Dispatcher.Env
 const Request = Dispatcher.Request
 const Logger = Dispatcher.Logger
+const Session = Dispatcher.Session
 const View = Dispatcher.View
 const Response = Dispatcher.Response
 const Helpers = Dispatcher.Helpers
@@ -25,40 +26,41 @@ const Namespace = Dispatcher.Namespace
 const Static = Dispatcher.Static
 let server = null
 
-let getData = function (data, timeout) {
-  return new Promise(function (resolve, reject) {
-    if (!timeout) {
-      resolve(data)
-    } else {
-      setTimeout(function () {
-        resolve(data)
-      }, timeout)
-    }
-  })
-}
 
-describe('Basic Http Server', function () {
-  before(function (done) {
-    this.timeout(5000)
+  let getData = function(data,timeout) {
+    return new Promise(function(resolve, reject) {
+      if (!timeout) {
+        resolve(data);
+      }else{
+        setTimeout(function(){
+          resolve(data);
+        },timeout);
+      }
+    });
+  }
 
-    Helpers.load(path.join(__dirname, './package.json'))
-    let env = new Env(Helpers)
-    let namespace = new Namespace(env, Helpers)
+  describe("Basic Http Server", function() {
 
-    let view = new View(Helpers, env)
-    let response = new Response(view)
-    server = new Dispatcher.Server(Routes, Request, response, Logger)
-    namespace.autoload()
-    done()
-  })
+    before(function(done){
 
-  beforeEach(function () {
-    server.stop()
-  })
+      this.timeout(5000)
 
-  it('should be able to return any data type from request', function (done) {
-    Routes.get('/home', function *(request, response) {
-      return 'hello world'
+      Helpers.load(path.join(__dirname,'./package.json'))
+      let env = new Env(Helpers)
+      let namespace = new Namespace(env,Helpers)
+
+      let view = new View(Helpers,env)
+      let response = new Response(view)
+      let session = new Session(Helpers,{
+        get: function() {
+          return 'cookie'
+        }
+      })
+      server = new Dispatcher.Server(Routes,Request,response,Logger,session)
+      namespace.autoload()
+
+      done()
+
     })
     server.start(4000)
 
@@ -131,7 +133,89 @@ describe('Basic Http Server', function () {
           done()
         }
       })
-  })
+    })
+
+    it("should be able to return any data type from request", function(done) {
+    
+      Routes.get("/home", function*(request, response) {
+        return "hello world";
+      });
+      server.start(4000);
+    
+      api()
+        .base('http://localhost:4000')
+        .get('/home')
+        .expectStatus(200)
+        .expectBody("hello world")
+        .end(function(err, res, body) {
+          if (err) done(err)
+          else done();
+        })
+    });
+    
+    
+    it("should throw 404 when route is not found", function(done) {
+    
+      server.start(4000);
+    
+      api()
+        .base('http://localhost:4000')
+        .get('/404')
+        .expectStatus(404)
+        .end(function(err, res, body) {
+          if (err) done(err)
+          else done();
+        })
+    });
+    
+    it("should throw 503 error when route controller syntax is not readable", function(done) {
+    
+      Routes.get("/foo","FooController")
+      server.start(4000);
+    
+      api()
+        .base('http://localhost:4000')
+        .get('/foo')
+        .expectStatus(503)
+        .end(function(err, res, body) {
+          if (err) done(err)
+          else done();
+        })
+    });
+    
+    it("should spyn a server on given port and respond to a registered route", function(done) {
+    
+      let usersToReturn = [{
+        username: 'foo',
+        age: 22
+      }, {
+        username: 'bar',
+        age: 25
+      }];
+    
+      Routes.get("/user", function*(request, response) {
+        let users = yield getData(usersToReturn);
+        if (users) {
+          response.status(200).send(users);
+        }
+      });
+    
+      server.start(4000);
+    
+      api()
+        .json()
+        .base('http://localhost:4000')
+        .get('/user')
+        .expectStatus(200)
+        .expectBody(usersToReturn)
+        .end(function(err, res, body) {
+          if (err) done(err)
+          else{
+            done();
+          }
+        })
+    
+    });
 
   it('should start a server and attach multiple middlewares to a given route', function (done) {
     let usersToReturn = [{

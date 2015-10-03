@@ -11,7 +11,8 @@ const Ware = require('adonis-co-ware')()
 const url = require('url')
 const http = require('http')
 
-function Server (Route, Request, Response, Logger) {
+function Server (Route, Request, Response, Logger, Session) {
+
   this.Logger = Logger
 
   /**
@@ -25,7 +26,16 @@ function Server (Route, Request, Response, Logger) {
     let uri = url.parse(req.url).pathname
     let method = req.method
     let response = new Response(req, res)
+    let session = new Session(req,res)
     let request = new Request(req)
+
+    /**
+     * setting up session on request object which
+     * makes session methods available on
+     * request object itself.
+     * @type {[type]}
+     */
+    request.session = session
 
     /**
      * if request is for a static resource , serve static resource
