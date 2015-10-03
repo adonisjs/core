@@ -24,9 +24,9 @@ class ServerProvider extends ServiceProvider {
    * @description Binding Server to ioc container
   */
   * register () {
-    this.app.bind('Adonis/Src/Server', function (Route,Request,Response,Logger) {
+    this.app.bind('Adonis/Src/Server', function (Route, Request, Response, Logger, Session) {
       const Server = require('../src/Server')
-      return new Server(Route,Request,Response,Logger)
+      return new Server(Route, Request, Response, Logger, Session)
     })
   }
 }

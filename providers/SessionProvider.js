@@ -16,7 +16,7 @@ class SessionProvider extends ServiceProvider {
    * @return {Array}
   */
   static get inject(){
-    return ["Adonis/Src/Helpers","Adonis/Src/Config"]
+    return ["Adonis/Src/Helpers","Adonis/Addons/Config"]
   }
 
   /**
@@ -24,9 +24,9 @@ class SessionProvider extends ServiceProvider {
    * @description Binding Server to ioc container
   */
   * register () {
-    this.app.bind('Adonis/Src/Session', function (Helpers,Config) {
+    this.app.bind('Adonis/Src/Session', function (Helpers, Config) {
       const Session = require('../src/Session')
-      return new Session(Helpers,Config)
+      return new Session(Helpers, Config)
     })
   }
 }
