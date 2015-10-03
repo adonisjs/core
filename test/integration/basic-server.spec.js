@@ -62,18 +62,6 @@ let server = null
       done()
 
     })
-    server.start(4000)
-
-    api()
-      .base('http://localhost:4000')
-      .get('/home')
-      .expectStatus(200)
-      .expectBody('hello world')
-      .end(function (err, res, body) {
-        if (err) done(err)
-        else done()
-      })
-  })
 
   it('should throw 404 when route is not found', function (done) {
     server.start(4000)
@@ -102,37 +90,37 @@ let server = null
       })
   })
 
-  it('should spyn a server on given port and respond to a registered route', function (done) {
-    let usersToReturn = [{
-      username: 'foo',
-      age: 22
-    }, {
-      username: 'bar',
-      age: 25
-    }]
+    it('should spyn a server on given port and respond to a registered route', function (done) {
+      let usersToReturn = [{
+        username: 'foo',
+        age: 22
+      }, {
+        username: 'bar',
+        age: 25
+      }]
 
-    Routes.get('/user', function *(request, response) {
-      let users = yield getData(usersToReturn)
-      if (users) {
-        response.status(200).send(users)
-      }
-    })
-
-    server.start(4000)
-
-    api()
-      .json()
-      .base('http://localhost:4000')
-      .get('/user')
-      .expectStatus(200)
-      .expectBody(usersToReturn)
-      .end(function (err, res, body) {
-        if (err) {
-          done(err)
-        } else {
-          done()
+      Routes.get('/user', function *(request, response) {
+        let users = yield getData(usersToReturn)
+        if (users) {
+          response.status(200).send(users)
         }
       })
+
+      server.start(4000)
+
+      api()
+        .json()
+        .base('http://localhost:4000')
+        .get('/user')
+        .expectStatus(200)
+        .expectBody(usersToReturn)
+        .end(function (err, res, body) {
+          if (err) {
+            done(err)
+          } else {
+            done()
+          }
+        })
     })
 
     it("should be able to return any data type from request", function(done) {
