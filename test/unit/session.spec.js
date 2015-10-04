@@ -14,6 +14,7 @@ const chai = require('chai')
 const fs = require('fs')
 const expect = chai.expect
 const path = require('path')
+const _ = require('lodash')
 const cookie = require('cookie')
 const coFs = require('co-fs-extra')
 
@@ -167,7 +168,6 @@ describe('Sessions', function () {
           }
           else{
             const cookies = cookie.parse(res.headers['set-cookie'][0])
-
             expect(cookies).to.have.property('adonis-session')
             expect(JSON.parse(cookies['adonis-session'])[0].d.key).to.equal('foo')
             expect(JSON.parse(cookies['adonis-session'])[0].d.value).to.equal('bar')
@@ -209,6 +209,45 @@ describe('Sessions', function () {
           }
           else{
             expect(res.text).to.equal('bar')
+            done();
+          }
+        });
+    })
+
+    it('should replace old values with new when same key is passed', function (done) {
+
+      delete process.env.APP_KEY
+
+      let view = new View(Helpers,Env)
+      let MakeResponse = new Response(view)
+      const Manager = new Session(Helpers,Config)
+
+      var server = http.createServer(function(req, res) {
+        let response = new MakeResponse(req, res)
+        const session = new Manager(req,res)
+
+        co (function * () {
+          return yield session.put('foo','foobar')
+        }).then(function(foo){
+          response.send(' ').end()
+        }).catch(done)
+      });
+
+      supertest(server)
+        .get("/")
+        .set('Cookie', ['adonis-session=[{"d":{"key":"foo","value":"bar"},"t":"string"},{"d":{"key":"baz","value":"baz"},"t":"string"}]'])
+        .end(function(err, res) {
+          if (err){
+            done(err)
+          }
+          else{
+            const cookies = cookie.parse(res.headers['set-cookie'][0])
+            expect(cookies).to.have.property('adonis-session')
+            _.each(JSON.parse(cookies['adonis-session']), function (cookie){
+              if(cookie.d.key === 'foo'){
+                expect(cookie.d.value).not.to.equal('bar')
+              }
+            })
             done();
           }
         });
@@ -444,6 +483,16 @@ describe('Sessions', function () {
       const toType = SessionManagerHelpers.stringToType(user)
 
       expect(true).to.equal(toType.d)
+
+    });
+
+    it('should convert date object to date string', function () {
+
+      const date = new Date()
+
+      const time = {d:JSON.stringify(date),t:'object'}
+      const toType = SessionManagerHelpers.stringToType(time)
+      expect(JSON.parse(JSON.stringify(date))).to.equal(toType.d)
 
     });
   

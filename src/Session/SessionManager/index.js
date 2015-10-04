@@ -21,8 +21,15 @@ class SessionManager {
 		return 'adonis-session'
 	}
 
+	/**
+	 * @description create session string to be saved with
+	 * active driver.
+	 * @method _makeBody
+	 * @param  {String}  key
+	 * @param  {*}  value
+	 * @return {Object}
+	 */
 	_makeBody(key, value) {
-
 		/**
 		 * getting typeof value , required to format
 		 * values properly before saving them.
@@ -40,19 +47,33 @@ class SessionManager {
 
 		/**
 		 * body to save to session, it is the final
-		 * format save by all drivers
+		 * format saved by all drivers
 		 * @type {Object}
 		 */
 		const body = {
 			d: {key,value},
 			t: type
 		}
-
 		return body
-
 	}
 
-	*put (key, value) {
+	/**
+	 * @function put
+	 * @description adding key/value pair to session
+	 * object
+	 * @param  {String} key
+	 * @param  {*} value
+	 * @return {void}
+	 * @public
+	 */
+	* put (key, value) {
+		/**
+		 * throwing error when key/value pair or object is not
+		 * passed while saving cookies
+		 */
+		if(key && !value && typeof(key) !== 'object'){
+			throw new Error('session requires key/value pair of an object')
+		}
 
 		/**
 		 * access to this for callback methods
@@ -60,11 +81,19 @@ class SessionManager {
 		const self = this
 
 		/**
-		 * session id for session , by default 
+		 * session id for session , by default
 		 * it is null
-		 * @type {[type]}
+		 * @type {String}
 		 */
 		let sessionId = null
+
+		/**
+		 * initializing existing session with an empty array.
+		 * If existing session exists it will be replaced
+		 * with session object.
+		 * @type {Array}
+		 */
+		let existingSession = []
 
 		/**
 		 * parsing existing cookies to read
@@ -74,47 +103,53 @@ class SessionManager {
 		const cookies = Cookies.parse(this.request)
 
 		/**
-		 * setting existing session if there , otherwise
-		 * setting up existing session as an array.
-		 * @type {Array}
+		 * here we read session id from cookie. It will be actual 
+		 * session object if cookie driver is in use. Otherwise
+		 * it will be the unique session id.
+		 * @type {String}
+		 * @encrypted false
 		 */
-		let existingSession = []
-		try{
-			existingSession = JSON.parse(cookies['adonis-session'])
-		}catch(e){
-			// ignoring error
-		}
+		sessionId = cookies['adonis-session']
 
-		if(key && !value && typeof(key) !== 'object'){
-			throw new Error('session requires key/value pair of an object')
+		/**
+		 * we will get session information if session id
+		 * exists otherwise we create a fresh instance
+		 * of session
+		 */
+		if(sessionId){
+			if(this.constructor.driver === 'cookie'){
+				try{
+					existingSession = JSON.parse(sessionId)
+				}catch(e){
+					// ignoring error
+				}
+			}else{
+				existingSession = yield this.constructor.driver.read(sessionId)
+			}
 		}
 
 		if(!value && typeof(key) === 'object'){
-
 			/**
 			 * if user has passed an object , containing multiple session
 			 * values , loop through them and push individual item
 			 */
 			_.each(key, function (item,index) {
-				existingSession.push(self._makeBody(index,item))
+				helpers.pushToSession(existingSession,self._makeBody(index,item))
 			})
-
 		}else{
-
 			/**
 			 * otherwise push original key/value pair
 			 * passed to this method
 			 */
-			existingSession.push(this._makeBody(key,value))			
-
+			helpers.pushToSession(existingSession,self._makeBody(key,value))
 		}
 
 		/**
-		 * pushing new value to existing session 
-		 * array.
+		 * converting session back to string to be saved inside
+		 * cookie
+		 * @type {String}
 		 */
 		existingSession = JSON.stringify(existingSession)
-
 
 		if(this.constructor.driver === 'cookie'){
 
@@ -125,7 +160,6 @@ class SessionManager {
 			 * little confusing
 			*/
 			sessionId = existingSession
-
 		}else{
 
 			/**
@@ -133,11 +167,9 @@ class SessionManager {
 			 * not cookie and need way to reference session
 			 * values
 			 */
-			sessionId = helpers.generateSessionId()
+			sessionId = sessionId || helpers.generateSessionId()
 			yield this.constructor.driver.write(sessionId,existingSession)
-
 		}
-
 
 		/**
 		 * generating cookie string to push to cookies 
@@ -162,19 +194,55 @@ class SessionManager {
 	}
 
 
+	/**
+	 * @function get
+	 * @description fetching session value for a given 
+	 * key
+	 * @param  {String} key
+	 * @return {*}
+	 * @public
+	 */
 	* get (key) {
-		const cookies = Cookies.parse(this.request)
-		let session = cookies['adonis-session']
+
+		/**
+		 * pairs will be built by iterating over the session 
+		 * object and transforming values back to their
+		 * original type.
+		 * @type {Object}
+		 */
 		let pairs = {}
 
+		/**
+		 * reading cookies from request
+		 */
+		const cookies = Cookies.parse(this.request)
+
+		/**
+		 * looking for adonis-session key inside cookies
+		 * @type {Object}
+		 */
+		let session = cookies['adonis-session']
+
+		/**
+		 * if session key does not exists inside cookie
+		 * return null
+		 */
 		if(!session){
 			return null
 		}
 
+		/**
+		 * if driver is not cookie , we need to fetch values using sessionId
+		 * from active driver
+		 */
 		if(this.constructor.driver !== 'cookie'){
 			session = yield this.constructor.driver.read(session)
 		}
 
+		/**
+		 * parsing it back to object.
+		 * @type {Object}
+		 */
 		session = JSON.parse(session)
 
 		pairs = _.object(_.map(session, function(item,index) {

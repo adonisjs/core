@@ -14,7 +14,7 @@ const winston = require('winston')
 let Logger = new winston.Logger({
   transports: [
     new winston.transports.Console({
-      handleExceptions: true,
+      handleExceptions: false,
       json: false,
       prefixes: 'adonis',
       prettyPrint: true,

@@ -7,6 +7,7 @@
 */
 
 const crypto = require('crypto')
+const _ = require('lodash')
 
 let helpers = exports = module.exports = {}
 
@@ -82,4 +83,56 @@ helpers.generateSessionId = function () {
 	const sha = crypto.createHash('sha256')
 	sha.update(`${new Date().getTime().toString()}${Math.random().toString()}`)
 	return sha.digest('hex')
+}
+
+/**
+ * @function pushToSession
+ * @description here we update values on session object
+ * which is supposed to be saved with a given driver
+ * also making sure we replace the existing session
+ * with new value if same key is used.
+ * @param  {Object}      existingSession
+ * @param  {*}      value
+ * @return {void}
+ * @public
+ */
+helpers.pushToSession = function (existingSession, value) {
+
+	/**
+	 * storing whether key/value pair already exists on session
+	 * object or not.
+	 * @type {Boolean}
+	 */
+	let matchFound = false
+
+	/**
+	 * if existing session is empty, simply push values 
+	 * on it.
+	 */
+	if(_.size(existingSession) === 0){
+		existingSession.push(value)
+		return
+	}
+
+	_.each(existingSession, function (item, index) {
+		/**
+		 * if key/value pair already exists on session, update
+		 * it's value with new value and set matchFound to
+		 * true.
+		 */
+		if(value.d.key === item.d.key){
+			item = value
+			matchFound = true
+		}
+		existingSession[index] = item
+	})
+
+	/**
+	 * if key/value pair does not exists on session. Push
+	 * values to it.
+	 */
+	if(!matchFound){
+		existingSession.push(value)
+	}
+
 }

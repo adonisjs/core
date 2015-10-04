@@ -19,7 +19,8 @@ const signature = require('cookie-signature')
 let Cookies = exports = module.exports = {}
 
 /**
- * parses cookie header and returns an object
+ * @function parse
+ * @description parses cookie header and returns an object
  * @param  {String} cookieHeader
  * @return {Object}
  */

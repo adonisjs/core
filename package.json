@@ -42,6 +42,7 @@
     "chai": "^3.2.0",
     "chai-string": "^1.1.2",
     "coveralls": "^2.11.4",
+    "cz-conventional-changelog": "^1.1.2",
     "formidable": "^1.0.17",
     "hippie": "^0.3.0",
     "istanbul": "^0.3.18",
