@@ -89,5 +89,13 @@ pip-selfcheck.json
 
 ## nightwatch
 reports
-test
 reports/*
+
+## npm only
+test
+.editorconfig
+.cz.json
+.travis.yml
+makecoverage
+makeselenium
+maketest
