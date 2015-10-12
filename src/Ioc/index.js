@@ -12,6 +12,7 @@
 const helpers = require('./helpers')
 const _       = require('lodash')
 const requireStack = require('require-stack')
+const debug = require('debug')('adonis:ioc')
 
 /**
  * list of registered providers
@@ -70,6 +71,7 @@ Ioc._bind = function (namespace, closure, singleton) {
   if(typeof(closure) !== 'function'){
     throw new Error('Invalid arguments, bind expects a callback')
   }
+  debug('binding %s to ioc container',namespace)
   providers[namespace] = {closure,singleton}
 }
 
@@ -122,6 +124,7 @@ Ioc._extendProvider = function (extender, manager) {
  */
 Ioc._autoLoad = function (namespace) {
   namespace = namespace.replace(autoloadDirectory.namespace,autoloadDirectory.directoryPath)
+  debug('autoloading %s from ioc container',namespace)
   try{
     return requireStack(namespace)
   }catch(e){
@@ -203,6 +206,7 @@ Ioc.manager = function (namespace, defination) {
   if(!defination.extend){
     throw new Error('Incomplete implementation, manager objects should have extend method')
   }
+  debug('registering manager for %s',namespace)
   providerManagers[namespace] = defination
 }
 
@@ -220,6 +224,7 @@ Ioc.extend = function (namespace, key, closure) {
   if(typeof(closure) !== 'function'){
     throw new Error('Invalid arguments, extend expects a callback')
   }
+  debug('extending %s',namespace)
   providerExtenders[namespace] = providerExtenders[namespace] || []
   providerExtenders[namespace].push({key, closure})
 }
@@ -235,6 +240,7 @@ Ioc.extend = function (namespace, key, closure) {
  * @public
  */
 Ioc.autoload = function (namespace, directoryPath) {
+  debug('autoloading directory is set to %s under %s namespace',directoryPath,namespace)
   autoloadDirectory = {namespace,directoryPath}
 }
 
@@ -247,10 +253,9 @@ Ioc.autoload = function (namespace, directoryPath) {
  * @public
  */
 Ioc.use = function (namespace) {
-  let type = null
 
   if(providers[namespace]){
-    type = 'PROVIDER'
+    debug('resolving provider %s',namespace)
 
     /**
      * if provider supports extending and there are closures to
@@ -265,11 +270,11 @@ Ioc.use = function (namespace) {
   }
 
   if(helpers.isAutoLoadPath(autoloadDirectory,namespace)){
-    type = 'LOCAL_MODULE'
     return Ioc._autoLoad(namespace)
   }
 
   if(aliases[namespace]){
+    debug('resolving provider namespace via %s alias',namespace)
     return Ioc.use(aliases[namespace])
   }
 
@@ -287,6 +292,7 @@ Ioc.use = function (namespace) {
  * @public
  */
 Ioc.alias = function (key, namespace) {
+  debug('%s has been aliased as %s',namespace,key)
   aliases[key] = namespace
 }
 
@@ -302,11 +308,13 @@ Ioc.make = function (Binding) {
 
   const _bind = Function.prototype.bind
 
-  if(typeof(Binding) !== 'function' || typeof(Binding.constructor) !== 'function'){
+  if(typeof(Binding) !== 'function' || typeof(Binding.constructor) !== 'function' || !Binding.name){
     throw new Error('Invalid type, you can only make class instances using make method')
   }
-  const injections = Binding.inject || helpers.introspect(Binding.toString())
 
+  debug('making class %s',Binding.name)
+
+  const injections = Binding.inject || helpers.introspect(Binding.toString())
   if(!injections || _.size(injections) === 0){
     return new Binding
   }

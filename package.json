@@ -7,11 +7,11 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test/unit --bail",
+    "test": "DEBUG=adonis:* mocha test/unit --bail",
     "coverage": "istanbul cover _mocha test/unit --bail"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "adonisjs",
+  "license": "MIT",
   "devDependencies": {
     "chai": "^3.3.0",
     "cz-conventional-changelog": "^1.1.4",
@@ -21,6 +21,7 @@
   "dependencies": {
     "co": "^4.6.0",
     "co-parallel": "^1.0.0",
+    "debug": "^2.2.0",
     "dwell": "^1.0.0",
     "lodash": "^3.10.1",
     "require-stack": "^1.0.1"
