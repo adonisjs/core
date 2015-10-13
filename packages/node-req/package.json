@@ -1,0 +1,36 @@
+{
+  "name": "node-req",
+  "version": "1.0.0",
+  "description": "lightweight i/o only http request parser",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test",
+    "coverage": "istanbul cover _mocha test"
+  },
+  "keywords": [
+    "node-req",
+    "req",
+    "node-http-request",
+    "http-request"
+  ],
+  "author": "amanvirk",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "co": "^4.6.0",
+    "co-mocha": "^1.1.2",
+    "co-supertest": "0.0.10",
+    "cz-conventional-changelog": "^1.1.4",
+    "formidable": "^1.0.17",
+    "istanbul": "^0.3.22",
+    "mocha": "^2.3.3",
+    "supertest": "^1.1.0"
+  },
+  "dependencies": {
+    "accepts": "^1.3.0",
+    "fresh": "^0.3.0",
+    "parseurl": "^1.3.0",
+    "proxy-addr": "^1.0.8",
+    "type-is": "^1.6.9"
+  }
+}
