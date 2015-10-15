@@ -278,7 +278,15 @@ Ioc.use = function (namespace) {
     return Ioc.use(aliases[namespace])
   }
 
-  throw new Error('Unable to resolve ' + namespace)
+  /**
+   * otherwise treat it as a node
+   * module and require it.
+   */
+  try{
+    return requireStack(namespace)
+  }catch(error){
+    throw error
+  }
 
 }
 

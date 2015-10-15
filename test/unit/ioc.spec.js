@@ -329,7 +329,13 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.use('Bar')
       }
-      expect(fn).to.throw(/Unable to resolve Bar/)
+      expect(fn).to.throw(/Cannot find module/)
+    })
+
+    it('should require node module using use function', function () {
+
+      const lodash = Ioc.use('lodash')
+      expect(lodash.each).to.be.a('function')
     })
 
 
