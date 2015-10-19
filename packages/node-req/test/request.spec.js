@@ -6,7 +6,7 @@
  * MIT Licensed
 */
 
-const Request    = require('../src/Request')
+const Request = require('../')
 const supertest  = require('co-supertest')
 const formidable = require('formidable')
 const http       = require('http')
