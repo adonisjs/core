@@ -19,7 +19,7 @@ const is        = require('type-is')
 
 /**
  * @module Request
- * @description Lean io module for parsing http 
+ * @description Lean io module for parsing http
  * request.
  * @type {Object}
  */
@@ -37,8 +37,8 @@ Request.get = function (request) {
 }
 
 /**
- * @description returns request post body, one 
- * have to make use of some body parser to 
+ * @description returns request post body, one
+ * have to make use of some body parser to
  * set request body
  * @method post
  * @param  {Object} request
@@ -152,7 +152,7 @@ Request.ips = function (request) {
 }
 
 /**
- * @description looks for request protocol to check 
+ * @description looks for request protocol to check
  * for https existence or returns false
  * @method secure
  * @param  {Object} request
@@ -182,7 +182,7 @@ Request.subdomains = function (request, offset) {
   let subdomains =  hostname.split('.').reverse()
   subdomains = subdomains.slice(offset)
   /**
-   * remove www if is the last subdomain 
+   * remove www if is the last subdomain
    * after reverse
    */
   if(subdomains[subdomains.length - 1] === 'www'){
@@ -271,7 +271,7 @@ Request.is = function (request, keys) {
 }
 
 /**
- * @description returns best possible accept type 
+ * @description returns best possible accept type
  * based upon Accept header
  * @method accepts
  * @param  {Object} request

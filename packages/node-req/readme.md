@@ -1,13 +1,15 @@
 # Node Req
 
-`node-req` is a loosely couple i/o module to parsing and returning values out of http request object using helper methods.It is not express, neither connect. It is just an i/o module for parsing request object.
+![](http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png)
+
+`node-req` is an i/o module for parsing and returning values out of HTTP request object using helper methods.It is not express, neither connect. It is just an i/o module for parsing request object.
 
 ## See also
 
 1. node-res
 2. node-cookie
 
-## Http Server
+## Http 
 
 ```javascript
 var http = require('http')
@@ -15,19 +17,18 @@ var nodeReq = require('node-req')
 
 http.createServer(function (req, res) {
   
-  // get query string from req  
-  var get = nodeReq.get(req)
+  // get query string from req
+  var query = nodeReq.get(req)
 
 }).listen(3000)
 
 ```
 
-Yes that's all , `node-req` makes no assumption on how to add router or handle http reqs. All it does it parse request object and return values out of it.
+Yes, that's all, `node-req` makes no assumption on how to add routes or handle HTTP requests. All it does it parse request object and return values out of it.
 
-## What's different from express ?
+## What's different from express?
 
-`express` is super cool, but it is a framework which has lot more to offer than just parsing requests, where `node-req`
-is just a parser and will be an option based on your use case.
+`express` is super cool, but it is a framework that has a lot more to offer than just parsing requests, where `node-req` is just a parser and will be an option based on your use case.
 
 ## Methods
 
@@ -52,7 +53,7 @@ nodeReq.post(req)
 ```
 
 #### method (req)
-returns request method or you can say http verb
+returns request method, or you can say HTTP verb
 
 ```javascript
 nodeReq.method(req)
@@ -96,7 +97,7 @@ nodeReq.ip(req, ['127.0.0.0/8', '10.0.0.0/8'])
 ```
 
 #### ips (req)
-Returns list of all ip address associated with a request, starting from closest to furthest based on trusted proxy
+Returns list of all IP address associated with a request, starting from closest to furthest based on trusted proxy
 
 ```javascript
 nodeReq.ips(req)
@@ -119,7 +120,7 @@ nodeReq.subdomains(req)
 // returns ['gig']
 ```
 
-where as
+whereas
 
 ```javascript
 // request url www.baz.com
@@ -129,14 +130,14 @@ nodeReq.subdomains(req)
 ```
 
 #### ajax (req)
-determines whether request is ajax or not based on `X-Requested-With` header
+determines whether a request is ajax or not based on `X-Requested-With` header
 
 ```javascript
 nodeReq.ajax(req)
 ```
 
 #### pjax (req)
-determines whether request is pjax or not based on `X-Pjax` header
+determines whether a request is pjax or not based on `X-Pjax` header
 
 ```javascript
 nodeReq.pjax(req)
@@ -150,7 +151,7 @@ nodeReq.hostname(req)
 ```
 
 #### url (req)
-returns request url without query string
+returns request URL without the query string
 
 ```javascript
 // request url /users?offset=0&limit=10
@@ -175,11 +176,11 @@ nodeReq.originalUrl(req)
 tells whether request is of certain type or not based on `Content-type` header.
 
 ```javascript
-nodeReq.is('html')
+nodeReq.is(req, 'html')
 // true
-nodeReq.is('text/html')
+nodeReq.is(req, 'text/html')
 // true
-nodeReq.is(['json','html'])
+nodeReq.is(req, ['json','html'])
 //true
 ```
 
@@ -187,11 +188,27 @@ nodeReq.is(['json','html'])
 tells whether request accepts data of certain type based on `Accepts` header.
 
 ```javascript
-nodeReq.accepts('html')
+nodeReq.accepts(req, 'html')
 // 'html'
-nodeReq.accepts('text/html')
+nodeReq.accepts(req, 'text/html')
 // 'text/html'
-nodeReq.accepts(['json','html'])
+nodeReq.accepts(req, ['json','html'])
 // 'html'
 ```
 
+## License 
+(The MIT License)
+
+Copyright (c) 2015 Poppins
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
