@@ -2,6 +2,9 @@
 
 ![](http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png)
 
+![](https://img.shields.io/travis/poppinss/node-req.svg)
+[![Coverage Status](https://coveralls.io/repos/poppinss/node-req/badge.svg?branch=master&service=github)](https://coveralls.io/github/poppinss/node-req?branch=master)
+
 `node-req` is an i/o module for parsing and returning values out of HTTP request object using helper methods.It is not express, neither connect. It is just an i/o module for parsing request object.
 
 ## See also
