@@ -4,7 +4,7 @@
   "description": "I/O parser for nodejs http request",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover _mocha --report lcovonly -- -R spec test",
+    "test": "istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "coverage": "istanbul cover _mocha test --bail"
   },
   "keywords": [
@@ -33,6 +33,7 @@
     "fresh": "^0.3.0",
     "parseurl": "^1.3.0",
     "proxy-addr": "^1.0.8",
+    "qs": "^5.2.0",
     "type-is": "^1.6.9"
   },
   "directories": {
