@@ -151,6 +151,12 @@ Request.ips = function (request) {
   return proxyaddr.all(request)
 }
 
+Request.protocol = function (request) {
+  let proto = request.connection.encrypted ? 'https' : 'http'
+  proto = Request.header(request, 'X-Forwarded-Proto') || proto
+  return proto.split(/\s*,\s*/)[0];
+}
+
 /**
  * @description looks for request protocol to check
  * for https existence or returns false
@@ -160,7 +166,7 @@ Request.ips = function (request) {
  * @public
  */
 Request.secure = function (request) {
-  return 'https' === parseurl(request).protocol
+  return Request.protocol(request) === 'https'
 }
 
 /**

@@ -6,11 +6,13 @@
  * MIT Licensed
 */
 
-const Request = require('../')
+const Request    = require('../')
 const supertest  = require('co-supertest')
 const formidable = require('formidable')
 const http       = require('http')
 const chai       = require('chai')
+const pem        = require('pem')
+const https      = require('https')
 const expect     = chai.expect
 
 require('co-mocha')
@@ -196,17 +198,39 @@ describe('Http Request', function () {
     expect(res.body.ip).to.match(/127\.0\.0\.1/)
   })
 
-  it('should tell whether request is on https or not', function * () {
+  it('should request protocol', function * () {
 
     const server = http.createServer(function (req,res) {
-      const secure = Request.secure(req)
+      const protocol = Request.protocol(req)
       res.writeHead(200,{"content-type": "application/json"})
-      res.write(JSON.stringify({secure}))
+      res.write(JSON.stringify({protocol}))
       res.end()
     })
 
     const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.secure).to.equal(false)
+    expect(res.body.protocol).to.equal('http')
+  })
+
+  it('should tell whether request is on https or not', function (done) {
+
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    pem.createCertificate({days:1, selfSigned:true}, function(err, keys){
+      const server = https.createServer({key: keys.serviceKey, cert: keys.certificate},function (req,res) {
+        const secure = Request.secure(req)
+        res.writeHead(200,{"content-type": "application/json"})
+        res.write(JSON.stringify({secure}))
+        res.end()
+      })
+      supertest(server).get('/').expect(200).end(function (err, res){
+        if(err){
+          done(err)
+          return
+        }
+        expect(res.body.secure).to.equal(true)
+        done()
+      })
+    })
+
   })
 
   it('should not return www as subdomain for a given url', function () {
