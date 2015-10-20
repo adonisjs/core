@@ -1,7 +1,7 @@
 {
   "name": "adonis-fold",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "Ioc container with all required goodies to write scalable node applications",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -27,5 +27,21 @@
     "dwell": "^1.0.0",
     "lodash": "^3.10.1",
     "require-stack": "^1.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poppinss/adonis-fold.git"
+  },
+  "keywords": [
+    "ioc",
+    "dependency",
+    "injection",
+    "service",
+    "provider",
+    "autoloading"
+  ],
+  "bugs": {
+    "url": "https://github.com/poppinss/adonis-fold/issues"
+  },
+  "homepage": "https://github.com/poppinss/adonis-fold#readme"
 }
