@@ -6,7 +6,7 @@
  * MIT Licensed
 */
 
-const Ioc    = require('../../src/Ioc')
+const Ioc    = require('../../').Ioc
 const chai   = require('chai')
 const expect = chai.expect
 const path   = require('path')

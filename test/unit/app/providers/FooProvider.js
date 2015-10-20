@@ -1,6 +1,6 @@
 'use strict'
 
-const ServiceProvider = require('../../../../src/ServiceProvider')
+const ServiceProvider = require('../../../../').ServiceProvider
 
 class Foo {
 

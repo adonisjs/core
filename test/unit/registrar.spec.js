@@ -8,8 +8,8 @@
 
 const chai = require('chai')
 const expect = chai.expect
-const Registrar = require('../../src/Registrar')
-const Ioc    = require('../../src/Ioc')
+const Registrar = require('../../').Registrar
+const Ioc    = require('../../').Ioc
 const path = require('path')
 
 describe('Registrar', function () {

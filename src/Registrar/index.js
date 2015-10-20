@@ -30,7 +30,6 @@ let Registrar = exports = module.exports = {}
  * @public
  */
 Registrar.require = function (arrayOfProviders) {
-
   return _.map(arrayOfProviders, function (provider) {
     const module = new(requireStack(provider))
     return module.register()
@@ -46,11 +45,8 @@ Registrar.require = function (arrayOfProviders) {
  * @public
  */
 Registrar.register = function (arrayOfProviders) {
-
   arrayOfProviders = Registrar.require(arrayOfProviders)
   return co (function * () {
     return yield parallel(arrayOfProviders)
   })
-
 }
-
