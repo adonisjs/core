@@ -36,7 +36,9 @@ class Server {
 
     if(requestUrl === '/favicon.ico' || requestUrl === 'favicon.ico'){
       debug('serving favicon')
-      this.static.serve(req, res)
+      this.static.serve(req, res, function (err) {
+        helpers.staticResourceDone(err, response)
+      })
       return
     }
 
@@ -47,7 +49,9 @@ class Server {
      * try serving static resource if route is not found
      */
     if(!resolvedRoute.handler){
-      this.static.serve(req, res)
+      this.static.serve(req, res, function (err) {
+        helpers.staticResourceDone(err, response)
+      })
       return
     }
 

@@ -86,3 +86,10 @@ helpers.handleRequestError = function (error, response) {
   const status = error.status || 500
   response.status(status).send(message)
 }
+
+helpers.staticResourceDone = function (err, response) {
+  if(err){
+    helpers.handleRequestError(err, response)
+    return
+  }
+}

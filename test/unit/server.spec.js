@@ -57,6 +57,11 @@ describe("Server", function () {
     done()
   })
 
+  it("should make 404 error when unable to find static resource", function * () {
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    const res = yield supertest(testServer).get('/foo.ico').expect(404).end()
+  })
+
   it("should call route action if defined", function * (done) {
 
     Route.get('/', function * (request, response) {
