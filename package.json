@@ -1,0 +1,40 @@
+{
+  "name": "adonis-framework",
+  "version": "1.0.0",
+  "description": "Adonis framework repo",
+  "main": "index.js",
+  "scripts": {
+    "test": "_mocha test/unit --bail",
+    "coverage": "istanbul cover _mocha test/unit --bail"
+  },
+  "keywords": [
+    "adonis-framework",
+    "mvc",
+    "mvc-framework"
+  ],
+  "author": "adonisjs",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "co-mocha": "^1.1.2",
+    "co-supertest": "0.0.10",
+    "coveralls": "^2.11.4",
+    "adonis-fold": "git://github.com/poppinss/adonis-fold.git",
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.3",
+    "mocha-lcov-reporter": "^1.0.0",
+    "pem": "^1.8.1",
+    "supertest": "^1.1.0"
+  },
+  "dependencies": {
+    "co": "^4.6.0",
+    "debug": "^2.2.0",
+    "lodash": "^3.10.1",
+    "node-cookie": "git://github.com/poppinss/node-cookie.git",
+    "node-req": "git://github.com/poppinss/node-req.git",
+    "node-res": "git://github.com/poppinss/node-res.git",
+    "node-static": "^0.7.7",
+    "nunjucks": "^2.1.0",
+    "path-to-regexp": "^1.2.1"
+  }
+}
