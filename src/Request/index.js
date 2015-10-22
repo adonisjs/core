@@ -8,6 +8,7 @@
 
 const nodeReq = require('node-req')
 const nodeCookie = require('node-cookie')
+const File = require('../File')
 const _ = require('lodash')
 
 /**
@@ -21,6 +22,8 @@ class Request {
   constructor (request, response) {
     this.request = request
     this.response = response
+    this._body = {}
+    this._files = []
 
     /**
      * secret to parse and decrypt cookies
@@ -315,6 +318,70 @@ class Request {
   params () {
     return this._params || {}
   }
+
+  /**
+   * @description converts a file object to file instance
+   * if already is not an instance
+   * @method _toFileInstance
+   * @param  {Object}        file [description]
+   * @return {Object}             [description]
+   * @private
+   */
+  _toFileInstance (file) {
+    if (!(file instanceof File)) {
+      file = new File(file)
+    }
+    return file
+  }
+
+  /**
+   * @description converts an uploaded file to file
+   * instance
+   * @method file
+   * @param  {String} key [description]
+   * @return {Object}     [description]
+   * @public
+   */
+  file (key) {
+    /**
+     * if requested file was not uploaded return an
+     * empty instance of file object.
+     */
+    if(!this._files[key]){
+      return this._toFileInstance({})
+    }
+
+    /**
+     * grabbing file from uploaded files and
+     * converting them to file instance
+     */
+    const fileToReturn = this._files[key].toJSON()
+
+    /**
+     * if multiple file upload , convert of them to
+     * file instance
+     */
+    if(_.isArray(fileToReturn)){
+      return _.map(fileToReturn, (file) => {
+        return this._toFileInstance(file)
+      })
+    }
+    return this._toFileInstance(fileToReturn)
+  }
+
+  /**
+   * @description returns all uploded files by converting
+   * them to file instances
+   * @method files
+   * @return {Array}
+   * @public
+   */
+  files () {
+    return _.map(this._files, (file, index) => {
+      return this.file(index)
+    })
+  }
+
 }
 
 module.exports = Request

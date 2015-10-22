@@ -9,8 +9,24 @@
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
 
+/**
+ * @module helpers
+ * @type {Object}
+ */
 let helpers = exports = module.exports = {}
 
+/**
+ * @description calls request route handler by setting up middleware
+ * layer
+ * @method callRouteHandler
+ * @param  {Object}         resolvedRoute
+ * @param  {Object}         request
+ * @param  {Object}         response
+ * @param  {Object}         middleware
+ * @param  {Object}         debug
+ * @param  {String}         appNamespace
+ * @return {void}
+ */
 helpers.callRouteHandler = function (resolvedRoute, request, response, middleware, debug, appNamespace) {
 
   let routeMiddleware = []
@@ -85,11 +101,4 @@ helpers.handleRequestError = function (error, response) {
   const message = error.message || 'Internal server error'
   const status = error.status || 500
   response.status(status).send(message)
-}
-
-helpers.staticResourceDone = function (err, response) {
-  if(err){
-    helpers.handleRequestError(err, response)
-    return
-  }
 }

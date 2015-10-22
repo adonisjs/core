@@ -10,9 +10,11 @@ const chai = require('chai')
 const expect = chai.expect
 const Request = require('../../src/Request')
 const http = require('http')
+const File = require('../../src/File')
 const https = require('https')
 const supertest = require('co-supertest')
 const pem = require('pem')
+const formidable = require('formidable')
 
 require('co-mocha')
 
@@ -64,7 +66,7 @@ describe('Request', function () {
     expect(res.body.body).deep.equal({name:"foo"})
   })
 
-    it('should return empty object when post body does not exists', function * () {
+  it('should return empty object when post body does not exists', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res)
       const body = request.post()
@@ -420,6 +422,53 @@ describe('Request', function () {
     expect(res.body.name).to.equal(null)
   })
 
+  it('should return an uploaded file as an instance of File object', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm();
+      const request = new Request(req, res)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const file = request.file('logo')
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({file:file instanceof File}),'utf8')
+      })
+    })
+    const res = yield supertest(server).get("/").attach('logo',__dirname+'/uploads/npm-logo.svg').expect(200).end()
+    expect(res.body.file).to.equal(true)
+  })
 
+  it('should return an empty file instance when file is not uploaded', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm();
+      const request = new Request(req, res)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const file = request.file('logo')
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({exists:file.exists()}),'utf8')
+      })
+    })
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.exists).to.equal(false)
+  })
+
+  it('should return all uploaded file as an instance of File object', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm();
+      const request = new Request(req, res)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const allFiles = request.files()
+        const isInstances = []
+        allFiles.forEach(function (file) {
+          isInstances.push(file instanceof File)
+        })
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({isInstances}),'utf8')
+      })
+    })
+    const res = yield supertest(server).get("/").attach('logo',__dirname+'/uploads/npm-logo.svg').attach('favicon',__dirname+'/public/favicon.ico').expect(200).end()
+    expect(res.body.isInstances).deep.equal([true,true])
+  })
 
 })

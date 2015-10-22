@@ -44,26 +44,23 @@ describe("Server", function () {
     Middleware.new()
   })
 
-  it("should serve static resource from a given directory", function * (done) {
+  it("should serve static resource from a given directory", function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/style.css').expect('Content-type',/css/).expect(200).end()
     expect(res.text).to.match(/(?:\s*\S+\s*{[^}]*})+/g)
-    done()
   })
 
-  it("should serve favicon when request is for favicon", function * (done) {
+  it("should serve favicon when request is for favicon", function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/favicon.ico').expect('Content-type',/x-icon/).expect(200).end()
-    done()
   })
 
   it("should make 404 error when unable to find static resource", function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/foo.ico').expect(404).end()
+    const res = yield supertest(testServer).get('/foo.css').expect(404).end()
   })
 
-  it("should call route action if defined", function * (done) {
-
+  it("should call route action if defined", function * () {
     Route.get('/', function * (request, response) {
       response.send({rendered:true})
     })
@@ -71,60 +68,53 @@ describe("Server", function () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(200).end()
     expect(res.body.rendered).to.equal(true)
-    done()
   })
 
-  it("should call route action via controller method", function * (done) {
+  it("should call route action via controller method", function * () {
     Route.get('/', 'HomeController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(200).end()
     expect(res.body.rendered).to.equal(true)
-    done()
   })
 
-  it("should return error when route handler is not of a valid type", function * (done) {
+  it("should return error when route handler is not of a valid type", function * () {
     Route.get('/', {})
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/Invalid route handler/)
-    done()
   })
 
-  it("should return error when unable to find controller", function * (done) {
+  it("should return error when unable to find controller", function * () {
     Route.get('/', 'FooController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/Cannot find module/)
-    done()
   })
 
-  it("should return error when unable to find controller method", function * (done) {
+  it("should return error when unable to find controller method", function * () {
     Route.get('/', 'HomeController.foo')
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/foo does not exists/)
-    done()
   })
 
-  it("should return error when unable to resolve middleware", function * (done) {
+  it("should return error when unable to resolve middleware", function * () {
     Middleware.register('auth',['App/Auth'])
     Route.get('/', 'HomeController.index').middlewares(['auth'])
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/Cannot find module/)
-    done()
   })
 
-  it("should return error when unable to find handle method on middleware", function * (done) {
+  it("should return error when unable to find handle method on middleware", function * () {
     Middleware.register('auth',['App/Http/Middleware/NoHandle'])
     Route.get('/', 'HomeController.index').middlewares(['auth'])
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/handle does not exists/)
-    done()
   })
 
-  it('should handle call middleware attached to a route', function * (done) {
+  it('should handle call middleware attached to a route', function * () {
 
     Middleware.register('parser','App/Http/Middleware/Parser')
     Middleware.register('cycle','App/Http/Middleware/Cycle2')
@@ -132,10 +122,9 @@ describe("Server", function () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(200).end()
     expect(res.text).to.equal("1")
-    done()
   })
 
-  it("should call middlewares attached on route with closure as handler", function * (done) {
+  it("should call middlewares attached on route with closure as handler", function * () {
 
     Middleware.register('parser','App/Http/Middleware/Parser')
     Middleware.register('cycle','App/Http/Middleware/Cycle2')
@@ -146,38 +135,33 @@ describe("Server", function () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(200).end()
     expect(res.text).to.equal("1")
-    done()
   })
 
-  it("should report error thrown my route closure", function * (done) {
+  it("should report error thrown my route closure", function * () {
     Route.get('/', function * (request, response) {
       throw new Error('Unable to login')
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/Unable to login/)
-    done()
   })
 
-  it("should print default error message when error itself does not have any message", function * (done) {
+  it("should print default error message when error itself does not have any message", function * () {
     Route.get('/', function * (request, response) {
       throw new Error()
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/Internal server error/)
-    done()
   })
 
 
-  it('should listen to server on a given port using listen method', function * (done) {
+  it('should listen to server on a given port using listen method', function * () {
     process.env.APP_PORT = 3333
     Route.get('/','HomeController.index')
     this.server.listen()
     const testServer = supertest.agent('http://localhost:3333')
     const res = yield testServer.get('/').expect(200).end()
     expect(res.body).deep.equal({rendered:true})
-    done()
-
   })
 })

@@ -37,7 +37,10 @@ class Server {
     if(requestUrl === '/favicon.ico' || requestUrl === 'favicon.ico'){
       debug('serving favicon')
       this.static.serve(req, res, function (err) {
-        helpers.staticResourceDone(err, response)
+        /* istanbul ignore if */
+        if(err){
+          helpers.handleRequestError(err, response)
+        }
       })
       return
     }
@@ -50,7 +53,9 @@ class Server {
      */
     if(!resolvedRoute.handler){
       this.static.serve(req, res, function (err) {
-        helpers.staticResourceDone(err, response)
+        if(err){
+          helpers.handleRequestError(err, response)
+        }
       })
       return
     }
