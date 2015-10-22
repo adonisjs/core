@@ -349,11 +349,12 @@ Ioc.makeFunc = function (Binding) {
     throw new Error('Unable to make ' + Binding)
   }
 
-  const instance = Ioc.make(Ioc.use(parts[0]))
+  Binding = Ioc.use(parts[0])
+  const instance = Ioc.make(Binding)
   const method = parts[1]
 
   if(!instance[method]){
-    throw new Error(method + ' does not exists on ' + instance)
+    throw new Error(method + ' does not exists on ' + Binding.name)
   }
   return {instance,method}
 

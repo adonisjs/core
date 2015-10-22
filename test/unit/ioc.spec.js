@@ -315,7 +315,7 @@ describe('Ioc', function () {
         return Ioc.makeFunc('App/Baz.bar')
       }
 
-      expect(fn).to.throw(/bar does not exists/)
+      expect(fn).to.throw(/bar does not exists on Baz/)
 
     })
 
