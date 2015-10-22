@@ -21,11 +21,15 @@
     "co-supertest": "0.0.10",
     "coveralls": "^2.11.4",
     "formidable": "^1.0.17",
+    "ioredis": "^1.9.1",
     "istanbul": "^0.4.0",
     "mocha": "^2.3.3",
     "mocha-lcov-reporter": "^1.0.0",
     "pem": "^1.8.1",
     "supertest": "^1.1.0"
+  },
+  "peerDependencies": {
+    "adonis-fold": "git://github.com/poppinss/adonis-fold.git"
   },
   "dependencies": {
     "co": "^4.6.0",
