@@ -252,80 +252,111 @@ describe('Ioc', function () {
 
     })
 
-    it('should throw an error , when trying to make something other than a class', function () {
+    it('should be able to make nested classes', function () {
 
-      const fn = function () {
-        return Ioc.make({})
+      class Bar {}
+
+      Ioc.bind('App/Bar', function () {
+        return new Bar
+      })
+
+      class Foo {
+        constructor (Bar) {
+          this.bar = Bar
+        }
       }
 
-      expect(fn).to.throw(/Invalid type/)
+      Ioc.bind('App/Foo', function (app) {
+        return new Foo(app.use("App/Bar"))
+      })
+
+      class Redis{
+        static get inject() {
+          return ["App/Foo"]
+        }
+        constructor (Foo) {
+          this.foo = Foo
+        }
+      }
+
+      const redis = Ioc.make(Redis)
+      expect(redis.foo instanceof Foo).to.equal(true)
+      expect(redis.foo.bar instanceof Bar).to.equal(true)
 
     })
 
-    it('should resolve and return class intance with required method', function () {
+    it('should be able to deep inject classes from autoloaded path', function () {
+
+      Ioc.autoload('App',__dirname+'/app')
 
       class Foo {
-
-        bar () {
-          return 'bar'
+        static get inject() {
+          return ["App/Services/Service"]
         }
-
+        constructor (Service) {
+          this.services = Service
+        }
       }
 
-      Ioc.bind('App/Foo', function (){
-        return Foo
+      const foo = Ioc.make(Foo)
+      expect(foo.services.bar).to.equal('bar')
+      expect(foo.services.baz).to.equal('baz')
+    })
+
+    it('should not make anything other then a class', function () {
+      const result = Ioc.make({})
+      expect(result).deep.equal({})
+    })
+
+    it('should make complexed Classes which has multiple dependencies', function () {
+
+      Ioc.autoload('App', path.join(__dirname, './app'))
+
+      class FooProvider {
+      }
+      Ioc.bind('App/Providers/Foo', function (){
+        return new FooProvider
       })
 
-      const foo = Ioc.makeFunc('App/Foo.bar')
-      expect(foo.instance instanceof Foo).to.equal(true)
-      expect(foo.instance[foo.method]()).to.equal('bar')
-
+      const userController = Ioc.make('App/Http/Controllers/UserController')
+      expect(userController.foo instanceof FooProvider).to.equal(true)
+      expect(userController.time).to.equal('time')
     })
 
     it('should throw an error, when unable to resolve binding using makeFunc', function () {
-
       const fn = function () {
         return Ioc.makeFunc('App/Baz.bar')
       }
-
       expect(fn).to.throw(/Cannot find module/)
-
     })
 
 
     it('should throw an error, when makeFunc string is not properly formatted', function () {
-
       const fn = function () {
         return Ioc.makeFunc('App/Baz')
       }
-
       expect(fn).to.throw(/Unable to make/)
-
     })
 
     it('should throw an error, when function does not exists on class', function () {
-
-      class Baz {}
-
-      Ioc.bind('App/Baz', function () {
-        return Baz
-      })
-
+      Ioc.autoload('App', path.join(__dirname, './app'))
       const fn = function () {
-        return Ioc.makeFunc('App/Baz.bar')
+        return Ioc.makeFunc('App/Services/Service.hello')
       }
-
-      expect(fn).to.throw(/bar does not exists on Baz/)
-
+      expect(fn).to.throw(/hello does not exists/)
     })
 
+    it('should return class instance and method using makeFunc method', function () {
+      Ioc.autoload('App', path.join(__dirname, './app'))
+      const userController = Ioc.makeFunc('App/Http/Controllers/UserController.hello')
+      expect(userController.instance[userController.method]()).to.equal('hello world')
+    })
 
   })
 
   context('Global', function () {
 
     it('should throw an error, when unable to resolve depedency from ioc container', function () {
-
       const fn = function () {
         return Ioc.use('Bar')
       }
@@ -333,7 +364,6 @@ describe('Ioc', function () {
     })
 
     it('should require node module using use function', function () {
-
       const lodash = Ioc.use('lodash')
       expect(lodash.each).to.be.a('function')
     })
@@ -349,5 +379,4 @@ describe('Ioc', function () {
     })
 
   })
-
 })

@@ -23,7 +23,8 @@ let providers = {}
 
 /**
  * list of managers exposed by providers
- * to given option to extend.
+ * they should have implemented extend
+ * method
  * @type {Object}
  * @private
  */
@@ -37,7 +38,7 @@ let providerManagers = {}
 let providerExtenders = {}
 
 /**
- * namespace for a given directory path
+ * namespace and directory path
  * to be treated as autoload
  * @private
  */
@@ -110,13 +111,12 @@ Ioc._extendProvider = function (extender, manager) {
 
     const defination = closure(Ioc)
     manager.extend(key,defination)
-
   })
 }
 
 /**
  * autoloads a given file by making dynamic path
- * from namespace register for autoloading
+ * from namespace registered for autoloading
  * @method _autoLoad
  * @param  {String}  namespace
  * @return {*}
@@ -129,6 +129,44 @@ Ioc._autoLoad = function (namespace) {
     return requireStack(namespace)
   }catch(e){
     throw e
+  }
+}
+
+/**
+ * @description returns whether variable is a class or not
+ * @method _isClass
+ * @param  {Mixed}  Binding
+ * @return {Boolean}
+ * @private
+ */
+Ioc._isClass = function (Binding) {
+  return typeof(Binding) === 'function' && typeof(Binding.constructor) === 'function' && Binding.name
+}
+
+/**
+ * @description returns type of binding based on
+ * its existence inside providers, autoload
+ * path etc.
+ * @method _type
+ * @param  {String} binding [description]
+ * @return {String}         [description]
+ * @private
+ */
+Ioc._type = function (binding) {
+  if(typeof(binding) !== 'string'){
+    return 'UNKNOWN'
+  }
+
+  if(providers[binding]){
+    return 'PROVIDER'
+  }
+
+  if(helpers.isAutoLoadPath(autoloadDirectory,binding)){
+    return 'AUTOLOAD'
+  }
+
+  if(aliases[binding]){
+    return 'ALIAS'
   }
 }
 
@@ -253,41 +291,22 @@ Ioc.autoload = function (namespace, directoryPath) {
  * @public
  */
 Ioc.use = function (namespace) {
+  const type = Ioc._type(namespace)
 
-  if(providers[namespace]){
-    debug('resolving provider %s',namespace)
-
-    /**
-     * if provider supports extending and there are closures to
-     * extend then invoke them first before resolving
-     * provider
-     */
-    if(providerExtenders[namespace] && providerManagers[namespace]){
-      Ioc._extendProvider(providerExtenders[namespace], providerManagers[namespace])
-    }
-
-    return Ioc._resolveProvider(providers[namespace])
+  switch (type) {
+    case 'PROVIDER':
+      debug('resolving provider %s',namespace)
+      if(providerExtenders[namespace] && providerManagers[namespace]){
+        Ioc._extendProvider(providerExtenders[namespace], providerManagers[namespace])
+      }
+      return Ioc._resolveProvider(providers[namespace])
+    case 'AUTOLOAD':
+      return Ioc._autoLoad(namespace)
+    case 'ALIAS':
+      return Ioc.use(aliases[namespace])
+    default:
+      return requireStack(namespace)
   }
-
-  if(helpers.isAutoLoadPath(autoloadDirectory,namespace)){
-    return Ioc._autoLoad(namespace)
-  }
-
-  if(aliases[namespace]){
-    debug('resolving provider namespace via %s alias',namespace)
-    return Ioc.use(aliases[namespace])
-  }
-
-  /**
-   * otherwise treat it as a node
-   * module and require it.
-   */
-  try{
-    return requireStack(namespace)
-  }catch(error){
-    throw error
-  }
-
 }
 
 /**
@@ -313,22 +332,33 @@ Ioc.alias = function (key, namespace) {
  * @public
  */
 Ioc.make = function (Binding) {
-
   const _bind = Function.prototype.bind
+  const type = Ioc._type(Binding)
 
-  if(typeof(Binding) !== 'function' || typeof(Binding.constructor) !== 'function' || !Binding.name){
-    throw new Error('Invalid type, you can only make class instances using make method')
+  if(type === 'PROVIDER'){
+    return Ioc.use(Binding)
   }
 
-  debug('making class %s',Binding.name)
+  if(type === 'AUTOLOAD'){
+    Binding = Ioc.use(Binding)
+  }
 
+  if(!Ioc._isClass(Binding)){
+    return Binding
+  }
+
+  /**
+   * if binding is a valid class, make an instance
+   * of it by injecting dependencies
+   */
+  debug('making class %s',Binding.name)
   const injections = Binding.inject || helpers.introspect(Binding.toString())
   if(!injections || _.size(injections) === 0){
     return new Binding
   }
 
   const resolvedInjections = _.map(injections, function (injection) {
-    return Ioc.use(injection)
+    return Ioc.make(injection)
   })
 
   return new (_bind.apply(Binding, [null].concat(resolvedInjections)))()
@@ -343,19 +373,16 @@ Ioc.make = function (Binding) {
  * @public
  */
 Ioc.makeFunc = function (Binding) {
-
   const parts = Binding.split('.')
   if(parts.length !== 2){
     throw new Error('Unable to make ' + Binding)
   }
 
-  Binding = Ioc.use(parts[0])
-  const instance = Ioc.make(Binding)
+  const instance = Ioc.make(parts[0])
   const method = parts[1]
 
   if(!instance[method]){
-    throw new Error(method + ' does not exists on ' + Binding.name)
+    throw new Error(method + ' does not exists on ' + parts[0])
   }
   return {instance,method}
-
 }
