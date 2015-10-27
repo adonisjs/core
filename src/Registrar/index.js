@@ -9,9 +9,9 @@
 /**
  * @ignore
 */
-const parallel     = require('co-parallel')
-const co           = require('co')
-const _            = require('lodash')
+const parallel = require('co-parallel')
+const co = require('co')
+const _ = require('lodash')
 const requireStack = require('require-stack')
 
 /**
@@ -31,7 +31,7 @@ let Registrar = exports = module.exports = {}
  */
 Registrar.require = function (arrayOfProviders) {
   return _.map(arrayOfProviders, function (provider) {
-    const module = new(requireStack(provider))
+    const module = new (requireStack(provider))
     return module.register()
   })
 }
@@ -46,7 +46,7 @@ Registrar.require = function (arrayOfProviders) {
  */
 Registrar.register = function (arrayOfProviders) {
   arrayOfProviders = Registrar.require(arrayOfProviders)
-  return co (function * () {
+  return co(function * () {
     return yield parallel(arrayOfProviders)
   })
 }

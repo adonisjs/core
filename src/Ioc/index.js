@@ -10,7 +10,7 @@
  * @ignore
  */
 const helpers = require('./helpers')
-const _       = require('lodash')
+const _ = require('lodash')
 const requireStack = require('require-stack')
 const debug = require('debug')('adonis:ioc')
 
@@ -69,11 +69,11 @@ let Ioc = exports = module.exports = {}
  * @private
  */
 Ioc._bind = function (namespace, closure, singleton) {
-  if(typeof(closure) !== 'function'){
+  if (typeof (closure) !== 'function') {
     throw new Error('Invalid arguments, bind expects a callback')
   }
-  debug('binding %s to ioc container',namespace)
-  providers[namespace] = {closure,singleton}
+  debug('binding %s to ioc container', namespace)
+  providers[namespace] = {closure, singleton}
 }
 
 /**
@@ -85,7 +85,7 @@ Ioc._bind = function (namespace, closure, singleton) {
  * @private
  */
 Ioc._resolveProvider = function (provider) {
-  if(!provider.singleton){
+  if (!provider.singleton) {
     return provider.closure(Ioc)
   }
   provider.instance = provider.instance || provider.closure(Ioc)
@@ -103,14 +103,12 @@ Ioc._resolveProvider = function (provider) {
  * @private
  */
 Ioc._extendProvider = function (extender, manager) {
-
   _.each(extender, function (item) {
-
     const closure = item.closure
     const key = item.key
 
     const defination = closure(Ioc)
-    manager.extend(key,defination)
+    manager.extend(key, defination)
   })
 }
 
@@ -123,11 +121,11 @@ Ioc._extendProvider = function (extender, manager) {
  * @private
  */
 Ioc._autoLoad = function (namespace) {
-  namespace = namespace.replace(autoloadDirectory.namespace,autoloadDirectory.directoryPath)
-  debug('autoloading %s from ioc container',namespace)
-  try{
+  namespace = namespace.replace(autoloadDirectory.namespace, autoloadDirectory.directoryPath)
+  debug('autoloading %s from ioc container', namespace)
+  try {
     return requireStack(namespace)
-  }catch(e){
+  } catch (e) {
     throw e
   }
 }
@@ -140,7 +138,7 @@ Ioc._autoLoad = function (namespace) {
  * @private
  */
 Ioc._isClass = function (Binding) {
-  return typeof(Binding) === 'function' && typeof(Binding.constructor) === 'function' && Binding.name
+  return typeof (Binding) === 'function' && typeof (Binding.constructor) === 'function' && Binding.name
 }
 
 /**
@@ -153,19 +151,19 @@ Ioc._isClass = function (Binding) {
  * @private
  */
 Ioc._type = function (binding) {
-  if(typeof(binding) !== 'string'){
+  if (typeof (binding) !== 'string') {
     return 'UNKNOWN'
   }
 
-  if(providers[binding]){
+  if (providers[binding]) {
     return 'PROVIDER'
   }
 
-  if(helpers.isAutoLoadPath(autoloadDirectory,binding)){
+  if (helpers.isAutoLoadPath(autoloadDirectory, binding)) {
     return 'AUTOLOAD'
   }
 
-  if(aliases[binding]){
+  if (aliases[binding]) {
     return 'ALIAS'
   }
 }
@@ -186,7 +184,7 @@ Ioc.getProviders = function () {
  * @return {Object}
  * @public
  */
-Ioc.getManagers = function (){
+Ioc.getManagers = function () {
   return providerManagers
 }
 
@@ -197,7 +195,7 @@ Ioc.getManagers = function (){
  * @return {Object}
  * @public
  */
-Ioc.getExtenders = function (){
+Ioc.getExtenders = function () {
   return providerExtenders
 }
 
@@ -241,10 +239,10 @@ Ioc.singleton = function (namespace, closure) {
  * @public
  */
 Ioc.manager = function (namespace, defination) {
-  if(!defination.extend){
+  if (!defination.extend) {
     throw new Error('Incomplete implementation, manager objects should have extend method')
   }
-  debug('registering manager for %s',namespace)
+  debug('registering manager for %s', namespace)
   providerManagers[namespace] = defination
 }
 
@@ -259,14 +257,13 @@ Ioc.manager = function (namespace, defination) {
  * @public
  */
 Ioc.extend = function (namespace, key, closure) {
-  if(typeof(closure) !== 'function'){
+  if (typeof (closure) !== 'function') {
     throw new Error('Invalid arguments, extend expects a callback')
   }
-  debug('extending %s',namespace)
+  debug('extending %s', namespace)
   providerExtenders[namespace] = providerExtenders[namespace] || []
   providerExtenders[namespace].push({key, closure})
 }
-
 
 /**
  * @description setting up a directory to be autoloaded
@@ -278,8 +275,8 @@ Ioc.extend = function (namespace, key, closure) {
  * @public
  */
 Ioc.autoload = function (namespace, directoryPath) {
-  debug('autoloading directory is set to %s under %s namespace',directoryPath,namespace)
-  autoloadDirectory = {namespace,directoryPath}
+  debug('autoloading directory is set to %s under %s namespace', directoryPath, namespace)
+  autoloadDirectory = {namespace, directoryPath}
 }
 
 /**
@@ -295,8 +292,8 @@ Ioc.use = function (namespace) {
 
   switch (type) {
     case 'PROVIDER':
-      debug('resolving provider %s',namespace)
-      if(providerExtenders[namespace] && providerManagers[namespace]){
+      debug('resolving provider %s', namespace)
+      if (providerExtenders[namespace] && providerManagers[namespace]) {
         Ioc._extendProvider(providerExtenders[namespace], providerManagers[namespace])
       }
       return Ioc._resolveProvider(providers[namespace])
@@ -319,7 +316,7 @@ Ioc.use = function (namespace) {
  * @public
  */
 Ioc.alias = function (key, namespace) {
-  debug('%s has been aliased as %s',namespace,key)
+  debug('%s has been aliased as %s', namespace, key)
   aliases[key] = namespace
 }
 
@@ -335,15 +332,15 @@ Ioc.make = function (Binding) {
   const _bind = Function.prototype.bind
   const type = Ioc._type(Binding)
 
-  if(type === 'PROVIDER'){
+  if (type === 'PROVIDER') {
     return Ioc.use(Binding)
   }
 
-  if(type === 'AUTOLOAD'){
+  if (type === 'AUTOLOAD') {
     Binding = Ioc.use(Binding)
   }
 
-  if(!Ioc._isClass(Binding)){
+  if (!Ioc._isClass(Binding)) {
     return Binding
   }
 
@@ -351,10 +348,10 @@ Ioc.make = function (Binding) {
    * if binding is a valid class, make an instance
    * of it by injecting dependencies
    */
-  debug('making class %s',Binding.name)
+  debug('making class %s', Binding.name)
   const injections = Binding.inject || helpers.introspect(Binding.toString())
-  if(!injections || _.size(injections) === 0){
-    return new Binding
+  if (!injections || _.size(injections) === 0) {
+    return new Binding()
   }
 
   const resolvedInjections = _.map(injections, function (injection) {
@@ -374,15 +371,15 @@ Ioc.make = function (Binding) {
  */
 Ioc.makeFunc = function (Binding) {
   const parts = Binding.split('.')
-  if(parts.length !== 2){
+  if (parts.length !== 2) {
     throw new Error('Unable to make ' + Binding)
   }
 
   const instance = Ioc.make(parts[0])
   const method = parts[1]
 
-  if(!instance[method]){
+  if (!instance[method]) {
     throw new Error(method + ' does not exists on ' + parts[0])
   }
-  return {instance,method}
+  return {instance, method}
 }

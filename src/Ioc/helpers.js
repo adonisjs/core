@@ -10,7 +10,7 @@
  * @ignore
  */
 const dwell = require('dwell')
-const _  = require('lodash')
+const _ = require('lodash')
 
 let helpers = exports = module.exports = {}
 
@@ -37,6 +37,6 @@ helpers.isAutoLoadPath = function (autoload, namespace) {
  */
 helpers.introspect = function (defination) {
   return _.map(dwell.inspect(defination), function (injection) {
-    return injection.replace(/_/g,'/')
+    return injection.replace(/_/g, '/')
   })
 }

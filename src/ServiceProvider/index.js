@@ -19,7 +19,7 @@ const Ioc = require('../Ioc')
  */
 class ServiceProvider {
 
-  constructor() {
+  constructor () {
     this.app = Ioc
   }
 
