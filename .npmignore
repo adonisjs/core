@@ -60,3 +60,4 @@ test
 .cz.json
 .travis.yml
 .editorconfig
+.jshintrc
