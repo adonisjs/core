@@ -236,6 +236,8 @@ Ioc.singleton = function (namespace, closure) {
  * @param  {*} defination
  * @return {void}
  * @throws {IncompleteImplementation} If defination does not have extend method
+ * @example
+ *   Ioc.manager('Adonis/Addons/Cache',CacheManager)
  * @public
  */
 Ioc.manager = function (namespace, defination) {
@@ -254,6 +256,10 @@ Ioc.manager = function (namespace, defination) {
  * @param  {String} key
  * @param  {Function} closure
  * @return {void}
+ * @example
+ *     Ioc.extend('Adonis/Addons/Cache', 'redis', function (app) {
+ *
+ *     })
  * @public
  */
 Ioc.extend = function (namespace, key, closure) {
