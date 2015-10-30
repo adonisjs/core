@@ -10,6 +10,7 @@ const nodeReq = require('node-req')
 const nodeCookie = require('node-cookie')
 const File = require('../File')
 const _ = require('lodash')
+const npmLog = require('npmlog')
 
 /**
  * @class  Request
@@ -404,6 +405,75 @@ class Request {
     return _.map(this._files, (file, index) => {
       return this.file(index)
     })
+  }
+
+  /**
+   * @description flash an object of messages to upcoming
+   * request
+   * @method flash
+   * @param  {Object} values [description]
+   * @return {void}        [description]
+   * @public
+   */
+  * flash (values) {
+    if(typeof(values) !== 'object'){
+      throw new Error("Flash values should be an object")
+    }
+    yield this.session.put('flash_messages', values)
+  }
+
+  /**
+   * @description return values set via flash from
+   * request session
+   * @method old
+   * @param  {String} key          [description]
+   * @param  {Mixed} defaultValue [description]
+   * @return {Mixed}              [description]
+   * @public
+   */
+  old (key, defaultValue) {
+    if(!this._flash_messages) {
+      npmLog.level = 'warn'
+      npmLog.warn('Make use of Flash middleware to enable flash messaging')
+      this._flash_messages = {}
+    }
+    defaultValue = defaultValue || null
+    return this._flash_messages[key] || defaultValue
+  }
+
+  /**
+   * @description flash all request input fields to
+   * session flash
+   * @method flashAll
+   * @return {void}
+   * @public
+   */
+  * flashAll () {
+    yield this.flash(this.all())
+  }
+
+  /**
+   * @description flash values of request keys from request
+   * input field to session flash
+   * @method flashOnly
+   * @return {void}
+   * @public
+   */
+  * flashOnly () {
+    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
+    yield this.flash(this.only(args))
+  }
+
+  /**
+   * @description flash values of request to session flash
+   * except defined keys
+   * @method flashExcept
+   * @return {void}
+   * @public
+   */
+  * flashExcept () {
+    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
+    yield this.flash(this.except(args))
   }
 
 }

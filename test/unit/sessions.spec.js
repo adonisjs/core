@@ -237,6 +237,32 @@ describe('Session', function  (argument) {
 
     })
 
+    it('should set json as value for a given key', function * () {
+
+      SessionManager.driver = 'cookie'
+      let sessionManager
+
+      const server = http.createServer(function (req, res) {
+        sessionManager = new SessionManager(req, res)
+        co(function * () {
+          yield sessionManager.put('profile',{name:'virk',age:22})
+        }).then(function (response) {
+          res.writeHead(200)
+          res.end()
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const res = yield supertest(server).get("/").expect(200).end()
+      const session = res.headers['set-cookie'][0].split('=')
+      let body = {}
+      body['profile'] = {d: JSON.stringify({name:"virk",age:22}), t: 'Object' }
+      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+
+    })
+
     it('should not set key/value pair on session when value is not of a valid type', function * () {
 
       SessionManager.driver = 'cookie'

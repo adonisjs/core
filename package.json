@@ -40,6 +40,7 @@
     "node-res": "git://github.com/poppinss/node-res.git",
     "node-static": "^0.7.7",
     "node-uuid": "^1.4.3",
+    "npmlog": "^1.2.1",
     "nunjucks": "^2.1.0",
     "path-to-regexp": "^1.2.1",
     "type-of-is": "^3.4.0"

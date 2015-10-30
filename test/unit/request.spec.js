@@ -9,12 +9,15 @@
 const chai = require('chai')
 const expect = chai.expect
 const Request = require('../../src/Request')
+const SessionManager = require('../../src/Session/SessionManager')
 const http = require('http')
 const File = require('../../src/File')
 const https = require('https')
 const supertest = require('co-supertest')
 const pem = require('pem')
 const formidable = require('formidable')
+const querystring = require("querystring")
+const co = require('co')
 
 require('co-mocha')
 
@@ -561,6 +564,240 @@ describe('Request', function () {
     })
     const res = yield supertest(server).get("/").attach('logo',__dirname+'/uploads/npm-logo.svg').attach('favicon',__dirname+'/public/favicon.ico').expect(200).end()
     expect(res.body.isInstances).deep.equal([true,true])
+  })
+
+  it('should throw an error when flash message is not an object', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        yield request.flash('username', 'foo')
+      }).then(function (response) {
+        res.writeHead(200)
+        res.end()
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify({message:err.message}))
+      })
+    })
+
+    const res = yield supertest(server).get("/").expect(500).end()
+    expect(res.body.message).to.match(/Flash values should be an object/)
+  })
+
+  it('should flash messages to session', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        yield request.flash({username:'foo'})
+      }).then(function (response) {
+        res.writeHead(200)
+        res.end()
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/").expect(200).end()
+    const flashMessage = res.headers['set-cookie'][0].split('=')
+    let body = {}
+    body['flash_messages'] = {d:JSON.stringify({username:'foo'}),t:'Object'}
+    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+  })
+
+  it('should read flash messages and if set clear them off from request', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        request._flash_messages = yield sessionManager.pull('flash_messages', {})
+        return request.old('username')
+      }).then(function (response) {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end(JSON.stringify({response}))
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const body = {}
+    body['flash_messages'] = {d:JSON.stringify({username:'virk'}),t:'Object'}
+    const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
+    expect(res.body.response).to.equal('virk')
+  })
+
+  it('should return null when flash message value does not exists', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        request._flash_messages = yield sessionManager.pull('flash_messages', {})
+        return request.old('username')
+      }).then(function (response) {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end(JSON.stringify({response}))
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.response).to.equal(null)
+  })
+
+
+  it('should return default value when flash message value does not exists', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        request._flash_messages = yield sessionManager.pull('flash_messages', {})
+        return request.old('username', 'foo')
+      }).then(function (response) {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end(JSON.stringify({response}))
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.response).to.equal('foo')
+  })
+
+  it('should auto set flash messages to an empty object when it does exists', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        return request.old('username', 'foo')
+      }).then(function (response) {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end(JSON.stringify({response}))
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.response).to.equal('foo')
+  })
+
+  it('should flash all request inputs using flashAll method', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        return yield request.flashAll()
+      }).then(function () {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end()
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
+    const flashMessage = res.headers['set-cookie'][0].split('=')
+    let body = {}
+    body['flash_messages'] = {d:JSON.stringify({username:'foo',age:"22"}),t:'Object'}
+    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+  })
+
+  it('should flash all request inputs except defined keys using flashExcept method', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        return yield request.flashExcept('age')
+      }).then(function () {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end()
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
+    const flashMessage = res.headers['set-cookie'][0].split('=')
+    let body = {}
+    body['flash_messages'] = {d:JSON.stringify({username:'foo'}),t:'Object'}
+    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+  })
+
+  it('should flash all request inputs only for defined keys using flashOnly method', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        return yield request.flashOnly('age')
+      }).then(function () {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end()
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
+    const flashMessage = res.headers['set-cookie'][0].split('=')
+    let body = {}
+    body['flash_messages'] = {d:JSON.stringify({age:'22'}),t:'Object'}
+    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 
 })
