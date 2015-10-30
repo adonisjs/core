@@ -70,6 +70,15 @@ describe("Server", function () {
     expect(res.body.rendered).to.equal(true)
   })
 
+  it("should invoke route for verb defined using _method", function * () {
+    Route.put('/', function * (request, response) {
+      response.send({rendered:true})
+    })
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    const res = yield supertest(testServer).get('/?_method=PUT').expect(200).end()
+    expect(res.body.rendered).to.equal(true)
+  })
+
   it("should call route action via controller method", function * () {
     Route.get('/', 'HomeController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
@@ -154,7 +163,6 @@ describe("Server", function () {
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/Internal server error/)
   })
-
 
   it('should listen to server on a given port using listen method', function * () {
     process.env.APP_PORT = 3333

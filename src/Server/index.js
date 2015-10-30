@@ -33,6 +33,7 @@ class Server {
     const request = new this.Request(req, res)
     const response = new this.Response(request, res)
     const requestUrl = request.url()
+    const method = request.input('_method',request.method())
 
     if(requestUrl === '/favicon.ico' || requestUrl === 'favicon.ico'){
       debug('serving favicon')
@@ -46,7 +47,7 @@ class Server {
     }
 
     debug('request on url %s ',requestUrl)
-    const resolvedRoute = this.Route.resolve(requestUrl,request.method(),request.hostname())
+    const resolvedRoute = this.Route.resolve(requestUrl,method,request.hostname())
 
     /**
      * try serving static resource if route is not found

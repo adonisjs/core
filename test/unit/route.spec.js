@@ -24,7 +24,7 @@ describe('Route',function () {
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
-      expect(routes[0].verb).deep.equal(['GET'])
+      expect(routes[0].verb).deep.equal(['GET', 'HEAD'])
     })
 
     it('should register a route with POST verb', function () {

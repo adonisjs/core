@@ -74,7 +74,7 @@ Route.route = function (route, verb, handler) {
  * @public
  */
 Route.get = function (route, handler) {
-  this.route(route, 'GET', handler)
+  this.route(route, ['GET', 'HEAD'], handler)
   return this
 }
 
