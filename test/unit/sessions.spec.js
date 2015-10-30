@@ -288,6 +288,32 @@ describe('Session', function  (argument) {
 
     })
 
+    it('should return all session values', function * () {
+
+      SessionManager.driver = 'cookie'
+      const sessionManagerFake = new SessionManager()
+
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          return yield sessionManager.all()
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          console.log(err)
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      let body = {}
+      body['name'] = sessionManagerFake._makeBody('name','virk')
+      const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
+      expect(res.body.name).deep.equal({name:'virk'})
+
+    })
+
     it('should get existing session value', function * () {
 
       SessionManager.driver = 'cookie'
@@ -301,6 +327,7 @@ describe('Session', function  (argument) {
           res.writeHead(200,{"content-type": "application/json"})
           res.end(JSON.stringify({name}))
         }).catch(function (err) {
+          console.log(err)
           res.writeHead(500, {"content-type":"application/json"})
           res.end(JSON.stringify(err))
         })

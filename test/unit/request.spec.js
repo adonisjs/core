@@ -101,8 +101,20 @@ describe('Request', function () {
 
     const res = yield supertest(server).get("/").expect(200).end()
     expect(res.body.name).to.equal(null)
-
   })
+
+  it('should return default value when value for input key is not available', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res)
+      const name = request.input("name", "doe")
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({name}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.name).to.equal('doe')
+  })
+
 
   it('should return get and post values when using all', function * () {
     const server = http.createServer(function (req, res) {
@@ -116,6 +128,86 @@ describe('Request', function () {
     const res = yield supertest(server).get("/?name=foo").expect(200).end()
     expect(res.body.all).deep.equal({name:"foo",age:22})
   })
+
+  it('should return all values expect defined keys', function * () {
+    const server = http.createServer(function (req, res) {
+      req._body = {age:22}
+      const request = new Request(req, res)
+      const all = request.except('age')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({all}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.all).deep.equal({name:"foo"})
+  })
+
+  it('should return all values expect defined keys when defined as an array', function * () {
+    const server = http.createServer(function (req, res) {
+      req._body = {age:22}
+      const request = new Request(req, res)
+      const all = request.except(['age'])
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({all}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.all).deep.equal({name:"foo"})
+  })
+
+  it('should not return key/value pair for key that does not exists', function * () {
+    const server = http.createServer(function (req, res) {
+      req._body = {age:22}
+      const request = new Request(req, res)
+      const all = request.except(['foo'])
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({all}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.all).deep.equal({name:"foo",age:22})
+  })
+
+
+  it('should return all values for only defined keys', function * () {
+    const server = http.createServer(function (req, res) {
+      req._body = {age:22}
+      const request = new Request(req, res)
+      const all = request.only('age')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({all}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.all).deep.equal({age:22})
+  })
+
+  it('should return all values for only defined keys when keys are defined as array', function * () {
+    const server = http.createServer(function (req, res) {
+      req._body = {age:22}
+      const request = new Request(req, res)
+      const all = request.only(['age'])
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({all}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.all).deep.equal({age:22})
+  })
+
+  it('should not return key/value pair for key that does not exists', function * () {
+    const server = http.createServer(function (req, res) {
+      req._body = {age:22}
+      const request = new Request(req, res)
+      const all = request.only(['foo'])
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({all}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.all).deep.equal({})
+  })
+
 
   it('should return all headers for a given request', function * () {
     const server = http.createServer(function (req, res) {

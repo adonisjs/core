@@ -56,9 +56,10 @@ class Request {
    * @return {Mixed}
    * @public
    */
-  input (key) {
+  input (key, defaultValue) {
+    defaultValue = defaultValue || null
     const input = this.all()
-    return input[key] || null
+    return input[key] || defaultValue
   }
 
   /**
@@ -70,6 +71,29 @@ class Request {
    */
   all () {
     return _.merge(this.get(),this.post())
+  }
+
+  /**
+   * @description returns all input values except defined
+   * keys
+   * @method except
+   * @return {Object}
+   * @public
+   */
+  except () {
+    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
+    return _.omit(this.all(), args)
+  }
+
+  /**
+   * @description returns values for defined keys only
+   * @method only
+   * @return {Object}
+   * @public
+   */
+  only () {
+    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
+    return _.pick(this.all(), args)
   }
 
   /**

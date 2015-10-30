@@ -176,11 +176,15 @@ class SessionManager {
       return existingSession
     }
 
-    const body = this._makeBody(key, value)
-    if(body){
+    const body = this._makeBody (key, value)
+    if (body) {
       existingSession[key] = body
     }
-    else if(!body && existingSession[key]){
+    /**
+     * if someone has passed null as a value then remove key from
+     * existing session.
+     */
+    else if (!body && existingSession[key]) {
       delete existingSession[key]
     }
     return existingSession
@@ -189,17 +193,14 @@ class SessionManager {
   /**
    * @description get value from session from a given key
    * @method _getViaCookie
-   * @param  {String}      key
-   * @param  {Mixed}      defaultValue
-   * @return {Mixed}
+   * @return {Object}
    * @private
    */
-  _getViaCookie (key, defaultValue) {
+  _getViaCookie () {
     const existingSession = this._getSessionCookie() || {}
-    if(existingSession[key]){
-      return this._reverseBody(existingSession[key])
-    }
-    return defaultValue
+    return _.object(_.map (existingSession, (value, index) => {
+      return [index,this._reverseBody(value)]
+    }))
   }
 
 
@@ -210,7 +211,7 @@ class SessionManager {
    * @param  {Mixed}      value [description]
    * @private
    */
-  * _setViaDriver (key, value){
+  * _setViaDriver (key, value) {
 
     let sessionId = this._getSessionCookie()
     let sessionExists = true
@@ -230,20 +231,32 @@ class SessionManager {
    * @description get session value from active driver
    * store
    * @method _getViaDriver
-   * @param  {String}      key          [description]
-   * @param  {Mixed}      defaultValue [description]
-   * @return {Mixed}                   [description]
+   * @return {Object}                   [description]
    */
-  * _getViaDriver (key, defaultValue) {
+  * _getViaDriver () {
     const sessionId = this._getSessionCookie()
     if(!sessionId){
-      return defaultValue
+      return {}
     }
     const existingSession = yield this.constructor.driver.read(sessionId)
-    if(existingSession[key]){
-      return this._reverseBody(existingSession[key])
+    return _.object(_.map (existingSession, (value, index) => {
+      return [index,this._reverseBody(value)]
+    }))
+  }
+
+
+  /**
+   * @description returns all session values
+   * @method all
+   * @return {Object}
+   * @public
+   */
+  * all () {
+    const activeDriver = this.constructor.driver
+    if(activeDriver === 'cookie'){
+      return this._getViaCookie()
     }
-    return defaultValue
+    return yield this._getViaDriver()
   }
 
   /**
@@ -257,7 +270,6 @@ class SessionManager {
    * @public
    */
   * put (key, value) {
-
     if(key && typeof(value) === 'undefined' && typeof(key) !== 'object'){
       throw new Error('put expects key/value pair or an object of keys and values')
     }
@@ -291,12 +303,9 @@ class SessionManager {
    * @public
    */
   * get (key, defaultValue) {
-    const activeDriver = this.constructor.driver
-    if(activeDriver === 'cookie'){
-      return this._getViaCookie(key, defaultValue)
-    }else{
-      return yield this._getViaDriver(key, defaultValue)
-    }
+    defaultValue = defaultValue || null
+    const sessionValues = yield this.all()
+    return sessionValues[key] || defaultValue
   }
 
   /**
