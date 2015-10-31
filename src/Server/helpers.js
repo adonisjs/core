@@ -129,5 +129,7 @@ helpers.makeControllerMethod = function (appNamespace, controllerMethod) {
 helpers.handleRequestError = function (error, response) {
   const message = error.message || 'Internal server error'
   const status = error.status || 500
+  const stack = error.stack || message
+  console.log(stack)
   response.status(status).send(message)
 }

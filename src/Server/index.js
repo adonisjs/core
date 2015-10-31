@@ -30,22 +30,7 @@ class Server {
    * @return {void}               [description]
    * @private
    */
-  _finalHandler (request, response) {
-
-    const requestUrl = request.url()
-    /**
-     * making request verb/method based upon _method or falling
-     * back to original method
-     * @type {String}
-     */
-    const method = request.input('_method',request.method())
-
-    /**
-     * resolving route handler based upon request url, method
-     * and hostname
-     * @type {Object}
-     */
-    const resolvedRoute = this.Route.resolve(requestUrl,method,request.hostname())
+  _finalHandler (resolvedRoute, request, response) {
 
     /**
      * if route is not registered, try looking for a static resource
@@ -64,7 +49,7 @@ class Server {
      * layer of named middleware and finally invoking
      * route action.
      */
-    helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNamespace())
+    helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNameSpace())
   }
 
   /**
@@ -79,6 +64,17 @@ class Server {
     const self = this
     const request = new this.Request(req, res)
     const response = new this.Response(request, res)
+    const requestUrl = request.url()
+    /**
+     * making request verb/method based upon _method or falling
+     * back to original method
+     * @type {String}
+     */
+    const method = request.input('_method',request.method())
+
+    const resolvedRoute = this.Route.resolve(requestUrl,method,request.hostname())
+    request._params = resolvedRoute.params
+
     debug('request on url %s ',req.url)
 
     /**
@@ -88,7 +84,7 @@ class Server {
      * @return {Function}
      */
     const finalHandler = function * () {
-      self._finalHandler(request, response)
+      self._finalHandler(resolvedRoute, request, response)
     }
     helpers.respondRequest(this.middleware, request, response, finalHandler)
   }
@@ -98,8 +94,9 @@ class Server {
    * @method listen
    * @return {void}
    */
-  listen () {
-    http.createServer(this.handle.bind(this)).listen(process.env.APP_PORT)
+  listen (port) {
+    port = port || process.env.APP_PORT
+    http.createServer(this.handle.bind(this)).listen(port)
   }
 
 }

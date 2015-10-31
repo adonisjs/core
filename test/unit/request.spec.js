@@ -307,6 +307,7 @@ describe('Request', function () {
           return
         }
         expect(res.body.secure).to.equal(true)
+        server.close()
         done()
       })
     });

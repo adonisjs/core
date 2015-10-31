@@ -29,7 +29,7 @@ describe("Server", function () {
       publicPath: function () {
         return path.join(__dirname, './public')
       },
-      appNamespace : function () {
+      appNameSpace : function () {
         return 'App'
       }
     }
@@ -64,7 +64,6 @@ describe("Server", function () {
     Route.get('/', function * (request, response) {
       response.send({rendered:true})
     })
-
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(200).end()
     expect(res.body.rendered).to.equal(true)
