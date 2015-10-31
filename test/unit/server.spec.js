@@ -107,6 +107,30 @@ describe("Server", function () {
     expect(res.error.text).to.match(/foo does not exists/)
   })
 
+  it("should call all global middleware before reaching the route handler", function * () {
+    Middleware.global(['App/Http/Middleware/Global'])
+    Route.get('/', 'UserController.index')
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    const res = yield supertest(testServer).get('/').expect(200).end()
+    expect(res.text).to.equal('2')
+  })
+
+  it("should catch errors created by global middleware", function * () {
+    Middleware.global(['App/Http/Middleware/GlobalCatch'])
+    Route.get('/', 'UserController.index')
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    const res = yield supertest(testServer).get('/').expect(401).end()
+    expect(res.error.text).to.equal('Login')
+  })
+
+  it("should catch errors thrown by global middleware", function * () {
+    Middleware.global(['App/Http/Middleware/GlobalThrow'])
+    Route.get('/', 'UserController.index')
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    const res = yield supertest(testServer).get('/').expect(401).end()
+    expect(res.error.text).to.equal('Login')
+  })
+
   it("should return error when unable to resolve middleware", function * () {
     Middleware.register('auth',['App/Auth'])
     Route.get('/', 'HomeController.index').middlewares(['auth'])

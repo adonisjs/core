@@ -79,7 +79,7 @@ Middleware.named = function (namedMiddleware) {
  * @public
  */
 Middleware.getGlobal = function () {
-  return global
+  return _.unique(global)
 }
 
 /**
@@ -102,9 +102,9 @@ Middleware.getNamed = function () {
  * @public
  */
 Middleware.filter = function (keys, callGlobal) {
-  global = _.unique(global)
+  const globalMiddleware = Middleware.getGlobal()
   const namedToCall = _.toArray(_.pick(named, keys))
-  return callGlobal === true ? global.concat(namedToCall) : namedToCall
+  return callGlobal === true ? globalMiddleware.concat(namedToCall) : namedToCall
 }
 
 /**

@@ -28,8 +28,16 @@ class Static {
    * @param  {Function} done
    * @return {void}
    */
-  serve (request, response, done) {
-    this.server.serve(request, response, done)
+  serve (request, response) {
+    return new Promise((resolve, reject) => {
+      this.server.serve(request, response, function (err, good) {
+        if(err){
+          reject(err)
+          return
+        }
+        resolve(good)
+      })
+    })
   }
 
 }

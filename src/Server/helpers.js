@@ -6,6 +6,7 @@
  * MIT Licensed
 */
 
+const debug = require('debug')('adonis:framework')
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
 
@@ -18,7 +19,7 @@ let helpers = exports = module.exports = {}
 /**
  * @description calls request route handler by setting up middleware
  * layer
- * @method callRouteHandler
+ * @method callRouteAction
  * @param  {Object}         resolvedRoute
  * @param  {Object}         request
  * @param  {Object}         response
@@ -27,52 +28,80 @@ let helpers = exports = module.exports = {}
  * @param  {String}         appNamespace
  * @return {void}
  */
-helpers.callRouteHandler = function (resolvedRoute, request, response, middleware, debug, appNamespace) {
+helpers.callRouteAction = function (resolvedRoute, request, response, middleware, appNamespace) {
+  co(function * () {
+    /**
+     * resolving route middleware if any, middleware.resolve tends
+     * to throw errors bubbled by IoC container
+     * @type {Array}
+     */
+    let routeMiddleware = middleware.resolve(middleware.filter(resolvedRoute.middlewares, false))
 
-  let routeMiddleware = []
-  try{
-    routeMiddleware = middleware.resolve(middleware.filter(resolvedRoute.middlewares,true))
-  }catch(e){
+    /**
+     * making route action, which can a controller method or
+     * can be a closure.
+     * @type {Object}
+     */
+    const routeAction = helpers.constructRouteAction(resolvedRoute, appNamespace)
+
+    routeMiddleware = routeMiddleware.concat([routeAction])
+
+    /**
+     * composing all middleware with route action
+     */
+    yield middleware.compose(routeMiddleware, request, response)
+
+  }).catch(function (e){
     helpers.handleRequestError(e, response)
-    return
-  }
+  })
+}
 
-  /**
-   * if route handler is a controller method resolve it from
-   * ioc.
-   */
-  if(typeof(resolvedRoute.handler) === 'string'){
-    debug('responding to route using controller method')
+/**
+ * @description responds to an http request by calling all global
+ * middleware and finally executing finalHandler
+ * @method respondRequest
+ * @param  {Object}       middleware   [description]
+ * @param  {Object}       request      [description]
+ * @param  {Object}       response     [description]
+ * @param  {Function}       finalHandler [description]
+ * @return {void}                    [description]
+ * @public
+ */
+helpers.respondRequest = function (middleware, request, response, finalHandler) {
+  co (function * () {
+    /**
+     * here we resolve all global middleware and compose
+     * them
+     * @type {Array}
+     */
+    let routeMiddleware = middleware.resolve(middleware.getGlobal())
+    routeMiddleware = routeMiddleware.concat([{instance:null,method:finalHandler}])
+    yield middleware.compose(routeMiddleware, request, response)
+  }).catch(function (e) {
+    helpers.handleRequestError(e, response)
+  })
+}
 
-    co (function * () {
-      const controllerMethod = helpers.makeControllerMethod(appNamespace, resolvedRoute.handler)
-      routeMiddleware = routeMiddleware.concat([controllerMethod])
-      yield middleware.compose(routeMiddleware, request, response)
-    }).catch(function (e) {
-      helpers.handleRequestError(e, response)
-    })
-    return
-  }
-
-  /**
-   * if request handler is a closure, call it directly
-  */
+/**
+ * @description constructing route action which can be controller
+ * method or a Closure binded as a callback
+ * @method constructRouteAction
+ * @param  {Object}             resolvedRoute [description]
+ * @param  {String}             appNamespace  [description]
+ * @return {Object}                           [description]
+ * @public
+ * @throws {Invalid route handler} If Route handler is not function or valid controller
+ * method.
+ */
+helpers.constructRouteAction = function (resolvedRoute, appNamespace) {
   if (typeof(resolvedRoute.handler) === 'function'){
     debug('responding to route using closure')
-    co (function * () {
-      routeMiddleware = routeMiddleware.concat([{instance:null,method:resolvedRoute.handler}])
-      yield middleware.compose(routeMiddleware, request, response)
-    }).catch(function (e) {
-      helpers.handleRequestError(e, response)
-    })
-    return
+    return {instance:null,method:resolvedRoute.handler}
   }
-
-  /**
-   * otherwise throw an error , as we have no idea on to call
-   * this type of route handler.
-   */
-  helpers.handleRequestError(new Error('Invalid route handler , attach a controller method or a closure'), response)
+  else if(typeof(resolvedRoute.handler) === 'string'){
+    return helpers.makeControllerMethod(appNamespace, resolvedRoute.handler)
+  }
+  throw new Error('Invalid route handler , attach a controller method or a closure')
 }
 
 /**
