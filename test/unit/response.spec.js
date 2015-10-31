@@ -34,7 +34,7 @@ describe('Response', function () {
       }
     }
     const view = new View(Helpers, Env, Route)
-    this.Response = new ResponseBuilder(view)
+    this.Response = new ResponseBuilder(view,Route)
   })
 
   it('should respond to a request using send method', function * (done) {
@@ -168,6 +168,18 @@ describe('Response', function () {
     done()
   })
 
+  it('should redirect to a given route using route method', function * (done) {
+    Route.get('/user/:id', function * () {}).as('profile')
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res)
+      const response = new this.Response(request, res)
+      response.route('profile', {id:1})
+    })
+    const res = yield supertest(server).get('/').expect(302).end()
+    expect(res.headers['location']).to.equal('/user/1')
+    done()
+  })
+
   it('should add vary field to response headers', function * (done) {
     const server = http.createServer((req, res) => {
       const request = new Request(req,res)
@@ -176,6 +188,17 @@ describe('Response', function () {
     })
     const res = yield supertest(server).get('/').expect(200).end()
     expect(res.headers['vary']).to.equal('Accepts')
+    done()
+  })
+
+  it('should set response cookie using cookie method', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res)
+      const response = new this.Response(request, res)
+      response.cookie('name','virk').end()
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.headers['set-cookie']).deep.equal(['name=virk'])
     done()
   })
 

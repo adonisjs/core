@@ -7,7 +7,9 @@
 */
 
 const nodeRes = require('node-res')
+const nodeCookie = require('node-cookie')
 let viewInstance = null
+let routeInstance = null
 
 /**
  * @class  Response class to be passed on
@@ -67,6 +69,17 @@ class Response {
   status (statusCode) {
     nodeRes.status(this.response, statusCode)
     return this
+  }
+
+  /**
+   * ends response, should not be used with
+   * send method
+   * @method end
+   * @return {void}
+   * @public
+   */
+  end () {
+    nodeRes.end(this.response)
   }
 
   /**
@@ -159,6 +172,50 @@ class Response {
     nodeRes.vary(this.response, field)
     return this
   }
+
+  /**
+   * @description redirects to a url created using route url
+   * helper
+   * @method route
+   * @param  {String} route
+   * @param  {Object} data
+   * @param  {Number} status
+   * @return {void}
+   * @public
+   */
+  route (route, data, status) {
+    const toUrl = routeInstance.url(route, data)
+    this.redirect(toUrl, status)
+  }
+
+  /**
+   * @description updates cookie header while making response
+   * @method cookie
+   * @param  {String} key
+   * @param  {Mixed} value
+   * @param  {Object} options
+   * @return {Object}
+   * @public
+   */
+  cookie (key, value, options) {
+    const secret = process.env.APP_KEY
+    const encrypt = !!secret
+    nodeCookie.create(this.request.request, this.response, key, value, options, secret, encrypt)
+    return this
+  }
+
+  /**
+   * @description clears existing cookie from response header
+   * @method clearCookie
+   * @param  {String}    key
+   * @param  {Object}    options
+   * @return {Object}
+   */
+  clearCookie (key, options) {
+    nodeCookie.clear(this.request.request, this.response, key, options)
+    return this
+  }
+
 }
 
 /**
@@ -167,8 +224,9 @@ class Response {
  * view instance.
  */
 class ResponseBuilder {
-  constructor (View) {
+  constructor (View, Route) {
     viewInstance = View
+    routeInstance = Route
     return Response
   }
 }
