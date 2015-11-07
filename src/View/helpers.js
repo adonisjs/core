@@ -19,6 +19,6 @@ module.exports = function (env, Route) {
    * output input as json
    */
   env.addFilter('json', function (val) {
-    JSON.stringify(val)
+    return JSON.stringify(val)
   })
 }
