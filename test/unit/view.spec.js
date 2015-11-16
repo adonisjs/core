@@ -83,8 +83,23 @@ describe('View',function () {
     }catch(e){
       expect(e.message).to.match(/What you/)
     }
-
   })
 
+  it('should add a filter using filter method', function * () {
+    this.view.filter('mycase', function (text) {
+      return text.toUpperCase()
+    })
+    const view = yield this.view.make('filter')
+    expect(view.trim()).to.equal('VIRK')
+  })
+
+  it('should add a global using global method', function * () {
+    const time = new Date().getTime()
+    this.view.global('time', function () {
+      return time
+    })
+    const view = yield this.view.make('global')
+    expect(view.trim()).to.equal(time.toString())
+  })
 
 })

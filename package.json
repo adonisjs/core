@@ -34,8 +34,9 @@
     "adonis-fold": "git://github.com/poppinss/adonis-fold.git"
   },
   "dependencies": {
+    "auto-loader": "^0.2.0",
     "co": "^4.6.0",
-    "debug": "^2.2.0",
+    "dotenv": "^1.2.0",
     "lodash": "^3.10.1",
     "node-cookie": "git://github.com/poppinss/node-cookie.git",
     "node-req": "git://github.com/poppinss/node-req.git",

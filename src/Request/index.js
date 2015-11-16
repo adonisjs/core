@@ -475,7 +475,6 @@ class Request {
     const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
     yield this.flash(this.except(args))
   }
-
 }
 
 module.exports = Request

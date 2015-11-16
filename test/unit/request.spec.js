@@ -296,9 +296,9 @@ describe('Request', function () {
         const secure = request.secure()
         res.writeHead(200, {"Content-type":"application/json"})
         res.end(JSON.stringify({secure}),'utf8')
-      }).listen(3000)
+      })
 
-      supertest('https://localhost:3000')
+      supertest(server)
       .get("/")
       .expect(200)
       .end(function (err, res){
@@ -774,6 +774,33 @@ describe('Request', function () {
     expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 
+  it('should flash all request inputs except defined keys using flashExcept method when passing array', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        return yield request.flashExcept(['age'])
+      }).then(function () {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end()
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
+    const flashMessage = res.headers['set-cookie'][0].split('=')
+    let body = {}
+    body['flash_messages'] = {d:JSON.stringify({username:'foo'}),t:'Object'}
+    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+  })
+
   it('should flash all request inputs only for defined keys using flashOnly method', function * () {
 
     SessionManager.driver = 'cookie'
@@ -785,6 +812,33 @@ describe('Request', function () {
       request.session = sessionManager
       co(function * () {
         return yield request.flashOnly('age')
+      }).then(function () {
+        res.writeHead(200, {"content-type":"application/json"})
+        res.end()
+      }).catch(function (err) {
+        res.writeHead(500, {"content-type":"application/json"})
+        res.end(JSON.stringify(err))
+      })
+    })
+
+    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
+    const flashMessage = res.headers['set-cookie'][0].split('=')
+    let body = {}
+    body['flash_messages'] = {d:JSON.stringify({age:'22'}),t:'Object'}
+    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+  })
+
+  it('should flash all request inputs only for defined keys using flashOnly method when passing an array', function * () {
+
+    SessionManager.driver = 'cookie'
+    let sessionManager
+
+    const server = http.createServer(function (req, res) {
+      sessionManager = new SessionManager(req, res)
+      const request = new Request(req, res)
+      request.session = sessionManager
+      co(function * () {
+        return yield request.flashOnly(['age'])
       }).then(function () {
         res.writeHead(200, {"content-type":"application/json"})
         res.end()

@@ -22,4 +22,5 @@ module.exports = function (env, Route) {
   env.addFilter('json', function (val) {
     return JSON.stringify(val)
   })
+
 }

@@ -18,7 +18,7 @@ const viewExtensions = require('./extensions')
  */
 function View (Helpers, Env, Route) {
   const viewsPath = Helpers.viewsPath()
-  const viewsCache = Env.get('CACHE_VIEWS') === 'true'
+  const viewsCache = Env.get('CACHE_VIEWS')
   this.viewsEnv = new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
   viewExtensions(this.viewsEnv)
   viewFilters(this.viewsEnv, Route)
@@ -43,6 +43,31 @@ View.prototype.make = function (template_path, data) {
       }
     })
   })
+}
+
+/**
+ * @description add a filter to view, it also support async execution
+ * @method filter
+ * @param  {String}   name
+ * @param  {Function} callback
+ * @param  {Boolean}   async
+ * @return {void}
+ * @public
+ */
+View.prototype.filter = function (name, callback, async) {
+  this.viewsEnv.addFilter(name, callback, async)
+}
+
+/**
+ * @description add a global method to views
+ * @method global
+ * @param  {String} name
+ * @param  {Mixed} value
+ * @return {void}
+ * @public
+ */
+View.prototype.global = function (name, value) {
+  this.viewsEnv.addGlobal(name, value)
 }
 
 module.exports = View
