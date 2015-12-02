@@ -94,12 +94,13 @@ Server.prototype.stop = function () {
 /**
  * @function start
  * @description start http server on a given port
+ * @param  {String} host
  * @param  {Number} port
  * @public
  */
-Server.prototype.start = function (port) {
+Server.prototype.start = function (host, port) {
   this.Logger.info('serving app on port %s', port)
-  this.serverInstance.listen(port)
+  this.serverInstance.listen(port, host)
 }
 
 module.exports = Server
