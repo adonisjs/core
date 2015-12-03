@@ -1,12 +1,12 @@
 'use strict'
 
-class Baz{
+class Baz {
 
-  static get inject () {
-    return ["App/Services/Bar"]
+  static get inject() {
+    return ['App/Services/Bar']
   }
 
-  constructor(Bar){
+  constructor( Bar) {
     this.bar = Bar.bar
     this.baz = 'baz'
   }

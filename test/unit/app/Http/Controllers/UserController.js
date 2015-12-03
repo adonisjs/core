@@ -2,20 +2,19 @@
 
 class UserController {
 
-  static get inject () {
-    return ["App/Providers/Foo", "App/modules/time"]
+  static get inject() {
+    return ['App/Providers/Foo', 'App/modules/time']
   }
 
-  constructor (Foo, Time) {
+  constructor( Foo, Time) {
     this.foo = Foo
     this.time = Time
   }
 
-  hello () {
+  hello() {
     return 'hello world'
   }
 
 }
-
 
 module.exports = UserController

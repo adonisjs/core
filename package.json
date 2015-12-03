@@ -23,9 +23,9 @@
   "dependencies": {
     "co": "^4.6.0",
     "co-parallel": "^1.0.0",
-    "debug": "^2.2.0",
     "dwell": "^1.0.0",
     "lodash": "^3.10.1",
+    "npmlog": "^2.0.0",
     "require-stack": "^1.0.1"
   },
   "repository": {

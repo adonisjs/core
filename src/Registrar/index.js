@@ -31,7 +31,8 @@ let Registrar = exports = module.exports = {}
  */
 Registrar.require = function (arrayOfProviders) {
   return _.map(arrayOfProviders, function (provider) {
-    const module = new (requireStack(provider))
+    const Module = requireStack(provider)
+    const module = new Module()
     return module.register()
   })
 }

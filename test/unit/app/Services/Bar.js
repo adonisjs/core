@@ -1,8 +1,8 @@
 'use strict'
 
-class Bar{
+class Bar {
 
-  constructor(){
+  constructor() {
     this.bar = 'bar'
   }
 
