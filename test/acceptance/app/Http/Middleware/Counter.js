@@ -2,13 +2,9 @@
 
 class Counter {
 
-  constructor () {
-    this.counter = "2"
-  }
-
   * handle (request, response, next) {
-    request.counter = this.counter
-    yield next
+    request.counter = 1
+    yield next;
   }
 
 }

@@ -4,8 +4,8 @@
   "description": "Adonis framework repo",
   "main": "index.js",
   "scripts": {
-    "test": "_mocha test/unit test/behavior --bail",
-    "coverage": "istanbul cover _mocha test/unit test/behavior  --bail"
+    "test": "_mocha test/unit test/acceptance --bail",
+    "coverage": "istanbul cover _mocha test/unit test/acceptance  --bail"
   },
   "keywords": [
     "adonis-framework",
@@ -28,13 +28,15 @@
     "mocha-lcov-reporter": "^1.0.0",
     "nightmare": "^2.0.7",
     "pem": "^1.8.1",
-    "supertest": "^1.1.0"
+    "supertest": "^1.1.0",
+    "zombie": "^4.2.1"
   },
   "peerDependencies": {
     "adonis-fold": "git://github.com/poppinss/adonis-fold.git"
   },
   "dependencies": {
     "auto-loader": "^0.2.0",
+    "bcryptjs": "^2.3.0",
     "co": "^4.6.0",
     "dotenv": "^1.2.0",
     "lodash": "^3.10.1",

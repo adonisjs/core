@@ -12,7 +12,7 @@ const path = require('path')
 const _ = require('lodash')
 const expect = chai.expect
 
-const basePath = path.join(__dirname,'../behavior');
+const basePath = path.join(__dirname,'../acceptance');
 
 describe("Helpers", function () {
 

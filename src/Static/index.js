@@ -31,7 +31,7 @@ class Static {
   serve (request, response) {
     return new Promise((resolve, reject) => {
       this.server.serve(request, response, function (err, good) {
-        if(err){
+        if(err) {
           reject(err)
           return
         }

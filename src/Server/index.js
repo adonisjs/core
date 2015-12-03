@@ -6,7 +6,7 @@
  * MIT Licensed
 */
 
-const debug = require('debug')('adonis:framework')
+const Logger = require('../Logger')
 const helpers = require('./helpers')
 const http = require('http')
 
@@ -19,6 +19,7 @@ class Server {
     this.middleware = Middleware
     this.static = Static
     this.helpers = Helpers
+    this.log = new Logger('adonis:framework')
   }
 
   /**
@@ -75,7 +76,7 @@ class Server {
     const resolvedRoute = this.Route.resolve(requestUrl,method,request.hostname())
     request._params = resolvedRoute.params
 
-    debug('request on url %s ',req.url)
+    this.log.verbose('request on url %s ',req.url)
 
     /**
      * @description final method to call after executing

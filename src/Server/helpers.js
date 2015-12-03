@@ -6,7 +6,8 @@
  * MIT Licensed
 */
 
-const debug = require('debug')('adonis:framework')
+const Logger = require('../Logger')
+const log = new Logger('adonis:framework')
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
 
@@ -24,7 +25,6 @@ let helpers = exports = module.exports = {}
  * @param  {Object}         request
  * @param  {Object}         response
  * @param  {Object}         middleware
- * @param  {Object}         debug
  * @param  {String}         appNamespace
  * @return {void}
  */
@@ -43,7 +43,6 @@ helpers.callRouteAction = function (resolvedRoute, request, response, middleware
      * @type {Object}
      */
     const routeAction = helpers.constructRouteAction(resolvedRoute, appNamespace)
-
     routeMiddleware = routeMiddleware.concat([routeAction])
 
     /**
@@ -95,7 +94,7 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
  */
 helpers.constructRouteAction = function (resolvedRoute, appNamespace) {
   if (typeof(resolvedRoute.handler) === 'function'){
-    debug('responding to route using closure')
+    log.verbose('responding to route using closure')
     return {instance:null,method:resolvedRoute.handler}
   }
   else if(typeof(resolvedRoute.handler) === 'string'){

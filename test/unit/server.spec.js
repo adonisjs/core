@@ -188,10 +188,10 @@ describe("Server", function () {
   })
 
   it('should listen to server on a given port using listen method', function * () {
-    process.env.APP_PORT = 3333
+    process.env.APP_PORT = 8000
     Route.get('/','HomeController.index')
     this.server.listen()
-    const testServer = supertest.agent('http://localhost:3333')
+    const testServer = supertest.agent('http://localhost:8000')
     const res = yield testServer.get('/').expect(200).end()
     expect(res.body).deep.equal({rendered:true})
   })
