@@ -322,7 +322,7 @@ describe('Sessions', function () {
           }
       });
     })
-  
+
     context('Reading cookies' , function () {
 
       delete process.env.APP_KEY
@@ -495,6 +495,6 @@ describe('Sessions', function () {
       expect(JSON.parse(JSON.stringify(date))).to.equal(toType.d)
 
     });
-  
+
   })
 })

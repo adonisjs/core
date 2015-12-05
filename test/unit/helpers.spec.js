@@ -15,7 +15,7 @@ const path = require('path')
 
 describe('Helpers', function () {
   /**
-   * expecting Helpers to throw error when package autoload is not 
+   * expecting Helpers to throw error when package autoload is not
    * defined inside package.json file
    */
   it('should return an error when autoload is missing inside package.json file', function () {
@@ -26,7 +26,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * expecting Helpers to throw error when package autoload is 
+   * expecting Helpers to throw error when package autoload is
    * defined but values are missing inside package.json file
    */
   it('should return an error when autoload values are missing inside package.json file', function () {
@@ -44,7 +44,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing basePath method expectations to make sure it returns 
+   * testing basePath method expectations to make sure it returns
    * root of the app
    */
   it('should return base path as application root', function () {
@@ -52,7 +52,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing publicPath method expectations to make sure it returns 
+   * testing publicPath method expectations to make sure it returns
    * public path for app
    */
   it('should return path to application public directory', function () {
@@ -60,7 +60,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing publicPath method expectations to make sure it returns 
+   * testing publicPath method expectations to make sure it returns
    * path to the given file inside public directory
    */
   it('should return path to defined file inside application public directory', function () {
@@ -68,7 +68,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing appPath method expectations to make sure it returns 
+   * testing appPath method expectations to make sure it returns
    * app directory path
    */
   it('should return path to application app directory', function () {
@@ -76,7 +76,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing storagePath method expectations to make sure it returns 
+   * testing storagePath method expectations to make sure it returns
    * storage directory path
    */
   it('should return path to application storage directory', function () {
@@ -84,7 +84,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing storagePath method expectations to make sure it returns 
+   * testing storagePath method expectations to make sure it returns
    * link to file inside storage directory
    */
   it('should return path to define file inside application storage directory', function () {
@@ -92,7 +92,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing viewsPath method expectations to make sure it returns 
+   * testing viewsPath method expectations to make sure it returns
    * path to views directory
    */
   it('should return path to application views directory', function () {
@@ -100,7 +100,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing resourcesPath method expectations to make sure it returns 
+   * testing resourcesPath method expectations to make sure it returns
    * path to resources directory
    */
   it('should return path to application resources directory', function () {
@@ -108,7 +108,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing resourcesPath method expectations to make sure it returns 
+   * testing resourcesPath method expectations to make sure it returns
    * path to file inside resources directory
    */
   it('should return path to file defined inside application resources directory', function () {
@@ -116,7 +116,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing configPath method expectations to make sure it returns 
+   * testing configPath method expectations to make sure it returns
    * path to config directory
    */
   it('should return path to application config directory', function () {
@@ -124,7 +124,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing configPath method expectations to make sure it returns 
+   * testing configPath method expectations to make sure it returns
    * path to file inside config directory
    */
   it('should return path to defined file inside application config directory', function () {
@@ -132,7 +132,7 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing appNameSpace method expectations to make sure it returns 
+   * testing appNameSpace method expectations to make sure it returns
    * application base Namespace
    */
   it('should return application namespace', function () {
