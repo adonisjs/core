@@ -107,4 +107,13 @@ describe('Views', function () {
       done()
     }).catch(done)
   })
+
+  it ('should output input in json format from json filter', function (done) {
+    co(function *() {
+      return yield view.make('json', { "data": { "name": "Romain Lanz" } })
+    }).then(function (compiledView) {
+      expect(compiledView.trim()).to.equal('{"name":"Romain Lanz"}')
+      done()
+    }).catch(done)
+  })
 })
