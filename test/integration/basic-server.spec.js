@@ -64,7 +64,7 @@ let server = null
     })
 
   it('should throw 404 when route is not found', function (done) {
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .base('http://localhost:4000')
@@ -78,7 +78,8 @@ let server = null
 
   it('should throw 503 error when route controller syntax is not readable', function (done) {
     Routes.get('/foo', 'FooController')
-    server.start(4000)
+
+    server.start('0.0.0.0', 4000)
 
     api()
       .base('http://localhost:4000')
@@ -106,7 +107,7 @@ let server = null
         }
       })
 
-      server.start(4000)
+      server.start('0.0.0.0', 4000)
 
       api()
         .json()
@@ -124,12 +125,12 @@ let server = null
     })
 
     it("should be able to return any data type from request", function(done) {
-    
       Routes.get("/home", function*(request, response) {
         return "hello world";
       });
-      server.start(4000);
-    
+
+      server.start('0.0.0.0', 4000)
+
       api()
         .base('http://localhost:4000')
         .get('/home')
@@ -140,12 +141,11 @@ let server = null
           else done();
         })
     });
-    
-    
+
+
     it("should throw 404 when route is not found", function(done) {
-    
-      server.start(4000);
-    
+      server.start('0.0.0.0', 4000)
+
       api()
         .base('http://localhost:4000')
         .get('/404')
@@ -155,12 +155,12 @@ let server = null
           else done();
         })
     });
-    
+
     it("should throw 503 error when route controller syntax is not readable", function(done) {
-    
       Routes.get("/foo","FooController")
-      server.start(4000);
-    
+
+      server.start('0.0.0.0', 4000)
+
       api()
         .base('http://localhost:4000')
         .get('/foo')
@@ -170,9 +170,8 @@ let server = null
           else done();
         })
     });
-    
+
     it("should spyn a server on given port and respond to a registered route", function(done) {
-    
       let usersToReturn = [{
         username: 'foo',
         age: 22
@@ -180,16 +179,16 @@ let server = null
         username: 'bar',
         age: 25
       }];
-    
+
       Routes.get("/user", function*(request, response) {
         let users = yield getData(usersToReturn);
         if (users) {
           response.status(200).send(users);
         }
       });
-    
-      server.start(4000);
-    
+
+      server.start('0.0.0.0', 4000)
+
       api()
         .json()
         .base('http://localhost:4000')
@@ -202,7 +201,7 @@ let server = null
             done();
           }
         })
-    
+
     });
 
   it('should start a server and attach multiple middlewares to a given route', function (done) {
@@ -229,7 +228,7 @@ let server = null
       }
     }).middlewares(['auth', 'admin'])
 
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .json()
@@ -264,7 +263,7 @@ let server = null
       }
     }).middlewares(['auth'])
 
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .header('color', 'red')
@@ -281,7 +280,7 @@ let server = null
   it('should serve static resources', function (done) {
     Static.public('dist', path.join(__dirname, './public'))
 
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .base('http://localhost:4000')
@@ -297,7 +296,9 @@ let server = null
 
   it('should serve favicon from a given path', function (done) {
     Static.favicon(path.join(__dirname, './public/favicon.ico'))
-    server.start(4000)
+
+    server.start('0.0.0.0', 4000)
+
     api()
       .base('http://localhost:4000')
       .get('/favicon.ico')
@@ -320,7 +321,7 @@ let server = null
       }
     ]
 
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .json()
@@ -351,7 +352,7 @@ let server = null
       }
     ]
 
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .json()
@@ -379,7 +380,7 @@ let server = null
       }
     ]
 
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .json()
@@ -397,9 +398,10 @@ let server = null
     Routes.get('*', function *(request, response) {
       response.send('foo')
     })
+
     Static.public('dist', path.join(__dirname, './public'))
 
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .base('http://localhost:4000')
@@ -415,7 +417,8 @@ let server = null
 
   it('should throw an error when unable to find static resource', function (done) {
     Static.public('dist', path.join(__dirname, './public'))
-    server.start(4000)
+
+    server.start('0.0.0.0', 4000)
 
     api()
       .base('http://localhost:4000')
@@ -432,7 +435,7 @@ let server = null
       return response.send('foo')
     })
 
-    server.start(4000)
+    server.start('0.0.0.0', 4000)
 
     api()
       .base('http://localhost:4000')
