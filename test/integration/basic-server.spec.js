@@ -90,6 +90,20 @@ let server = null
       })
   })
 
+  it('should throw a 503 error when action is not defined in the controller', function (done) {
+    Routes.get('/foo', 'HomeController.foo')
+    server.start(4000)
+
+    api()
+      .base('http://localhost:4000')
+      .get('/foo')
+      .expectStatus(503)
+      .end(function (err, res, body) {
+        if (err) done(err)
+        else done()
+      })
+  })
+
     it('should spyn a server on given port and respond to a registered route', function (done) {
       let usersToReturn = [{
         username: 'foo',
