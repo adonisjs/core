@@ -63,6 +63,22 @@ let server = null
 
     })
 
+    it('should stop the serveur when stop is called', function (done) {
+      server.start(4000)
+
+      server.stop()
+
+      api()
+        .base('http://localhost:4000')
+        .get('/offline')
+        .end(function (err, res, body) {
+          expect(err.code).to.equal('ECONNREFUSED')
+          expect(err.port).to.equal(4000)
+
+          done()
+        })
+    })
+
   it('should throw 404 when route is not found', function (done) {
     server.start(4000)
 
