@@ -298,4 +298,29 @@ describe('Response', function () {
         done()
       })
   })
+
+  it('should throw an exception if key is not defined', function (done) {
+    process.env.APP_KEY = '12192102002201921021AABB'
+
+    let view = new View(Helpers, Env)
+    let MakeResponse = new Response(view, Route)
+
+    var server = http.createServer(function (req, res) {
+      let response = new MakeResponse(req, res)
+
+      try {
+        response.cookie(undefined, 'bar')
+      } catch (e) {
+        done()
+      }
+
+      response.send('')
+      response.end()
+    })
+
+    supertest(server)
+      .get('/')
+      .set('Cookie', ['foo=BsMYi0teP2BEA%2FJoBJiveg%3D%3D.NU993JsT1wbYT4sdKw6YS6UceaO5tM3wdGqrrZ9O7OI'])
+      .end(function (err, res) {})
+  })
 })
