@@ -1,68 +1,64 @@
 'use strict'
 
 /**
- * adonis-framework
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
-*/
-
-const path = require('path')
-const debug = require('debug')('adonis:framework')
-
-/**
- * application root path
- * @private
+ * @author         Harminder Virk <virk.officials@gmail.com>
+ *
+ * @package        adonis-framework
+ * @copyright      2015-2015
+ * @license        MIT
  */
-let rootPath = null
 
-/**
- * path to application app directory
- * @private
- */
-let appPath = null
+const path       = require('path')
+const debug      = require('debug')('adonis:framework')
 
-/**
- * app directory namespace
- * @private
- */
-let appNameSpace = null
+let rootPath     = null     // application root path
+let appPath      = null     // path to application app directory
+let appNameSpace = null     // autoloading namespace
 
-/**
- * @module Helpers
- * @description Gives an easy api to access frequently used paths
- * inside adonis application.
- */
 let Helpers = exports = module.exports = {}
 
 /**
- * @description loads package.json file from application
- * and set required paths and namespace based on same.
- * @method load
- * @param  {String} packagePath
- * @return {void}
+ * loads package.json file from application and set required paths
+ * and namespace based on same.
+ * --------------------------------------------------------------------
+ * @param    |    {String}    |    packagePath
+ * @return   |    {void}
  * @public
  */
 Helpers.load = function (packagePath) {
   debug('reading application config from %s', packagePath)
 
   rootPath = path.dirname(packagePath)
-  const packageFile = require(packagePath)
 
+  /**
+   * loading package file and throwing error if
+   * autoload is not defined
+   */
+  const packageFile = require(packagePath)
   if (!packageFile.autoload) {
     throw new Error('autoload must be enable inside package.json file')
   }
+
+  /**
+   * throwing error when autoloading key and value are missing
+   */
   const autoloadSettings = Object.keys(packageFile.autoload)
   if (!autoloadSettings.length) {
     throw new Error('autoload must be enable inside package.json file')
   }
+
+  /**
+   * setting up appNamespace and appPath from autoload
+   * obhect inside package.json file
+   */
   appNameSpace = autoloadSettings[0]
   appPath = path.join(rootPath, packageFile.autoload[appNameSpace])
 }
 
 /**
- * @description Returns path to application root.
- * @method basePath
- * @return {String}
+ * Returns path to application root.
+ * -----------------------------------------------------------
+ * @return    |    {String}
  * @public
  */
 Helpers.basePath = function () {
@@ -70,10 +66,10 @@ Helpers.basePath = function () {
 }
 
 /**
- * @description Returns path to application folder
- * which is defined under a given namespace.
- * @method appPath
- * @return {String}
+ * Returns path to application folder which is
+ * defined under a given namespace.
+ * -----------------------------------------------------------
+ * @return    |    {String}
  * @public
  */
 Helpers.appPath = function () {
@@ -81,9 +77,9 @@ Helpers.appPath = function () {
 }
 
 /**
- * @description Returns path to application public folder
- * @method publicPath
- * @return {String}
+ * Returns path to application public folder
+ * -----------------------------------------------------------
+ * @return    |    {String}
  * @public
  */
 Helpers.publicPath = function (toFile) {
@@ -93,10 +89,10 @@ Helpers.publicPath = function (toFile) {
 }
 
 /**
- * @description Returns application namespace , under which
+ * Returns application namespace , under which
  * app directory is registered.
- * @method appNameSpace
- * @return {String}
+ * -----------------------------------------------------------
+ * @return    |    {String}
  * @public
  */
 Helpers.appNameSpace = function () {
@@ -104,9 +100,9 @@ Helpers.appNameSpace = function () {
 }
 
 /**
- * @description returns path to config directory
- * @method configPath
- * @return {String}
+ * returns path to config directory
+ * -----------------------------------------------------------
+ * @return    |    {String}
  * @public
  */
 Helpers.configPath = function (toFile) {
@@ -116,9 +112,9 @@ Helpers.configPath = function (toFile) {
 }
 
 /**
- * @description returns reference to storage path of application
- * @method storagePath
- * @return {String}
+ * returns reference to storage path of application
+ * -----------------------------------------------------------
+ * @return    |    {String}
  * @public
  */
 Helpers.storagePath = function (toFile) {
@@ -128,9 +124,9 @@ Helpers.storagePath = function (toFile) {
 }
 
 /**
- * @description returns reference to resources directory
- * @method resourcesPath
- * @return {String}
+ * returns reference to resources directory
+ * -----------------------------------------------------------
+ * @return    |    {String}
  * @public
  */
 Helpers.resourcesPath = function (toFile) {
@@ -140,10 +136,10 @@ Helpers.resourcesPath = function (toFile) {
 }
 
 /**
- * @description returns path to migrations directory
- * @method migrationsPath
- * @param  {String} toFile
- * @return {Strings}
+ * returns path to migrations directory.
+ * -----------------------------------------------------------
+ * @param     |    {String}    |    toFile
+ * @return    |    {String}    |
  */
 Helpers.migrationsPath = function (toFile) {
   const toDir = './migrations'
@@ -152,20 +148,20 @@ Helpers.migrationsPath = function (toFile) {
 }
 
 /**
- * @description returns reference to views directory
- * @method viewsPath
- * @return {String}
+ * returns reference to views directory
+ * -----------------------------------------------------------
+ * @return    |    {String}    |
  */
 Helpers.viewsPath = function () {
   return Helpers.resourcesPath('views')
 }
 
 /**
- * @description makes path by joining two endpoints
- * @method _makePath
- * @param  {String}  base
- * @param  {String}  incremental
- * @return {String}
+ * makes path by joining two endpoints
+ * -----------------------------------------------------------
+ * @param     |    {String}    |    base
+ * @param     |    {String}    |    incremental
+ * @return    |    {String}    |
  * @private
  */
 Helpers._makePath = function (base, incremental) {
