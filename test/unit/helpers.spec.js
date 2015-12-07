@@ -52,7 +52,15 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing publicPath method expectations to make sure it returns 
+   * testing migrationsPath method expectations to make sure it returns
+   * migrations path of the app
+   */
+  it('should return path to migrations directory', function () {
+    expect(Helpers.migrationsPath()).to.equal(path.join(__dirname, './helpers/migrations'))
+  })
+
+  /**
+   * testing publicPath method expectations to make sure it returns
    * public path for app
    */
   it('should return path to application public directory', function () {
