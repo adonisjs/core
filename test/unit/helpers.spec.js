@@ -132,10 +132,18 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing appNameSpace method expectations to make sure it returns 
+   * testing appNameSpace method expectations to make sure it returns
    * application base Namespace
    */
   it('should return application namespace', function () {
     expect(Helpers.appNameSpace()).to.equal('App')
+  })
+
+  it('should encode base64 string', function () {
+    expect(Helpers.base64Encode('Romain Lanz')).to.equal('Um9tYWluIExhbno=')
+  })
+
+  it('should decode base64 string', function () {
+    expect(Helpers.base64Decode('Um9tYWluIExhbno=')).to.equal('Romain Lanz')
   })
 })
