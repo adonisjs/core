@@ -22,15 +22,15 @@ helpers.typeToString = function (value) {
 	if(!value) return value
 
 	switch(typeof(value)){
-		
+
 		/**
-		 * if value is an object , convert 
+		 * if value is an object , convert
 		 * it to string using stringify.
 		 */
 		case 'object':
 			value = JSON.stringify(value)
 			break
-		
+
 		/**
 		 * if value is a number , convert it to
 		 * string using toString method
@@ -53,7 +53,7 @@ helpers.typeToString = function (value) {
 
 /**
  * converting string values back to original datatype
- * based upon their type 
+ * based upon their type
  * @param  {Object} value
  * @return {Object}
  */
@@ -106,7 +106,7 @@ helpers.pushToSession = function (existingSession, value) {
 	let matchFound = false
 
 	/**
-	 * if existing session is empty, simply push values 
+	 * if existing session is empty, simply push values
 	 * on it.
 	 */
 	if(_.size(existingSession) === 0){

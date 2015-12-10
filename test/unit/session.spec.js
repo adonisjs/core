@@ -140,9 +140,43 @@ describe('Sessions', function () {
 
     })
 
+    it('should throw an error when key/value pair or object is not passed on put method', function (done) {
+
+      delete process.env.APP_KEY
+
+      let view = new View(Helpers,Env)
+      let MakeResponse = new Response(view)
+      const Manager = new Session(Helpers,Config)
+
+      var server = http.createServer(function(req, res) {
+        let response = new MakeResponse(req, res)
+        const session = new Manager(req,res)
+
+        co (function * () {
+          return yield session.put('foo')
+        }).then(function(){
+          response.send(' ').end()
+        }).catch(function (error) {
+          response.send(error.message).end()
+        })
+      });
+
+      supertest(server)
+        .post("/")
+        .end(function(err, res) {
+          if (err){
+            done(err)
+          }
+          else{
+            expect(res.text).to.match(/key\/value/)
+            done();
+          }
+        });
+
+    })
+
 
     it('should setup multiple sessions as cookie value when using put method', function (done) {
-
       delete process.env.APP_KEY
 
       let view = new View(Helpers,Env)
@@ -178,7 +212,79 @@ describe('Sessions', function () {
             done();
           }
         });
+    })
 
+    it('should be able to define session cookie options', function (done) {
+
+      delete process.env.APP_KEY
+
+      let view = new View(Helpers,Env)
+      let MakeResponse = new Response(view)
+      const Manager = new Session(Helpers,Config)
+
+      var server = http.createServer(function(req, res) {
+        let response = new MakeResponse(req, res)
+        const session = new Manager(req,res)
+
+        co (function * () {
+          return yield session.put({'foo':'bar','baz':'baz'}, {path:'/foo'})
+        }).then(function(){
+          response.send(' ').end()
+        }).catch(done)
+      });
+
+      supertest(server)
+        .post("/")
+        .end(function(err, res) {
+          if (err){
+            done(err)
+          }
+          else{
+            const cookies = cookie.parse(res.headers['set-cookie'][0])
+            expect(cookies).to.have.property('Path')
+            expect(cookies['Path']).to.equal('/foo')
+            done();
+          }
+        });
+    })
+
+    it('should be able to define session cookie options when using key/value pairs', function (done) {
+
+      delete process.env.APP_KEY
+
+      let view = new View(Helpers,Env)
+      let MakeResponse = new Response(view)
+      const Manager = new Session(Helpers,Config)
+
+      var server = http.createServer(function(req, res) {
+        let response = new MakeResponse(req, res)
+        const session = new Manager(req,res)
+
+        co (function * () {
+          return yield session.put('name','virk',{path:'/foo', domain: 'http://google.com'})
+        }).then(function(){
+          response.send(' ').end()
+        }).catch(done)
+      });
+
+      supertest(server)
+        .post("/")
+        .end(function(err, res) {
+          if (err){
+            done(err)
+          }
+          else{
+            const cookies = cookie.parse(res.headers['set-cookie'][0])
+            expect(cookies).to.have.property('Path')
+            expect(cookies).to.have.property('Domain')
+            expect(cookies).to.have.property('adonis-session')
+            expect(JSON.parse(cookies['adonis-session'])[0].d.value).to.equal('virk')
+            expect(JSON.parse(cookies['adonis-session'])[0].d.key).to.equal('name')
+            expect(cookies['Path']).to.equal('/foo')
+            expect(cookies['Domain']).to.equal('http://google.com')
+            done();
+          }
+        });
     })
 
     it('should fetch session value defined on request', function (done) {
@@ -322,7 +428,7 @@ describe('Sessions', function () {
           }
       });
     })
-  
+
     context('Reading cookies' , function () {
 
       delete process.env.APP_KEY
@@ -495,6 +601,6 @@ describe('Sessions', function () {
       expect(JSON.parse(JSON.stringify(date))).to.equal(toType.d)
 
     });
-  
+
   })
 })
