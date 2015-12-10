@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * adonis-framework 
+ * adonis-framework
  * Copyright(c) - Harminder Virk
  * MIT Licensed
 */
@@ -38,7 +38,7 @@ class SessionManager {
 		const type = typeof(value)
 
 		/**
-		 * converting value to string based upon it's 
+		 * converting value to string based upon it's
 		 * type. It is required as we cannot save
 		 * raw objects to cookies or to files.
 		 * @type {String}
@@ -66,7 +66,7 @@ class SessionManager {
 	 * @return {void}
 	 * @public
 	 */
-	* put (key, value) {
+	* put (key, value, options) {
 		/**
 		 * throwing error when key/value pair or object is not
 		 * passed while saving cookies
@@ -103,7 +103,7 @@ class SessionManager {
 		const cookies = Cookies.parse(this.request)
 
 		/**
-		 * here we read session id from cookie. It will be actual 
+		 * here we read session id from cookie. It will be actual
 		 * session object if cookie driver is in use. Otherwise
 		 * it will be the unique session id.
 		 * @type {String}
@@ -128,7 +128,8 @@ class SessionManager {
 			}
 		}
 
-		if(!value && typeof(key) === 'object'){
+		if(typeof(key) === 'object') {
+      options = value
 			/**
 			 * if user has passed an object , containing multiple session
 			 * values , loop through them and push individual item
@@ -154,8 +155,8 @@ class SessionManager {
 		if(this.constructor.driver === 'cookie'){
 
 			/**
-			 * when someone is using cookie as the session driver , we 
-			 * not need a driver to save values instead we set 
+			 * when someone is using cookie as the session driver , we
+			 * not need a driver to save values instead we set
 			 * session value as session id. Not a hack but
 			 * little confusing
 			*/
@@ -163,7 +164,7 @@ class SessionManager {
 		}else{
 
 			/**
-			 * here we create session id , as data storage is 
+			 * here we create session id , as data storage is
 			 * not cookie and need way to reference session
 			 * values
 			 */
@@ -172,15 +173,15 @@ class SessionManager {
 		}
 
 		/**
-		 * generating cookie string to push to cookies 
+		 * generating cookie string to push to cookies
 		 * which will be used by response object
 		 * while making response
 		 * @type {Object}
 		 */
-		const session = {key:this.constructor.sessionKey,value:sessionId}
+		const session = {key:this.constructor.sessionKey,value:sessionId, options}
 
 		/**
-		 * if cookies does not exists already on response , set them 
+		 * if cookies does not exists already on response , set them
 		 * as an empty object
 		 * @type {Object}
 		 */
@@ -196,7 +197,7 @@ class SessionManager {
 
 	/**
 	 * @function get
-	 * @description fetching session value for a given 
+	 * @description fetching session value for a given
 	 * key
 	 * @param  {String} key
 	 * @return {*}
@@ -205,7 +206,7 @@ class SessionManager {
 	* get (key) {
 
 		/**
-		 * pairs will be built by iterating over the session 
+		 * pairs will be built by iterating over the session
 		 * object and transforming values back to their
 		 * original type.
 		 * @type {Object}
