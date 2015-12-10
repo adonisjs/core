@@ -52,7 +52,15 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing publicPath method expectations to make sure it returns 
+   * testing migrationsPath method expectations to make sure it returns
+   * migrations path of the app
+   */
+  it('should return path to migrations directory', function () {
+    expect(Helpers.migrationsPath()).to.equal(path.join(__dirname, './helpers/migrations'))
+  })
+
+  /**
+   * testing publicPath method expectations to make sure it returns
    * public path for app
    */
   it('should return path to application public directory', function () {
@@ -132,10 +140,18 @@ describe('Helpers', function () {
   })
 
   /**
-   * testing appNameSpace method expectations to make sure it returns 
+   * testing appNameSpace method expectations to make sure it returns
    * application base Namespace
    */
   it('should return application namespace', function () {
     expect(Helpers.appNameSpace()).to.equal('App')
+  })
+
+  it('should encode base64 string', function () {
+    expect(Helpers.base64Encode('Romain Lanz')).to.equal('Um9tYWluIExhbno=')
+  })
+
+  it('should decode base64 string', function () {
+    expect(Helpers.base64Decode('Um9tYWluIExhbno=')).to.equal('Romain Lanz')
   })
 })

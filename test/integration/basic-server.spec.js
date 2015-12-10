@@ -63,6 +63,22 @@ let server = null
 
     })
 
+    it('should stop the serveur when stop is called', function (done) {
+      server.start(4000)
+
+      server.stop()
+
+      api()
+        .base('http://localhost:4000')
+        .get('/offline')
+        .end(function (err, res, body) {
+          expect(err.code).to.equal('ECONNREFUSED')
+          expect(err.port).to.equal(4000)
+
+          done()
+        })
+    })
+
   it('should throw 404 when route is not found', function (done) {
     server.start(4000)
 
@@ -78,6 +94,20 @@ let server = null
 
   it('should throw 503 error when route controller syntax is not readable', function (done) {
     Routes.get('/foo', 'FooController')
+    server.start(4000)
+
+    api()
+      .base('http://localhost:4000')
+      .get('/foo')
+      .expectStatus(503)
+      .end(function (err, res, body) {
+        if (err) done(err)
+        else done()
+      })
+  })
+
+  it('should throw a 503 error when action is not defined in the controller', function (done) {
+    Routes.get('/foo', 'HomeController.foo')
     server.start(4000)
 
     api()
