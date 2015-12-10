@@ -29,4 +29,13 @@ describe('HttpException', function () {
     let error = new HttpException('Something went found')
     expect(error.status).to.equal(503)
   })
+
+  it('should use a fallback if captureStackTrace is not defined', function () {
+
+    // Monkey patch Error class to remove captureStackTrace() method
+    delete Error.captureStackTrace
+
+    let error = new HttpException(404, 'Page not found')
+    expect(error.stack).to.be.defined
+  })
 })

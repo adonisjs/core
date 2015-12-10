@@ -160,6 +160,26 @@ Helpers.viewsPath = function () {
   return Helpers.resourcesPath('views')
 }
 
+/**
+ * @function base64Encode
+ * @description returns encoded base64 string
+ * @param  {String} unencoded
+ * @return {String}
+ */
+Helpers.base64Encode = function (unencoded) {
+  return new Buffer(unencoded || '').toString('base64')
+}
+
+/**
+ * @function base64Decode
+ * @description returns decoded base64 string
+ * @param  {String} encoded
+ * @return {String}
+ */
+Helpers.base64Decode = function (encoded) {
+  return new Buffer(encoded || '', 'base64').toString('utf8')
+}
+
 Helpers._makePath = function (base, incremental) {
   return path.join(base, incremental)
 }
