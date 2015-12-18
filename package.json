@@ -13,6 +13,7 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
+    "cat-log": "^1.0.0",
     "chai": "^3.3.0",
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.4",

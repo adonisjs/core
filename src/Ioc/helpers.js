@@ -6,9 +6,6 @@
  * MIT Licensed
 */
 
-/**
- * @ignore
- */
 const dwell = require('dwell')
 const _ = require('lodash')
 

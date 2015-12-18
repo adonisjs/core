@@ -9,8 +9,8 @@
 const helpers = require('./helpers')
 const _ = require('lodash')
 const requireStack = require('require-stack')
-const Logger = require('../Logger')
-const log = new Logger('adonis:ioc')
+const CatLog = require('cat-log')
+const log = new CatLog('adonis:ioc')
 
 /**
  * list of registered providers
@@ -308,6 +308,19 @@ Ioc.use = function (namespace) {
     default:
       return requireStack(namespace)
   }
+}
+
+/**
+ * @description sets up aliases using an object
+ * @method aliases
+ * @param  {Object} hash
+ * @return {void}
+ * @public
+ */
+Ioc.aliases = function (hash) {
+  _.each(hash, function (value, key) {
+    Ioc.alias(key, value)
+  })
 }
 
 /**

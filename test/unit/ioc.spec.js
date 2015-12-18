@@ -366,5 +366,15 @@ describe('Ioc', function () {
       expect(Ioc.use('Foo') instanceof Foo).to.equal(true)
     })
 
+    it('should be able to alias binding using an object', function () {
+      class Foo {
+      }
+      Ioc.bind('App/Foo', function () {
+        return new Foo
+      })
+      Ioc.aliases({'Foo': 'App/Foo'})
+      expect(Ioc.use('Foo') instanceof Foo).to.equal(true)
+    })
+
   })
 })
