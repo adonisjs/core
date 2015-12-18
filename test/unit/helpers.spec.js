@@ -9,7 +9,6 @@
 const Helpers = require('../../src/Helpers')
 const chai = require('chai')
 const path = require('path')
-const _ = require('lodash')
 const expect = chai.expect
 
 const basePath = path.join(__dirname,'../acceptance');

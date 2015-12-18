@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "_mocha test/unit test/acceptance --bail",
-    "coverage": "istanbul cover _mocha test/unit test/acceptance  --bail"
+    "coverage": "istanbul cover _mocha test/unit test/acceptance  --bail",
+    "hint": "jshint src/**/*.js test/**/*.js --config ./jshint.json"
   },
   "keywords": [
     "adonis-framework",
@@ -24,9 +25,9 @@
     "formidable": "^1.0.17",
     "ioredis": "^1.9.1",
     "istanbul": "^0.4.0",
+    "jshint": "^2.8.0",
     "mocha": "^2.3.3",
     "mocha-lcov-reporter": "^1.0.0",
-    "nightmare": "^2.0.7",
     "pem": "^1.8.1",
     "supertest": "^1.1.0",
     "zombie": "^4.2.1"

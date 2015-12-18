@@ -59,7 +59,7 @@ describe('Response', function () {
     })
 
     const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.headers['country']).to.equal("India")
+    expect(res.headers.country).to.equal("India")
     done()
   })
 
@@ -72,7 +72,7 @@ describe('Response', function () {
     })
 
     const res = yield supertest(server).get('/').set('country','India').expect(200).end()
-    expect(res.headers['country']).to.equal(undefined)
+    expect(res.headers.country).to.equal(undefined)
     done()
 
   })
@@ -109,7 +109,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.status(304).json({name:"foo"})
     })
-    const res = yield supertest(server).get('/').expect(304).end()
+    yield supertest(server).get('/').expect(304).end()
     done()
   })
 
@@ -153,7 +153,7 @@ describe('Response', function () {
       response.location('http://amanvirk.me').send('')
     })
     const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.headers['location']).to.equal('http://amanvirk.me')
+    expect(res.headers.location).to.equal('http://amanvirk.me')
     done()
   })
 
@@ -164,7 +164,7 @@ describe('Response', function () {
       response.redirect('http://amanvirk.me')
     })
     const res = yield supertest(server).get('/').expect(302).end()
-    expect(res.headers['location']).to.equal('http://amanvirk.me')
+    expect(res.headers.location).to.equal('http://amanvirk.me')
     done()
   })
 
@@ -176,7 +176,7 @@ describe('Response', function () {
       response.route('profile', {id:1})
     })
     const res = yield supertest(server).get('/').expect(302).end()
-    expect(res.headers['location']).to.equal('/user/1')
+    expect(res.headers.location).to.equal('/user/1')
     done()
   })
 
@@ -187,7 +187,7 @@ describe('Response', function () {
       response.vary('Accepts').send('')
     })
     const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.headers['vary']).to.equal('Accepts')
+    expect(res.headers.vary).to.equal('Accepts')
     done()
   })
 

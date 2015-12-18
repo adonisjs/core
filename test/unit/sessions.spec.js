@@ -22,7 +22,7 @@ let Config = {
   }
 }
 
-describe('Session', function  (argument) {
+describe('Session', function  () {
 
   context('Session Builder', function () {
     it('should extend session drivers using extend method', function * () {
@@ -193,7 +193,7 @@ describe('Session', function  (argument) {
         sessionManager = new SessionManager(req, res)
         co(function * () {
           yield sessionManager.put('name','virk')
-        }).then(function (response) {
+        }).then(function () {
           res.writeHead(200)
           res.end()
         }).catch(function (err) {
@@ -205,7 +205,7 @@ describe('Session', function  (argument) {
       const res = yield supertest(server).get("/").expect(200).end()
       const session = res.headers['set-cookie'][0].split('=')
       let body = {}
-      body['name'] = sessionManager._makeBody('name','virk')
+      body.name = sessionManager._makeBody('name','virk')
       expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
 
     })
@@ -219,7 +219,7 @@ describe('Session', function  (argument) {
         sessionManager = new SessionManager(req, res)
         co(function * () {
           yield sessionManager.put({name:'virk',age:22})
-        }).then(function (response) {
+        }).then(function () {
           res.writeHead(200)
           res.end()
         }).catch(function (err) {
@@ -231,8 +231,8 @@ describe('Session', function  (argument) {
       const res = yield supertest(server).get("/").expect(200).end()
       const session = res.headers['set-cookie'][0].split('=')
       let body = {}
-      body['name'] = sessionManager._makeBody('name','virk')
-      body['age'] = sessionManager._makeBody('age',22)
+      body.name = sessionManager._makeBody('name','virk')
+      body.age = sessionManager._makeBody('age',22)
       expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
 
     })
@@ -246,7 +246,7 @@ describe('Session', function  (argument) {
         sessionManager = new SessionManager(req, res)
         co(function * () {
           yield sessionManager.put('profile',{name:'virk',age:22})
-        }).then(function (response) {
+        }).then(function () {
           res.writeHead(200)
           res.end()
         }).catch(function (err) {
@@ -258,7 +258,7 @@ describe('Session', function  (argument) {
       const res = yield supertest(server).get("/").expect(200).end()
       const session = res.headers['set-cookie'][0].split('=')
       let body = {}
-      body['profile'] = {d: JSON.stringify({name:"virk",age:22}), t: 'Object' }
+      body.profile = {d: JSON.stringify({name:"virk",age:22}), t: 'Object' }
       expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
 
     })
@@ -272,7 +272,7 @@ describe('Session', function  (argument) {
         sessionManager = new SessionManager(req, res)
         co(function * () {
           yield sessionManager.put({name:'virk',age:function () {} })
-        }).then(function (response) {
+        }).then(function () {
           res.writeHead(200)
           res.end()
         }).catch(function (err) {
@@ -284,7 +284,7 @@ describe('Session', function  (argument) {
       const res = yield supertest(server).get("/").expect(200).end()
       const session = res.headers['set-cookie'][0].split('=')
       let body = {}
-      body['name'] = sessionManager._makeBody('name','virk')
+      body.name = sessionManager._makeBody('name','virk')
       expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
 
     })
@@ -298,7 +298,7 @@ describe('Session', function  (argument) {
         const sessionManager = new SessionManager(req, res)
         co(function * () {
           yield sessionManager.forget('name')
-        }).then(function (response) {
+        }).then(function () {
           res.writeHead(200)
           res.end()
         }).catch(function (err) {
@@ -308,7 +308,7 @@ describe('Session', function  (argument) {
       })
 
       let body = {}
-      body['name'] = sessionManagerFake._makeBody('name','virk')
+      body.name = sessionManagerFake._makeBody('name','virk')
       const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
       expect(res.headers['set-cookie']).to.equal(undefined)
 
@@ -334,7 +334,7 @@ describe('Session', function  (argument) {
       })
 
       let body = {}
-      body['name'] = sessionManagerFake._makeBody('name','virk')
+      body.name = sessionManagerFake._makeBody('name','virk')
       const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
       expect(res.body.name).deep.equal({name:'virk'})
 
@@ -360,7 +360,7 @@ describe('Session', function  (argument) {
       })
 
       let body = {}
-      body['name'] = sessionManagerFake._makeBody('name','virk')
+      body.name = sessionManagerFake._makeBody('name','virk')
       const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
       expect(res.body.name).to.equal('virk')
 
@@ -385,7 +385,7 @@ describe('Session', function  (argument) {
       })
 
       let body = {}
-      body['name'] = sessionManagerFake._makeBody('name','virk')
+      body.name = sessionManagerFake._makeBody('name','virk')
       const res = yield supertest(server).get("/").expect(200).end()
       expect(res.body.name).to.equal('foo')
 
@@ -410,8 +410,8 @@ describe('Session', function  (argument) {
       })
 
       let body = {}
-      body['name'] = sessionManagerFake._makeBody('name','virk')
-      body['age'] = sessionManagerFake._makeBody('age',22)
+      body.name = sessionManagerFake._makeBody('name','virk')
+      body.age = sessionManagerFake._makeBody('age',22)
       const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
       expect(res.body.name).to.equal('virk')
       let trustedValue = res.headers['set-cookie'][res.headers['set-cookie'].length - 1]
@@ -427,7 +427,7 @@ describe('Session', function  (argument) {
       let sessionValue = {}
 
       const FileDriver = {
-        * read (sessionId) {
+        * read () {
           return {}
         },
         * write (id,value) {
@@ -441,7 +441,7 @@ describe('Session', function  (argument) {
         const sessionManager = new SessionManager(req, res)
         co(function * () {
           return yield sessionManager.put('name','virk')
-        }).then(function (name) {
+        }).then(function () {
           res.writeHead(200)
           res.end()
         }).catch(function (err) {
@@ -462,7 +462,7 @@ describe('Session', function  (argument) {
       let sessionValue = {}
 
       const FileDriver = {
-        * read (sessionId) {
+        * read () {
           return {name:'virk'}
         },
         * write (id,value) {
@@ -475,7 +475,7 @@ describe('Session', function  (argument) {
         const sessionManager = new SessionManager(req, res)
         co(function * () {
           return yield sessionManager.put('name','foo')
-        }).then(function (name) {
+        }).then(function () {
           res.writeHead(200)
           res.end()
         }).catch(function (err) {
@@ -496,7 +496,7 @@ describe('Session', function  (argument) {
       let sessionValue = {}
 
       const FileDriver = {
-        * read (sessionId) {
+        * read () {
           return {name:{d:'virk','t':'String'}}
         },
         * write (id,value) {
@@ -509,7 +509,7 @@ describe('Session', function  (argument) {
         const sessionManager = new SessionManager(req, res)
         co(function * () {
           return yield sessionManager.put('age',22)
-        }).then(function (name) {
+        }).then(function () {
           res.writeHead(200)
           res.end()
         }).catch(function (err) {
@@ -527,10 +527,9 @@ describe('Session', function  (argument) {
     it('should read value for a given key from session using file driver', function * () {
 
       let sessionId = '123456789'
-      let sessionValue = {}
 
       const FileDriver = {
-        * read (sessionId) {
+        * read () {
           return {name:{d:'virk','t':'String'}}
         }
       }
@@ -556,11 +555,8 @@ describe('Session', function  (argument) {
 
     it('should return default value when session id does not exists', function * () {
 
-      let sessionId = '123456789'
-      let sessionValue = {}
-
       const FileDriver = {
-        * read (sessionId) {
+        * read () {
           return {name:{d:'virk','t':'String'}}
         }
       }
@@ -587,10 +583,9 @@ describe('Session', function  (argument) {
     it('should return default value when value does not exists in session', function * () {
 
       let sessionId = '123456789'
-      let sessionValue = {}
 
       const FileDriver = {
-        * read (sessionId) {
+        * read () {
           return {name:{d:'virk','t':'String'}}
         }
       }

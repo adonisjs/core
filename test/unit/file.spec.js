@@ -9,7 +9,6 @@
 
 const File = require('../../src/File')
 const chai = require('chai')
-const _ = require('lodash')
 const path = require('path')
 const fs = require('fs')
 const expect = chai.expect
@@ -27,7 +26,11 @@ describe('File', function() {
 
   after(function (done) {
     fs.rename(__dirname+'/public/logo.svg',__dirname+'/uploads/npm-logo.svg',function (err) {
-      done()
+      if(err) {
+        done(err)
+      }else{
+        done()
+      }
     })
   })
 

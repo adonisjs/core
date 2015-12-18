@@ -29,7 +29,7 @@ describe('Middleware', function () {
   it('should register a named middleware', function () {
     Middleware.register('bar','App/Foo/Bar')
     const named = Middleware.getNamed()
-    expect(named['bar']).to.equal('App/Foo/Bar')
+    expect(named.bar).to.equal('App/Foo/Bar')
   })
 
   it('should bulk register global middleware', function () {

@@ -30,7 +30,7 @@ class File{
   move (toPath, name) {
     name = name || this.clientName()
     const uploadingFileName = `${toPath}/${name}`
-    return new Promise ((resolve, reject) => {
+    return new Promise ((resolve) => {
 
       fs.rename(this.tmpPath(), uploadingFileName, (err) => {
         if(err){

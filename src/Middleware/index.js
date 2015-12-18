@@ -9,13 +9,14 @@
 const _ = require('lodash')
 const Ioc = require('adonis-fold').Ioc
 
-let global = []
-let named = {}
+let globalMiddleware = []
+let namedMiddleware = {}
 
 /**
  * @description Middleware layer with generators support
  * @type {Object}
  */
+/*jshint -W120 */
 let Middleware = exports = module.exports = {}
 
 /**
@@ -25,8 +26,8 @@ let Middleware = exports = module.exports = {}
  * @public
  */
 Middleware.new = function () {
-  global = []
-  named = {}
+  globalMiddleware = []
+  namedMiddleware = {}
 }
 
 /**
@@ -40,10 +41,10 @@ Middleware.new = function () {
  */
 Middleware.register = function (key, namespace) {
   if(!namespace){
-    global.push(key)
+    globalMiddleware.push(key)
     return
   }
-  named[key] = namespace
+  namedMiddleware[key] = namespace
 }
 
 /**
@@ -55,7 +56,7 @@ Middleware.register = function (key, namespace) {
  * @public
  */
 Middleware.global = function (arrayOfMiddleware) {
-  global = global.concat(arrayOfMiddleware)
+  globalMiddleware = globalMiddleware.concat(arrayOfMiddleware)
 }
 
 /**
@@ -79,7 +80,7 @@ Middleware.named = function (namedMiddleware) {
  * @public
  */
 Middleware.getGlobal = function () {
-  return _.unique(global)
+  return _.unique(globalMiddleware)
 }
 
 /**
@@ -89,7 +90,7 @@ Middleware.getGlobal = function () {
  * @public
  */
 Middleware.getNamed = function () {
-  return named
+  return namedMiddleware
 }
 
 /**
@@ -103,7 +104,7 @@ Middleware.getNamed = function () {
  */
 Middleware.filter = function (keys, callGlobal) {
   const globalMiddleware = Middleware.getGlobal()
-  const namedToCall = _.toArray(_.pick(named, keys))
+  const namedToCall = _.toArray(_.pick(Middleware.getNamed(), keys))
   return callGlobal === true ? globalMiddleware.concat(namedToCall) : namedToCall
 }
 

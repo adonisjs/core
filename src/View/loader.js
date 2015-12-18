@@ -14,6 +14,7 @@ const fs = require('fs')
  * @module viewsLoader
  * @description Custom async implementation of nunjucks views loader
  */
+/*jshint -W120 */
 exports = module.exports = nunjucks.Loader.extend({
 
   /**
@@ -46,7 +47,10 @@ exports = module.exports = nunjucks.Loader.extend({
     const self = this
 
     fs.readFile(viewPath, function (err, content) {
-      if (err) return callback(null, null)
+      if (err) {
+        callback(null, null)
+        return
+      }
       callback(null, {
         src: content.toString(),
         path: viewPath,

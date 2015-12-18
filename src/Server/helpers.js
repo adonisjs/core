@@ -15,6 +15,7 @@ const Ioc = require('adonis-fold').Ioc
  * @module helpers
  * @type {Object}
  */
+/*jshint -W120 */
 let helpers = exports = module.exports = {}
 
 /**

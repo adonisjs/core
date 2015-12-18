@@ -30,6 +30,7 @@ let activeGroup = null
  * @description Gives ability to bind http requests to
  * regular expression.
  */
+/*jshint -W120 */
 let Route = exports = module.exports = {}
 
 /**
@@ -223,7 +224,9 @@ Route.resolve = function (urlPath, verb, host) {
     urlPath = `${host}${urlPath}`
   }
   let resolvedRoute = helpers.returnMatchingRouteToUrl(routes, urlPath, verb)
-  if (_.size(resolvedRoute) === 0) return {}
+  if (_.size(resolvedRoute) === 0){
+    return {}
+  }
   return helpers.returnRouteArguments(resolvedRoute, urlPath, host)
 }
 

@@ -8,6 +8,7 @@
 
 const bcrypt = require('bcryptjs')
 
+/*jshint -W120 */
 let Hash = exports = module.exports = {}
 
 /**

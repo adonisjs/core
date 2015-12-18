@@ -15,6 +15,7 @@ let rootPath     = null     // application root path
 let appPath      = null     // path to application app directory
 let appNameSpace = null     // autoloading namespace
 
+/*jshint -W120 */
 let Helpers = exports = module.exports = {}
 
 /**
@@ -22,10 +23,11 @@ let Helpers = exports = module.exports = {}
  * and namespace based on same.
  * --------------------------------------------------------------------
  * @param    |    {String}    |    packagePath
+ * @param    |    {Object}    |    Ioc
  * @return   |    {void}
  * @public
  */
-Helpers.load = function (packagePath) {
+Helpers.load = function (packagePath, Ioc) {
   debug('reading application config from %s', packagePath)
 
   rootPath = path.dirname(packagePath)
@@ -53,6 +55,13 @@ Helpers.load = function (packagePath) {
    */
   appNameSpace = autoloadSettings[0]
   appPath = path.join(rootPath, packageFile.autoload[appNameSpace])
+
+  /**
+   * if Ioc is defined setup autoloading values
+   */
+  if(Ioc && Ioc.autoload) {
+    Ioc.autoload(appNameSpace, appPath)
+  }
 }
 
 /**

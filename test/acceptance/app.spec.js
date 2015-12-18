@@ -12,7 +12,6 @@ const chai = require('chai')
 const expect = chai.expect
 const server = require('./setup')
 const Helpers = require('../../src/Helpers')
-const cheerio = require('cheerio')
 const Ioc = require("adonis-fold").Ioc
 const queryString = require('querystring')
 const Middleware = require('../../src/Middleware')

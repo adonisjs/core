@@ -15,7 +15,6 @@ const Middleware = require('../../src/Middleware')
 const chai = require('chai')
 const Ioc = require('adonis-fold').Ioc
 const supertest = require('co-supertest')
-const _ = require('lodash')
 const expect = chai.expect
 const http = require('http')
 const path = require('path')
@@ -52,12 +51,12 @@ describe("Server", function () {
 
   it("should serve favicon when request is for favicon", function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/favicon.ico').expect('Content-type',/x-icon/).expect(200).end()
+    yield supertest(testServer).get('/favicon.ico').expect('Content-type',/x-icon/).expect(200).end()
   })
 
   it("should make 404 error when unable to find static resource", function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/foo.css').expect(404).end()
+    yield supertest(testServer).get('/foo.css').expect(404).end()
   })
 
   it("should call route action if defined", function * () {
@@ -170,7 +169,7 @@ describe("Server", function () {
   })
 
   it("should report error thrown my route closure", function * () {
-    Route.get('/', function * (request, response) {
+    Route.get('/', function * () {
       throw new Error('Unable to login')
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
@@ -179,7 +178,7 @@ describe("Server", function () {
   })
 
   it("should print default error message when error itself does not have any message", function * () {
-    Route.get('/', function * (request, response) {
+    Route.get('/', function * () {
       throw new Error()
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))

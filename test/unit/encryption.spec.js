@@ -17,7 +17,7 @@ const Env = {
     if(key === 'APP_KEY'){
       return 'bubblegum'
     }
-    if(key == 'ENCRYPTION'){
+    if(key === 'ENCRYPTION'){
       return 'aes-256-cbc'
     }
   }

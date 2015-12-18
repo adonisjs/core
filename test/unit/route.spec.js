@@ -86,7 +86,7 @@ describe('Route',function () {
     it('should register resourceful routes', function () {
       Route.resource('/','SomeController')
       const routes = Route.routes()
-      const verbs = _.object(_.map(routes, function (route,index) {
+      const verbs = _.object(_.map(routes, function (route) {
         return [route.route + '-' + route.verb[0],true]
       }))
       expect(routes.length).to.equal(6)
@@ -101,7 +101,7 @@ describe('Route',function () {
     it('should register resourceful routes when base route is not /', function () {
       Route.resource('/admin','SomeController')
       const routes = Route.routes()
-      const verbs = _.object(_.map(routes, function (route,index) {
+      const verbs = _.object(_.map(routes, function (route) {
         return [route.route + '-' + route.verb[0],true]
       }))
       expect(routes.length).to.equal(6)
@@ -175,7 +175,7 @@ describe('Route',function () {
         Route.resource('/','SomeController')
       }).prefix('/v1')
       const routes = Route.routes()
-      const verbs = _.object(_.map(routes, function (route,index) {
+      const verbs = _.object(_.map(routes, function (route) {
         return [route.route + '-' + route.verb[0],true]
       }))
       expect(routes.length).to.equal(6)

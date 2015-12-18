@@ -13,6 +13,7 @@ const Ioc = require('adonis-fold').Ioc
  * @module viewsYield
  * @description Here we add support for es6 generators to nunjucks views
  */
+/*jshint -W120 */
 function ViewsYield () {
   this.tags = ['yield']
 
@@ -26,7 +27,7 @@ function ViewsYield () {
    * @return {Object}
    * @public
    */
-  this.parse = function (parser, nodes, lexer) {
+  this.parse = function (parser, nodes) {
     var tok = parser.nextToken()
     var args = parser.parseSignature(null, true)
     parser.advanceAfterBlockEnd(tok.value)

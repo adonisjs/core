@@ -432,8 +432,8 @@ describe('Request', function () {
   it('should not reparse cookies after calling cookies method multiple times', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res)
-      const cookies = request.cookies()
-      request.cookiesObject["age"] = 22
+      request.cookies()
+      request.cookiesObject.age = 22
       const cookiesAgain = request.cookies()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({cookies:cookiesAgain}),'utf8')
@@ -578,7 +578,7 @@ describe('Request', function () {
       request.session = sessionManager
       co(function * () {
         yield request.flash('username', 'foo')
-      }).then(function (response) {
+      }).then(function () {
         res.writeHead(200)
         res.end()
       }).catch(function (err) {
@@ -602,7 +602,7 @@ describe('Request', function () {
       request.session = sessionManager
       co(function * () {
         yield request.flash({username:'foo'})
-      }).then(function (response) {
+      }).then(function () {
         res.writeHead(200)
         res.end()
       }).catch(function (err) {
@@ -614,7 +614,7 @@ describe('Request', function () {
     const res = yield supertest(server).get("/").expect(200).end()
     const flashMessage = res.headers['set-cookie'][0].split('=')
     let body = {}
-    body['flash_messages'] = {d:JSON.stringify({username:'foo'}),t:'Object'}
+    body.flash_messages = {d:JSON.stringify({username:'foo'}),t:'Object'}
     expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 
@@ -640,7 +640,7 @@ describe('Request', function () {
     })
 
     const body = {}
-    body['flash_messages'] = {d:JSON.stringify({username:'virk'}),t:'Object'}
+    body.flash_messages = {d:JSON.stringify({username:'virk'}),t:'Object'}
     const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
     expect(res.body.response).to.equal('virk')
   })
@@ -743,7 +743,7 @@ describe('Request', function () {
     const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
     const flashMessage = res.headers['set-cookie'][0].split('=')
     let body = {}
-    body['flash_messages'] = {d:JSON.stringify({username:'foo',age:"22"}),t:'Object'}
+    body.flash_messages = {d:JSON.stringify({username:'foo',age:"22"}),t:'Object'}
     expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 
@@ -770,7 +770,7 @@ describe('Request', function () {
     const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
     const flashMessage = res.headers['set-cookie'][0].split('=')
     let body = {}
-    body['flash_messages'] = {d:JSON.stringify({username:'foo'}),t:'Object'}
+    body.flash_messages = {d:JSON.stringify({username:'foo'}),t:'Object'}
     expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 
@@ -797,7 +797,7 @@ describe('Request', function () {
     const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
     const flashMessage = res.headers['set-cookie'][0].split('=')
     let body = {}
-    body['flash_messages'] = {d:JSON.stringify({username:'foo'}),t:'Object'}
+    body.flash_messages = {d:JSON.stringify({username:'foo'}),t:'Object'}
     expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 
@@ -824,7 +824,7 @@ describe('Request', function () {
     const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
     const flashMessage = res.headers['set-cookie'][0].split('=')
     let body = {}
-    body['flash_messages'] = {d:JSON.stringify({age:'22'}),t:'Object'}
+    body.flash_messages = {d:JSON.stringify({age:'22'}),t:'Object'}
     expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 
@@ -851,7 +851,7 @@ describe('Request', function () {
     const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
     const flashMessage = res.headers['set-cookie'][0].split('=')
     let body = {}
-    body['flash_messages'] = {d:JSON.stringify({age:'22'}),t:'Object'}
+    body.flash_messages = {d:JSON.stringify({age:'22'}),t:'Object'}
     expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 

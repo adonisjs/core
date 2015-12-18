@@ -11,7 +11,6 @@ const View = require('../../src/View')
 const Route = require('../../src/Route')
 const chai = require('chai')
 const path = require('path')
-const _ = require('lodash')
 const expect = chai.expect
 require('co-mocha')
 
@@ -34,7 +33,7 @@ describe('View',function () {
 
   it('should throw an error when unable to find view', function * () {
     try{
-      const foo = yield this.view.make('foo.html')
+       yield this.view.make('foo.html')
     }catch(e){
       expect(e.message).to.match(/template not found/)
     }
