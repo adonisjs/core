@@ -7,14 +7,13 @@
     "test": "test"
   },
   "scripts": {
-    "test": "istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "test": "npm run hint && istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "coverage": "istanbul cover _mocha test/unit --bail",
     "hint": "jshint src/**/*.js && jshint test/**/*.js --config ./jshint.json"
   },
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "cat-log": "^1.0.0",
     "chai": "^3.3.0",
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.4",
@@ -25,10 +24,10 @@
   },
   "dependencies": {
     "co": "^4.6.0",
+    "cat-log": "^1.0.0",
     "co-parallel": "^1.0.0",
     "dwell": "^1.0.0",
     "lodash": "^3.10.1",
-    "npmlog": "^2.0.0",
     "require-stack": "^1.0.1"
   },
   "repository": {

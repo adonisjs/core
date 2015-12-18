@@ -6,8 +6,10 @@
  * MIT Licensed
 */
 
-module.exports = {
-  Ioc: require('./src/Ioc'),
-  ServiceProvider: require('./src/ServiceProvider'),
-  Registrar: require('./src/Registrar')
-}
+const Ioc = require('./src/Ioc')
+const ServiceProvider = require('./src/ServiceProvider')
+const Registrar = require('./src/Registrar')
+
+GLOBAL.use = Ioc.use
+
+module.exports = { Ioc, ServiceProvider, Registrar }
