@@ -32,7 +32,7 @@ describe("Helpers", function () {
   it('should set autoload values when Ioc instance is passed to load method', function () {
     let appKey, appNamesapce
     const Ioc = {
-      autoload: function (key, namespace) {
+      autoload: function (namespace, key) {
         appKey = key
         appNamesapce = namespace
       }

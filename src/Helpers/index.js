@@ -61,7 +61,7 @@ Helpers.load = function (packagePath, Ioc) {
    * if Ioc is defined setup autoloading values
    */
   if(Ioc && Ioc.autoload) {
-    Ioc.autoload(appPath, appNameSpace)
+    Ioc.autoload(appNameSpace, appPath)
   }
 }
 
