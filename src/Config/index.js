@@ -5,6 +5,7 @@
  * Copyright(c) 2015-2015 Harminder Virk
  * MIT Licensed
 */
+
 const autoLoad = require('auto-loader')
 const _ = require('lodash')
 

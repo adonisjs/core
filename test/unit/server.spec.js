@@ -19,6 +19,10 @@ const expect = chai.expect
 const http = require('http')
 const path = require('path')
 
+class Session {
+
+}
+
 require('co-mocha')
 
 describe("Server", function () {
@@ -35,7 +39,7 @@ describe("Server", function () {
     Ioc.autoload('App',path.join(__dirname, './app'))
     const staticServer = new Static(Helpers)
     const Response = new ResponseBuilder({})
-    this.server = new Server(Request, Response, Route, Helpers, Middleware,staticServer)
+    this.server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session)
   })
 
   beforeEach(function () {

@@ -10,6 +10,8 @@ const Helpers = require('../../../src/Helpers')
 const path = require('path')
 const Static = require('../../../src/Static')
 
+class Session {}
+
 module.exports = function () {
   const Env = {
     get: function () {
@@ -20,6 +22,6 @@ module.exports = function () {
   const view = new View(Helpers, Env, Route)
   const Response = new ResponseBuilder(view, Route)
   const staticServer = new Static(Helpers)
-  const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer)
+  const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session)
   return server;
 }

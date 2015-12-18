@@ -31,13 +31,24 @@ describe('Session', function  () {
       Config.get = function () {
         return 'redis'
       }
-      Session.extend('redis', Redis)
+      Session.extend('redis', new Redis)
       const session = new Session(Config)
       expect(session.driver instanceof Redis).to.equal(true)
     })
 
-    it('should return list of core session drivers', function * () {
-      expect(Session.drivers()).to.have.property('file')
+    it('should return list of extended session drivers', function * () {
+      expect(Session.drivers()).to.be.an('object')
+    })
+
+    it('should throw an error when unable to locate driver', function * () {
+
+      Config.get = function () {
+        return 'mongo'
+      }
+      const fn = function () {
+        return new Session(Config)
+      }
+      expect(fn).to.throw(/Unable to locate mongo session driver/i)
     })
 
     it('should set driver to cookie when driver under use is cookie', function * () {

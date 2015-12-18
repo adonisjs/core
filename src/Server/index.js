@@ -12,9 +12,10 @@ const http = require('http')
 
 class Server {
 
-  constructor (Request, Response, Route, Helpers, Middleware, Static) {
+  constructor (Request, Response, Route, Helpers, Middleware, Static, Session) {
     this.Request = Request
     this.Response = Response
+    this.Session = Session
     this.Route = Route
     this.middleware = Middleware
     this.static = Static
@@ -65,7 +66,9 @@ class Server {
     const self = this
     const request = new this.Request(req, res)
     const response = new this.Response(request, res)
+    const session = new this.Session(req, res)
     const requestUrl = request.url()
+    response.session = session
     /**
      * making request verb/method based upon _method or falling
      * back to original method

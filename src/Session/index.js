@@ -16,8 +16,8 @@ const SessionManager = require('./SessionManager')
  */
 class Session {
 
-  static drivers(){
-    return Drivers
+  static drivers() {
+    return {}
   }
 
   /**
@@ -36,8 +36,28 @@ class Session {
   constructor (Config) {
     const driver = Config.get('session.driver')
     let driverInstance = 'cookie'
-    if(driver !== 'cookie'){
-      driverInstance = Ioc.make(this.constructor.drivers[driver])
+    if(driver !== 'cookie') {
+
+      if(Drivers[driver]) {
+        /**
+         * make instance of core drivers using ioc make
+         * method
+         */
+        driverInstance = Ioc.make(Drivers[driver])
+      }
+      else if (this.constructor.drivers[driver]) {
+        /**
+         * return driver instance if one of the extended
+         * drivers
+         */
+        driverInstance = this.constructor.drivers[driver]
+      }
+      else {
+        /**
+         * throw error when unable to locate driver
+         */
+        throw new Error('Unable to locate ' + driver + ' session driver')
+      }
     }
     SessionManager.driver = driverInstance
     return SessionManager
