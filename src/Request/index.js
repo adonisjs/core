@@ -10,7 +10,8 @@ const nodeReq = require('node-req')
 const nodeCookie = require('node-cookie')
 const File = require('../File')
 const _ = require('lodash')
-const npmLog = require('npmlog')
+const CatLog = require('cat-log')
+const log = new CatLog('adonis:framework')
 
 /**
  * @class  Request
@@ -433,8 +434,7 @@ class Request {
    */
   old (key, defaultValue) {
     if(!this._flash_messages) {
-      npmLog.level = 'warn'
-      npmLog.warn('Make use of Flash middleware to enable flash messaging')
+      log.warn('Make use of Flash middleware to enable flash messaging')
       this._flash_messages = {}
     }
     defaultValue = defaultValue || null

@@ -29,6 +29,19 @@ describe("Helpers", function () {
     expect(fn).to.throw(/autoload must be enable/)
   })
 
+  it('should set autoload values when Ioc instance is passed to load method', function () {
+    let appKey, appNamesapce
+    const Ioc = {
+      autoload: function (key, namespace) {
+        appKey = key
+        appNamesapce = namespace
+      }
+    }
+    Helpers.load(path.join(basePath,'./package.test.json'), Ioc)
+    expect(appKey).to.equal(path.join(basePath, './app'))
+    expect(appNamesapce).to.equal('App')
+  })
+
   context('After Load', function () {
     before(function () {
       Helpers.load(path.join(basePath,'./package.test.json'))

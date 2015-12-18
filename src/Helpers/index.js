@@ -9,7 +9,8 @@
  */
 
 const path       = require('path')
-const debug      = require('debug')('adonis:framework')
+const CatLog = require('cat-log')
+const log = new CatLog('adonis:framework')
 
 let rootPath     = null     // application root path
 let appPath      = null     // path to application app directory
@@ -28,7 +29,7 @@ let Helpers = exports = module.exports = {}
  * @public
  */
 Helpers.load = function (packagePath, Ioc) {
-  debug('reading application config from %s', packagePath)
+  log.info('reading application config from %s', packagePath)
 
   rootPath = path.dirname(packagePath)
 
@@ -60,7 +61,7 @@ Helpers.load = function (packagePath, Ioc) {
    * if Ioc is defined setup autoloading values
    */
   if(Ioc && Ioc.autoload) {
-    Ioc.autoload(appNameSpace, appPath)
+    Ioc.autoload(appPath, appNameSpace)
   }
 }
 

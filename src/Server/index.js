@@ -6,7 +6,7 @@
  * MIT Licensed
 */
 
-const Logger = require('../Logger')
+const CatLog = require('cat-log')
 const helpers = require('./helpers')
 const http = require('http')
 
@@ -19,7 +19,7 @@ class Server {
     this.middleware = Middleware
     this.static = Static
     this.helpers = Helpers
-    this.log = new Logger('adonis:framework')
+    this.log = new CatLog('adonis:framework')
   }
 
   /**

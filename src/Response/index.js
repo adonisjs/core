@@ -90,7 +90,7 @@ class Response {
    * @public
    */
   send (body) {
-    nodeRes.send(this.response, body)
+    nodeRes.send(this.request, this.response, body)
   }
 
   /**
@@ -101,7 +101,7 @@ class Response {
    * @public
    */
   json (body) {
-    nodeRes.json(this.response, body)
+    nodeRes.json(this.request, this.response, body)
   }
 
   /**
@@ -113,7 +113,7 @@ class Response {
    */
   jsonp (body) {
     const callback = this.request.input('callback')
-    nodeRes.jsonp(this.response, body, callback)
+    nodeRes.jsonp(this.request, this.response, body, callback)
   }
 
   /**
@@ -159,7 +159,7 @@ class Response {
    * @return {void}
    */
   redirect (toUrl, status) {
-    nodeRes.redirect(this.response, toUrl, status)
+    nodeRes.redirect(this.request, this.response, toUrl, status)
   }
 
   /**

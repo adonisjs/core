@@ -6,8 +6,8 @@
  * MIT Licensed
 */
 
-const Logger = require('../Logger')
-const log = new Logger('adonis:framework')
+const CatLog = require('cat-log')
+const log = new CatLog('adonis:framework')
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
 
