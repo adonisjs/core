@@ -66,7 +66,7 @@ describe('Ioc', function () {
 
     it('should be able to fetch binding from ioc container with type hinted depedencies', function () {
       class Foo {
-        constructor( App_Bar) {
+        constructor(App_Bar) {
           this.bar = App_Bar
         }
       }
@@ -74,7 +74,7 @@ describe('Ioc', function () {
       }
 
       Ioc.bind('App/Bar', function () {
-        return new Bar
+        return new Bar()
       })
 
       Ioc.bind('App/Foo', function (app) {
@@ -92,7 +92,7 @@ describe('Ioc', function () {
         }
       }
       Ioc.singleton('App/Foo', function () {
-        return new Foo
+        return new Foo()
       })
 
       const foo1 = Ioc.use('App/Foo')
@@ -154,7 +154,7 @@ describe('Ioc', function () {
         static drivers() {}
 
         constructor() {
-          return this.constructor.drivers['redis']
+          return this.constructor.drivers.redis
         }
 
         static extend( key, defination) {
@@ -168,11 +168,11 @@ describe('Ioc', function () {
       Ioc.manager('App/Cache', Cache)
 
       Ioc.bind('App/Cache', function () {
-        return new Cache
+        return new Cache()
       })
 
       Ioc.extend('App/Cache', 'redis', function () {
-        return new Redis
+        return new Redis()
       })
 
       expect(Ioc.use('App/Cache') instanceof Redis).to.equal(true)
@@ -203,7 +203,7 @@ describe('Ioc', function () {
       }
 
       Ioc.bind('App/Foo', function () {
-        return new Foo
+        return new Foo()
       })
 
       class Redis {
@@ -224,7 +224,7 @@ describe('Ioc', function () {
       }
 
       Ioc.bind('App/Foo', function () {
-        return new Foo
+        return new Foo()
       })
 
       class Redis {
@@ -249,7 +249,7 @@ describe('Ioc', function () {
       }
 
       Ioc.bind('App/Bar', function () {
-        return new Bar
+        return new Bar()
       })
 
       class Foo {
@@ -305,7 +305,7 @@ describe('Ioc', function () {
       class FooProvider {
       }
       Ioc.bind('App/Providers/Foo', function () {
-        return new FooProvider
+        return new FooProvider()
       })
 
       const userController = Ioc.make('App/Http/Controllers/UserController')
@@ -360,7 +360,7 @@ describe('Ioc', function () {
       class Foo {
       }
       Ioc.bind('App/Foo', function () {
-        return new Foo
+        return new Foo()
       })
       Ioc.alias('Foo', 'App/Foo')
       expect(Ioc.use('Foo') instanceof Foo).to.equal(true)
@@ -370,7 +370,7 @@ describe('Ioc', function () {
       class Foo {
       }
       Ioc.bind('App/Foo', function () {
-        return new Foo
+        return new Foo()
       })
       Ioc.aliases({'Foo': 'App/Foo'})
       expect(Ioc.use('Foo') instanceof Foo).to.equal(true)

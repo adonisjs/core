@@ -19,6 +19,8 @@ const requireStack = require('require-stack')
  * @description Register providers to ioc container
  * @type {Object}
  */
+
+/*jshint -W120 */
 let Registrar = exports = module.exports = {}
 
 /**

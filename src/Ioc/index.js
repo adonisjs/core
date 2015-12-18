@@ -54,6 +54,8 @@ let aliases = {}
  * @description Ioc container to store and resolve
  * depedencies with solid dependency injection.
  */
+
+/*jshint -W120 */
 let Ioc = exports = module.exports = {}
 
 /**
