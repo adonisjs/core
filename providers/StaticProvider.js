@@ -19,4 +19,4 @@ class StaticProvider extends ServiceProvider {
   }
 }
 
-module.exports = MiddlewareProvider
+module.exports = StaticProvider
