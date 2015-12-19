@@ -25,7 +25,7 @@ class SessionManager {
    * @return {String}
    * @public
    */
-  get sessionKey(){
+  get sessionKey() {
     return 'adonis-session'
   }
 
@@ -47,10 +47,10 @@ class SessionManager {
    * @param  {Mixed}    session
    * @private
    */
-  _setSessionCookie (session) {
+  _setSessionCookie (session, options) {
     const secret  = process.env.APP_KEY
     const encrypt = !!secret
-    nodeCookie.create (this.request, this.response, this.sessionKey, session, secret, encrypt)
+    nodeCookie.create (this.request, this.response, this.sessionKey, session, options, secret, encrypt)
   }
 
   /**
@@ -142,26 +142,33 @@ class SessionManager {
    * @param  {Mixed}      value
    * @private
    */
-  _setViaCookie (key, value) {
+  _setViaCookie (key, value, options) {
     /**
      * parsing existing session from request
      */
     const existingSession = this._getSessionCookie() || {}
     const newSession = this._makeSessionBody(existingSession, key, value)
-    this._setSessionCookie(existingSession)
+    this._setSessionCookie(newSession)
   }
 
   /**
    * @description makes session body by setting/updating values on existing
    * session.
    * @method _makeSessionBody
-   * @param  {Object}         existingSession [description]
-   * @param  {Mixed}         key             [description]
-   * @param  {Mixed}         value           [description]
-   * @return {Object}                         [description]
+   * @param  {Object}         existingSession
+   * @param  {Mixed}         key
+   * @param  {Mixed}         value
+   * @return {Object}
    * @private
    */
   _makeSessionBody (existingSession, key, value) {
+
+    /**
+     * we need to make sure existing session is an object, as it is possible
+     * to have other values instead of an object. This situation is likely
+     * to occur when encryption is toggled
+     */
+    existingSession = typeof(existingSession) === 'object' ? existingSession : {}
     /**
      * if arguments contain an object over key/value pair then loop
      * through it and make body for each item inside object
@@ -207,23 +214,28 @@ class SessionManager {
   /**
    * @description sets session value using session driver
    * @method _setViaDriver
-   * @param  {Mixed}      key   [description]
-   * @param  {Mixed}      value [description]
+   * @param  {Mixed}      key
+   * @param  {Mixed}      value
    * @private
    */
-  * _setViaDriver (key, value) {
-
+  * _setViaDriver (key, value, options) {
     let sessionId = this._getSessionCookie()
-    let sessionExists = true
 
-    if(!sessionId){
-      sessionExists = false
+    /**
+     * here we create a new session id if session if does not exists
+     * in cookies. Also we need to handle migration from cookie
+     * driver to other drivers, as with cookie driver the value
+     * of sessionId will be the actual session valuesm which is
+     * going to be an object. So we need to re-create the
+     * sessionId when sessionId is not a string.
+     */
+    if(!sessionId || typeof(sessionId) !== 'string') {
       sessionId = uuid.v1()
     }
 
     const existingSession = yield this.constructor.driver.read(sessionId)
     const newSession = this._makeSessionBody(existingSession, key, value)
-    this._setSessionCookie(sessionId)
+    this._setSessionCookie(sessionId,  options)
     yield this.constructor.driver.write(sessionId,JSON.stringify(newSession))
   }
 
@@ -231,7 +243,7 @@ class SessionManager {
    * @description get session value from active driver
    * store
    * @method _getViaDriver
-   * @return {Object}                   [description]
+   * @return {Object}
    */
   * _getViaDriver () {
     const sessionId = this._getSessionCookie()
@@ -269,17 +281,17 @@ class SessionManager {
    *                             is not an object
    * @public
    */
-  * put (key, value) {
+  * put (key, value, options) {
     if(key && typeof(value) === 'undefined' && typeof(key) !== 'object'){
       throw new Error('put expects key/value pair or an object of keys and values')
     }
     const activeDriver = this.constructor.driver
 
-    if(activeDriver === 'cookie'){
-      this._setViaCookie(key, value)
+    if(activeDriver === 'cookie') {
+      this._setViaCookie(key, value, options)
     }
     else{
-      yield this._setViaDriver(key, value)
+      yield this._setViaDriver(key, value, options)
     }
   }
 

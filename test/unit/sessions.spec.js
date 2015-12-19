@@ -619,6 +619,26 @@ describe('Session', function  () {
       expect(res.body.age).to.equal(22)
 
     })
-  })
 
+    it('should work fine when existing session value is not an object', function * () {
+      SessionManager.driver = 'cookie'
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          return yield sessionManager.put('age', 22)
+        }).then(function () {
+          res.writeHead(200,{"content-type":"application/json"})
+          res.end('')
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const res = yield supertest(server).get("/").set('Cookie','adonis-session=12002010020').expect(200).end()
+      const sessionKey = res.headers['set-cookie'][1].split('adonis-session=')
+      const trustedValue = querystring.unescape(sessionKey[1]).replace('j:','')
+      expect(JSON.parse(trustedValue)).deep.equal({"age": {"d": "22", "t": "Number"}})
+    })
+  })
 })
