@@ -68,7 +68,7 @@ class Server {
     const response = new this.Response(request, res)
     const session = new this.Session(req, res)
     const requestUrl = request.url()
-    response.session = session
+    request.session = session
     /**
      * making request verb/method based upon _method or falling
      * back to original method
