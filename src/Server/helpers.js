@@ -95,7 +95,7 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
  */
 helpers.constructRouteAction = function (resolvedRoute, appNamespace) {
   if (typeof(resolvedRoute.handler) === 'function'){
-    log.verbose('responding to route using closure')
+    log.debug('responding to route using closure')
     return {instance:null,method:resolvedRoute.handler}
   }
   else if(typeof(resolvedRoute.handler) === 'string'){

@@ -23,7 +23,7 @@ const browser = new Browser()
 describe('App Exceptations', function () {
 
   before(function () {
-    server().listen(3333);
+    server().listen('0.0.0.0',3333);
     Ioc.autoload(Helpers.appNameSpace(),Helpers.appPath())
   })
 

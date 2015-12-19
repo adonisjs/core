@@ -190,11 +190,10 @@ describe("Server", function () {
     expect(res.error.text).to.match(/Internal server error/)
   })
 
-  it('should listen to server on a given port using listen method', function * () {
-    process.env.APP_PORT = 8000
+  it('should listen to server on a given port and host using listen method', function * () {
     Route.get('/','HomeController.index')
-    this.server.listen()
-    const testServer = supertest.agent('http://localhost:8000')
+    this.server.listen('0.0.0.0', 8000)
+    const testServer = supertest.agent('http://127.0.0.1:8000')
     const res = yield testServer.get('/').expect(200).end()
     expect(res.body).deep.equal({rendered:true})
   })

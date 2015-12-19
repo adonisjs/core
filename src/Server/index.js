@@ -95,12 +95,14 @@ class Server {
 
   /**
    * starting a server on a given port
+   * @param String host
+   * @param String port
    * @method listen
    * @return {void}
    */
-  listen (port) {
-    port = port || process.env.APP_PORT
-    http.createServer(this.handle.bind(this)).listen(port)
+  listen (host, port) {
+    this.log.info('serving app on %s:%s', host, port)
+    http.createServer(this.handle.bind(this)).listen(port, host)
   }
 
 }

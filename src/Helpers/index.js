@@ -29,7 +29,7 @@ let Helpers = exports = module.exports = {}
  * @public
  */
 Helpers.load = function (packagePath, Ioc) {
-  log.info('reading application config from %s', packagePath)
+  log.debug('reading autoload settings from %s', packagePath)
 
   rootPath = path.dirname(packagePath)
 
