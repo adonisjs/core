@@ -148,7 +148,7 @@ class SessionManager {
      */
     const existingSession = this._getSessionCookie() || {}
     const newSession = this._makeSessionBody(existingSession, key, value)
-    this._setSessionCookie(newSession)
+    this._setSessionCookie(newSession, options)
   }
 
   /**
