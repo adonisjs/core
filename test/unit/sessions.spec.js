@@ -31,7 +31,7 @@ describe('Session', function  () {
       Config.get = function () {
         return 'redis'
       }
-      Session.extend('redis', new Redis)
+      Session.extend('redis', new Redis())
       const session = new Session(Config)
       expect(session.driver instanceof Redis).to.equal(true)
     })
