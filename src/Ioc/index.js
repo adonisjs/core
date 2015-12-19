@@ -351,7 +351,7 @@ Ioc.make = function (Binding) {
   const _bind = Function.prototype.bind
   const type = Ioc._type(Binding)
 
-  if (type === 'PROVIDER') {
+  if (type === 'PROVIDER' || type === 'ALIAS') {
     return Ioc.use(Binding)
   }
 
