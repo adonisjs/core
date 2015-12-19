@@ -72,7 +72,7 @@ Ioc._bind = function (namespace, closure, singleton) {
   if (typeof (closure) !== 'function') {
     throw new Error('Invalid arguments, bind expects a callback')
   }
-  log.debug('binding %s to ioc container', namespace)
+  log.verbose('binding %s to ioc container', namespace)
   providers[namespace] = {closure, singleton}
 }
 
@@ -122,7 +122,7 @@ Ioc._extendProvider = function (extender, manager) {
  */
 Ioc._autoLoad = function (namespace) {
   namespace = namespace.replace(autoloadDirectory.namespace, autoloadDirectory.directoryPath)
-  log.debug('autoloading %s from ioc container', namespace)
+  log.verbose('autoloading %s from ioc container', namespace)
   try {
     return requireStack(namespace)
   } catch (e) {
@@ -244,7 +244,7 @@ Ioc.manager = function (namespace, defination) {
   if (!defination.extend) {
     throw new Error('Incomplete implementation, manager objects should have extend method')
   }
-  log.debug('registering manager for %s', namespace)
+  log.verbose('registering manager for %s', namespace)
   providerManagers[namespace] = defination
 }
 
@@ -266,7 +266,7 @@ Ioc.extend = function (namespace, key, closure) {
   if (typeof (closure) !== 'function') {
     throw new Error('Invalid arguments, extend expects a callback')
   }
-  log.debug('extending %s', namespace)
+  log.verbose('extending %s', namespace)
   providerExtenders[namespace] = providerExtenders[namespace] || []
   providerExtenders[namespace].push({key, closure})
 }
@@ -281,7 +281,7 @@ Ioc.extend = function (namespace, key, closure) {
  * @public
  */
 Ioc.autoload = function (namespace, directoryPath) {
-  log.debug('autoloading directory is set to %s under %s namespace', directoryPath, namespace)
+  log.verbose('autoloading directory is set to %s under %s namespace', directoryPath, namespace)
   autoloadDirectory = {namespace, directoryPath}
 }
 
@@ -298,7 +298,7 @@ Ioc.use = function (namespace) {
 
   switch (type) {
     case 'PROVIDER':
-      log.debug('resolving provider %s', namespace)
+      log.verbose('resolving provider %s', namespace)
       if (providerExtenders[namespace] && providerManagers[namespace]) {
         Ioc._extendProvider(providerExtenders[namespace], providerManagers[namespace])
       }
@@ -335,7 +335,7 @@ Ioc.aliases = function (hash) {
  * @public
  */
 Ioc.alias = function (key, namespace) {
-  log.debug('%s has been aliased as %s', namespace, key)
+  log.verbose('%s has been aliased as %s', namespace, key)
   aliases[key] = namespace
 }
 
@@ -367,7 +367,7 @@ Ioc.make = function (Binding) {
    * if binding is a valid class, make an instance
    * of it by injecting dependencies
    */
-  log.debug('making class %s', Binding.name)
+  log.verbose('making class %s', Binding.name)
   const injections = Binding.inject || helpers.introspect(Binding.toString())
   if (!injections || _.size(injections) === 0) {
     return new Binding()
