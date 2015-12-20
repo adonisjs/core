@@ -7,6 +7,8 @@ module.exports = {
       password : '',
       user: ''
     }
-  }
+  },
+
+  connection: false
 
 }

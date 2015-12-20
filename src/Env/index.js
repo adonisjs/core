@@ -37,7 +37,7 @@ class Env {
    * @return {Mixed}
    */
   get (key, defaultValue) {
-    defaultValue = exis.existy(defaultValue) ? defaultValue : null
+    defaultValue = this.existy(defaultValue) ? defaultValue : null
     let returnValue = process.env[key] || defaultValue
     if(returnValue === 'true' || returnValue === '1'){
       return true

@@ -31,6 +31,11 @@ describe('Env', function() {
     expect(env.get('APP_KEY','foo')).to.equal('foo')
   })
 
+  it('should return default value when it does exists in .env file and default value is a boolean', function () {
+    const env = new Env(Helpers)
+    expect(env.get('APP_KEY',false)).to.equal(false)
+  })
+
   it('should override defined values', function () {
     const env = new Env(Helpers)
     env.set('APP_PORT', 4000)

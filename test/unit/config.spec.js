@@ -34,6 +34,18 @@ describe('Config', function() {
     expect(database).to.equal(null)
   })
 
+  it('should return actual value when value is a false boolean', function () {
+    const config = new Config(Helpers)
+    const database = config.get('database.connection')
+    expect(database).to.equal(false)
+  })
+
+  it('should return default value when default value is a false boolean', function () {
+    const config = new Config(Helpers)
+    const database = config.get('database.foo', false)
+    expect(database).to.equal(false)
+  })
+
   it('should set value for a given key', function () {
     const config = new Config(Helpers)
     config.set('database.mysql.connection.database', 'blog')
