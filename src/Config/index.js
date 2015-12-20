@@ -17,6 +17,17 @@ class Config {
   }
 
   /**
+   * @description tells whether value exists or not by checking
+   * it type
+   * @method existy
+   * @param  {Mixed} value
+   * @return {Boolean}
+   */
+  existy (value) {
+    return typeof(value) !== 'undefined' && typeof(value) !== 'null'
+  }
+
+  /**
    * @description get value for a given key from config store
    * @method get
    * @param  {String} key
@@ -25,8 +36,9 @@ class Config {
    * @public
    */
   get (key, defaultValue) {
-    defaultValue = defaultValue || null
-    return _.get(this.config, key) || defaultValue
+    defaultValue = this.existy(defaultValue) ? defaultValue : null
+    const returnValue = _.get(this.config, key)
+    return this.existy(returnValue)  ? returnValue : defaultValue
   }
 
   /**

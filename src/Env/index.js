@@ -18,6 +18,17 @@ class Env {
   }
 
   /**
+   * @description tells whether value exists or not by checking
+   * it type
+   * @method existy
+   * @param  {Mixed} value
+   * @return {Boolean}
+   */
+  existy (value) {
+    return typeof(value) !== 'undefined' && typeof(value) !== 'null'
+  }
+
+  /**
    * @description get value of an existing key from
    * env file
    * @method get
@@ -26,7 +37,7 @@ class Env {
    * @return {Mixed}
    */
   get (key, defaultValue) {
-    defaultValue = defaultValue || null
+    defaultValue = exis.existy(defaultValue) ? defaultValue : null
     let returnValue = process.env[key] || defaultValue
     if(returnValue === 'true' || returnValue === '1'){
       return true
