@@ -159,12 +159,12 @@ Ioc._type = function (binding) {
     return 'PROVIDER'
   }
 
-  if (helpers.isAutoLoadPath(autoloadDirectory, binding)) {
-    return 'AUTOLOAD'
-  }
-
   if (aliases[binding]) {
     return 'ALIAS'
+  }
+
+  if (helpers.isAutoLoadPath(autoloadDirectory, binding)) {
+    return 'AUTOLOAD'
   }
 }
 
