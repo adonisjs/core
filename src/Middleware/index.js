@@ -40,7 +40,7 @@ Middleware.new = function () {
  * @public
  */
 Middleware.register = function (key, namespace) {
-  if(!namespace){
+  if (!namespace) {
     globalMiddleware.push(key)
     return
   }
@@ -133,14 +133,14 @@ Middleware.resolve = function (middleware) {
  * @public
  */
 Middleware.compose = function (middleware, request, response) {
-  function *noop(){}
+  function * noop () {}
   return function * (next) {
     next = next || noop()
     let i = middleware.length
     while(i--){
       const instance = middleware[i].instance
       const method = instance ? middleware[i].instance[middleware[i].method] : middleware[i].method
-      next = method.apply(instance,[request, response, next])
+      next = method.apply(instance, [request, response, next])
     }
     yield *next
   }

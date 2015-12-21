@@ -7,13 +7,13 @@
 */
 
 const nodeCookie = require('node-cookie')
-const Type       = require('type-of-is')
-const _          = require('lodash')
-const uuid       = require('node-uuid')
+const Type = require('type-of-is')
+const _ = require('lodash')
+const uuid = require('node-uuid')
 
 class SessionManager {
 
-  constructor (request, response) {
+  constructor( request, response) {
     this.request = request
     this.response = response
   }
@@ -24,8 +24,8 @@ class SessionManager {
    * @return {Mixed}
    * @private
    */
-  _getSessionCookie () {
-    const secret  = process.env.APP_KEY
+  _getSessionCookie() {
+    const secret = process.env.APP_KEY
     const decrypt = !!secret
     return nodeCookie.parse(this.request, secret, decrypt)[this.constructor.options.cookie]
   }
@@ -36,8 +36,8 @@ class SessionManager {
    * @param  {Mixed}    session
    * @private
    */
-  _setSessionCookie (session) {
-    const secret  = process.env.APP_KEY
+  _setSessionCookie( session) {
+    const secret = process.env.APP_KEY
     const encrypt = !!secret
 
     /**
@@ -53,11 +53,11 @@ class SessionManager {
     /**
      * only set expires at when browser clear is set to false
      */
-    if(!this.constructor.options.browserClear) {
+    if (!this.constructor.options.browserClear) {
       options.expires = new Date(Date.now() + (this.constructor.options.age * 60 * 1000))
     }
 
-    nodeCookie.create (this.request, this.response, this.constructor.options.cookie, session, options, secret, encrypt)
+    nodeCookie.create(this.request, this.response, this.constructor.options.cookie, session, options, secret, encrypt)
   }
 
   /**
@@ -69,7 +69,7 @@ class SessionManager {
    * @return {Object}
    * @private
    */
-  _makeBody (key, value) {
+  _makeBody( key, value) {
     const type = Type.string(value)
 
     /**
@@ -80,28 +80,28 @@ class SessionManager {
      *                        Error
      */
     switch (type) {
-      case "Number":
+      case 'Number':
         value = String(value)
         break
-      case "Object":
+      case 'Object':
         value = JSON.stringify(value)
         break
-      case "Array":
+      case 'Array':
         value = JSON.stringify(value)
         break
-      case "Boolean":
+      case 'Boolean':
         value = String(value)
         break
-      case "Function":
+      case 'Function':
         value = null
         break
-      case "RegExp":
+      case 'RegExp':
         value = null
         break
-      case "Date":
+      case 'Date':
         value = String(value)
         break
-      case "Error":
+      case 'Error':
         value = null
         break
     }
@@ -124,18 +124,18 @@ class SessionManager {
    * @return {Mixed}
    * @private
    */
-  _reverseBody (value) {
-    switch(value.t){
-      case "Number":
+  _reverseBody( value) {
+    switch (value.t) {
+      case 'Number':
         value.d = Number(value.d)
         break
-      case "Object":
+      case 'Object':
         value.d = JSON.parse(value.d)
         break
-      case "Array":
+      case 'Array':
         value.d = JSON.parse(value.d)
         break
-      case "Boolean":
+      case 'Boolean':
         value.d = value.d === 'true' || value.d === '1'
         break
     }
@@ -149,7 +149,7 @@ class SessionManager {
    * @param  {Mixed}      value
    * @private
    */
-  _setViaCookie (key, value) {
+  _setViaCookie( key, value) {
     /**
      * parsing existing session from request
      */
@@ -168,29 +168,28 @@ class SessionManager {
    * @return {Object}
    * @private
    */
-  _makeSessionBody (existingSession, key, value) {
-
+  _makeSessionBody( existingSession, key, value) {
     /**
      * we need to make sure existing session is an object, as it is possible
      * to have other values instead of an object. This situation is likely
      * to occur when encryption is toggled
      */
-    existingSession = typeof(existingSession) === 'object' ? existingSession : {}
+    existingSession = typeof (existingSession) === 'object' ? existingSession : {}
     /**
      * if arguments contain an object over key/value pair then loop
      * through it and make body for each item inside object
      */
-    if(key && typeof(value) === 'undefined' && typeof(key) === 'object'){
+    if (key && typeof (value) === 'undefined' && typeof (key) === 'object') {
       _.each(key, (item, index) => {
         const body = this._makeBody(index, item)
-        if(body){
+        if (body) {
           existingSession[index] = body
         }
       })
       return existingSession
     }
 
-    const body = this._makeBody (key, value)
+    const body = this._makeBody(key, value)
     if (body) {
       existingSession[key] = body
     }
@@ -210,13 +209,12 @@ class SessionManager {
    * @return {Object}
    * @private
    */
-  _getViaCookie () {
+  _getViaCookie() {
     const existingSession = this._getSessionCookie() || {}
-    return _.object(_.map (existingSession, (value, index) => {
-      return [index,this._reverseBody(value)]
+    return _.object(_.map(existingSession, (value, index) => {
+      return [index, this._reverseBody(value)]
     }))
   }
-
 
   /**
    * @description sets session value using session driver
@@ -225,7 +223,7 @@ class SessionManager {
    * @param  {Mixed}      value
    * @private
    */
-  * _setViaDriver (key, value) {
+  * _setViaDriver( key, value) {
     let sessionId = this._getSessionCookie()
 
     /**
@@ -236,14 +234,14 @@ class SessionManager {
      * going to be an object. So we need to re-create the
      * sessionId when sessionId is not a string.
      */
-    if(!sessionId || typeof(sessionId) !== 'string') {
+    if (!sessionId || typeof (sessionId) !== 'string') {
       sessionId = uuid.v1()
     }
 
     const existingSession = yield this.constructor.driver.read(sessionId)
     const newSession = this._makeSessionBody(existingSession, key, value)
     this._setSessionCookie(sessionId)
-    yield this.constructor.driver.write(sessionId,JSON.stringify(newSession))
+    yield this.constructor.driver.write(sessionId, JSON.stringify(newSession))
   }
 
   /**
@@ -252,17 +250,16 @@ class SessionManager {
    * @method _getViaDriver
    * @return {Object}
    */
-  * _getViaDriver () {
+  * _getViaDriver() {
     const sessionId = this._getSessionCookie()
-    if(!sessionId){
+    if (!sessionId) {
       return {}
     }
     const existingSession = yield this.constructor.driver.read(sessionId)
-    return _.object(_.map (existingSession, (value, index) => {
-      return [index,this._reverseBody(value)]
+    return _.object(_.map(existingSession, (value, index) => {
+      return [index, this._reverseBody(value)]
     }))
   }
-
 
   /**
    * @description returns all session values
@@ -270,9 +267,9 @@ class SessionManager {
    * @return {Object}
    * @public
    */
-  * all () {
+  * all() {
     const activeDriver = this.constructor.driver
-    if(activeDriver === 'cookie'){
+    if (activeDriver === 'cookie') {
       return this._getViaCookie()
     }
     return yield this._getViaDriver()
@@ -288,16 +285,15 @@ class SessionManager {
    *                             is not an object
    * @public
    */
-  * put (key, value) {
-    if(key && typeof(value) === 'undefined' && typeof(key) !== 'object'){
+  * put( key, value) {
+    if (key && typeof (value) === 'undefined' && typeof (key) !== 'object') {
       throw new Error('put expects key/value pair or an object of keys and values')
     }
     const activeDriver = this.constructor.driver
 
-    if(activeDriver === 'cookie') {
+    if (activeDriver === 'cookie') {
       this._setViaCookie(key, value)
-    }
-    else{
+    } else {
       yield this._setViaDriver(key, value)
     }
   }
@@ -309,7 +305,7 @@ class SessionManager {
    * @return {void}
    * @public
    */
-  * forget (key) {
+  * forget( key) {
     yield this.put(key, null)
   }
 
@@ -321,7 +317,7 @@ class SessionManager {
    * @return {Mixed}
    * @public
    */
-  * get (key, defaultValue) {
+  * get( key, defaultValue) {
     defaultValue = defaultValue || null
     const sessionValues = yield this.all()
     return sessionValues[key] || defaultValue
@@ -336,7 +332,7 @@ class SessionManager {
    * @return {Mixed}
    * @public
    */
-  * pull (key, defaultValue) {
+  * pull( key, defaultValue) {
     const value = yield this.get(key, defaultValue)
     yield this.forget(key)
     return value

@@ -33,7 +33,7 @@ subdomains.add = function (domain) {
  * @return {Boolean}
  * @public
  */
-subdomains.match = function (host){
+subdomains.match = function (host) {
   let is_subdomain = false
   for (let x = 0; x < registeredDomains.length; x++) {
     let domain = registeredDomains[x]

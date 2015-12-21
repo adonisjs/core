@@ -29,11 +29,11 @@ class Session {
    * @return {void}
    * @public
    */
-  static extend (key, value) {
+  static extend( key, value) {
     this.drivers[key] = value
   }
 
-  constructor (Config) {
+  constructor( Config) {
     const driver = Config.get('session.driver')
     const sessionPath = Config.get('session.path', '/')
     const sessionAge = Config.get('session.age')
@@ -43,7 +43,7 @@ class Session {
     const sessionSecure = Config.get('session.secure', false)
 
     const sessionOptions = {
-      path:sessionPath,
+      path: sessionPath,
       domain: sessionDomain,
       secure: sessionSecure,
       browserClear: sessionBrowserClear,
@@ -52,9 +52,8 @@ class Session {
     }
 
     let driverInstance = 'cookie'
-    if(driver !== 'cookie') {
-
-      if(Drivers[driver]) {
+    if (driver !== 'cookie') {
+      if (Drivers[driver]) {
         /**
          * make instance of core drivers using ioc make
          * method
@@ -67,8 +66,7 @@ class Session {
          * drivers
          */
         driverInstance = this.constructor.drivers[driver]
-      }
-      else {
+      } else {
         /**
          * throw error when unable to locate driver
          */

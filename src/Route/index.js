@@ -224,7 +224,7 @@ Route.resolve = function (urlPath, verb, host) {
     urlPath = `${host}${urlPath}`
   }
   let resolvedRoute = helpers.returnMatchingRouteToUrl(routes, urlPath, verb)
-  if (_.size(resolvedRoute) === 0){
+  if (_.size(resolvedRoute) === 0) {
     return {}
   }
   return helpers.returnRouteArguments(resolvedRoute, urlPath, host)
@@ -238,7 +238,6 @@ Route.resolve = function (urlPath, verb, host) {
  * @public
  */
 Route.resource = function (pattern, handler) {
-
   /**
    * avoiding multiple / when route itself is a base
    * route.
@@ -271,7 +270,7 @@ Route.url = function (pattern, params) {
    * if found pattern as a named route, make it using
    * route properties
    */
-  if(namedRoute){
+  if (namedRoute) {
     const resolveRoute = namedRoute.subdomain ? `${namedRoute.subdomain}${namedRoute.route}` : namedRoute.route
     return helpers.compileRouteToUrl(resolveRoute, params)
   }

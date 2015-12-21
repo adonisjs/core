@@ -8,13 +8,13 @@
  * @license        MIT
  */
 
-const path       = require('path')
+const path = require('path')
 const CatLog = require('cat-log')
 const log = new CatLog('adonis:framework')
 
-let rootPath     = null     // application root path
-let appPath      = null     // path to application app directory
-let appNameSpace = null     // autoloading namespace
+let rootPath = null // application root path
+let appPath = null // path to application app directory
+let appNameSpace = null // autoloading namespace
 
 /*jshint -W120 */
 let Helpers = exports = module.exports = {}
@@ -60,7 +60,7 @@ Helpers.load = function (packagePath, Ioc) {
   /**
    * if Ioc is defined setup autoloading values
    */
-  if(Ioc && Ioc.autoload) {
+  if (Ioc && Ioc.autoload) {
     Ioc.autoload(appNameSpace, appPath)
   }
 }

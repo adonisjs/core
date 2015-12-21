@@ -16,7 +16,6 @@ const fs = require('fs')
  */
 /*jshint -W120 */
 exports = module.exports = nunjucks.Loader.extend({
-
   /**
    * @description Initiates views loader
    * @method init

@@ -15,7 +15,7 @@ const mkdirp = require('mkdirp')
  */
 class File {
 
-  constructor (Helpers, Config) {
+  constructor( Helpers, Config) {
     const sessionDir = Config.get('sessions.file.directory') || 'sessions/'
     this.storagePath = Helpers.storagePath(sessionDir)
     this.config = Config
@@ -30,10 +30,10 @@ class File {
    * @return {void}
    * @private
    */
-  _writeSessionToFile (filePath, data) {
+  _writeSessionToFile( filePath, data) {
     return new Promise(function (resolve, reject) {
       fs.writeFile(filePath, data, function (err) {
-        if(err){
+        if (err) {
           return reject(err)
         }
         resolve()
@@ -49,11 +49,11 @@ class File {
    * @return {void}
    * @private
    */
-  _makeStorageDir (storagePath) {
+  _makeStorageDir( storagePath) {
     return new Promise(function (resolve, reject) {
       mkdirp(storagePath, function (err) {
         /* istanbul ignore if */
-        if(err){
+        if (err) {
           return reject(err)
         }
         resolve()
@@ -68,10 +68,10 @@ class File {
    * @param {String} filePath
    * @return {Mixed}
    */
-  _readSession (filePath) {
+  _readSession( filePath) {
     return new Promise(function (resolve, reject) {
       fs.readFile(filePath, function (err, contents) {
-        if(err){
+        if (err) {
           return reject(err)
         }
         resolve(contents.toString('utf8'))
@@ -87,7 +87,7 @@ class File {
    * @return {void}
    * @public
    */
-  * write (sessionId, data) {
+  * write( sessionId, data) {
     yield this._makeStorageDir(this.storagePath)
     const sessionFile = `${this.storagePath}/${sessionId}`
     yield this._writeSessionToFile(sessionFile, data)
@@ -101,12 +101,12 @@ class File {
    * @return {Object}
    * @public
    */
-  * read (sessionId) {
-    try{
+  * read( sessionId) {
+    try {
       const sessionFile = `${this.storagePath}/${sessionId}`
       const sessionData = yield this._readSession(sessionFile)
       return JSON.parse(sessionData)
-    }catch(e){
+    } catch(e) {
       return {}
     }
   }

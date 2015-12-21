@@ -52,7 +52,7 @@ helpers.callRouteAction = function (resolvedRoute, request, response, middleware
      */
     yield middleware.compose(routeMiddleware, request, response)
 
-  }).catch(function (e){
+  }).catch(function (e) {
     helpers.handleRequestError(e, request, response)
   })
 }
@@ -69,14 +69,14 @@ helpers.callRouteAction = function (resolvedRoute, request, response, middleware
  * @public
  */
 helpers.respondRequest = function (middleware, request, response, finalHandler) {
-  co (function * () {
+  co(function * () {
     /**
      * here we resolve all global middleware and compose
      * them
      * @type {Array}
      */
     let routeMiddleware = middleware.resolve(middleware.getGlobal())
-    routeMiddleware = routeMiddleware.concat([{instance:null,method:finalHandler}])
+    routeMiddleware = routeMiddleware.concat([{instance: null,method: finalHandler}])
     yield middleware.compose(routeMiddleware, request, response)
   }).catch(function (e) {
     helpers.handleRequestError(e, request, response)
@@ -95,11 +95,11 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
  * method.
  */
 helpers.constructRouteAction = function (resolvedRoute, appNamespace) {
-  if (typeof(resolvedRoute.handler) === 'function'){
+  if (typeof (resolvedRoute.handler) === 'function') {
     log.verbose('responding to route using closure')
-    return {instance:null,method:resolvedRoute.handler}
+    return {instance: null,method: resolvedRoute.handler}
   }
-  else if(typeof(resolvedRoute.handler) === 'string'){
+  else if (typeof (resolvedRoute.handler) === 'string') {
     return helpers.makeControllerMethod(appNamespace, resolvedRoute.handler)
   }
   throw new Error('Invalid route handler , attach a controller method or a closure')
@@ -128,14 +128,13 @@ helpers.makeControllerMethod = function (appNamespace, controllerMethod) {
  * @public
  */
 helpers.handleRequestError = function (error, request, response) {
-
   /**
    * if we have any listeners for error events, we will emit
    * the error only and will let the listeners make the
    * decision of how to display those errors.
    */
   const errorListeners = App.listeners('error').length
-  if(errorListeners > 0) {
+  if (errorListeners > 0) {
     App.emit('error', error, request, response)
     return
   }

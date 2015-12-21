@@ -688,7 +688,6 @@ describe('Session', function  () {
         })
       })
 
-      let body = {}
       const res = yield supertest(server).get("/").expect(200).end()
       const sessionPath = res.headers['set-cookie'][0].split('adonis-session=')[1].split(';')[1].trim()
       expect(sessionPath).to.equal('Path=/user')
@@ -713,7 +712,6 @@ describe('Session', function  () {
         })
       })
 
-      let body = {}
       const res = yield supertest(server).get("/").expect(200).end()
       const session = res.headers['set-cookie'][0].split('adonis-session=')[1]
       expect(session.indexOf('Secure') > -1).to.equal(true)
@@ -738,7 +736,6 @@ describe('Session', function  () {
         })
       })
 
-      let body = {}
       const res = yield supertest(server).get("/").expect(200).end()
       const session = res.headers['set-cookie'][0].split('adonis-session=')[1]
       expect(session.indexOf('Expires=') > -1).to.equal(true)
@@ -763,7 +760,6 @@ describe('Session', function  () {
         })
       })
 
-      let body = {}
       const res = yield supertest(server).get("/").expect(200).end()
       const session = res.headers['set-cookie'][0].split('adonis-session=')[1]
       expect(session.indexOf('Expires=') > -1).to.equal(false)

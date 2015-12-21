@@ -105,12 +105,11 @@ RouterHelper.compileRouteToUrl = function (route, values) {
  * @public
  */
 RouterHelper.appendMiddleware = function (routes, middlewares) {
-  if(_.isArray(routes)){
-    _.each (routes, function (route) {
+  if (_.isArray(routes)) {
+    _.each(routes, function (route) {
       route.middlewares = route.middlewares.concat(middlewares)
     })
-  }
-  else{
+  } else {
     routes.middlewares = routes.middlewares.concat(middlewares)
   }
 }
@@ -137,7 +136,7 @@ RouterHelper.prefixRoute = function (routes, prefix) {
  * @param  {Array}     routes
  * @param  {String}     subdomain
  */
-RouterHelper.addSubdomain = function (routes, subdomain){
+RouterHelper.addSubdomain = function (routes, subdomain) {
   _.each(routes, function (route) {
     route.subdomain = subdomain
   })

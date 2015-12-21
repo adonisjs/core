@@ -23,7 +23,7 @@ Hash.make = function (value, rounds) {
   rounds = rounds || 10
   return new Promise(function (resolve, reject) {
     bcrypt.hash(value, rounds, function (error, hash) {
-      if(error) {
+      if (error) {
         return reject(error)
       }
       resolve(hash)
@@ -40,9 +40,9 @@ Hash.make = function (value, rounds) {
  * @public
  */
 Hash.verify = function (value, hash) {
-  return new Promise (function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     bcrypt.compare(value, hash, function (error, response) {
-      if(error) {
+      if (error) {
         return reject(error)
       }
       resolve(response)

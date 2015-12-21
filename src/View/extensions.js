@@ -52,10 +52,10 @@ function ViewsYield () {
     co(function *() {
       return yield method
     })
-    .then(function (response) {
-      context.ctx[index] = response
-      callback()
-    }).catch(function (error) {
+      .then(function (response) {
+        context.ctx[index] = response
+        callback()
+      }).catch(function (error) {
       callback(error)
     })
   }
