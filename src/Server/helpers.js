@@ -9,6 +9,7 @@
 const CatLog = require('cat-log')
 const log = new CatLog('adonis:framework')
 const co = require('co')
+const App = require('../App')
 const Ioc = require('adonis-fold').Ioc
 
 /**
@@ -52,7 +53,7 @@ helpers.callRouteAction = function (resolvedRoute, request, response, middleware
     yield middleware.compose(routeMiddleware, request, response)
 
   }).catch(function (e){
-    helpers.handleRequestError(e, response)
+    helpers.handleRequestError(e, request, response)
   })
 }
 
@@ -78,7 +79,7 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
     routeMiddleware = routeMiddleware.concat([{instance:null,method:finalHandler}])
     yield middleware.compose(routeMiddleware, request, response)
   }).catch(function (e) {
-    helpers.handleRequestError(e, response)
+    helpers.handleRequestError(e, request, response)
   })
 }
 
@@ -126,10 +127,22 @@ helpers.makeControllerMethod = function (appNamespace, controllerMethod) {
  * @return {void}
  * @public
  */
-helpers.handleRequestError = function (error, response) {
+helpers.handleRequestError = function (error, request, response) {
+
+  /**
+   * if we have any listeners for error events, we will emit
+   * the error only and will let the listeners make the
+   * decision of how to display those errors.
+   */
+  const errorListeners = App.listeners('error').length
+  if(errorListeners > 0) {
+    App.emit('error', error, request, response)
+    return
+  }
+
   const message = error.message || 'Internal server error'
   const status = error.status || 500
   const stack = error.stack || message
-  console.log(stack)
-  response.status(status).send(message)
+  log.error(stack)
+  response.status(status).send(stack)
 }

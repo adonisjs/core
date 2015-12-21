@@ -41,7 +41,7 @@ class Server {
     if(!resolvedRoute.handler){
       this.static.serve(request.request, request.response)
       .catch(function (e){
-        helpers.handleRequestError(e, response)
+        helpers.handleRequestError(e, request, response)
       })
       return
     }

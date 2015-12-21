@@ -130,7 +130,7 @@ describe("Server", function () {
     Route.get('/', 'UserController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(401).end()
-    expect(res.error.text).to.equal('Login')
+    expect(res.error.text).to.match(/Error: Login/)
   })
 
   it("should return error when unable to resolve middleware", function * () {
@@ -181,13 +181,13 @@ describe("Server", function () {
     expect(res.error.text).to.match(/Unable to login/)
   })
 
-  it("should print default error message when error itself does not have any message", function * () {
+  it("should show default error stack when error itself does not have any message", function * () {
     Route.get('/', function * () {
       throw new Error()
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
-    expect(res.error.text).to.match(/Internal server error/)
+    expect(res.error.text).to.match(/Error/)
   })
 
   it('should listen to server on a given port and host using listen method', function * () {
