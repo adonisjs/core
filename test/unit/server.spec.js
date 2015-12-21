@@ -17,6 +17,7 @@ const Ioc = require('adonis-fold').Ioc
 const supertest = require('co-supertest')
 const expect = chai.expect
 const http = require('http')
+const App = require('../../src/App')
 const path = require('path')
 
 class Session {
@@ -188,6 +189,19 @@ describe("Server", function () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
     expect(res.error.text).to.match(/Error/)
+  })
+
+  it("should emit error event when there are listeners attach to error", function * () {
+    App.on('error', function (error, request, response) {
+      console.log('here')
+      response.status(401).send('Forbidden')
+    })
+    Route.get('/', function * () {
+      throw new Error()
+    })
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    const res = yield supertest(testServer).get('/').expect(401).end()
+    expect(res.error.text).to.equal('Forbidden')
   })
 
   it('should listen to server on a given port and host using listen method', function * () {
