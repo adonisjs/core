@@ -35,6 +35,22 @@ class Session {
 
   constructor (Config) {
     const driver = Config.get('session.driver')
+    const sessionPath = Config.get('session.path', '/')
+    const sessionAge = Config.get('session.age')
+    const sessionBrowserClear = Config.get('session.clearWithBrowser', false)
+    const sessionDomain = Config.get('session.domain')
+    const sessionCookieName = Config.get('session.cookie', 'adonis-session')
+    const sessionSecure = Config.get('session.secure', false)
+
+    const sessionOptions = {
+      path:sessionPath,
+      domain: sessionDomain,
+      secure: sessionSecure,
+      browserClear: sessionBrowserClear,
+      age: sessionAge,
+      cookie: sessionCookieName
+    }
+
     let driverInstance = 'cookie'
     if(driver !== 'cookie') {
 
@@ -60,6 +76,7 @@ class Session {
       }
     }
     SessionManager.driver = driverInstance
+    SessionManager.options = sessionOptions
     return SessionManager
   }
 

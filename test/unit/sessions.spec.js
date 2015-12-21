@@ -10,6 +10,7 @@ const chai = require('chai')
 const http = require('http')
 const supertest = require('co-supertest')
 const co = require('co')
+const Ioc = require('adonis-fold').Ioc
 const expect = chai.expect
 const SessionManager = require('../../src/Session/SessionManager')
 const Session = require('../../src/Session')
@@ -38,6 +39,25 @@ describe('Session', function  () {
 
     it('should return list of extended session drivers', function * () {
       expect(Session.drivers()).to.be.an('object')
+    })
+
+    it('should make an instance of pre existing drivers using make method', function * () {
+      let Config = {}
+      Config.get = function () {
+        return 'file'
+      }
+      let Helpers = {}
+      Helpers.storagePath = function () {
+        return ''
+      }
+      Ioc.bind('Config', function () {
+        return Config
+      })
+      Ioc.bind('Helpers', function () {
+        return Helpers
+      })
+      const session = new Session(Config)
+      expect(session.driver.storagePath).to.equal('')
     })
 
     it('should throw an error when unable to locate driver', function * () {
@@ -69,11 +89,6 @@ describe('Session', function  () {
       }catch(e){
         expect(e.message).to.match(/put expects/)
       }
-    })
-
-    it('should return session key using getter', function * (){
-      const sessionManager = new SessionManager()
-      expect(sessionManager.sessionKey).to.equal('adonis-session')
     })
 
     it('should convert object to string representation', function () {
@@ -198,6 +213,8 @@ describe('Session', function  () {
     it('should set session on cookies when active driver is cookie', function * () {
 
       SessionManager.driver = 'cookie'
+      SessionManager.options.domain = null
+      SessionManager.options.path = '/'
       let sessionManager
 
       const server = http.createServer(function (req, res) {
@@ -217,13 +234,15 @@ describe('Session', function  () {
       const session = res.headers['set-cookie'][0].split('=')
       let body = {}
       body.name = sessionManager._makeBody('name','virk')
-      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)) + '; Path')
 
     })
 
     it('should set multiple session values on cookies using object', function * () {
 
       SessionManager.driver = 'cookie'
+      SessionManager.options.domain = null
+      SessionManager.options.path = '/'
       let sessionManager
 
       const server = http.createServer(function (req, res) {
@@ -244,13 +263,15 @@ describe('Session', function  () {
       let body = {}
       body.name = sessionManager._makeBody('name','virk')
       body.age = sessionManager._makeBody('age',22)
-      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)) + '; Path')
 
     })
 
     it('should set json as value for a given key', function * () {
 
       SessionManager.driver = 'cookie'
+      SessionManager.options.domain = null
+      SessionManager.options.path = '/'
       let sessionManager
 
       const server = http.createServer(function (req, res) {
@@ -270,7 +291,7 @@ describe('Session', function  () {
       const session = res.headers['set-cookie'][0].split('=')
       let body = {}
       body.profile = {d: JSON.stringify({name:"virk",age:22}), t: 'Object' }
-      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)) + '; Path')
 
     })
 
@@ -296,7 +317,7 @@ describe('Session', function  () {
       const session = res.headers['set-cookie'][0].split('=')
       let body = {}
       body.name = sessionManager._makeBody('name','virk')
-      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+      expect(session[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)) + '; Path')
 
     })
 
@@ -320,7 +341,7 @@ describe('Session', function  () {
 
       let body = {}
       body.name = sessionManagerFake._makeBody('name','virk')
-      const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
+      const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body) + '; Path']).expect(200).end()
       expect(res.headers['set-cookie']).to.equal(undefined)
 
     })
@@ -328,6 +349,7 @@ describe('Session', function  () {
     it('should return all session values', function * () {
 
       SessionManager.driver = 'cookie'
+      SessionManager.options.cookie = 'adonis-session'
       const sessionManagerFake = new SessionManager()
 
       const server = http.createServer(function (req, res) {
@@ -405,6 +427,8 @@ describe('Session', function  () {
     it('should return session value and delete it from session using pull method', function * () {
 
       SessionManager.driver = 'cookie'
+      SessionManager.options.cookie = 'adonis-session'
+
       const sessionManagerFake = new SessionManager()
 
       const server = http.createServer(function (req, res) {
@@ -427,7 +451,7 @@ describe('Session', function  () {
       expect(res.body.name).to.equal('virk')
       let trustedValue = res.headers['set-cookie'][res.headers['set-cookie'].length - 1]
       trustedValue = trustedValue.split('=')
-      trustedValue = JSON.parse(querystring.unescape(trustedValue[1]).replace('j:',''))
+      trustedValue = JSON.parse(querystring.unescape(trustedValue[1]).replace('j:','').replace('; Path', ''))
       expect(trustedValue.name).to.equal(undefined)
 
     })
@@ -447,6 +471,9 @@ describe('Session', function  () {
         }
       }
       SessionManager.driver = FileDriver
+      SessionManager.options.cookie = 'adonis-session'
+      SessionManager.options.secure = false
+      SessionManager.options.path = '/'
 
       const server = http.createServer(function (req, res) {
         const sessionManager = new SessionManager(req, res)
@@ -462,7 +489,7 @@ describe('Session', function  () {
       })
 
       const res = yield supertest(server).get("/").expect(200).end()
-      expect(res.headers['set-cookie'][0]).to.equal('adonis-session='+sessionId)
+      expect(res.headers['set-cookie'][0]).to.equal('adonis-session='+sessionId + '; Path=/')
       expect(sessionValue).to.equal(JSON.stringify({name:{d:'virk',t:'String'}}))
 
     })
@@ -622,6 +649,8 @@ describe('Session', function  () {
 
     it('should work fine when existing session value is not an object', function * () {
       SessionManager.driver = 'cookie'
+      SessionManager.options.cookie = 'adonis-session'
+
       const server = http.createServer(function (req, res) {
         const sessionManager = new SessionManager(req, res)
         co(function * () {
@@ -637,8 +666,107 @@ describe('Session', function  () {
 
       const res = yield supertest(server).get("/").set('Cookie','adonis-session=12002010020').expect(200).end()
       const sessionKey = res.headers['set-cookie'][1].split('adonis-session=')
-      const trustedValue = querystring.unescape(sessionKey[1]).replace('j:','')
+      const trustedValue = querystring.unescape(sessionKey[1]).replace('j:','').replace('; Path=/', '')
       expect(JSON.parse(trustedValue)).deep.equal({"age": {"d": "22", "t": "Number"}})
+    })
+
+    it('should make use of path defined on session options', function * () {
+
+      SessionManager.driver = 'cookie'
+      SessionManager.options.path = '/user'
+
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          return yield sessionManager.put('name','foo')
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      let body = {}
+      const res = yield supertest(server).get("/").expect(200).end()
+      const sessionPath = res.headers['set-cookie'][0].split('adonis-session=')[1].split(';')[1].trim()
+      expect(sessionPath).to.equal('Path=/user')
+
+    })
+
+    it('should set cookie to secure when secure is true', function * () {
+
+      SessionManager.driver = 'cookie'
+      SessionManager.options.secure = true
+
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          return yield sessionManager.put('name','foo')
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      let body = {}
+      const res = yield supertest(server).get("/").expect(200).end()
+      const session = res.headers['set-cookie'][0].split('adonis-session=')[1]
+      expect(session.indexOf('Secure') > -1).to.equal(true)
+    })
+
+    it('should set cookie expiry when age is set', function * () {
+
+      SessionManager.driver = 'cookie'
+      SessionManager.options.browserClear = false
+      SessionManager.options.age = 120
+
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          return yield sessionManager.put('name','foo')
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      let body = {}
+      const res = yield supertest(server).get("/").expect(200).end()
+      const session = res.headers['set-cookie'][0].split('adonis-session=')[1]
+      expect(session.indexOf('Expires=') > -1).to.equal(true)
+    })
+
+    it('should not set cookie expiry when age is set but browser clear is true', function * () {
+
+      SessionManager.driver = 'cookie'
+      SessionManager.options.browserClear = true
+      SessionManager.options.age = 120
+
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          return yield sessionManager.put('name','foo')
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      let body = {}
+      const res = yield supertest(server).get("/").expect(200).end()
+      const session = res.headers['set-cookie'][0].split('adonis-session=')[1]
+      expect(session.indexOf('Expires=') > -1).to.equal(false)
     })
   })
 })

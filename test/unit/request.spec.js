@@ -594,6 +594,9 @@ describe('Request', function () {
   it('should flash messages to session', function * () {
 
     SessionManager.driver = 'cookie'
+    SessionManager.options = {}
+    SessionManager.options.cookie = 'adonis-session'
+    SessionManager.options.browserClear = true
     let sessionManager
 
     const server = http.createServer(function (req, res) {

@@ -19,17 +19,6 @@ class SessionManager {
   }
 
   /**
-   * @description getter for session key name
-   * to be stored inside cookies
-   * @method sessionKey
-   * @return {String}
-   * @public
-   */
-  get sessionKey() {
-    return 'adonis-session'
-  }
-
-  /**
    * @description returns cookie value for session key
    * @method _getSessionCookie
    * @return {Mixed}
@@ -38,7 +27,7 @@ class SessionManager {
   _getSessionCookie () {
     const secret  = process.env.APP_KEY
     const decrypt = !!secret
-    return nodeCookie.parse(this.request, secret, decrypt)['adonis-session']
+    return nodeCookie.parse(this.request, secret, decrypt)[this.constructor.options.cookie]
   }
 
   /**
@@ -47,10 +36,28 @@ class SessionManager {
    * @param  {Mixed}    session
    * @private
    */
-  _setSessionCookie (session, options) {
+  _setSessionCookie (session) {
     const secret  = process.env.APP_KEY
     const encrypt = !!secret
-    nodeCookie.create (this.request, this.response, this.sessionKey, session, options, secret, encrypt)
+
+    /**
+     * options to be sent to cookie
+     * @type {Object}
+     */
+    const options = {
+      domain: this.constructor.options.domain,
+      path: this.constructor.options.path,
+      secure: this.constructor.options.secure,
+    }
+
+    /**
+     * only set expires at when browser clear is set to false
+     */
+    if(!this.constructor.options.browserClear) {
+      options.expires = new Date(Date.now() + (this.constructor.options.age * 60 * 1000))
+    }
+
+    nodeCookie.create (this.request, this.response, this.constructor.options.cookie, session, options, secret, encrypt)
   }
 
   /**
@@ -142,13 +149,13 @@ class SessionManager {
    * @param  {Mixed}      value
    * @private
    */
-  _setViaCookie (key, value, options) {
+  _setViaCookie (key, value) {
     /**
      * parsing existing session from request
      */
     const existingSession = this._getSessionCookie() || {}
     const newSession = this._makeSessionBody(existingSession, key, value)
-    this._setSessionCookie(newSession, options)
+    this._setSessionCookie(newSession)
   }
 
   /**
@@ -218,7 +225,7 @@ class SessionManager {
    * @param  {Mixed}      value
    * @private
    */
-  * _setViaDriver (key, value, options) {
+  * _setViaDriver (key, value) {
     let sessionId = this._getSessionCookie()
 
     /**
@@ -235,7 +242,7 @@ class SessionManager {
 
     const existingSession = yield this.constructor.driver.read(sessionId)
     const newSession = this._makeSessionBody(existingSession, key, value)
-    this._setSessionCookie(sessionId,  options)
+    this._setSessionCookie(sessionId)
     yield this.constructor.driver.write(sessionId,JSON.stringify(newSession))
   }
 
@@ -281,17 +288,17 @@ class SessionManager {
    *                             is not an object
    * @public
    */
-  * put (key, value, options) {
+  * put (key, value) {
     if(key && typeof(value) === 'undefined' && typeof(key) !== 'object'){
       throw new Error('put expects key/value pair or an object of keys and values')
     }
     const activeDriver = this.constructor.driver
 
     if(activeDriver === 'cookie') {
-      this._setViaCookie(key, value, options)
+      this._setViaCookie(key, value)
     }
     else{
-      yield this._setViaDriver(key, value, options)
+      yield this._setViaDriver(key, value)
     }
   }
 
