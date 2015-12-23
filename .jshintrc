@@ -1,9 +1,0 @@
-{
-  "esnext": true,
-  "node": true,
-  "indent": 2,
-  "asi": true,
-  "globals":{
-    "exports": true
-  }
-}

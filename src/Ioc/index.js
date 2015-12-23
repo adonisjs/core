@@ -55,7 +55,6 @@ let aliases = {}
  * depedencies with solid dependency injection.
  */
 
-/*jshint -W120 */
 let Ioc = exports = module.exports = {}
 
 /**

@@ -1,7 +1,7 @@
 {
   "name": "adonis-fold",
   "version": "2.0.0",
-  "description": "Ioc container with all required goodies to write scalable node applications",
+  "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -9,7 +9,7 @@
   "scripts": {
     "test": "npm run standard && istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "coverage": "istanbul cover _mocha test/unit --bail",
-    "standard": "standard"
+    "standard": "standard src/**/*.js test/**/*.spec.js"
   },
   "author": "adonisjs",
   "license": "MIT",
