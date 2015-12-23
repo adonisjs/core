@@ -7,9 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run hint && istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "test": "npm run standard && istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "coverage": "istanbul cover _mocha test/unit --bail",
-    "hint": "jshint src/**/*.js && jshint test/**/*.js --config ./jshint.json"
+    "standard": "standard"
   },
   "author": "adonisjs",
   "license": "MIT",
@@ -18,9 +18,9 @@
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.4",
     "istanbul": "^0.3.22",
-    "jshint": "^2.8.0",
     "mocha": "^2.3.3",
-    "mocha-lcov-reporter": "^1.0.0"
+    "mocha-lcov-reporter": "^1.0.0",
+    "standard": "^5.4.1"
   },
   "dependencies": {
     "co": "^4.6.0",
