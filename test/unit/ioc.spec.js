@@ -359,5 +359,17 @@ describe('Ioc', function () {
       Ioc.aliases({'Foo': 'App/Foo'})
       expect(Ioc.use('Foo') instanceof Foo).to.equal(true)
     })
+
+    it('should transform output of a path using it\'s hooks', function () {
+      expect(Ioc.use('App/Services/Hook')).to.equal('bar')
+    })
+
+    it('should transform output of a path using multiple hooks', function () {
+      expect(Ioc.use('App/Services/MultipleHooks')).to.equal('newBar')
+    })
+
+    it('should not transform if hook is not a function', function () {
+      expect(Ioc.use('App/Services/FakeHook')).to.be.a('function')
+    })
   })
 })

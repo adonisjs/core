@@ -123,7 +123,17 @@ Ioc._autoLoad = function (namespace) {
   namespace = namespace.replace(autoloadDirectory.namespace, autoloadDirectory.directoryPath)
   log.verbose('autoloading %s from ioc container', namespace)
   try {
-    return requireStack(namespace)
+    let result = requireStack(namespace)
+    /**
+     * autoloaded paths can have multiple hooks to transform
+     * it's output. Lucid is an example of making use of it.
+     */
+    if (result.hooks && result.hooks.forEach) {
+      result.hooks.forEach(function (hook) {
+        result = typeof (result[hook]) === 'function' ? result[hook]() : result
+      })
+    }
+    return result
   } catch (e) {
     throw e
   }
