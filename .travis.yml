@@ -4,6 +4,7 @@ node_js:
 - 4.2.4
 sudo: false
 before_install:
+npm install git://github.com/poppinss/adonis-fold.git
 install:
 - npm install --no-optional
 notifications:
