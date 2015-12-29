@@ -6,16 +6,13 @@
  * MIT Licensed
 */
 
-/**
- * @ignores
- */
-const parseurl  = require('parseurl')
-const qs        = require('qs')
-const fresh     = require('fresh')
+const parseurl = require('parseurl')
+const qs = require('qs')
+const fresh = require('fresh')
 const proxyaddr = require('proxy-addr')
-const isIP      = require('net').isIP
-const accepts   = require('accepts')
-const is        = require('type-is')
+const isIP = require('net').isIP
+const accepts = require('accepts')
+const is = require('type-is')
 
 /**
  * @module Request
@@ -102,15 +99,15 @@ Request.fresh = function (request, response) {
   /**
    * only for GET and HEAD
    */
-  if(method !== 'GET' && method !== 'HEAD'){
+  if (method !== 'GET' && method !== 'HEAD') {
     return false
   }
 
   /**
    * 2xx or 304 as per rfc2616 14.26
    */
-  if ((status >= 200 && status < 300) || 304 === status) {
-    return fresh(request.headers, (response.headers || {}));
+  if ((status >= 200 && status < 300) || status === 304) {
+    return fresh(request.headers, (response.headers || {}))
   }
 
   return false
@@ -136,7 +133,7 @@ Request.stale = function (request, response) {
  * @return {String}
  */
 Request.ip = function (request, fn) {
-  return proxyaddr(request,fn)
+  return proxyaddr(request, fn)
 }
 
 /**
@@ -151,10 +148,18 @@ Request.ips = function (request) {
   return proxyaddr.all(request)
 }
 
+/**
+ * @description returns request protocol based upon encrypted connection
+ * or X-Forwaded-Proto header
+ * @method protocol
+ * @param  {Object} request
+ * @return {String}
+ * @public
+ */
 Request.protocol = function (request) {
   let proto = request.connection.encrypted ? 'https' : 'http'
   proto = Request.header(request, 'X-Forwarded-Proto') || proto
-  return proto.split(/\s*,\s*/)[0];
+  return proto.split(/\s*,\s*/)[0]
 }
 
 /**
@@ -181,18 +186,18 @@ Request.subdomains = function (request, offset) {
   offset = offset || 2
   const hostname = parseurl(request).hostname
 
-  if(!hostname || isIP(hostname)){
+  if (!hostname || isIP(hostname)) {
     return []
   }
 
-  let subdomains =  hostname.split('.').reverse()
+  let subdomains = hostname.split('.').reverse()
   subdomains = subdomains.slice(offset)
   /**
    * remove www if is the last subdomain
    * after reverse
    */
-  if(subdomains[subdomains.length - 1] === 'www'){
-    subdomains.splice(subdomains.length -1,1)
+  if (subdomains[subdomains.length - 1] === 'www') {
+    subdomains.splice(subdomains.length - 1, 1)
   }
   return subdomains
 }
@@ -207,7 +212,7 @@ Request.subdomains = function (request, offset) {
  */
 Request.ajax = function (request) {
   const xhr = Request.header(request, 'X-Requested-With') || ''
-  return xhr.toLowerCase() === 'xmlhttprequest';
+  return xhr.toLowerCase() === 'xmlhttprequest'
 }
 
 /**
@@ -219,7 +224,7 @@ Request.ajax = function (request) {
  * @public
  */
 Request.pjax = function (request) {
-  if(Request.header(request, 'X-Pjax')){
+  if (Request.header(request, 'X-Pjax')) {
     return true
   }
   return false
@@ -270,7 +275,7 @@ Request.originalUrl = function (request) {
  * @public
  */
 Request.is = function (request, keys) {
-  if(is.is(request, keys)){
+  if (is.is(request, keys)) {
     return true
   }
   return false

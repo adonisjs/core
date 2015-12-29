@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "istanbul cover _mocha test --bail"
+    "coverage": "istanbul cover _mocha test --bail",
+    "standard": "standard src/**/*.js test/*.js"
   },
   "keywords": [
     "node-req",
@@ -21,12 +22,12 @@
     "co-mocha": "^1.1.2",
     "co-supertest": "0.0.10",
     "coveralls": "^2.11.4",
-    "cz-conventional-changelog": "^1.1.4",
     "formidable": "^1.0.17",
     "istanbul": "^0.3.22",
     "mocha": "^2.3.3",
     "mocha-lcov-reporter": "^1.0.0",
     "pem": "^1.8.1",
+    "standard": "^5.4.1",
     "supertest": "^1.1.0"
   },
   "dependencies": {
