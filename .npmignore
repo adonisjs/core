@@ -5,3 +5,4 @@ npm-debug.log
 test
 .travis.yml
 .editorconfig
+benchmarks
