@@ -38,6 +38,8 @@ require('co-mocha')
 
 describe('Session File Driver', function  () {
 
+  this.timeout(5000)
+
   it('should create session directory if does not exists', function * () {
     const fileDriver = new FileDriver(Helpers, Config)
     yield fileDriver._makeStorageDir(__dirname+'/storage/sessions')
