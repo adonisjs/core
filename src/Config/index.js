@@ -11,7 +11,7 @@ const _ = require('lodash')
 
 class Config {
 
-  constructor(Helpers) {
+  constructor (Helpers) {
     this.configPath = Helpers.configPath()
     this.config = autoLoad.load(this.configPath)
   }
@@ -23,8 +23,8 @@ class Config {
    * @param  {Mixed} value
    * @return {Boolean}
    */
-  existy(value) {
-    return typeof (value) !== 'undefined' && typeof (value) !== 'null'
+  existy (value) {
+    return value !== undefined && value !== null
   }
 
   /**
@@ -35,7 +35,7 @@ class Config {
    * @return {Mixed}
    * @public
    */
-  get(key, defaultValue) {
+  get (key, defaultValue) {
     defaultValue = this.existy(defaultValue) ? defaultValue : null
     const returnValue = _.get(this.config, key)
     return this.existy(returnValue) ? returnValue : defaultValue
@@ -49,7 +49,7 @@ class Config {
    * @param  {Mixed} value
    * @public
    */
-  set(key, value) {
+  set (key, value) {
     _.set(this.config, key, value)
   }
 }

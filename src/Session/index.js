@@ -16,7 +16,7 @@ const SessionManager = require('./SessionManager')
  */
 class Session {
 
-  static drivers() {
+  static drivers () {
     return {}
   }
 
@@ -29,11 +29,11 @@ class Session {
    * @return {void}
    * @public
    */
-  static extend( key, value) {
+  static extend (key, value) {
     this.drivers[key] = value
   }
 
-  constructor( Config) {
+  constructor (Config) {
     const driver = Config.get('session.driver')
     const sessionPath = Config.get('session.path', '/')
     const sessionAge = Config.get('session.age')
@@ -59,8 +59,7 @@ class Session {
          * method
          */
         driverInstance = Ioc.make(Drivers[driver])
-      }
-      else if (this.constructor.drivers[driver]) {
+      } else if (this.constructor.drivers[driver]) {
         /**
          * return driver instance if one of the extended
          * drivers

@@ -12,7 +12,7 @@ const http = require('http')
 
 class Server {
 
-  constructor( Request, Response, Route, Helpers, Middleware, Static, Session) {
+  constructor (Request, Response, Route, Helpers, Middleware, Static, Session) {
     this.Request = Request
     this.Response = Response
     this.Session = Session
@@ -32,7 +32,7 @@ class Server {
    * @return {void}               [description]
    * @private
    */
-  _finalHandler( resolvedRoute, request, response) {
+  _finalHandler (resolvedRoute, request, response) {
     /**
      * if route is not registered, try looking for a static resource
      * or simply throw an error if static resource is not found
@@ -61,7 +61,7 @@ class Server {
    * @return {void}
    * @public
    */
-  handle( req, res) {
+  handle (req, res) {
     const self = this
     const request = new this.Request(req, res)
     const response = new this.Response(request, res)
@@ -99,7 +99,7 @@ class Server {
    * @method listen
    * @return {void}
    */
-  listen( host, port) {
+  listen (host, port) {
     this.log.info('serving app on %s:%s', host, port)
     http.createServer(this.handle.bind(this)).listen(port, host)
   }

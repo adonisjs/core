@@ -21,7 +21,7 @@ const log = new CatLog('adonis:framework')
  */
 class Request {
 
-  constructor( request, response) {
+  constructor (request, response) {
     this.request = request
     this.response = response
     this._body = {}
@@ -58,7 +58,7 @@ class Request {
    * @return {Mixed}
    * @public
    */
-  input( key, defaultValue) {
+  input (key, defaultValue) {
     defaultValue = defaultValue || null
     const input = this.all()
     return input[key] || defaultValue
@@ -71,7 +71,7 @@ class Request {
    * @return {Object}
    * @public
    */
-  all() {
+  all () {
     return _.merge(this.get(), this.post())
   }
 
@@ -82,7 +82,7 @@ class Request {
    * @return {Object}
    * @public
    */
-  except() {
+  except () {
     const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
     return _.omit(this.all(), args)
   }
@@ -93,7 +93,7 @@ class Request {
    * @return {Object}
    * @public
    */
-  only() {
+  only () {
     const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
     return _.pick(this.all(), args)
   }
@@ -105,7 +105,7 @@ class Request {
    * @return {Object}
    * @public
    */
-  get() {
+  get () {
     return nodeReq.get(this.request)
   }
 
@@ -116,7 +116,7 @@ class Request {
    * @return {Object}
    * @public
    */
-  post() {
+  post () {
     return nodeReq.post(this.request) || {}
   }
 
@@ -127,7 +127,7 @@ class Request {
    * @return {Mixed}
    * @public
    */
-  header( key) {
+  header (key) {
     return nodeReq.header(this.request, key)
   }
 
@@ -137,7 +137,7 @@ class Request {
    * @return {Object}
    * @public
    */
-  headers() {
+  headers () {
     return nodeReq.headers(this.request)
   }
 
@@ -148,7 +148,7 @@ class Request {
    * @return {Boolean}
    * @public
    */
-  fresh() {
+  fresh () {
     return nodeReq.fresh(this.request, this.response)
   }
 
@@ -159,7 +159,7 @@ class Request {
    * @return {Boolean}
    * @public
    */
-  stale() {
+  stale () {
     return nodeReq.stale(this.request, this.response)
   }
 
@@ -169,7 +169,7 @@ class Request {
    * @return {String}
    * @public
    */
-  ip() {
+  ip () {
     return nodeReq.ip(this.request, '127.0.0.1')
   }
 
@@ -180,7 +180,7 @@ class Request {
    * @return {Array}
    * @public
    */
-  ips() {
+  ips () {
     return nodeReq.ips(this.request)
   }
 
@@ -191,7 +191,7 @@ class Request {
    * @return {Boolean}
    * @public
    */
-  secure() {
+  secure () {
     return nodeReq.secure(this.request)
   }
 
@@ -201,7 +201,7 @@ class Request {
    * @return {Array}
    * @public
    */
-  subdomains() {
+  subdomains () {
     return nodeReq.subdomains(this.request)
   }
 
@@ -212,7 +212,7 @@ class Request {
    * @return {Boolean}
    * @public
    */
-  ajax() {
+  ajax () {
     return nodeReq.ajax(this.request)
   }
 
@@ -222,7 +222,7 @@ class Request {
    * @method pjax
    * @return {Boolean}
    */
-  pjax() {
+  pjax () {
     return nodeReq.pjax(this.request)
   }
 
@@ -232,7 +232,7 @@ class Request {
    * @return {String}
    * @public
    */
-  hostname() {
+  hostname () {
     return nodeReq.hostname(this.request)
   }
 
@@ -243,7 +243,7 @@ class Request {
    * @return {String}
    * @public
    */
-  url() {
+  url () {
     return nodeReq.url(this.request)
   }
 
@@ -254,7 +254,7 @@ class Request {
    * @return {String}
    * @public
    */
-  originalUrl() {
+  originalUrl () {
     return nodeReq.originalUrl(this.request)
   }
 
@@ -265,7 +265,7 @@ class Request {
    * @return {Boolean}
    * @public
    */
-  is() {
+  is () {
     return nodeReq.is(this.request, _.toArray(arguments))
   }
 
@@ -276,7 +276,7 @@ class Request {
    * @return {String}
    * @public
    */
-  accepts() {
+  accepts () {
     return nodeReq.accepts(this.request, _.toArray(arguments))
   }
 
@@ -286,7 +286,7 @@ class Request {
    * @return {String}
    * @public
    */
-  method() {
+  method () {
     return nodeReq.method(this.request)
   }
 
@@ -297,7 +297,7 @@ class Request {
    * @return {Mixed}
    * @public
    */
-  cookie( key) {
+  cookie (key) {
     const cookies = this.cookies()
     return cookies[key] || null
   }
@@ -309,7 +309,7 @@ class Request {
    * @return {Object}
    * @public
    */
-  cookies() {
+  cookies () {
     const secret = this.secret || null
     const decrypt = !!this.secret
 
@@ -331,7 +331,7 @@ class Request {
    * @return {Mixed}
    * @public
    */
-  param( key) {
+  param (key) {
     return this.params()[key] || null
   }
 
@@ -341,7 +341,7 @@ class Request {
    * @return {Object}
    * @public
    */
-  params() {
+  params () {
     return this._params || {}
   }
 
@@ -353,7 +353,7 @@ class Request {
    * @return {Object}             [description]
    * @private
    */
-  _toFileInstance( file) {
+  _toFileInstance (file) {
     if (!(file instanceof File)) {
       file = new File(file)
     }
@@ -368,7 +368,7 @@ class Request {
    * @return {Object}     [description]
    * @public
    */
-  file( key) {
+  file (key) {
     /**
      * if requested file was not uploaded return an
      * empty instance of file object.
@@ -402,7 +402,7 @@ class Request {
    * @return {Array}
    * @public
    */
-  files() {
+  files () {
     return _.map(this._files, (file, index) => {
       return this.file(index)
     })
@@ -416,7 +416,7 @@ class Request {
    * @return {void}        [description]
    * @public
    */
-  * flash( values) {
+  * flash (values) {
     if (typeof (values) !== 'object') {
       throw new Error('Flash values should be an object')
     }
@@ -432,7 +432,7 @@ class Request {
    * @return {Mixed}              [description]
    * @public
    */
-  old( key, defaultValue) {
+  old (key, defaultValue) {
     if (!this._flash_messages) {
       log.warn('Make use of Flash middleware to enable flash messaging')
       this._flash_messages = {}
@@ -448,7 +448,7 @@ class Request {
    * @return {void}
    * @public
    */
-  * flashAll() {
+  * flashAll () {
     yield this.flash(this.all())
   }
 
@@ -459,7 +459,7 @@ class Request {
    * @return {void}
    * @public
    */
-  * flashOnly() {
+  * flashOnly () {
     const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
     yield this.flash(this.only(args))
   }
@@ -471,7 +471,7 @@ class Request {
    * @return {void}
    * @public
    */
-  * flashExcept() {
+  * flashExcept () {
     const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
     yield this.flash(this.except(args))
   }

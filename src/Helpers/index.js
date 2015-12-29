@@ -1,12 +1,10 @@
 'use strict'
 
 /**
- * @author         Harminder Virk <virk.officials@gmail.com>
- *
- * @package        adonis-framework
- * @copyright      2015-2015
- * @license        MIT
- */
+ * adonis-framework
+ * Copyright(c) 2015-2105 Harminder Virk
+ * MIT Licensed
+*/
 
 const path = require('path')
 const CatLog = require('cat-log')
@@ -16,17 +14,15 @@ let rootPath = null // application root path
 let appPath = null // path to application app directory
 let appNameSpace = null // autoloading namespace
 
-/*jshint -W120 */
 let Helpers = exports = module.exports = {}
 
 /**
- * loads package.json file from application and set required paths
+ * @description loads package.json file from application and set required paths
  * and namespace based on same.
- * --------------------------------------------------------------------
- * @param    |    {String}    |    packagePath
- * @param    |    {Object}    |    Ioc
- * @return   |    {void}
- * @public
+ * @method load
+ * @param  {String} packagePath
+ * @param  {Object} Ioc
+ * @return {void}
  */
 Helpers.load = function (packagePath, Ioc) {
   log.verbose('reading autoload settings from %s', packagePath)
@@ -66,114 +62,108 @@ Helpers.load = function (packagePath, Ioc) {
 }
 
 /**
- * Returns path to application root.
- * -----------------------------------------------------------
- * @return    |    {String}
- * @public
+ * @descrition Returns path to application root
+ * @method basePath
+ * @return {String}
  */
 Helpers.basePath = function () {
   return rootPath
 }
 
 /**
- * Returns path to application folder which is
+ * @description Returns path to application folder which is
  * defined under a given namespace.
- * -----------------------------------------------------------
- * @return    |    {String}
- * @public
+ * @method appPath
+ * @return {String}
  */
 Helpers.appPath = function () {
   return appPath
 }
 
 /**
- * Returns path to application public folder
- * -----------------------------------------------------------
- * @return    |    {String}
- * @public
+ * @description Returns path to application public folder
+ * @method publicPath
+ * @param  {String}   toFile
+ * @return {String}
  */
 Helpers.publicPath = function (toFile) {
   const toDir = './public'
-  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath, incrementalPath)
+  return Helpers._makePath(rootPath, toDir, toFile)
 }
 
 /**
- * Returns application namespace , under which
+ * @descripption Returns application namespace , under which
  * app directory is registered.
- * -----------------------------------------------------------
- * @return    |    {String}
- * @public
+ * @method appNameSpace
+ * @return {String}
  */
 Helpers.appNameSpace = function () {
   return appNameSpace
 }
 
 /**
- * returns path to config directory
- * -----------------------------------------------------------
- * @return    |    {String}
- * @public
+ * @description returns path to config directory
+ * @method configPath
+ * @param  {String}   toFile
+ * @return {String}
  */
 Helpers.configPath = function (toFile) {
   const toDir = './config'
-  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath, incrementalPath)
+  return Helpers._makePath(rootPath, toDir, toFile)
 }
 
 /**
- * returns reference to storage path of application
- * -----------------------------------------------------------
- * @return    |    {String}
+ * @description returns reference to storage path of application
+ * @method storagePath
+ * @param  {String}    toFile
+ * @return {String}
  * @public
  */
 Helpers.storagePath = function (toFile) {
   const toDir = './storage'
-  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath, incrementalPath)
+  return Helpers._makePath(rootPath, toDir, toFile)
 }
 
 /**
- * returns reference to resources directory
- * -----------------------------------------------------------
- * @return    |    {String}
- * @public
+ * @description returns reference to resources directory
+ * @method resourcesPath
+ * @param  {String}      toFile
+ * @return {String}
  */
 Helpers.resourcesPath = function (toFile) {
   const toDir = './resources'
-  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath, incrementalPath)
+  return Helpers._makePath(rootPath, toDir, toFile)
 }
 
 /**
- * returns path to migrations directory.
- * -----------------------------------------------------------
- * @param     |    {String}    |    toFile
- * @return    |    {String}    |
+ * @description returns path to migrations directory.
+ * @method migrationsPath
+ * @param  {String}       toFile
+ * @return {String}
  */
 Helpers.migrationsPath = function (toFile) {
   const toDir = './migrations'
-  const incrementalPath = typeof (toFile) !== 'undefined' ? `/${toDir}/${toFile}` : toDir
-  return Helpers._makePath(rootPath, incrementalPath)
+  return Helpers._makePath(rootPath, toDir, toFile)
 }
 
 /**
- * returns reference to views directory
- * -----------------------------------------------------------
- * @return    |    {String}    |
+ * @description returns reference to views directory
+ * @method viewsPath
+ * @return {String}
  */
 Helpers.viewsPath = function () {
   return Helpers.resourcesPath('views')
 }
 
 /**
- * makes path by joining two endpoints
- * -----------------------------------------------------------
- * @param     |    {String}    |    base
- * @param     |    {String}    |    incremental
- * @return    |    {String}    |
- * @private
+ * @description makes path by joining two endpoints
+ * @method _makePath
+ * @param  {String}  base
+ * @param  {String}  toDir
+ * @param  {String}  toFile
+ * @return {String}
  */
-Helpers._makePath = function (base, incremental) {
+Helpers._makePath = function (base, toDir, toFile) {
+  const incremental = toFile ? `/${toDir}/${toFile}` : toDir
   return path.join(base, incremental)
 }

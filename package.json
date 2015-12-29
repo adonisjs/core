@@ -4,9 +4,9 @@
   "description": "Adonis framework repo",
   "main": "index.js",
   "scripts": {
-    "test": "npm run hint && _mocha test/unit test/acceptance --bail",
-    "coverage": "npm run hint && istanbul cover _mocha test/unit test/acceptance  --bail",
-    "hint": "jshint src/**/*.js test/**/*.js --config ./jshint.json"
+    "test": "npm run standard && _mocha test/unit test/acceptance --bail",
+    "coverage": "npm run standard && istanbul cover _mocha test/unit test/acceptance  --bail",
+    "standard": "standard src/**/*.js providers/*.js"
   },
   "keywords": [
     "adonis-framework",
@@ -23,12 +23,11 @@
     "co-supertest": "0.0.10",
     "coveralls": "^2.11.4",
     "formidable": "^1.0.17",
-    "ioredis": "^1.9.1",
     "istanbul": "^0.4.0",
-    "jshint": "^2.8.0",
     "mocha": "^2.3.3",
     "mocha-lcov-reporter": "^1.0.0",
     "pem": "^1.8.1",
+    "standard": "^5.4.1",
     "supertest": "^1.1.0",
     "zombie": "^4.2.1"
   },

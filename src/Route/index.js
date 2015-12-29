@@ -25,12 +25,6 @@ let routes = []
  */
 let activeGroup = null
 
-/**
- * @module Route
- * @description Gives ability to bind http requests to
- * regular expression.
- */
-/*jshint -W120 */
 let Route = exports = module.exports = {}
 
 /**

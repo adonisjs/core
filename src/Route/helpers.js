@@ -9,7 +9,6 @@
 const pathToRegexp = require('path-to-regexp')
 const _ = require('lodash')
 
-/*jshint -W120 */
 let RouterHelper = exports = module.exports = {}
 
 /**

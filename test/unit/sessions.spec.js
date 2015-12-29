@@ -342,7 +342,9 @@ describe('Session', function  () {
       let body = {}
       body.name = sessionManagerFake._makeBody('name','virk')
       const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body) + '; Path']).expect(200).end()
-      expect(res.headers['set-cookie']).to.equal(undefined)
+      let cookie = res.headers['set-cookie'][1].split(';')[0].split('cookie=')[1]
+      cookie = querystring.unescape(cookie).replace('j:', '')
+      expect(JSON.parse(cookie)).deep.equal({})
 
     })
 

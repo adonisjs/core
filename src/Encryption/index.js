@@ -10,7 +10,7 @@ const crypto = require('crypto')
 
 class Encryption {
 
-  constructor( Env) {
+  constructor (Env) {
     this.appKey = Env.get('APP_KEY')
     this.algorithm = Env.get('ENCRYPTION', 'aes-256-cbc')
 
@@ -31,7 +31,7 @@ class Encryption {
    * @return {String}
    * @public
    */
-  encrypt( value, encoding) {
+  encrypt (value, encoding) {
     const cipher = crypto.createCipher(this.algorithm, this.appKey)
     encoding = encoding || 'utf8'
     cipher.update(value, encoding, 'hex')
@@ -46,7 +46,7 @@ class Encryption {
    * @return {Mixed}
    * @public
    */
-  decrypt( value, encoding) {
+  decrypt (value, encoding) {
     const decipher = crypto.createDecipher(this.algorithm, this.appKey)
     encoding = encoding || 'utf8'
     decipher.update(value, 'hex', encoding)

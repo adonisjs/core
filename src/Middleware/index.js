@@ -12,11 +12,6 @@ const Ioc = require('adonis-fold').Ioc
 let globalMiddleware = []
 let namedMiddleware = {}
 
-/**
- * @description Middleware layer with generators support
- * @type {Object}
- */
-/*jshint -W120 */
 let Middleware = exports = module.exports = {}
 
 /**
@@ -137,11 +132,11 @@ Middleware.compose = function (middleware, request, response) {
   return function * (next) {
     next = next || noop()
     let i = middleware.length
-    while(i--){
+    while (i--) {
       const instance = middleware[i].instance
       const method = instance ? middleware[i].instance[middleware[i].method] : middleware[i].method
       next = method.apply(instance, [request, response, next])
     }
-    yield *next
+    yield * next
   }
 }

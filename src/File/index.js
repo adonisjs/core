@@ -15,7 +15,7 @@ const fs = require('fs')
  */
 class File {
 
-  constructor( File) {
+  constructor (File) {
     this.file = File
   }
 
@@ -27,11 +27,10 @@ class File {
    * @return {void}
    * @public
    */
-  move( toPath, name) {
+  move (toPath, name) {
     name = name || this.clientName()
     const uploadingFileName = `${toPath}/${name}`
     return new Promise((resolve) => {
-
       fs.rename(this.tmpPath(), uploadingFileName, (err) => {
         if (err) {
           this.file.error = err
@@ -44,7 +43,6 @@ class File {
         }
         resolve()
       })
-
     })
   }
 
@@ -54,7 +52,7 @@ class File {
    * @return {String}
    * @public
    */
-  clientName() {
+  clientName () {
     return this.file.name
   }
 
@@ -65,7 +63,7 @@ class File {
    * @return {String}
    * @public
    */
-  mimeType() {
+  mimeType () {
     return this.file.type
   }
 
@@ -75,7 +73,7 @@ class File {
    * @return {String}
    * @public
    */
-  extension() {
+  extension () {
     return path.extname(this.clientName()).replace('.', '')
   }
 
@@ -85,7 +83,7 @@ class File {
    * @return {String}
    * @public
    */
-  clientSize() {
+  clientSize () {
     return this.file.size
   }
 
@@ -96,7 +94,7 @@ class File {
    * @return {String}
    * @public
    */
-  tmpPath() {
+  tmpPath () {
     return this.file.path
   }
 
@@ -106,7 +104,7 @@ class File {
    * @return {String}
    * @public
    */
-  uploadName() {
+  uploadName () {
     return this.file.filename
   }
 
@@ -116,7 +114,7 @@ class File {
    * @return {String}
    * @public
    */
-  uploadPath() {
+  uploadPath () {
     return this.file.filepath
   }
 
@@ -126,7 +124,7 @@ class File {
    * @return {Boolean}
    * @public
    */
-  exists() {
+  exists () {
     return !!this.tmpPath()
   }
 
@@ -137,7 +135,7 @@ class File {
    * @return {Boolean}
    * @public
    */
-  moved() {
+  moved () {
     return !this.errors()
   }
 
@@ -146,7 +144,7 @@ class File {
    * @method errors
    * @return {Object}
    */
-  errors() {
+  errors () {
     return this.file.error || null
   }
 

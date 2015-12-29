@@ -17,7 +17,7 @@ let routeInstance = null
  */
 class Response {
 
-  constructor( request, response) {
+  constructor (request, response) {
     this.request = request
     this.response = response
   }
@@ -30,7 +30,7 @@ class Response {
    * @return {Object}
    * @public
    */
-  header( key, value) {
+  header (key, value) {
     nodeRes.header(this.response, key, value)
     return this
   }
@@ -43,7 +43,7 @@ class Response {
    * @return {void}
    * @public
    */
-  * view( template, options) {
+  * view (template, options) {
     return viewInstance.make(template, options)
   }
 
@@ -54,7 +54,7 @@ class Response {
    * @return {Object}
    * @public
    */
-  removeHeader( key) {
+  removeHeader (key) {
     nodeRes.removeHeader(this.response, key)
     return this
   }
@@ -66,7 +66,7 @@ class Response {
    * @return {Object}
    * @public
    */
-  status( statusCode) {
+  status (statusCode) {
     nodeRes.status(this.response, statusCode)
     return this
   }
@@ -78,7 +78,7 @@ class Response {
    * @return {void}
    * @public
    */
-  end() {
+  end () {
     nodeRes.end(this.response)
   }
 
@@ -89,7 +89,7 @@ class Response {
    * @return {void}
    * @public
    */
-  send( body) {
+  send (body) {
     nodeRes.send(this.request, this.response, body)
   }
 
@@ -100,7 +100,7 @@ class Response {
    * @return {void}
    * @public
    */
-  json( body) {
+  json (body) {
     nodeRes.json(this.request, this.response, body)
   }
 
@@ -111,7 +111,7 @@ class Response {
    * @return {void}
    * @public
    */
-  jsonp( body) {
+  jsonp (body) {
     const callback = this.request.input('callback')
     nodeRes.jsonp(this.request, this.response, body, callback)
   }
@@ -123,7 +123,7 @@ class Response {
    * @return {void}
    * @public
    */
-  download( filePath) {
+  download (filePath) {
     nodeRes.download(this.response, filePath)
   }
 
@@ -136,7 +136,7 @@ class Response {
    * @param  {String}   disposition
    * @return {void}
    */
-  attachment( filePath, name, disposition) {
+  attachment (filePath, name, disposition) {
     nodeRes.attachment(this.response, filePath, name, disposition)
   }
 
@@ -146,7 +146,7 @@ class Response {
    * @param  {String} toUrl
    * @return {Object}
    */
-  location( toUrl) {
+  location (toUrl) {
     nodeRes.location(this.response, toUrl)
     return this
   }
@@ -158,7 +158,7 @@ class Response {
    * @param  {Number} status
    * @return {void}
    */
-  redirect( toUrl, status) {
+  redirect (toUrl, status) {
     nodeRes.redirect(this.request, this.response, toUrl, status)
   }
 
@@ -168,7 +168,7 @@ class Response {
    * @param  {String} field
    * @return {Object}
    */
-  vary( field) {
+  vary (field) {
     nodeRes.vary(this.response, field)
     return this
   }
@@ -183,7 +183,7 @@ class Response {
    * @return {void}
    * @public
    */
-  route( route, data, status) {
+  route (route, data, status) {
     const toUrl = routeInstance.url(route, data)
     this.redirect(toUrl, status)
   }
@@ -197,7 +197,7 @@ class Response {
    * @return {Object}
    * @public
    */
-  cookie( key, value, options) {
+  cookie (key, value, options) {
     const secret = process.env.APP_KEY
     const encrypt = !!secret
     nodeCookie.create(this.request.request, this.response, key, value, options, secret, encrypt)
@@ -211,7 +211,7 @@ class Response {
    * @param  {Object}    options
    * @return {Object}
    */
-  clearCookie( key, options) {
+  clearCookie (key, options) {
     nodeCookie.clear(this.request.request, this.response, key, options)
     return this
   }
@@ -224,7 +224,7 @@ class Response {
  * view instance.
  */
 class ResponseBuilder {
-  constructor( View, Route) {
+  constructor (View, Route) {
     viewInstance = View
     routeInstance = Route
     return Response

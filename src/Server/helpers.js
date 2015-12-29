@@ -12,11 +12,6 @@ const co = require('co')
 const App = require('../App')
 const Ioc = require('adonis-fold').Ioc
 
-/**
- * @module helpers
- * @type {Object}
- */
-/*jshint -W120 */
 let helpers = exports = module.exports = {}
 
 /**
@@ -51,7 +46,6 @@ helpers.callRouteAction = function (resolvedRoute, request, response, middleware
      * composing all middleware with route action
      */
     yield middleware.compose(routeMiddleware, request, response)
-
   }).catch(function (e) {
     helpers.handleRequestError(e, request, response)
   })
@@ -76,7 +70,7 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
      * @type {Array}
      */
     let routeMiddleware = middleware.resolve(middleware.getGlobal())
-    routeMiddleware = routeMiddleware.concat([{instance: null,method: finalHandler}])
+    routeMiddleware = routeMiddleware.concat([{instance: null, method: finalHandler}])
     yield middleware.compose(routeMiddleware, request, response)
   }).catch(function (e) {
     helpers.handleRequestError(e, request, response)
@@ -97,9 +91,8 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
 helpers.constructRouteAction = function (resolvedRoute, appNamespace) {
   if (typeof (resolvedRoute.handler) === 'function') {
     log.verbose('responding to route using closure')
-    return {instance: null,method: resolvedRoute.handler}
-  }
-  else if (typeof (resolvedRoute.handler) === 'string') {
+    return {instance: null, method: resolvedRoute.handler}
+  } else if (typeof (resolvedRoute.handler) === 'string') {
     return helpers.makeControllerMethod(appNamespace, resolvedRoute.handler)
   }
   throw new Error('Invalid route handler , attach a controller method or a closure')

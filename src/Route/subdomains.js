@@ -8,12 +8,6 @@
 
 let registeredDomains = []
 
-/**
- * @module subdomains
- * @description holds subdomains registerd via route groups
- * @type {Object}
- */
-/*jshint -W120 */
 let subdomains = exports = module.exports = {}
 
 /**

@@ -9,11 +9,6 @@
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
 
-/**
- * @module viewsYield
- * @description Here we add support for es6 generators to nunjucks views
- */
-/*jshint -W120 */
 function ViewsYield () {
   this.tags = ['yield']
 
@@ -52,10 +47,11 @@ function ViewsYield () {
     co(function *() {
       return yield method
     })
-      .then(function (response) {
-        context.ctx[index] = response
-        callback()
-      }).catch(function (error) {
+    .then(function (response) {
+      context.ctx[index] = response
+      callback()
+    })
+    .catch(function (error) {
       callback(error)
     })
   }

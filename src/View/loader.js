@@ -10,11 +10,6 @@ const nunjucks = require('nunjucks')
 const path = require('path')
 const fs = require('fs')
 
-/**
- * @module viewsLoader
- * @description Custom async implementation of nunjucks views loader
- */
-/*jshint -W120 */
 exports = module.exports = nunjucks.Loader.extend({
   /**
    * @description Initiates views loader

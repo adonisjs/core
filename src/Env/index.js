@@ -11,7 +11,7 @@ const dotenv = require('dotenv')
 
 class Env {
 
-  constructor( Helpers) {
+  constructor (Helpers) {
     const basePath = Helpers.basePath()
     const pathToEnvFile = path.join(basePath, '.env')
     dotenv.load({path: pathToEnvFile})
@@ -24,8 +24,8 @@ class Env {
    * @param  {Mixed} value
    * @return {Boolean}
    */
-  existy( value) {
-    return typeof (value) !== 'undefined' && typeof (value) !== 'null'
+  existy (value) {
+    return value !== undefined && value !== null
   }
 
   /**
@@ -36,7 +36,7 @@ class Env {
    * @param  {Mixed} defaultValue
    * @return {Mixed}
    */
-  get( key, defaultValue) {
+  get (key, defaultValue) {
     defaultValue = this.existy(defaultValue) ? defaultValue : null
     let returnValue = process.env[key] || defaultValue
     if (returnValue === 'true' || returnValue === '1') {
@@ -55,7 +55,7 @@ class Env {
    * @param  {Mixed} value
    * @public
    */
-  set( key, value) {
+  set (key, value) {
     process.env[key] = value
   }
 
