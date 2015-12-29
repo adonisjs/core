@@ -8,6 +8,7 @@ before_install:
   npm install -g n
   n stable
   npm install npm -g
+  gcc --version
 install:
 - npm install
 notifications:
