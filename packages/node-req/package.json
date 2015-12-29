@@ -4,8 +4,8 @@
   "description": "I/O parser for nodejs http request",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "istanbul cover _mocha test --bail",
+    "test": "npm run standard && istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "coverage": "npm run standard && istanbul cover _mocha test --bail",
     "standard": "standard src/**/*.js test/*.js"
   },
   "keywords": [
