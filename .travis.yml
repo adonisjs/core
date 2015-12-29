@@ -3,6 +3,11 @@ node_js:
 - 5.3.0
 - 4.2.4
 sudo: false
+before_install:
+  npm cache clean -f
+  npm install -g n
+  n stable
+  npm install npm -g
 install:
 - npm install
 notifications:
