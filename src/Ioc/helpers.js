@@ -9,7 +9,6 @@
 const dwell = require('dwell')
 const _ = require('lodash')
 
-/*jshint -W120 */
 let helpers = exports = module.exports = {}
 
 /**

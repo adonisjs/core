@@ -1,5 +1,6 @@
 'use strict'
 
+/* global describe, it, context */
 /**
  * adonis-fold
  * Copyright(c) 2015-2015 Harminder Virk
@@ -40,7 +41,7 @@ describe('Ioc', function () {
 
     it("should add manager with a namespace and it's defination", function () {
       class Foo {
-        static extend() {}
+        static extend () {}
       }
       Ioc.manager('App/Foo', Foo)
       expect(Ioc.getManagers()['App/Foo']).deep.equal(Foo)
@@ -66,7 +67,7 @@ describe('Ioc', function () {
 
     it('should be able to fetch binding from ioc container with type hinted depedencies', function () {
       class Foo {
-        constructor(App_Bar) {
+        constructor (App_Bar) {
           this.bar = App_Bar
         }
       }
@@ -87,7 +88,7 @@ describe('Ioc', function () {
 
     it('should be able to bind instances as singleton', function (done) {
       class Foo {
-        constructor() {
+        constructor () {
           this.time = new Date().getTime()
         }
       }
@@ -101,9 +102,7 @@ describe('Ioc', function () {
         expect(foo1.time).to.equal(foo2.time)
         done()
       }, 1000)
-
     })
-
   })
 
   context('Autoloading', function () {
@@ -123,17 +122,16 @@ describe('Ioc', function () {
       }
       expect(fn).to.throw(/Cannot find module/)
     })
-
   })
 
   context('Manager', function () {
     it('should to be extend manager instance of a provider', function () {
       class Foo {
-        static extend() {}
+        static extend () {}
       }
 
       class Mongo {
-        constructor() {
+        constructor () {
           this.name = 'mongo'
         }
       }
@@ -145,19 +143,17 @@ describe('Ioc', function () {
 
       expect(Ioc.getExtenders()['App/Foo'][0]).to.be.an('object')
       expect(Ioc.getExtenders()['App/Foo'][0].key).to.equal('mongo')
-
     })
 
     it('should extend provider before resolving it', function () {
       class Cache {
+        static drivers () {}
 
-        static drivers() {}
-
-        constructor() {
+        constructor () {
           return this.constructor.drivers.redis
         }
 
-        static extend( key, defination) {
+        static extend (key, defination) {
           this.drivers[key] = defination
         }
       }
@@ -176,7 +172,6 @@ describe('Ioc', function () {
       })
 
       expect(Ioc.use('App/Cache') instanceof Redis).to.equal(true)
-
     })
 
     it('should throw an error when trying to extend provider without a callback', function () {
@@ -185,38 +180,30 @@ describe('Ioc', function () {
       }
       expect(fn).to.throw(/Invalid arguments, extend expects a callback/)
     })
-
   })
 
   context('Make', function () {
     it('should make an instance of class when there are no injections', function () {
       class Redis {
       }
-
       const redis = Ioc.make(Redis)
       expect(redis instanceof Redis).to.equal(true)
-
     })
 
     it('should make an instance of class when there are injections to be typhinted from constructor', function () {
       class Foo {
       }
-
       Ioc.bind('App/Foo', function () {
         return new Foo()
       })
-
       class Redis {
-
-        constructor( App_Foo) {
+        constructor (App_Foo) {
           this.foo = App_Foo
         }
-
       }
 
       const redis = Ioc.make(Redis)
       expect(redis.foo instanceof Foo).to.equal(true)
-
     })
 
     it('should make an instance of class when there are injections injected via inject method', function () {
@@ -229,11 +216,11 @@ describe('Ioc', function () {
 
       class Redis {
 
-        static get inject() {
+        static get inject () {
           return ['App/Foo']
         }
 
-        constructor( Foo) {
+        constructor (Foo) {
           this.foo = Foo
         }
 
@@ -241,7 +228,6 @@ describe('Ioc', function () {
 
       const redis = Ioc.make(Redis)
       expect(redis.foo instanceof Foo).to.equal(true)
-
     })
 
     it('should be able to make nested classes', function () {
@@ -253,7 +239,7 @@ describe('Ioc', function () {
       })
 
       class Foo {
-        constructor( Bar) {
+        constructor (Bar) {
           this.bar = Bar
         }
       }
@@ -263,10 +249,10 @@ describe('Ioc', function () {
       })
 
       class Redis {
-        static get inject() {
+        static get inject () {
           return ['App/Foo']
         }
-        constructor( Foo) {
+        constructor (Foo) {
           this.foo = Foo
         }
       }
@@ -274,17 +260,16 @@ describe('Ioc', function () {
       const redis = Ioc.make(Redis)
       expect(redis.foo instanceof Foo).to.equal(true)
       expect(redis.foo.bar instanceof Bar).to.equal(true)
-
     })
 
     it('should be able to deep inject classes from autoloaded path', function () {
       Ioc.autoload('App', __dirname + '/app')
 
       class Foo {
-        static get inject() {
+        static get inject () {
           return ['App/Services/Service']
         }
-        constructor( Service) {
+        constructor (Service) {
           this.services = Service
         }
       }
@@ -340,7 +325,6 @@ describe('Ioc', function () {
       const userController = Ioc.makeFunc('App/Http/Controllers/UserController.hello')
       expect(userController.instance[userController.method]()).to.equal('hello world')
     })
-
   })
 
   context('Global', function () {
@@ -376,5 +360,16 @@ describe('Ioc', function () {
       expect(Ioc.use('Foo') instanceof Foo).to.equal(true)
     })
 
+    it('should transform output of a path using it\'s hooks', function () {
+      expect(Ioc.use('App/Services/Hook')).to.equal('bar')
+    })
+
+    it('should transform output of a path using multiple hooks', function () {
+      expect(Ioc.use('App/Services/MultipleHooks')).to.equal('newBar')
+    })
+
+    it('should not transform if hook is not a function', function () {
+      expect(Ioc.use('App/Services/FakeHook')).to.be.a('function')
+    })
   })
 })

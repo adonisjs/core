@@ -1,5 +1,6 @@
 'use strict'
 
+/* global describe, it*/
 /**
  * adonis-fold
  * Copyright(c) 2015-2015 Harminder Virk
@@ -20,7 +21,5 @@ describe('Registrar', function () {
         expect(Ioc.use('Providers/Foo').foo).to.equal('bar')
         done()
       }).catch(done)
-
   })
-
 })

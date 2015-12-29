@@ -6,21 +6,11 @@
   * MIT Licensed
 */
 
-/**
- * @ignore
-*/
 const parallel = require('co-parallel')
 const co = require('co')
 const _ = require('lodash')
 const requireStack = require('require-stack')
 
-/**
- * @module Registrar
- * @description Register providers to ioc container
- * @type {Object}
- */
-
-/*jshint -W120 */
 let Registrar = exports = module.exports = {}
 
 /**
