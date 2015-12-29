@@ -1,7 +1,7 @@
 language: node_js
 node_js:
-- iojs
 - 4.0.0
+- 5.3.0
 sudo: false
 install:
 - npm install
