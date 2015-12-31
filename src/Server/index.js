@@ -12,7 +12,7 @@ const http = require('http')
 
 class Server {
 
-  constructor (Request, Response, Route, Helpers, Middleware, Static, Session) {
+  constructor (Request, Response, Route, Helpers, Middleware, Static, Session, Config) {
     this.Request = Request
     this.Response = Response
     this.Session = Session
@@ -20,6 +20,7 @@ class Server {
     this.middleware = Middleware
     this.static = Static
     this.helpers = Helpers
+    this.config = Config
     this.log = new CatLog('adonis:framework')
   }
 
@@ -63,7 +64,7 @@ class Server {
    */
   handle (req, res) {
     const self = this
-    const request = new this.Request(req, res)
+    const request = new this.Request(req, res, this.config)
     const response = new this.Response(request, res)
     const session = new this.Session(req, res)
     const requestUrl = request.url()

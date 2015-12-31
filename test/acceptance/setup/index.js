@@ -12,6 +12,13 @@ const Static = require('../../../src/Static')
 
 class Session {}
 
+const Config = {
+  get: function (key) {
+    return key === 'http.trustProxy' ? true : 2
+  }
+}
+
+
 module.exports = function () {
   const Env = {
     get: function () {
@@ -22,6 +29,6 @@ module.exports = function () {
   const view = new View(Helpers, Env, Route)
   const Response = new ResponseBuilder(view, Route)
   const staticServer = new Static(Helpers)
-  const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session)
+  const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, Config)
   return server;
 }

@@ -21,9 +21,10 @@ const log = new CatLog('adonis:framework')
  */
 class Request {
 
-  constructor (request, response) {
+  constructor (request, response, Config) {
     this.request = request
     this.response = response
+    this.config = Config
     this._body = {}
     this._files = []
 
@@ -170,7 +171,7 @@ class Request {
    * @public
    */
   ip () {
-    return nodeReq.ip(this.request, '127.0.0.1')
+    return nodeReq.ip(this.request, this.config.get('http.trustProxy'))
   }
 
   /**
@@ -181,7 +182,7 @@ class Request {
    * @public
    */
   ips () {
-    return nodeReq.ips(this.request)
+    return nodeReq.ips(this.request, this.config.get('http.trustProxy'))
   }
 
   /**
@@ -202,7 +203,7 @@ class Request {
    * @public
    */
   subdomains () {
-    return nodeReq.subdomains(this.request)
+    return nodeReq.subdomains(this.request, this.config.get('http.trustProxy'), this.config.get('http.subdomainOffset'))
   }
 
   /**
@@ -233,7 +234,7 @@ class Request {
    * @public
    */
   hostname () {
-    return nodeReq.hostname(this.request)
+    return nodeReq.hostname(this.request, this.config.get('http.trustProxy'))
   }
 
   /**

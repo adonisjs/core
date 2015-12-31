@@ -19,8 +19,9 @@ class ServerProvider extends ServiceProvider {
       const Middleware = app.use('Adonis/Src/Middleware')
       const Static = app.use('Adonis/Src/Static')
       const Session = app.use('Adonis/Src/Session')
+      const Config = app.use('Adonis/Src/Config')
       const Server = require('../src/Server')
-      return new Server(Request, Response, Route, Helpers, Middleware, Static, Session)
+      return new Server(Request, Response, Route, Helpers, Middleware, Static, Session, Config)
     })
   }
 }

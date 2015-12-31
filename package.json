@@ -44,7 +44,7 @@
     "lodash": "^3.10.1",
     "mkdirp": "^0.5.1",
     "node-cookie": "^1.0.0",
-    "node-req": "^1.0.0",
+    "node-req": "^1.0.1",
     "node-res": "^2.0.0",
     "node-static": "^0.7.7",
     "node-uuid": "^1.4.3",
