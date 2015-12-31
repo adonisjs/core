@@ -19,6 +19,12 @@ const formidable = require('formidable')
 const querystring = require("querystring")
 const co = require('co')
 
+const Config = {
+  get: function (key) {
+    return key === 'http.trustProxy' ? true : 2
+  }
+}
+
 require('co-mocha')
 
 describe('Request', function () {
@@ -27,7 +33,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
 
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const query = request.get()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({query}),'utf8')
@@ -43,7 +49,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
 
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const query = request.get()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({query}),'utf8')
@@ -58,7 +64,7 @@ describe('Request', function () {
   it('should get request post data', function * () {
     const server = http.createServer(function (req, res) {
       req._body = {name:"foo"}
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const body = request.post()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({body}),'utf8')
@@ -71,7 +77,7 @@ describe('Request', function () {
 
   it('should return empty object when post body does not exists', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const body = request.post()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({body}),'utf8')
@@ -84,7 +90,7 @@ describe('Request', function () {
 
   it('should get value for a given key using input method', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const name = request.input("name")
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({name}),'utf8')
@@ -96,7 +102,7 @@ describe('Request', function () {
 
   it('should return null when value for input key is not available', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const name = request.input("name")
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({name}),'utf8')
@@ -108,7 +114,7 @@ describe('Request', function () {
 
   it('should return default value when value for input key is not available', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const name = request.input("name", "doe")
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({name}),'utf8')
@@ -122,7 +128,7 @@ describe('Request', function () {
   it('should return get and post values when using all', function * () {
     const server = http.createServer(function (req, res) {
       req._body = {age:22}
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const all = request.all()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -135,7 +141,7 @@ describe('Request', function () {
   it('should return all values expect defined keys', function * () {
     const server = http.createServer(function (req, res) {
       req._body = {age:22}
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const all = request.except('age')
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -148,7 +154,7 @@ describe('Request', function () {
   it('should return all values expect defined keys when defined as an array', function * () {
     const server = http.createServer(function (req, res) {
       req._body = {age:22}
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const all = request.except(['age'])
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -161,7 +167,7 @@ describe('Request', function () {
   it('should not return key/value pair for key that does not exists', function * () {
     const server = http.createServer(function (req, res) {
       req._body = {age:22}
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const all = request.except(['foo'])
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -175,7 +181,7 @@ describe('Request', function () {
   it('should return all values for only defined keys', function * () {
     const server = http.createServer(function (req, res) {
       req._body = {age:22}
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const all = request.only('age')
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -188,7 +194,7 @@ describe('Request', function () {
   it('should return all values for only defined keys when keys are defined as array', function * () {
     const server = http.createServer(function (req, res) {
       req._body = {age:22}
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const all = request.only(['age'])
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -201,7 +207,7 @@ describe('Request', function () {
   it('should not return key/value pair for key that does not exists', function * () {
     const server = http.createServer(function (req, res) {
       req._body = {age:22}
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const all = request.only(['foo'])
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -214,7 +220,7 @@ describe('Request', function () {
 
   it('should return all headers for a given request', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const headers = request.headers()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({headers}),'utf8')
@@ -227,7 +233,7 @@ describe('Request', function () {
 
   it('should return header value for a given key', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const username = request.header("username")
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({username}),'utf8')
@@ -239,7 +245,7 @@ describe('Request', function () {
 
   it('should check for request freshness', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const fresh = request.fresh()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({fresh}),'utf8')
@@ -251,7 +257,7 @@ describe('Request', function () {
 
   it('should tell whether request is stale or not', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const stale = request.stale()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({stale}),'utf8')
@@ -263,7 +269,7 @@ describe('Request', function () {
 
   it('should return best match for request ip address', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const ip = request.ip()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({ip}),'utf8')
@@ -275,7 +281,7 @@ describe('Request', function () {
 
   it('should return all ip addresses from a given request', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const ips = request.ips()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({ips}),'utf8')
@@ -292,7 +298,7 @@ describe('Request', function () {
     pem.createCertificate({days:1, selfSigned:true}, function(err, keys){
 
       const server = https.createServer({key: keys.serviceKey, cert: keys.certificate},function (req, res) {
-        const request = new Request(req, res)
+        const request = new Request(req, res, Config)
         const secure = request.secure()
         res.writeHead(200, {"Content-type":"application/json"})
         res.end(JSON.stringify({secure}),'utf8')
@@ -314,14 +320,20 @@ describe('Request', function () {
   })
 
   it('should return request subdomains', function * () {
-    const request = new Request({url:'http://virk.abc.com'}, {})
-    const subdomains = request.subdomains()
-    expect(subdomains).deep.equal(['virk'])
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const subdomains = request.subdomains()
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({subdomains}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").set('X-Forwarded-Host','virk.adonisjs.com').expect(200).end()
+    expect(res.body.subdomains).deep.equal(['virk'])
   })
 
   it('should tell whether request is ajax or not', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const ajax = request.ajax()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({ajax}),'utf8')
@@ -333,7 +345,7 @@ describe('Request', function () {
 
   it('should tell whether request is pjax or not', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const pjax = request.pjax()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({pjax}),'utf8')
@@ -346,20 +358,20 @@ describe('Request', function () {
   it('should return request host name', function * () {
 
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const hostname = request.hostname()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({hostname}),'utf8')
     })
 
     const res = yield supertest(server).get("/").expect(200).end()
-    expect(res.body.hostname).to.equal(null)
+    expect(res.body.hostname).to.equal('127.0.0.1')
   })
 
 
   it('should return request url', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const url = request.url()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({url}),'utf8')
@@ -371,7 +383,7 @@ describe('Request', function () {
 
   it('should return request original url', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const originalUrl = request.originalUrl()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({originalUrl}),'utf8')
@@ -383,7 +395,7 @@ describe('Request', function () {
 
   it('should return request method', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const method = request.method()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({method}),'utf8')
@@ -395,7 +407,7 @@ describe('Request', function () {
 
   it('should tell whether request is of certain type', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const isHtml = request.is('html')
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({isHtml}),'utf8')
@@ -407,7 +419,7 @@ describe('Request', function () {
 
   it('should tell best response type request will accept', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const html = request.accepts('html')
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({html}),'utf8')
@@ -419,7 +431,7 @@ describe('Request', function () {
 
   it('should return request cookies', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const cookies = request.cookies()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({cookies}),'utf8')
@@ -431,7 +443,7 @@ describe('Request', function () {
 
   it('should not reparse cookies after calling cookies method multiple times', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.cookies()
       request.cookiesObject.age = 22
       const cookiesAgain = request.cookies()
@@ -445,7 +457,7 @@ describe('Request', function () {
 
   it('should return cookie value for a given key', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const name = request.cookie('name')
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({name}),'utf8')
@@ -457,7 +469,7 @@ describe('Request', function () {
 
   it('should return null when cookie value for a given key does not exists', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const age = request.cookie('age')
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({age}),'utf8')
@@ -469,7 +481,7 @@ describe('Request', function () {
 
   it('should return route params', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request._params = {id:1}
       const params = request.params()
       res.writeHead(200, {"Content-type":"application/json"})
@@ -482,7 +494,7 @@ describe('Request', function () {
 
   it('should return empty object when request params does not exists', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       const params = request.params()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({params}),'utf8')
@@ -494,7 +506,7 @@ describe('Request', function () {
 
   it('should return request param value for a given key', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request._params = {id:1}
       const id = request.param('id')
       res.writeHead(200, {"Content-type":"application/json"})
@@ -507,7 +519,7 @@ describe('Request', function () {
 
   it('should return request null when param value for a given key does not exists', function * () {
     const server = http.createServer(function (req, res) {
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request._params = {id:1}
       const name = request.param('name')
       res.writeHead(200, {"Content-type":"application/json"})
@@ -521,7 +533,7 @@ describe('Request', function () {
   it('should return an uploaded file as an instance of File object', function * () {
     const server = http.createServer(function (req, res) {
       var form = new formidable.IncomingForm();
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       form.parse(req, function(err, fields, files) {
         request._files = files
         const file = request.file('logo')
@@ -536,7 +548,7 @@ describe('Request', function () {
   it('should return an empty file instance when file is not uploaded', function * () {
     const server = http.createServer(function (req, res) {
       var form = new formidable.IncomingForm();
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       form.parse(req, function(err, fields, files) {
         request._files = files
         const file = request.file('logo')
@@ -551,7 +563,7 @@ describe('Request', function () {
   it('should return all uploaded file as an instance of File object', function * () {
     const server = http.createServer(function (req, res) {
       var form = new formidable.IncomingForm();
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       form.parse(req, function(err, fields, files) {
         request._files = files
         const allFiles = request.files()
@@ -574,7 +586,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         yield request.flash('username', 'foo')
@@ -601,7 +613,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         yield request.flash({username:'foo'})
@@ -628,7 +640,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         request._flash_messages = yield sessionManager.pull('flash_messages', {})
@@ -655,7 +667,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         request._flash_messages = yield sessionManager.pull('flash_messages', {})
@@ -681,7 +693,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         request._flash_messages = yield sessionManager.pull('flash_messages', {})
@@ -706,7 +718,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         return request.old('username', 'foo')
@@ -730,7 +742,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         return yield request.flashAll()
@@ -757,7 +769,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         return yield request.flashExcept('age')
@@ -784,7 +796,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         return yield request.flashExcept(['age'])
@@ -811,7 +823,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         return yield request.flashOnly('age')
@@ -838,7 +850,7 @@ describe('Request', function () {
 
     const server = http.createServer(function (req, res) {
       sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res)
+      const request = new Request(req, res, Config)
       request.session = sessionManager
       co(function * () {
         return yield request.flashOnly(['age'])
