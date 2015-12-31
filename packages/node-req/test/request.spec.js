@@ -163,18 +163,42 @@ describe('Http Request', function () {
   })
   it('should return all request ip addresses', function * () {
     const server = http.createServer(function (req, res) {
-      const ip = Request.ips(req)
+      const ips = Request.ips(req, true)
       res.writeHead(200, {'content-type': 'application/json'})
-      res.write(JSON.stringify({ip}))
+      res.write(JSON.stringify({ips}))
       res.end()
     })
     const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.ip).to.match(/127\.0\.0\.1/)
+    expect(res.body.ips).deep.equal([])
   })
 
   it('should request protocol', function * () {
     const server = http.createServer(function (req, res) {
       const protocol = Request.protocol(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({protocol}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.protocol).to.equal('http')
+  })
+
+  it('should request X-Forwarded-Proto when trust proxy is enabled', function * () {
+    const server = http.createServer(function (req, res) {
+      const protocol = Request.protocol(req, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({protocol}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('X-Forwarded-Proto', 'https').expect(200).end()
+    expect(res.body.protocol).to.equal('https')
+  })
+
+  it('should actual protocol when trust proxy is enabled but X-Forwarded-Proto is missing', function * () {
+    const server = http.createServer(function (req, res) {
+      const protocol = Request.protocol(req, true)
       res.writeHead(200, {'content-type': 'application/json'})
       res.write(JSON.stringify({protocol}))
       res.end()
@@ -209,36 +233,51 @@ describe('Http Request', function () {
     })
   })
 
-  it('should not return www as subdomain for a given url', function () {
-    const req = {
-      url: 'http://www.abc.com'
-    }
-    const subdomains = Request.subdomains(req)
-    expect(subdomains).deep.equal([])
+  it('should not return www as subdomain for a given url', function * () {
+    const server = http.createServer(function (req, res) {
+      const subdomains = Request.subdomains(req, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({subdomains}))
+      res.end()
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.subdomains).deep.equal([])
   })
 
-  it('should return subdomains and should not remove www if not the base subdomain', function () {
-    const req = {
-      url: 'http://virk.www.abc.com'
-    }
-    const subdomains = Request.subdomains(req)
-    expect(subdomains).deep.equal(['www', 'virk'])
+  it('should return subdomains and should not remove www if not the base subdomain', function * () {
+    const server = http.createServer(function (req, res) {
+      req.headers.host = 'virk.www.adonisjs.com'
+      const subdomains = Request.subdomains(req, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({subdomains}))
+      res.end()
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.subdomains).deep.equal(['www', 'virk'])
   })
 
-  it('should return subdomains for a given url and remove www if is the base subdomain', function () {
-    const req = {
-      url: 'http://www.virk.abc.com'
-    }
-    const subdomains = Request.subdomains(req)
-    expect(subdomains).deep.equal(['virk'])
+  it('should return subdomains for a given url and remove www if is the base subdomain', function * () {
+    const server = http.createServer(function (req, res) {
+      req.headers.host = 'www.virk.adonisjs.com'
+      const subdomains = Request.subdomains(req, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({subdomains}))
+      res.end()
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.subdomains).deep.equal(['virk'])
   })
 
-  it('should return empty array when hostname is an ip address', function () {
-    const req = {
-      url: 'http://127.0.0.1'
-    }
-    const subdomains = Request.subdomains(req)
-    expect(subdomains).deep.equal([])
+  it('should return empty array when hostname is an ip address', function * () {
+    const server = http.createServer(function (req, res) {
+      req.headers.host = '127.0.0.1'
+      const subdomains = Request.subdomains(req, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({subdomains}))
+      res.end()
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.subdomains).deep.equal([])
   })
 
   it('should tell whether request is ajax or not', function * () {
@@ -285,6 +324,7 @@ describe('Http Request', function () {
     const res = yield supertest(server).get('/').expect(200).end()
     expect(res.body.pjax).to.equal(false)
   })
+
   it('should return request hostname', function * () {
     const server = http.createServer(function (req, res) {
       const hostname = Request.hostname(req)
@@ -294,8 +334,123 @@ describe('Http Request', function () {
     })
 
     const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.hostname).to.equal(null)
+    expect(res.body.hostname).to.equal('127.0.0.1')
   })
+
+  it('should return request hostname from X-Forwarded-Host when trust proxy is defined as a position', function * () {
+    const server = http.createServer(function (req, res) {
+      const hostname = Request.hostname(req, 1)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('X-Forwarded-Host', '10.0.0.1').expect(200).end()
+    expect(res.body.hostname).to.equal('10.0.0.1')
+  })
+
+  it('should return undefined when unable to get hostname', function * () {
+    const server = http.createServer(function (req, res) {
+      const hostname = Request.hostname(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Host', '').expect(200).end()
+    expect(res.body.hostname).to.equal(undefined)
+  })
+
+  it('should return request hostname from X-Forwarded-Host when trust proxy is enabled', function * () {
+    const server = http.createServer(function (req, res) {
+      req.headers['x-forwarded-host'] = 'amanvirk.me'
+      const hostname = Request.hostname(req, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.hostname).to.equal('amanvirk.me')
+  })
+
+  it('should return request hostname from X-Forwarded-Host when trust proxy is a function', function * () {
+    const server = http.createServer(function (req, res) {
+      req.headers['x-forwarded-host'] = 'amanvirk.me'
+      const hostname = Request.hostname(req, function (addr) {
+        return true
+      })
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.hostname).to.equal('amanvirk.me')
+  })
+
+  it('should return request connection remoteAddress when trust proxy is disabled', function * () {
+    const server = http.createServer(function (req, res) {
+      req.headers['x-forwarded-host'] = 'amanvirk.me'
+      const hostname = Request.hostname(req, false)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.hostname).to.equal('127.0.0.1')
+  })
+
+  it('should return request connection X-Forwarded-Host when trust proxy is loopback, since we are on localhost', function * () {
+    const server = http.createServer(function (req, res) {
+      req.headers['x-forwarded-host'] = 'amanvirk.me'
+      const hostname = Request.hostname(req, 'loopback')
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.hostname).to.equal('amanvirk.me')
+  })
+
+  it('should work with ipv6 hostnames', function * () {
+    const server = http.createServer(function (req, res) {
+      const hostname = Request.hostname(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Host', '[::1]').expect(200).end()
+    expect(res.body.hostname).to.equal('[::1]')
+  })
+
+  it('should work with ipv6 hostnames and port', function * () {
+    const server = http.createServer(function (req, res) {
+      const hostname = Request.hostname(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Host', '[::1]:3000').expect(200).end()
+    expect(res.body.hostname).to.equal('[::1]')
+  })
+
+  it('should return original host when X-Forwarded-Host is not trusted', function * () {
+    const server = http.createServer(function (req, res) {
+      const hostname = Request.hostname(req, '192.168.0.1')
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hostname}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('X-Forwarded-Host', '10.0.0.1').expect(200).end()
+    expect(res.body.hostname).to.equal('127.0.0.1')
+  })
+
   it('should return request url without query string or hash', function * () {
     const server = http.createServer(function (req, res) {
       const url = Request.url(req)

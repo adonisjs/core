@@ -99,11 +99,13 @@ Returns request ip based on trusted proxy, check out [proxyaddr](https://www.npm
 nodeReq.ip(req, ['127.0.0.0/8', '10.0.0.0/8'])
 ```
 
-#### ips (req)
-Returns list of all IP address associated with a request, starting from closest to furthest based on trusted proxy
+#### ips (req, trust)
+Returns list of all IP address associated with a request, starting from closest to furthest based on trusted proxy. Also check out [proxyaddr](https://www.npmjs.com/package/proxy-addr) for more info
 
 ```javascript
-nodeReq.ips(req)
+nodeReq.ips(req, function (remoteAddress) {
+  return remoteAddress === '127.0.0.1'
+})
 ```
 
 #### secure (req)
@@ -113,12 +115,12 @@ Is request from https ?
 nodeReq.secure(req)
 ```
 
-#### subdomains (req, offset=2)
-List of subdomains on a given request
+#### subdomains (req, trust, offset=2)
+List of subdomains on a given request. If trust is enabled it will refer to the `X-Forwarded-Host` header. Also check out [proxyaddr](https://www.npmjs.com/package/proxy-addr) for more info
 
 ```javascript
 // request url gig.baz.com
-nodeReq.subdomains(req)
+nodeReq.subdomains(req, false)
 
 // returns ['gig']
 ```
@@ -133,7 +135,7 @@ nodeReq.subdomains(req)
 ```
 
 #### ajax (req)
-determines whether a request is ajax or not based on `X-Requested-With` header
+determines whether a request is ajax or not based on `X-Requested-With` header.
 
 ```javascript
 nodeReq.ajax(req)
@@ -146,11 +148,11 @@ determines whether a request is pjax or not based on `X-Pjax` header
 nodeReq.pjax(req)
 ```
 
-#### hostname (req)
-returns request hostname
+#### hostname (req, trust)
+returns request hostname and if trust is enabled, it will refer to the `X-Forwarded-Host` header. Also check out [proxyaddr](https://www.npmjs.com/package/proxy-addr) for more info
 
 ```javascript
-nodeReq.hostname(req)
+nodeReq.hostname(req, trust)
 ```
 
 #### url (req)

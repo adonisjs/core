@@ -15,6 +15,34 @@ const accepts = require('accepts')
 const is = require('type-is')
 
 /**
+ * @description compiles different values of trust proxy
+ * into an invokable function.
+ * INSPIRED BY EXPRESS
+ * @method compileTrust
+ * @param  {Mixed}     value
+ * @return {Function}
+ */
+const compileTrust = function (value) {
+  if (typeof (value) === 'function') {
+    return value
+  }
+  if (value === true) {
+    return function () {
+      return true
+    }
+  }
+  if (typeof (value) === 'number') {
+    return function (a, i) {
+      return i < value
+    }
+  }
+  if (typeof value === 'string') {
+    value = value.split(/ *, */)
+  }
+  return proxyaddr.compile(value || [])
+}
+
+/**
  * @module Request
  * @description Lean io module for parsing http
  * request.
@@ -129,11 +157,11 @@ Request.stale = function (request, response) {
  * proxy or returns closest untrusted address
  * @method ip
  * @param  {Object}   request
- * @param  {Function} fn
+ * @param  {Mixed} trust
  * @return {String}
  */
-Request.ip = function (request, fn) {
-  return proxyaddr(request, fn)
+Request.ip = function (request, trust) {
+  return proxyaddr(request, compileTrust(trust))
 }
 
 /**
@@ -141,11 +169,13 @@ Request.ip = function (request, fn) {
  * ordered in closest to furthest trusted address
  * @method ips
  * @param  {Object} request
+ * @param  {Mixed} trust
  * @return {Array}
  * @public
  */
-Request.ips = function (request) {
-  return proxyaddr.all(request)
+Request.ips = function (request, trust) {
+  const addresses = proxyaddr.all(request, compileTrust(trust))
+  return addresses.slice(1).reverse()
 }
 
 /**
@@ -156,8 +186,12 @@ Request.ips = function (request) {
  * @return {String}
  * @public
  */
-Request.protocol = function (request) {
+Request.protocol = function (request, trust) {
   let proto = request.connection.encrypted ? 'https' : 'http'
+  trust = compileTrust(trust)
+  if (!trust(request.connection.remoteAddress, 0)) {
+    return proto
+  }
   proto = Request.header(request, 'X-Forwarded-Proto') || proto
   return proto.split(/\s*,\s*/)[0]
 }
@@ -178,13 +212,14 @@ Request.secure = function (request) {
  * returns request subdomain
  * @method subdomains
  * @param  {Object}   request
+ * @param  {Mixed}    trust
  * @param  {Number}   offset
  * @return {Array}
  * @public
  */
-Request.subdomains = function (request, offset) {
+Request.subdomains = function (request, trust, offset) {
   offset = offset || 2
-  const hostname = parseurl(request).hostname
+  const hostname = Request.hostname(request, trust)
 
   if (!hostname || isIP(hostname)) {
     return []
@@ -237,8 +272,28 @@ Request.pjax = function (request) {
  * @return {String}
  * @public
  */
-Request.hostname = function (request) {
-  return parseurl(request).hostname
+Request.hostname = function (request, trust) {
+  trust = compileTrust(trust)
+  let host = Request.header(request, 'X-Forwarded-Host')
+
+  /**
+   * grabbing host header if trust proxy is disabled or host
+   * does not exists on forwared headers
+   */
+  if (!host || !trust(request.connection.remoteAddress, 0)) {
+    host = Request.header(request, 'Host')
+  }
+
+  if (!host) {
+    return
+  }
+
+  /**
+   * Support for IPv6
+   */
+  const offset = host[0] === '[' ? host.indexOf(']') + 1 : 0
+  const index = host.indexOf(':', offset)
+  return index !== -1 ? host.substring(0, index) : host
 }
 
 /**
