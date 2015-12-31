@@ -110,6 +110,20 @@ describe('Response', function () {
     done()
   })
 
+  it('should make jsonp response using jsonp default callback when callback is missing in query string', function * (done) {
+
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.jsonp({name:"foo"})
+    })
+
+    const res = yield supertest(server).get('/').expect(200).expect('Content-type',/javascript/).end()
+    expect(res.text).to.match(/typeof callback/)
+    done()
+  })
+
+
   it('should set request status', function * (done) {
     const server = http.createServer((req, res) => {
       const request = new Request(req,res, Config)
