@@ -23,6 +23,11 @@ const path = require('path')
 class Session {
 
 }
+const Config = {
+  get: function (key) {
+    return key === 'http.trustProxy' ? true : 2
+  }
+}
 
 require('co-mocha')
 
@@ -40,7 +45,7 @@ describe("Server", function () {
     Ioc.autoload('App',path.join(__dirname, './app'))
     const staticServer = new Static(Helpers)
     const Response = new ResponseBuilder({})
-    this.server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session)
+    this.server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session, Config)
   })
 
   beforeEach(function () {
