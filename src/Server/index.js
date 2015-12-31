@@ -69,16 +69,6 @@ class Server {
     const session = new this.Session(req, res)
     const requestUrl = request.url()
     request.session = session
-    /**
-     * making request verb/method based upon _method or falling
-     * back to original method
-     * @type {String}
-     */
-    const method = request.input('_method', request.method())
-
-    const resolvedRoute = this.Route.resolve(requestUrl, method, request.hostname())
-    request._params = resolvedRoute.params
-
     this.log.verbose('request on url %s ', req.url)
 
     /**
@@ -88,6 +78,14 @@ class Server {
      * @return {Function}
      */
     const finalHandler = function * () {
+      /**
+       * making request verb/method based upon _method or falling
+       * back to original method
+       * @type {String}
+       */
+      const method = request.input('_method', request.method())
+      const resolvedRoute = self.Route.resolve(requestUrl, method, request.hostname())
+      request._params = resolvedRoute.params
       self._finalHandler(resolvedRoute, request, response)
     }
     helpers.respondRequest(this.middleware, request, response, finalHandler)
