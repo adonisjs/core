@@ -10,16 +10,16 @@ const crypto = require('crypto')
 
 class Encryption {
 
-  constructor (Env) {
-    this.appKey = Env.get('APP_KEY')
-    this.algorithm = Env.get('ENCRYPTION', 'aes-256-cbc')
+  constructor (Config) {
+    this.appKey = Config.get('app.appKey')
+    this.algorithm = Config.get('app.encryption.algorithm', 'aes-256-cbc')
 
     /**
      * throwing error when APP_KEY is not defined as encryption
      * does not make sense without a key
      */
     if (!this.appKey) {
-      throw new Error('Encryption cannot work without APP_KEY')
+      throw new Error('Encryption cannot work without application key. Define appKey inside app config')
     }
   }
 

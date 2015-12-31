@@ -21,7 +21,14 @@ const co = require('co')
 
 const Config = {
   get: function (key) {
-    return key === 'http.trustProxy' ? true : 2
+    switch (key) {
+      case 'http.trustProxy':
+        return true
+      case 'app.appKey':
+        return null
+      default:
+        return 2
+    }
   }
 }
 
@@ -609,6 +616,7 @@ describe('Request', function () {
     SessionManager.options = {}
     SessionManager.options.cookie = 'adonis-session'
     SessionManager.options.browserClear = true
+    SessionManager.config = Config
     let sessionManager
 
     const server = http.createServer(function (req, res) {

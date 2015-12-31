@@ -14,8 +14,9 @@ class ResponseProvider extends ServiceProvider {
     this.app.singleton('Adonis/Src/Response', function (app) {
       const View = app.use('Adonis/Src/View')
       const Route = app.use('Adonis/Src/Route')
+      const Config = app.use('Adonis/Src/Config')
       const Response = require('../src/Response')
-      return new Response(View, Route)
+      return new Response(View, Route, Config)
     })
   }
 }

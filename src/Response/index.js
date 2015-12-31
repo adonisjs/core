@@ -10,6 +10,7 @@ const nodeRes = require('node-res')
 const nodeCookie = require('node-cookie')
 let viewInstance = null
 let routeInstance = null
+let configInstance = null
 
 /**
  * @class  Response class to be passed on
@@ -20,6 +21,9 @@ class Response {
   constructor (request, response) {
     this.request = request
     this.response = response
+    if (configInstance.get('app.http.setPoweredBy', true)) {
+      nodeRes.header(this.response, 'x-powered-by', 'adonis')
+    }
   }
 
   /**
@@ -112,7 +116,7 @@ class Response {
    * @public
    */
   jsonp (body) {
-    const callback = this.request.input('callback')
+    const callback = this.request.input('callback') || configInstance.get('app.http.jsonpCallback')
     nodeRes.jsonp(this.request, this.response, body, callback)
   }
 
@@ -198,7 +202,7 @@ class Response {
    * @public
    */
   cookie (key, value, options) {
-    const secret = process.env.APP_KEY
+    const secret = configInstance.get('app.appKey')
     const encrypt = !!secret
     nodeCookie.create(this.request.request, this.response, key, value, options, secret, encrypt)
     return this
@@ -224,9 +228,10 @@ class Response {
  * view instance.
  */
 class ResponseBuilder {
-  constructor (View, Route) {
+  constructor (View, Route, Config) {
     viewInstance = View
     routeInstance = Route
+    configInstance = Config
     return Response
   }
 }

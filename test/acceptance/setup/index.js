@@ -14,21 +14,23 @@ class Session {}
 
 const Config = {
   get: function (key) {
-    return key === 'http.trustProxy' ? true : 2
+    switch (key) {
+      case 'http.trustProxy':
+        return false
+      case 'app.appKey':
+        return null
+      default:
+        return 0
+    }
   }
 }
 
 
 module.exports = function () {
-  const Env = {
-    get: function () {
-      return 'false'
-    }
-  }
   Helpers.load(path.join(__dirname,'../package.test.json'))
-  const view = new View(Helpers, Env, Route)
-  const Response = new ResponseBuilder(view, Route)
-  const staticServer = new Static(Helpers)
+  const view = new View(Helpers, Config, Route)
+  const Response = new ResponseBuilder(view, Route, Config)
+  const staticServer = new Static(Helpers, Config)
   const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, Config)
   return server;
 }

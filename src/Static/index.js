@@ -14,9 +14,18 @@ const nodeStatic = require('node-static')
  */
 class Static {
 
-  constructor (Helpers) {
+  constructor (Helpers, Config) {
     this.publicPath = Helpers.publicPath()
-    this.server = new nodeStatic.Server(this.publicPath)
+
+    const options = {
+      cache: Config.get('static.cache', 3600),
+      serverInfo: 'adonis-static',
+      headers: Config.get('static.headers', {}),
+      gzip: Config.get('static.gzip', false),
+      indexFile: Config.get('static.indexFile', 'index.html')
+    }
+
+    this.server = new nodeStatic.Server(this.publicPath, options)
   }
 
   /**

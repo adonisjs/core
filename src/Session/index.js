@@ -74,6 +74,7 @@ class Session {
     }
     SessionManager.driver = driverInstance
     SessionManager.options = sessionOptions
+    SessionManager.config = Config
     return SessionManager
   }
 

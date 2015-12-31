@@ -17,10 +17,17 @@ const Session = require('../../src/Session')
 const querystring = require("querystring")
 require('co-mocha')
 
-let Config = {
-  get: function () {
-    return 'cookie'
+const _get = function (key) {
+    switch (key) {
+      case 'app.appKey':
+        return null
+      default :
+        return 'cookie'
+    }
   }
+
+let Config = {
+   get: _get
 }
 
 describe('Session', function  () {
@@ -211,10 +218,11 @@ describe('Session', function  () {
     })
 
     it('should set session on cookies when active driver is cookie', function * () {
-
+      Config.get = _get
       SessionManager.driver = 'cookie'
       SessionManager.options.domain = null
       SessionManager.options.path = '/'
+      SessionManager.config = Config
       let sessionManager
 
       const server = http.createServer(function (req, res) {

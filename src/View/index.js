@@ -16,9 +16,9 @@ const viewExtensions = require('./extensions')
  * @description View class for adonis framework ,
  * serve jinja like views
  */
-function View (Helpers, Env, Route) {
+function View (Helpers, Config, Route) {
   const viewsPath = Helpers.viewsPath()
-  const viewsCache = Env.get('CACHE_VIEWS', true)
+  const viewsCache = Config.get('app.views.cache', true)
   this.viewsEnv = new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
   viewExtensions(this.viewsEnv)
   viewFilters(this.viewsEnv, Route)

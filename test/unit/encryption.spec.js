@@ -12,12 +12,12 @@ const crypto = require('crypto')
 const expect = chai.expect
 let encryption
 
-const Env = {
+const Config = {
   get: function (key) {
-    if(key === 'APP_KEY'){
+    if(key === 'app.appKey'){
       return 'bubblegum'
     }
-    if(key === 'ENCRYPTION'){
+    if(key === 'app.encryption.algorithm'){
       return 'aes-256-cbc'
     }
   }
@@ -26,18 +26,18 @@ const Env = {
 describe('Encryption', function() {
 
   before(function () {
-    encryption = new Encryption(Env)
+    encryption = new Encryption(Config)
   })
 
   it('should throw error when APP_KEY is not defined', function () {
     const fn = function () {
       return new Encryption({get: function () {}})
     }
-    expect(fn).to.throw(/Encryption cannot work without APP_KEY/i)
+    expect(fn).to.throw(/Encryption cannot work without application key/i)
   })
 
   it('should encryption values using defined algorithm', function () {
-    const cipher = crypto.createCipher(Env.get('ENCRYPTION'),Env.get('APP_KEY'))
+    const cipher = crypto.createCipher(Config.get('app.encryption.algorithm'),Config.get('app.appKey'))
     cipher.update('virk')
     const encrypted = encryption.encrypt('virk')
     expect(encrypted).to.equal(cipher.final('hex'))

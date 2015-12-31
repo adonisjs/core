@@ -13,8 +13,9 @@ class StaticProvider extends ServiceProvider {
   * register () {
     this.app.bind('Adonis/Src/Static', function (app) {
       const Helpers = app.use('Adonis/Src/Helpers')
+      const Config = app.use('Adonis/Src/Config')
       const Static = require('../src/Static')
-      return new Static(Helpers)
+      return new Static(Helpers, Config)
     })
   }
 }

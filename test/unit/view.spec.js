@@ -22,12 +22,12 @@ describe('View',function () {
         return path.join(__dirname,'./app/views')
       }
     }
-    const Env = {
+    const Config = {
       get: function () {
         return true
       }
     }
-    this.view = new View(Helpers, Env, Route)
+    this.view = new View(Helpers, Config, Route)
 
   })
 
