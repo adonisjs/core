@@ -1,6 +1,6 @@
 {
   "name": "node-req",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "I/O parser for nodejs http request",
   "main": "index.js",
   "scripts": {
