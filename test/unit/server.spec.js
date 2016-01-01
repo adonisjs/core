@@ -43,8 +43,8 @@ describe("Server", function () {
       }
     }
     Ioc.autoload('App',path.join(__dirname, './app'))
-    const staticServer = new Static(Helpers)
-    const Response = new ResponseBuilder({})
+    const staticServer = new Static(Helpers, Config)
+    const Response = new ResponseBuilder({}, {}, Config)
     this.server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session, Config)
   })
 

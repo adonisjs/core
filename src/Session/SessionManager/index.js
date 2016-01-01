@@ -25,7 +25,7 @@ class SessionManager {
    * @private
    */
   _getSessionCookie () {
-    const secret = process.env.APP_KEY
+    const secret = this.constructor.config.get('app.appKey')
     const decrypt = !!secret
     return nodeCookie.parse(this.request, secret, decrypt)[this.constructor.options.cookie]
   }
@@ -37,7 +37,7 @@ class SessionManager {
    * @private
    */
   _setSessionCookie (session) {
-    const secret = process.env.APP_KEY
+    const secret = this.constructor.config.get('app.appKey')
     const encrypt = !!secret
 
     /**

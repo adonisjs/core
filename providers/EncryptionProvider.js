@@ -13,8 +13,8 @@ class EncryptionProvider extends ServiceProvider {
   * register () {
     this.app.singleton('Adonis/Src/Encryption', function (app) {
       const Encryption = require('../src/Encryption')
-      const Env = app.use('Adonis/Src/Env')
-      return new Encryption(Env)
+      const Config = app.use('Adonis/Src/Config')
+      return new Encryption(Config)
     })
   }
 }

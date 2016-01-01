@@ -32,7 +32,7 @@ class Request {
      * secret to parse and decrypt cookies
      * @type {String}
      */
-    this.secret = process.env.APP_KEY
+    this.secret = this.config.get('app.appKey')
 
     /**
      * holding references to cookies once they
@@ -171,7 +171,7 @@ class Request {
    * @public
    */
   ip () {
-    return nodeReq.ip(this.request, this.config.get('http.trustProxy'))
+    return nodeReq.ip(this.request, this.config.get('app.http.trustProxy'))
   }
 
   /**
@@ -182,7 +182,7 @@ class Request {
    * @public
    */
   ips () {
-    return nodeReq.ips(this.request, this.config.get('http.trustProxy'))
+    return nodeReq.ips(this.request, this.config.get('app.http.trustProxy'))
   }
 
   /**
@@ -203,7 +203,7 @@ class Request {
    * @public
    */
   subdomains () {
-    return nodeReq.subdomains(this.request, this.config.get('http.trustProxy'), this.config.get('http.subdomainOffset'))
+    return nodeReq.subdomains(this.request, this.config.get('app.http.trustProxy'), this.config.get('app.http.subdomainOffset'))
   }
 
   /**
@@ -234,7 +234,7 @@ class Request {
    * @public
    */
   hostname () {
-    return nodeReq.hostname(this.request, this.config.get('http.trustProxy'))
+    return nodeReq.hostname(this.request, this.config.get('app.http.trustProxy'))
   }
 
   /**
