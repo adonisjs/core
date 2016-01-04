@@ -97,6 +97,14 @@ describe("Helpers", function () {
     it('should return project views directory path', function () {
       expect(Helpers.viewsPath()).to.equal(path.join(basePath,'./resources/views'))
     })
+
+    it('should encode base64 string', function () {
+      expect(Helpers.base64Encode('Romain Lanz')).to.equal('Um9tYWluIExhbno=')
+    })
+
+    it('should decode base64 string', function () {
+      expect(Helpers.base64Decode('Um9tYWluIExhbno=')).to.equal('Romain Lanz')
+    })
   })
 
 
