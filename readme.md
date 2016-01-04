@@ -11,7 +11,7 @@ You can learn more about adonis on http://adonisjs.com
 
 ## The MIT License
 
-COPYRIGHT (c) 2015 Harminder Virk
+COPYRIGHT (c) 2016 Harminder Virk
 
 MIT License
 
