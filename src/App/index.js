@@ -2,7 +2,7 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2015 Harminder Virk
+ * Copyright(c) 2015-2016 Harminder Virk
  * MIT Licensed
 */
 const EventEmitter2 = require('eventemitter2').EventEmitter2
