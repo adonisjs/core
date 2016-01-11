@@ -10,6 +10,7 @@ const nodeCookie = require('node-cookie')
 const Type = require('type-of-is')
 const _ = require('lodash')
 const uuid = require('node-uuid')
+const util = require('../../../lib/util')
 
 class SessionManager {
 
@@ -317,9 +318,9 @@ class SessionManager {
    * @public
    */
   * get (key, defaultValue) {
-    defaultValue = defaultValue || null
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
     const sessionValues = yield this.all()
-    return sessionValues[key] || defaultValue
+    return util.existy(sessionValues[key]) ? sessionValues[key] : defaultValue
   }
 
   /**

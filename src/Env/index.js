@@ -8,6 +8,7 @@
 
 const path = require('path')
 const dotenv = require('dotenv')
+const util = require('../../lib/util')
 
 class Env {
 
@@ -15,17 +16,6 @@ class Env {
     const basePath = Helpers.basePath()
     const pathToEnvFile = path.join(basePath, '.env')
     dotenv.load({path: pathToEnvFile})
-  }
-
-  /**
-   * @description tells whether value exists or not by checking
-   * it type
-   * @method existy
-   * @param  {Mixed} value
-   * @return {Boolean}
-   */
-  existy (value) {
-    return value !== undefined && value !== null
   }
 
   /**
@@ -37,7 +27,7 @@ class Env {
    * @return {Mixed}
    */
   get (key, defaultValue) {
-    defaultValue = this.existy(defaultValue) ? defaultValue : null
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
     let returnValue = process.env[key] || defaultValue
     if (returnValue === 'true' || returnValue === '1') {
       return true

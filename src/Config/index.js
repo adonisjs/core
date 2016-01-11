@@ -8,23 +8,13 @@
 
 const autoLoad = require('auto-loader')
 const _ = require('lodash')
+const util = require('../../lib/util')
 
 class Config {
 
   constructor (Helpers) {
     this.configPath = Helpers.configPath()
     this.config = autoLoad.load(this.configPath)
-  }
-
-  /**
-   * @description tells whether value exists or not by checking
-   * it type
-   * @method existy
-   * @param  {Mixed} value
-   * @return {Boolean}
-   */
-  existy (value) {
-    return value !== undefined && value !== null
   }
 
   /**
@@ -36,9 +26,9 @@ class Config {
    * @public
    */
   get (key, defaultValue) {
-    defaultValue = this.existy(defaultValue) ? defaultValue : null
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
     const returnValue = _.get(this.config, key)
-    return this.existy(returnValue) ? returnValue : defaultValue
+    return util.existy(returnValue) ? returnValue : defaultValue
   }
 
   /**
