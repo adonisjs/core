@@ -16,6 +16,13 @@ const Helpers = {
 }
 
 describe('Config', function() {
+
+  it('should ignore any files apart from .js files inside the config directory', function () {
+    const config = new Config(Helpers)
+    expect(config.config).not.have.property('.gitkeep')
+    expect(config.config).to.have.property('database')
+  })
+
   it('should get values for a given key from config store', function () {
     const config = new Config(Helpers)
     const host = config.get('database.mysql.connection.host')

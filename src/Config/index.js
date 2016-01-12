@@ -14,7 +14,11 @@ class Config {
 
   constructor (Helpers) {
     this.configPath = Helpers.configPath()
-    this.config = autoLoad.load(this.configPath)
+    this.config = _.object(_.compact(_.map(autoLoad.load(this.configPath), function (file, name) {
+      if (name.endsWith('.js')) {
+        return [name.replace('.js', ''), file]
+      }
+    })))
   }
 
   /**

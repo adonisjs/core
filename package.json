@@ -35,7 +35,7 @@
     "adonis-fold": "^2.0.0"
   },
   "dependencies": {
-    "auto-loader": "^0.2.0",
+    "auto-loader": "git+https://github.com/thetutlage/node-auto-loader.git",
     "bcryptjs": "^2.3.0",
     "cat-log": "^1.0.0",
     "co": "^4.6.0",
@@ -51,5 +51,16 @@
     "nunjucks": "^2.1.0",
     "path-to-regexp": "^1.2.1",
     "type-of-is": "^3.4.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonisjs/adonis-framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-framework/issues"
+  },
+  "homepage": "https://github.com/adonisjs/adonis-framework#readme"
 }
