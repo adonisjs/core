@@ -1,7 +1,7 @@
 {
   "name": "adonis-framework",
-  "version": "2.0.3",
-  "description": "Adonis framework repo",
+  "version": "2.0.5",
+  "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
     "test": "npm run standard && _mocha test/unit test/acceptance --bail",
