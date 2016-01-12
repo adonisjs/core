@@ -1,6 +1,7 @@
 # AdonisJS Framework
 
 [![Gitter](https://img.shields.io/badge/+%20GITTER-JOIN%20CHAT%20%E2%86%92-1DCE73.svg?style=flat-square)](https://gitter.im/adonisjs/adonis-framework)
+[![Trello](https://img.shields.io/badge/TRELLO-%E2%86%92-89609E.svg?style=flat-square)](https://trello.com/b/yzpqCgdl/adonis-for-humans)
 [![Version](https://img.shields.io/npm/v/adonis-framework.svg?style=flat-square)](https://www.npmjs.com/package/adonis-framework)
 [![Build Status](https://img.shields.io/travis/adonisjs/adonis-framework.svg?style=flat-square)](https://travis-ci.org/adonisjs/adonis-framework)
 [![Coverage Status](https://img.shields.io/coveralls/adonisjs/adonis-framework/master.svg?style=flat-square)](https://coveralls.io/github/adonisjs/adonis-framework?branch=master)
