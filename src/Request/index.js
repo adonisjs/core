@@ -2,7 +2,7 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2015 Harminder Virk
+ * Copyright(c) 2015-2016 Harminder Virk
  * MIT Licensed
 */
 
@@ -12,6 +12,7 @@ const File = require('../File')
 const _ = require('lodash')
 const CatLog = require('cat-log')
 const log = new CatLog('adonis:framework')
+const util = require('../../lib/util')
 
 /**
  * @class  Request
@@ -60,9 +61,9 @@ class Request {
    * @public
    */
   input (key, defaultValue) {
-    defaultValue = defaultValue || null
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
     const input = this.all()
-    return input[key] || defaultValue
+    return util.existy(input[key]) ? input[key] : defaultValue
   }
 
   /**
@@ -332,8 +333,9 @@ class Request {
    * @return {Mixed}
    * @public
    */
-  param (key) {
-    return this.params()[key] || null
+  param (key, defaultValue) {
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
+    return util.existy(this.params()[key]) ? this.params()[key] : defaultValue
   }
 
   /**
@@ -438,8 +440,8 @@ class Request {
       log.warn('Make use of Flash middleware to enable flash messaging')
       this._flash_messages = {}
     }
-    defaultValue = defaultValue || null
-    return this._flash_messages[key] || defaultValue
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
+    return util.existy(this._flash_messages[key]) ? this._flash_messages[key] : defaultValue
   }
 
   /**

@@ -2,7 +2,7 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2015 Harminder Virk
+ * Copyright(c) 2015-2016 Harminder Virk
  * MIT Licensed
 */
 
@@ -524,7 +524,7 @@ describe('Request', function () {
     expect(res.body.id).to.equal(1)
   })
 
-  it('should return request null when param value for a given key does not exists', function * () {
+  it('should return null when param value for a given key does not exists', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
       request._params = {id:1}
@@ -536,6 +536,20 @@ describe('Request', function () {
     const res = yield supertest(server).get("/").expect(200).end()
     expect(res.body.name).to.equal(null)
   })
+
+  it('should return default value when param value for a given key does not exists', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._params = {id:1}
+      const name = request.param('name', 'bar')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({name}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.name).to.equal('bar')
+  })
+
 
   it('should return an uploaded file as an instance of File object', function * () {
     const server = http.createServer(function (req, res) {
