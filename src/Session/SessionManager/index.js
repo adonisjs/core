@@ -211,7 +211,7 @@ class SessionManager {
    */
   _getViaCookie () {
     const existingSession = this._getSessionCookie() || {}
-    return _.object(_.map(existingSession, (value, index) => {
+    return _.fromPairs(_.map(existingSession, (value, index) => {
       return [index, this._reverseBody(value)]
     }))
   }
@@ -256,7 +256,7 @@ class SessionManager {
       return {}
     }
     const existingSession = yield this.constructor.driver.read(sessionId)
-    return _.object(_.map(existingSession, (value, index) => {
+    return _.fromPairs(_.map(existingSession, (value, index) => {
       return [index, this._reverseBody(value)]
     }))
   }
