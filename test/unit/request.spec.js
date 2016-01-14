@@ -566,6 +566,76 @@ describe('Request', function () {
     expect(res.body.file).to.equal(true)
   })
 
+  it('should return true when a pattern matches the current route url', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const matches = request.match('/user/:id/profile')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({matches}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/user/1/profile").expect(200).end()
+    expect(res.body.matches).to.equal(true)
+  })
+
+  it('should return false when a pattern does not matches the current route url', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const matches = request.match('/user')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({matches}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/user/1/profile").expect(200).end()
+    expect(res.body.matches).to.equal(false)
+  })
+
+  it('should return true when any of the paths inside array matches the current route url', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const matches = request.match(['/user', '/user/1/profile'])
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({matches}),'utf8')
+    })
+    const res = yield supertest(server).get("/user/1/profile").expect(200).end()
+    expect(res.body.matches).to.equal(true)
+  })
+
+  it('should return false when none of the paths inside array matches the current route url', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const matches = request.match(['/user', '/user/1', '/1/profile'])
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({matches}),'utf8')
+    })
+    const res = yield supertest(server).get("/user/1/profile").expect(200).end()
+    expect(res.body.matches).to.equal(false)
+  })
+
+  it('should return true when any of the paths from any of the arguments matches the current route url', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const matches = request.match('/user', '/user/1/profile')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({matches}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/user/1/profile").expect(200).end()
+    expect(res.body.matches).to.equal(true)
+  })
+
+  it('should return false when any of the paths from any of the arguments does not matches the current route url', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const matches = request.match('/user', '/user/1', '/user/profile')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({matches}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/user/1/profile").expect(200).end()
+    expect(res.body.matches).to.equal(false)
+  })
+
   it('should return an empty file instance when file is not uploaded', function * () {
     const server = http.createServer(function (req, res) {
       var form = new formidable.IncomingForm();
