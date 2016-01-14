@@ -108,6 +108,17 @@ describe('Route',function () {
       expect(routes[7].name).to.equal('users.destroy')
     })
 
+    it('should register nested resourceful routes', function() {
+      Route.resource('users.comments','SomeController')
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],true]
+      }))
+      expect(routes.length).to.equal(8)
+      expect(verbs['users/comments-GET']).not.to.equal(undefined)
+      expect(routes[0].name).to.equal('users.comments.index')
+    })
+
     it('should be able to name routes', function () {
       Route.any('/','SomeController.method').as('home')
       const routes = Route.routes()

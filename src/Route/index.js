@@ -232,20 +232,16 @@ Route.resolve = function (urlPath, verb, host) {
  * @public
  */
 Route.resource = function (resourceName, handler) {
-  /**
-   * avoiding multiple / when route itself is a base
-   * route.
-   * @type {String}
-   */
+  let resourceUrl = resourceName.replace('.', '/')
 
-  Route.get(resourceName, `${handler}.index`).as(`${resourceName}.index`)
-  Route.get(`${resourceName}/:id`, `${handler}.show`).as(`${resourceName}.show`)
-  Route.get(`${resourceName}/create`, `${handler}.create`).as(`${resourceName}.create`)
-  Route.get(`${resourceName}/:id/edit`, `${handler}.edit`).as(`${resourceName}.edit`)
-  Route.post(resourceName, `${handler}.store`).as(`${resourceName}.store`)
-  Route.put(`${resourceName}/:id`, `${handler}.update`).as(`${resourceName}.update`)
-  Route.patch(`${resourceName}/:id`, `${handler}.update`)
-  Route.delete(`${resourceName}/:id`, `${handler}.destroy`).as(`${resourceName}.destroy`)
+  Route.get(resourceUrl, `${handler}.index`).as(`${resourceName}.index`)
+  Route.get(`${resourceUrl}/:id`, `${handler}.show`).as(`${resourceName}.show`)
+  Route.get(`${resourceUrl}/create`, `${handler}.create`).as(`${resourceName}.create`)
+  Route.get(`${resourceUrl}/:id/edit`, `${handler}.edit`).as(`${resourceName}.edit`)
+  Route.post(resourceUrl, `${handler}.store`).as(`${resourceName}.store`)
+  Route.put(`${resourceUrl}/:id`, `${handler}.update`).as(`${resourceName}.update`)
+  Route.patch(`${resourceUrl}/:id`, `${handler}.update`)
+  Route.delete(`${resourceUrl}/:id`, `${handler}.destroy`).as(`${resourceName}.destroy`)
 }
 
 /**
