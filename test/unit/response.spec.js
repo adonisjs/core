@@ -26,6 +26,8 @@ const Config = {
         return true
       case 'app.http.jsonpCallback':
         return 'callback'
+      case 'app.http.setPoweredBy':
+        return true
       default: true
     }
   }
@@ -239,6 +241,42 @@ describe('Response', function () {
     try{
       const res = yield supertest(server).get('/').expect(200).end()
       expect(res.text.trim()).to.equal("<h2> Hello world </h2>")
+      done()
+    }catch(e){
+      done(e)
+    }
+  })
+
+  it('should set X-Powered-By when enabled inside app.http config', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.send()
+    })
+    try{
+      const res = yield supertest(server).get('/').expect(200).end()
+      expect(res.headers).to.have.property('x-powered-by')
+      done()
+    }catch(e){
+      done(e)
+    }
+  })
+
+  it('should not set X-Powered-By when not enabled inside app.http config', function * (done) {
+    const server = http.createServer((req, res) => {
+      const Config = {
+        get: function () {
+          return false
+        }
+      }
+      const request = new Request(req,res, Config)
+      const Response = new ResponseBuilder({}, Route, Config)
+      const response = new Response(request, res)
+      response.send()
+    })
+    try{
+      const res = yield supertest(server).get('/').expect(200).end()
+      expect(res.headers).not.have.property('x-powered-by')
       done()
     }catch(e){
       done(e)
