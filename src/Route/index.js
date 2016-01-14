@@ -227,24 +227,25 @@ Route.resolve = function (urlPath, verb, host) {
 /**
  * @description creates a resource of routes based out of conventions
  * @method resource
- * @param  {String} pattern
+ * @param  {String} resourceName
  * @param  {String} handler
  * @public
  */
-Route.resource = function (pattern, handler) {
+Route.resource = function (resourceName, handler) {
   /**
    * avoiding multiple / when route itself is a base
    * route.
    * @type {String}
    */
-  const seperator = pattern === '/' ? '' : '/'
 
-  Route.options(pattern, '')
-  Route.get(pattern, `${handler}.index`)
-  Route.post(pattern, `${handler}.store`)
-  Route.get(`${pattern}${seperator}:id`, `${handler}.show`)
-  Route.put(`${pattern}${seperator}:id`, `${handler}.update`)
-  Route.delete(`${pattern}${seperator}:id`, `${handler}.destroy`)
+  Route.get(resourceName, `${handler}.index`).as(`${resourceName}.index`)
+  Route.get(`${resourceName}/:id`, `${handler}.show`).as(`${resourceName}.show`)
+  Route.get(`${resourceName}/create`, `${handler}.create`).as(`${resourceName}.create`)
+  Route.get(`${resourceName}/:id/edit`, `${handler}.edit`).as(`${resourceName}.edit`)
+  Route.post(resourceName, `${handler}.store`).as(`${resourceName}.store`)
+  Route.put(`${resourceName}/:id`, `${handler}.update`).as(`${resourceName}.update`)
+  Route.patch(`${resourceName}/:id`, `${handler}.update`)
+  Route.delete(`${resourceName}/:id`, `${handler}.destroy`).as(`${resourceName}.destroy`)
 }
 
 /**
