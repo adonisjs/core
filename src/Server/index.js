@@ -100,7 +100,7 @@ class Server {
    * @return {void}
    */
   listen (host, port) {
-    this.log.info('serving app on %s:%s', host, port)
+    this.log.info('serving app on http://%s:%s', host, port)
     http.createServer(this.handle.bind(this)).listen(port, host)
   }
 
