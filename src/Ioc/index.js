@@ -76,6 +76,21 @@ Ioc._bind = function (namespace, closure, singleton) {
 }
 
 /**
+ * @description clears of all local data, like its a new
+ * instance
+ * @method new
+ * @return {void} [description]
+ * @public
+ */
+Ioc.new = function () {
+  providers = {}
+  providerManagers = {}
+  providerExtenders = {}
+  autoloadDirectory = {}
+  aliases = {}
+}
+
+/**
  * @description resolves eagerly loaded provider
  * by setting up dependencies in right order
  * @method _resolveProvider
@@ -96,19 +111,22 @@ Ioc._resolveProvider = function (provider) {
  * and pass key/return value to provider extend
  * method.
  * @method _extendProvider
- * @param  {Object}        extender
- * @param  {Object}        manager
+ * @param  {String}        namespace
  * @return {void}
  * @private
  */
-Ioc._extendProvider = function (extender, manager) {
-  _.each(extender, function (item) {
-    const closure = item.closure
-    const key = item.key
-
-    const defination = closure(Ioc)
-    manager.extend(key, defination)
-  })
+Ioc._extendProvider = function (namespace) {
+  if (providerExtenders[namespace] && providerManagers[namespace]) {
+    const extender = providerExtenders[namespace]
+    const manager = providerManagers[namespace]
+    _.each(extender, function (item) {
+      const closure = item.closure
+      const key = item.key
+      const defination = closure(Ioc)
+      manager.extend(key, defination)
+    })
+    providerExtenders[namespace] = []
+  }
 }
 
 /**
@@ -308,9 +326,7 @@ Ioc.use = function (namespace) {
   switch (type) {
     case 'PROVIDER':
       log.verbose('resolving provider %s', namespace)
-      if (providerExtenders[namespace] && providerManagers[namespace]) {
-        Ioc._extendProvider(providerExtenders[namespace], providerManagers[namespace])
-      }
+      Ioc._extendProvider(namespace)
       return Ioc._resolveProvider(providers[namespace])
     case 'AUTOLOAD':
       return Ioc._autoLoad(namespace)
@@ -360,14 +376,35 @@ Ioc.make = function (Binding) {
   const _bind = Function.prototype.bind
   const type = Ioc._type(Binding)
 
+  /**
+   * if binding type is a provider or alias, we should simply
+   * return the binding from container and should not act
+   * smart
+   */
   if (type === 'PROVIDER' || type === 'ALIAS') {
     return Ioc.use(Binding)
   }
 
+  /**
+   * if binding is autoload, than we should transform
+   * the binding value by requiring it
+   */
   if (type === 'AUTOLOAD') {
     Binding = Ioc.use(Binding)
   }
 
+  /**
+   * if binding is a string and is not part of autoload directory
+   * we should try to require it and return output
+   */
+  if (type !== 'AUTOLOAD' && typeof (Binding) === 'string') {
+    return requireStack(Binding)
+  }
+
+  /**
+   * if binding is not a class we should return it's original
+   * value
+   */
   if (!Ioc._isClass(Binding)) {
     return Binding
   }

@@ -1,6 +1,6 @@
 'use strict'
 
-/* global describe, it, context */
+/* global describe, it, context,beforeEach */
 /**
  * adonis-fold
  * Copyright(c) 2015-2015 Harminder Virk
@@ -13,6 +13,10 @@ const expect = chai.expect
 const path = require('path')
 
 describe('Ioc', function () {
+  beforeEach(function () {
+    Ioc.new()
+  })
+
   context('Providers', function () {
     it('should bind namespace to a given closure', function () {
       Ioc.bind('App/Foo', function () {
@@ -54,6 +58,110 @@ describe('Ioc', function () {
         return Ioc.manager('App/Foo', Foo)
       }
       expect(fn).to.throw(/Incomplete implementation/g)
+    })
+
+    it('should be able to extend provider even if the actual provider does not exists', function () {
+      class Session {
+        static extend () {}
+      }
+      Ioc.extend('Adonis/Test/Session', 'redis', function () {
+        return Session
+      })
+      expect(Ioc.getExtenders()['Adonis/Test/Session']).to.be.an('array')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][0]).to.be.an('object')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][0].key).to.equal('redis')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][0].closure()).to.equal(Session)
+    })
+
+    it('should be able to have multiple extenders for a given provider', function () {
+      class Session {
+        static extend () {}
+      }
+      class Mongo {
+        static extend () {}
+      }
+      Ioc.extend('Adonis/Test/Session', 'redis', function () {
+        return Session
+      })
+      Ioc.extend('Adonis/Test/Session', 'mongo', function () {
+        return Mongo
+      })
+      expect(Ioc.getExtenders()['Adonis/Test/Session']).to.be.an('array')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][0]).to.be.an('object')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][0].key).to.equal('redis')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][0].closure()).to.equal(Session)
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][1]).to.be.an('object')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][1].key).to.equal('mongo')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][1].closure()).to.equal(Mongo)
+    })
+
+    it('should remove the extender once it has been attached to the provider', function () {
+      let extendCalledCounts = 0
+      class Session {
+        static extend () {}
+      }
+      class SessionManager {
+        static extend () {
+          extendCalledCounts++
+        }
+      }
+      Ioc.extend('Adonis/Test/Session', 'redis', function () {
+        return Session
+      })
+      Ioc.manager('Adonis/Test/Session', SessionManager)
+      Ioc.bind('Adonis/Test/Session', function () {
+        return {}
+      })
+      expect(Ioc.getExtenders()['Adonis/Test/Session']).to.be.an('array')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][0]).to.be.an('object')
+      expect(Ioc.getExtenders()['Adonis/Test/Session'][0].key).to.equal('redis')
+      Ioc.use('Adonis/Test/Session')
+      Ioc.use('Adonis/Test/Session')
+      expect(extendCalledCounts).to.equal(1)
+      expect(Ioc.getExtenders()['Adonis/Test/Session']).to.have.length(0)
+    })
+
+    it('make sure one time extend call is not breaking the binding lifecycle', function () {
+      class RedisSession {
+      }
+      class SessionManager {
+        static extend (name, value) {
+          this.drivers = this.drivers || {}
+          this.drivers[name] = value
+        }
+      }
+      Ioc.extend('Adonis/Test/Session', 'redis', function () {
+        return RedisSession
+      })
+      Ioc.manager('Adonis/Test/Session', SessionManager)
+      Ioc.bind('Adonis/Test/Session', function () {
+        return new SessionManager()
+      })
+      const session1 = Ioc.use('Adonis/Test/Session')
+      expect(session1.constructor.drivers).to.have.property('redis')
+      const session2 = Ioc.use('Adonis/Test/Session')
+      expect(session2.constructor.drivers).to.have.property('redis')
+    })
+
+    it('make extenders are getting called even when trying to resolve provider using alias', function () {
+      class RedisSession {
+      }
+      class SessionManager {
+        static extend (name, value) {
+          this.drivers = this.drivers || {}
+          this.drivers[name] = value
+        }
+      }
+      Ioc.extend('Adonis/Test/Session', 'redis', function () {
+        return RedisSession
+      })
+      Ioc.manager('Adonis/Test/Session', SessionManager)
+      Ioc.bind('Adonis/Test/Session', function () {
+        return new SessionManager()
+      })
+      Ioc.alias('Session', 'Adonis/Test/Session')
+      const session = Ioc.use('Session')
+      expect(session.constructor.drivers).to.have.property('redis')
     })
 
     it('should be able to fetch binding from ioc container using use method', function () {
@@ -321,6 +429,12 @@ describe('Ioc', function () {
     })
 
     it('should return class instance and method using makeFunc method', function () {
+      Ioc.bind('App/Providers/Foo', function () {
+        return {}
+      })
+      Ioc.bind('App/Providers/time', function () {
+        return {}
+      })
       Ioc.autoload('App', path.join(__dirname, './app'))
       const userController = Ioc.makeFunc('App/Http/Controllers/UserController.hello')
       expect(userController.instance[userController.method]()).to.equal('hello world')
@@ -361,14 +475,17 @@ describe('Ioc', function () {
     })
 
     it('should transform output of a path using it\'s hooks', function () {
+      Ioc.autoload('App', path.join(__dirname, './app'))
       expect(Ioc.use('App/Services/Hook')).to.equal('bar')
     })
 
     it('should transform output of a path using multiple hooks', function () {
+      Ioc.autoload('App', path.join(__dirname, './app'))
       expect(Ioc.use('App/Services/MultipleHooks')).to.equal('newBar')
     })
 
     it('should not transform if hook is not a function', function () {
+      Ioc.autoload('App', path.join(__dirname, './app'))
       expect(Ioc.use('App/Services/FakeHook')).to.be.a('function')
     })
   })
