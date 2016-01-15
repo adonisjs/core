@@ -1,6 +1,6 @@
 {
   "name": "adonis-fold",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
   "directories": {
