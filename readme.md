@@ -1,39 +1,43 @@
 # Fold
 
-![](http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png)
-![](https://img.shields.io/travis/poppinss/adonis-fold.svg)
+[![Gitter](https://img.shields.io/badge/+%20GITTER-JOIN%20CHAT%20%E2%86%92-1DCE73.svg?style=flat-square)](https://gitter.im/adonisjs/adonis-framework)
+[![Trello](https://img.shields.io/badge/TRELLO-%E2%86%92-89609E.svg?style=flat-square)](https://trello.com/b/yzpqCgdl/adonis-for-humans)
+[![Version](https://img.shields.io/npm/v/adonis-fold.svg?style=flat-square)](https://www.npmjs.com/package/adonis-fold)
+[![Build Status](https://img.shields.io/travis/poppinss/adonis-fold/master.svg?style=flat-square)](https://travis-ci.org/poppinss/adonis-fold)
+[![Coverage Status](https://img.shields.io/coveralls/poppinss/adonis-fold/master.svg?style=flat-square)](https://coveralls.io/github/poppinss/adonis-fold?branch=master)
+[![Downloads](https://img.shields.io/npm/dt/adonis-fold.svg?style=flat-square)](https://www.npmjs.com/package/adonis-fold)
+[![License](https://img.shields.io/npm/l/adonis-fold.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-[![Coverage Status](https://coveralls.io/repos/poppinss/adonis-fold/badge.svg?branch=master&service=github)](https://coveralls.io/github/poppinss/adonis-fold?branch=master)
+> :pray: This repository contains the IOC container for adonis framework. It can be used standalone too.
 
-Fold is an Ioc container for Node applications borrowed ideas from Php and has support for 
+Fold is an IOC container for Node applications to make dependency injection simpler and powerful. It has following features and used in [adonis framework](](http://adonisjs.com))
 
 1. Service Provider
 2. Service Manager
-3. Namespace/Auto Loading
+3. Namespaces/Auto Loading
 
-Ioc container enables solid Dependency Injection through out your application and makes it easier for you to test your modules by mocking dependencies with ease.
+IOC container enables solid Dependency Injection through out your application and makes it easier for you to test your modules by mocking dependencies with ease.
 
-Fold is used by [Adonis](http://adonisjs.com) and you should checkout [Ioc Container Documentation](#http://adonisjs.com/docs/1.0/ioc-container)
+You can learn more about AdonisJS and all of its awesomeness on http://adonisjs.com :evergreen_tree:
 
-## License
-( The MIT License )
+## Table of Contents
 
-Copyright (c) 2015 Poppins
+* [Team Members](#team-members)
+* [Requirements](#requirements)
+* [Contribution Guidelines](#contribution-guidelines)
 
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
+## <a name="team-members"></a>Team Members
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+* Harminder Virk ([Caffiene Blogging](http://amanvirk.me/)) <virk.officials@gmail.com>
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+## <a name="requirements"></a>Requirements
+
+AdonisJS is build on the top of ES2015, which makes the code more enjoyable and cleaner to read. It doesn't make use of any transpiler and depends upon Core V8 implemented features.
+
+For these reasons, AdonisJS require you to use `node >= 4.0` and `npm >= 3.0`.
+
+## <a name="contribution-guidelines"></a>Contribution Guidelines
+
+In favor of active development we accept contributions for everyone. You can contribute by submitting a bug, creating pull requests or even improving documentation.
+
+You can find a complete guide to be followed strictly before submitting your pull requests in the [Official Documentation](http://adonisjs.com/docs/2.0/contributing).
