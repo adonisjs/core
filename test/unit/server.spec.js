@@ -25,7 +25,13 @@ class Session {
 }
 const Config = {
   get: function (key) {
-    return key === 'http.trustProxy' ? true : 2
+    if(key === 'http.trustProxy') {
+      return true
+    } else if(key === 'static.indexFile') {
+      return 'index.html'
+    } else {
+      return 2
+    }
   }
 }
 
@@ -67,6 +73,14 @@ describe("Server", function () {
   it("should make 404 error when unable to find static resource", function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     yield supertest(testServer).get('/foo.css').expect(404).end()
+  })
+
+  it("should serve static resource even if route is defined", function * () {
+    Route.get('/favicon.ico', function * (request, response) {
+      response.send({rendered:true})
+    })
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    yield supertest(testServer).get('/favicon.ico').expect('Content-type',/x-icon/).expect(200).end()
   })
 
   it("should call route action if defined", function * () {

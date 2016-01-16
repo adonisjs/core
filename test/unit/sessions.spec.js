@@ -44,10 +44,6 @@ describe('Session', function  () {
       expect(session.driver instanceof Redis).to.equal(true)
     })
 
-    it('should return list of extended session drivers', function * () {
-      expect(Session.drivers()).to.be.an('object')
-    })
-
     it('should make an instance of pre existing drivers using make method', function * () {
       let Config = {}
       Config.get = function () {

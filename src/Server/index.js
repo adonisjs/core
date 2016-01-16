@@ -35,23 +35,21 @@ class Server {
    */
   _finalHandler (resolvedRoute, request, response) {
     /**
-     * if route is not registered, try looking for a static resource
-     * or simply throw an error if static resource is not found
-     */
-    if (!resolvedRoute.handler) {
-      this.static.serve(request.request, request.response)
-        .catch(function (e) {
-          helpers.handleRequestError(e, request, response)
-        })
-      return
-    }
-
-    /**
      * calling request action handler by making a middleware
      * layer of named middleware and finally invoking
      * route action.
      */
-    helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNameSpace())
+    if (resolvedRoute.handler) {
+      helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNameSpace())
+      return
+    }
+    const error = new Error(`Route not found ${request.url()}`)
+    error.status = 404
+    throw error
+  }
+
+  _staticHandler (request, response) {
+    return this.static.serve(request.request, request.response)
   }
 
   /**
@@ -69,6 +67,7 @@ class Server {
     const session = new this.Session(req, res)
     const requestUrl = request.url()
     request.session = session
+    this.log.verbose('request on url %s ', req.url)
 
     /**
      * making request verb/method based upon _method or falling
@@ -78,18 +77,19 @@ class Server {
     const method = request.input('_method', request.method())
     const resolvedRoute = this.Route.resolve(requestUrl, method, request.hostname())
     request._params = resolvedRoute.params
-    this.log.verbose('request on url %s ', req.url)
 
-    /**
-     * @description final method to call after executing
-     * global middleware
-     * @method finalHandler
-     * @return {Function}
-     */
     const finalHandler = function * () {
       self._finalHandler(resolvedRoute, request, response)
     }
-    helpers.respondRequest(this.middleware, request, response, finalHandler)
+
+    this._staticHandler(request, response)
+    .catch((e) => {
+      if (e.status === 404) {
+        helpers.respondRequest(this.middleware, request, response, finalHandler)
+        return
+      }
+      helpers.handleRequestError(e, request, response)
+    })
   }
 
   /**

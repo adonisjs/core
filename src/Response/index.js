@@ -22,7 +22,7 @@ class Response {
     this.request = request
     this.response = response
     if (configInstance.get('app.http.setPoweredBy', true)) {
-      nodeRes.header(this.response, 'x-powered-by', 'adonis')
+      nodeRes.header(this.response, 'X-Powered-By', 'Adonis')
     }
   }
 

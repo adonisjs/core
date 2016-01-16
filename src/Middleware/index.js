@@ -75,7 +75,7 @@ Middleware.named = function (namedMiddleware) {
  * @public
  */
 Middleware.getGlobal = function () {
-  return _.unique(globalMiddleware)
+  return _.uniq(globalMiddleware)
 }
 
 /**

@@ -9,6 +9,7 @@
 const nodeReq = require('node-req')
 const nodeCookie = require('node-cookie')
 const File = require('../File')
+const pathToRegexp = require('path-to-regexp')
 const _ = require('lodash')
 const CatLog = require('cat-log')
 const log = new CatLog('adonis:framework')
@@ -120,6 +121,10 @@ class Request {
    */
   post () {
     return nodeReq.post(this.request) || {}
+  }
+
+  raw () {
+    return this._raw
   }
 
   /**
@@ -352,8 +357,8 @@ class Request {
    * @description converts a file object to file instance
    * if already is not an instance
    * @method _toFileInstance
-   * @param  {Object}        file [description]
-   * @return {Object}             [description]
+   * @param  {Object}        file
+   * @return {Object}
    * @private
    */
   _toFileInstance (file) {
@@ -367,8 +372,8 @@ class Request {
    * @description converts an uploaded file to file
    * instance
    * @method file
-   * @param  {String} key [description]
-   * @return {Object}     [description]
+   * @param  {String} key
+   * @return {Object}
    * @public
    */
   file (key) {
@@ -415,8 +420,8 @@ class Request {
    * @description flash an object of messages to upcoming
    * request
    * @method flash
-   * @param  {Object} values [description]
-   * @return {void}        [description]
+   * @param  {Object} values
+   * @return {void}
    * @public
    */
   * flash (values) {
@@ -430,9 +435,9 @@ class Request {
    * @description return values set via flash from
    * request session
    * @method old
-   * @param  {String} key          [description]
-   * @param  {Mixed} defaultValue [description]
-   * @return {Mixed}              [description]
+   * @param  {String} key
+   * @param  {Mixed} defaultValue
+   * @return {Mixed}
    * @public
    */
   old (key, defaultValue) {
@@ -478,6 +483,22 @@ class Request {
     const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
     yield this.flash(this.except(args))
   }
+
+  /**
+   * @description tells whether a given pattern matches the
+   * current url or not
+   * @method match
+   * @param  {String} pattern
+   * @return {Boolean}
+   * @public
+   */
+  match () {
+    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
+    const url = this.url()
+    const pattern = pathToRegexp(args, [])
+    return pattern.test(url)
+  }
+
 }
 
 module.exports = Request

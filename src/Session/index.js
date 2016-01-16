@@ -16,10 +16,6 @@ const SessionManager = require('./SessionManager')
  */
 class Session {
 
-  static drivers () {
-    return {}
-  }
-
   /**
    * @description extend method for ioc to extend
    * session provider
@@ -30,6 +26,7 @@ class Session {
    * @public
    */
   static extend (key, value) {
+    this.drivers = this.drivers || {}
     this.drivers[key] = value
   }
 
