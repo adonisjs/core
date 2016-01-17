@@ -95,20 +95,6 @@ describe('Request', function () {
     expect(res.body.body).deep.equal({})
   })
 
-  it('should return raw object attached to request using raw method', function * () {
-    const server = http.createServer(function (req, res) {
-      const request = new Request(req, res, Config)
-      request._raw = {foo: 'bar'}
-      const raw = request.raw()
-      res.writeHead(200, {"Content-type":"application/json"})
-      res.end(JSON.stringify({raw}),'utf8')
-    })
-
-    const res = yield supertest(server).get("/").expect(200).end()
-    expect(res.body.raw).to.be.an('object')
-    expect(res.body.raw).deep.equal({foo: 'bar'})
-  })
-
   it('should get value for a given key using input method', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
@@ -438,6 +424,30 @@ describe('Request', function () {
     expect(res.body.isHtml).to.equal(true)
   })
 
+  it('should tell whether request is of certain type when an array of options have been passed', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const isHtml = request.is(['json', 'html'])
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({isHtml}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").set('Content-type','text/html').expect(200).end()
+    expect(res.body.isHtml).to.equal(true)
+  })
+
+  it('should tell whether request is of certain type when multiple arguments have been passed', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const isHtml = request.is('json', 'javascript', 'html')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({isHtml}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").set('Content-type','text/html').expect(200).end()
+    expect(res.body.isHtml).to.equal(true)
+  })
+
   it('should tell best response type request will accept', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
@@ -446,7 +456,33 @@ describe('Request', function () {
       res.end(JSON.stringify({html}),'utf8')
     })
 
-    const res = yield supertest(server).get("/").set('Accepts','text/html').expect(200).end()
+    const res = yield supertest(server).get("/").set('Accept','text/html').expect(200).end()
+    expect(res.body.html).to.equal('html')
+  })
+
+  it('should tell best response type request will accept when an array of options have been passed', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const html = request.accepts(['json', 'html'])
+      console.log(html)
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({html}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").set('Accept','text/html').expect(200).end()
+    expect(res.body.html).to.equal('html')
+  })
+
+  it('should tell best response type request will accept when multiple arguments have been passed', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const html = request.accepts('json','javascript', 'html')
+      console.log(html)
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({html}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").set('Accept','text/html').expect(200).end()
     expect(res.body.html).to.equal('html')
   })
 

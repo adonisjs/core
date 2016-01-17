@@ -1,3 +1,20 @@
+<a name="2.0.7"></a>
+## [2.0.7](https://github.com/adonisjs/adonis-framework/compare/v2.0.3...v2.0.7) (2016-01-17)
+
+
+### Bug Fixes
+
+* **request:** method is and accepts have been fixed to treat arrays ([9d8e963](https://github.com/adonisjs/adonis-framework/commit/9d8e963))
+* **session:** now list of drivers is set to an empty object by default ([3bb75e0](https://github.com/adonisjs/adonis-framework/commit/3bb75e0))
+
+### Features
+
+* **package.json:** make the repository commitizen-friendly ([0082c4a](https://github.com/adonisjs/adonis-framework/commit/0082c4a))
+* **request:** add match method to match an array of patterns to current url ([a81a4f7](https://github.com/adonisjs/adonis-framework/commit/a81a4f7))
+* **request:** Added raw method to access raw data sent to a given request ([00de598](https://github.com/adonisjs/adonis-framework/commit/00de598))
+
+
+
 <a name="2.0.6"></a>
 ## 2.0.6 (2016-01-16)
 
