@@ -84,35 +84,40 @@ describe('Route',function () {
     })
 
     it('should register resourceful routes', function () {
-      Route.resource('/','SomeController')
+      Route.resource('users','SomeController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
         return [route.route + '-' + route.verb[0],true]
       }))
-      expect(routes.length).to.equal(6)
-      expect(verbs['/-OPTIONS']).not.to.equal(undefined)
-      expect(verbs['/-GET']).not.to.equal(undefined)
-      expect(verbs['/-POST']).not.to.equal(undefined)
-      expect(verbs['/:id-GET']).not.to.equal(undefined)
-      expect(verbs['/:id-PUT']).not.to.equal(undefined)
-      expect(verbs['/:id-DELETE']).not.to.equal(undefined)
+      expect(routes.length).to.equal(8)
+      expect(verbs['users-GET']).not.to.equal(undefined)
+      expect(verbs['users/:id-GET']).not.to.equal(undefined)
+      expect(verbs['users/create-GET']).not.to.equal(undefined)
+      expect(verbs['users/:id/edit-GET']).not.to.equal(undefined)
+      expect(verbs['users-POST']).not.to.equal(undefined)
+      expect(verbs['users/:id-PUT']).not.to.equal(undefined)
+      expect(verbs['users/:id-PATCH']).not.to.equal(undefined)
+      expect(verbs['users/:id-DELETE']).not.to.equal(undefined)
+
+      expect(routes[0].name).to.equal('users.index')
+      expect(routes[1].name).to.equal('users.show')
+      expect(routes[2].name).to.equal('users.create')
+      expect(routes[3].name).to.equal('users.edit')
+      expect(routes[4].name).to.equal('users.store')
+      expect(routes[5].name).to.equal('users.update')
+      expect(routes[7].name).to.equal('users.destroy')
     })
 
-    it('should register resourceful routes when base route is not /', function () {
-      Route.resource('/admin','SomeController')
+    it('should register nested resourceful routes', function() {
+      Route.resource('users.comments','SomeController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
         return [route.route + '-' + route.verb[0],true]
       }))
-      expect(routes.length).to.equal(6)
-      expect(verbs['/admin-OPTIONS']).not.to.equal(undefined)
-      expect(verbs['/admin-GET']).not.to.equal(undefined)
-      expect(verbs['/admin-POST']).not.to.equal(undefined)
-      expect(verbs['/admin/:id-GET']).not.to.equal(undefined)
-      expect(verbs['/admin/:id-PUT']).not.to.equal(undefined)
-      expect(verbs['/admin/:id-DELETE']).not.to.equal(undefined)
+      expect(routes.length).to.equal(8)
+      expect(verbs['users/comments-GET']).not.to.equal(undefined)
+      expect(routes[0].name).to.equal('users.comments.index')
     })
-
 
     it('should be able to name routes', function () {
       Route.any('/','SomeController.method').as('home')
@@ -172,20 +177,21 @@ describe('Route',function () {
 
     it('should prefix all resourceful routes under a group', function () {
       Route.group('admin',function () {
-        Route.resource('/','SomeController')
-      }).prefix('/v1')
+        Route.resource('users','SomeController')
+      }).prefix('/v1/')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
         return [route.route + '-' + route.verb[0],true]
       }))
-      expect(routes.length).to.equal(6)
-      expect(verbs['/v1-OPTIONS']).not.to.equal(undefined)
-      expect(verbs['/v1-GET']).not.to.equal(undefined)
-      expect(verbs['/v1-POST']).not.to.equal(undefined)
-      expect(verbs['/v1/:id-GET']).not.to.equal(undefined)
-      expect(verbs['/v1/:id-PUT']).not.to.equal(undefined)
-      expect(verbs['/v1/:id-DELETE']).not.to.equal(undefined)
-
+      expect(routes.length).to.equal(8)
+      expect(verbs['/v1/users-GET']).not.to.equal(undefined)
+      expect(verbs['/v1/users/create-GET']).not.to.equal(undefined)
+      expect(verbs['/v1/users-POST']).not.to.equal(undefined)
+      expect(verbs['/v1/users/:id-GET']).not.to.equal(undefined)
+      expect(verbs['/v1/users/:id/edit-GET']).not.to.equal(undefined)
+      expect(verbs['/v1/users/:id-PUT']).not.to.equal(undefined)
+      expect(verbs['/v1/users/:id-PATCH']).not.to.equal(undefined)
+      expect(verbs['/v1/users/:id-DELETE']).not.to.equal(undefined)
     })
 
     it('should be able to define subdomain for a given route', function () {
