@@ -273,7 +273,8 @@ class Request {
    * @public
    */
   is () {
-    return nodeReq.is(this.request, _.toArray(arguments))
+    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
+    return nodeReq.is(this.request, args)
   }
 
   /**
@@ -284,7 +285,8 @@ class Request {
    * @public
    */
   accepts () {
-    return nodeReq.accepts(this.request, _.toArray(arguments))
+    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
+    return nodeReq.accepts(this.request, args)
   }
 
   /**
