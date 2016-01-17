@@ -123,10 +123,6 @@ class Request {
     return nodeReq.post(this.request) || {}
   }
 
-  raw () {
-    return this._raw
-  }
-
   /**
    * @description returns header value for a given key
    * @method header
