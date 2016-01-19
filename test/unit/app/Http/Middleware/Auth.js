@@ -1,6 +1,6 @@
 'use strict'
 
-class Auth{
+class Auth {
 
   *handle (request, response, next) {
     request.count++
