@@ -35,6 +35,13 @@ describe('Route',function () {
       expect(routes[0].verb).deep.equal(['POST'])
     })
 
+    it('should add / when route defination does not have one', function () {
+      Route.post('admin','SomeController.method')
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].route).to.equal('/admin')
+    })
+
     it('should register a route with PUT verb', function () {
       Route.put('/','SomeController.method')
       const routes = Route.routes()
@@ -87,32 +94,35 @@ describe('Route',function () {
       Route.resource('/','SomeController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb[0],true]
+        return [route.route + '-' + route.verb[0],route.handler]
       }))
-      expect(routes.length).to.equal(6)
-      expect(verbs['/-OPTIONS']).not.to.equal(undefined)
-      expect(verbs['/-GET']).not.to.equal(undefined)
-      expect(verbs['/-POST']).not.to.equal(undefined)
-      expect(verbs['/:id-GET']).not.to.equal(undefined)
-      expect(verbs['/:id-PUT']).not.to.equal(undefined)
-      expect(verbs['/:id-DELETE']).not.to.equal(undefined)
+      expect(routes.length).to.equal(8)
+      expect(verbs['/-GET']).to.equal('SomeController.index')
+      expect(verbs['/create-GET']).to.equal('SomeController.create')
+      expect(verbs['/-POST']).to.equal('SomeController.store')
+      expect(verbs['/:id-GET']).to.equal('SomeController.show')
+      expect(verbs['/:id/edit-GET']).to.equal('SomeController.edit')
+      expect(verbs['/:id-PUT']).to.equal('SomeController.update')
+      expect(verbs['/:id-PATCH']).to.equal('SomeController.update')
+      expect(verbs['/:id-DELETE']).to.equal('SomeController.destroy')
     })
 
     it('should register resourceful routes when base route is not /', function () {
       Route.resource('/admin','SomeController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb[0],true]
+        return [route.route + '-' + route.verb[0],route.handler]
       }))
-      expect(routes.length).to.equal(6)
-      expect(verbs['/admin-OPTIONS']).not.to.equal(undefined)
-      expect(verbs['/admin-GET']).not.to.equal(undefined)
-      expect(verbs['/admin-POST']).not.to.equal(undefined)
-      expect(verbs['/admin/:id-GET']).not.to.equal(undefined)
-      expect(verbs['/admin/:id-PUT']).not.to.equal(undefined)
-      expect(verbs['/admin/:id-DELETE']).not.to.equal(undefined)
+      expect(routes.length).to.equal(8)
+      expect(verbs['/admin-GET']).to.equal('SomeController.index')
+      expect(verbs['/admin/create-GET']).to.equal('SomeController.create')
+      expect(verbs['/admin-POST']).to.equal('SomeController.store')
+      expect(verbs['/admin/:id-GET']).to.equal('SomeController.show')
+      expect(verbs['/admin/:id/edit-GET']).to.equal('SomeController.edit')
+      expect(verbs['/admin/:id-PUT']).to.equal('SomeController.update')
+      expect(verbs['/admin/:id-PATCH']).to.equal('SomeController.update')
+      expect(verbs['/admin/:id-DELETE']).to.equal('SomeController.destroy')
     })
-
 
     it('should be able to name routes', function () {
       Route.any('/','SomeController.method').as('home')
@@ -171,21 +181,205 @@ describe('Route',function () {
 
 
     it('should prefix all resourceful routes under a group', function () {
-      Route.group('admin',function () {
-        Route.resource('/','SomeController')
+      Route.group('v1',function () {
+        Route.resource('admin','SomeController')
       }).prefix('/v1')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb[0],true]
+        return [route.route + '-' + route.verb[0],route.handler]
       }))
-      expect(routes.length).to.equal(6)
-      expect(verbs['/v1-OPTIONS']).not.to.equal(undefined)
-      expect(verbs['/v1-GET']).not.to.equal(undefined)
-      expect(verbs['/v1-POST']).not.to.equal(undefined)
-      expect(verbs['/v1/:id-GET']).not.to.equal(undefined)
-      expect(verbs['/v1/:id-PUT']).not.to.equal(undefined)
-      expect(verbs['/v1/:id-DELETE']).not.to.equal(undefined)
+      expect(routes.length).to.equal(8)
+      expect(verbs['/v1/admin-GET']).to.equal('SomeController.index')
+      expect(verbs['/v1/admin/create-GET']).to.equal('SomeController.create')
+      expect(verbs['/v1/admin-POST']).to.equal('SomeController.store')
+      expect(verbs['/v1/admin/:id-GET']).to.equal('SomeController.show')
+      expect(verbs['/v1/admin/:id/edit-GET']).to.equal('SomeController.edit')
+      expect(verbs['/v1/admin/:id-PUT']).to.equal('SomeController.update')
+      expect(verbs['/v1/admin/:id-PATCH']).to.equal('SomeController.update')
+      expect(verbs['/v1/admin/:id-DELETE']).to.equal('SomeController.destroy')
+    })
 
+    it('should be able to create nested resources seperated with dots', function () {
+      Route.resource('user.posts','PostController')
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.handler]
+      }))
+      expect(routes.length).to.equal(8)
+      expect(verbs['/user/:user_id/posts-GET']).to.equal('PostController.index')
+      expect(verbs['/user/:user_id/posts/create-GET']).to.equal('PostController.create')
+      expect(verbs['/user/:user_id/posts-POST']).to.equal('PostController.store')
+      expect(verbs['/user/:user_id/posts/:id-GET']).to.equal('PostController.show')
+      expect(verbs['/user/:user_id/posts/:id/edit-GET']).to.equal('PostController.edit')
+      expect(verbs['/user/:user_id/posts/:id-PUT']).to.equal('PostController.update')
+      expect(verbs['/user/:user_id/posts/:id-PATCH']).to.equal('PostController.update')
+      expect(verbs['/user/:user_id/posts/:id-DELETE']).to.equal('PostController.destroy')
+    })
+
+    it('should be able to create end number of nested resources seperated with dots', function () {
+      Route.resource('user.post.comments','CommentsController')
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.handler]
+      }))
+      expect(routes.length).to.equal(8)
+      expect(verbs['/user/:user_id/post/:post_id/comments-GET']).to.equal('CommentsController.index')
+      expect(verbs['/user/:user_id/post/:post_id/comments/create-GET']).to.equal('CommentsController.create')
+      expect(verbs['/user/:user_id/post/:post_id/comments-POST']).to.equal('CommentsController.store')
+      expect(verbs['/user/:user_id/post/:post_id/comments/:id-GET']).to.equal('CommentsController.show')
+      expect(verbs['/user/:user_id/post/:post_id/comments/:id/edit-GET']).to.equal('CommentsController.edit')
+      expect(verbs['/user/:user_id/post/:post_id/comments/:id-PUT']).to.equal('CommentsController.update')
+      expect(verbs['/user/:user_id/post/:post_id/comments/:id-PATCH']).to.equal('CommentsController.update')
+      expect(verbs['/user/:user_id/post/:post_id/comments/:id-DELETE']).to.equal('CommentsController.destroy')
+    })
+
+    it('should be define same resource under a group and without a group', function () {
+      Route.resource('users','UsersController')
+      Route.group('v', function () {
+        Route.resource('users', 'V1UsersController')
+      }).prefix('/v1')
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.handler]
+      }))
+      expect(routes.length).to.equal(16)
+      expect(verbs['/users-GET']).to.equal('UsersController.index')
+      expect(verbs['/v1/users-GET']).to.equal('V1UsersController.index')
+
+      expect(verbs['/users/create-GET']).to.equal('UsersController.create')
+      expect(verbs['/v1/users/create-GET']).to.equal('V1UsersController.create')
+
+      expect(verbs['/users-POST']).to.equal('UsersController.store')
+      expect(verbs['/v1/users-POST']).to.equal('V1UsersController.store')
+
+      expect(verbs['/users/:id-GET']).to.equal('UsersController.show')
+      expect(verbs['/v1/users/:id-GET']).to.equal('V1UsersController.show')
+
+      expect(verbs['/users/:id/edit-GET']).to.equal('UsersController.edit')
+      expect(verbs['/v1/users/:id/edit-GET']).to.equal('V1UsersController.edit')
+
+      expect(verbs['/users/:id-PUT']).to.equal('UsersController.update')
+      expect(verbs['/v1/users/:id-PUT']).to.equal('V1UsersController.update')
+
+      expect(verbs['/users/:id-DELETE']).to.equal('UsersController.destroy')
+      expect(verbs['/v1/users/:id-DELETE']).to.equal('V1UsersController.destroy')
+    })
+
+    it('should be define same resource under a group and without a group binded to same controller', function () {
+      Route.resource('users','UsersController')
+      Route.group('v', function () {
+        Route.resource('users', 'UsersController')
+      }).prefix('/v1')
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.handler]
+      }))
+      expect(routes.length).to.equal(16)
+      expect(verbs['/users-GET']).to.equal('UsersController.index')
+      expect(verbs['/v1/users-GET']).to.equal('UsersController.index')
+
+      expect(verbs['/users/create-GET']).to.equal('UsersController.create')
+      expect(verbs['/v1/users/create-GET']).to.equal('UsersController.create')
+
+      expect(verbs['/users-POST']).to.equal('UsersController.store')
+      expect(verbs['/v1/users-POST']).to.equal('UsersController.store')
+
+      expect(verbs['/users/:id-GET']).to.equal('UsersController.show')
+      expect(verbs['/v1/users/:id-GET']).to.equal('UsersController.show')
+
+      expect(verbs['/users/:id/edit-GET']).to.equal('UsersController.edit')
+      expect(verbs['/v1/users/:id/edit-GET']).to.equal('UsersController.edit')
+
+      expect(verbs['/users/:id-PUT']).to.equal('UsersController.update')
+      expect(verbs['/v1/users/:id-PUT']).to.equal('UsersController.update')
+
+      expect(verbs['/users/:id-DELETE']).to.equal('UsersController.destroy')
+      expect(verbs['/v1/users/:id-DELETE']).to.equal('UsersController.destroy')
+    })
+
+    it('all route resources should have a name', function () {
+      Route.resource('user.posts','PostController')
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.name]
+      }))
+      expect(routes.length).to.equal(8)
+      expect(verbs['/user/:user_id/posts-GET']).to.equal('user.posts.index')
+      expect(verbs['/user/:user_id/posts/create-GET']).to.equal('user.posts.create')
+      expect(verbs['/user/:user_id/posts-POST']).to.equal('user.posts.store')
+      expect(verbs['/user/:user_id/posts/:id-GET']).to.equal('user.posts.show')
+      expect(verbs['/user/:user_id/posts/:id/edit-GET']).to.equal('user.posts.edit')
+      expect(verbs['/user/:user_id/posts/:id-PUT']).to.equal('user.posts.update')
+      expect(verbs['/user/:user_id/posts/:id-PATCH']).to.equal('user.posts.update')
+      expect(verbs['/user/:user_id/posts/:id-DELETE']).to.equal('user.posts.destroy')
+    })
+
+    it('should be able to override route resource names', function () {
+      Route.resource('user.posts','PostController').as({
+        edit: 'post.showEdit',
+        destroy: 'post.remove'
+      })
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.name]
+      }))
+      expect(routes.length).to.equal(8)
+      expect(verbs['/user/:user_id/posts-GET']).to.equal('user.posts.index')
+      expect(verbs['/user/:user_id/posts/create-GET']).to.equal('user.posts.create')
+      expect(verbs['/user/:user_id/posts-POST']).to.equal('user.posts.store')
+      expect(verbs['/user/:user_id/posts/:id-GET']).to.equal('user.posts.show')
+      expect(verbs['/user/:user_id/posts/:id/edit-GET']).to.equal('post.showEdit')
+      expect(verbs['/user/:user_id/posts/:id-PUT']).to.equal('user.posts.update')
+      expect(verbs['/user/:user_id/posts/:id-PATCH']).to.equal('user.posts.update')
+      expect(verbs['/user/:user_id/posts/:id-DELETE']).to.equal('post.remove')
+    })
+
+    it('should be able to define route required routes for a resource', function () {
+      Route.resource('user.posts','PostController').only(['create', 'store', 'index'])
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.name]
+      }))
+      expect(routes.length).to.equal(3)
+      expect(verbs['/user/:user_id/posts-GET']).to.equal('user.posts.index')
+      expect(verbs['/user/:user_id/posts/create-GET']).to.equal('user.posts.create')
+      expect(verbs['/user/:user_id/posts-POST']).to.equal('user.posts.store')
+      expect(verbs['/user/:user_id/posts/:id-GET']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/:id/edit-GET']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/:id-PUT']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/:id-PATCH']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/:id-DELETE']).to.equal(undefined)
+    })
+
+    it('should be able to define route actions not required when creating resources', function () {
+      Route.resource('user.posts','PostController').except(['create', 'store', 'index'])
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.name]
+      }))
+      expect(routes.length).to.equal(5)
+      expect(verbs['/user/:user_id/posts-GET']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/create-GET']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts-POST']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/:id-GET']).to.equal('user.posts.show')
+      expect(verbs['/user/:user_id/posts/:id/edit-GET']).to.equal('user.posts.edit')
+      expect(verbs['/user/:user_id/posts/:id-PUT']).to.equal('user.posts.update')
+      expect(verbs['/user/:user_id/posts/:id-PATCH']).to.equal('user.posts.update')
+      expect(verbs['/user/:user_id/posts/:id-DELETE']).to.equal('user.posts.destroy')
+    })
+
+    it('should filter routes from resource routes copy also when using except', function () {
+      Route
+        .resource('user.posts','PostController')
+        .except(['create', 'store', 'index'])
+        .as({
+          store: 'users.save'
+        })
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb[0],route.name]
+      }))
+      expect(verbs['/user/:user_id/posts-POST']).to.equal(undefined)
     })
 
     it('should be able to define subdomain for a given route', function () {
@@ -245,9 +439,7 @@ describe('Route',function () {
     })
 
     it('should resolve a route registered with multiple verbs', function () {
-
       Route.match(['get','post'], '/', 'SomeController.method')
-
       const home = Route.resolve('/','GET')
       expect(home.route).to.equal('/')
       expect(home.verb).deep.equal(['GET','POST'])
@@ -257,7 +449,6 @@ describe('Route',function () {
       expect(home.middlewares).deep.equal([])
       expect(home.subdomain).to.equal(null)
       expect(home.params).deep.equal({})
-
     })
 
     it('should return route middlewares if registered with route', function () {
@@ -299,6 +490,43 @@ describe('Route',function () {
       expect(home).deep.equal({})
     })
 
+    it('should resolve routes registered as resource', function () {
+      Route.resource('users', 'UsersController')
+      const usersIndex = Route.resolve('/users','GET')
+      expect(usersIndex.name).to.equal('users.index')
+      expect(usersIndex.handler).to.equal('UsersController.index')
+    })
+
+    it('should resolve routes registered as nested resource', function () {
+      Route.resource('users.posts', 'PostController')
+      const postsIndex = Route.resolve('/users/1/posts','GET')
+      expect(postsIndex.name).to.equal('users.posts.index')
+      expect(postsIndex.handler).to.equal('PostController.index')
+    })
+
+    it('should resolve routes registered as resource under a group', function () {
+      Route.group('v1', function () {
+        Route.resource('users.posts', 'PostController')
+      }).prefix('/v1')
+      const postsIndex = Route.resolve('/v1/users/1/posts','GET')
+      expect(postsIndex.name).to.equal('users.posts.index')
+      expect(postsIndex.handler).to.equal('PostController.index')
+    })
+
+    it('should resolve routes registered as resource under a group and with a group', function () {
+      Route.resource('users.posts', 'PostController')
+      Route.group('v1', function () {
+        Route.resource('users.posts', 'V1PostController')
+      }).prefix('/v1')
+      const V1postsIndex = Route.resolve('/v1/users/1/posts','GET')
+      expect(V1postsIndex.name).to.equal('users.posts.index')
+      expect(V1postsIndex.handler).to.equal('V1PostController.index')
+
+      const postsIndex = Route.resolve('/users/1/posts','GET')
+      expect(postsIndex.name).to.equal('users.posts.index')
+      expect(postsIndex.handler).to.equal('PostController.index')
+    })
+
   })
 
   context('Building Url', function () {
@@ -336,6 +564,15 @@ describe('Route',function () {
       expect(url).to.equal('amanvirk.me/hello-world')
     })
 
+    it('should make url for route registered as a resource', function () {
+      Route.resource('users', 'UsersController')
+      const url = Route.url('users.index')
+      const createUrl = Route.url('users.create')
+      const updateUrl = Route.url('users.update', {id: 1})
+      expect(url).to.equal('/users')
+      expect(createUrl).to.equal('/users/create')
+      expect(updateUrl).to.equal('/users/1')
+    })
 
   })
 

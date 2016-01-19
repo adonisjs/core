@@ -21,6 +21,7 @@ let RouterHelper = exports = module.exports = {}
  * @public
  */
 RouterHelper.construct = function (route, verb, handler, group) {
+  route = route.startsWith('/') ? route : `/${route}`
   let pattern = RouterHelper.makeRoutePattern(route)
   let middlewares = []
   let subdomain = null
