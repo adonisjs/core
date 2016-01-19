@@ -55,6 +55,19 @@ class Group {
     helpers.addSubdomain(this.routes, subdomain)
   }
 
+  /**
+   * @description adds formats to an array of routes
+   * @method formats
+   * @param  {Array} formats [description]
+   * @param  {Boolean} strict  [description]
+   * @return {Object}         [description]
+   * @public
+   */
+  formats (formats, strict) {
+    helpers.addFormats(this.routes, formats, strict)
+    return this
+  }
+
 }
 
 module.exports = Group

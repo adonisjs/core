@@ -10,6 +10,7 @@ const Route = require('../../src/Route')
 const chai = require('chai')
 const _ = require('lodash')
 const expect = chai.expect
+const pathToRegexp = require('path-to-regexp')
 
 describe('Route',function () {
 
@@ -391,18 +392,66 @@ describe('Route',function () {
       expect(routes[0].subdomain).to.equal('v1.example.org')
     })
 
+    it('should be able to define formats on routes', function () {
+      Route.get('/', 'HomeController.index').formats(['json'])
+      const routes = Route.routes()
+      expect(routes[0].route).to.equal('/:format(.json)?')
+    })
+
+    it('should be able to define multiple formats on routes', function () {
+      Route.get('/', 'HomeController.index').formats(['json', 'xml'])
+      const routes = Route.routes()
+      expect(routes[0].route).to.equal('/:format(.json|.xml)?')
+    })
+
+    it('should be able to define formats on routes and make format strict', function () {
+      Route.get('/', 'HomeController.index').formats(['json'], true)
+      const routes = Route.routes()
+      expect(routes[0].route).to.equal('/:format(.json)')
+    })
+
+    it('should be able to define formats on group of routes', function () {
+      Route.group('v2', function () {
+        Route.get('/users', 'UsersController.index')
+        Route.get('/posts', 'PostController.index')
+      }).formats(['json'])
+      const routes = Route.routes()
+      expect(routes[0].route).to.equal('/users:format(.json)?')
+      expect(routes[1].route).to.equal('/posts:format(.json)?')
+    })
+
+    it('should be able to define strict formats on group of routes', function () {
+      Route.group('v2', function () {
+        Route.get('/users', 'UsersController.index')
+        Route.get('/posts', 'PostController.index')
+      }).formats(['json'], true)
+      const routes = Route.routes()
+      expect(routes[0].route).to.equal('/users:format(.json)')
+      expect(routes[1].route).to.equal('/posts:format(.json)')
+    })
+
+    it('should be able to define formats on resources', function () {
+      Route.resource('users', 'UsersController').formats(['json'])
+      const routes = Route.routes()
+      const routePairs = _.map(routes, function (route) {
+        return route.route
+      })
+      expect(routePairs.length).to.equal(8)
+      routePairs.forEach(function (item) {
+        expect(item).to.match(/:format(json)?/g)
+      })
+    })
+
   })
 
   context('Resolve', function () {
 
     it('should return an empty object when unable to resolve route', function () {
-
       const home = Route.resolve('/','GET')
       expect(home).deep.equal({})
     })
 
     it('should resolve a given route', function () {
-
       Route.get('/','SomeController.method')
       const home = Route.resolve('/','GET')
       expect(home.route).to.equal('/')
@@ -412,7 +461,6 @@ describe('Route',function () {
       expect(home.middlewares).deep.equal([])
       expect(home.subdomain).to.equal(null)
       expect(home.params).deep.equal({})
-
     })
 
     it('should return route arguments', function () {
@@ -422,7 +470,6 @@ describe('Route',function () {
     })
 
     it('should resolve a route prefixed via group', function () {
-
       Route.group('v1',function () {
         Route.get('/','SomeController.method')
       }).prefix('/v1')
@@ -527,6 +574,57 @@ describe('Route',function () {
       expect(postsIndex.handler).to.equal('PostController.index')
     })
 
+    it('should be able to define and resolve routes using formats', function () {
+      Route.get('/users', 'UsersController.index').formats(['json', 'xml'])
+      const userIndex = Route.resolve('/users','GET')
+      const withJson = Route.resolve('/users.json','GET')
+      const withXml = Route.resolve('/users.xml', 'GET')
+      expect(userIndex.handler).to.equal(withJson.handler)
+      expect(userIndex.handler).to.equal(withXml.handler)
+    })
+
+    it('should be able to define and resolve routes using formats from groups', function () {
+      Route.group('v2', function () {
+        Route.get('/users', 'UsersController.index')
+      }).prefix('/v2').formats(['json', 'xml'])
+      const userIndex = Route.resolve('/v2/users','GET')
+      const withJson = Route.resolve('/v2/users.json','GET')
+      const withXml = Route.resolve('/v2/users.xml', 'GET')
+      expect(userIndex.handler).to.equal(withJson.handler)
+      expect(userIndex.handler).to.equal(withXml.handler)
+    })
+
+    it('should be able to define formats on single routes and then groups too', function () {
+      Route.group('v2', function () {
+        Route.get('/users', 'UsersController.index').formats(['html'])
+      }).prefix('/v2').formats(['json', 'xml'])
+      const userIndex = Route.resolve('/v2/users','GET')
+      const withJson = Route.resolve('/v2/users.json','GET')
+      const withXml = Route.resolve('/v2/users.xml', 'GET')
+      const withHtml = Route.resolve('/v2/users.html', 'GET')
+      expect(userIndex.handler).deep.equal(withJson.handler)
+      expect(userIndex.handler).deep.equal(withXml.handler)
+      expect(userIndex.handler).deep.equal(withHtml.handler)
+    })
+
+    it('should be to define able formats on route resources', function () {
+      Route.resource('users', 'UsersController').formats(['json', 'html'])
+      const userIndex = Route.resolve('/users','GET')
+      const withJson = Route.resolve('/users.json','GET')
+      const withHtml = Route.resolve('/users.html', 'GET')
+      expect(userIndex.handler).deep.equal(withJson.handler)
+      expect(userIndex.handler).deep.equal(withHtml.handler)
+    })
+
+    it('should return format as params when using formats', function () {
+      Route.resource('users', 'UsersController').formats(['json', 'html'])
+      const userIndex = Route.resolve('/users','GET')
+      const withJson = Route.resolve('/users.json','GET')
+      const withHtml = Route.resolve('/users.html', 'GET')
+      expect(userIndex.params.format).to.equal(undefined)
+      expect(withJson.params.format).to.equal('.json')
+      expect(withHtml.params.format).to.equal('.html')
+    })
   })
 
   context('Building Url', function () {
@@ -573,8 +671,5 @@ describe('Route',function () {
       expect(createUrl).to.equal('/users/create')
       expect(updateUrl).to.equal('/users/1')
     })
-
   })
-
-
 })

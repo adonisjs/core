@@ -233,7 +233,8 @@ Route.resolve = function (urlPath, verb, host) {
   if (_.size(resolvedRoute) === 0) {
     return {}
   }
-  return helpers.returnRouteArguments(resolvedRoute, urlPath, host)
+  const v = helpers.returnRouteArguments(resolvedRoute, urlPath, host)
+  return v
 }
 
 /**
@@ -281,4 +282,18 @@ Route.url = function (pattern, params) {
 Route.remove = function (name) {
   const index = _.findIndex(routes, {name})
   routes.splice(index, 1)
+}
+
+/**
+ * @description add formats paramters to route defination
+ * which makes them accept formats on routes
+ * @method formats
+ * @param  {Array} formats
+ * @param  {Boolean} strict
+ * @return {void}
+ * @public
+ */
+Route.formats = function (formats, strict) {
+  const lastRoute = Route.lastRoute()
+  helpers.addFormats(lastRoute, formats, strict)
 }

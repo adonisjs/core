@@ -22,10 +22,10 @@ let RouterHelper = exports = module.exports = {}
  */
 RouterHelper.construct = function (route, verb, handler, group) {
   route = route.startsWith('/') ? route : `/${route}`
-  let pattern = RouterHelper.makeRoutePattern(route)
-  let middlewares = []
-  let subdomain = null
-  let name = route
+  const pattern = RouterHelper.makeRoutePattern(route)
+  const middlewares = []
+  const subdomain = null
+  const name = route
 
   verb = _.isArray(verb) ? verb : [verb] // a route can register for multiple verbs
   return {route, verb, handler, pattern, middlewares, name, group, subdomain}
@@ -69,18 +69,19 @@ RouterHelper.returnMatchingRouteToUrl = function (routes, urlPath, verb) {
  * @function returnRouteArguments
  * @description return params passed to a given resolved route
  * @param  {Object} route
- * @param  {String} url
+ * @param  {String} urlPath
  * @return {Object}
  * @public
  */
 RouterHelper.returnRouteArguments = function (route, urlPath) {
-  let extracted = route.pattern.exec(urlPath)
-  route.params = {}
+  const routeShallowCopy = _.clone(route)
+  let extracted = routeShallowCopy.pattern.exec(urlPath)
+  routeShallowCopy.params = {}
 
-  _.map(route.pattern.keys, function (key, index) {
-    route.params[key.name] = extracted[index + 1]
+  _.map(routeShallowCopy.pattern.keys, function (key, index) {
+    routeShallowCopy.params[key.name] = extracted[index + 1]
   })
-  return route
+  return routeShallowCopy
 }
 
 /**
@@ -115,6 +116,28 @@ RouterHelper.appendMiddleware = function (routes, middlewares) {
 }
 
 /**
+ * @description adds formats to routes or an array of routes
+ * @method addFormats
+ * @param  {Array|Object}   routes
+ * @param  {Boolean}   strict
+ * @param  {void}   format
+ * @public
+ */
+RouterHelper.addFormats = function (routes, formats, strict) {
+  const flag = strict ? '' : '?'
+  const formatsPattern = `:format(.${formats.join('|.')})${flag}`
+  if (_.isArray(routes)) {
+    _.each(routes, function (route) {
+      route.route = `${route.route}${formatsPattern}`
+      route.pattern = RouterHelper.makeRoutePattern(route.route)
+    })
+  } else {
+    routes.route = `${routes.route}${formatsPattern}`
+    routes.pattern = RouterHelper.makeRoutePattern(routes.route)
+  }
+}
+
+/**
  * @description general purpose method to prefix group of routes
  * @method prefixRoute
  * @param  {Array}    routes
@@ -141,3 +164,4 @@ RouterHelper.addSubdomain = function (routes, subdomain) {
     route.subdomain = subdomain
   })
 }
+

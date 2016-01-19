@@ -7,6 +7,7 @@
 */
 
 const _ = require('lodash')
+const helpers = require('./helpers')
 
 class Resource {
 
@@ -127,6 +128,19 @@ class Resource {
         return true
       }
     })
+    return this
+  }
+
+    /**
+   * @description adds formats to an array of routes
+   * @method formats
+   * @param  {Array} formats [description]
+   * @param  {Boolean} strict  [description]
+   * @return {Object}         [description]
+   * @public
+   */
+  formats (formats, strict) {
+    helpers.addFormats(this.routes, formats, strict)
     return this
   }
 
