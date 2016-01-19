@@ -47,7 +47,6 @@ describe('Response', function () {
   })
 
   it('should respond to a request using send method', function * (done) {
-
     const server = http.createServer((req, res) => {
       const request = new Request(req,res, Config)
       const response = new this.Response(request, res)
@@ -58,6 +57,42 @@ describe('Response', function () {
     expect(res.text).to.equal("Hello world")
     done()
   })
+
+  it('should make use of descriptive methods exposed by nodeRes', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.ok("Hello world")
+    })
+
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.text).to.equal("Hello world")
+    done()
+  })
+
+  it('should return 401 using unauthorized method', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.unauthorized("Login first")
+    })
+
+    const res = yield supertest(server).get('/').expect(401).end()
+    expect(res.text).to.equal("Login first")
+    done()
+  })
+
+  it('should return 500 using internalServerError method', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.internalServerError("Error first")
+    })
+    const res = yield supertest(server).get('/').expect(500).end()
+    expect(res.text).to.equal("Error first")
+    done()
+  })
+
 
   it('should set header on response', function * (done) {
 

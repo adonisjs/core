@@ -24,6 +24,11 @@ class Response {
     if (configInstance.get('app.http.setPoweredBy', true)) {
       nodeRes.header(this.response, 'X-Powered-By', 'Adonis')
     }
+    nodeRes.descriptiveMethods.forEach((method) => {
+      this[method] = (body) => {
+        nodeRes[method](this.request, this.response, body)
+      }
+    })
   }
 
   /**
