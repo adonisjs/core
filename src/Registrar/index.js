@@ -22,11 +22,14 @@ let Registrar = exports = module.exports = {}
  * @public
  */
 Registrar.require = function (arrayOfProviders) {
-  return _.map(arrayOfProviders, function (provider) {
+  return _.chain(arrayOfProviders)
+  .unique()
+  .map(function (provider) {
+    provider = provider.trim()
     const Module = requireStack(provider)
     const module = new Module()
     return module.register()
-  })
+  }).value()
 }
 
 /**

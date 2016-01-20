@@ -194,10 +194,13 @@ describe('Ioc', function () {
       expect(foo.bar instanceof Bar).to.equal(true)
     })
 
-    it('should be able to bind instances as singleton', function (done) {
+    it('should be able to bind instances as singleton', function () {
       class Foo {
         constructor () {
-          this.time = new Date().getTime()
+          this.items = []
+        }
+        add () {
+          this.items.push('test')
         }
       }
       Ioc.singleton('App/Foo', function () {
@@ -205,11 +208,9 @@ describe('Ioc', function () {
       })
 
       const foo1 = Ioc.use('App/Foo')
-      setTimeout(function () {
-        const foo2 = Ioc.use('App/Foo')
-        expect(foo1.time).to.equal(foo2.time)
-        done()
-      }, 1000)
+      foo1.add()
+      const foo2 = Ioc.use('App/Foo')
+      expect(foo1.items).deep.equal(foo2.items)
     })
   })
 

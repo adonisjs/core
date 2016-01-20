@@ -71,8 +71,9 @@ Ioc._bind = function (namespace, closure, singleton) {
   if (typeof (closure) !== 'function') {
     throw new Error('Invalid arguments, bind expects a callback')
   }
+  namespace = namespace.trim()
   log.verbose('binding %s to ioc container', namespace)
-  providers[namespace] = {closure, singleton}
+  providers[namespace] = {closure, singleton, instance: null}
 }
 
 /**
