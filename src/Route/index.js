@@ -172,7 +172,7 @@ Route.any = function (route, handler) {
  * @public
  */
 Route.as = function (name) {
-  let lastRoute = Route.lastRoute()
+  let lastRoute = Route._lastRoute()
   lastRoute.name = name
   return this
 }
@@ -184,7 +184,7 @@ Route.as = function (name) {
  * @return {Object}
  * @public
  */
-Route.lastRoute = function () {
+Route._lastRoute = function () {
   return _.last(routes)
 }
 
@@ -195,7 +195,7 @@ Route.lastRoute = function () {
  * @public
  */
 Route.middlewares = function (arrayOfNamedMiddleware) {
-  let lastRoute = Route.lastRoute()
+  let lastRoute = Route._lastRoute()
   helpers.appendMiddleware(lastRoute, arrayOfNamedMiddleware)
   return this
 }
@@ -294,6 +294,6 @@ Route.remove = function (name) {
  * @public
  */
 Route.formats = function (formats, strict) {
-  const lastRoute = Route.lastRoute()
+  const lastRoute = Route._lastRoute()
   helpers.addFormats(lastRoute, formats, strict)
 }

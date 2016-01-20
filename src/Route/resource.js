@@ -33,7 +33,7 @@ class Resource {
    */
   _registerRoute (verb, route, handler, name) {
     this.RouteHelper[verb](route, `${handler}.${name}`).as(`${this.basename}.${name}`)
-    this.routes.push(this.RouteHelper.lastRoute())
+    this.routes.push(this.RouteHelper._lastRoute())
   }
 
   /**

@@ -33,6 +33,17 @@ let Config = {
 describe('Session', function  () {
 
   context('Session Builder', function () {
+
+    it('should throw an error when unable to locate driver', function * () {
+      Config.get = function () {
+        return 'mongo'
+      }
+      const fn = function () {
+        return new Session(Config)
+      }
+      expect(fn).to.throw(/Unable to locate mongo session driver/i)
+    })
+
     it('should extend session drivers using extend method', function * () {
       class Redis {
       }
@@ -61,17 +72,6 @@ describe('Session', function  () {
       })
       const session = new Session(Config)
       expect(session.driver.storagePath).to.equal('')
-    })
-
-    it('should throw an error when unable to locate driver', function * () {
-
-      Config.get = function () {
-        return 'mongo'
-      }
-      const fn = function () {
-        return new Session(Config)
-      }
-      expect(fn).to.throw(/Unable to locate mongo session driver/i)
     })
 
     it('should set driver to cookie when driver under use is cookie', function * () {
