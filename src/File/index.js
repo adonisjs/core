@@ -17,6 +17,9 @@ class File {
 
   constructor (File) {
     this.file = File
+    this.file.error = null
+    this.file.filename = ''
+    this.file.filepath = ''
   }
 
   /**
@@ -34,8 +37,8 @@ class File {
       fs.rename(this.tmpPath(), uploadingFileName, (err) => {
         if (err) {
           this.file.error = err
-          this.file.filename = null
-          this.file.filepath = null
+          this.file.filename = ''
+          this.file.filepath = ''
         } else {
           this.file.error = null
           this.file.filename = name
@@ -145,7 +148,7 @@ class File {
    * @return {Object}
    */
   errors () {
-    return this.file.error || null
+    return this.file.error
   }
 
 }
