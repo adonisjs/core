@@ -6,7 +6,7 @@
  * MIT Licensed
 */
 
-const autoLoad = require('auto-loader')
+const requireAll = require('require-all')
 const _ = require('lodash')
 const util = require('../../lib/util')
 
@@ -14,11 +14,10 @@ class Config {
 
   constructor (Helpers) {
     this.configPath = Helpers.configPath()
-    this.config = _.fromPairs(_.compact(_.map(autoLoad.load(this.configPath), function (file, name) {
-      if (name.endsWith('.js')) {
-        return [name.replace('.js', ''), file]
-      }
-    })))
+    this.config = requireAll({
+      dirname: this.configPath,
+      filters: /(.*)\.js$/
+    })
   }
 
   /**
