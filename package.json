@@ -36,8 +36,6 @@
     "adonis-fold": "^2.0.0"
   },
   "dependencies": {
-    "adonis-fold": "^2.0.1",
-    "auto-loader": "git+https://github.com/thetutlage/node-auto-loader.git",
     "bcryptjs": "^2.3.0",
     "cat-log": "^1.0.0",
     "co": "^4.6.0",
@@ -52,6 +50,7 @@
     "node-uuid": "^1.4.3",
     "nunjucks": "^2.1.0",
     "path-to-regexp": "^1.2.1",
+    "require-all": "^2.0.0",
     "type-of-is": "^3.4.0"
   },
   "config": {

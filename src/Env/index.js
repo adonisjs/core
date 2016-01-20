@@ -13,9 +13,7 @@ const util = require('../../lib/util')
 class Env {
 
   constructor (Helpers) {
-    const basePath = Helpers.basePath()
-    const pathToEnvFile = path.join(basePath, '.env')
-    dotenv.load({path: pathToEnvFile})
+    dotenv.load({path: path.join(Helpers.basePath(), '.env')})
   }
 
   /**
