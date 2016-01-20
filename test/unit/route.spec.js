@@ -91,6 +91,14 @@ describe('Route',function () {
       expect(routes[0].verb).deep.equal(['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
     })
 
+    it('should throw an error when handler binded to resource is not a controller', function () {
+      const fn = function () {
+        Route.resource('/', function * () {
+        })
+      }
+      expect(fn).to.throw(/You can only bind controllers to resources/)
+    })
+
     it('should register resourceful routes', function () {
       Route.resource('/','SomeController')
       const routes = Route.routes()

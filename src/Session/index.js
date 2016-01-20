@@ -16,10 +16,6 @@ const SessionManager = require('./SessionManager')
  */
 class Session {
 
-  static drivers () {
-    return {}
-  }
-
   /**
    * @description extend method for ioc to extend
    * session provider
@@ -30,6 +26,7 @@ class Session {
    * @public
    */
   static extend (key, value) {
+    this.drivers = this.drivers || {}
     this.drivers[key] = value
   }
 
@@ -41,6 +38,7 @@ class Session {
     const sessionDomain = Config.get('session.domain')
     const sessionCookieName = Config.get('session.cookie', 'adonis-session')
     const sessionSecure = Config.get('session.secure', false)
+    this.constructor.drivers = this.constructor.drivers || {}
 
     const sessionOptions = {
       path: sessionPath,

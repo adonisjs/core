@@ -69,8 +69,7 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
      * them
      * @type {Array}
      */
-    let routeMiddleware = middleware.resolve([], true)
-    routeMiddleware = routeMiddleware.concat([{instance: null, method: finalHandler}])
+    const routeMiddleware = middleware.resolve([], true).concat([{instance: null, method: finalHandler}])
     yield middleware.compose(routeMiddleware, request, response)
   }).catch(function (e) {
     helpers.handleRequestError(e, request, response)

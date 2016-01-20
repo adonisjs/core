@@ -50,11 +50,11 @@ describe('Middleware', function () {
   })
 
   it('should fetch parameters from named middleware', function () {
-    expect(Middleware.fetchNameAndParams('auth:basic')).deep.equal({name: 'auth', params: ['basic']})
+    expect(Middleware.fetchParams('basic')).deep.equal(['basic'])
   })
 
   it('should fetch parameters from multiple named middleware', function () {
-    expect(Middleware.fetchNameAndParams('auth:basic,false')).deep.equal({name: 'auth', params: ['basic', 'false']})
+    expect(Middleware.fetchParams('basic,false')).deep.equal(['basic', 'false'])
   })
 
   it('should resolve all global middleware using resolve method', function () {

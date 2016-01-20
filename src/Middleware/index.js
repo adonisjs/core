@@ -89,16 +89,14 @@ Middleware.getNamed = function () {
 }
 
 /**
- * @description fetch params and name of the namemiddleware
+ * @description fetch params for a named middleware
  * @method fetchParams
- * @param  {String} key
- * @return {Object}
+ * @param  {String|Undefined}    params [description]
+ * @return {Array}           [description]
  * @public
  */
-Middleware.fetchNameAndParams = function (key) {
-  key = key.split(':')
-  const params = key[1] ? key[1].split(',') : []
-  return {name: key[0], params}
+Middleware.fetchParams = function (params) {
+  return params ? params.split(',') : []
 }
 
 /**
@@ -110,14 +108,16 @@ Middleware.fetchNameAndParams = function (key) {
  * @public
  */
 Middleware.formatNamedMiddleware = function (namedKeys) {
-  return _.fromPairs(_.map(namedKeys, function (key) {
-    const namedAndParams = Middleware.fetchNameAndParams(key)
-    const middlewareNamespace = namedMiddleware[namedAndParams.name]
-    if (!middlewareNamespace) {
-      throw new Error(`Unable to resolve ${namedAndParams.name}`)
+  const structured = {}
+  namedKeys.forEach(function (item) {
+    const itemItems = item.split(':')
+    const namespace = namedMiddleware[itemItems[0]]
+    if (!namespace) {
+      throw new Error(`Unable to resolve ${itemItems[0]}`)
     }
-    return [middlewareNamespace, namedAndParams.params]
-  }))
+    structured[namespace] = Middleware.fetchParams(itemItems[1])
+  })
+  return structured
 }
 
 /**
