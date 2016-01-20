@@ -12,6 +12,9 @@ const helpers = require('./helpers')
 class Resource {
 
   constructor (RouteHelper, pattern, handler) {
+    if (typeof (handler) !== 'string') {
+      throw new Error('You can only bind controllers to resources')
+    }
     this.RouteHelper = RouteHelper
     this.routes = []
     this.basename = pattern.replace(/\\/g, '')
