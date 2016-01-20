@@ -11,13 +11,14 @@ const expect = chai.expect
 const Ioc = require('adonis-fold').Ioc
 const path = require('path')
 const Middleware = require('../../src/Middleware')
+require('co-mocha')
 
 describe('Middleware', function () {
 
-  Ioc.autoload('App',path.join(__dirname,'./app'))
-
   afterEach(function () {
     Middleware.new()
+    Ioc.new()
+    Ioc.autoload('App',path.join(__dirname,'./app'))
   })
 
   it('should register a global middleware', function () {
@@ -48,48 +49,110 @@ describe('Middleware', function () {
     expect(named).deep.equal(namedMiddleware)
   })
 
-  it('should filter requested named middleware', function () {
-    Middleware.register('bar','App/Foo/Bar')
-    Middleware.register('baz','App/Foo/Baz')
-    expect(Middleware.filter(['baz'])).deep.equal(['App/Foo/Baz'])
+  it('should fetch parameters from named middleware', function () {
+    expect(Middleware.fetchNameAndParams('auth:basic')).deep.equal({name: 'auth', params: ['basic']})
   })
 
-  it('should filter requested named middleware and attach all global middleware to it', function () {
-    Middleware.register('bar','App/Foo/Bar')
-    Middleware.register('App/Foo/Global')
-    Middleware.register('baz','App/Foo/Baz')
-    expect(Middleware.filter(['baz'], true)).deep.equal(['App/Foo/Global','App/Foo/Baz'])
+  it('should fetch parameters from multiple named middleware', function () {
+    expect(Middleware.fetchNameAndParams('auth:basic,false')).deep.equal({name: 'auth', params: ['basic', 'false']})
   })
 
-  it('should resolve middlware instances from Ioc container', function () {
-    Middleware.register('App/Http/Middleware/Auth')
-    const resolved = Middleware.resolve(Middleware.filter([],true))
+  it('should resolve all global middleware using resolve method', function () {
+    Middleware.global(['App/Http/Middleware/Global'])
+    const resolved = Middleware.resolve({}, true)
     expect(resolved).to.be.an('array')
-    expect(resolved[0].method).to.equal('handle')
+    expect(resolved.length).to.equal(1)
+    expect(resolved[0]).to.have.property('instance')
+    expect(resolved[0]).to.have.property('method')
+    expect(resolved[0]).to.have.property('parameters')
   })
 
-  it('should call an array of middleware till last one', function * () {
-    Middleware.register('App/Http/Middleware/Auth')
-    Middleware.register('App/Http/Middleware/Cycle2')
-    const resolved = Middleware.resolve(Middleware.filter([],true))
-    const request = {count:0}
-    const response = {}
+  it('should format named middleware keys to namespace params mappings', function () {
+    Middleware.register('auth', 'App/Http/Middleware/AuthMiddleware')
+    const formatted = Middleware.formatNamedMiddleware(['auth:basic'])
+    expect(formatted).to.deep.equal({'App/Http/Middleware/AuthMiddleware': ['basic']})
+  })
 
-    const composed = Middleware.compose(resolved, request, response)
-    yield composed()
+  it('should throw error when unable to find mapping inside middleware store', function () {
+    const formatted = function () {
+      return Middleware.formatNamedMiddleware(['auth:basic'])
+    }
+    expect(formatted).to.throw(/Unable to resolve auth/)
+  })
+
+  it('should resolve named middleware using resolve method', function () {
+    Middleware.register('auth', 'App/Http/Middleware/AuthMiddleware')
+    const formatted = Middleware.formatNamedMiddleware(['auth:basic'])
+    const resolved = Middleware.resolve(formatted, false)
+    expect(resolved.length).to.equal(1)
+    expect(resolved[0]).to.have.property('instance')
+    expect(resolved[0]).to.have.property('method')
+    expect(resolved[0]).to.have.property('parameters')
+    expect(resolved[0].parameters).deep.equal(['basic'])
+   })
+
+  it('should resolve global and named named middleware using resolve method', function () {
+    Middleware.register('auth', 'App/Http/Middleware/AuthMiddleware')
+    Middleware.global(['App/Http/Middleware/Global'])
+    const formatted = Middleware.formatNamedMiddleware(['auth:basic'])
+    const resolved = Middleware.resolve(formatted, true)
+    expect(resolved.length).to.equal(2)
+    expect(resolved[0]).to.have.property('instance')
+    expect(resolved[0]).to.have.property('method')
+    expect(resolved[0]).to.have.property('parameters')
+    expect(resolved[0].parameters).deep.equal([])
+    expect(resolved[1]).to.have.property('instance')
+    expect(resolved[1]).to.have.property('method')
+    expect(resolved[1]).to.have.property('parameters')
+    expect(resolved[1].parameters).deep.equal(['basic'])
+  })
+
+  it('should compose global middleware using compose method', function * () {
+    Middleware.global(['App/Http/Middleware/Global'])
+    const request = {}
+    const response = {}
+    const resolved = Middleware.resolve([], true)
+    const compose = Middleware.compose(resolved, request, response)
+    yield compose()
     expect(request.count).to.equal(2)
   })
 
-  it('should abort middlware cycle when yield next has not been called', function * () {
-    Middleware.register('App/Http/Middleware/Cycle')
-    Middleware.register('App/Http/Middleware/Cycle2')
-    const resolved = Middleware.resolve(Middleware.filter([],true))
-    const request = {count:0}
+  it('should abort request in between when middleware throws an error', function * () {
+    Middleware.global(['App/Http/Middleware/GlobalThrow', 'App/Http/Middleware/Parser'])
+    const request = {}
     const response = {}
+    const resolved = Middleware.resolve([], true)
+    const compose = Middleware.compose(resolved, request, response)
+    try {
+      yield compose()
+      expect(true).to.equal(false)
+    } catch (e) {
+      expect(e.message).to.equal('Login')
+      expect(request.count).to.equal(undefined)
+    }
+  })
 
-    const composed = Middleware.compose(resolved, request, response)
-    yield composed()
+  it('should call middleware one by one', function * () {
+    Middleware.global(['App/Http/Middleware/Parser', 'App/Http/Middleware/Cycle2'])
+    const request = {}
+    const response = {}
+    const resolved = Middleware.resolve([], true)
+    const compose = Middleware.compose(resolved, request, response)
+    yield compose()
     expect(request.count).to.equal(1)
+  })
+
+  it('should pass parameters to be middleware', function * () {
+    Middleware.global(['App/Http/Middleware/Parser', 'App/Http/Middleware/Cycle2'])
+    Middleware.register('auth', 'App/Http/Middleware/AuthMiddleware')
+    const request = {}
+    const response = {}
+    const formatted = Middleware.formatNamedMiddleware(['auth:basic'])
+    const resolved = Middleware.resolve(formatted, true)
+    const compose = Middleware.compose(resolved, request, response)
+    yield compose()
+    expect(request.count).to.equal(1)
+    expect(request.scheme).to.equal('basic')
   })
 
 })

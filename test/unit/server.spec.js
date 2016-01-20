@@ -162,7 +162,7 @@ describe("Server", function () {
   })
 
   it("should return error when unable to find handle method on middleware", function * () {
-    Middleware.register('auth',['App/Http/Middleware/NoHandle'])
+    Middleware.register('auth', ['App/Http/Middleware/NoHandle'])
     Route.get('/', 'HomeController.index').middlewares(['auth'])
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
@@ -212,7 +212,6 @@ describe("Server", function () {
 
   it("should emit error event when there are listeners attach to error", function * () {
     App.on('error', function (error, request, response) {
-      console.log('here')
       response.status(401).send('Forbidden')
     })
     Route.get('/', function * () {
