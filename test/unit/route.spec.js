@@ -147,6 +147,20 @@ describe('Route',function () {
       expect(routes[0].middlewares).deep.equal(['auth'])
     })
 
+    it('should be able to attach middlewares as multiple parameters', function () {
+      Route.any('/','SomeController.method').middlewares('auth', 'web')
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].middlewares).deep.equal(['auth', 'web'])
+    })
+
+    it('should be able to attach middlewares using middleware method', function () {
+      Route.any('/','SomeController.method').middleware('auth', 'web')
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].middlewares).deep.equal(['auth', 'web'])
+    })
+
     it('should be able to group routes', function () {
       Route.group('admin',function () {
         Route.get('/','SomeController.method')

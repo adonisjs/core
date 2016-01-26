@@ -194,11 +194,17 @@ Route._lastRoute = function () {
  * @param  {Array} arrayOfNamedMiddleware
  * @public
  */
-Route.middlewares = function (arrayOfNamedMiddleware) {
+Route.middlewares = function () {
   let lastRoute = Route._lastRoute()
+  const arrayOfNamedMiddleware = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
   helpers.appendMiddleware(lastRoute, arrayOfNamedMiddleware)
   return this
 }
+
+/**
+ * @see  middlewares
+ */
+Route.middleware = Route.middlewares
 
 /**
  * @description create a new group of routes
