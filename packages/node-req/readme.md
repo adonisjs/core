@@ -46,15 +46,6 @@ nodeReq.get(req)
 // returns {name:'doe'}
 ```
 
-#### post (req)
-return request post body [ it does not parse req body, make use of formidable ]
-
-```javascript
-nodeReq.post(req)
-
-// reads from req._body
-```
-
 #### method (req)
 returns request method, or you can say HTTP verb
 
@@ -199,6 +190,17 @@ nodeReq.accepts(req, 'text/html')
 // 'text/html'
 nodeReq.accepts(req, ['json','html'])
 // 'html'
+```
+
+#### hasBody (req)
+tells whether request has body to be read by any body parser.
+
+```javascript
+if (nodeReq.hasBody(req)) {
+  req.on('data', function (chunk) {
+    // ... 
+  })
+}
 ```
 
 ## License 

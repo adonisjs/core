@@ -9,7 +9,6 @@
 /* global it, describe */
 const Request = require('../')
 const supertest = require('co-supertest')
-const formidable = require('formidable')
 const http = require('http')
 const chai = require('chai')
 const pem = require('pem')
@@ -41,28 +40,6 @@ describe('Http Request', function () {
 
     const res = yield supertest(server).get('/').expect(200).end()
     expect(res.body).deep.equal({})
-  })
-
-  it('should return request body when available', function * () {
-    const server = http.createServer(function (req, res) {
-      var form = new formidable.IncomingForm()
-
-      form.parse(req, function (err, fields, files) {
-        if (err) {
-          res.writeHead(500, {'content-type': 'application/json'})
-          res.end()
-          return
-        }
-        req._body = fields
-        const body = Request.post(req)
-        res.writeHead(200, {'content-type': 'application/json'})
-        res.write(JSON.stringify(body))
-        res.end()
-      })
-    })
-
-    const res = yield supertest(server).post('/').send({name: 'foo'}).expect(200).end()
-    expect(res.body).deep.equal({name: 'foo'})
   })
 
   it('should return request http verb', function * () {
@@ -505,5 +482,29 @@ describe('Http Request', function () {
 
     const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
     expect(res.body.html).to.equal('html')
+  })
+
+  it('should return true when request has body to read', function * () {
+    const server = http.createServer(function (req, res) {
+      const hasBody = Request.hasBody(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hasBody}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').send('name', 'doe').expect(200).end()
+    expect(res.body.hasBody).to.equal(true)
+  })
+
+  it('should return false when request does not have body to be read', function * () {
+    const server = http.createServer(function (req, res) {
+      const hasBody = Request.hasBody(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({hasBody}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.hasBody).to.equal(false)
   })
 })

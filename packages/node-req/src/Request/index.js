@@ -62,19 +62,6 @@ Request.get = function (request) {
 }
 
 /**
- * @description returns request post body, one
- * have to make use of some body parser to
- * set request body
- * @method post
- * @param  {Object} request
- * @return {Object}
- * @public
- */
-Request.post = function (request) {
-  return request._body
-}
-
-/**
  * @description return request method (also known as http verb)
  * @method method
  * @param  {Object} request
@@ -347,4 +334,15 @@ Request.is = function (request, keys) {
 Request.accepts = function (request, keys) {
   const accept = accepts(request)
   return accept.type(keys)
+}
+
+/**
+ * @description tells whether request has body or
+ * not to be read by any body parser
+ * @method accepts
+ * @param  {Object} request
+ * @return {Boolean}
+ */
+Request.hasBody = function (request) {
+  return is.hasBody(request)
 }
