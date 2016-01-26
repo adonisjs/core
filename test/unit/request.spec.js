@@ -70,8 +70,8 @@ describe('Request', function () {
 
   it('should get request post data', function * () {
     const server = http.createServer(function (req, res) {
-      req._body = {name:"foo"}
       const request = new Request(req, res, Config)
+      request._body = {name:"foo"}
       const body = request.post()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({body}),'utf8')
@@ -134,8 +134,8 @@ describe('Request', function () {
 
   it('should return get and post values when using all', function * () {
     const server = http.createServer(function (req, res) {
-      req._body = {age:22}
       const request = new Request(req, res, Config)
+      request._body = {age:22}
       const all = request.all()
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -147,8 +147,8 @@ describe('Request', function () {
 
   it('should return all values expect defined keys', function * () {
     const server = http.createServer(function (req, res) {
-      req._body = {age:22}
       const request = new Request(req, res, Config)
+      request._body = {age:22}
       const all = request.except('age')
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -160,8 +160,8 @@ describe('Request', function () {
 
   it('should return all values expect defined keys when defined as an array', function * () {
     const server = http.createServer(function (req, res) {
-      req._body = {age:22}
       const request = new Request(req, res, Config)
+      request._body = {age:22}
       const all = request.except(['age'])
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -173,8 +173,8 @@ describe('Request', function () {
 
   it('should not return key/value pair for key that does not exists', function * () {
     const server = http.createServer(function (req, res) {
-      req._body = {age:22}
       const request = new Request(req, res, Config)
+      request._body = {age:22}
       const all = request.except(['foo'])
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -187,8 +187,8 @@ describe('Request', function () {
 
   it('should return all values for only defined keys', function * () {
     const server = http.createServer(function (req, res) {
-      req._body = {age:22}
       const request = new Request(req, res, Config)
+      request._body = {age:22}
       const all = request.only('age')
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -200,8 +200,8 @@ describe('Request', function () {
 
   it('should return all values for only defined keys when keys are defined as array', function * () {
     const server = http.createServer(function (req, res) {
-      req._body = {age:22}
       const request = new Request(req, res, Config)
+      request._body = {age:22}
       const all = request.only(['age'])
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -213,8 +213,8 @@ describe('Request', function () {
 
   it('should not return key/value pair for key that does not exists', function * () {
     const server = http.createServer(function (req, res) {
-      req._body = {age:22}
       const request = new Request(req, res, Config)
+      request._body = {age:22}
       const all = request.only(['foo'])
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
@@ -223,7 +223,6 @@ describe('Request', function () {
     const res = yield supertest(server).get("/?name=foo").expect(200).end()
     expect(res.body.all).deep.equal({})
   })
-
 
   it('should return all headers for a given request', function * () {
     const server = http.createServer(function (req, res) {
@@ -684,6 +683,43 @@ describe('Request', function () {
 
     const res = yield supertest(server).get("/user/1/profile").expect(200).end()
     expect(res.body.matches).to.equal(false)
+  })
+
+  it('should return false when request does not have body', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const hasBody = request.hasBody()
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({hasBody}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/user/1/profile").expect(200).end()
+    expect(res.body.hasBody).to.equal(false)
+  })
+
+  it('should return true when request has body', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const hasBody = request.hasBody()
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({hasBody}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/user/1/profile").send('name', 'doe').expect(200).end()
+    expect(res.body.hasBody).to.equal(true)
+  })
+
+  it('should return request format using format method', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._params = {format: '.json'}
+      const format = request.format()
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({format}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/user/1/profile").expect(200).end()
+    expect(res.body.format).to.equal('json')
   })
 
   it('should return an empty file instance when file is not uploaded', function * () {

@@ -120,7 +120,7 @@ class Request {
    * @public
    */
   post () {
-    return nodeReq.post(this.request) || {}
+    return this._body || {}
   }
 
   /**
@@ -495,6 +495,28 @@ class Request {
     const url = this.url()
     const pattern = pathToRegexp(args, [])
     return pattern.test(url)
+  }
+
+  /**
+   * @description returns request format enabled by using
+   * .formats on routes
+   * @method format
+   * @return {String}
+   * @public
+   */
+  format () {
+    return this.param('format') ? this.param('format').replace('.', '') : null
+  }
+
+  /**
+   * @description tells whether or not request has body. It can be
+   * used by bodyParsers to decide whether or not to parse body
+   * @method hasBody
+   * @return {Boolean} [description]
+   * @public
+   */
+  hasBody () {
+    return nodeReq.hasBody(this.request)
   }
 
 }
