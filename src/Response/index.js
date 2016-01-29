@@ -57,6 +57,20 @@ class Response {
   }
 
   /**
+   * @description creates a new view using View class
+   * and sends it back as response
+   * @method sendView
+   * @param  {String} template
+   * @param  {Object} options
+   * @return {void}
+   * @public
+   */
+  * sendView (template, options) {
+    const view = yield this.view(template, options)
+    this.send(view)
+  }
+
+  /**
    * @description removes header from response.
    * @method removeHeader
    * @param  {String}     key

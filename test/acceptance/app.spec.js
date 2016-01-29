@@ -129,4 +129,13 @@ describe('App Exceptations', function () {
       browser.assert.status(404)
     }
   })
+
+  it('should send a view using sendView method', function * () {
+    Route.get('/', function * (request, response) {
+      yield response.sendView('index')
+    })
+    yield browser.visit('/')
+    expect(browser.text('body').trim()).to.equal('sending via view');
+  })
+
 })

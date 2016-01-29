@@ -282,6 +282,26 @@ describe('Response', function () {
     }
   })
 
+  it('should immediately send a view using response sendView method', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      co(function * () {
+       yield response.sendView('index')
+      }).catch(function (err) {
+        console.log(err)
+        response.status(200).send(err)
+      })
+    })
+    try{
+      const res = yield supertest(server).get('/').expect(200).end()
+      expect(res.text.trim()).to.equal("<h2> Hello world </h2>")
+      done()
+    }catch(e){
+      done(e)
+    }
+  })
+
   it('should set X-Powered-By when enabled inside app.http config', function * (done) {
     const server = http.createServer((req, res) => {
       const request = new Request(req,res, Config)
