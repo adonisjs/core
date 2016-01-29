@@ -130,6 +130,14 @@ describe('App Exceptations', function () {
     }
   })
 
+  it('should return request format', function * () {
+    Route.get('/admin', function * (request, response) {
+      response.send(request.format())
+    }).formats(['json'])
+    yield browser.visit('/admin.json')
+    expect(browser.text('body').trim()).to.equal('json')
+  })
+
   it('should send a view using sendView method', function * () {
     Route.get('/', function * (request, response) {
       yield response.sendView('index')
