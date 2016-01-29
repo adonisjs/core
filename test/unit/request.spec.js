@@ -219,7 +219,7 @@ describe('Request', function () {
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
     })
-
+  
     const res = yield supertest(server).get("/?name=foo").expect(200).end()
     expect(res.body.all).deep.equal({})
   })
