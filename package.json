@@ -16,7 +16,7 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "^2.0.0",
+    "adonis-fold": "^2.0.1",
     "chai": "^3.3.0",
     "cheerio": "^0.19.0",
     "co-mocha": "^1.1.2",
@@ -33,7 +33,7 @@
     "zombie": "^4.2.1"
   },
   "peerDependencies": {
-    "adonis-fold": "^2.0.0"
+    "adonis-fold": "^2.0.1"
   },
   "dependencies": {
     "bcryptjs": "^2.3.0",
@@ -44,7 +44,7 @@
     "lodash": "^4.0.1",
     "mkdirp": "^0.5.1",
     "node-cookie": "^1.0.0",
-    "node-req": "^1.0.2",
+    "node-req": "^1.0.3",
     "node-res": "^2.0.2",
     "node-static": "^0.7.7",
     "node-uuid": "^1.4.7",
