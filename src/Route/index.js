@@ -60,6 +60,7 @@ Route.new = function () {
 Route.route = function (route, verb, handler) {
   let constructedRoute = helpers.construct(route, verb, handler, activeGroup)
   routes.push(constructedRoute)
+  return this
 }
 
 /**

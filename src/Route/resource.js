@@ -17,7 +17,7 @@ class Resource {
     }
     this.RouteHelper = RouteHelper
     this.routes = []
-    this.basename = pattern.replace(/\\/g, '')
+    this.basename = pattern.replace('/', '')
     this._buildRoutes(pattern, handler)
     return this
   }
@@ -35,7 +35,8 @@ class Resource {
    * @public
    */
   _registerRoute (verb, route, handler, name) {
-    this.RouteHelper[verb](route, `${handler}.${name}`).as(`${this.basename}.${name}`)
+    const resourceName = (this.basename === '/' || !this.basename) ? name : `${this.basename}.${name}`
+    this.RouteHelper.route(route, verb, `${handler}.${name}`).as(resourceName)
     this.routes.push(this.RouteHelper._lastRoute())
   }
 
@@ -53,14 +54,13 @@ class Resource {
     })
     const seperator = pattern.endsWith('/') ? '' : '/'
 
-    this._registerRoute('get', pattern, handler, 'index')
-    this._registerRoute('get', `${pattern}${seperator}create`, handler, 'create')
-    this._registerRoute('post', `${pattern}`, handler, 'store')
-    this._registerRoute('get', `${pattern}${seperator}:id`, handler, 'show')
-    this._registerRoute('get', `${pattern}${seperator}:id/edit`, handler, 'edit')
-    this._registerRoute('put', `${pattern}${seperator}:id`, handler, 'update')
-    this._registerRoute('patch', `${pattern}${seperator}:id`, handler, 'update')
-    this._registerRoute('delete', `${pattern}${seperator}:id`, handler, 'destroy')
+    this._registerRoute(['GET', 'HEAD'], pattern, handler, 'index')
+    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}create`, handler, 'create')
+    this._registerRoute('POST', `${pattern}`, handler, 'store')
+    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}:id`, handler, 'show')
+    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}:id/edit`, handler, 'edit')
+    this._registerRoute(['PUT', 'PATCH'], `${pattern}${seperator}:id`, handler, 'update')
+    this._registerRoute('DELETE', `${pattern}${seperator}:id`, handler, 'destroy')
   }
 
   /**
