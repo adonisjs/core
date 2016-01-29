@@ -24,6 +24,11 @@ class Response {
     if (configInstance.get('app.http.setPoweredBy', true)) {
       nodeRes.header(this.response, 'X-Powered-By', 'Adonis')
     }
+    nodeRes.descriptiveMethods.forEach((method) => {
+      this[method] = (body) => {
+        nodeRes[method](this.request, this.response, body)
+      }
+    })
   }
 
   /**
@@ -49,6 +54,20 @@ class Response {
    */
   * view (template, options) {
     return viewInstance.make(template, options)
+  }
+
+  /**
+   * @description creates a new view using View class
+   * and sends it back as response
+   * @method sendView
+   * @param  {String} template
+   * @param  {Object} options
+   * @return {void}
+   * @public
+   */
+  * sendView (template, options) {
+    const view = yield this.view(template, options)
+    this.send(view)
   }
 
   /**

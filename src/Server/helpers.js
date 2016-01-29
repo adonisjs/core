@@ -32,7 +32,7 @@ helpers.callRouteAction = function (resolvedRoute, request, response, middleware
      * to throw errors bubbled by IoC container
      * @type {Array}
      */
-    let routeMiddleware = middleware.resolve(middleware.filter(resolvedRoute.middlewares, false))
+    let routeMiddleware = middleware.resolve(middleware.formatNamedMiddleware(resolvedRoute.middlewares), false)
 
     /**
      * making route action, which can a controller method or
@@ -69,8 +69,7 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
      * them
      * @type {Array}
      */
-    let routeMiddleware = middleware.resolve(middleware.getGlobal())
-    routeMiddleware = routeMiddleware.concat([{instance: null, method: finalHandler}])
+    const routeMiddleware = middleware.resolve([], true).concat([{instance: null, method: finalHandler}])
     yield middleware.compose(routeMiddleware, request, response)
   }).catch(function (e) {
     helpers.handleRequestError(e, request, response)

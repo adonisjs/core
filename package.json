@@ -1,10 +1,10 @@
 {
   "name": "adonis-framework",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
-    "test": "npm run standard && _mocha test/unit test/acceptance --bail",
+    "test": "npm run standard && istanbul cover _mocha --report lcovonly -- -R spec test/unit test/acceptance && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "coverage": "npm run standard && istanbul cover _mocha test/unit test/acceptance  --bail",
     "standard": "standard src/**/*.js providers/*.js"
   },
@@ -16,7 +16,7 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "^2.0.0",
+    "adonis-fold": "^2.0.1",
     "chai": "^3.3.0",
     "cheerio": "^0.19.0",
     "co-mocha": "^1.1.2",
@@ -33,24 +33,24 @@
     "zombie": "^4.2.1"
   },
   "peerDependencies": {
-    "adonis-fold": "^2.0.0"
+    "adonis-fold": "^2.0.1"
   },
   "dependencies": {
-    "auto-loader": "git+https://github.com/thetutlage/node-auto-loader.git",
     "bcryptjs": "^2.3.0",
     "cat-log": "^1.0.0",
     "co": "^4.6.0",
-    "dotenv": "^1.2.0",
+    "dotenv": "^2.0.0",
     "eventemitter2": "^0.4.14",
-    "lodash": "^4.0.0",
+    "lodash": "^4.0.1",
     "mkdirp": "^0.5.1",
     "node-cookie": "^1.0.0",
-    "node-req": "^1.0.1",
-    "node-res": "^2.0.0",
+    "node-req": "^1.0.3",
+    "node-res": "^2.0.2",
     "node-static": "^0.7.7",
-    "node-uuid": "^1.4.3",
-    "nunjucks": "^2.1.0",
+    "node-uuid": "^1.4.7",
+    "nunjucks": "^2.3.0",
     "path-to-regexp": "^1.2.1",
+    "require-all": "^2.0.0",
     "type-of-is": "^3.4.0"
   },
   "config": {

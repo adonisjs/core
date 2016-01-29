@@ -8,6 +8,7 @@
 
 const helpers = require('./helpers')
 const Group = require('./group')
+const Resource = require('./resource')
 const subdomains = require('./subdomains')
 const _ = require('lodash')
 
@@ -59,6 +60,7 @@ Route.new = function () {
 Route.route = function (route, verb, handler) {
   let constructedRoute = helpers.construct(route, verb, handler, activeGroup)
   routes.push(constructedRoute)
+  return this
 }
 
 /**
@@ -171,9 +173,20 @@ Route.any = function (route, handler) {
  * @public
  */
 Route.as = function (name) {
-  let lastRoute = _.last(routes)
+  let lastRoute = Route._lastRoute()
   lastRoute.name = name
   return this
+}
+
+/**
+ * @description returns last route registered inside
+ * the route store
+ * @method lastRoute
+ * @return {Object}
+ * @public
+ */
+Route._lastRoute = function () {
+  return _.last(routes)
 }
 
 /**
@@ -182,11 +195,17 @@ Route.as = function (name) {
  * @param  {Array} arrayOfNamedMiddleware
  * @public
  */
-Route.middlewares = function (arrayOfNamedMiddleware) {
-  let lastRoute = _.last(routes)
+Route.middlewares = function () {
+  let lastRoute = Route._lastRoute()
+  const arrayOfNamedMiddleware = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
   helpers.appendMiddleware(lastRoute, arrayOfNamedMiddleware)
   return this
 }
+
+/**
+ * @see  middlewares
+ */
+Route.middleware = Route.middlewares
 
 /**
  * @description create a new group of routes
@@ -221,7 +240,8 @@ Route.resolve = function (urlPath, verb, host) {
   if (_.size(resolvedRoute) === 0) {
     return {}
   }
-  return helpers.returnRouteArguments(resolvedRoute, urlPath, host)
+  const v = helpers.returnRouteArguments(resolvedRoute, urlPath, host)
+  return v
 }
 
 /**
@@ -232,19 +252,7 @@ Route.resolve = function (urlPath, verb, host) {
  * @public
  */
 Route.resource = function (pattern, handler) {
-  /**
-   * avoiding multiple / when route itself is a base
-   * route.
-   * @type {String}
-   */
-  const seperator = pattern === '/' ? '' : '/'
-
-  Route.options(pattern, '')
-  Route.get(pattern, `${handler}.index`)
-  Route.post(pattern, `${handler}.store`)
-  Route.get(`${pattern}${seperator}:id`, `${handler}.show`)
-  Route.put(`${pattern}${seperator}:id`, `${handler}.update`)
-  Route.delete(`${pattern}${seperator}:id`, `${handler}.destroy`)
+  return new Resource(Route, pattern, handler)
 }
 
 /**
@@ -269,4 +277,30 @@ Route.url = function (pattern, params) {
     return helpers.compileRouteToUrl(resolveRoute, params)
   }
   return helpers.compileRouteToUrl(pattern, params)
+}
+
+/**
+ * @description removes a route using it's name
+ * @method remove
+ * @param  {String} name
+ * @return {void}
+ * @public
+ */
+Route.remove = function (name) {
+  const index = _.findIndex(routes, {name})
+  routes.splice(index, 1)
+}
+
+/**
+ * @description add formats paramters to route defination
+ * which makes them accept formats on routes
+ * @method formats
+ * @param  {Array} formats
+ * @param  {Boolean} strict
+ * @return {void}
+ * @public
+ */
+Route.formats = function (formats, strict) {
+  const lastRoute = Route._lastRoute()
+  helpers.addFormats(lastRoute, formats, strict)
 }

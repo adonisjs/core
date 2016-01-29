@@ -17,6 +17,13 @@ class SessionManager {
   constructor (request, response) {
     this.request = request
     this.response = response
+    /**
+     * session cookie payload is the original of session cookie when request
+     * has been started and incrementally, we will update this value until
+     * request is over.
+     * @type {Mixed}
+     */
+    this.sessionCookiePayload = null
   }
 
   /**
@@ -28,7 +35,10 @@ class SessionManager {
   _getSessionCookie () {
     const secret = this.constructor.config.get('app.appKey')
     const decrypt = !!secret
-    return nodeCookie.parse(this.request, secret, decrypt)[this.constructor.options.cookie]
+    if (!this.sessionCookiePayload) {
+      this.sessionCookiePayload = nodeCookie.parse(this.request, secret, decrypt)[this.constructor.options.cookie]
+    }
+    return this.sessionCookiePayload
   }
 
   /**
@@ -57,7 +67,12 @@ class SessionManager {
     if (!this.constructor.options.browserClear) {
       options.expires = new Date(Date.now() + (this.constructor.options.age * 60 * 1000))
     }
-
+    /**
+     * here we update the cookie payload, this is what will be saved
+     * to the browser on request finish. But before that we need
+     * to persist it.
+     */
+    this.sessionCookiePayload = session
     nodeCookie.create(this.request, this.response, this.constructor.options.cookie, session, options, secret, encrypt)
   }
 

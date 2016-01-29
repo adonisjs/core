@@ -43,11 +43,20 @@ class Server {
       helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNameSpace())
       return
     }
+
     const error = new Error(`Route not found ${request.url()}`)
     error.status = 404
     throw error
   }
 
+  /**
+   * @description serves a static resource
+   * @method _staticHandler
+   * @param  {Object}       request  [description]
+   * @param  {Object}       response [description]
+   * @return {Promise}                [description]
+   * @public
+   */
   _staticHandler (request, response) {
     return this.static.serve(request.request, request.response)
   }

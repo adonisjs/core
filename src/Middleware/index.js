@@ -89,31 +89,52 @@ Middleware.getNamed = function () {
 }
 
 /**
- * @description filter requested middleware from named and
- * global list
- * @method filter
- * @param  {Array} keys
- * @param  {Boolean} callGlobal
- * @return {Array}
+ * @description fetch params for a named middleware
+ * @method fetchParams
+ * @param  {String|Undefined}    params [description]
+ * @return {Array}           [description]
  * @public
  */
-Middleware.filter = function (keys, callGlobal) {
-  const globalMiddleware = Middleware.getGlobal()
-  const namedToCall = _.toArray(_.pick(Middleware.getNamed(), keys))
-  return callGlobal === true ? globalMiddleware.concat(namedToCall) : namedToCall
+Middleware.fetchParams = function (params) {
+  return params ? params.split(',') : []
+}
+
+/**
+ * @description formats an array of named middleware by
+ * returning it's namespace and parameters
+ * @method formatNamedMiddleware
+ * @param  {Array}              namedKeys [description]
+ * @return {Object}                        [description]
+ * @public
+ */
+Middleware.formatNamedMiddleware = function (namedKeys) {
+  const structured = {}
+  namedKeys.forEach(function (item) {
+    const itemItems = item.split(':')
+    const namespace = namedMiddleware[itemItems[0]]
+    if (!namespace) {
+      throw new Error(`Unable to resolve ${itemItems[0]}`)
+    }
+    structured[namespace] = Middleware.fetchParams(itemItems[1])
+  })
+  return structured
 }
 
 /**
  * @description resolves an array of middleware namespaces from
  * ioc container
  * @method resolve
- * @param  {Array} middleware
+ * @param  {Object} namedMiddlewareHash
+ * @param  {Boolean} includeGlobal
  * @return {Array}
  * @public
  */
-Middleware.resolve = function (middleware) {
-  return _.map(middleware, function (item) {
-    return Ioc.makeFunc(`${item}.handle`)
+Middleware.resolve = function (namedMiddlewareHash, includeGlobal) {
+  const finalSet = includeGlobal ? Middleware.getGlobal().concat(_.keys(namedMiddlewareHash)) : _.keys(namedMiddlewareHash)
+  return _.map(finalSet, function (item) {
+    const func = Ioc.makeFunc(`${item}.handle`)
+    func.parameters = namedMiddlewareHash[item] || []
+    return func
   })
 }
 
@@ -134,8 +155,9 @@ Middleware.compose = function (middleware, request, response) {
     let i = middleware.length
     while (i--) {
       const instance = middleware[i].instance
-      const method = instance ? middleware[i].instance[middleware[i].method] : middleware[i].method
-      next = method.apply(instance, [request, response, next])
+      const method = instance ? instance[middleware[i].method] : middleware[i].method
+      const values = [request, response, next].concat(middleware[i].parameters)
+      next = method.apply(instance, values)
     }
     yield * next
   }

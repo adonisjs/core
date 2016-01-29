@@ -33,6 +33,17 @@ let Config = {
 describe('Session', function  () {
 
   context('Session Builder', function () {
+
+    it('should throw an error when unable to locate driver', function * () {
+      Config.get = function () {
+        return 'mongo'
+      }
+      const fn = function () {
+        return new Session(Config)
+      }
+      expect(fn).to.throw(/Unable to locate mongo session driver/i)
+    })
+
     it('should extend session drivers using extend method', function * () {
       class Redis {
       }
@@ -61,17 +72,6 @@ describe('Session', function  () {
       })
       const session = new Session(Config)
       expect(session.driver.storagePath).to.equal('')
-    })
-
-    it('should throw an error when unable to locate driver', function * () {
-
-      Config.get = function () {
-        return 'mongo'
-      }
-      const fn = function () {
-        return new Session(Config)
-      }
-      expect(fn).to.throw(/Unable to locate mongo session driver/i)
     })
 
     it('should set driver to cookie when driver under use is cookie', function * () {
@@ -346,7 +346,7 @@ describe('Session', function  () {
       let body = {}
       body.name = sessionManagerFake._makeBody('name','virk')
       const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body) + '; Path']).expect(200).end()
-      let cookie = res.headers['set-cookie'][1].split(';')[0].split('cookie=')[1]
+      let cookie = res.headers['set-cookie'][res.headers['set-cookie'].length - 1].split(';')[0].split('cookie=')[1]
       cookie = querystring.unescape(cookie).replace('j:', '')
       expect(JSON.parse(cookie)).deep.equal({})
 
@@ -671,7 +671,7 @@ describe('Session', function  () {
       })
 
       const res = yield supertest(server).get("/").set('Cookie','adonis-session=12002010020').expect(200).end()
-      const sessionKey = res.headers['set-cookie'][1].split('adonis-session=')
+      const sessionKey = res.headers['set-cookie'][res.headers['set-cookie'].length - 1].split('adonis-session=')
       const trustedValue = querystring.unescape(sessionKey[1]).replace('j:','').replace('; Path=/', '')
       expect(JSON.parse(trustedValue)).deep.equal({"age": {"d": "22", "t": "Number"}})
     })
@@ -724,7 +724,6 @@ describe('Session', function  () {
     })
 
     it('should set cookie expiry when age is set', function * () {
-
       SessionManager.driver = 'cookie'
       SessionManager.options.browserClear = false
       SessionManager.options.age = 120
@@ -748,7 +747,6 @@ describe('Session', function  () {
     })
 
     it('should not set cookie expiry when age is set but browser clear is true', function * () {
-
       SessionManager.driver = 'cookie'
       SessionManager.options.browserClear = true
       SessionManager.options.age = 120
@@ -769,6 +767,173 @@ describe('Session', function  () {
       const res = yield supertest(server).get("/").expect(200).end()
       const session = res.headers['set-cookie'][0].split('adonis-session=')[1]
       expect(session.indexOf('Expires=') > -1).to.equal(false)
+    })
+
+    it('should be able to put values to session store multiple times in a single request', function * () {
+      SessionManager.driver = 'cookie'
+      SessionManager.options.path = '/'
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          yield sessionManager.put('name','foo')
+          yield sessionManager.put('age', 22)
+        }).then(function () {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end()
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const res = yield supertest(server).get("/").expect(200).end()
+      const sessionKey = res.headers['set-cookie'][res.headers['set-cookie'].length - 1].split('adonis-session=')
+      const trustedValue = JSON.parse(querystring.unescape(sessionKey[1]).replace('j:','').replace('; Path=/; Secure', ''))
+      expect(trustedValue).to.have.property('name')
+      expect(trustedValue).to.have.property('age')
+    })
+
+    it('should be able to incrementally update the session store multiple times in a single request', function * () {
+      SessionManager.driver = 'cookie'
+      SessionManager.options.path = '/'
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          yield sessionManager.put('name','foo')
+          const name = yield sessionManager.pull('name')
+          yield sessionManager.put('age', 22)
+          return name
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const res = yield supertest(server).get("/").expect(200).end()
+      const sessionKey = res.headers['set-cookie'][res.headers['set-cookie'].length - 1].split('adonis-session=')
+      const trustedValue = JSON.parse(querystring.unescape(sessionKey[1]).replace('j:','').replace('; Path=/; Secure', ''))
+      expect(trustedValue).not.have.property('name')
+      expect(trustedValue).to.have.property('age')
+      expect(res.body.name).to.equal('foo')
+    })
+
+    it('should be able to read values immediately added with in the same request', function * () {
+      SessionManager.driver = 'cookie'
+      SessionManager.options.path = '/'
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          yield sessionManager.put('name','foo')
+          return yield sessionManager.get('name')
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+      const res = yield supertest(server).get("/").expect(200).end()
+      expect(res.body.name).to.equal('foo')
+    })
+
+    it('should be able to put values to session store multiple times in a single request using file driver', function * () {
+      SessionManager.driver = 'file'
+      SessionManager.options.path = '/'
+      let sessionValues = {}
+      const FileDriver = {
+        read: function * () {
+          return typeof(sessionValues) === 'object' ? sessionValues : JSON.parse(sessionValues)
+        },
+        write: function * (id, values) {
+          sessionValues = values
+        }
+      }
+      SessionManager.driver = FileDriver
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          yield sessionManager.put('name','foo')
+          yield sessionManager.put('age', 22)
+        }).then(function () {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end()
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const res = yield supertest(server).get("/").expect(200).end()
+      expect(JSON.parse(sessionValues)).to.have.property('age')
+      expect(JSON.parse(sessionValues)).to.have.property('name')
+    })
+
+    it('should be able to incrementally update the session store multiple times in a single request using file driver', function * () {
+      SessionManager.driver = 'file'
+      SessionManager.options.path = '/'
+      let sessionValues = {}
+      const FileDriver = {
+        read: function * () {
+          return typeof(sessionValues) === 'object' ? sessionValues : JSON.parse(sessionValues)
+        },
+        write: function * (id, values) {
+          sessionValues = values
+        }
+      }
+      SessionManager.driver = FileDriver
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          yield sessionManager.put('name','foo')
+          const name = yield sessionManager.pull('name')
+          yield sessionManager.put('age', 22)
+          return name
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const res = yield supertest(server).get("/").expect(200).end()
+      expect(JSON.parse(sessionValues)).to.have.property('age')
+      expect(JSON.parse(sessionValues)).not.have.property('name')
+    })
+
+    it('should be able to read values immediately added with in the same request using file driver', function * () {
+      SessionManager.driver = 'file'
+      SessionManager.options.path = '/'
+      let sessionValues = {}
+      const FileDriver = {
+        read: function * () {
+          return typeof(sessionValues) === 'object' ? sessionValues : JSON.parse(sessionValues)
+        },
+        write: function * (id, values) {
+          sessionValues = values
+        }
+      }
+      SessionManager.driver = FileDriver
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          yield sessionManager.put('name','foo')
+          return yield sessionManager.get('name')
+        }).then(function (name) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+      const res = yield supertest(server).get("/").expect(200).end()
+      expect(res.body.name).to.equal('foo')
     })
   })
 })

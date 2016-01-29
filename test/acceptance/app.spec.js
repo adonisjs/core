@@ -110,4 +110,40 @@ describe('App Exceptations', function () {
     yield browser.visit('/')
     expect(browser.getCookie('name')).to.equal(null);
   })
+
+  it('should response to a url with .json extension', function * () {
+    Route.get('/', function * (request, response) {
+      response.send('sending via json route')
+    }).formats(['json'])
+    yield browser.visit('/.json')
+    expect(browser.text('body').trim()).to.equal('sending via json route');
+  })
+
+  it('should throw 404 when route is not found using a non-registered extension', function * () {
+    Route.get('/', function * (request, response) {
+      response.send('sending via json route')
+    }).formats(['json'])
+    try {
+      yield browser.visit('/.xml')
+    } catch (e) {
+      browser.assert.status(404)
+    }
+  })
+
+  it('should return request format', function * () {
+    Route.get('/admin', function * (request, response) {
+      response.send(request.format())
+    }).formats(['json'])
+    yield browser.visit('/admin.json')
+    expect(browser.text('body').trim()).to.equal('json')
+  })
+
+  it('should send a view using sendView method', function * () {
+    Route.get('/', function * (request, response) {
+      yield response.sendView('index')
+    })
+    yield browser.visit('/')
+    expect(browser.text('body').trim()).to.equal('sending via view');
+  })
+
 })

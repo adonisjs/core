@@ -10,9 +10,9 @@ const path = require('path')
 const CatLog = require('cat-log')
 const log = new CatLog('adonis:framework')
 
-let rootPath = null // application root path
-let appPath = null // path to application app directory
-let appNameSpace = null // autoloading namespace
+let rootPath = '' // application root path
+let appPath = '' // path to application app directory
+let appNameSpace = '' // autoloading namespace
 
 let Helpers = exports = module.exports = {}
 
