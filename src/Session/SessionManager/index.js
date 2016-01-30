@@ -141,15 +141,25 @@ class SessionManager {
    * @private
    */
   _reverseBody (value) {
+    /**
+     * if parsed do not re parse
+     */
+    if (typeof (value.d) === value.t.toLowerCase()) {
+      return value.d
+    }
     switch (value.t) {
       case 'Number':
         value.d = Number(value.d)
         break
       case 'Object':
-        value.d = JSON.parse(value.d)
+        try {
+          value.d = JSON.parse(value.d)
+        } catch (e) {}
         break
       case 'Array':
-        value.d = JSON.parse(value.d)
+        try {
+          value.d = JSON.parse(value.d)
+        } catch (e) {}
         break
       case 'Boolean':
         value.d = value.d === 'true' || value.d === '1'
