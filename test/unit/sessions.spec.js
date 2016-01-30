@@ -840,6 +840,28 @@ describe('Session', function  () {
       expect(res.body.name).to.equal('foo')
     })
 
+    it('should be able to read objects for multiple times', function * () {
+      SessionManager.driver = 'cookie'
+      SessionManager.options.path = '/'
+      const server = http.createServer(function (req, res) {
+        const sessionManager = new SessionManager(req, res)
+        co(function * () {
+          yield sessionManager.put('profile', {name: 'foo'})
+          yield sessionManager.get('profile')
+          return yield sessionManager.get('profile')
+        }).then(function (profile) {
+          res.writeHead(200,{"content-type": "application/json"})
+          res.end(JSON.stringify({profile}))
+        }).catch(function (err) {
+          console.log(err)
+          res.writeHead(500, {"content-type":"application/json"})
+          res.end(JSON.stringify(err))
+        })
+      })
+      const res = yield supertest(server).get("/").expect(200).end()
+      expect(res.body.profile).deep.equal({name: 'foo'})
+    })
+
     it('should be able to put values to session store multiple times in a single request using file driver', function * () {
       SessionManager.driver = 'file'
       SessionManager.options.path = '/'

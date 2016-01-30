@@ -1,3 +1,37 @@
+<a name="2.0.9"></a>
+## [2.0.9](https://github.com/adonisjs/adonis-framework/compare/v2.0.3...v2.0.9) (2016-01-30)
+
+
+### Bug Fixes
+
+* **request:** method is and accepts have been fixed to treat arrays ([9d8e963](https://github.com/adonisjs/adonis-framework/commit/9d8e963))
+* **session:** fixed session manager to keep updated session payload within one request #88 ([1fe8b4b](https://github.com/adonisjs/adonis-framework/commit/1fe8b4b)), closes [#88](https://github.com/adonisjs/adonis-framework/issues/88)
+* **session:** now list of drivers is set to an empty object by default ([3bb75e0](https://github.com/adonisjs/adonis-framework/commit/3bb75e0))
+* **session-manager:** avoiding reparsing of session body ([0d8394d](https://github.com/adonisjs/adonis-framework/commit/0d8394d))
+
+### Features
+
+* **middleware:** middleware now accepts runtime parameters ([6907053](https://github.com/adonisjs/adonis-framework/commit/6907053))
+* **package:** passing coverage report to coveralls ([579ab3e](https://github.com/adonisjs/adonis-framework/commit/579ab3e))
+* **package.json:** make the repository commitizen-friendly ([0082c4a](https://github.com/adonisjs/adonis-framework/commit/0082c4a))
+* **request:** add match method to match an array of patterns to current url ([a81a4f7](https://github.com/adonisjs/adonis-framework/commit/a81a4f7))
+* **request:** added hasBody and format methods to request instance ([30739db](https://github.com/adonisjs/adonis-framework/commit/30739db))
+* **request:** Added raw method to access raw data sent to a given request ([00de598](https://github.com/adonisjs/adonis-framework/commit/00de598))
+* **response:** added descriptive methods to make response like ok,unauthorized ([b092407](https://github.com/adonisjs/adonis-framework/commit/b092407))
+* **response:** added sendView method to end the response immediately by sending view ([1655667](https://github.com/adonisjs/adonis-framework/commit/1655667))
+* **route:** added options to add format to routes ([cfe6c5c](https://github.com/adonisjs/adonis-framework/commit/cfe6c5c))
+* **route-resource:** added support for nested resources and resources filters ([907014e](https://github.com/adonisjs/adonis-framework/commit/907014e))
+* **routes:** added middleware alias and added support for multiple params ([51cf673](https://github.com/adonisjs/adonis-framework/commit/51cf673))
+
+### Performance Improvements
+
+* **config:** remove auto-load with require-all for performance ([806aae2](https://github.com/adonisjs/adonis-framework/commit/806aae2))
+* **env,file,helpers:** improved initial datatypes to help v8 set hidden classes ([79bd6b4](https://github.com/adonisjs/adonis-framework/commit/79bd6b4))
+* **middleware,route,server,session:** improved variables initialization to keep v8 happy ([20080ec](https://github.com/adonisjs/adonis-framework/commit/20080ec))
+* **request.format:** added acceptance for request.format ([4ed82c2](https://github.com/adonisjs/adonis-framework/commit/4ed82c2))
+
+
+
 <a name="2.0.8"></a>
 ## [2.0.8](https://github.com/adonisjs/adonis-framework/compare/v2.0.3...v2.0.8) (2016-01-29)
 
