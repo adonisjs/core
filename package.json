@@ -18,7 +18,7 @@
   "devDependencies": {
     "adonis-fold": "^2.0.1",
     "chai": "^3.3.0",
-    "cheerio": "^0.19.0",
+    "cheerio": "^0.20.0",
     "co-mocha": "^1.1.2",
     "co-supertest": "0.0.10",
     "coveralls": "^2.11.4",
