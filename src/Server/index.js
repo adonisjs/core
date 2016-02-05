@@ -2,14 +2,22 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const CatLog = require('cat-log')
 const helpers = require('./helpers')
 const http = require('http')
+const NE = require('node-exceptions')
 
+/**
+ * Http server for adonis framework
+ * @class
+ */
 class Server {
 
   constructor (Request, Response, Route, Helpers, Middleware, Static, Session, Config) {
@@ -25,48 +33,53 @@ class Server {
   }
 
   /**
-   * @description responds to request by finding registered
+   * responds to request by finding registered
    * route or fallbacks to static resource.
-   * @method _finalHandler
+   *
    * @param  {Object}      request  [description]
    * @param  {Object}      response [description]
    * @return {void}               [description]
+   *
    * @private
    */
   _finalHandler (resolvedRoute, request, response) {
-    /**
-     * calling request action handler by making a middleware
-     * layer of named middleware and finally invoking
-     * route action.
-     */
-    if (resolvedRoute.handler) {
-      helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNameSpace())
-      return
+    if (!resolvedRoute.handler) {
+      throw new NE.HttpException(`Route not found ${request.url()}`, 404)
     }
 
-    const error = new Error(`Route not found ${request.url()}`)
-    error.status = 404
-    throw error
+    helpers.callRouteAction(
+      resolvedRoute,
+      request,
+      response,
+      this.middleware,
+      this.helpers.appNameSpace()
+    )
   }
 
   /**
-   * @description serves a static resource
-   * @method _staticHandler
+   * serves static resource using static server
+   *
    * @param  {Object}       request  [description]
    * @param  {Object}       response [description]
    * @return {Promise}                [description]
-   * @public
+   *
+   * @private
    */
   _staticHandler (request, response) {
     return this.static.serve(request.request, request.response)
   }
 
   /**
-   * @description createServer handler to respond to a given http request
-   * @method handle
+   * request handler to respond to a given http request
+   *
    * @param  {Object} req
    * @param  {Object} res
-   * @return {void}
+   *
+   * @example
+   * http
+   *   .createServer(Server.handle.bind(Server))
+   *   .listen(3333)
+   *
    * @public
    */
   handle (req, res) {
@@ -83,12 +96,21 @@ class Server {
      * back to original method
      * @type {String}
      */
-    const method = request.input('_method', request.method())
+    const method = request.input('_method', request.method()).toUpperCase()
     const resolvedRoute = this.Route.resolve(requestUrl, method, request.hostname())
     request._params = resolvedRoute.params
 
     const finalHandler = function * () {
       self._finalHandler(resolvedRoute, request, response)
+    }
+
+    /**
+     * do not serve static resources when request method is not
+     * GET or HEAD
+     */
+    if (method !== 'GET' && method !== 'HEAD') {
+      helpers.respondRequest(this.middleware, request, response, finalHandler)
+      return
     }
 
     this._staticHandler(request, response)
@@ -102,11 +124,15 @@ class Server {
   }
 
   /**
-   * starting a server on a given port
-   * @param String host
-   * @param String port
-   * @method listen
-   * @return {void}
+   * starting a server on a given port and host
+   *
+   * @param {String} host
+   * @param {String} port
+   *
+   * @example
+   * Server.listen('localhost', 3333)
+   *
+   * @public
    */
   listen (host, port) {
     this.log.info('serving app on %s:%s', host, port)

@@ -11,19 +11,22 @@ const log = new CatLog('adonis:framework')
 const co = require('co')
 const App = require('../App')
 const Ioc = require('adonis-fold').Ioc
+const NE = require('node-exceptions')
 
 let helpers = exports = module.exports = {}
 
 /**
- * @description calls request route handler by setting up middleware
+ * calls request route handler by setting up middleware
  * layer
- * @method callRouteAction
+ *
  * @param  {Object}         resolvedRoute
  * @param  {Object}         request
  * @param  {Object}         response
  * @param  {Object}         middleware
  * @param  {String}         appNamespace
- * @return {void}
+ *
+ * @private
+ *
  */
 helpers.callRouteAction = function (resolvedRoute, request, response, middleware, appNamespace) {
   co(function * () {
@@ -52,15 +55,16 @@ helpers.callRouteAction = function (resolvedRoute, request, response, middleware
 }
 
 /**
- * @description responds to an http request by calling all global
+ * responds to an http request by calling all global
  * middleware and finally executing finalHandler
- * @method respondRequest
- * @param  {Object}       middleware   [description]
- * @param  {Object}       request      [description]
- * @param  {Object}       response     [description]
- * @param  {Function}       finalHandler [description]
- * @return {void}                    [description]
- * @public
+ *
+ * @param  {Object}       middleware
+ * @param  {Object}       request
+ * @param  {Object}       response
+ * @param  {Function}       finalHandler
+ * @return {void}
+ *
+ * @private
  */
 helpers.respondRequest = function (middleware, request, response, finalHandler) {
   co(function * () {
@@ -77,13 +81,14 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
 }
 
 /**
- * @description constructing route action which can be controller
+ * constructing route action which can be controller
  * method or a Closure binded as a callback
- * @method constructRouteAction
- * @param  {Object}             resolvedRoute [description]
- * @param  {String}             appNamespace  [description]
- * @return {Object}                           [description]
- * @public
+ *
+ * @param  {Object}             resolvedRoute
+ * @param  {String}             appNamespace
+ * @return {Object}
+ *
+ * @private
  */
 helpers.constructRouteAction = function (resolvedRoute, appNamespace) {
   if (typeof (resolvedRoute.handler) === 'function') {
@@ -92,16 +97,17 @@ helpers.constructRouteAction = function (resolvedRoute, appNamespace) {
   } else if (typeof (resolvedRoute.handler) === 'string') {
     return helpers.makeControllerMethod(appNamespace, resolvedRoute.handler)
   }
-  throw new Error('Invalid route handler , attach a controller method or a closure')
+  throw new NE.InvalidArgumentException('Invalid route handler, attach a controller method or a closure')
 }
 
 /**
- * @description making controller method from ioc container using it's complete namespace
- * @method makeControllerMethod
+ * making controller method from ioc container using it's complete namespace
+ *
  * @param  {String}             appNamespace
  * @param  {String}             controllerMethod
  * @return {Object}
- * @public
+ *
+ * @private
  */
 helpers.makeControllerMethod = function (appNamespace, controllerMethod) {
   const controllerNamespace = `${appNamespace}/Http/Controllers`
@@ -110,12 +116,13 @@ helpers.makeControllerMethod = function (appNamespace, controllerMethod) {
 }
 
 /**
- * @description  sending error back to http client
- * @method handleRequestError
+ * sending error back to http client
+ *
  * @param  {Object}           error
  * @param  {Object}           response
  * @return {void}
- * @public
+ *
+ * @private
  */
 helpers.handleRequestError = function (error, request, response) {
   /**

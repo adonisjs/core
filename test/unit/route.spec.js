@@ -9,6 +9,7 @@
 const Route = require('../../src/Route')
 const chai = require('chai')
 const _ = require('lodash')
+const NE = require('node-exceptions')
 const expect = chai.expect
 const pathToRegexp = require('path-to-regexp')
 
@@ -96,7 +97,7 @@ describe('Route',function () {
         Route.resource('/', function * () {
         })
       }
-      expect(fn).to.throw(/You can only bind controllers to resources/)
+      expect(fn).to.throw(NE.DomainException, /You can only bind controllers to resources/)
     })
 
     it('should register resourceful routes', function () {
@@ -205,6 +206,26 @@ describe('Route',function () {
       expect(routes[0]).to.be.an('object')
       expect(routes[0].group).to.equal('admin')
       expect(routes[0].middlewares).deep.equal(['auth'])
+    })
+
+    it('should be able to attach middlewares as multiple parameters on a group', function () {
+      Route.group('admin',function () {
+        Route.get('/','SomeController.method')
+      }).middlewares('auth', 'web')
+
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].middlewares).deep.equal(['auth', 'web'])
+    })
+
+    it('should be able to attach middlewares using middleware method', function () {
+      Route.group('admin',function () {
+        Route.get('/','SomeController.method')
+      }).middleware('auth', 'web')
+
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].middlewares).deep.equal(['auth', 'web'])
     })
 
     it('should be able to attach middleware to group routes and isolated middleware to routes inside group', function () {
@@ -400,6 +421,23 @@ describe('Route',function () {
       expect(verbs['/user/:user_id/posts/:id-PUT/PATCH']).to.equal(undefined)
       expect(verbs['/user/:user_id/posts/:id-DELETE']).to.equal(undefined)
     })
+
+    it('should be able to define route required routes for a resource as multiple parameters', function () {
+      Route.resource('user.posts','PostController').only('create', 'store', 'index')
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.name]
+      }))
+      expect(routes.length).to.equal(3)
+      expect(verbs['/user/:user_id/posts-GET/HEAD']).to.equal('user.posts.index')
+      expect(verbs['/user/:user_id/posts/create-GET/HEAD']).to.equal('user.posts.create')
+      expect(verbs['/user/:user_id/posts-POST']).to.equal('user.posts.store')
+      expect(verbs['/user/:user_id/posts/:id-GET/HEAD']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/:id/edit-GET/HEAD']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/:id-PUT/PATCH']).to.equal(undefined)
+      expect(verbs['/user/:user_id/posts/:id-DELETE']).to.equal(undefined)
+    })
+
 
     it('should be able to define route actions not required when creating resources', function () {
       Route.resource('user.posts','PostController').except(['create', 'store', 'index'])

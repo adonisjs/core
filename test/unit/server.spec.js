@@ -75,6 +75,11 @@ describe("Server", function () {
     yield supertest(testServer).get('/foo.css').expect(404).end()
   })
 
+  it("should not serve static resources with route is not GET or HEAD", function * () {
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    yield supertest(testServer).post('/style.css').expect(404).end()
+  })
+
   it("should serve static resource even if route is defined", function * () {
     Route.get('/favicon.ico', function * (request, response) {
       response.send({rendered:true})

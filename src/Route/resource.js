@@ -8,12 +8,19 @@
 
 const _ = require('lodash')
 const helpers = require('./helpers')
+const util = require('../../lib/util')
+const NE = require('node-exceptions')
 
+/**
+ * Resource management for Http routes.
+ * @class
+ * @alias Route.Resource
+ */
 class Resource {
 
   constructor (RouteHelper, pattern, handler) {
     if (typeof (handler) !== 'string') {
-      throw new Error('You can only bind controllers to resources')
+      throw new NE.DomainException('You can only bind controllers to resources')
     }
     this.RouteHelper = RouteHelper
     this.routes = []
@@ -23,16 +30,17 @@ class Resource {
   }
 
   /**
-   * @description register a route to the routes store
+   * register a route to the routes store
    * and pushes it to local array to reference it
    * later
-   * @method _registerRoute
+   *
    * @param  {String}       verb
    * @param  {String}       route
    * @param  {String}       handler
    * @param  {String}       name
    * @return {void}
-   * @public
+   *
+   * @private
    */
   _registerRoute (verb, route, handler, name) {
     const resourceName = (this.basename === '/' || !this.basename) ? name : `${this.basename}.${name}`
@@ -41,12 +49,15 @@ class Resource {
   }
 
   /**
-   * @description builds all routes for a given pattern
+   * builds all routes for a given pattern
+   *
    * @method _buildRoutes
+   *
    * @param  {String}     pattern
    * @param  {String}     handler
    * @return {void}
-   * @public
+   *
+   * @private
    */
   _buildRoutes (pattern, handler) {
     pattern = pattern.replace(/(\w+)\./g, function (index, group) {
@@ -64,10 +75,14 @@ class Resource {
   }
 
   /**
-   * @description transform methods keys to resource route names
+   * transform methods keys to resource route names
+   *
    * @method _transformKeys
+   *
    * @param  {Array}       pairKeys
    * @return {Array}
+   *
+   * @private
    */
   _transformKeys (pairKeys) {
     return pairKeys.map((item) => {
@@ -76,11 +91,7 @@ class Resource {
   }
 
   /**
-   * @description change names for defined routes mapped
-   * next to actions
-   * @method as
-   * @param  {Object} pairs
-   * @return {Object}
+   * {@link module:Route~as}
    */
   as (pairs) {
     const pairKeys = _.keys(pairs)
@@ -95,14 +106,21 @@ class Resource {
   }
 
   /**
-   * @description removes all other actions from routes
-   * resources except the given array
-   * @method only
-   * @param  {Array} methods
-   * @return {Object}
+   * removes all other actions from routes resources
+   * except the given array
+   *
+   * @param  {Mixed} methods - An array of methods or multiple parameters defining
+   *                           methods
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').only('create', 'store')
+   * Route.resource('...').only(['create', 'store'])
+   *
    * @public
    */
-  only (methods) {
+  only () {
+    const methods = util.spread.apply(this, arguments)
     const transformedMethods = this._transformKeys(methods)
     this.routes = _.filter(this.routes, (route) => {
       if (transformedMethods.indexOf(route.name) <= -1) {
@@ -115,14 +133,20 @@ class Resource {
   }
 
   /**
-   * @description removes actions defined inside given array
-   * from all resources routes
-   * @method except
-   * @param  {Array} methods
-   * @return {Object}
+   * filters resource by removing routes for defined actions
+   *
+   * @param  {Mixed} methods - An array of methods or multiple parameters defining
+   *                           methods
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').except('create', 'store')
+   * Route.resource('...').except(['create', 'store'])
+   *
    * @public
    */
-  except (methods) {
+  except () {
+    const methods = util.spread.apply(this, arguments)
     const transformedMethods = this._transformKeys(methods)
     this.routes = _.filter(this.routes, (route) => {
       if (transformedMethods.indexOf(route.name) > -1) {
@@ -134,13 +158,8 @@ class Resource {
     return this
   }
 
-    /**
-   * @description adds formats to an array of routes
-   * @method formats
-   * @param  {Array} formats [description]
-   * @param  {Boolean} strict  [description]
-   * @return {Object}         [description]
-   * @public
+  /**
+   * See {@link module:Route~formats}
    */
   formats (formats, strict) {
     helpers.addFormats(this.routes, formats, strict)

@@ -44,8 +44,8 @@ class Encryption {
    * @public
    */
   encrypt (value, encoding) {
-    const cipher = crypto.createCipher(this.algorithm, this.appKey)
     encoding = encoding || 'utf8'
+    const cipher = crypto.createCipher(this.algorithm, this.appKey)
     cipher.update(value, encoding, 'hex')
     return cipher.final('hex')
   }
@@ -63,8 +63,8 @@ class Encryption {
    * @public
    */
   decrypt (value, encoding) {
-    const decipher = crypto.createDecipher(this.algorithm, this.appKey)
     encoding = encoding || 'utf8'
+    const decipher = crypto.createDecipher(this.algorithm, this.appKey)
     decipher.update(value, 'hex', encoding)
     return decipher.final(encoding)
   }

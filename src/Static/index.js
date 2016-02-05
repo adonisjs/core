@@ -2,15 +2,18 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const nodeStatic = require('node-static')
 
 /**
- * @class  Static
- * @description serves the purpose of serving static files
+ * serves static files for a given directory
+ * @class
  */
 class Static {
 
@@ -29,13 +32,18 @@ class Static {
   }
 
   /**
-   * @description serves static file based upon
-   * request url
-   * @method serve
+   * serves static file for a given request url
+   *
    * @param  {Object} request
    * @param  {Object} response
-   * @param  {Function} done
-   * @return {void}
+   * @return {Promise}
+   *
+   * @example
+   * static
+   *   .serve(req, res)
+   *   .then()
+   *   .catch()
+   * @public
    */
   serve (request, response) {
     return new Promise((resolve, reject) => {

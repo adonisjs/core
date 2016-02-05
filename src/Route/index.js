@@ -9,7 +9,8 @@
 const helpers = require('./helpers')
 const Group = require('./group')
 const Resource = require('./resource')
-const subdomains = require('./subdomains')
+const domains = require('./domains')
+const util = require('../../lib/util')
 const _ = require('lodash')
 
 /**
@@ -277,9 +278,10 @@ Route._lastRoute = function () {
  * assign array of named middlewares to route
  *
  * @method middlewares
- * @alias middleware
+ * @synonym middleware
  *
- * @param  {Mixed} keys - an array of middleware or multiple params
+ * @param  {Mixed} keys - an array of middleware or multiple parameters
+ * @return {Object} - reference to this for chaining
  *
  * @example
  * Route.get('...').middleware('auth', 'csrf')
@@ -288,12 +290,17 @@ Route._lastRoute = function () {
  * @public
  */
 Route.middlewares = function () {
-  let lastRoute = Route._lastRoute()
-  const arrayOfNamedMiddleware = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
-  helpers.appendMiddleware(lastRoute, arrayOfNamedMiddleware)
+  helpers.appendMiddleware(
+    Route._lastRoute(),
+    util.spread.apply(this, arguments)
+  )
   return this
 }
 
+/**
+ * @see module:Route~middlewares
+ * @method middleware
+ */
 Route.middleware = Route.middlewares
 
 /**
@@ -339,7 +346,7 @@ Route.group = function (name, cb) {
  * @public
  */
 Route.resolve = function (urlPath, verb, host) {
-  if (subdomains.match(host)) {
+  if (domains.match(host)) {
     urlPath = `${host}${urlPath}`
   }
   let resolvedRoute = helpers.returnMatchingRouteToUrl(routes, urlPath, verb)
