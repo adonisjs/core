@@ -545,6 +545,18 @@ describe('Request', function () {
     expect(res.body.age).to.equal(null)
   })
 
+  it('should return default value when cookie value for a given key does not exists', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const age = request.cookie('age', 18)
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({age}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").set('Cookie',['name=foo']).expect(200).end()
+    expect(res.body.age).to.equal(18)
+  })
+
   it('should return route params', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)

@@ -151,6 +151,8 @@ class Request {
    * returns header value for a given key
    *
    * @param  {String} key
+   * @param  {Mixed} defaultValue - default value to return when actual
+   *                                 value is undefined or null
    * @return {Mixed}
    *
    * @example
@@ -158,8 +160,10 @@ class Request {
    *
    * @public
    */
-  header (key) {
-    return nodeReq.header(this.request, key)
+  header (key, defaultValue) {
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
+    const headerValue = nodeReq.header(this.request, key)
+    return util.existy(headerValue) ? headerValue : defaultValue
   }
 
   /**
@@ -361,14 +365,16 @@ class Request {
    * returns cookie value for a given key
    *
    * @param  {String} key - Key for which value should be returnd
-   *
+   * @param  {Mixed} defaultValue - default value to return when actual
+   *                                 value is undefined or null
    * @return {Mixed}
    *
    * @public
    */
-  cookie (key) {
+  cookie (key, defaultValue) {
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
     const cookies = this.cookies()
-    return cookies[key] || null
+    return util.existy(cookies[key]) ? cookies[key] : defaultValue
   }
 
   /**
