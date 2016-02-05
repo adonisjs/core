@@ -11,6 +11,7 @@ const expect = chai.expect
 const Ioc = require('adonis-fold').Ioc
 const path = require('path')
 const Middleware = require('../../src/Middleware')
+const NE = require('node-exceptions')
 require('co-mocha')
 
 describe('Middleware', function () {
@@ -77,7 +78,7 @@ describe('Middleware', function () {
     const formatted = function () {
       return Middleware.formatNamedMiddleware(['auth:basic'])
     }
-    expect(formatted).to.throw(/Unable to resolve auth/)
+    expect(formatted).to.throw(NE.RuntimeException, /auth is not register/)
   })
 
   it('should resolve named middleware using resolve method', function () {

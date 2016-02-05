@@ -10,6 +10,7 @@ const Helpers = require('../../src/Helpers')
 const chai = require('chai')
 const path = require('path')
 const expect = chai.expect
+const NE = require('node-exceptions')
 
 const basePath = path.join(__dirname,'../acceptance');
 
@@ -19,14 +20,14 @@ describe("Helpers", function () {
     const fn = function () {
       Helpers.load(path.join(__dirname,'./package.test.json'))
     }
-    expect(fn).to.throw(/autoload must be enable/)
+    expect(fn).to.throw(NE.DomainException, /autoload must be enable/)
   })
 
   it('should throw error when autoload exists but not configured', function () {
     const fn = function () {
       Helpers.load(path.join(__dirname,'./package.another.json'))
     }
-    expect(fn).to.throw(/autoload must be enable/)
+    expect(fn).to.throw(NE.DomainException, /autoload must be enable/)
   })
 
   it('should set autoload values when Ioc instance is passed to load method', function () {

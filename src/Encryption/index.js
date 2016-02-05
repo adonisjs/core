@@ -2,12 +2,20 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const crypto = require('crypto')
 
+/**
+ * Encrypt and decrypt values using nodeJs crypto, make
+ * sure to set APP_KEY inside .env file.
+ * @class
+ */
 class Encryption {
 
   constructor (Config) {
@@ -24,11 +32,15 @@ class Encryption {
   }
 
   /**
-   * @description encrypts a given value
-   * @method encrypt
-   * @param  {Mixed} value
-   * @param  {String} encoding
+   * encrypts a given value
+   *
+   * @param  {Mixed} value - value to be encrypted
+   * @param  {String} [encoding=utf8] encoding to be used for input value
    * @return {String}
+   *
+   * @example
+   * Encryption.encrypt('somevalue')
+   *
    * @public
    */
   encrypt (value, encoding) {
@@ -39,11 +51,15 @@ class Encryption {
   }
 
   /**
-   * @description decrypts encrypted value
-   * @method decrypt
-   * @param  {String} value
-   * @param  {String} encoding
+   * decrypts encrypted value
+   *
+   * @param  {String} value - value to decrypt
+   * @param  {String} [encoding=utf8] encoding to be used for output value
    * @return {Mixed}
+   *
+   * @example
+   * Encryption.decrypt('somevalue')
+   *
    * @public
    */
   decrypt (value, encoding) {

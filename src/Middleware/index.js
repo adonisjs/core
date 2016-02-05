@@ -2,22 +2,32 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const _ = require('lodash')
 const Ioc = require('adonis-fold').Ioc
+const NE = require('node-exceptions')
 
 let globalMiddleware = []
 let namedMiddleware = {}
 
+/**
+ * Http middleware layer to register and resolve middleware
+ * for a given HTTP request.
+ * @module Middleware
+ */
 let Middleware = exports = module.exports = {}
 
 /**
- * @description clears off existing middleware.
+ * clears off all global and named middleware
+ *
  * @method new
- * @return {void}
+ *
  * @public
  */
 Middleware.new = function () {
@@ -26,12 +36,19 @@ Middleware.new = function () {
 }
 
 /**
- * @description registers a new middleware under global
- * or named middleware list
+ * registers a new global or named middleware. If second
+ * parameter is empty, middleware will be considered
+ * global.
+ *
  * @method register
- * @param  {String} key
- * @param  {String} namespace
- * @return {void}
+ *
+ * @param  {String} [key] - unqiue key for named middleware
+ * @param  {String} namespace - Reference to the binding of Ioc container
+ *
+ * @example
+ * Middleware.register('App/Http/Middleware/Auth')
+ * Middleware.register('app', 'App/Http/Middleware/Auth')
+ *
  * @public
  */
 Middleware.register = function (key, namespace) {
@@ -43,11 +60,15 @@ Middleware.register = function (key, namespace) {
 }
 
 /**
- * @description adds a array of middleware inside global list.
- * use for bulk register
+ * concats a array of middleware inside global list.
+ *
  * @method global
+ *
  * @param  {Array} arrayOfMiddleware
- * @return {void}
+ *
+ * @example
+ * Middleware.global(['App/Http/Middleware/Auth', '...'])
+ *
  * @public
  */
 Middleware.global = function (arrayOfMiddleware) {
@@ -55,11 +76,15 @@ Middleware.global = function (arrayOfMiddleware) {
 }
 
 /**
- * @description adds an object of middleware to named list.
- * use for bulk register
+ * adds an object of middleware to named list.
+ *
  * @method named
+ *
  * @param  {Object} namedMiddleware
- * @return {void}
+ *
+ * @example
+ * Middleware.named({'auth': 'App/Http/Middleware/Auth'}, {...})
+ *
  * @public
  */
 Middleware.named = function (namedMiddleware) {
@@ -69,9 +94,12 @@ Middleware.named = function (namedMiddleware) {
 }
 
 /**
- * @description returns list of global middleware
+ * returns list of global middleware
+ *
  * @method getGlobal
+ *
  * @return {Array}
+ *
  * @public
  */
 Middleware.getGlobal = function () {
@@ -79,9 +107,12 @@ Middleware.getGlobal = function () {
 }
 
 /**
- * @description returns list of named middleware
+ * returns list of named middleware
+ *
  * @method getNamed
+ *
  * @return {Object}
+ *
  * @public
  */
 Middleware.getNamed = function () {
@@ -89,10 +120,13 @@ Middleware.getNamed = function () {
 }
 
 /**
- * @description fetch params for a named middleware
+ * fetch params defined next to named middleware while
+ * consuming them.
  * @method fetchParams
- * @param  {String|Undefined}    params [description]
- * @return {Array}           [description]
+ *
+ * @param  {String|Undefined}    params
+ * @return {Array}
+ *
  * @public
  */
 Middleware.fetchParams = function (params) {
@@ -100,33 +134,42 @@ Middleware.fetchParams = function (params) {
 }
 
 /**
- * @description formats an array of named middleware by
- * returning it's namespace and parameters
+ * returning an object of named middleware by
+ * parsing them.
+ *
  * @method formatNamedMiddleware
- * @param  {Array}              namedKeys [description]
- * @return {Object}                        [description]
+ *
+ * @param  {Array}              keys
+ * @return {Object}
+ *
+ * @throws {RunTimeException} If named middleware for a given
+ *                            key is not registered.
  * @public
  */
-Middleware.formatNamedMiddleware = function (namedKeys) {
+Middleware.formatNamedMiddleware = function (keys) {
   const structured = {}
-  namedKeys.forEach(function (item) {
-    const itemItems = item.split(':')
-    const namespace = namedMiddleware[itemItems[0]]
+  keys.forEach(function (key) {
+    const keyOptions = key.split(':')
+    const namespace = namedMiddleware[keyOptions[0]]
     if (!namespace) {
-      throw new Error(`Unable to resolve ${itemItems[0]}`)
+      throw new NE.RuntimeException(`${keyOptions[0]} is not registered as a named middleware`)
     }
-    structured[namespace] = Middleware.fetchParams(itemItems[1])
+    structured[namespace] = Middleware.fetchParams(keyOptions[1])
   })
   return structured
 }
 
 /**
- * @description resolves an array of middleware namespaces from
+ * resolves an array of middleware namespaces from
  * ioc container
+ *
  * @method resolve
+ *
  * @param  {Object} namedMiddlewareHash
- * @param  {Boolean} includeGlobal
+ * @param  {Boolean} [includeGlobal=false]
+ *
  * @return {Array}
+ *
  * @public
  */
 Middleware.resolve = function (namedMiddlewareHash, includeGlobal) {
@@ -139,13 +182,15 @@ Middleware.resolve = function (namedMiddlewareHash, includeGlobal) {
 }
 
 /**
- * @description compose middleware to calls them in sequence.
- * something similar to koa-compose
+ * composes middleware and calls them in sequence something similar
+ * to koa-compose.
+ *
  * @method compose
- * @param  {Array} middleware
- * @param  {Ojbect} request
- * @param  {Ojbect} response
- * @return {void}
+ *
+ * @param  {Array} Middleware - Array of middleware resolved from Ioc container
+ * @param  {Object} request - Http request object
+ * @param  {Object} response - Http response object
+ *
  * @public
  */
 Middleware.compose = function (middleware, request, response) {

@@ -84,8 +84,6 @@ helpers.respondRequest = function (middleware, request, response, finalHandler) 
  * @param  {String}             appNamespace  [description]
  * @return {Object}                           [description]
  * @public
- * @throws {Invalid route handler} If Route handler is not function or valid controller
- * method.
  */
 helpers.constructRouteAction = function (resolvedRoute, appNamespace) {
   if (typeof (resolvedRoute.handler) === 'function') {

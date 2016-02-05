@@ -10,10 +10,9 @@ const helpers = require('./helpers')
 const subdomains = require('./subdomains')
 
 /**
- * @class Group
- * @description Adds functionality to create group of routes and
+ * Adds functionality to create group of routes and
  * keep code DRY.
- * @public
+ * @class Route.Group
  */
 class Group {
 
@@ -22,8 +21,7 @@ class Group {
   }
 
   /**
-   * @description attach middleware to group of routes.
-   * @method middlewares
+   * attach middleware to group of routes.
    * @param  {Array}    arrayOfNamedMiddleware
    * @return {Object}                           reference to this for chaining
    * @public

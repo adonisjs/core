@@ -10,7 +10,7 @@ const fs = require('fs')
 const mkdirp = require('mkdirp')
 
 /**
- * @class  File
+ * @class  FileDriver
  * @description File driver for session provider
  */
 class File {

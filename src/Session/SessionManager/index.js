@@ -306,8 +306,6 @@ class SessionManager {
    * @param  {Mixed} key
    * @param  {Mixed} value
    * @return {void}
-   * @throws {Invalid arguments} If key/value does not exists or argument
-   *                             is not an object
    * @public
    */
   * put (key, value) {

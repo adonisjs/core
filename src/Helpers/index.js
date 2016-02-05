@@ -2,68 +2,70 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const path = require('path')
 const CatLog = require('cat-log')
 const log = new CatLog('adonis:framework')
+const NE = require('node-exceptions')
 
 let rootPath = '' // application root path
 let appPath = '' // path to application app directory
-let appNameSpace = '' // autoloading namespace
+let autoloadNameSpace = '' // autoloading namespace
 
+/**
+ * Manage commonly required methods to be used anywhere inside
+ * the application
+ * @module Helpers
+ */
 let Helpers = exports = module.exports = {}
 
 /**
- * @description loads package.json file from application and set required paths
+ * loads package.json file from application and set required paths
  * and namespace based on same.
+ *
  * @method load
+ *
  * @param  {String} packagePath
  * @param  {Object} Ioc
- * @return {void}
+ *
+ * @throws {DomainException} If autoload is not defined in package.json file
+ *
+ * @public
  */
 Helpers.load = function (packagePath, Ioc) {
   log.verbose('reading autoload settings from %s', packagePath)
 
   rootPath = path.dirname(packagePath)
 
-  /**
-   * loading package file and throwing error if
-   * autoload is not defined
-   */
   const packageFile = require(packagePath)
   if (!packageFile.autoload) {
-    throw new Error('autoload must be enable inside package.json file')
+    throw new NE.DomainException('autoload must be enable inside package.json file')
   }
 
-  /**
-   * throwing error when autoloading key and value are missing
-   */
   const autoloadSettings = Object.keys(packageFile.autoload)
   if (!autoloadSettings.length) {
-    throw new Error('autoload must be enable inside package.json file')
+    throw new NE.DomainException('autoload must be enable inside package.json file')
   }
 
-  /**
-   * setting up appNamespace and appPath from autoload
-   * obhect inside package.json file
-   */
-  appNameSpace = autoloadSettings[0]
-  appPath = path.join(rootPath, packageFile.autoload[appNameSpace])
+  autoloadNameSpace = autoloadSettings[0]
+  appPath = path.join(rootPath, packageFile.autoload[autoloadNameSpace])
 
-  /**
-   * if Ioc is defined setup autoloading values
-   */
   if (Ioc && Ioc.autoload) {
-    Ioc.autoload(appNameSpace, appPath)
+    Ioc.autoload(autoloadNameSpace, appPath)
   }
 }
 
 /**
- * @descrition Returns path to application root
+ * Returns absolute path to application root
+ *
  * @method basePath
+ *
  * @return {String}
  */
 Helpers.basePath = function () {
@@ -71,9 +73,11 @@ Helpers.basePath = function () {
 }
 
 /**
- * @description Returns path to application folder which is
+ * Returns absolute path to application folder which is
  * defined under a given namespace.
+ *
  * @method appPath
+ *
  * @return {String}
  */
 Helpers.appPath = function () {
@@ -81,9 +85,12 @@ Helpers.appPath = function () {
 }
 
 /**
- * @description Returns path to application public folder
+ * Returns absolute path to application public folder or path to a
+ * given file inside public folder.
+ *
  * @method publicPath
- * @param  {String}   toFile
+ *
+ * @param  {String}   [toFile] - filename to return path for
  * @return {String}
  */
 Helpers.publicPath = function (toFile) {
@@ -92,19 +99,24 @@ Helpers.publicPath = function (toFile) {
 }
 
 /**
- * @descripption Returns application namespace , under which
+ * Returns application namespace , under which
  * app directory is registered.
+ *
  * @method appNameSpace
+ *
  * @return {String}
  */
 Helpers.appNameSpace = function () {
-  return appNameSpace
+  return autoloadNameSpace
 }
 
 /**
- * @description returns path to config directory
+ * returns absolute path to config directory or a file inside
+ * config directory
+ *
  * @method configPath
- * @param  {String}   toFile
+ *
+ * @param  {String}   [toFile] - filename to return path for
  * @return {String}
  */
 Helpers.configPath = function (toFile) {
@@ -113,10 +125,14 @@ Helpers.configPath = function (toFile) {
 }
 
 /**
- * @description returns reference to storage path of application
+ * returns absolute path to storage path of application or an
+ * file inside the storage path.
+ *
  * @method storagePath
- * @param  {String}    toFile
+ *
+ * @param  {String}   [toFile] - filename to return path for
  * @return {String}
+ *
  * @public
  */
 Helpers.storagePath = function (toFile) {
@@ -125,10 +141,15 @@ Helpers.storagePath = function (toFile) {
 }
 
 /**
- * @description returns reference to resources directory
+ * returns absolute path to resources directory or a file inside
+ * resources directory
+ *
  * @method resourcesPath
- * @param  {String}      toFile
+ *
+ * @param  {String}   [toFile] - filename to return path for
  * @return {String}
+ *
+ * @public
  */
 Helpers.resourcesPath = function (toFile) {
   const toDir = './resources'
@@ -136,10 +157,14 @@ Helpers.resourcesPath = function (toFile) {
 }
 
 /**
- * @description returns path to migrations directory.
+ * returns absolute path to migrations directory.
+ *
  * @method migrationsPath
- * @param  {String}       toFile
+ *
+ * @param  {String}   [toFile] - filename to return path for
  * @return {String}
+ *
+ * @public
  */
 Helpers.migrationsPath = function (toFile) {
   const toDir = './migrations'
@@ -147,21 +172,29 @@ Helpers.migrationsPath = function (toFile) {
 }
 
 /**
- * @description returns reference to views directory
+ * returns absolute path to views directory
+ *
  * @method viewsPath
+ *
  * @return {String}
+ *
+ * @public
  */
 Helpers.viewsPath = function () {
   return Helpers.resourcesPath('views')
 }
 
 /**
- * @description makes path by joining two endpoints
+ * makes path by joining two endpoints
+ *
  * @method _makePath
+ *
  * @param  {String}  base
  * @param  {String}  toDir
  * @param  {String}  toFile
  * @return {String}
+ *
+ * @private
  */
 Helpers._makePath = function (base, toDir, toFile) {
   const incremental = toFile ? `/${toDir}/${toFile}` : toDir

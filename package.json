@@ -44,6 +44,7 @@
     "lodash": "^4.0.1",
     "mkdirp": "^0.5.1",
     "node-cookie": "^1.0.0",
+    "node-exceptions": "^1.0.0",
     "node-req": "^1.0.3",
     "node-res": "^2.0.2",
     "node-static": "^0.7.7",

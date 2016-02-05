@@ -2,8 +2,11 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const nodeReq = require('node-req')
@@ -16,10 +19,11 @@ const log = new CatLog('adonis:framework')
 const util = require('../../lib/util')
 
 /**
- * @class  Request
- * @description instance is passed with every http request to
- * read request values in an unified way
- * @public
+ * Glued http request object to read values for
+ * a given request. Instance of this class
+ * is generated automatically on every
+ * new request.
+ * @class
  */
 class Request {
 
@@ -54,24 +58,32 @@ class Request {
   }
 
   /**
-   * @description returns input value for a given
-   * key from post and get values
-   * @method input
-   * @param  {String} key
+   * returns input value for a given key from post
+   * and get values.
+   *
+   * @param  {String} key - Key to return value for
+   * @param  {Mixed} defaultValue - default value to return when actual
+   *                                 value is empty
    * @return {Mixed}
+   *
+   * @example
+   * request.input('name')
+   * request.input('profile.name')
+   *
    * @public
    */
   input (key, defaultValue) {
     defaultValue = util.existy(defaultValue) ? defaultValue : null
     const input = this.all()
-    return util.existy(input[key]) ? input[key] : defaultValue
+    const value = _.get(input, key)
+    return util.existy(value) ? value : defaultValue
   }
 
   /**
-   * @description returns merged values from
-   * get and post
-   * @method all
+   * returns merged values from get and post methods.
+   *
    * @return {Object}
+   *
    * @public
    */
   all () {
@@ -79,10 +91,15 @@ class Request {
   }
 
   /**
-   * @description returns all input values except defined
-   * keys
-   * @method except
+   * returns all input values except defined keys
+   *
+   * @param {Mixed} keys an array of keys or multiple keys to omit values for
    * @return {Object}
+   *
+   * @example
+   * request.except('password', 'credit_card')
+   * request.except(['password', 'credit_card'])
+   *
    * @public
    */
   except () {
@@ -91,9 +108,15 @@ class Request {
   }
 
   /**
-   * @description returns values for defined keys only
-   * @method only
+   * returns all input values for defined keys only
+   *
+   * @param {Mixed} keys an array of keys or multiple keys to pick values for
    * @return {Object}
+   *
+   * @example
+   * request.only('name', 'email')
+   * request.only(['name', 'name'])
+   *
    * @public
    */
   only () {
@@ -102,10 +125,10 @@ class Request {
   }
 
   /**
-   * @description returns query parameters
-   * from request query
-   * @method get
+   * returns query parameters from request querystring
+   *
    * @return {Object}
+   *
    * @public
    */
   get () {
@@ -113,10 +136,11 @@ class Request {
   }
 
   /**
-   * @description returns post body from request, BodyParser
+   * returns post body from request, BodyParser
    * middleware needs to be enabled for this to work
-   * @method post
+   *
    * @return {Object}
+   *
    * @public
    */
   post () {
@@ -124,10 +148,14 @@ class Request {
   }
 
   /**
-   * @description returns header value for a given key
-   * @method header
+   * returns header value for a given key
+   *
    * @param  {String} key
    * @return {Mixed}
+   *
+   * @example
+   * request.header('Authorization')
+   *
    * @public
    */
   header (key) {
@@ -135,9 +163,10 @@ class Request {
   }
 
   /**
-   * @description returns all request headers
-   * @method headers
+   * returns all request headers from a given request
+   *
    * @return {Object}
+   *
    * @public
    */
   headers () {
@@ -145,10 +174,11 @@ class Request {
   }
 
   /**
-   * @description tells whether request is fresh or not by
+   * tells whether request is fresh or not by
    * checking Etag and expires header
-   * @method fresh
+   *
    * @return {Boolean}
+   *
    * @public
    */
   fresh () {
@@ -156,10 +186,12 @@ class Request {
   }
 
   /**
-   * @description opposite of fresh
-   * @see  fresh
-   * @method stale
+   * opposite of fresh
+   *
+   * @see fresh
+   *
    * @return {Boolean}
+   *
    * @public
    */
   stale () {
@@ -167,9 +199,14 @@ class Request {
   }
 
   /**
-   * @description returns most trusted ip address
-   * @method ip
+   * returns most trusted ip address for a given request. Proxy
+   * headers are trusted only when app.http.trustProxy is
+   * enabled inside config file.
+   *
+   * @uses app.http.subdomainOffset
+   *
    * @return {String}
+   *
    * @public
    */
   ip () {
@@ -177,10 +214,14 @@ class Request {
   }
 
   /**
-   * @description returns an array of ip addresses sorted from
-   * most to least trusted
-   * @method ips
+   * returns an array of ip addresses sorted from most to
+   * least trusted. Proxy headers are trusted only when
+   * app.http.trustProxy is enabled inside config file.
+   *
+   * @uses app.http.subdomainOffset
+   *
    * @return {Array}
+   *
    * @public
    */
   ips () {
@@ -188,10 +229,10 @@ class Request {
   }
 
   /**
-   * @description tells whether request is on https
-   * or not
-   * @method secure
+   * tells whether request is on https or not
+   *
    * @return {Boolean}
+   *
    * @public
    */
   secure () {
@@ -199,9 +240,15 @@ class Request {
   }
 
   /**
-   * @description returns a array of subdomains from url
-   * @method subdomains
+   * returns an array of subdomains from url. Proxy headers
+   * are trusted only when app.http.trustProxy is enabled
+   * inside config file.
+   *
+   * @uses app.http.subdomainOffset
+   * @uses app.http.trustProxy
+   *
    * @return {Array}
+   *
    * @public
    */
   subdomains () {
@@ -209,10 +256,10 @@ class Request {
   }
 
   /**
-   * @description tells whether request is an ajax
-   * request or not
-   * @method ajax
+   * tells whether request is an ajax request or not
+   *
    * @return {Boolean}
+   *
    * @public
    */
   ajax () {
@@ -220,19 +267,24 @@ class Request {
   }
 
   /**
-   * @description tells whether request is pjax or
+   * tells whether request is pjax or
    * not based on X-PJAX header
-   * @method pjax
+   *
    * @return {Boolean}
+   *
+   * @public
    */
   pjax () {
     return nodeReq.pjax(this.request)
   }
 
   /**
-   * @description returns request hostname
-   * @method hostname
+   * returns request hostname
+   *
+   * @uses app.http.subdomainOffset
+   *
    * @return {String}
+   *
    * @public
    */
   hostname () {
@@ -240,10 +292,10 @@ class Request {
   }
 
   /**
-   * @description returns request url without
-   * query string
-   * @method url
+   * returns request url without query string
+   *
    * @return {String}
+   *
    * @public
    */
   url () {
@@ -251,10 +303,10 @@ class Request {
   }
 
   /**
-   * @description returns request original Url
-   * with query string
-   * @method originalUrl
+   * returns request original Url with query string
+   *
    * @return {String}
+   *
    * @public
    */
   originalUrl () {
@@ -262,10 +314,15 @@ class Request {
   }
 
   /**
-   * @description tells whether request is of certain type
+   * tells whether request is of certain type
    * based upon Content-type header
-   * @method is
+   *
    * @return {Boolean}
+   *
+   * @example
+   * request.is('text/html', 'text/plain')
+   * request.is(['text/html', 'text/plain'])
+   *
    * @public
    */
   is () {
@@ -274,10 +331,14 @@ class Request {
   }
 
   /**
-   * @description returns the best response type to be accepted
-   * using Accepts header
-   * @method accepts
+   * returns the best response type to be accepted using Accepts header
+   *
    * @return {String}
+   *
+   * @example
+   * request.accepts('text/html', 'application/json')
+   * request.accepts(['text/html', 'application/json'])
+   *
    * @public
    */
   accepts () {
@@ -286,9 +347,10 @@ class Request {
   }
 
   /**
-   * @description returns request method or verb in HTTP terms
-   * @method method
+   * returns request method or verb in HTTP terms
+   *
    * @return {String}
+   *
    * @public
    */
   method () {
@@ -296,10 +358,12 @@ class Request {
   }
 
   /**
-   * @description returns cookie value for a given key
-   * @method cookie
-   * @param  {String} key
+   * returns cookie value for a given key
+   *
+   * @param  {String} key - Key for which value should be returnd
+   *
    * @return {Mixed}
+   *
    * @public
    */
   cookie (key) {
@@ -308,10 +372,10 @@ class Request {
   }
 
   /**
-   * @description returns all cookies associated to a
-   * given request
-   * @method cookies
+   * returns all cookies associated to a given request
+   *
    * @return {Object}
+   *
    * @public
    */
   cookies () {
@@ -330,10 +394,13 @@ class Request {
   }
 
   /**
-   * @description  return route param value for a given key
-   * @method param
-   * @param  {String} key
+   * return route param value for a given key
+   *
+   * @param  {String} key - key for which the value should be return
+   * @param {Mixed} defaultValue - default value to be returned with actual
+   *                               is null or undefined
    * @return {Mixed}
+   *
    * @public
    */
   param (key, defaultValue) {
@@ -342,9 +409,10 @@ class Request {
   }
 
   /**
-   * @description returns all route params
-   * @method params
+   * returns all route params
+   *
    * @return {Object}
+   *
    * @public
    */
   params () {
@@ -352,9 +420,9 @@ class Request {
   }
 
   /**
-   * @description converts a file object to file instance
+   * converts a file object to file instance
    * if already is not an instance
-   * @method _toFileInstance
+   *
    * @param  {Object}        file
    * @return {Object}
    * @private
@@ -367,11 +435,14 @@ class Request {
   }
 
   /**
-   * @description converts an uploaded file to file
-   * instance
-   * @method file
+   * returns uploaded file instance for a given key
+   * @instance Request.file
+   *
    * @param  {String} key
    * @return {Object}
+   *
+   * @example
+   * request.file('avatar')
    * @public
    */
   file (key) {
@@ -402,10 +473,11 @@ class Request {
   }
 
   /**
-   * @description returns all uploded files by converting
+   * returns all uploded files by converting
    * them to file instances
-   * @method files
+   *
    * @return {Array}
+   *
    * @public
    */
   files () {
@@ -415,11 +487,13 @@ class Request {
   }
 
   /**
-   * @description flash an object of messages to upcoming
-   * request
-   * @method flash
+   * flash an object of messages to session.
+   *
    * @param  {Object} values
-   * @return {void}
+   *
+   * @example
+   * yield request.flash({error: 'Unable to create account'})
+   *
    * @public
    */
   * flash (values) {
@@ -430,12 +504,18 @@ class Request {
   }
 
   /**
-   * @description return values set via flash from
+   * return values set via flash from
    * request session
-   * @method old
-   * @param  {String} key
-   * @param  {Mixed} defaultValue
+   *
+   * @param  {String} key - key for which to pull value for
+   * @param  {Mixed} defaultValue - default value to return when actual value
+   *                                is empty
    * @return {Mixed}
+   *
+   * @example
+   * request.old('name')
+   * request.old('form.name')
+   *
    * @public
    */
   old (key, defaultValue) {
@@ -448,10 +528,12 @@ class Request {
   }
 
   /**
-   * @description flash all request input fields to
-   * session flash
-   * @method flashAll
+   * flash all request input fields to session
+   *
    * @return {void}
+   *
+   * @example
+   * yield request.flashAll()
    * @public
    */
   * flashAll () {
@@ -459,10 +541,13 @@ class Request {
   }
 
   /**
-   * @description flash values of request keys from request
-   * input field to session flash
-   * @method flashOnly
+   * flash values of defined keys to session flash
+   *
    * @return {void}
+   *
+   * @example
+   * yield request.flashOnly('name', 'age')
+   *
    * @public
    */
   * flashOnly () {
@@ -471,10 +556,14 @@ class Request {
   }
 
   /**
-   * @description flash values of request to session flash
-   * except defined keys
-   * @method flashExcept
+   * flash values from request to session except
+   * the values of defined keys.
+   *
    * @return {void}
+   *
+   * @example
+   * yield request.flashExcept('name', 'age')
+   *
    * @public
    */
   * flashExcept () {
@@ -483,11 +572,15 @@ class Request {
   }
 
   /**
-   * @description tells whether a given pattern matches the
-   * current url or not
-   * @method match
+   * tells whether a given pattern matches the current url or not
+   *
    * @param  {String} pattern
    * @return {Boolean}
+   *
+   * @example
+   * request.match('/user/:id', 'user/(+.)')
+   * request.match(['/user/:id', 'user/(+.)'])
+   *
    * @public
    */
   match () {
@@ -498,10 +591,14 @@ class Request {
   }
 
   /**
-   * @description returns request format enabled by using
+   * returns request format enabled by using
    * .formats on routes
-   * @method format
+   *
    * @return {String}
+   *
+   * @example
+   * request.format()
+   *
    * @public
    */
   format () {
@@ -509,10 +606,11 @@ class Request {
   }
 
   /**
-   * @description tells whether or not request has body. It can be
+   * tells whether or not request has body. It can be
    * used by bodyParsers to decide whether or not to parse body
-   * @method hasBody
+   *
    * @return {Boolean} [description]
+   *
    * @public
    */
   hasBody () {

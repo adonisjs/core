@@ -119,6 +119,18 @@ describe('Request', function () {
     expect(res.body.name).to.equal(null)
   })
 
+  it('should get nested value for a given key using input method', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const name = request.input("profile.name")
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({name}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/?profile[name]=foo").expect(200).end()
+    expect(res.body.name).to.equal("foo")
+  })
+
   it('should return default value when value for input key is not available', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
@@ -219,7 +231,7 @@ describe('Request', function () {
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
     })
-  
+
     const res = yield supertest(server).get("/?name=foo").expect(200).end()
     expect(res.body.all).deep.equal({})
   })
@@ -463,7 +475,6 @@ describe('Request', function () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
       const html = request.accepts(['json', 'html'])
-      console.log(html)
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({html}),'utf8')
     })
@@ -476,7 +487,6 @@ describe('Request', function () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
       const html = request.accepts('json','javascript', 'html')
-      console.log(html)
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({html}),'utf8')
     })

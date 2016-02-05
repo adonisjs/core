@@ -2,32 +2,42 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const path = require('path')
 const fs = require('fs')
 
 /**
- * @class  File
- * @description File manager class to handle file uploads
+ * Used by request object internally to manage file uploads.
+ *
+ * @class
+ *
+ * @alias Request.file
  */
 class File {
 
-  constructor (File) {
-    this.file = File
+  constructor (formidableObject) {
+    this.file = formidableObject
     this.file.error = null
     this.file.filename = ''
     this.file.filepath = ''
   }
 
   /**
-   * @description moves uploaded file from tmpPath to given location
-   * @method move
+   * moves uploaded file from tmpPath to a given location. This is
+   * an async function.
+   *
    * @param  {String} toPath
    * @param  {String} name
-   * @return {void}
+   *
+   * @example
+   * yield file.move()
+   *
    * @public
    */
   move (toPath, name) {
@@ -50,9 +60,10 @@ class File {
   }
 
   /**
-   * @description returns file name on clients machine
-   * @method clientName
+   * returns name of the uploaded file inside tmpPath.
+   *
    * @return {String}
+   *
    * @public
    */
   clientName () {
@@ -60,10 +71,10 @@ class File {
   }
 
   /**
-   * @description returns file mime type detected from
-   * clients machine
-   * @method mimeType
+   * returns file mime type detected from original uploaded file.
+   *
    * @return {String}
+   *
    * @public
    */
   mimeType () {
@@ -71,9 +82,10 @@ class File {
   }
 
   /**
-   * @description returns upload file extension
-   * @method extension
+   * returns file extension from original uploaded file.
+   *
    * @return {String}
+   *
    * @public
    */
   extension () {
@@ -81,9 +93,10 @@ class File {
   }
 
   /**
-   * @description returns file size from client machine
-   * @method clientSize
+   * returns file size of original uploaded file.
+   *
    * @return {String}
+   *
    * @public
    */
   clientSize () {
@@ -91,10 +104,10 @@ class File {
   }
 
   /**
-   * @description return tmp path of file
-   * after successfull upload
-   * @method tmpPath
+   * returns temporary path of file.
+   *
    * @return {String}
+   *
    * @public
    */
   tmpPath () {
@@ -102,9 +115,10 @@ class File {
   }
 
   /**
-   * @description returns file name after moving file
-   * @method uploadName
+   * returns file name after moving file
+   *
    * @return {String}
+   *
    * @public
    */
   uploadName () {
@@ -112,9 +126,10 @@ class File {
   }
 
   /**
-   * @description returns complete uploadPath
-   * @method uploadPath
+   * returns complete uploadPath after moving file
+   *
    * @return {String}
+   *
    * @public
    */
   uploadPath () {
@@ -122,9 +137,10 @@ class File {
   }
 
   /**
-   * @description tells whether file exists on tmp path or not
-   * @method exists
+   * tells whether file exists on temporary path or not
+   *
    * @return {Boolean}
+   *
    * @public
    */
   exists () {
@@ -132,10 +148,10 @@ class File {
   }
 
   /**
-   * @description tells whether move operation was sucessfull or
-   * not
-   * @method moved
+   * tells whether move operation was successful or not
+   *
    * @return {Boolean}
+   *
    * @public
    */
   moved () {
@@ -143,9 +159,11 @@ class File {
   }
 
   /**
-   * @description returns errors caused while moving file
-   * @method errors
+   * returns errors caused while moving file
+   *
    * @return {Object}
+   *
+   * @public
    */
   errors () {
     return this.file.error
