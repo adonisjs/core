@@ -46,6 +46,10 @@ describe('Response', function () {
     this.Response = new ResponseBuilder(view, Route, Config)
   })
 
+  beforeEach(function () {
+    Route.new()
+  })
+
   it('should respond to a request using send method', function * (done) {
     const server = http.createServer((req, res) => {
       const request = new Request(req,res, Config)
@@ -238,6 +242,21 @@ describe('Response', function () {
     done()
   })
 
+  it('should redirect to a given route using route method when it is under a domain', function * (done) {
+    Route.group('g', function () {
+      Route.get('/user/:id', function * () {}).as('profile')
+    }).domain('virk.adonisjs.com')
+
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.route('profile', {id:1})
+    })
+    const res = yield supertest(server).get('/').expect(302).end()
+    expect(res.headers.location).to.equal('virk.adonisjs.com/user/1')
+    done()
+  })
+
   it('should add vary field to response headers', function * (done) {
     const server = http.createServer((req, res) => {
       const request = new Request(req,res, Config)
@@ -269,7 +288,6 @@ describe('Response', function () {
       }).then (function (responseView) {
         response.send(responseView)
       }).catch(function (err) {
-        console.log(err)
         response.status(200).send(err)
       })
     })
@@ -289,7 +307,6 @@ describe('Response', function () {
       co(function * () {
        yield response.sendView('index')
       }).catch(function (err) {
-        console.log(err)
         response.status(200).send(err)
       })
     })
