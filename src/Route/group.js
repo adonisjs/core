@@ -74,7 +74,7 @@ class Group {
    */
   domain (domain) {
     domains.add(helpers.makeRoutePattern(domain))
-    helpers.addSubdomain(this.routes, domain)
+    helpers.addDomain(this.routes, domain)
   }
 
   /**

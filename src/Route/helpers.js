@@ -28,11 +28,11 @@ RouterHelper.construct = function (route, verb, handler, group) {
   route = route.startsWith('/') ? route : `/${route}`
   const pattern = RouterHelper.makeRoutePattern(route)
   const middlewares = []
-  const subdomain = null
+  const domain = null
   const name = route
 
   verb = _.isArray(verb) ? verb : [verb] // a route can register for multiple verbs
-  return {route, verb, handler, pattern, middlewares, name, group, subdomain}
+  return {route, verb, handler, pattern, middlewares, name, group, domain}
 }
 
 /**
@@ -59,8 +59,8 @@ RouterHelper.makeRoutePattern = function (route) {
  */
 RouterHelper.returnMatchingRouteToUrl = function (routes, urlPath, verb) {
   let maps = _.filter(routes, function (route) {
-    if (route.subdomain) {
-      route.pattern = RouterHelper.makeRoutePattern(route.subdomain + route.route)
+    if (route.domain) {
+      route.pattern = RouterHelper.makeRoutePattern(route.domain + route.route)
     }
     return (route.pattern.test(urlPath) && _.includes(route.verb, verb))
   })
@@ -163,15 +163,15 @@ RouterHelper.prefixRoute = function (routes, prefix) {
 }
 
 /**
- * adds subdomain to group of routes.
+ * adds domain to group of routes.
  *
  * @param  {Array}     routes
- * @param  {String}     subdomain
+ * @param  {String}     domain
  *
  * @private
  */
-RouterHelper.addSubdomain = function (routes, subdomain) {
+RouterHelper.addDomain = function (routes, domain) {
   _.each(routes, function (route) {
-    route.subdomain = subdomain
+    route.domain = domain
   })
 }

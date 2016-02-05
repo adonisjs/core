@@ -469,13 +469,13 @@ describe('Route',function () {
       expect(verbs['/user/:user_id/posts-POST']).to.equal(undefined)
     })
 
-    it('should be able to define subdomain for a given route', function () {
+    it('should be able to define domain for a given route', function () {
       Route.group('admin',function () {
         Route.get('/','SomeController.method')
       }).domain('v1.example.org')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
-      expect(routes[0].subdomain).to.equal('v1.example.org')
+      expect(routes[0].domain).to.equal('v1.example.org')
     })
 
     it('should be able to define formats on routes', function () {
@@ -545,7 +545,7 @@ describe('Route',function () {
       expect(home.handler).to.equal('SomeController.method')
       expect(home.group).to.equal(null)
       expect(home.middlewares).deep.equal([])
-      expect(home.subdomain).to.equal(null)
+      expect(home.domain).to.equal(null)
       expect(home.params).deep.equal({})
     })
 
@@ -566,7 +566,7 @@ describe('Route',function () {
       expect(home.handler).to.equal('SomeController.method')
       expect(home.group).to.equal('v1')
       expect(home.middlewares).deep.equal([])
-      expect(home.subdomain).to.equal(null)
+      expect(home.domain).to.equal(null)
       expect(home.params).deep.equal({})
 
     })
@@ -580,7 +580,7 @@ describe('Route',function () {
       expect(home.handler).to.equal('SomeController.method')
       expect(home.group).to.equal(null)
       expect(home.middlewares).deep.equal([])
-      expect(home.subdomain).to.equal(null)
+      expect(home.domain).to.equal(null)
       expect(home.params).deep.equal({})
     })
 
@@ -606,7 +606,7 @@ describe('Route',function () {
       expect(home.middlewares).deep.equal(['cors','auth'])
     })
 
-    it('should resolve routes with subdomains', function () {
+    it('should resolve routes with domains', function () {
       Route.group('admin', function () {
         Route.get('/', 'SomeController.method')
       }).domain('virk.me')
@@ -615,7 +615,7 @@ describe('Route',function () {
       expect(home.handler).to.equal('SomeController.method')
     })
 
-    it('should not resolve paths defined inside subdomain without host', function () {
+    it('should not resolve paths defined inside domain without host', function () {
       Route.group('admin', function () {
         Route.get('/', 'SomeController.method')
       }).domain('virk.me')
@@ -740,7 +740,7 @@ describe('Route',function () {
       expect(url).to.equal('/v1/hello-world')
     })
 
-    it('should make url for route registered inside subdomain', function () {
+    it('should make url for route registered inside domain', function () {
       Route.group('v1', function () {
         Route.get('/:post','SomeController.index').as('post')
       }).domain('amanvirk.me')
