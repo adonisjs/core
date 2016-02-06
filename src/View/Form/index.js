@@ -71,7 +71,7 @@ class Form {
     avoid = avoid || []
     const htmlAttributes = []
     _.each(attributes, (value, index) => {
-      if (avoid.indexOf(index) <= -1 ) {
+      if (avoid.indexOf(index) <= -1) {
         htmlAttributes.push(`${index}="${value}"`)
       }
     })
@@ -122,7 +122,6 @@ class Form {
    * @public
    */
   open (options) {
-
     /**
      * if user has defined route, fetch actual
      * route defination using Route module
@@ -161,9 +160,8 @@ class Form {
   label (name, value, attributes) {
     attributes = attributes || {}
     const labelAttributes = [`name="${name}"`].concat(this._makeHtmlAttributes(attributes))
-    return this.env.filters.safe(`<label ${labelAttributes.join(" ")}> ${value} </label>`)
+    return this.env.filters.safe(`<label ${labelAttributes.join(' ')}> ${value} </label>`)
   }
-
 }
 
 module.exports = Form
