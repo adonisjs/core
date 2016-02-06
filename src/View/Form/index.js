@@ -158,6 +158,12 @@ class Form {
     return this.env.filters.safe(`<form ${formAttributes.join(' ')}>`)
   }
 
+  label (name, value, attributes) {
+    attributes = attributes || {}
+    const labelAttributes = [`name="${name}"`].concat(this._makeHtmlAttributes(attributes))
+    return this.env.filters.safe(`<label ${labelAttributes.join(" ")}> ${value} </label>`)
+  }
+
 }
 
 module.exports = Form

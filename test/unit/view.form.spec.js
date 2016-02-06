@@ -78,4 +78,14 @@ describe('Form Helper', function () {
     expect(formTag.val).to.equal('<form method="POST" action="/users?_method=PUT" enctype="application/x-www-form-urlencoded">')
   })
 
+  it('should be able to create label', function () {
+    const label = form.label('email', 'Enter your email address')
+    expect(label.val).to.equal('<label name="email"> Enter your email address </label>')
+  })
+
+  it('should be able to define extra attributes with label', function () {
+    const label = form.label('email', 'Enter your email address', {class: 'flat'})
+    expect(label.val).to.equal('<label name="email" class="flat"> Enter your email address </label>')
+  })
+
 })
