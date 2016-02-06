@@ -1,10 +1,12 @@
 'use strict'
 
-
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const View = require('../../src/View')
@@ -28,7 +30,10 @@ describe('View',function () {
       }
     }
     this.view = new View(Helpers, Config, Route)
+  })
 
+  beforeEach(function () {
+    Route.new()
   })
 
   it('should throw an error when unable to find view', function * () {
@@ -68,7 +73,6 @@ describe('View',function () {
     }
     const asyncView = yield this.view.make('async',{profile})
     expect(asyncView.trim()).to.equal('virk')
-
   })
 
   it('should return error thrown by yield method', function * () {

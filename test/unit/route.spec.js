@@ -100,6 +100,20 @@ describe('Route',function () {
       expect(fn).to.throw(NE.DomainException, /You can only bind controllers to resources/)
     })
 
+    it('should be able to get a route with it\'s name', function () {
+      Route.get('/user/:id', 'UsersController.show').as('user.show')
+      const route = Route.getRoute({name: 'user.show'})
+      expect(route).to.be.an('object')
+      expect(route.handler).to.equal('UsersController.show')
+    })
+
+    it('should be able to get a route with it\'s handler name', function () {
+      Route.get('/user/:id', 'UsersController.show').as('user.show')
+      const route = Route.getRoute({handler: 'UsersController.show'})
+      expect(route).to.be.an('object')
+      expect(route.name).to.equal('user.show')
+    })
+
     it('should register resourceful routes', function () {
       Route.resource('/','SomeController')
       const routes = Route.routes()

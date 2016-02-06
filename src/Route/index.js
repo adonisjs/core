@@ -408,6 +408,23 @@ Route.url = function (pattern, params) {
 }
 
 /**
+ * returns a route with it's property
+ *
+ * @method getRoute
+ * @param  {Object} property
+ *
+ * @example
+ * Route.getRoute({name: 'user.show'})
+ * Route.getRoute({handler: 'UserController.show'})
+ *
+ * @return {Object}
+ */
+Route.getRoute = function (property) {
+  const index = _.findIndex(routes, property)
+  return routes[index]
+}
+
+/**
  * removes a route from routes mapping using it's name
  *
  * @method remove
