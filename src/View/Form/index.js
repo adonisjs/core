@@ -11,6 +11,11 @@
 
 const _ = require('lodash')
 
+/**
+ * Form helper for views
+ * @class
+ * @alias View.Form
+ */
 class Form {
 
   constructor (View, Route) {
@@ -24,7 +29,6 @@ class Form {
    * returns method to be used for
    * submitting forms
    *
-   * @method _getMethod
    * @param  {String}   method
    * @return {String}
    *
@@ -40,8 +44,6 @@ class Form {
 
   /**
    * returns url to be set as form action
-   *
-   * @method _getUrl
    *
    * @param  {Object} options
    * @return {String}
@@ -59,8 +61,6 @@ class Form {
   /**
    * makes html attributes from an object
    *
-   * @method _makeHtmlAttributes
-   *
    * @param  {Object}            attributes
    * @param  {Array}             [avoid=[]]
    * @return {Array}
@@ -71,7 +71,7 @@ class Form {
     avoid = avoid || []
     const htmlAttributes = []
     _.each(attributes, (value, index) => {
-      if (avoid.indexOf(index) <= -1) {
+      if (avoid.indexOf(index) <= -1 && value !== null && value !== undefined) {
         htmlAttributes.push(`${index}="${value}"`)
       }
     })
@@ -80,9 +80,10 @@ class Form {
 
   /**
    * returns enctype to be used for submitting form
-   * @method _getEncType
+   *
    * @param  {Boolean}    files
    * @return {String}
+   *
    * @private
    */
   _getEncType (files) {
@@ -92,10 +93,11 @@ class Form {
   /**
    * adds query string for method spoofing if method is other
    * than get and post
-   * @method _makeMethodQueryString
+   *
    * @param  {String}               method
    * @param  {String}               url
    * @return {String}
+   *
    * @private
    */
   _makeMethodQueryString (method, url) {
@@ -107,9 +109,47 @@ class Form {
   }
 
   /**
+   * make options attributes for the options tag
+   *
+   * @param  {Mixed}               value
+   * @param  {Array}               selected
+   * @return {String}
+   *
+   * @private
+   */
+  _makeOptionsAttributes (value, selected) {
+    const attributes = {
+      selected: selected.indexOf(value) > -1 ? true : null,
+      value: value
+    }
+    return this._makeHtmlAttributes(attributes).join(' ')
+  }
+
+  /**
+   * make options tag
+   *
+   * @param  {Array|Object}     options
+   * @param  {Array|String}     selected
+   * @return {Array}
+   *
+   * @private
+   */
+  _makeOptions (options, selected) {
+    selected = _.isArray(selected) ? selected : [selected]
+
+    if (_.isArray(options)) {
+      return _.map(options, (option) => {
+        return `<option ${this._makeOptionsAttributes(option, selected)}> ${option} </option>`
+      })
+    }
+    return _.map(options, (option, key) => {
+      return `<option ${this._makeOptionsAttributes(key, selected)}> ${option} </option>`
+    })
+  }
+
+  /**
    * open a form tag and sets it's action,method
    * enctype and other attributes
-   * @method open
    * @param  {Object} options - options to be used in order to create
    *                            form tag
    * @return {Object} - view specific object
@@ -157,11 +197,297 @@ class Form {
     return this.env.filters.safe(`<form ${formAttributes.join(' ')}>`)
   }
 
+  /**
+   * creates a label field
+   *
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} [attributes={}]
+   * @return {Object}
+   *
+   * @example
+   * Form.label('email', 'Enter your email address')
+   * Form.label('email', 'Enter your email address', {class: 'bootstrap-class'})
+   *
+   * @public
+   */
   label (name, value, attributes) {
     attributes = attributes || {}
     const labelAttributes = [`name="${name}"`].concat(this._makeHtmlAttributes(attributes))
     return this.env.filters.safe(`<label ${labelAttributes.join(' ')}> ${value} </label>`)
   }
+
+  /**
+   * creates an input field with defined type and attributes.
+   * Also it will use old values if flash middleware is
+   * enabled.
+   *
+   * @param  {String} type
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   *
+   * form.input('text', 'username', '', {class: 'input'})
+   */
+  input (type, name, value, attributes) {
+    attributes = attributes || {}
+    attributes.id = attributes.id || name
+
+    if (!value && this.env.globals.old && !attributes.avoidOld) {
+      value = this.env.globals.old(name)
+    }
+    attributes.avoidOld = null
+
+    if (type === 'textarea') {
+      const textareaAttributes = [`name="${name}"`].concat(this._makeHtmlAttributes(attributes))
+      value = value || ''
+      return this.env.filters.safe(`<textarea ${textareaAttributes.join(' ')}>${value}</textarea>`)
+    }
+
+    let inputAttributes = [`type="${type}"`, `name="${name}"`]
+    if (value) {
+      inputAttributes.push(`value="${value}"`)
+    }
+    inputAttributes = inputAttributes.concat(this._makeHtmlAttributes(attributes))
+    return this.env.filters.safe(`<input ${inputAttributes.join(' ')} />`)
+  }
+
+  /**
+   * creates a text input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.text('username', '', {id: 'profile-username'})
+   *
+   * @public
+   */
+  text (name, value, attributes) {
+    return this.input('text', name, value, attributes)
+  }
+
+  /**
+   * creates a password input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.password('password', '', {})
+   *
+   * @public
+   */
+  password (name, value, attributes) {
+    return this.input('password', name, value, attributes)
+  }
+
+  /**
+   * creates a file input field
+   * @param  {String} name
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.file('password', {})
+   *
+   * @public
+   */
+  file (name, attributes) {
+    return this.input('file', name, null, attributes)
+  }
+
+  /**
+   * creates a color input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.color('theme-color', '#ffffff', {})
+   *
+   * @public
+   */
+  color (name, value, attributes) {
+    return this.input('color', name, value, attributes)
+  }
+
+  /**
+   * creates a date input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.date('theme-color', '', {})
+   *
+   * @public
+   */
+  date (name, value, attributes) {
+    return this.input('date', name, value, attributes)
+  }
+
+  /**
+   * creates a url input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.url('profile', '', {})
+   *
+   * @public
+   */
+  url (name, value, attributes) {
+    return this.input('url', name, value, attributes)
+  }
+
+  /**
+   * creates a search input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.search('search', '', {})
+   *
+   * @public
+   */
+  search (name, value, attributes) {
+    return this.input('search', name, value, attributes)
+  }
+
+  /**
+   * creates a hidden input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.hidden('token', '', {})
+   *
+   * @public
+   */
+  hidden (name, value, attributes) {
+    return this.input('hidden', name, value, attributes)
+  }
+
+  /**
+   * creates a textarea field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.hidden('token', '', {})
+   *
+   * @public
+   */
+  textarea (name, value, attributes) {
+    return this.input('textarea', name, value, attributes)
+  }
+
+  /**
+   * creates a radio input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Boolean} checked - input to be checked or not
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.radio('gender', 'male', true, {})
+   * form.radio('gender', 'female')
+   *
+   * @public
+   */
+  radio (name, value, checked, attributes) {
+    attributes = attributes || {}
+    attributes.checked = checked ? 'checked' : null
+    return this.input('radio', name, value, attributes)
+  }
+
+  /**
+   * creates a checkbox input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Boolean} checked - input to be checked or not
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.checkbox('terms', 'agree')
+   *
+   * @public
+   */
+  checkbox (name, value, checked, attributes) {
+    attributes = attributes || {}
+    attributes.checked = checked ? 'checked' : null
+    return this.input('checkbox', name, value, attributes)
+  }
+
+  /**
+   * creates a new select box
+   *
+   * @param  {String} name
+   * @param  {Object|Array} options
+   * @param  {String|Array} selected
+   * @param  {String} emptyOption
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   *
+   * form.select('country', ['India', 'Us', 'France'])
+   * form.select('country', {ind: 'India', us: 'Us', fr: 'France'}, ['ind', 'us'])
+   * form.select('country', ['India', 'Us', 'France'], null, 'Select Country')
+   *
+   * @public
+   */
+  select (name, options, selected, emptyOption, attributes) {
+    attributes = attributes || {}
+    attributes.id = attributes.id || name
+    let selectAttributes = [`name="${name}"`]
+    selectAttributes = selectAttributes.concat(this._makeHtmlAttributes(attributes))
+    let selectTag = `<select ${selectAttributes.join(' ')}>\n`
+    if (emptyOption) {
+      selectTag += this._makeOptions({'': emptyOption})[0] + '\n'
+    }
+    selectTag += this._makeOptions(options, selected).join('\n')
+    selectTag += '\n</select>'
+    return this.env.filters.safe(selectTag)
+  }
+
+  /**
+   * creates a select box with options in a defined range
+   * @param  {String}    name
+   * @param  {Number}    start
+   * @param  {Number}    end
+   * @param  {Number|Array}    selected
+   * @param  {String}    emptyOption
+   * @param  {Object}    attributes
+   * @return {Object}
+   *
+   * @example
+   * form.selectRange('shoesize', 4, 12, 7, 'Select shoe size')
+   *
+   * @public
+   */
+  selectRange (name, start, end, selected, emptyOption, attributes) {
+    return this.select(name, _.range(start, end), selected, emptyOption, attributes)
+  }
+
 }
 
 module.exports = Form
