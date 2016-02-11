@@ -2,8 +2,11 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 module.exports = function (env, Route) {
@@ -13,6 +16,17 @@ module.exports = function (env, Route) {
    */
   env.addFilter('route', function (val, options) {
     return Route.url(val, options)
+  })
+
+  /**
+   * returns a route from it's controller action
+   */
+  env.addFilter('action', function (val, options) {
+    const route = Route.getRoute({handler: val})
+    if (!route || !route.route) {
+      return null
+    }
+    return Route.url(route.route, options)
   })
 
   /**

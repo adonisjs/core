@@ -60,6 +60,17 @@ describe('View',function () {
     expect(profile.trim()).to.equal('/1')
   })
 
+  it('should make use of action filter inside views', function * () {
+    Route.get('/:id','ProfileController.show').as('profile')
+    const profile = yield this.view.make('profileAction',{id:1})
+    expect(profile.trim()).to.equal('/1')
+  })
+
+  it('should return empty string when unable to find route action', function * () {
+    const profile = this.view.makeString('{{ "ProfileController.show" | action({id:1}) }}',{id:1})
+    expect(profile.trim()).to.equal('')
+  })
+
   it('should stringify json', function * () {
     const jsonView = yield this.view.make('json',{profile:{name:"virk"}})
     expect(jsonView.trim()).to.equal(JSON.stringify({name:"virk"}))

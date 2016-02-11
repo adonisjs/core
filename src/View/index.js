@@ -33,7 +33,7 @@ class View {
    * compile a view with give template and data
    *
    * @param  {String} template_path
-   * @param  {Object} data
+   * @param  {Object} [data]
    * @return {Promise}
    *
    * @example
@@ -54,6 +54,24 @@ class View {
         resolve(templateContent)
       })
     })
+  }
+
+  /**
+   * makes a view from string instead of path, it is
+   * helpful for making quick templates on the
+   * fly.
+   *
+   * @param  {String}   templateString
+   * @param  {Object}   [data]
+   * @return {String}
+   *
+   * @example
+   * view.makeString('Hello {{ user }}', {user: 'doe'})
+   *
+   * @public
+   */
+  makeString (templateString, data) {
+    return this.viewsEnv.renderString(templateString, data)
   }
 
   /**
