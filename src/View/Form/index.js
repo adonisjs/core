@@ -272,6 +272,75 @@ class Form {
   }
 
   /**
+   * creates a submit input field with name, value
+   * and other input attributes
+   * @method submit
+   * @param  {String} value
+   * @param  {String} name
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.submit('Click Me', null, {class: 'button-primary'})
+   *
+   * @public
+   */
+  submit (value, name, attributes) {
+    name = name || 'submit'
+    return this.input('submit', name, value, attributes)
+  }
+
+  /**
+   * creates a button element with name, value and other
+   * other button attributes
+   * @method button
+   * @param  {String} value
+   * @param  {String} [name=submit]
+   * @param  {Object} [attributes={}]
+   * @return {Object}
+   *
+   * @example
+   * form.button('Submit')
+   * form.button('Create Account', 'create-account')
+   * form.button('Submit', null, {class: 'button--large'})
+   *
+   * @public
+   */
+  button (value, name, attributes) {
+    attributes = attributes || {}
+    let type = 'submit'
+    if (attributes.type) {
+      type = attributes.type
+      attributes.type = null
+    }
+    name = name || type
+    attributes.id = attributes.id || name
+    const buttonAttributes = [`type="${type}"`, `name="${name}"`, `value="${value}"`].concat(this._makeHtmlAttributes(attributes))
+    return this.env.filters.safe(`<button ${buttonAttributes.join(' ')}> ${value} </button>`)
+  }
+
+  /**
+   * creates a button element as with reset type.
+   * @method resetButton
+   * @param  {String} value
+   * @param  {String} [name=submit]
+   * @param  {Object} [attributes={}]
+   * @return {Object}
+   *
+   * @example
+   * form.button('Submit')
+   * form.button('Create Account', 'create-account')
+   * form.button('Submit', null, {class: 'button--large'})
+   *
+   * @public
+   */
+  resetButton (value, name, attributes) {
+    attributes = attributes || {}
+    attributes.type = 'reset'
+    return this.button(value, name, attributes)
+  }
+
+  /**
    * creates a password input field
    * @param  {String} name
    * @param  {String} value

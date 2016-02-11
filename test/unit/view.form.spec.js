@@ -88,7 +88,7 @@ describe('Form Helper', function () {
     expect(label.val).to.equal('<label name="email" class="flat"> Enter your email address </label>')
   })
 
-  it('should create an input box using input method', function () {
+  it('should create an input box using text method', function () {
     const label = form.text('email')
     expect(label.val).to.equal('<input type="text" name="email" id="email" />')
   })
@@ -299,4 +299,43 @@ describe('Form Helper', function () {
     expect(label.val).to.equal(expected)
   })
 
+  it('should create a submit button using submit method', function () {
+    const label = form.submit('Submit')
+    expect(label.val).to.equal('<input type="submit" name="submit" value="Submit" id="submit" />')
+  })
+
+  it('should be able to define extra attributes on submit button', function () {
+    const label = form.submit('Submit', null, {class: 'small'})
+    expect(label.val).to.equal('<input type="submit" name="submit" value="Submit" class="small" id="submit" />')
+  })
+
+  it('should be able to define name of submit button', function () {
+    const label = form.submit('Create Account', 'create')
+    expect(label.val).to.equal('<input type="submit" name="create" value="Create Account" id="create" />')
+  })
+
+  it('should create a button using button method', function () {
+    const label = form.button('Submit')
+    expect(label.val).to.equal('<button type="submit" name="submit" value="Submit" id="submit"> Submit </button>')
+  })
+
+  it('should be able to define extra attributes on button', function () {
+    const label = form.button('Submit', null, {class: 'big'})
+    expect(label.val).to.equal('<button type="submit" name="submit" value="Submit" class="big" id="submit"> Submit </button>')
+  })
+
+  it('should be able to define a different name for button', function () {
+    const label = form.button('Create Account', 'create')
+    expect(label.val).to.equal('<button type="submit" name="create" value="Create Account" id="create"> Create Account </button>')
+  })
+
+  it('should create a reset button using resetButton method', function () {
+    const label = form.resetButton('Clear Form')
+    expect(label.val).to.equal('<button type="reset" name="reset" value="Clear Form" id="reset"> Clear Form </button>')
+  })
+
+  it('should create a reset button by passing type to reset inside button method', function () {
+    const label = form.button('Clear Form', 'clear', {type: 'reset'})
+    expect(label.val).to.equal('<button type="reset" name="clear" value="Clear Form" id="clear"> Clear Form </button>')
+  })
 })
