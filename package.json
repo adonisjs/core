@@ -41,7 +41,7 @@
     "co": "^4.6.0",
     "dotenv": "^2.0.0",
     "eventemitter2": "^0.4.14",
-    "lodash": "^4.0.1",
+    "lodash": "^4.4.0",
     "mkdirp": "^0.5.1",
     "node-cookie": "^1.0.0",
     "node-exceptions": "^1.0.1",
