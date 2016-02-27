@@ -40,7 +40,7 @@
     "cat-log": "^1.0.0",
     "co": "^4.6.0",
     "dotenv": "^2.0.0",
-    "eventemitter2": "^0.4.14",
+    "eventemitter2": "^1.0.0",
     "lodash": "^4.4.0",
     "mkdirp": "^0.5.1",
     "node-cookie": "^1.0.0",
