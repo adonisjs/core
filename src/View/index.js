@@ -32,7 +32,7 @@ class View {
   /**
    * compile a view with give template and data
    *
-   * @param  {String} template_path
+   * @param  {String} templatePath
    * @param  {Object} [data]
    * @return {Promise}
    *
@@ -95,7 +95,7 @@ class View {
    * add a global method to views
    *
    * @param  {String} name
-   * @param  {Mixed} value
+   * @param  {*} value
    *
    * @example
    * View.global('key', value)
