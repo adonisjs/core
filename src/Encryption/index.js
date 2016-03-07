@@ -46,8 +46,9 @@ class Encryption {
   encrypt (value, encoding) {
     encoding = encoding || 'utf8'
     const cipher = crypto.createCipher(this.algorithm, this.appKey)
-    cipher.update(value, encoding, 'hex')
-    return cipher.final('hex')
+    let encrypted = cipher.update(value, encoding, 'hex')
+    encrypted += cipher.final('hex')
+    return encrypted
   }
 
   /**
@@ -65,8 +66,9 @@ class Encryption {
   decrypt (value, encoding) {
     encoding = encoding || 'utf8'
     const decipher = crypto.createDecipher(this.algorithm, this.appKey)
-    decipher.update(value, 'hex', encoding)
-    return decipher.final(encoding)
+    let decrypted = decipher.update(value, 'hex', encoding)
+    decrypted += decipher.final(encoding)
+    return decrypted
   }
 
 }
