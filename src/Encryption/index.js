@@ -14,6 +14,8 @@ const crypto = require('crypto')
 /**
  * Encrypt and decrypt values using nodeJs crypto, make
  * sure to set APP_KEY inside .env file.
+ *
+ * Not compatible with Laravel because they use serialize()/unserialize()
  * @class
  */
 class Encryption {
@@ -22,13 +24,22 @@ class Encryption {
     this.appKey = Config.get('app.appKey')
     this.algorithm = Config.get('app.encryption.algorithm', 'aes-256-cbc')
 
-    /**
-     * throwing error when APP_KEY is not defined as encryption
-     * does not make sense without a key
-     */
-    if (!this.appKey) {
-      throw new Error('Encryption cannot work without application key. Define appKey inside app config')
+    if (!this.supported(this.appKey, this.algorithm)) {
+      throw new Error('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths.')
     }
+  }
+
+  /**
+   * Determine if the given key and cipher combination is valid.
+   *
+   * @param  {String}  key
+   * @param  {String}  cipher
+   * @return {Boolean}
+   */
+  supported (key, cipher) {
+    key = key || ''
+    cipher = cipher || ''
+    return (cipher.toLowerCase() === 'aes-128-cbc' && key.length === 16) || (cipher.toLowerCase() === 'aes-256-cbc' && key.length === 32)
   }
 
   /**
