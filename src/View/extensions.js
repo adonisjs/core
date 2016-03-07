@@ -49,7 +49,7 @@ function ViewsYield () {
     var index = keys[0]
     var method = injections[index]
 
-    co(function *() {
+    co(function * () {
       return yield method
     })
     .then(function (response) {
