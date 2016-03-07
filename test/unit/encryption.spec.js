@@ -38,9 +38,10 @@ describe('Encryption', function() {
 
   it('should encryption values using defined algorithm', function () {
     const cipher = crypto.createCipher(Config.get('app.encryption.algorithm'),Config.get('app.appKey'))
-    cipher.update('These Aren\'t the Droids You\'re Looking For')
-    const encrypted = encryption.encrypt('These Aren\'t the Droids You\'re Looking For')
-    expect(encrypted).to.equal(cipher.final('hex'))
+    let encrypted = cipher.update('These Aren\'t the Droids You\'re Looking For', 'utf8', 'hex')
+    encrypted += cipher.final('hex')
+    const encryptedFromClass = encryption.encrypt('These Aren\'t the Droids You\'re Looking For')
+    expect(encryptedFromClass).to.equal(encrypted)
   })
 
   it('should decrypt values using defined algorithm', function () {
