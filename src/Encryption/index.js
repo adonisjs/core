@@ -110,7 +110,12 @@ class Encryption {
    * @return {Mixed}
    */
   getJsonPayload (payload) {
-    payload = JSON.parse(this.base64Decode(payload))
+    const json = this.base64Decode(payload)
+    try {
+      payload = JSON.parse(json)
+    } catch (e) {
+      throw new Error('The payload is not an json object.')
+    }
     // If the payload is not valid JSON or does not have the proper keys set we will
     // assume it is invalid and bail out of the routine since we will not be able
     // to decrypt the given value. We'll also check the MAC for this encryption.
