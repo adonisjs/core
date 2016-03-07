@@ -48,7 +48,7 @@ class Encryption {
 
     let iv = crypto.randomBytes(this.getIvSize())
 
-    let cipher = crypto.createCipheriv(this.algorithm, this.appKey, iv)
+    const cipher = crypto.createCipheriv(this.algorithm, this.appKey, iv)
     value = cipher.update(value, encoding, 'base64')
     value += cipher.final('base64')
 
@@ -59,8 +59,8 @@ class Encryption {
     // Once we have the encrypted value we will go ahead base64_encode the input
     // vector and create the MAC for the encrypted value so we can verify its
     // authenticity. Then, we'll JSON encode the data in a "payload" array.
-    let mac = this.hash(iv = this.base64Encode(iv), value)
-    let json = JSON.stringify({iv: iv, value: value, mac: mac})
+    const mac = this.hash(iv = this.base64Encode(iv), value)
+    const json = JSON.stringify({iv: iv, value: value, mac: mac})
     return this.base64Encode(json)
   }
 
@@ -80,10 +80,10 @@ class Encryption {
     encoding = encoding || 'utf8'
     payload = this.getJsonPayload(payload)
 
-    let iv = this.base64Decode(payload.iv, true)
+    const iv = this.base64Decode(payload.iv, true)
 
-    let decipher = crypto.createDecipheriv(this.algorithm, this.appKey, iv)
-    var decrypted = decipher.update(payload.value, 'base64', encoding)
+    const decipher = crypto.createDecipheriv(this.algorithm, this.appKey, iv)
+    let decrypted = decipher.update(payload.value, 'base64', encoding)
     decrypted += decipher.final(encoding)
 
     if (!decrypted) {
@@ -176,8 +176,8 @@ class Encryption {
    * @return {Boolean}
    */
   validMac (payload) {
-    let bytes = crypto.randomBytes(this.getIvSize())
-    let calcMac = this.hashHmac('sha256', this.hash(payload.iv, payload.value), bytes)
+    const bytes = crypto.randomBytes(this.getIvSize())
+    const calcMac = this.hashHmac('sha256', this.hash(payload.iv, payload.value), bytes)
     return this.hashHmac('sha256', payload.mac, bytes) === calcMac
   }
 
