@@ -198,6 +198,19 @@ class Form {
   }
 
   /**
+   * closes the form tag
+   *
+   * @method close
+   *
+   * @return {Object}
+   *
+   * @public
+   */
+  close () {
+    return this.env.filters.safe('</form>')
+  }
+
+  /**
    * creates a label field
    *
    * @param  {String} name

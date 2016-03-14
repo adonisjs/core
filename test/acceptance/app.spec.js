@@ -146,4 +146,13 @@ describe('App Exceptations', function () {
     expect(browser.text('body').trim()).to.equal('sending via view');
   })
 
+  it('should make use of form global helper to setup a form', function * () {
+    Route.get('/', function * (request, response) {
+      yield response.sendView('form')
+    })
+    yield browser.visit('/')
+    expect(browser.html('form')).not.to.equal('')
+    expect(browser.html('input')).not.to.equal('')
+    expect(browser.html('button')).not.to.equal('')
+  })
 })

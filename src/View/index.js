@@ -11,6 +11,7 @@
 
 const nunjucks = require('nunjucks')
 const ViewLoader = require('./loader')
+const Form = require('./Form')
 const viewFilters = require('./filters')
 const viewExtensions = require('./extensions')
 
@@ -25,6 +26,7 @@ class View {
     const viewsPath = Helpers.viewsPath()
     const viewsCache = Config.get('app.views.cache', true)
     this.viewsEnv = new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
+    this.global('form', new Form(this, Route))
     viewExtensions(this.viewsEnv)
     viewFilters(this.viewsEnv, Route)
   }
