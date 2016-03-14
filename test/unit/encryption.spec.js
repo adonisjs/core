@@ -39,7 +39,7 @@ describe('Encryption', function() {
     const fn = function () {
       return new Encryption(new Config())
     }
-    expect(fn).to.throw(/The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths\./i)
+    expect(fn).to.throw(/App key needs to be specific in order to make use of Encryption\./i)
   })
 
   it('should throw error when APP_KEY to long', function () {

@@ -24,6 +24,10 @@ class Encryption {
     this.appKey = Config.get('app.appKey')
     this.algorithm = Config.get('app.encryption.algorithm', 'aes-256-cbc')
 
+    if (!this.appKey) {
+      throw new Error('App key needs to be specific in order to make use of Encryption.')
+    }
+
     if (!this.supported(this.appKey, this.algorithm)) {
       throw new Error('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths.')
     }
@@ -108,6 +112,8 @@ class Encryption {
    *
    * @param  {String} payload
    * @return {Mixed}
+   *
+   * @public
    */
   getJsonPayload (payload) {
     const json = this.base64Decode(payload)
@@ -134,6 +140,8 @@ class Encryption {
    * @param  {String} iv
    * @param  {String} value
    * @return {String}
+   *
+   * @public
    */
   hash (iv, value) {
     return this.hashHmac('sha256', iv + value, this.appKey)
@@ -146,6 +154,8 @@ class Encryption {
    * @param  {String} data
    * @param  {String} key
    * @return {String}
+   *
+   * @public
    */
   hashHmac (algo, data, key) {
     return crypto.createHmac(algo, key).update(data).digest('hex')
@@ -156,6 +166,8 @@ class Encryption {
    *
    * @param  {String} unencoded
    * @return {String}
+   *
+   * @public
    */
   base64Encode (unencoded) {
     return new Buffer(unencoded || '').toString('base64')
@@ -167,6 +179,8 @@ class Encryption {
    * @param  {String} encoded
    * @param  {Boolean} raw
    * @return {Mixed}
+   *
+   * @public
    */
   base64Decode (encoded, raw) {
     if (raw) {
@@ -180,6 +194,8 @@ class Encryption {
    *
    * @param  {Mixed} data
    * @return {Boolean}
+   *
+   * @public
    */
   invalidPayload (data) {
     return typeof data !== 'object' || !data.hasOwnProperty('iv') || !data.hasOwnProperty('value') || !data.hasOwnProperty('mac')
@@ -190,6 +206,8 @@ class Encryption {
    *
    * @param  object payload
    * @return {Boolean}
+   *
+   * @public
    */
   validMac (payload) {
     const bytes = crypto.randomBytes(this.getIvSize())
@@ -201,6 +219,8 @@ class Encryption {
    * Get the IV size for the cipher
    *
    * @return {Integer}
+   *
+   * @public
    */
   getIvSize () {
     return 16
