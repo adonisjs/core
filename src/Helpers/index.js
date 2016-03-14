@@ -217,6 +217,21 @@ Helpers.databasePath = function (toFile) {
 }
 
 /**
+ * returns whether the process belongs to ace command
+ * or not.
+ *
+ * @method isAceCommand
+ *
+ * @return {Boolean}    [description]
+ *
+ * @public
+ */
+Helpers.isAceCommand = function () {
+  const processFile = process.mainModule.filename
+  return processFile.endsWith('ace')
+}
+
+/**
  * returns absolute path to views directory
  *
  * @method viewsPath
