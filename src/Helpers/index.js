@@ -157,7 +157,7 @@ Helpers.resourcesPath = function (toFile) {
 }
 
 /**
- * returns absolute path to migrations directory.
+ * returns absolute path to database/migrations directory.
  *
  * @method migrationsPath
  *
@@ -167,7 +167,52 @@ Helpers.resourcesPath = function (toFile) {
  * @public
  */
 Helpers.migrationsPath = function (toFile) {
-  const toDir = './migrations'
+  const toDir = toFile ? `./migrations/${toFile}` : './migrations'
+  return Helpers.databasePath(toDir)
+}
+
+/**
+ * returns absolute path to database/seeds directory.
+ *
+ * @method seedsPath
+ *
+ * @param  {String}   [toFile] - filename to return path for
+ * @return {String}
+ *
+ * @public
+ */
+Helpers.seedsPath = function (toFile) {
+  const toDir = toFile ? `./seeds/${toFile}` : './seeds'
+  return Helpers.databasePath(toDir)
+}
+
+/**
+ * returns absolute path to database/factories directory.
+ *
+ * @method factoriesPath
+ *
+ * @param  {String}   [toFile] - filename to return path for
+ * @return {String}
+ *
+ * @public
+ */
+Helpers.factoriesPath = function (toFile) {
+  const toDir = toFile ? `./factories/${toFile}` : './factories'
+  return Helpers.databasePath(toDir)
+}
+
+/**
+ * returns path to the database directory.
+ *
+ * @method databasePath
+ *
+ * @param  {String}     toFile [description]
+ * @return {String}            [description]
+ *
+ * @public
+ */
+Helpers.databasePath = function (toFile) {
+  const toDir = './database'
   return Helpers._makePath(rootPath, toDir, toFile)
 }
 

@@ -88,11 +88,27 @@ describe("Helpers", function () {
     })
 
     it('should return project migrations directory path', function () {
-      expect(Helpers.migrationsPath()).to.equal(path.join(basePath,'./migrations'))
+      expect(Helpers.migrationsPath()).to.equal(path.join(basePath,'./database/migrations'))
     })
 
     it('should return migrations path to a given file', function () {
-      expect(Helpers.migrationsPath('1234.js')).to.equal(path.join(basePath,'./migrations/1234.js'))
+      expect(Helpers.migrationsPath('1234.js')).to.equal(path.join(basePath,'./database/migrations/1234.js'))
+    })
+
+    it('should return project seeds directory path', function () {
+      expect(Helpers.seedsPath()).to.equal(path.join(basePath,'./database/seeds'))
+    })
+
+    it('should return migrations path to a given file', function () {
+      expect(Helpers.seedsPath('1234.js')).to.equal(path.join(basePath,'./database/seeds/1234.js'))
+    })
+
+    it('should return project factories directory path', function () {
+      expect(Helpers.factoriesPath()).to.equal(path.join(basePath,'./database/factories'))
+    })
+
+    it('should return migrations path to a given file', function () {
+      expect(Helpers.factoriesPath('1234.js')).to.equal(path.join(basePath,'./database/factories/1234.js'))
     })
 
     it('should return project views directory path', function () {
