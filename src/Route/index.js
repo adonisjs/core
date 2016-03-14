@@ -101,6 +101,40 @@ Route.get = function (route, handler) {
 }
 
 /**
+ * registers a get route with null handler
+ * which later can be used with render
+ * method to render a view.
+ *
+ * @method on
+ *
+ * @param  {String} route
+ * @return {Object}
+ *
+ * @public
+ */
+Route.on = function (route) {
+  Route.get(route, null)
+  return this
+}
+
+/**
+ * Replaces the route handler method with a custom
+ * closure, to send a given view.
+ *
+ * @method render
+ *
+ * @param  {String} view
+ *
+ * @public
+ */
+Route.render = function (view) {
+  const route = Route._lastRoute()
+  route.handler = function * (request, response) {
+    yield response.sendView(view, {request})
+  }
+}
+
+/**
  * register route with POST verb
  *
  * @method post

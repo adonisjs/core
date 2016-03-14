@@ -12,6 +12,7 @@ const _ = require('lodash')
 const NE = require('node-exceptions')
 const expect = chai.expect
 const pathToRegexp = require('path-to-regexp')
+require('co-mocha')
 
 describe('Route',function () {
 
@@ -770,6 +771,46 @@ describe('Route',function () {
       expect(url).to.equal('/users')
       expect(createUrl).to.equal('/users/create')
       expect(updateUrl).to.equal('/users/1')
+    })
+
+    it('should be able to define a get route using .on method', function () {
+      Route.on('/signup')
+      const routes = Route.routes()
+      expect(routes[0].handler).to.equal(null)
+      expect(routes[0].route).to.equal('/signup')
+    })
+
+    it('should bind a custom callback handler to the render method', function () {
+      Route.on('/signup').render('signup')
+      const routes = Route.routes()
+      expect(routes[0].handler).to.be.a('function')
+      expect(routes[0].route).to.equal('/signup')
+    })
+
+    it('should call sendView method on response when handler is invoked', function * () {
+      let viewToRender = null
+      const res = {
+        sendView: function * (view) {
+          viewToRender = view
+        }
+      }
+      Route.on('/signup').render('signup')
+      const routes = Route.routes()
+      yield routes[0].handler({}, res)
+      expect(viewToRender).to.equal('signup')
+    })
+
+    it('should pass request object to the sendView method', function * () {
+      let requestPassed = null
+      const res = {
+        sendView: function * (view, data) {
+          requestPassed = data.request
+        }
+      }
+      Route.on('/signup').render('signup')
+      const routes = Route.routes()
+      yield routes[0].handler({foo: 'bar'}, res)
+      expect(requestPassed).deep.equal({foo: 'bar'})
     })
   })
 })

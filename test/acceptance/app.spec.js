@@ -155,4 +155,10 @@ describe('App Exceptations', function () {
     expect(browser.html('input')).not.to.equal('')
     expect(browser.html('button')).not.to.equal('')
   })
+
+  it('should render a view using router render method', function * () {
+    Route.on('/signup').render('signup')
+    yield browser.visit('/signup?name=virk')
+    expect(browser.text('body')).to.equal('the url is /signup and the name is virk')
+  })
 })
