@@ -7,6 +7,7 @@
 */
 
 const Env = require('../../src/Env')
+const stderr = require("test-console").stderr
 const chai = require('chai')
 const expect = chai.expect
 
@@ -19,6 +20,15 @@ const Helpers = {
 describe('Env', function() {
   it('should load .env file by initiating Env class', function () {
     new Env(Helpers)
+  })
+
+  it('should load .env file from the location defined as ENV_PATH flag', function () {
+    const inspect = stderr.inspect()
+    process.env.ENV_PATH = '/users/.env'
+    new Env(Helpers)
+    inspect.restore()
+    expect(inspect.output[0]).to.match(/\/users\/\.env/)
+    process.env.ENV_PATH = ''
   })
 
   it('should get values defined in .env file', function () {

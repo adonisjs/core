@@ -21,7 +21,29 @@ const util = require('../../lib/util')
 class Env {
 
   constructor (Helpers) {
-    dotenv.load({path: path.join(Helpers.basePath(), '.env')})
+    const envLocation = this.envPath()
+    const options = {
+      path: path.join(Helpers.basePath(), envLocation),
+      silent: process.env.ENV_SILENT || false,
+      encoding: process.env.ENV_ENCODING || 'utf8'
+    }
+    dotenv.load(options)
+  }
+
+  /**
+   * returns envPath by checking the environment variables
+   *
+   * @method envPath
+   *
+   * @return {String}
+   *
+   * @public
+   */
+  envPath () {
+    if (!process.env.ENV_PATH || process.env.ENV_PATH.length === 0) {
+      return '.env'
+    }
+    return process.env.ENV_PATH
   }
 
   /**
