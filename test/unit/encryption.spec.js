@@ -39,7 +39,7 @@ describe('Encryption', function() {
     const fn = function () {
       return new Encryption(new Config())
     }
-    expect(fn).to.throw(/App key needs to be specific in order to make use of Encryption\./i)
+    expect(fn).to.throw(/App key needs to be specified in order to make use of Encryption\./i)
   })
 
   it('should throw error when APP_KEY to long', function () {

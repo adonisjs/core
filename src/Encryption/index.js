@@ -25,7 +25,7 @@ class Encryption {
     this.algorithm = Config.get('app.encryption.algorithm', 'aes-256-cbc')
 
     if (!this.appKey) {
-      throw new Error('App key needs to be specific in order to make use of Encryption.')
+      throw new Error('App key needs to be specified in order to make use of Encryption.')
     }
 
     if (!this.supported(this.appKey, this.algorithm)) {
