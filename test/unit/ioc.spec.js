@@ -475,19 +475,16 @@ describe('Ioc', function () {
       expect(Ioc.use('Foo') instanceof Foo).to.equal(true)
     })
 
-    it('should transform output of a path using it\'s hooks', function () {
+    it('should call hooks for an autoloaded dependency', function () {
       Ioc.autoload('App', path.join(__dirname, './app'))
-      expect(Ioc.use('App/Services/Hook')).to.equal('bar')
+      const hook = Ioc.use('App/Services/Hook')
+      expect(hook.called).to.equal(true)
     })
 
-    it('should transform output of a path using multiple hooks', function () {
+    it('should not call a hook if hook is not a function', function () {
       Ioc.autoload('App', path.join(__dirname, './app'))
-      expect(Ioc.use('App/Services/MultipleHooks')).to.equal('newBar')
-    })
-
-    it('should not transform if hook is not a function', function () {
-      Ioc.autoload('App', path.join(__dirname, './app'))
-      expect(Ioc.use('App/Services/FakeHook')).to.be.a('function')
+      const hook = Ioc.use('App/Services/FakeHook')
+      expect(hook.called).to.equal(undefined)
     })
   })
 })

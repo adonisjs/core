@@ -144,12 +144,15 @@ Ioc._autoLoad = function (namespace) {
   try {
     let result = requireStack(namespace)
     /**
-     * autoloaded paths can have multiple hooks to transform
-     * it's output. Lucid is an example of making use of it.
+     * autoloaded paths can have multiple hooks to be called
+     * everytime it is required. Lucid is an example of
+     * making use of it.
      */
-    if (result.hooks && result.hooks.forEach) {
-      result.hooks.forEach(function (hook) {
-        result = typeof (result[hook]) === 'function' ? result[hook]() : result
+    if (result.IocHooks && result.IocHooks.forEach) {
+      result.IocHooks.forEach(function (hook) {
+        if (typeof (result[hook]) === 'function') {
+          result[hook]()
+        }
       })
     }
     return result

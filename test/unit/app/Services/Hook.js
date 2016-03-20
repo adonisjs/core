@@ -2,12 +2,12 @@
 
 class Hook {
 
-  static get hooks () {
+  static get IocHooks () {
     return ['extend']
   }
 
   static extend () {
-    return 'bar'
+    this.called = true
   }
 }
 
