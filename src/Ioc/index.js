@@ -406,10 +406,10 @@ Ioc.make = function (Binding) {
   }
 
   /**
-   * if binding is not a class we should return it's original
-   * value
+   * if binding is not a class or makePlain is defined as
+   * true, then we should return it's original value.
    */
-  if (!Ioc._isClass(Binding)) {
+  if (!Ioc._isClass(Binding) || Binding.makePlain) {
     return Binding
   }
 

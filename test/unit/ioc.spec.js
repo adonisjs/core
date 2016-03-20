@@ -486,5 +486,18 @@ describe('Ioc', function () {
       const hook = Ioc.use('App/Services/FakeHook')
       expect(hook.called).to.equal(undefined)
     })
+
+    it('should make the instance of a class when makePlain is defined to true', function () {
+      class User {
+        static get prop () {
+          return 'i am prop'
+        }
+        static get makePlain () {
+          return true
+        }
+      }
+      const makeUser = Ioc.make(User)
+      expect(makeUser.prop).to.equal('i am prop')
+    })
   })
 })
