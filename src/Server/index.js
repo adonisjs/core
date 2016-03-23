@@ -36,9 +36,9 @@ class Server {
    * responds to request by finding registered
    * route or fallbacks to static resource.
    *
-   * @param  {Object}      request  [description]
-   * @param  {Object}      response [description]
-   * @return {void}               [description]
+   * @param  {Object}      request
+   * @param  {Object}      response
+   * @return {void}
    *
    * @private
    */
@@ -59,14 +59,30 @@ class Server {
   /**
    * serves static resource using static server
    *
-   * @param  {Object}       request  [description]
-   * @param  {Object}       response [description]
-   * @return {Promise}                [description]
+   * @param  {Object}       request
+   * @param  {Object}       response
+   * @return {Promise}
    *
    * @private
    */
   _staticHandler (request, response) {
     return this.static.serve(request.request, request.response)
+  }
+
+  /**
+   * returns request method by spoofing the _method only
+   * if allowed by the applicatin
+   *
+   * @param  {Object}          request
+   * @return {String}
+   *
+   * @private
+   */
+  _getRequestMethod (request) {
+    if (!this.config.get('app.http.allowMethodSpoofing')) {
+      return request.method().toUpperCase()
+    }
+    return request.input('_method', request.method()).toUpperCase()
   }
 
   /**
@@ -96,7 +112,7 @@ class Server {
      * back to original method
      * @type {String}
      */
-    const method = request.input('_method', request.method()).toUpperCase()
+    const method = this._getRequestMethod(request)
     const resolvedRoute = this.Route.resolve(requestUrl, method, request.hostname())
     request._params = resolvedRoute.params
 
