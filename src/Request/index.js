@@ -615,7 +615,7 @@ class Request {
    * tells whether or not request has body. It can be
    * used by bodyParsers to decide whether or not to parse body
    *
-   * @return {Boolean} [description]
+   * @return {Boolean}
    *
    * @public
    */
@@ -623,6 +623,17 @@ class Request {
     return nodeReq.hasBody(this.request)
   }
 
+  /**
+   * adds a new method to the request prototype
+   *
+   * @param  {String}   name
+   * @param  {Function} callback
+   *
+   * @public
+   */
+  static macro (name, callback) {
+    this.prototype[name] = callback
+  }
 }
 
 module.exports = Request

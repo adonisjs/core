@@ -1070,4 +1070,20 @@ describe('Request', function () {
     expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
   })
 
+  it('should be able to add macro to the request prototype', function () {
+    Request.macro('foo', function () {
+      return 'foo'
+    })
+    const request = new Request({}, {}, {get: function () {}})
+    expect(request.foo()).to.equal('foo')
+  })
+
+  it('should have access to instance inside the callback', function * () {
+    Request.macro('foo', function () {
+      return this.request.name
+    })
+    const request = new Request({name: 'bar'}, {}, {get: function () {}})
+    expect(request.foo()).to.equal('bar')
+  })
+
 })
