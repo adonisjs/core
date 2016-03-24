@@ -27,7 +27,7 @@ class Response {
     }
     nodeRes.descriptiveMethods.forEach((method) => {
       this[method] = (body) => {
-        nodeRes[method](this.request, this.response, body)
+        nodeRes[method](this.request.request, this.response, body)
       }
     })
   }
@@ -137,7 +137,7 @@ class Response {
    * @public
    */
   send (body) {
-    nodeRes.send(this.request, this.response, body)
+    nodeRes.send(this.request.request, this.response, body)
   }
 
   /**
@@ -149,7 +149,7 @@ class Response {
    * @public
    */
   json (body) {
-    nodeRes.json(this.request, this.response, body)
+    nodeRes.json(this.request.request, this.response, body)
   }
 
   /**
@@ -163,7 +163,7 @@ class Response {
    */
   jsonp (body) {
     const callback = this.request.input('callback') || configInstance.get('app.http.jsonpCallback')
-    nodeRes.jsonp(this.request, this.response, body, callback)
+    nodeRes.jsonp(this.request.request, this.response, body, callback)
   }
 
   /**
@@ -206,6 +206,9 @@ class Response {
    * @public
    */
   location (toUrl) {
+    if (toUrl === 'back') {
+      toUrl = this.request.header('Referrer') || '/'
+    }
     nodeRes.location(this.response, toUrl)
     return this
   }
@@ -218,7 +221,10 @@ class Response {
    *
    */
   redirect (toUrl, status) {
-    nodeRes.redirect(this.request, this.response, toUrl, status)
+    if (toUrl === 'back') {
+      toUrl = this.request.header('Referrer') || '/'
+    }
+    nodeRes.redirect(this.request.request, this.response, toUrl, status)
   }
 
   /**

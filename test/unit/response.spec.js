@@ -219,6 +219,26 @@ describe('Response', function () {
     done()
   })
 
+  it('should set location header to referrer on response', function * () {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.location('back').send('')
+    })
+    const res = yield supertest(server).get('/').set('Referrer', '/foo').expect(200).end()
+    expect(res.headers.location).to.equal('/foo')
+  })
+
+  it('should set location header to / when there is no referrer on request', function * () {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.location('back').send('')
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.headers.location).to.equal('/')
+  })
+
   it('should set location header on response using redirect method', function * (done) {
     const server = http.createServer((req, res) => {
       const request = new Request(req,res, Config)
@@ -227,6 +247,28 @@ describe('Response', function () {
     })
     const res = yield supertest(server).get('/').expect(302).end()
     expect(res.headers.location).to.equal('http://amanvirk.me')
+    done()
+  })
+
+  it('should set location header to referrer when using back with redirect method', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.redirect('back')
+    })
+    const res = yield supertest(server).get('/').set('Referrer', '/bar').expect(302).end()
+    expect(res.headers.location).to.equal('/bar')
+    done()
+  })
+
+  it('should set location header to / when there is no referrer defined using redirect method', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.redirect('back')
+    })
+    const res = yield supertest(server).get('/').expect(302).end()
+    expect(res.headers.location).to.equal('/')
     done()
   })
 
