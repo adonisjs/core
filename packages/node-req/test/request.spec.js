@@ -66,6 +66,42 @@ describe('Http Request', function () {
     expect(res.body.time).to.equal('now')
   })
 
+  it('should return request referrer header', function * () {
+    const server = http.createServer(function (req, res) {
+      const referrer = Request.header(req, 'Referrer')
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({referrer}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Referrer', '/').expect(200).end()
+    expect(res.body.referrer).to.equal('/')
+  })
+
+  it('should return request referrer header when request referrer is using the alternate name', function * () {
+    const server = http.createServer(function (req, res) {
+      const referrer = Request.header(req, 'Referrer')
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({referrer}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Referer', '/').expect(200).end()
+    expect(res.body.referrer).to.equal('/')
+  })
+
+  it('should return request referrer header when parameter key is using the alternate name', function * () {
+    const server = http.createServer(function (req, res) {
+      const referrer = Request.header(req, 'Referer')
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({referrer}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Referrer', '/foo').expect(200).end()
+    expect(res.body.referrer).to.equal('/foo')
+  })
+
   it('should return request single header by its key', function * () {
     const server = http.createServer(function (req, res) {
       const time = Request.header(req, 'time')

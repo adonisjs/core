@@ -95,7 +95,15 @@ Request.headers = function (request) {
  */
 Request.header = function (request, key) {
   key = key.toLowerCase()
-  return Request.headers(request)[key]
+  const headers = Request.headers(request)
+
+  switch (key) {
+    case 'referer':
+    case 'referrer':
+      return headers.referrer || headers.referer
+    default:
+      return headers[key]
+  }
 }
 
 /**
