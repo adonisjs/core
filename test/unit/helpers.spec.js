@@ -114,7 +114,15 @@ describe("Helpers", function () {
     it('should return project views directory path', function () {
       expect(Helpers.viewsPath()).to.equal(path.join(basePath,'./resources/views'))
     })
+
+    it('should make complete namespace for a given namespace', function () {
+      const hook = Helpers.makeNameSpace('Model/Hooks', 'UserHook.validate')
+      expect(hook).to.equal('App/Model/Hooks/UserHook.validate')
+    })
+
+    it('should return complete namespace when toPath is already a complete namespace', function () {
+      const hook = Helpers.makeNameSpace('Model/Hooks', 'App/Model/Hooks/UserHook.validate')
+      expect(hook).to.equal('App/Model/Hooks/UserHook.validate')
+    })
   })
-
-
 })

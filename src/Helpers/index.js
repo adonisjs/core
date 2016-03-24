@@ -111,6 +111,26 @@ Helpers.appNameSpace = function () {
 }
 
 /**
+ * makes complete namespace for a given path and base
+ * namespace
+ *
+ * @method makeNameSpace
+ *
+ * @param  {String}      baseNameSpace
+ * @param  {String}      toPath
+ * @return {String}
+ *
+ * @public
+ */
+Helpers.makeNameSpace = function (baseNameSpace, toPath) {
+  const appNameSpace = Helpers.appNameSpace()
+  if (toPath.startsWith(appNameSpace)) {
+    return toPath
+  }
+  return path.normalize(`${appNameSpace}/${baseNameSpace}/${toPath}`)
+}
+
+/**
  * returns absolute path to config directory or a file inside
  * config directory
  *
@@ -206,8 +226,8 @@ Helpers.factoriesPath = function (toFile) {
  *
  * @method databasePath
  *
- * @param  {String}     toFile [description]
- * @return {String}            [description]
+ * @param  {String}     toFile
+ * @return {String}
  *
  * @public
  */
@@ -222,7 +242,7 @@ Helpers.databasePath = function (toFile) {
  *
  * @method isAceCommand
  *
- * @return {Boolean}    [description]
+ * @return {Boolean}
  *
  * @public
  */
