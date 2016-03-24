@@ -253,6 +253,14 @@ describe('Event', function() {
     expect(listeners.length).to.equal(1)
   })
 
+  it('should throw error when trying to remove unregistered named event', function () {
+    const event = new Event(Config)
+    const fn = function () {
+      event.removeListener('foo', 'fooEvent')
+    }
+    expect(fn).to.throw(/There is no named event with fooEvent name for foo event/)
+  })
+
   it('should be able to remove the correct named events', function (done) {
     const event = new Event(Config)
     event.on('foo', 'fooEvent', function () {
