@@ -15,7 +15,6 @@ const Helpers = require('../../src/Helpers')
 const Ioc = require("adonis-fold").Ioc
 const queryString = require('querystring')
 const Middleware = require('../../src/Middleware')
-const App = require('../../src/App')
 require('co-mocha')
 
 Browser.localhost('localhost', 3333)
@@ -25,7 +24,6 @@ describe('App Exceptations', function () {
 
   before(function () {
     server().listen('0.0.0.0',3333);
-    App.removeAllListeners('error')
     Ioc.autoload(Helpers.appNameSpace(),Helpers.appPath())
   })
 
