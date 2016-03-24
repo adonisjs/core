@@ -355,4 +355,22 @@ describe('Response', function () {
     }
   })
 
+  it('should be able to add macro to the response prototype', function () {
+    const Response = new ResponseBuilder({}, Route, Config)
+    Response.macro('foo', function () {
+      return 'foo'
+    })
+    const response = new Response({}, {setHeader: function () {}})
+    expect(response.foo()).to.equal('foo')
+  })
+
+  it('should have access to instance inside the callback', function * () {
+    const Response = new ResponseBuilder({}, Route, Config)
+    Response.macro('foo', function () {
+      return this.request.name
+    })
+    const response = new Response({name: 'bar'}, {setHeader: function () {}})
+    expect(response.foo()).to.equal('bar')
+  })
+
 })

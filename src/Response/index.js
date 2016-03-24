@@ -285,6 +285,19 @@ class Response {
     nodeCookie.clear(this.request.request, this.response, key, options)
     return this
   }
+
+  /**
+   * adds a new method to the response prototype
+   *
+   * @param  {String}   name
+   * @param  {Function} callback
+   *
+   * @public
+   */
+  static macro (name, callback) {
+    this.prototype[name] = callback
+  }
+
 }
 
 class ResponseBuilder {
