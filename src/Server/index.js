@@ -13,6 +13,7 @@ const CatLog = require('cat-log')
 const helpers = require('./helpers')
 const http = require('http')
 const co = require('co')
+const Ioc = require('adonis-fold').Ioc
 const NE = require('node-exceptions')
 
 /**
@@ -23,6 +24,7 @@ class Server {
 
   constructor (Request, Response, Route, Helpers, Middleware, Static, Session, Config, Event) {
     this.Request = Request
+    this.controllersPath = 'Http/Controllers'
     this.Response = Response
     this.Session = Session
     this.route = Route
@@ -45,8 +47,8 @@ class Server {
    * @private
    */
   _respond (request, response, finalHandler) {
-    const action = helpers.makeRequestAction(this.middleware, finalHandler)
-    this._executeCo(action, request, response)
+    const chain = helpers.makeMiddlewareChain(this.middleware, finalHandler, true)
+    this._executeChain(chain, request, response)
   }
 
   /**
@@ -63,8 +65,57 @@ class Server {
     if (!resolvedRoute.handler) {
       throw new NE.HttpException(`Route not found ${request.url()}`, 404)
     }
-    const action = helpers.makeRouteAction(resolvedRoute, this.middleware, this.helpers.appNameSpace())
-    this._executeCo(action, request, response)
+    const routeAction = this._makeRouteAction(resolvedRoute.handler)
+    const chain = helpers.makeMiddlewareChain(this.middleware, routeAction, false, resolvedRoute)
+    this._executeChain(chain, request, response)
+  }
+
+  /**
+   * makes route action based upon the type of registered handler
+   *
+   * @param  {Function|String}         handler
+   * @return {Object}
+   *
+   * @throws {InvalidArgumentException} If a valid handler type is not found
+   *
+   * @private
+   */
+  _makeRouteAction (handler) {
+    if (typeof (handler) === 'function') {
+      return this._makeClosureAction(handler)
+    }
+    if (typeof (handler) === 'string') {
+      return this._makeControllerAction(handler)
+    }
+    throw new NE.InvalidArgumentException('Invalid route handler, attach a controller method or a closure', 500)
+  }
+
+  /**
+   * returns route closure by wrapping it inside an object,
+   * same is done to make it compatible with middleware
+   * compose method
+   *
+   * @param  {Function}           closure
+   * @return {Object}
+   *
+   * @private
+   */
+  _makeClosureAction (closure) {
+    this.log.verbose('responding to route using closure')
+    return {instance: null, method: closure}
+  }
+
+  /**
+   * resolves controller action from the Ioc container by
+   * creating the proper namespace
+   *
+   * @param  {String}              handler
+   * @return {Object}
+   *
+   * @private
+   */
+  _makeControllerAction (handler) {
+    return Ioc.makeFunc(this.helpers.makeNameSpace(this.controllersPath, handler))
   }
 
   /**
@@ -103,10 +154,10 @@ class Server {
    *
    * @private
    */
-  _executeCo (handlers, request, response) {
+  _executeChain (chain, request, response) {
     const middleware = this.middleware
     co(function * () {
-      yield middleware.compose(handlers, request, response)
+      yield middleware.compose(chain, request, response)
     }).catch((e) => {
       this._handleError(e, request, response)
     })

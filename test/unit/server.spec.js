@@ -51,8 +51,8 @@ describe("Server", function () {
       publicPath: function () {
         return path.join(__dirname, './public')
       },
-      appNameSpace : function () {
-        return 'App'
+      makeNameSpace: function (base, toPath) {
+        return `App/${base}/${toPath}`
       }
     }
     Ioc.autoload('App',path.join(__dirname, './app'))
