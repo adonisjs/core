@@ -12,6 +12,7 @@
 const CatLog = require('cat-log')
 const helpers = require('./helpers')
 const http = require('http')
+const co = require('co')
 const NE = require('node-exceptions')
 
 /**
@@ -20,40 +21,95 @@ const NE = require('node-exceptions')
  */
 class Server {
 
-  constructor (Request, Response, Route, Helpers, Middleware, Static, Session, Config) {
+  constructor (Request, Response, Route, Helpers, Middleware, Static, Session, Config, Event) {
     this.Request = Request
     this.Response = Response
     this.Session = Session
-    this.Route = Route
+    this.route = Route
     this.middleware = Middleware
     this.static = Static
     this.helpers = Helpers
     this.config = Config
+    this.event = Event
     this.log = new CatLog('adonis:framework')
   }
 
   /**
-   * responds to request by finding registered
-   * route or fallbacks to static resource.
+   * responds to a given http request by calling all global
+   * middleware and finally executing the route action.
    *
-   * @param  {Object}      request
-   * @param  {Object}      response
-   * @return {void}
+   * @param  {Object} request
+   * @param  {Object} response
+   * @param  {Function} finalHandler
    *
    * @private
    */
-  _finalHandler (resolvedRoute, request, response) {
+  _respond (request, response, finalHandler) {
+    const action = helpers.makeRequestAction(this.middleware, finalHandler)
+    this._executeCo(action, request, response)
+  }
+
+  /**
+   * responds to request by finding registered
+   * route or throwing 404 error
+   *
+   * @param  {Object}      request
+   * @param  {Object}      response
+   * @throws {HttpException} If there is not registered route action
+   *
+   * @private
+   */
+  _callRouteAction (resolvedRoute, request, response) {
     if (!resolvedRoute.handler) {
       throw new NE.HttpException(`Route not found ${request.url()}`, 404)
     }
+    const action = helpers.makeRouteAction(resolvedRoute, this.middleware, this.helpers.appNameSpace())
+    this._executeCo(action, request, response)
+  }
 
-    helpers.callRouteAction(
-      resolvedRoute,
-      request,
-      response,
-      this.middleware,
-      this.helpers.appNameSpace()
-    )
+  /**
+   * handles any errors thrown with in a given request
+   * and emit them using the Event provider.
+   *
+   * @param  {Object}     error
+   * @param  {Object}     request
+   * @param  {Object}     response
+   *
+   * @private
+   */
+  _handleError (error, request, response) {
+    const status = error.status || 500
+    if (this.event.wildcard() && this.event.hasListeners(['Http', '*'])) {
+      this.event.fire(['Http', status], error, request, response)
+      return
+    }
+    if (!this.event.wildcard() && this.event.hasListeners(['Http', 'error'])) {
+      this.event.fire(['Http', 'error'], error, request, response)
+      return
+    }
+    const message = error.message || 'Internal server error'
+    const stack = error.stack || message
+    this.log.error(stack)
+    response.status(status).send(stack)
+  }
+
+  /**
+   * executes an array of actions by composing them
+   * using middleware provider.
+   *
+   * @param  {Array}    handlers
+   * @param  {Object}   request
+   * @param  {Object}   response
+   *
+   * @private
+   */
+  _executeCo (handlers, request, response) {
+    const middleware = this.middleware
+    co(function * () {
+      yield middleware.compose(handlers, request, response)
+    }).catch((e) => {
+      this._handleError(e, request, response)
+    })
   }
 
   /**
@@ -103,9 +159,8 @@ class Server {
     const request = new this.Request(req, res, this.config)
     const response = new this.Response(request, res)
     const session = new this.Session(req, res)
-    const requestUrl = request.url()
     request.session = session
-    this.log.verbose('request on url %s ', req.url)
+    this.log.verbose('request on url %s ', request.originalUrl())
 
     /**
      * making request verb/method based upon _method or falling
@@ -113,11 +168,11 @@ class Server {
      * @type {String}
      */
     const method = this._getRequestMethod(request)
-    const resolvedRoute = this.Route.resolve(requestUrl, method, request.hostname())
+    const resolvedRoute = this.route.resolve(request.url(), method, request.hostname())
     request._params = resolvedRoute.params
 
     const finalHandler = function * () {
-      self._finalHandler(resolvedRoute, request, response)
+      self._callRouteAction(resolvedRoute, request, response)
     }
 
     /**
@@ -125,17 +180,17 @@ class Server {
      * GET or HEAD
      */
     if (method !== 'GET' && method !== 'HEAD') {
-      helpers.respondRequest(this.middleware, request, response, finalHandler)
+      this._respond(request, response, finalHandler)
       return
     }
 
     this._staticHandler(request, response)
     .catch((e) => {
       if (e.status === 404) {
-        helpers.respondRequest(this.middleware, request, response, finalHandler)
+        this._respond(request, response, finalHandler)
         return
       }
-      helpers.handleRequestError(e, request, response)
+      this._handleError(e, request, response)
     })
   }
 

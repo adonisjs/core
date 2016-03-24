@@ -17,7 +17,7 @@ const Ioc = require('adonis-fold').Ioc
 const supertest = require('co-supertest')
 const expect = chai.expect
 const http = require('http')
-const App = require('../../src/App')
+const EventProvider = require('../../src/Event')
 const path = require('path')
 
 class Session {
@@ -29,11 +29,18 @@ const Config = {
       return true
     } else if(key === 'static.indexFile') {
       return 'index.html'
+    } else if (key === 'event') {
+      return {
+        wildcard: true,
+        delimiter: ':'
+      }
     } else {
       return 2
     }
   }
 }
+
+const Event = new EventProvider(Config)
 
 require('co-mocha')
 
@@ -51,7 +58,7 @@ describe("Server", function () {
     Ioc.autoload('App',path.join(__dirname, './app'))
     const staticServer = new Static(Helpers, Config)
     const Response = new ResponseBuilder({}, {}, Config)
-    this.server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session, Config)
+    this.server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session, Config, Event)
   })
 
   beforeEach(function () {
@@ -216,7 +223,7 @@ describe("Server", function () {
   })
 
   it("should emit error event when there are listeners attach to error", function * () {
-    App.on('error', function (error, request, response) {
+    Event.when('Http:*', function (error, request, response) {
       response.status(401).send('Forbidden')
     })
     Route.get('/', function * () {
