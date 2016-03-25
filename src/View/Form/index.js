@@ -371,6 +371,21 @@ class Form {
   }
 
   /**
+   * creates an email input field
+   * @param  {String} name
+   * @param  {String} value
+   * @param  {Object} attributes
+   * @return {Object}
+   *
+   * @example
+   * form.email('email', '', {})
+   *
+   * @public
+   */
+  email (name, value, attributes) {
+    return this.input('email', name, value, attributes)
+  }
+  /**
    * creates a file input field
    * @param  {String} name
    * @param  {Object} attributes

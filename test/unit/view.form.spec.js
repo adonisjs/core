@@ -113,6 +113,11 @@ describe('Form Helper', function () {
     expect(label.val).to.equal('<input type="password" name="password" id="password" />')
   })
 
+  it('should create an email input using password method', function () {
+    const label = form.email('email_address')
+    expect(label.val).to.equal('<input type="email" name="email_address" id="email_address" />')
+  })
+
   it('should create a file input using file method', function () {
     const label = form.file('profile')
     expect(label.val).to.equal('<input type="file" name="profile" id="profile" />')
