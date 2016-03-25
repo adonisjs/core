@@ -22,10 +22,16 @@ const Config = {
   }
 }
 
+const Helpers = {
+  makeNameSpace: function (base, toPath) {
+    return `App/${base}/${toPath}`
+  }
+}
+
 describe('Event', function() {
 
   it('should be able to register an event', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', function (data) {
       expect(data).deep.equal({foo: 'bar'})
       done()
@@ -34,7 +40,7 @@ describe('Event', function() {
   })
 
   it('should be able to pass multiple arguments to the emit method', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', function (data, bar) {
       expect(data).deep.equal({foo: 'bar'})
       expect(bar).deep.equal({bar: 'baz'})
@@ -44,7 +50,7 @@ describe('Event', function() {
   })
 
   it('should be able to pass multiple arguments to the fire method', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', function (data, bar) {
       expect(data).deep.equal({foo: 'bar'})
       expect(bar).deep.equal({bar: 'baz'})
@@ -54,7 +60,7 @@ describe('Event', function() {
   })
 
   it('should be able to bind a class instance to the callback', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     class Foo {
       constructor () {
         this.name = 'foo'
@@ -70,7 +76,7 @@ describe('Event', function() {
   })
 
   it('should be able to register generator method as callback', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     const getName = function () {
       return new Promise(function (resolve) {
         setTimeout(function () {
@@ -87,7 +93,7 @@ describe('Event', function() {
   })
 
   it('should be able to make class instance from Ioc Container', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     class Foo {
 
       constructor () {
@@ -103,12 +109,12 @@ describe('Event', function() {
       return new Foo()
     })
 
-    event.on('foo', 'App/Listeners/Foo.sayFoo')
+    event.on('foo', 'Foo.sayFoo')
     event.fire('foo')
   })
 
   it('should be able to bind generator method', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     class Foo {
       constructor () {
         this.name = null
@@ -128,12 +134,12 @@ describe('Event', function() {
       return new Foo()
     })
 
-    event.on('foo', 'App/Listeners/Foo.sayFoo')
+    event.on('foo', 'Foo.sayFoo')
     event.fire('foo')
   })
 
   it('should be able to get data passed by the fire method', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     class Foo {
       sayFoo (data) {
         expect(data).deep.equal({foo: 'bar'})
@@ -144,12 +150,12 @@ describe('Event', function() {
       return new Foo()
     })
 
-    event.on('foo', 'App/Listeners/Foo.sayFoo')
+    event.on('foo', 'Foo.sayFoo')
     event.fire('foo', {foo: 'bar'})
   })
 
   it('should be able to get data passed by the fire method inside a generator method', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     class Foo {
       * sayFoo (data) {
         expect(data).deep.equal({foo: 'bar'})
@@ -160,12 +166,12 @@ describe('Event', function() {
       return new Foo()
     })
 
-    event.on('foo', 'App/Listeners/Foo.sayFoo')
+    event.on('foo', 'Foo.sayFoo')
     event.fire('foo', {foo: 'bar'})
   })
 
   it('should be able to listen for a event using the when method', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.when('user.login', function (data) {
       expect(data).deep.equal({username: 'doe'})
       done()
@@ -174,7 +180,7 @@ describe('Event', function() {
   })
 
   it('should be able to listen for a event using the listen method', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.listen('user.login', function (data) {
       expect(data).deep.equal({username: 'doe'})
       done()
@@ -183,7 +189,7 @@ describe('Event', function() {
   })
 
   it('should be able to listen for any event', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.any(function (event, data) {
       expect(event).to.equal('foo')
       expect(data).to.equal('bar')
@@ -194,7 +200,7 @@ describe('Event', function() {
 
   it('should be able to register one time only event listener', function (done) {
     let count = 0
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.once('foo',function () {
       count++
     })
@@ -205,7 +211,7 @@ describe('Event', function() {
   })
 
   it('should be able to get list of listeners for a specific event', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.once('foo',function () {
     })
     const listeners = event.getListeners('foo')
@@ -214,7 +220,7 @@ describe('Event', function() {
   })
 
   it('should be able to get list of listeners for wildcard events', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.once('foo.bar',function () {
     })
     const listeners = event.getListeners('foo.*')
@@ -223,19 +229,19 @@ describe('Event', function() {
   })
 
   it('should tell whether there are any listeners for a given event', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.once('foo.bar',function () {
     })
     expect(event.hasListeners('foo.*')).to.equal(true)
   })
 
   it('should tell whether wildcard is enabled or not', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     expect(event.wildcard()).to.equal(true)
   })
 
   it('should be able to define named events', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', 'fooEvent', function () {
       done()
     })
@@ -243,7 +249,7 @@ describe('Event', function() {
   })
 
   it('should be able to remove named events', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', 'fooEvent', function () {
     })
     event.on('foo', 'anotherEvent', function () {
@@ -254,7 +260,7 @@ describe('Event', function() {
   })
 
   it('should throw error when trying to remove unregistered named event', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     const fn = function () {
       event.removeListener('foo', 'fooEvent')
     }
@@ -262,7 +268,7 @@ describe('Event', function() {
   })
 
   it('should be able to remove the correct named events', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', 'fooEvent', function () {
       expect(true).to.equal(false)
     })
@@ -275,7 +281,7 @@ describe('Event', function() {
   })
 
   it('should be able to remove all listeners for a given event', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', function () {
     })
     event.on('foo', function () {
@@ -286,7 +292,7 @@ describe('Event', function() {
   })
 
   it('should be able to remove all listeners for all events', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', function () {
     })
     event.on('bar', function () {
@@ -297,7 +303,7 @@ describe('Event', function() {
   })
 
   it('should be able to define the number for times a event should be executed', function () {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     let count = 0
     event.limit(4).on('foo', function () {
       count++
@@ -313,7 +319,7 @@ describe('Event', function() {
   })
 
   it('should have access to the actual event via the emitter property on context', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     event.on('foo', function () {
       expect(this.emitter.event).to.equal('foo')
       done()
@@ -322,7 +328,7 @@ describe('Event', function() {
   })
 
   it('should have access to the actual event via the emitter property on context when a generator method is binded', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     const getName = function () {
       return new Promise((resolve) => resolve('done'))
     }
@@ -335,7 +341,7 @@ describe('Event', function() {
   })
 
   it('should have access to the actual event resolving out of the IoC container', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     class FooListener {
       sayFoo () {
         expect(this.constructor.name).to.equal('FooListener')
@@ -346,12 +352,12 @@ describe('Event', function() {
     Ioc.bind('App/Listeners/Foo', function () {
       return new FooListener()
     })
-    event.on('foo', 'App/Listeners/Foo.sayFoo')
+    event.on('foo', 'Foo.sayFoo')
     event.fire('foo')
   })
 
   it('should have access to the actual event resolving out of the IoC container within a generator method', function (done) {
-    const event = new Event(Config)
+    const event = new Event(Config, Helpers)
     class FooListener {
       * sayFoo () {
         expect(this.constructor.name).to.equal('FooListener')
@@ -362,7 +368,7 @@ describe('Event', function() {
     Ioc.bind('App/Listeners/Foo', function () {
       return new FooListener()
     })
-    event.on('foo', 'App/Listeners/Foo.sayFoo')
+    event.on('foo', 'Foo.sayFoo')
     event.fire('foo')
   })
 

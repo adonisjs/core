@@ -17,8 +17,10 @@ const co = require('co')
 
 class Event {
 
-  constructor (Config) {
+  constructor (Config, Helpers) {
     const options = Config.get('event')
+    this.listenersPath = 'Listeners'
+    this.helpers = Helpers
     this.namedListeners = {}
     this.listenerLimit = null
     this.emitter = new EventEmitter2(options)
@@ -34,7 +36,7 @@ class Event {
    * @private
    */
   _resolveHandler (handler) {
-    return typeof (handler) === 'string' ? Ioc.makeFunc(handler) : handler
+    return typeof (handler) === 'string' ? Ioc.makeFunc(this.helpers.makeNameSpace(this.listenersPath, handler)) : handler
   }
 
   /**

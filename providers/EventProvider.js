@@ -2,8 +2,11 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const ServiceProvider = require('adonis-fold').ServiceProvider
@@ -14,7 +17,8 @@ class EventProvider extends ServiceProvider {
     this.app.singleton('Adonis/Src/Event', function (app) {
       const Event = require('../src/Event')
       const Config = app.use('Adonis/Src/Config')
-      return new Event(Config)
+      const Helpers = app.use('Adonis/Src/Helpers')
+      return new Event(Config, Helpers)
     })
   }
 }
