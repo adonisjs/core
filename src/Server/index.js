@@ -129,19 +129,31 @@ class Server {
    * @private
    */
   _handleError (error, request, response) {
-    const status = error.status || 500
+    this._normalizeError(error)
     if (this.event.wildcard() && this.event.hasListeners(['Http', '*'])) {
-      this.event.fire(['Http', status], error, request, response)
+      this.event.fire(['Http', error.status], error, request, response)
       return
     }
     if (!this.event.wildcard() && this.event.hasListeners(['Http', 'error'])) {
       this.event.fire(['Http', 'error'], error, request, response)
       return
     }
-    const message = error.message || 'Internal server error'
-    const stack = error.stack || message
-    this.log.error(stack)
-    response.status(status).send(stack)
+    this.log.error(error.stack)
+    response.status(error.status).send(error.stack)
+  }
+
+  /**
+   * normalize error object by setting required parameters
+   * if they does not exists
+   *
+   * @param  {Object}        error [description]
+   *
+   * @private
+   */
+  _normalizeError (error) {
+    error.status = error.status || 500
+    error.message = error.message || 'Internal server error'
+    error.stack = error.stack || error.message
   }
 
   /**
