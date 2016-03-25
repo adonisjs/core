@@ -32,7 +32,8 @@ module.exports = function (env, Route) {
   /**
    * output input as json
    */
-  env.addFilter('json', function (val) {
-    return JSON.stringify(val)
+  env.addFilter('json', function (val, identation) {
+    identation = identation || 4
+    return JSON.stringify(val, null, identation)
   })
 }

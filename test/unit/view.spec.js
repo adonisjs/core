@@ -73,7 +73,7 @@ describe('View',function () {
 
   it('should stringify json', function * () {
     const jsonView = yield this.view.make('json',{profile:{name:"virk"}})
-    expect(jsonView.trim()).to.equal(JSON.stringify({name:"virk"}))
+    expect(jsonView.trim()).to.equal(JSON.stringify({name:"virk"}, null, 2))
   })
 
   it('should be able to make use of yield keyword inside view', function * () {
