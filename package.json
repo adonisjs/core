@@ -48,11 +48,11 @@
     "node-exceptions": "^1.0.1",
     "node-req": "^1.0.3",
     "node-res": "^2.0.2",
-    "node-static": "^0.7.7",
     "node-uuid": "^1.4.7",
     "nunjucks": "^2.3.0",
     "path-to-regexp": "^1.2.1",
     "require-all": "^2.0.0",
+    "serve-static": "^1.10.2",
     "type-of-is": "^3.4.0"
   },
   "config": {
