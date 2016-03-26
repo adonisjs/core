@@ -1,3 +1,13 @@
+<a name="2.0.10"></a>
+## [2.0.10](https://github.com/adonisjs/adonis-framework/compare/v2.0.9...v2.0.10) (2016-03-26)
+
+
+### Bug Fixes
+
+* **static-server:** Fix for #124 where node-static was crashing ([38efbd4](https://github.com/adonisjs/adonis-framework/commit/38efbd4)), closes [#124](https://github.com/adonisjs/adonis-framework/issues/124) [#124](https://github.com/adonisjs/adonis-framework/issues/124)
+
+
+
 <a name="2.0.9"></a>
 ## [2.0.9](https://github.com/adonisjs/adonis-framework/compare/v2.0.3...v2.0.9) (2016-01-30)
 
