@@ -6,7 +6,7 @@
  * MIT Licensed
 */
 
-const nodeStatic = require('node-static')
+const serveStatic = require('serve-static')
 
 /**
  * @class  Static
@@ -18,14 +18,14 @@ class Static {
     this.publicPath = Helpers.publicPath()
 
     const options = {
-      cache: Config.get('static.cache', 3600),
-      serverInfo: 'adonis-static',
-      headers: Config.get('static.headers', {}),
-      gzip: Config.get('static.gzip', false),
-      indexFile: Config.get('static.indexFile', 'index.html')
+      lastModified: Config.get('static.lastModified', true),
+      maxAge: Config.get('static.cache', 3600),
+      index: Config.get('static.indexFile', 'index.html'),
+      fallthrough: false,
+      etag: Config.get('static.etag', true)
     }
 
-    this.server = new nodeStatic.Server(this.publicPath, options)
+    this.server = serveStatic(this.publicPath, options)
   }
 
   /**
@@ -39,7 +39,7 @@ class Static {
    */
   serve (request, response) {
     return new Promise((resolve, reject) => {
-      this.server.serve(request, response, function (err, good) {
+      this.server(request, response, function (err, good) {
         if (err) {
           err.message = `Route ${err.message} while resolving ${request.url}`
           reject(err)
