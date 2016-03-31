@@ -23,6 +23,8 @@ class Resource {
       throw new NE.DomainException('You can only bind controllers to resources')
     }
     this.RouteHelper = RouteHelper
+    this.pattern = pattern
+    this.handler = handler
     this.routes = []
     this.basename = pattern.replace('/', '')
     this._buildRoutes(pattern, handler)
@@ -163,6 +165,72 @@ class Resource {
    */
   formats (formats, strict) {
     helpers.addFormats(this.routes, formats, strict)
+    return this
+  }
+
+  /**
+   * filters resource by removing routes for defined actions
+   *
+   * @param  {Mixed} methods - An array of parameters defining member
+   *                           routes
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').member([{ verbs: ['GET', 'POST'], action: 'preview'}])
+   *
+   * @public
+   */
+
+  member () {
+    const routes = util.spread.apply(this, arguments)
+    const seperator = this.pattern.endsWith('/') ? '' : '/'
+
+    const pattern = this.pattern.replace(/(\w+)\./g, function (index, group) {
+      return `${group}/:${group}_id/`
+    })
+
+    _.each(routes, (route) => {
+      const verbs = _.isEmpty(route.verbs) ? ['GET', 'HEAD'] : route.verbs
+      if (_.isEmpty(route.action)) {
+        throw new NE.InvalidArgumentException('action argument must be present')
+      }
+
+      this._registerRoute(verbs, `${pattern}${seperator}:id/${route.action}`, this.handler, route.action)
+    })
+
+    return this
+  }
+
+  /**
+   * filters resource by removing routes for defined actions
+   *
+   * @param  {Mixed} methods - An array of parameters defining collection
+   *                           routes
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').collection([{ verbs: ['GET', 'POST'], action: 'completed'}])
+   *
+   * @public
+   */
+
+  collection () {
+    const routes = util.spread.apply(this, arguments)
+    const seperator = this.pattern.endsWith('/') ? '' : '/'
+
+    const pattern = this.pattern.replace(/(\w+)\./g, function (index, group) {
+      return `${group}/:${group}_id/`
+    })
+
+    _.each(routes, (route) => {
+      const verbs = _.isEmpty(route.verbs) ? ['GET', 'HEAD'] : route.verbs
+      if (_.isEmpty(route.action)) {
+        throw new NE.InvalidArgumentException('action argument must be present')
+      }
+
+      this._registerRoute(verbs, `${pattern}${seperator}${route.action}`, this.handler, route.action)
+    })
+
     return this
   }
 
