@@ -543,6 +543,70 @@ describe('Route',function () {
       })
     })
 
+    it('should register resourceful routes with member paths', function () {
+      Route
+      .resource('/tasks','SomeController')
+      .member([
+        { verbs: ['GET','HEAD'], action: 'completed'},
+        { verbs: 'POST', action: 'mark_as'}
+      ])
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.handler]
+      }))
+      expect(routes.length).to.equal(9)
+      expect(verbs['/tasks-GET/HEAD']).to.equal('SomeController.index')
+      expect(verbs['/tasks/create-GET/HEAD']).to.equal('SomeController.create')
+      expect(verbs['/tasks-POST']).to.equal('SomeController.store')
+      expect(verbs['/tasks/:id-GET/HEAD']).to.equal('SomeController.show')
+      expect(verbs['/tasks/:id/edit-GET/HEAD']).to.equal('SomeController.edit')
+      expect(verbs['/tasks/:id-PUT/PATCH']).to.equal('SomeController.update')
+      expect(verbs['/tasks/:id-DELETE']).to.equal('SomeController.destroy')
+      expect(verbs['/tasks/:id/completed-GET/HEAD']).to.equal('SomeController.completed')
+      expect(verbs['/tasks/:id/mark_as-POST']).to.equal('SomeController.mark_as')
+    })
+
+    it('should throw an error when the action is not present for member route', function () {
+      const fn = function(){
+        Route.resource('/tasks','SomeController').member([{ verbs: ['POST'] }])
+      }
+
+      expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
+    })
+
+    it('should register resourceful routes with collection paths', function () {
+      Route
+      .resource('/tasks','SomeController')
+      .collection([
+        { verbs: ['GET','HEAD'], action: 'completed'},
+        { verbs: 'POST', action: 'mark_as'}
+      ])
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.handler]
+      }))
+      expect(routes.length).to.equal(9)
+      expect(verbs['/tasks-GET/HEAD']).to.equal('SomeController.index')
+      expect(verbs['/tasks/create-GET/HEAD']).to.equal('SomeController.create')
+      expect(verbs['/tasks-POST']).to.equal('SomeController.store')
+      expect(verbs['/tasks/:id-GET/HEAD']).to.equal('SomeController.show')
+      expect(verbs['/tasks/:id/edit-GET/HEAD']).to.equal('SomeController.edit')
+      expect(verbs['/tasks/:id-PUT/PATCH']).to.equal('SomeController.update')
+      expect(verbs['/tasks/:id-DELETE']).to.equal('SomeController.destroy')
+      expect(verbs['/tasks/completed-GET/HEAD']).to.equal('SomeController.completed')
+      expect(verbs['/tasks/mark_as-POST']).to.equal('SomeController.mark_as')
+    })
+
+    it('should throw an error when the action is not present for collection route', function () {
+      const fn = function(){
+        Route.resource('/tasks','SomeController').collection([{ verbs: ['POST'] }])
+      }
+
+      expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
+    })
+
   })
 
   context('Resolve', function () {
