@@ -169,67 +169,69 @@ class Resource {
   }
 
   /**
-   * filters resource by removing routes for defined actions
+   * add a member route to the resource
    *
-   * @param  {Mixed} methods - An array of parameters defining member
-   *                           routes
+   * @param  {String} action - the handle action method
+   *
+   * @param  {Mixed} methods - An array of strings or single string
+   *                           defining the http verb
+   *
    * @return {Object} - reference to resource instance for chaining
    *
    * @example
-   * Route.resource('...').member([{ verbs: ['GET', 'POST'], action: 'preview'}])
+   * Route.resource('...').addMember('completed')
    *
    * @public
    */
 
-  member () {
-    const routes = util.spread.apply(this, arguments)
+  addMember () {
+    const route = util.spread.apply(this, arguments)
     const seperator = this.pattern.endsWith('/') ? '' : '/'
 
     const pattern = this.pattern.replace(/(\w+)\./g, function (index, group) {
       return `${group}/:${group}_id/`
     })
 
-    _.each(routes, (route) => {
-      const verbs = _.isEmpty(route.verbs) ? ['GET', 'HEAD'] : route.verbs
-      if (_.isEmpty(route.action)) {
-        throw new NE.InvalidArgumentException('action argument must be present')
-      }
+    if (_.isEmpty(route)) {
+      throw new NE.InvalidArgumentException('action argument must be present')
+    }
 
-      this._registerRoute(verbs, `${pattern}${seperator}:id/${route.action}`, this.handler, route.action)
-    })
+    const verbs = _.isUndefined(route[1]) ? ['GET', 'HEAD'] : route[1]
+    this._registerRoute(verbs, `${pattern}${seperator}:id/${route[0]}`, this.handler, route[0])
 
     return this
   }
 
   /**
-   * filters resource by removing routes for defined actions
+   * add a collection route to the resource
    *
-   * @param  {Mixed} methods - An array of parameters defining collection
-   *                           routes
+   * @param  {String} action - the handle action method
+   *
+   * @param  {Mixed} methods - An array of strings or single string
+   *                           defining the http verb
    * @return {Object} - reference to resource instance for chaining
    *
    * @example
-   * Route.resource('...').collection([{ verbs: ['GET', 'POST'], action: 'completed'}])
+   * Route.resource('...').addCollection('completed')
    *
    * @public
    */
 
-  collection () {
-    const routes = util.spread.apply(this, arguments)
+  addCollection () {
+    const route = util.spread.apply(this, arguments)
     const seperator = this.pattern.endsWith('/') ? '' : '/'
 
     const pattern = this.pattern.replace(/(\w+)\./g, function (index, group) {
       return `${group}/:${group}_id/`
     })
 
-    _.each(routes, (route) => {
-      const verbs = _.isEmpty(route.verbs) ? ['GET', 'HEAD'] : route.verbs
-      if (_.isEmpty(route.action)) {
-        throw new NE.InvalidArgumentException('action argument must be present')
-      }
+    if (_.isEmpty(route)) {
+      throw new NE.InvalidArgumentException('action argument must be present')
+    }
 
-      this._registerRoute(verbs, `${pattern}${seperator}${route.action}`, this.handler, route.action)
-    })
+    const verbs = _.isUndefined(route[1]) ? ['GET', 'HEAD'] : route[1]
+
+    this._registerRoute(verbs, `${pattern}${seperator}${route[0]}`, this.handler, route[0])
 
     return this
   }

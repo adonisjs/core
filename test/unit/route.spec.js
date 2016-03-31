@@ -546,10 +546,8 @@ describe('Route',function () {
     it('should register resourceful routes with member paths', function () {
       Route
       .resource('/tasks','SomeController')
-      .member([
-        { verbs: ['GET','HEAD'], action: 'completed'},
-        { verbs: 'POST', action: 'mark_as'}
-      ])
+      .addMember('completed', ['GET', 'HEAD'])
+      .addMember('mark_as', 'POST')
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
@@ -569,7 +567,7 @@ describe('Route',function () {
 
     it('should throw an error when the action is not present for member route', function () {
       const fn = function(){
-        Route.resource('/tasks','SomeController').member([{ verbs: ['POST'] }])
+        Route.resource('/tasks','SomeController').addMember()
       }
 
       expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
@@ -578,15 +576,14 @@ describe('Route',function () {
     it('should register resourceful routes with collection paths', function () {
       Route
       .resource('/tasks','SomeController')
-      .collection([
-        { verbs: ['GET','HEAD'], action: 'completed'},
-        { verbs: 'POST', action: 'mark_as'}
-      ])
+      .addCollection('completed', ['GET', 'HEAD'])
+      .addCollection('mark_as', 'POST')
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
         return [route.route + '-' + route.verb.join('/'),route.handler]
       }))
+
       expect(routes.length).to.equal(9)
       expect(verbs['/tasks-GET/HEAD']).to.equal('SomeController.index')
       expect(verbs['/tasks/create-GET/HEAD']).to.equal('SomeController.create')
@@ -601,7 +598,9 @@ describe('Route',function () {
 
     it('should throw an error when the action is not present for collection route', function () {
       const fn = function(){
-        Route.resource('/tasks','SomeController').collection([{ verbs: ['POST'] }])
+        Route
+        .resource('/tasks','SomeController')
+        .addCollection()
       }
 
       expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
