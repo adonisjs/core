@@ -606,6 +606,53 @@ describe('Route',function () {
       expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
     })
 
+    it('should be able to override collection route name', function(){
+      Route
+      .resource('/posts','PostController')
+      .addCollection('thrending', ['GET', 'HEAD'])
+      .as({
+        thrending: 'posts.threndingPosts',
+      })
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.name]
+      }))
+
+      expect(routes.length).to.equal(8)
+      expect(verbs['/posts-GET/HEAD']).to.equal('posts.index')
+      expect(verbs['/posts/create-GET/HEAD']).to.equal('posts.create')
+      expect(verbs['/posts-POST']).to.equal('posts.store')
+      expect(verbs['/posts/:id-GET/HEAD']).to.equal('posts.show')
+      expect(verbs['/posts/:id/edit-GET/HEAD']).to.equal('posts.edit')
+      expect(verbs['/posts/:id-PUT/PATCH']).to.equal('posts.update')
+      expect(verbs['/posts/:id-DELETE']).to.equal('posts.destroy')
+      expect(verbs['/posts/thrending-GET/HEAD']).to.equal('posts.threndingPosts')
+    })
+
+    it('should be able to override member route name', function(){
+      Route
+      .resource('/posts','PostController')
+      .addMember('preview', ['GET', 'HEAD'])
+      .as({
+        preview: 'posts.previewPost',
+      })
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.name]
+      }))
+
+      expect(routes.length).to.equal(8)
+      expect(verbs['/posts-GET/HEAD']).to.equal('posts.index')
+      expect(verbs['/posts/create-GET/HEAD']).to.equal('posts.create')
+      expect(verbs['/posts-POST']).to.equal('posts.store')
+      expect(verbs['/posts/:id-GET/HEAD']).to.equal('posts.show')
+      expect(verbs['/posts/:id/edit-GET/HEAD']).to.equal('posts.edit')
+      expect(verbs['/posts/:id-PUT/PATCH']).to.equal('posts.update')
+      expect(verbs['/posts/:id-DELETE']).to.equal('posts.destroy')
+      expect(verbs['/posts/:id/preview-GET/HEAD']).to.equal('posts.previewPost')
+    })
   })
 
   context('Resolve', function () {
