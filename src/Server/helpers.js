@@ -26,7 +26,7 @@ let helpers = exports = module.exports = {}
  * @return {void}
  */
 helpers.callRouteAction = function (resolvedRoute, request, response, middleware, appNamespace) {
-  co(function * () {
+  return co(function * () {
     /**
      * resolving route middleware if any, middleware.resolve tends
      * to throw errors bubbled by IoC container
@@ -63,7 +63,7 @@ helpers.callRouteAction = function (resolvedRoute, request, response, middleware
  * @public
  */
 helpers.respondRequest = function (middleware, request, response, finalHandler) {
-  co(function * () {
+  return co(function * () {
     /**
      * here we resolve all global middleware and compose
      * them

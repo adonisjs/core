@@ -40,8 +40,7 @@ class Server {
      * route action.
      */
     if (resolvedRoute.handler) {
-      helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNameSpace())
-      return
+      return helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNameSpace())
     }
 
     const error = new Error(`Route not found ${request.url()}`)
@@ -88,7 +87,7 @@ class Server {
     request._params = resolvedRoute.params
 
     const finalHandler = function * () {
-      self._finalHandler(resolvedRoute, request, response)
+      yield self._finalHandler(resolvedRoute, request, response)
     }
 
     if (method !== 'GET' && method !== 'HEAD') {
