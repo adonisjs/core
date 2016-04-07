@@ -41,7 +41,7 @@ exports = module.exports = nunjucks.Loader.extend({
    * @public
    */
   getSource: function (name, callback) {
-    name = path.extname(name) === '.html' ? name : `${name}.html`
+    name = path.extname(name) === '.nunjucks' ? name : `${name}.nunjucks`
     const viewPath = path.resolve(this.viewsPath, name)
     const self = this
 

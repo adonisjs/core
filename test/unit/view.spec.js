@@ -45,11 +45,11 @@ describe('View',function () {
   })
 
   it('should make a view using it\'s path', function * () {
-    const index = yield this.view.make('index.html')
+    const index = yield this.view.make('index.nunjucks')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
 
-  it('should make a view using it\'s path without .html extension', function * () {
+  it('should make a view using it\'s path without .nunjucks extension', function * () {
     const index = yield this.view.make('index')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
