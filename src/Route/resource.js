@@ -23,9 +23,11 @@ class Resource {
       throw new NE.DomainException('You can only bind controllers to resources')
     }
     this.RouteHelper = RouteHelper
+    this.pattern = this._makePattern(pattern)
+    this.handler = handler
     this.routes = []
     this.basename = pattern.replace('/', '')
-    this._buildRoutes(pattern, handler)
+    this._buildRoutes()
     return this
   }
 
@@ -49,29 +51,41 @@ class Resource {
   }
 
   /**
+   * creates pattern for a given resource by removing
+   * {.} with nested route resources.
+   *
+   * @param  {String} pattern [description]
+   * @return {String}         [description]
+   *
+   * @example
+   * user.post.comment will return
+   * user/user_id/post/post_id/comment
+   *
+   * @private
+   */
+  _makePattern (pattern) {
+    return pattern.replace(/(\w+)\./g, function (index, group) {
+      return `${group}/:${group}_id/`
+    }).replace(/\/$/, '')
+  }
+
+  /**
    * builds all routes for a given pattern
    *
    * @method _buildRoutes
    *
-   * @param  {String}     pattern
-   * @param  {String}     handler
    * @return {void}
    *
    * @private
    */
-  _buildRoutes (pattern, handler) {
-    pattern = pattern.replace(/(\w+)\./g, function (index, group) {
-      return `${group}/:${group}_id/`
-    })
-    const seperator = pattern.endsWith('/') ? '' : '/'
-
-    this._registerRoute(['GET', 'HEAD'], pattern, handler, 'index')
-    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}create`, handler, 'create')
-    this._registerRoute('POST', `${pattern}`, handler, 'store')
-    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}:id`, handler, 'show')
-    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}:id/edit`, handler, 'edit')
-    this._registerRoute(['PUT', 'PATCH'], `${pattern}${seperator}:id`, handler, 'update')
-    this._registerRoute('DELETE', `${pattern}${seperator}:id`, handler, 'destroy')
+  _buildRoutes () {
+    this._registerRoute(['GET', 'HEAD'], this.pattern, this.handler, 'index')
+    this._registerRoute(['GET', 'HEAD'], `${this.pattern}/create`, this.handler, 'create')
+    this._registerRoute('POST', `${this.pattern}`, this.handler, 'store')
+    this._registerRoute(['GET', 'HEAD'], `${this.pattern}/:id`, this.handler, 'show')
+    this._registerRoute(['GET', 'HEAD'], `${this.pattern}/:id/edit`, this.handler, 'edit')
+    this._registerRoute(['PUT', 'PATCH'], `${this.pattern}/:id`, this.handler, 'update')
+    this._registerRoute('DELETE', `${this.pattern}/:id`, this.handler, 'destroy')
   }
 
   /**
@@ -163,6 +177,56 @@ class Resource {
    */
   formats (formats, strict) {
     helpers.addFormats(this.routes, formats, strict)
+    return this
+  }
+
+  /**
+   * add a member route to the resource
+   *
+   * @param  {String} action - the handle action method
+   *
+   * @param  {String} route - Route and action to be added to the resource
+   * @param  {Mixed}  [verbs=['GET', 'HEAD']]  - An array of verbs
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').addMember('completed')
+   *
+   * @public
+   */
+  addMember (route, verbs) {
+    if (_.isEmpty(route)) {
+      throw new NE.InvalidArgumentException('action argument must be present')
+    }
+
+    verbs = verbs || ['GET', 'HEAD']
+    verbs = _.isArray(verbs) ? verbs : [verbs]
+    this._registerRoute(verbs, `${this.pattern}/:id/${route}`, this.handler, route)
+    return this
+  }
+
+  /**
+   * add a collection route to the resource
+   *
+   * @param  {String} action - the handle action method
+   *
+   * @param  {String} route - Route and action to be added to the resource
+   * @param  {Mixed}  [verbs=['GET', 'HEAD']]  - An array of verbs
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').addCollection('completed')
+   *
+   * @public
+   */
+  addCollection (route, verbs) {
+    if (_.isEmpty(route)) {
+      throw new NE.InvalidArgumentException('action argument must be present')
+    }
+
+    verbs = verbs || ['GET', 'HEAD']
+    verbs = _.isArray(verbs) ? verbs : [verbs]
+    this._registerRoute(verbs, `${this.pattern}/${route}`, this.handler, route)
     return this
   }
 
