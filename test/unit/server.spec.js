@@ -25,17 +25,16 @@ class Session {
 }
 const Config = {
   get: function (key) {
-    if(key === 'http.trustProxy') {
-      return true
-    } else if(key === 'static.indexFile') {
-      return 'index.html'
-    } else if (key === 'event') {
-      return {
-        wildcard: true,
-        delimiter: ':'
-      }
-    } else {
-      return 2
+    switch (key) {
+      case 'app.static':
+        return {}
+      case 'event':
+        return {
+          wildcard: true,
+          delimiter: ':'
+        }
+      default:
+        return 2
     }
   }
 }

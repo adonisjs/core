@@ -18,17 +18,10 @@ const serveStatic = require('serve-static')
 class Static {
 
   constructor (Helpers, Config) {
-    this.publicPath = Helpers.publicPath()
-
-    const options = {
-      lastModified: Config.get('static.lastModified', true),
-      maxAge: Config.get('static.cache', 3600),
-      index: Config.get('static.indexFile', 'index.html'),
-      fallthrough: false,
-      etag: Config.get('static.etag', true)
-    }
-
-    this.server = serveStatic(this.publicPath, options)
+    const publicPath = Helpers.publicPath()
+    const options = Config.get('app.static', {})
+    options.fallthrough = false
+    this.server = serveStatic(publicPath, options)
   }
 
   /**
@@ -47,13 +40,12 @@ class Static {
    */
   serve (request, response) {
     return new Promise((resolve, reject) => {
-      this.server(request, response, function (err, good) {
-        if (err) {
-          err.message = `Route ${err.message} while resolving ${request.url}`
-          reject(err)
-          return
+      this.server(request, response, (error) => {
+        if (!error) {
+          return resolve()
         }
-        resolve(good)
+        error.message = `Route ${error.message} while resolving ${request.url}`
+        reject(error)
       })
     })
   }

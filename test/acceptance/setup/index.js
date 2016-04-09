@@ -16,10 +16,10 @@ class Session {}
 const Config = {
   get: function (key) {
     switch (key) {
-      case 'http.trustProxy':
-        return false
       case 'app.appKey':
         return null
+      case 'app.static':
+        return {}
       default:
         return 0
     }

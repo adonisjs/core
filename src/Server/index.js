@@ -247,11 +247,6 @@ class Server {
       return
     }
 
-    if (method !== 'GET' && method !== 'HEAD') {
-      helpers.respondRequest(this.middleware, request, response, finalHandler)
-      return
-    }
-
     this._staticHandler(request, response)
     .catch((e) => {
       if (e.status === 404) {
