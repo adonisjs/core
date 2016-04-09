@@ -529,7 +529,7 @@ describe('Session', function  () {
       })
 
       const res = yield supertest(server).get("/").set('Cookie','adonis-session='+sessionId).expect(200).end()
-      expect(res.headers['set-cookie'][0]).to.equal('adonis-session='+sessionId)
+      expect(res.headers['set-cookie'][0]).to.equal('adonis-session='+sessionId + '; Path=/')
       expect(sessionValue).to.equal(JSON.stringify({name:{d:'foo',t:'String'}}))
 
     })
@@ -563,7 +563,7 @@ describe('Session', function  () {
       })
 
       const res = yield supertest(server).get("/").set('Cookie','adonis-session='+sessionId).expect(200).end()
-      expect(res.headers['set-cookie'][0]).to.equal('adonis-session='+sessionId)
+      expect(res.headers['set-cookie'][0]).to.equal('adonis-session='+sessionId + '; Path=/')
       expect(sessionValue).to.equal(JSON.stringify({name:{d:'virk',t:'String'},age:{d:'22',t:'Number'}}))
 
     })
