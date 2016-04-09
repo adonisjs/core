@@ -52,6 +52,9 @@ class Event {
   _bindInstance (instance, method) {
     return function () {
       instance.emitter = this
+      instance.emitter.eventName = instance.emitter.event instanceof Array
+                                    ? instance.emitter.event.join(instance.emitter.delimiter)
+                                    : instance.emitter.event
       method.apply(instance, arguments)
     }
   }

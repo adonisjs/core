@@ -372,4 +372,20 @@ describe('Event', function() {
     event.fire('foo')
   })
 
+  it('should return the actual when with emitting event as an array', function (done) {
+    const Config = {
+      get: function () {
+        return {
+          delimiter: ':',
+          wildcard: true
+        }
+      }
+    }
+    const event = new Event(Config, Helpers)
+    event.on('Http:error', function () {
+      expect(this.emitter.eventName).to.equal('Http:error')
+      done()
+    })
+    event.fire(['Http', 'error'], {foo: 'bar'})
+  })
 })
