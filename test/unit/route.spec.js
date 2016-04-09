@@ -11,6 +11,7 @@ const chai = require('chai')
 const _ = require('lodash')
 const NE = require('node-exceptions')
 const expect = chai.expect
+const stderr = require("test-console").stderr
 const pathToRegexp = require('path-to-regexp')
 require('co-mocha')
 
@@ -99,6 +100,13 @@ describe('Route',function () {
         })
       }
       expect(fn).to.throw(NE.DomainException, /You can only bind controllers to resources/)
+    })
+
+    it('should log warning when trying to bind resource to the base route', function () {
+      const inspect = stderr.inspect()
+      Route.resource('/', 'HomeController')
+      inspect.restore()
+      expect(inspect.output[inspect.output.length - 2].trim()).to.equal('You are registering a resource for / path, which is not a good practice')
     })
 
     it('should be able to get a route with it\'s name', function () {

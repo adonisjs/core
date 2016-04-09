@@ -8,6 +8,8 @@
 
 const _ = require('lodash')
 const helpers = require('./helpers')
+const CatLog = require('cat-log')
+const logger = new CatLog('adonis:framework')
 const util = require('../../lib/util')
 const NE = require('node-exceptions')
 
@@ -21,6 +23,9 @@ class Resource {
   constructor (RouteHelper, pattern, handler) {
     if (typeof (handler) !== 'string') {
       throw new NE.DomainException('You can only bind controllers to resources')
+    }
+    if (pattern === '/') {
+      logger.warn('You are registering a resource for / path, which is not a good practice')
     }
     this.RouteHelper = RouteHelper
     this.pattern = this._makePattern(pattern)
