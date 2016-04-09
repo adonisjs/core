@@ -222,7 +222,7 @@ describe("Server", function () {
   })
 
   it("should emit error event when there are listeners attach to error", function * () {
-    Event.when('Http:*', function (error, request, response) {
+    Event.when('Http:error:*', function (error, request, response) {
       response.status(401).send('Forbidden')
     })
     Route.get('/', function * () {

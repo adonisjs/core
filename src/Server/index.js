@@ -130,8 +130,8 @@ class Server {
    */
   _handleError (error, request, response) {
     this._normalizeError(error)
-    if (this.event.wildcard() && this.event.hasListeners(['Http', '*'])) {
-      this.event.fire(['Http', error.status], error, request, response)
+    if (this.event.wildcard() && this.event.hasListeners(['Http', 'error', '*'])) {
+      this.event.fire(['Http', 'error', error.status], error, request, response)
       return
     }
     if (!this.event.wildcard() && this.event.hasListeners(['Http', 'error'])) {
