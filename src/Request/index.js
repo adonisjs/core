@@ -125,6 +125,33 @@ class Request {
   }
 
   /**
+   * returns a group of objects with defined keys and values
+   * corresponding to them. It is helpful when accepting
+   * an array of values via form submission.
+   *
+   * @param {Mixed} keys an array of keys or multiple keys to pick values for
+   * @return {Array}
+   *
+   * @example
+   * request.collect('name', 'email')
+   * request.collect(['name', 'email'])
+   *
+   * @public
+   */
+  collect () {
+    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
+    let values = _.values(this.only(args))
+    values = _.zip.apply(_, values)
+    return _.map(values, (item) => {
+      const group = {}
+      _.each(args, (key, index) => {
+        group[key] = item[index] || null
+      })
+      return group
+    })
+  }
+
+  /**
    * returns query parameters from request querystring
    *
    * @return {Object}

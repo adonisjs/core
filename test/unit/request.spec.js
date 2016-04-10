@@ -143,7 +143,6 @@ describe('Request', function () {
     expect(res.body.name).to.equal('doe')
   })
 
-
   it('should return get and post values when using all', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
@@ -155,6 +154,30 @@ describe('Request', function () {
 
     const res = yield supertest(server).get("/?name=foo").expect(200).end()
     expect(res.body.all).deep.equal({name:"foo",age:22})
+  })
+
+  it('should group and return an array of items', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._body = {username: ['virk', 'aman', 'nikk'], email: ['virk@gmail.com', 'aman@gmail.com', 'nikk@gmail.com']}
+      const contacts = request.collect('username', 'email')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({contacts}),'utf8')
+    })
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.contacts).deep.equal([{username: 'virk', email: 'virk@gmail.com'}, {username: 'aman', email: 'aman@gmail.com'}, {username: 'nikk', email: 'nikk@gmail.com'}])
+  })
+
+  it('should group and return null of fields not present inside the object', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._body = {username: ['virk', 'aman', 'nikk']}
+      const contacts = request.collect('username', 'age')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({contacts}),'utf8')
+    })
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.contacts).deep.equal([{username: 'virk', age: null}, {username: 'aman', age: null}, {username: 'nikk', age: null}])
   })
 
   it('should return all values expect defined keys', function * () {
