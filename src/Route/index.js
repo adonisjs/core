@@ -124,6 +124,7 @@ Route.on = function (route) {
  * @method render
  *
  * @param  {String} view
+ * @return {Object}
  *
  * @public
  */
@@ -132,6 +133,7 @@ Route.render = function (view) {
   route.handler = function * (request, response) {
     yield response.sendView(view, {request})
   }
+  return this
 }
 
 /**
