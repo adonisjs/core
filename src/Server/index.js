@@ -47,8 +47,12 @@ class Server {
    * @private
    */
   _respond (request, response, finalHandler) {
-    const chain = helpers.makeMiddlewareChain(this.middleware, finalHandler, true)
-    this._executeChain(chain, request, response)
+    try {
+      const chain = helpers.makeMiddlewareChain(this.middleware, finalHandler, true)
+      this._executeChain(chain, request, response)
+    } catch (e) {
+      this._handleError(e, request, response)
+    }
   }
 
   /**
