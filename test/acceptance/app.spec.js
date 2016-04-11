@@ -93,6 +93,22 @@ describe('App Exceptations', function () {
     expect(browser.text('body').trim()).to.equal('1')
   })
 
+  it('should return the request elapsed when controller has set timeout', function * () {
+    Middleware.global(['App/Http/Middleware/Logger'])
+    const done = function () {
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          resolve()
+        }, 1000)
+      })
+    }
+    Route.get('/', function * (request, response) {
+      yield done(request)
+    })
+    yield browser.visit('/')
+    expect(parseInt(browser.text('body').trim())).to.be.above(1000)
+  })
+
   it('should redirect request to a named route', function * () {
     Route.get('/', 'HomeController.redirect')
     Route.get('/:id', 'HomeController.profile').as('profile')

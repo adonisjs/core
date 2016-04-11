@@ -204,6 +204,6 @@ Middleware.compose = function (middleware, request, response) {
       const values = [request, response, next].concat(middleware[i].parameters)
       next = method.apply(instance, values)
     }
-    yield * next
+    return yield * next
   }
 }

@@ -49,7 +49,7 @@ class Server {
   _respond (request, response, finalHandler) {
     try {
       const chain = helpers.makeMiddlewareChain(this.middleware, finalHandler, true)
-      this._executeChain(chain, request, response)
+      return this._executeChain(chain, request, response)
     } catch (e) {
       this._handleError(e, request, response)
     }
@@ -71,7 +71,7 @@ class Server {
     }
     const routeAction = this._makeRouteAction(resolvedRoute.handler)
     const chain = helpers.makeMiddlewareChain(this.middleware, routeAction, false, resolvedRoute)
-    this._executeChain(chain, request, response)
+    return this._executeChain(chain, request, response)
   }
 
   /**
@@ -172,7 +172,7 @@ class Server {
    */
   _executeChain (chain, request, response) {
     const middleware = this.middleware
-    co(function * () {
+    return co(function * () {
       yield middleware.compose(chain, request, response)
     }).catch((e) => {
       this._handleError(e, request, response)
@@ -239,7 +239,7 @@ class Server {
     request._params = resolvedRoute.params
 
     const finalHandler = function * () {
-      self._callRouteAction(resolvedRoute, request, response)
+      yield self._callRouteAction(resolvedRoute, request, response)
     }
 
     /**
