@@ -14,8 +14,6 @@ const nodeCookie = require('node-cookie')
 const File = require('../File')
 const pathToRegexp = require('path-to-regexp')
 const _ = require('lodash')
-const CatLog = require('cat-log')
-const log = new CatLog('adonis:framework')
 const util = require('../../lib/util')
 
 /**
@@ -517,91 +515,6 @@ class Request {
     return _.map(this._files, (file, index) => {
       return this.file(index)
     })
-  }
-
-  /**
-   * flash an object of messages to session.
-   *
-   * @param  {Object} values
-   *
-   * @example
-   * yield request.flash({error: 'Unable to create account'})
-   *
-   * @public
-   */
-  * flash (values) {
-    if (typeof (values) !== 'object') {
-      throw new Error('Flash values should be an object')
-    }
-    yield this.session.put('flash_messages', values)
-  }
-
-  /**
-   * return values set via flash from
-   * request session
-   *
-   * @param  {String} key - key for which to pull value for
-   * @param  {Mixed} defaultValue - default value to return when actual value
-   *                                is empty
-   * @return {Mixed}
-   *
-   * @example
-   * request.old('name')
-   * request.old('form.name')
-   *
-   * @public
-   */
-  old (key, defaultValue) {
-    if (!this._flash_messages) {
-      log.warn('Make use of Flash middleware to enable flash messaging')
-      this._flash_messages = {}
-    }
-    defaultValue = util.existy(defaultValue) ? defaultValue : null
-    return util.existy(this._flash_messages[key]) ? this._flash_messages[key] : defaultValue
-  }
-
-  /**
-   * flash all request input fields to session
-   *
-   * @return {void}
-   *
-   * @example
-   * yield request.flashAll()
-   * @public
-   */
-  * flashAll () {
-    yield this.flash(this.all())
-  }
-
-  /**
-   * flash values of defined keys to session flash
-   *
-   * @return {void}
-   *
-   * @example
-   * yield request.flashOnly('name', 'age')
-   *
-   * @public
-   */
-  * flashOnly () {
-    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
-    yield this.flash(this.only(args))
-  }
-
-  /**
-   * flash values from request to session except
-   * the values of defined keys.
-   *
-   * @return {void}
-   *
-   * @example
-   * yield request.flashExcept('name', 'age')
-   *
-   * @public
-   */
-  * flashExcept () {
-    const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
-    yield this.flash(this.except(args))
   }
 
   /**
