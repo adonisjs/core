@@ -11,9 +11,9 @@
 
 const nunjucks = require('nunjucks')
 const ViewLoader = require('./loader')
-const Form = require('./Form')
 const viewFilters = require('./filters')
 const viewExtensions = require('./extensions')
+const viewGlobals = require('./globals')
 
 /**
  * View class for adonis framework to serve jinja like views
@@ -26,8 +26,8 @@ class View {
     const viewsPath = Helpers.viewsPath()
     const viewsCache = Config.get('app.views.cache', true)
     this.viewsEnv = new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
-    this.global('form', new Form(this, Route))
     viewExtensions(this.viewsEnv)
+    viewGlobals(this.viewsEnv, Route)
     viewFilters(this.viewsEnv, Route)
   }
 

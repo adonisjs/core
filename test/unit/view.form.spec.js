@@ -27,7 +27,7 @@ const Config = {
   }
 }
 
-const form = new Form(new View(Helpers, Config, Route), Route)
+const form = new Form(new View(Helpers, Config, Route).viewsEnv, Route)
 
 describe('Form Helper', function () {
   it('should be able to create a form opening tag using open method', function () {
@@ -138,7 +138,7 @@ describe('Form Helper', function () {
     view.global('old', function () {
       return 'some value'
     })
-    const formNew = new Form(view, Route)
+    const formNew = new Form(view.viewsEnv, Route)
     const label = formNew.text('username')
     expect(label.val).to.equal('<input type="text" name="username" value="some value" id="username" />')
   })
@@ -148,7 +148,7 @@ describe('Form Helper', function () {
     view.global('old', function () {
       return 'some value'
     })
-    const formNew = new Form(view, Route)
+    const formNew = new Form(view.viewsEnv, Route)
     const input = formNew.text('username', null, {avoidOld: true})
     expect(input.val).to.equal('<input type="text" name="username" id="username" />')
   })

@@ -18,8 +18,8 @@ const _ = require('lodash')
  */
 class Form {
 
-  constructor (View, Route) {
-    this.env = View.viewsEnv
+  constructor (viewsEnv, Route) {
+    this.env = viewsEnv
     this.specialKeywords = ['url', 'files', 'method', 'route', 'action', 'params']
     this.validFormMethods = ['GET', 'POST']
     this.route = Route
