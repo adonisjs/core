@@ -66,6 +66,30 @@ describe('View',function () {
     expect(profile.trim()).to.equal('/1')
   })
 
+  it('should make an anchor link to a given route', function * () {
+    Route.get('/:id','ProfileController.show').as('profile')
+    const viewString = this.view.makeString('{{ linkTo("profile", "View Profile", {id: 1}) }}')
+    expect(viewString.trim()).to.equal('<a href="/1" > View Profile </a>')
+  })
+
+  it('should make an anchor link with defined target to a given route', function * () {
+    Route.get('/users','ProfileController.show').as('listUsers')
+    const viewString = this.view.makeString('{{ linkTo("listUsers", "View Profile", {}, "_blank") }}')
+    expect(viewString.trim()).to.equal('<a href="/users" target="_blank"> View Profile </a>')
+  })
+
+  it('should make an anchor link to a given action', function * () {
+    Route.get('profile/:id','ProfileController.show')
+    const viewString = this.view.makeString('{{ linkToAction("ProfileController.show", "View Profile", {id: 1}) }}')
+    expect(viewString.trim()).to.equal('<a href="/profile/1" > View Profile </a>')
+  })
+
+  it('should make an anchor link with defined target to a given action', function * () {
+    Route.get('profile/:id','ProfileController.show')
+    const viewString = this.view.makeString('{{ linkToAction("ProfileController.show", "View Profile", {id: 1}, "_blank") }}')
+    expect(viewString.trim()).to.equal('<a href="/profile/1" target="_blank"> View Profile </a>')
+  })
+
   it('should return empty string when unable to find route action', function * () {
     const profile = this.view.makeString('{{ "ProfileController.show" | action({id:1}) }}',{id:1})
     expect(profile.trim()).to.equal('')
