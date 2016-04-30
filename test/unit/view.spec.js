@@ -54,6 +54,36 @@ describe('View',function () {
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
 
+  it('should make a nested view using a /', function * () {
+    const index = yield this.view.make('subviews/index')
+    expect(index.trim()).to.equal('<h2> Hello world </h2>')
+  })
+
+  it('should make a nested view using a / and the extension', function * () {
+    const index = yield this.view.make('subviews/index.nunjucks')
+    expect(index.trim()).to.equal('<h2> Hello world </h2>')
+  })
+
+  it('should make a nested view using a .', function * () {
+    const index = yield this.view.make('subviews.index')
+    expect(index.trim()).to.equal('<h2> Hello world </h2>')
+  })
+
+  it('should make a nested view using a . and the extension', function * () {
+    const index = yield this.view.make('subviews.index.nunjucks')
+    expect(index.trim()).to.equal('<h2> Hello world </h2>')
+  })
+
+  it('should include a view using a .', function * () {
+    const index = yield this.view.make('include')
+    expect(index.trim()).to.equal('<h2> Hello world </h2>')
+  })
+
+  it('should extends a view using a .', function * () {
+    const index = yield this.view.make('extends')
+    expect(index.trim()).to.equal('<h2> Hello world </h2>')
+  })
+
   it('should make use of route filter inside views', function * () {
     Route.get('/:id','ProfileController.show').as('profile')
     const profile = yield this.view.make('profile',{id:1})
