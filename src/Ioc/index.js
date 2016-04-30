@@ -71,8 +71,9 @@ Ioc._bind = function (namespace, closure, singleton) {
   if (typeof (closure) !== 'function') {
     throw new Error('Invalid arguments, bind expects a callback')
   }
+  namespace = namespace.trim()
   log.verbose('binding %s to ioc container', namespace)
-  providers[namespace] = {closure, singleton}
+  providers[namespace] = {closure, singleton, instance: null}
 }
 
 /**
@@ -143,12 +144,15 @@ Ioc._autoLoad = function (namespace) {
   try {
     let result = requireStack(namespace)
     /**
-     * autoloaded paths can have multiple hooks to transform
-     * it's output. Lucid is an example of making use of it.
+     * autoloaded paths can have multiple hooks to be called
+     * everytime it is required. Lucid is an example of
+     * making use of it.
      */
-    if (result.hooks && result.hooks.forEach) {
-      result.hooks.forEach(function (hook) {
-        result = typeof (result[hook]) === 'function' ? result[hook]() : result
+    if (result.IocHooks && result.IocHooks.forEach) {
+      result.IocHooks.forEach(function (hook) {
+        if (typeof (result[hook]) === 'function') {
+          result[hook]()
+        }
       })
     }
     return result
@@ -402,10 +406,10 @@ Ioc.make = function (Binding) {
   }
 
   /**
-   * if binding is not a class we should return it's original
-   * value
+   * if binding is not a class or makePlain is defined as
+   * true, then we should return it's original value.
    */
-  if (!Ioc._isClass(Binding)) {
+  if (!Ioc._isClass(Binding) || Binding.makePlain) {
     return Binding
   }
 

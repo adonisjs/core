@@ -2,12 +2,12 @@
 
 class FakeHook {
 
-  static get hooks () {
+  static get IocHooks () {
     return ['extend']
   }
 
-  static get extend () {
-    return 'bar'
+  static get foo () {
+    this.called = true
   }
 
 }
