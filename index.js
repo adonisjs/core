@@ -10,7 +10,7 @@ const Ioc = require('./src/Ioc')
 const ServiceProvider = require('./src/ServiceProvider')
 const Registrar = require('./src/Registrar')
 
-GLOBAL.use = Ioc.use
-GLOBAL.make = Ioc.make
+global.use = Ioc.use
+global.make = Ioc.make
 
 module.exports = { Ioc, ServiceProvider, Registrar }
