@@ -1,3 +1,22 @@
+<a name="3.0.1"></a>
+## 3.0.1 (2016-04-30)
+
+
+### Bug Fixes
+
+* **Ioc:** do not transform output after calling hooks ([8bc17ef](https://github.com/poppinss/adonis-fold/commit/8bc17ef))
+
+### Features
+
+* **ioc:** add support for makePlain property ([33ab0bf](https://github.com/poppinss/adonis-fold/commit/33ab0bf))
+* **package.json:** Added commitizen ([8a8fd3c](https://github.com/poppinss/adonis-fold/commit/8a8fd3c))
+
+### Performance Improvements
+
+* **ioc,registerar:** triming namespaces and providers, improved var initialization for v8 ([c5e04ad](https://github.com/poppinss/adonis-fold/commit/c5e04ad))
+
+
+
 <a name="2.0.1"></a>
 ## 2.0.1 (2016-01-15)
 
