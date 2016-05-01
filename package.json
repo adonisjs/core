@@ -16,7 +16,7 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "^3.0.0",
+    "adonis-fold": "^3.0.1",
     "chai": "^3.3.0",
     "cheerio": "^0.20.0",
     "co-mocha": "^1.1.2",
@@ -34,7 +34,7 @@
     "zombie": "^4.2.1"
   },
   "peerDependencies": {
-    "adonis-fold": "^3.0.0"
+    "adonis-fold": "^3.0.1"
   },
   "dependencies": {
     "bcryptjs": "^2.3.0",

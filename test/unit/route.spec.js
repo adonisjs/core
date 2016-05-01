@@ -949,7 +949,7 @@ describe('Route',function () {
     it('should bind a custom callback handler to the render method', function () {
       Route.on('/signup').render('signup')
       const routes = Route.routes()
-      expect(routes[0].handler).to.be.a('function')
+      expect(typeof (routes[0].handler)).to.equal('function')
       expect(routes[0].route).to.equal('/signup')
     })
 
