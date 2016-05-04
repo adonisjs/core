@@ -138,13 +138,21 @@ class Request {
    */
   collect () {
     const args = _.isArray(arguments[0]) ? arguments[0] : _.toArray(arguments)
-    let values = _.values(this.only(args))
-    values = _.zip.apply(_, values)
-    return _.map(values, (item) => {
+    const selectedValues = this.only(args)
+
+    /**
+     * need to make sure the values array is in balance to the expected
+     * array. Otherwise map method will pickup values for wrong keys.
+     */
+    if (_.size(args) > _.size(selectedValues)) {
+      args.forEach((key) => { selectedValues[key] = selectedValues[key] || [] })
+    }
+
+    const keys = _.keys(selectedValues)
+    const values = _.zip.apply(_, _.values(selectedValues))
+    return _.map(values, (item, index) => {
       const group = {}
-      _.each(args, (key, index) => {
-        group[key] = item[index] || null
-      })
+      _.each(args, (k, i) => { group[keys[i]] = item[i] || null })
       return group
     })
   }

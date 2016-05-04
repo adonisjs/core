@@ -168,7 +168,7 @@ describe('Request', function () {
     expect(res.body.contacts).deep.equal([{username: 'virk', email: 'virk@gmail.com'}, {username: 'aman', email: 'aman@gmail.com'}, {username: 'nikk', email: 'nikk@gmail.com'}])
   })
 
-  it('should group and return null of fields not present inside the object', function * () {
+  it('should group and return null for fields not present inside the object', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
       request._body = {username: ['virk', 'aman', 'nikk']}
@@ -178,6 +178,30 @@ describe('Request', function () {
     })
     const res = yield supertest(server).get("/?name=foo").expect(200).end()
     expect(res.body.contacts).deep.equal([{username: 'virk', age: null}, {username: 'aman', age: null}, {username: 'nikk', age: null}])
+  })
+
+  it('should group and return null for fields not present inside the object at different order', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._body = {username: ['virk', 'aman', 'nikk'], email: ['virk@foo.com', 'aman@foo.com', 'nikk@foo.com']}
+      const contacts = request.collect('name', 'email')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({contacts}),'utf8')
+    })
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.contacts).deep.equal([{name: null, email: 'virk@foo.com'}, {name: null, email: 'aman@foo.com'}, {name: null, email: 'nikk@foo.com'}])
+  })
+
+  it('should group and return null for fields not present inside the object in mix order', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._body = {username: ['virk', 'aman', 'nikk'], email: ['virk@foo.com', 'aman@foo.com', 'nikk@foo.com'], password: ['vi', 'am', 'ni']}
+      const contacts = request.collect('password', 'name', 'username')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({contacts}),'utf8')
+    })
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.contacts).deep.equal([{password: 'vi', name: null, username: 'virk'}, {password: 'am', name: null, username: 'aman'}, {password: 'ni', name: null, username: 'nikk'}])
   })
 
   it('should return all values expect defined keys', function * () {
