@@ -79,6 +79,11 @@ describe('View',function () {
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
 
+  it('should include a view by going a directory back', function * () {
+    const index = yield this.view.make('subviews.internal')
+    expect(index.trim()).to.equal('<h2> Hello world </h2>')
+  })
+
   it('should extends a view using a .', function * () {
     const index = yield this.view.make('extends')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
