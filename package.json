@@ -28,7 +28,7 @@
     "mocha": "^2.4.4",
     "mocha-lcov-reporter": "^1.1.0",
     "pem": "^1.8.1",
-    "standard": "^6.0.5",
+    "standard": "^7.0.1",
     "supertest": "^1.1.0",
     "test-console": "^1.0.0",
     "zombie": "^4.2.1"
