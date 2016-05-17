@@ -34,11 +34,11 @@ domains.add = function (domain) {
  * @private
  */
 domains.match = function (host) {
-  let is_domain = false
+  let isDomain = false
   registeredDomains.forEach(function (domain) {
     if (domain.test(host)) {
-      is_domain = true
+      isDomain = true
     }
   })
-  return is_domain
+  return isDomain
 }
