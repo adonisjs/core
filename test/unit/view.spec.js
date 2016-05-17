@@ -16,19 +16,20 @@ const path = require('path')
 const expect = chai.expect
 require('co-mocha')
 
+const Helpers = {
+  viewsPath: function () {
+    return path.join(__dirname,'./app/views')
+  }
+}
+const Config = {
+  get: function () {
+    return true
+  }
+}
+
 describe('View',function () {
 
   before(function () {
-    const Helpers = {
-      viewsPath: function () {
-        return path.join(__dirname,'./app/views')
-      }
-    }
-    const Config = {
-      get: function () {
-        return true
-      }
-    }
     this.view = new View(Helpers, Config, Route)
   })
 
@@ -173,6 +174,30 @@ describe('View',function () {
     })
     const view = yield this.view.make('global')
     expect(view.trim()).to.equal(time.toString())
+  })
+
+  it('should be able to make use of use method when injectServices is true', function * () {
+    const time = new Date().getTime()
+    this.view.global('typeof', function (value) {
+      return typeof (value)
+    })
+    const view = yield this.view.make('services')
+    expect(view.trim()).to.equal('function')
+  })
+
+  it('should not be able to make use of use method when injectServices is false', function * () {
+    const time = new Date().getTime()
+    const customConfig = {
+      get: function () {
+        return false
+      }
+    }
+    const view = new View(Helpers, customConfig, Route)
+    view.global('typeof', function (value) {
+      return typeof (value)
+    })
+    const compiledView = yield view.make('services')
+    expect(compiledView.trim()).to.equal('undefined')
   })
 
 })

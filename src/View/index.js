@@ -12,7 +12,6 @@
 const nunjucks = require('nunjucks')
 const ViewLoader = require('./loader')
 const viewFilters = require('./filters')
-const viewExtensions = require('./extensions')
 const viewGlobals = require('./globals')
 
 /**
@@ -25,8 +24,17 @@ class View {
   constructor (Helpers, Config, Route) {
     const viewsPath = Helpers.viewsPath()
     const viewsCache = Config.get('app.views.cache', true)
+    const injectServices = Config.get('app.views.injectServices', false)
     this.viewsEnv = new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
-    viewExtensions(this.viewsEnv)
+
+    /**
+     * only register use, make and yield when the end user
+     * has enabled injectServices inside the config file.
+     */
+    if (injectServices) {
+      require('./services')(this.viewsEnv)
+    }
+
     viewGlobals(this.viewsEnv, Route)
     viewFilters(this.viewsEnv, Route)
   }
