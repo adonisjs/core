@@ -203,6 +203,9 @@ class Server {
    */
   _getRequestMethod (request) {
     if (!this.config.get('app.http.allowMethodSpoofing')) {
+      if (request.input('_method')) {
+        this.log.warn('You are making use of method spoofing but it\'s not enabled. Make sure to enable it inside config/app.js file.')
+      }
       return request.method().toUpperCase()
     }
     return request.input('_method', request.method()).toUpperCase()
