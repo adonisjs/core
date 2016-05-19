@@ -271,10 +271,10 @@ class Server {
    */
   getCreateServerInstance () {
     if (this.httpCreateServerInstance) {
-      return this.httpCreateServerInstance;
+      return this.httpCreateServerInstance
     }
 
-    return this.httpCreateServerInstance = http.createServer(this.handle.bind(this));
+    return this.httpCreateServerInstance = http.createServer(this.handle.bind(this))
   }
 
   /**
