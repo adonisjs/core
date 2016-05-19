@@ -265,6 +265,19 @@ class Server {
   }
 
   /**
+   *
+   * @returns {*}
+   * @public
+   */
+  getCreateServerInstance () {
+    if (this.httpCreateServerInstance) {
+      return this.httpCreateServerInstance;
+    }
+
+    return this.httpCreateServerInstance = http.createServer(this.handle.bind(this));
+  }
+
+  /**
    * starting a server on a given port and host
    *
    * @param {String} host
@@ -277,7 +290,7 @@ class Server {
    */
   listen (host, port) {
     this.log.info('serving app on %s:%s', host, port)
-    http.createServer(this.handle.bind(this)).listen(port, host)
+    this.getCreateServerInstance().listen(port, host)
   }
 
 }
