@@ -25,7 +25,7 @@
     "cz-conventional-changelog": "^1.1.5",
     "formidable": "^1.0.17",
     "istanbul": "^0.4.0",
-    "mocha": "^2.4.4",
+    "mocha": "^2.5.2",
     "mocha-lcov-reporter": "^1.1.0",
     "pem": "^1.8.1",
     "standard": "^7.1.0",
