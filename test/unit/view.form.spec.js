@@ -66,6 +66,17 @@ describe('Form Helper', function () {
     expect(formTag.val).to.equal('<form method="POST" action="/users" enctype="application/x-www-form-urlencoded">')
   })
 
+  it("should throw an exception when you make url using a route name that doesn't exists", function () {
+    Route.post('/users', 'UserController.store').as('users.store')
+
+    try {
+      const formTag = form.open({ route: 'user.store', method: 'POST' })
+      expect(true).to.be.false
+    } catch(e) {
+      expect(e.message).to.match(/The route user.store has not been found/)
+    }
+  })
+
   it('should be able to make url using route name with params', function () {
     Route.delete('/user/:id', 'UserController.delete').as('deleteUser')
     const formTag = form.open({route: 'deleteUser', params: {id: 1} })
