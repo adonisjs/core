@@ -40,7 +40,8 @@ describe('View',function () {
   it('should throw an error when unable to find view', function * () {
     try{
        yield this.view.make('foo.html')
-    }catch(e){
+       expect(true).to.equal(false)
+    } catch(e) {
       expect(e.message).to.match(/template not found/)
     }
   })
