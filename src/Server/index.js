@@ -34,6 +34,7 @@ class Server {
     this.config = Config
     this.event = Event
     this.log = new CatLog('adonis:framework')
+    this.httpInstance = null
   }
 
   /**
@@ -269,12 +270,12 @@ class Server {
    * @returns {*}
    * @public
    */
-  getCreateServerInstance () {
-    if (!this.httpCreateServerInstance) {
-      this.httpCreateServerInstance = http.createServer(this.handle.bind(this))
+  getInstance () {
+    if (!this.httpInstance) {
+      this.httpInstance = http.createServer(this.handle.bind(this))
     }
 
-    return this.httpCreateServerInstance
+    return this.httpInstance
   }
 
   /**
@@ -290,7 +291,7 @@ class Server {
    */
   listen (host, port) {
     this.log.info('serving app on %s:%s', host, port)
-    this.getCreateServerInstance().listen(port, host)
+    this.getInstance().listen(port, host)
   }
 
 }
