@@ -218,7 +218,7 @@ class Event {
    *
    * @public
    */
-  limit (limit) {
+  times (limit) {
     this.listenerLimit = limit
     return this
   }

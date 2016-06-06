@@ -305,7 +305,7 @@ describe('Event', function() {
   it('should be able to define the number for times a event should be executed', function () {
     const event = new Event(Config, Helpers)
     let count = 0
-    event.limit(4).on('foo', function () {
+    event.times(4).on('foo', function () {
       count++
     })
     event.fire('foo')
