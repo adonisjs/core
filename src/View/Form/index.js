@@ -168,7 +168,12 @@ class Form {
      * and use the method.
      */
     if (options.route) {
-      const route = this.route.getRoute({name: options.route})
+      const route = this.route.getRoute({ name: options.route })
+
+      if (route === void 0) {
+        throw Error(`The route ${options.route} has not been found`)
+      }
+
       options.method = route.verb[0]
     }
 

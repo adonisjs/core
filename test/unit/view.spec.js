@@ -40,7 +40,8 @@ describe('View',function () {
   it('should throw an error when unable to find view', function * () {
     try{
        yield this.view.make('foo.html')
-    }catch(e){
+       expect(true).to.be.false
+    } catch(e) {
       expect(e.message).to.match(/template not found/)
     }
   })
@@ -100,6 +101,19 @@ describe('View',function () {
     Route.get('/:id','ProfileController.show').as('profile')
     const profile = yield this.view.make('profileAction',{id:1})
     expect(profile.trim()).to.equal('/1')
+  })
+
+  // TODO: Change the codebase to handle this test
+  it.skip('should throw an exception when make use of route filter and the route is not defined', function * () {
+
+    Route.get('/:id', 'ProfileController.show').as('profiles')
+
+    try {
+      const profile = yield this.view.make('profile', { id: 1 })
+      expect(true).to.be.false
+    } catch (e) {
+      expect(e.message).to.match(/The route profile has not been found/)
+    }
   })
 
   it('should make an anchor link to a given route', function * () {
