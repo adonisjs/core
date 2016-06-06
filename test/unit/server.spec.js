@@ -278,6 +278,16 @@ describe("Server", function () {
     expect(res.error.text).to.equal('Forbidden')
   })
 
+  it("should server instance is null", function * () {
+    expect(this.server.httpInstance).to.be.null
+  })
+
+  it("should server instance is http.Server", function * () {
+    const httpServer = this.server.getInstance()
+    expect(httpServer).to.be.instanceOf(http.Server)
+    expect(this.server.httpInstance).to.be.instanceOf(http.Server)
+  })
+
   it('should listen to server on a given port and host using listen method', function * () {
     Route.get('/','HomeController.index')
     this.server.listen('0.0.0.0', 8000)

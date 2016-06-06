@@ -34,6 +34,7 @@ class Server {
     this.config = Config
     this.event = Event
     this.log = new CatLog('adonis:framework')
+    this.httpInstance = null
   }
 
   /**
@@ -265,6 +266,19 @@ class Server {
   }
 
   /**
+   *
+   * @returns {*}
+   * @public
+   */
+  getInstance () {
+    if (!this.httpInstance) {
+      this.httpInstance = http.createServer(this.handle.bind(this))
+    }
+
+    return this.httpInstance
+  }
+
+  /**
    * starting a server on a given port and host
    *
    * @param {String} host
@@ -277,7 +291,7 @@ class Server {
    */
   listen (host, port) {
     this.log.info('serving app on %s:%s', host, port)
-    http.createServer(this.handle.bind(this)).listen(port, host)
+    this.getInstance().listen(port, host)
   }
 
 }
