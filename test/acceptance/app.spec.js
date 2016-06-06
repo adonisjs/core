@@ -106,7 +106,7 @@ describe('App Exceptations', function () {
       yield done(request)
     })
     yield browser.visit('/')
-    expect(parseInt(browser.text('body').trim())).to.be.above(1000)
+    expect(parseInt(browser.text('body').trim())).to.be.above(999)
   })
 
   it('should redirect request to a named route', function * () {
