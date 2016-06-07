@@ -47,11 +47,11 @@ describe('View',function () {
   })
 
   it('should make a view using it\'s path', function * () {
-    const index = yield this.view.make('index.nunjucks')
+    const index = yield this.view.make('index.njk')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
 
-  it('should make a view using it\'s path without .nunjucks extension', function * () {
+  it('should make a view using it\'s path without .njk extension', function * () {
     const index = yield this.view.make('index')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
@@ -62,7 +62,7 @@ describe('View',function () {
   })
 
   it('should make a nested view using a / and the extension', function * () {
-    const index = yield this.view.make('subviews/index.nunjucks')
+    const index = yield this.view.make('subviews/index.njk')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
 
@@ -72,7 +72,7 @@ describe('View',function () {
   })
 
   it('should make a nested view using a . and the extension', function * () {
-    const index = yield this.view.make('subviews.index.nunjucks')
+    const index = yield this.view.make('subviews.index.njk')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
 
