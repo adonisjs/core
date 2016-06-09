@@ -23,7 +23,7 @@ class Response {
     this.request = request
     this.response = response
     if (configInstance.get('app.http.setPoweredBy', true)) {
-      nodeRes.header(this.response, 'X-Powered-By', 'Adonis')
+      nodeRes.header(this.response, 'X-Powered-By', 'AdonisJs')
     }
     nodeRes.descriptiveMethods.forEach((method) => {
       this[method] = (body) => {
