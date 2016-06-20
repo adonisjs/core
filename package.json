@@ -24,7 +24,7 @@
     "coveralls": "^2.11.7",
     "cz-conventional-changelog": "^1.1.5",
     "formidable": "^1.0.17",
-    "istanbul": "^0.4.0",
+    "istanbul": "^0.4.4",
     "mocha": "^2.5.3",
     "mocha-lcov-reporter": "^1.1.0",
     "pem": "^1.8.1",
