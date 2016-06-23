@@ -106,7 +106,7 @@ describe('Route',function () {
       const inspect = stderr.inspect()
       Route.resource('/', 'HomeController')
       inspect.restore()
-      expect(inspect.output[inspect.output.length - 2].trim()).to.equal('You are registering a resource for / path, which is not a good practice')
+      expect(inspect.output[inspect.output.length - 2].trim()).to.match(/You are registering a resource for \/ path, which is not a good practice/)
     })
 
     it('should be able to get a route with it\'s name', function () {
