@@ -37,10 +37,10 @@ class File {
    * @private
    */
   _writeSessionToFile (filePath, data) {
-    return new Promise(function (resolve, reject) {
-      fs.writeFile(filePath, data, function (err) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(filePath, data, (err) => {
         if (err) {
-          return reject(err)
+          reject(err)
         }
         resolve()
       })
@@ -57,11 +57,11 @@ class File {
    * @private
    */
   _makeStorageDir (storagePath) {
-    return new Promise(function (resolve, reject) {
-      mkdirp(storagePath, function (err) {
+    return new Promise((resolve, reject) => {
+      mkdirp(storagePath, (err) => {
         /* istanbul ignore if */
         if (err) {
-          return reject(err)
+          reject(err)
         }
         resolve()
       })
@@ -78,10 +78,10 @@ class File {
    * @private
    */
   _readSession (filePath) {
-    return new Promise(function (resolve, reject) {
-      fs.readFile(filePath, function (err, contents) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, (err, contents) => {
         if (err) {
-          return reject(err)
+          reject(err)
         }
         resolve(contents.toString('utf8'))
       })
