@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.3.0",
-    "cat-log": "^1.0.0",
+    "cat-log": "^1.0.1",
     "co": "^4.6.0",
     "dotenv": "^2.0.0",
     "eventemitter2": "^1.0.2",
