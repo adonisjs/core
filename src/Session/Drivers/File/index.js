@@ -40,7 +40,7 @@ class File {
     return new Promise(function (resolve, reject) {
       fs.writeFile(filePath, data, function (err) {
         if (err) {
-          return reject(err)
+          reject(err)
         }
         resolve()
       })
@@ -61,7 +61,7 @@ class File {
       mkdirp(storagePath, function (err) {
         /* istanbul ignore if */
         if (err) {
-          return reject(err)
+          reject(err)
         }
         resolve()
       })
@@ -81,7 +81,7 @@ class File {
     return new Promise(function (resolve, reject) {
       fs.readFile(filePath, function (err, contents) {
         if (err) {
-          return reject(err)
+          reject(err)
         }
         resolve(contents.toString('utf8'))
       })
