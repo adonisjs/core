@@ -27,7 +27,7 @@ const readFile = function (filePath) {
   return new Promise(function (resolve, reject) {
     fs.readFile(filePath, function (err, contents) {
       if(err){
-        return reject(err)
+        reject(err)
       }
       resolve(contents.toString())
     })

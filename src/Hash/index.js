@@ -38,7 +38,7 @@ Hash.make = function (value, rounds) {
   return new Promise(function (resolve, reject) {
     bcrypt.hash(value, rounds, function (error, hash) {
       if (error) {
-        return reject(error)
+        reject(error)
       }
       resolve(hash)
     })
@@ -63,7 +63,7 @@ Hash.verify = function (value, hash) {
   return new Promise(function (resolve, reject) {
     bcrypt.compare(value, hash, function (error, response) {
       if (error) {
-        return reject(error)
+        reject(error)
       }
       resolve(response)
     })
