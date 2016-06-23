@@ -54,10 +54,12 @@ class View {
    * @public
    */
   make (templatePath, data) {
-    return new Promise((resolve, reject) => {
-      this.viewsEnv.render(templatePath, data, (err, templateContent) => {
+    let self = this
+    return new Promise(function (resolve, reject) {
+      self.viewsEnv.render(templatePath, data, function (err, templateContent) {
         if (err) {
           reject(err)
+          return
         }
         resolve(templateContent)
       })

@@ -42,7 +42,7 @@ class Static {
     return new Promise((resolve, reject) => {
       this.server(request, response, (error) => {
         if (!error) {
-          resolve()
+          return resolve()
         }
         error.message = `Route ${error.message} while resolving ${request.url}`
         reject(error)
