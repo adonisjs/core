@@ -684,6 +684,27 @@ describe('Request', function () {
     expect(res.body.file).to.equal(true)
   })
 
+  it('should return an array of uploaded files instances when multiple files are uploaded', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logos = request.file('logo[]')
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({logo1: logos[0] instanceof File, logo2: logos[1] instanceof File}), 'utf8')
+      })
+    })
+    const res = yield supertest(server).get("/")
+      .attach('logo[]',__dirname+'/uploads/npm-logo.svg')
+      .attach('logo[]',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+
+    expect(res.body.logo1).to.equal(true)
+    expect(res.body.logo2).to.equal(true)
+  })
+
   it('should return true when a pattern matches the current route url', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)

@@ -497,18 +497,16 @@ class Request {
      * grabbing file from uploaded files and
      * converting them to file instance
      */
-    const fileToReturn = this._files[key].toJSON()
+    const fileToReturn = this._files[key]
 
     /**
      * if multiple file upload , convert of them to
      * file instance
      */
     if (_.isArray(fileToReturn)) {
-      return _.map(fileToReturn, (file) => {
-        return this._toFileInstance(file)
-      })
+      return _.map(fileToReturn, (file) => this._toFileInstance(file.toJSON()))
     }
-    return this._toFileInstance(fileToReturn)
+    return this._toFileInstance(fileToReturn.toJSON())
   }
 
   /**
