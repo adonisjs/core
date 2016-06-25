@@ -47,7 +47,7 @@
     "node-cookie": "^1.0.2",
     "node-exceptions": "^1.0.1",
     "node-req": "^1.0.3",
-    "node-res": "^2.0.2",
+    "node-res": "^3.0.0",
     "node-uuid": "^1.4.7",
     "nunjucks": "^2.3.0",
     "path-to-regexp": "^1.3.0",
