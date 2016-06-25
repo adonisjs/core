@@ -178,7 +178,7 @@ class Response {
    * @public
    */
   download (filePath) {
-    nodeRes.download(this.response, filePath)
+    nodeRes.download(this.request, this.response, filePath)
   }
 
   /**
@@ -194,7 +194,7 @@ class Response {
    * @public
    */
   attachment (filePath, name, disposition) {
-    nodeRes.attachment(this.response, filePath, name, disposition)
+    nodeRes.attachment(this.request, this.response, filePath, name, disposition)
   }
 
   /**
