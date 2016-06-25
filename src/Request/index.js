@@ -463,12 +463,13 @@ class Request {
    * if already is not an instance
    *
    * @param  {Object}        file
+   * @param  {Object} [options]
    * @return {Object}
    * @private
    */
-  _toFileInstance (file) {
+  _toFileInstance (file, options) {
     if (!(file instanceof File)) {
-      file = new File(file)
+      file = new File(file, options)
     }
     return file
   }
@@ -478,13 +479,14 @@ class Request {
    * @instance Request.file
    *
    * @param  {String} key
+   * @param  {Objecr} [options]
    * @return {Object}
    *
    * @example
    * request.file('avatar')
    * @public
    */
-  file (key) {
+  file (key, options) {
     /**
      * if requested file was not uploaded return an
      * empty instance of file object.
@@ -504,9 +506,9 @@ class Request {
      * file instance
      */
     if (_.isArray(fileToReturn)) {
-      return _.map(fileToReturn, (file) => this._toFileInstance(file.toJSON()))
+      return _.map(fileToReturn, (file) => this._toFileInstance(file.toJSON(), options))
     }
-    return this._toFileInstance(fileToReturn.toJSON())
+    return this._toFileInstance(fileToReturn.toJSON(), options)
   }
 
   /**

@@ -11,6 +11,7 @@
 
 const path = require('path')
 const fs = require('fs')
+const bytes = require('bytes')
 
 /**
  * Used by request object internally to manage file uploads.
@@ -21,11 +22,123 @@ const fs = require('fs')
  */
 class File {
 
-  constructor (formidableObject) {
+  constructor (formidableObject, options) {
+    options = options || {}
     this.file = formidableObject
     this.file.error = null
-    this.file.filename = ''
-    this.file.filepath = ''
+    this.file.fileName = ''
+    this.file.maxSize = options.maxSize ? bytes(options.maxSize) : null
+    this.file.allowedExtensions = options.allowedExtensions || []
+    this.file.filePath = ''
+  }
+
+  /**
+   * sets error on the file instance and clears
+   * the file name and path
+   *
+   * @param   {String} error
+   *
+   * @private
+   */
+  _setError (error) {
+    this.file.error = error
+    this.file.fileName = ''
+    this.file.filePath = ''
+  }
+
+  /**
+   * sets filePath and name after the move
+   * and clears the error.
+   *
+   * @param   {String} fileName
+   * @param   {String} filePath
+   *
+   * @private
+   */
+  _setUploadedFile (fileName, filePath) {
+    this.file.error = null
+    this.file.fileName = fileName
+    this.file.filePath = filePath
+  }
+
+  /**
+   * sets file size exceeds error
+   *
+   * @private
+   */
+  _setFileSizeExceedsError () {
+    this._setError(`Uploaded file size ${bytes(this.clientSize())} exceeds the limit of ${bytes(this.file.maxSize)}`)
+  }
+
+  /**
+   * sets file size extension error
+   *
+   * @private
+   */
+  _setFileExtensionError () {
+    this._setError(`Uploaded file extension ${this.extension()} is not valid`)
+  }
+
+  /**
+   * validates the file size
+   *
+   * @return  {Boolean}
+   *
+   * @private
+   */
+  _underAllowedSize () {
+    return !this.file.maxSize || (this.clientSize() <= this.file.maxSize)
+  }
+
+  /**
+   * returns whether file has one of the defined extension
+   * or not.
+   *
+   * @return  {Boolean} [description]
+   *
+   * @private
+   */
+  _hasValidExtension () {
+    return !this.file.allowedExtensions.length || this.file.allowedExtensions.indexOf(this.extension()) > -1
+  }
+
+  /**
+   * a method to validate a given file.
+   *
+   * @return {Boolean}
+   */
+  validate () {
+    if (!this._hasValidExtension()) {
+      this._setFileExtensionError()
+      return false
+    } else if (!this._underAllowedSize()) {
+      this._setFileSizeExceedsError()
+      return false
+    }
+    return true
+  }
+
+  /**
+   * validates the file size and move it to the destination
+   *
+   * @param   {String} fileName
+   * @param   {String} completePath
+   *
+   * @return  {Promise}
+   *
+   * @private
+   */
+  _validateAndMove (fileName, completePath) {
+    return new Promise((resolve) => {
+      if (!this.validate()) {
+        resolve()
+        return
+      }
+      fs.rename(this.tmpPath(), completePath, (error) => {
+        error ? this._setError(error) : this._setUploadedFile(fileName, completePath)
+        resolve()
+      })
+    })
   }
 
   /**
@@ -43,20 +156,7 @@ class File {
   move (toPath, name) {
     name = name || this.clientName()
     const uploadingFileName = `${toPath}/${name}`
-    return new Promise((resolve) => {
-      fs.rename(this.tmpPath(), uploadingFileName, (err) => {
-        if (err) {
-          this.file.error = err
-          this.file.filename = ''
-          this.file.filepath = ''
-        } else {
-          this.file.error = null
-          this.file.filename = name
-          this.file.filepath = uploadingFileName
-        }
-        resolve()
-      })
-    })
+    return this._validateAndMove(name, uploadingFileName)
   }
 
   /**
@@ -122,7 +222,7 @@ class File {
    * @public
    */
   uploadName () {
-    return this.file.filename
+    return this.file.fileName
   }
 
   /**
@@ -133,7 +233,7 @@ class File {
    * @public
    */
   uploadPath () {
-    return this.file.filepath
+    return this.file.filePath
   }
 
   /**
@@ -167,6 +267,18 @@ class File {
    */
   errors () {
     return this.file.error
+  }
+
+  /**
+   * returns the JSON representation of the
+   * file instance.
+   *
+   * @return {Object}
+   *
+   * @public
+   */
+  toJSON () {
+    return this.file
   }
 
 }

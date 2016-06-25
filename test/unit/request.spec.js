@@ -705,6 +705,90 @@ describe('Request', function () {
     expect(res.body.logo2).to.equal(true)
   })
 
+  it('should be able to define max size for a given file', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logo = request.file('logo', {maxSize: '1kb'})
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+      })
+    })
+
+    const res = yield supertest(server).get("/")
+      .attach('logo',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+    expect(res.body.logo.maxSize).to.equal(1024)
+  })
+
+  it('should be able to define allowed extensions for a given file', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logo = request.file('logo', {allowedExtensions: ['jpg']})
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+      })
+    })
+
+    const res = yield supertest(server).get("/")
+      .attach('logo',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+    expect(res.body.logo.allowedExtensions).deep.equal(['jpg'])
+  })
+
+  it('should return error when trying to move a file of larger size', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logo = request.file('logo', {maxSize: '100b'})
+        logo
+        .move()
+        .then(() => {
+          res.writeHead(200, {"Content-type":"application/json"})
+          res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+        })
+      })
+    })
+
+    const res = yield supertest(server).get("/")
+      .attach('logo',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+    expect(res.body.logo.error).to.equal('Uploaded file size 235B exceeds the limit of 100B')
+  })
+
+  it('should return error when trying to move a file of invalid extension', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logo = request.file('logo', {allowedExtensions: ['jpg']})
+        logo
+        .move()
+        .then(() => {
+          res.writeHead(200, {"Content-type":"application/json"})
+          res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+        })
+      })
+    })
+
+    const res = yield supertest(server).get("/")
+      .attach('logo',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+    expect(res.body.logo.error).to.equal('Uploaded file extension svg is not valid')
+  })
+
   it('should return true when a pattern matches the current route url', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
