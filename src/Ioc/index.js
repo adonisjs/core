@@ -121,10 +121,11 @@ Ioc._extendProvider = function (namespace) {
     const extender = providerExtenders[namespace]
     const manager = providerManagers[namespace]
     _.each(extender, function (item) {
-      const closure = item.closure
       const key = item.key
-      const defination = closure(Ioc)
-      manager.extend(key, defination)
+      const args = item.args
+      const closureOutput = item.closure(Ioc)
+      const methodArgs = [key, closureOutput].concat(args)
+      manager.extend.apply(manager, methodArgs)
     })
     providerExtenders[namespace] = []
   }
@@ -297,9 +298,10 @@ Ioc.extend = function (namespace, key, closure) {
   if (typeof (closure) !== 'function') {
     throw new Error('Invalid arguments, extend expects a callback')
   }
+  const args = _.drop(_.toArray(arguments), 3)
   log.verbose('extending %s', namespace)
   providerExtenders[namespace] = providerExtenders[namespace] || []
-  providerExtenders[namespace].push({key, closure})
+  providerExtenders[namespace].push({key, closure, args})
 }
 
 /**
