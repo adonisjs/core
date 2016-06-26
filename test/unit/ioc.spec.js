@@ -51,6 +51,26 @@ describe('Ioc', function () {
       expect(Ioc.getManagers()['App/Foo']).deep.equal(Foo)
     })
 
+    it('should pass all the extend arguments to the manager extend method', function () {
+      let extendArgs = {}
+      class Foo {
+        static extend () {
+          extendArgs = arguments
+        }
+      }
+      Ioc.manager('App/Foo', Foo)
+      Ioc.bind('App/Foo', function () {
+        return new Foo()
+      })
+      Ioc.extend('App/Foo', 'bar', function () {
+        return {}
+      }, 'baz')
+      Ioc.use('App/Foo')
+      expect(extendArgs['0']).to.equal('bar')
+      expect(extendArgs['1']).deep.equal({})
+      expect(extendArgs['2']).to.equal('baz')
+    })
+
     it('should throw an error when manager does not have extend method', function () {
       class Foo {
       }
@@ -143,7 +163,7 @@ describe('Ioc', function () {
       expect(session2.constructor.drivers).to.have.property('redis')
     })
 
-    it('make extenders are getting called even when trying to resolve provider using alias', function () {
+    it('make sure extenders are getting called even when trying to resolve provider using alias', function () {
       class RedisSession {
       }
       class SessionManager {

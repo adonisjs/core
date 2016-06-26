@@ -1,15 +1,15 @@
 {
   "name": "adonis-fold",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "npm run standard && istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "coverage": "istanbul cover _mocha test/unit --bail",
-    "standard": "standard src/**/*.js test/**/*.spec.js"
+    "lint": "standard src/**/*.js test/**/*.spec.js"
   },
   "author": "adonisjs",
   "license": "MIT",
