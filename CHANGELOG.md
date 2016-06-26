@@ -1,3 +1,46 @@
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/adonisjs/adonis-framework/compare/v2.0.9...v3.0.0) (2016-06-26)
+
+
+### Bug Fixes
+
+* **linting:** fix linting error inside view extensions file([3095839](https://github.com/adonisjs/adonis-framework/commit/3095839))
+* **middleware:** Fix middleware layer to execute middleware in reverse after controller call([97857ab](https://github.com/adonisjs/adonis-framework/commit/97857ab))
+* **request:** handle multiple file uploads([2d0dfcb](https://github.com/adonisjs/adonis-framework/commit/2d0dfcb))
+* **route:test:** improve test expectations to match instead of strict equal([31e8d6c](https://github.com/adonisjs/adonis-framework/commit/31e8d6c))
+* **server:** add try/catch block to handle errors outside of co([36a40b6](https://github.com/adonisjs/adonis-framework/commit/36a40b6))
+* **server:** Fix for [#128](https://github.com/adonisjs/adonis-framework/issues/128)([4aa4f80](https://github.com/adonisjs/adonis-framework/commit/4aa4f80)), closes [#128](https://github.com/adonisjs/adonis-framework/issues/128)
+* **session:** fix sessions provider after node-cookie upgrade([8990f0d](https://github.com/adonisjs/adonis-framework/commit/8990f0d))
+* **static-server:** Fix for [#124](https://github.com/adonisjs/adonis-framework/issues/124) where node-static was crashing([38efbd4](https://github.com/adonisjs/adonis-framework/commit/38efbd4)), closes [#124](https://github.com/adonisjs/adonis-framework/issues/124) [#124](https://github.com/adonisjs/adonis-framework/issues/124)
+* **static-server:** Fix for [#124](https://github.com/adonisjs/adonis-framework/issues/124) where node-static was crashing([787573d](https://github.com/adonisjs/adonis-framework/commit/787573d)), closes [#124](https://github.com/adonisjs/adonis-framework/issues/124) [#124](https://github.com/adonisjs/adonis-framework/issues/124)
+
+
+### Features
+
+* **Env:** add support to load .env from different location([2503fbb](https://github.com/adonisjs/adonis-framework/commit/2503fbb))
+* **event:** add property eventName to scope emitter object([fee2a36](https://github.com/adonisjs/adonis-framework/commit/fee2a36))
+* **event:** add support for event emitter([8a7b3a7](https://github.com/adonisjs/adonis-framework/commit/8a7b3a7))
+* **file:** allow file instance to take validation options([36e3f1b](https://github.com/adonisjs/adonis-framework/commit/36e3f1b))
+* **form-helper:** added form.open method to create html form tag([e6367ff](https://github.com/adonisjs/adonis-framework/commit/e6367ff))
+* **form-helper:** added method to add labels([e56a834](https://github.com/adonisjs/adonis-framework/commit/e56a834))
+* **form-helper:** implemented all required html tags([082e8c8](https://github.com/adonisjs/adonis-framework/commit/082e8c8))
+* **helpers:** add makeNameSpace method([651972f](https://github.com/adonisjs/adonis-framework/commit/651972f))
+* **helpers:** add method to know whether process is for ace command([4beb8a2](https://github.com/adonisjs/adonis-framework/commit/4beb8a2))
+* **helpers:** add methods to get path to database directories([85688c8](https://github.com/adonisjs/adonis-framework/commit/85688c8))
+* **request:** Add collect method to form group of arrays with keys([d0e5303](https://github.com/adonisjs/adonis-framework/commit/d0e5303))
+* **request:** add support for adding macros([cfd129b](https://github.com/adonisjs/adonis-framework/commit/cfd129b))
+* **response:** add macro support([d7ad0ee](https://github.com/adonisjs/adonis-framework/commit/d7ad0ee))
+* **Route:** add router helper to render view([0f517cb](https://github.com/adonisjs/adonis-framework/commit/0f517cb))
+* **server:** add support to disable _method spoofing([43f21a2](https://github.com/adonisjs/adonis-framework/commit/43f21a2))
+* **server:** added the ability to obtain instance http.createServer () for socket.io ([#165](https://github.com/adonisjs/adonis-framework/issues/165))([8d221d0](https://github.com/adonisjs/adonis-framework/commit/8d221d0))
+* **static:** Switch to server-static for serving static files([cc5be2a](https://github.com/adonisjs/adonis-framework/commit/cc5be2a))
+* **view:** Add config option to disable service injection([9a9f3d4](https://github.com/adonisjs/adonis-framework/commit/9a9f3d4))
+* **view:** add globals for linkTo and linkToAction([3e6530d](https://github.com/adonisjs/adonis-framework/commit/3e6530d))
+* **view:** added makeString method and filter for making urls using controller methods([da7d080](https://github.com/adonisjs/adonis-framework/commit/da7d080))
+* **view:** Make all views to have .nunjucks extension [#133](https://github.com/adonisjs/adonis-framework/issues/133)([8535172](https://github.com/adonisjs/adonis-framework/commit/8535172)), closes [#133](https://github.com/adonisjs/adonis-framework/issues/133)
+
+
+
 <a name="2.0.10"></a>
 ## [2.0.10](https://github.com/adonisjs/adonis-framework/compare/v2.0.9...v2.0.10) (2016-03-26)
 
