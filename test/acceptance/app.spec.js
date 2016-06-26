@@ -15,7 +15,6 @@ const Helpers = require('../../src/Helpers')
 const Ioc = require("adonis-fold").Ioc
 const queryString = require('querystring')
 const Middleware = require('../../src/Middleware')
-const App = require('../../src/App')
 require('co-mocha')
 
 Browser.localhost('localhost', 3333)
@@ -25,7 +24,6 @@ describe('App Exceptations', function () {
 
   before(function () {
     server().listen('0.0.0.0',3333);
-    App.removeAllListeners('error')
     Ioc.autoload(Helpers.appNameSpace(),Helpers.appPath())
   })
 
@@ -95,6 +93,22 @@ describe('App Exceptations', function () {
     expect(browser.text('body').trim()).to.equal('1')
   })
 
+  it('should return the request elapsed when controller has set timeout', function * () {
+    Middleware.global(['App/Http/Middleware/Logger'])
+    const done = function () {
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          resolve()
+        }, 1000)
+      })
+    }
+    Route.get('/', function * (request, response) {
+      yield done(request)
+    })
+    yield browser.visit('/')
+    expect(parseInt(browser.text('body').trim())).to.be.above(999)
+  })
+
   it('should redirect request to a named route', function * () {
     Route.get('/', 'HomeController.redirect')
     Route.get('/:id', 'HomeController.profile').as('profile')
@@ -146,4 +160,19 @@ describe('App Exceptations', function () {
     expect(browser.text('body').trim()).to.equal('sending via view');
   })
 
+  it('should make use of form global helper to setup a form', function * () {
+    Route.get('/', function * (request, response) {
+      yield response.sendView('form')
+    })
+    yield browser.visit('/')
+    expect(browser.html('form')).not.to.equal('')
+    expect(browser.html('input')).not.to.equal('')
+    expect(browser.html('button')).not.to.equal('')
+  })
+
+  it('should render a view using router render method', function * () {
+    Route.on('/signup').render('signup')
+    yield browser.visit('/signup?name=virk')
+    expect(browser.text('body')).to.equal('the url is /signup and the name is virk')
+  })
 })

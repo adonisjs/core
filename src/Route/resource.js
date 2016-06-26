@@ -8,31 +8,46 @@
 
 const _ = require('lodash')
 const helpers = require('./helpers')
+const CatLog = require('cat-log')
+const logger = new CatLog('adonis:framework')
+const util = require('../../lib/util')
+const NE = require('node-exceptions')
 
+/**
+ * Resource management for Http routes.
+ * @class
+ * @alias Route.Resource
+ */
 class Resource {
 
   constructor (RouteHelper, pattern, handler) {
     if (typeof (handler) !== 'string') {
-      throw new Error('You can only bind controllers to resources')
+      throw new NE.DomainException('You can only bind controllers to resources')
+    }
+    if (pattern === '/') {
+      logger.warn('You are registering a resource for / path, which is not a good practice')
     }
     this.RouteHelper = RouteHelper
+    this.pattern = this._makePattern(pattern)
+    this.handler = handler
     this.routes = []
     this.basename = pattern.replace('/', '')
-    this._buildRoutes(pattern, handler)
+    this._buildRoutes()
     return this
   }
 
   /**
-   * @description register a route to the routes store
+   * register a route to the routes store
    * and pushes it to local array to reference it
    * later
-   * @method _registerRoute
+   *
    * @param  {String}       verb
    * @param  {String}       route
    * @param  {String}       handler
    * @param  {String}       name
    * @return {void}
-   * @public
+   *
+   * @private
    */
   _registerRoute (verb, route, handler, name) {
     const resourceName = (this.basename === '/' || !this.basename) ? name : `${this.basename}.${name}`
@@ -41,33 +56,52 @@ class Resource {
   }
 
   /**
-   * @description builds all routes for a given pattern
-   * @method _buildRoutes
-   * @param  {String}     pattern
-   * @param  {String}     handler
-   * @return {void}
-   * @public
+   * creates pattern for a given resource by removing
+   * {.} with nested route resources.
+   *
+   * @param  {String} pattern [description]
+   * @return {String}         [description]
+   *
+   * @example
+   * user.post.comment will return
+   * user/user_id/post/post_id/comment
+   *
+   * @private
    */
-  _buildRoutes (pattern, handler) {
-    pattern = pattern.replace(/(\w+)\./g, function (index, group) {
+  _makePattern (pattern) {
+    return pattern.replace(/(\w+)\./g, function (index, group) {
       return `${group}/:${group}_id/`
-    })
-    const seperator = pattern.endsWith('/') ? '' : '/'
-
-    this._registerRoute(['GET', 'HEAD'], pattern, handler, 'index')
-    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}create`, handler, 'create')
-    this._registerRoute('POST', `${pattern}`, handler, 'store')
-    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}:id`, handler, 'show')
-    this._registerRoute(['GET', 'HEAD'], `${pattern}${seperator}:id/edit`, handler, 'edit')
-    this._registerRoute(['PUT', 'PATCH'], `${pattern}${seperator}:id`, handler, 'update')
-    this._registerRoute('DELETE', `${pattern}${seperator}:id`, handler, 'destroy')
+    }).replace(/\/$/, '')
   }
 
   /**
-   * @description transform methods keys to resource route names
+   * builds all routes for a given pattern
+   *
+   * @method _buildRoutes
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _buildRoutes () {
+    this._registerRoute(['GET', 'HEAD'], this.pattern, this.handler, 'index')
+    this._registerRoute(['GET', 'HEAD'], `${this.pattern}/create`, this.handler, 'create')
+    this._registerRoute('POST', `${this.pattern}`, this.handler, 'store')
+    this._registerRoute(['GET', 'HEAD'], `${this.pattern}/:id`, this.handler, 'show')
+    this._registerRoute(['GET', 'HEAD'], `${this.pattern}/:id/edit`, this.handler, 'edit')
+    this._registerRoute(['PUT', 'PATCH'], `${this.pattern}/:id`, this.handler, 'update')
+    this._registerRoute('DELETE', `${this.pattern}/:id`, this.handler, 'destroy')
+  }
+
+  /**
+   * transform methods keys to resource route names
+   *
    * @method _transformKeys
+   *
    * @param  {Array}       pairKeys
    * @return {Array}
+   *
+   * @private
    */
   _transformKeys (pairKeys) {
     return pairKeys.map((item) => {
@@ -76,11 +110,7 @@ class Resource {
   }
 
   /**
-   * @description change names for defined routes mapped
-   * next to actions
-   * @method as
-   * @param  {Object} pairs
-   * @return {Object}
+   * {@link module:Route~as}
    */
   as (pairs) {
     const pairKeys = _.keys(pairs)
@@ -95,14 +125,21 @@ class Resource {
   }
 
   /**
-   * @description removes all other actions from routes
-   * resources except the given array
-   * @method only
-   * @param  {Array} methods
-   * @return {Object}
+   * removes all other actions from routes resources
+   * except the given array
+   *
+   * @param  {Mixed} methods - An array of methods or multiple parameters defining
+   *                           methods
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').only('create', 'store')
+   * Route.resource('...').only(['create', 'store'])
+   *
    * @public
    */
-  only (methods) {
+  only () {
+    const methods = util.spread.apply(this, arguments)
     const transformedMethods = this._transformKeys(methods)
     this.routes = _.filter(this.routes, (route) => {
       if (transformedMethods.indexOf(route.name) <= -1) {
@@ -115,14 +152,20 @@ class Resource {
   }
 
   /**
-   * @description removes actions defined inside given array
-   * from all resources routes
-   * @method except
-   * @param  {Array} methods
-   * @return {Object}
+   * filters resource by removing routes for defined actions
+   *
+   * @param  {Mixed} methods - An array of methods or multiple parameters defining
+   *                           methods
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').except('create', 'store')
+   * Route.resource('...').except(['create', 'store'])
+   *
    * @public
    */
-  except (methods) {
+  except () {
+    const methods = util.spread.apply(this, arguments)
     const transformedMethods = this._transformKeys(methods)
     this.routes = _.filter(this.routes, (route) => {
       if (transformedMethods.indexOf(route.name) > -1) {
@@ -134,16 +177,61 @@ class Resource {
     return this
   }
 
-    /**
-   * @description adds formats to an array of routes
-   * @method formats
-   * @param  {Array} formats [description]
-   * @param  {Boolean} strict  [description]
-   * @return {Object}         [description]
-   * @public
+  /**
+   * See {@link module:Route~formats}
    */
   formats (formats, strict) {
     helpers.addFormats(this.routes, formats, strict)
+    return this
+  }
+
+  /**
+   * add a member route to the resource
+   *
+   * @param  {String} action - the handle action method
+   *
+   * @param  {String} route - Route and action to be added to the resource
+   * @param  {Mixed}  [verbs=['GET', 'HEAD']]  - An array of verbs
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').addMember('completed')
+   *
+   * @public
+   */
+  addMember (route, verbs) {
+    if (_.isEmpty(route)) {
+      throw new NE.InvalidArgumentException('action argument must be present')
+    }
+
+    verbs = verbs || ['GET', 'HEAD']
+    verbs = _.isArray(verbs) ? verbs : [verbs]
+    this._registerRoute(verbs, `${this.pattern}/:id/${route}`, this.handler, route)
+    return this
+  }
+
+  /**
+   * add a collection route to the resource
+   *
+   * @param  {String} action - the handle action method
+   *
+   * @param  {String} route - Route and action to be added to the resource
+   * @param  {Mixed}  [verbs=['GET', 'HEAD']]  - An array of verbs
+   * @return {Object} - reference to resource instance for chaining
+   *
+   * @example
+   * Route.resource('...').addCollection('completed')
+   *
+   * @public
+   */
+  addCollection (route, verbs) {
+    if (_.isEmpty(route)) {
+      throw new NE.InvalidArgumentException('action argument must be present')
+    }
+
+    verbs = verbs || ['GET', 'HEAD']
+    verbs = _.isArray(verbs) ? verbs : [verbs]
+    this._registerRoute(verbs, `${this.pattern}/${route}`, this.handler, route)
     return this
   }
 

@@ -46,6 +46,10 @@ describe('Response', function () {
     this.Response = new ResponseBuilder(view, Route, Config)
   })
 
+  beforeEach(function () {
+    Route.new()
+  })
+
   it('should respond to a request using send method', function * (done) {
     const server = http.createServer((req, res) => {
       const request = new Request(req,res, Config)
@@ -215,6 +219,26 @@ describe('Response', function () {
     done()
   })
 
+  it('should set location header to referrer on response', function * () {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.location('back').send('')
+    })
+    const res = yield supertest(server).get('/').set('Referrer', '/foo').expect(200).end()
+    expect(res.headers.location).to.equal('/foo')
+  })
+
+  it('should set location header to / when there is no referrer on request', function * () {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.location('back').send('')
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.headers.location).to.equal('/')
+  })
+
   it('should set location header on response using redirect method', function * (done) {
     const server = http.createServer((req, res) => {
       const request = new Request(req,res, Config)
@@ -223,6 +247,28 @@ describe('Response', function () {
     })
     const res = yield supertest(server).get('/').expect(302).end()
     expect(res.headers.location).to.equal('http://amanvirk.me')
+    done()
+  })
+
+  it('should set location header to referrer when using back with redirect method', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.redirect('back')
+    })
+    const res = yield supertest(server).get('/').set('Referrer', '/bar').expect(302).end()
+    expect(res.headers.location).to.equal('/bar')
+    done()
+  })
+
+  it('should set location header to / when there is no referrer defined using redirect method', function * (done) {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.redirect('back')
+    })
+    const res = yield supertest(server).get('/').expect(302).end()
+    expect(res.headers.location).to.equal('/')
     done()
   })
 
@@ -235,6 +281,21 @@ describe('Response', function () {
     })
     const res = yield supertest(server).get('/').expect(302).end()
     expect(res.headers.location).to.equal('/user/1')
+    done()
+  })
+
+  it('should redirect to a given route using route method when it is under a domain', function * (done) {
+    Route.group('g', function () {
+      Route.get('/user/:id', function * () {}).as('profile')
+    }).domain('virk.adonisjs.com')
+
+    const server = http.createServer((req, res) => {
+      const request = new Request(req,res, Config)
+      const response = new this.Response(request, res)
+      response.route('profile', {id:1})
+    })
+    const res = yield supertest(server).get('/').expect(302).end()
+    expect(res.headers.location).to.equal('virk.adonisjs.com/user/1')
     done()
   })
 
@@ -269,7 +330,6 @@ describe('Response', function () {
       }).then (function (responseView) {
         response.send(responseView)
       }).catch(function (err) {
-        console.log(err)
         response.status(200).send(err)
       })
     })
@@ -289,7 +349,6 @@ describe('Response', function () {
       co(function * () {
        yield response.sendView('index')
       }).catch(function (err) {
-        console.log(err)
         response.status(200).send(err)
       })
     })
@@ -336,6 +395,24 @@ describe('Response', function () {
     }catch(e){
       done(e)
     }
+  })
+
+  it('should be able to add macro to the response prototype', function () {
+    const Response = new ResponseBuilder({}, Route, Config)
+    Response.macro('foo', function () {
+      return 'foo'
+    })
+    const response = new Response({}, {setHeader: function () {}})
+    expect(response.foo()).to.equal('foo')
+  })
+
+  it('should have access to instance inside the callback', function * () {
+    const Response = new ResponseBuilder({}, Route, Config)
+    Response.macro('foo', function () {
+      return this.request.name
+    })
+    const response = new Response({name: 'bar'}, {setHeader: function () {}})
+    expect(response.foo()).to.equal('bar')
   })
 
 })

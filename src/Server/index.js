@@ -2,71 +2,227 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const CatLog = require('cat-log')
 const helpers = require('./helpers')
 const http = require('http')
+const co = require('co')
+const Ioc = require('adonis-fold').Ioc
+const NE = require('node-exceptions')
 
+/**
+ * Http server for adonis framework
+ * @class
+ */
 class Server {
 
-  constructor (Request, Response, Route, Helpers, Middleware, Static, Session, Config) {
+  constructor (Request, Response, Route, Helpers, Middleware, Static, Session, Config, Event) {
     this.Request = Request
+    this.controllersPath = 'Http/Controllers'
     this.Response = Response
     this.Session = Session
-    this.Route = Route
+    this.route = Route
     this.middleware = Middleware
     this.static = Static
     this.helpers = Helpers
     this.config = Config
+    this.event = Event
     this.log = new CatLog('adonis:framework')
+    this.httpInstance = null
   }
 
   /**
-   * @description responds to request by finding registered
-   * route or fallbacks to static resource.
-   * @method _finalHandler
-   * @param  {Object}      request  [description]
-   * @param  {Object}      response [description]
-   * @return {void}               [description]
+   * responds to a given http request by calling all global
+   * middleware and finally executing the route action.
+   *
+   * @param  {Object} request
+   * @param  {Object} response
+   * @param  {Function} finalHandler
+   *
    * @private
    */
-  _finalHandler (resolvedRoute, request, response) {
-    /**
-     * calling request action handler by making a middleware
-     * layer of named middleware and finally invoking
-     * route action.
-     */
-    if (resolvedRoute.handler) {
-      helpers.callRouteAction(resolvedRoute, request, response, this.middleware, this.helpers.appNameSpace())
-      return
+  _respond (request, response, finalHandler) {
+    try {
+      const chain = helpers.makeMiddlewareChain(this.middleware, finalHandler, true)
+      return this._executeChain(chain, request, response)
+    } catch (e) {
+      this._handleError(e, request, response)
     }
-
-    const error = new Error(`Route not found ${request.url()}`)
-    error.status = 404
-    throw error
   }
 
   /**
-   * @description serves a static resource
-   * @method _staticHandler
-   * @param  {Object}       request  [description]
-   * @param  {Object}       response [description]
-   * @return {Promise}                [description]
-   * @public
+   * responds to request by finding registered
+   * route or throwing 404 error
+   *
+   * @param  {Object}      request
+   * @param  {Object}      response
+   * @throws {HttpException} If there is not registered route action
+   *
+   * @private
+   */
+  _callRouteAction (resolvedRoute, request, response) {
+    if (!resolvedRoute.handler) {
+      throw new NE.HttpException(`Route not found ${request.url()}`, 404)
+    }
+    const routeAction = this._makeRouteAction(resolvedRoute.handler)
+    const chain = helpers.makeMiddlewareChain(this.middleware, routeAction, false, resolvedRoute)
+    return this._executeChain(chain, request, response)
+  }
+
+  /**
+   * makes route action based upon the type of registered handler
+   *
+   * @param  {Function|String}         handler
+   * @return {Object}
+   *
+   * @throws {InvalidArgumentException} If a valid handler type is not found
+   *
+   * @private
+   */
+  _makeRouteAction (handler) {
+    if (typeof (handler) === 'function') {
+      return this._makeClosureAction(handler)
+    }
+    if (typeof (handler) === 'string') {
+      return this._makeControllerAction(handler)
+    }
+    throw new NE.InvalidArgumentException('Invalid route handler, attach a controller method or a closure', 500)
+  }
+
+  /**
+   * returns route closure by wrapping it inside an object,
+   * same is done to make it compatible with middleware
+   * compose method
+   *
+   * @param  {Function}           closure
+   * @return {Object}
+   *
+   * @private
+   */
+  _makeClosureAction (closure) {
+    this.log.verbose('responding to route using closure')
+    return {instance: null, method: closure}
+  }
+
+  /**
+   * resolves controller action from the Ioc container by
+   * creating the proper namespace
+   *
+   * @param  {String}              handler
+   * @return {Object}
+   *
+   * @private
+   */
+  _makeControllerAction (handler) {
+    return Ioc.makeFunc(this.helpers.makeNameSpace(this.controllersPath, handler))
+  }
+
+  /**
+   * handles any errors thrown with in a given request
+   * and emit them using the Event provider.
+   *
+   * @param  {Object}     error
+   * @param  {Object}     request
+   * @param  {Object}     response
+   *
+   * @private
+   */
+  _handleError (error, request, response) {
+    this._normalizeError(error)
+    if (this.event.wildcard() && this.event.hasListeners(['Http', 'error', '*'])) {
+      this.event.fire(['Http', 'error', error.status], error, request, response)
+      return
+    }
+    if (!this.event.wildcard() && this.event.hasListeners(['Http', 'error'])) {
+      this.event.fire(['Http', 'error'], error, request, response)
+      return
+    }
+    this.log.error(error.stack)
+    response.status(error.status).send(error.stack)
+  }
+
+  /**
+   * normalize error object by setting required parameters
+   * if they does not exists
+   *
+   * @param  {Object}        error [description]
+   *
+   * @private
+   */
+  _normalizeError (error) {
+    error.status = error.status || 500
+    error.message = error.message || 'Internal server error'
+    error.stack = error.stack || error.message
+  }
+
+  /**
+   * executes an array of actions by composing them
+   * using middleware provider.
+   *
+   * @param  {Array}    handlers
+   * @param  {Object}   request
+   * @param  {Object}   response
+   *
+   * @private
+   */
+  _executeChain (chain, request, response) {
+    const middleware = this.middleware
+    return co(function * () {
+      yield middleware.compose(chain, request, response)
+    }).catch((e) => {
+      this._handleError(e, request, response)
+    })
+  }
+
+  /**
+   * serves static resource using static server
+   *
+   * @param  {Object}       request
+   * @param  {Object}       response
+   * @return {Promise}
+   *
+   * @private
    */
   _staticHandler (request, response) {
     return this.static.serve(request.request, request.response)
   }
 
   /**
-   * @description createServer handler to respond to a given http request
-   * @method handle
+   * returns request method by spoofing the _method only
+   * if allowed by the applicatin
+   *
+   * @param  {Object}          request
+   * @return {String}
+   *
+   * @private
+   */
+  _getRequestMethod (request) {
+    if (!this.config.get('app.http.allowMethodSpoofing')) {
+      if (request.input('_method')) {
+        this.log.warn('You are making use of method spoofing but it\'s not enabled. Make sure to enable it inside config/app.js file.')
+      }
+      return request.method().toUpperCase()
+    }
+    return request.input('_method', request.method()).toUpperCase()
+  }
+
+  /**
+   * request handler to respond to a given http request
+   *
    * @param  {Object} req
    * @param  {Object} res
-   * @return {void}
+   *
+   * @example
+   * http
+   *   .createServer(Server.handle.bind(Server))
+   *   .listen(3333)
+   *
    * @public
    */
   handle (req, res) {
@@ -74,48 +230,68 @@ class Server {
     const request = new this.Request(req, res, this.config)
     const response = new this.Response(request, res)
     const session = new this.Session(req, res)
-    const requestUrl = request.url()
     request.session = session
-    this.log.verbose('request on url %s ', req.url)
+    this.log.verbose('request on url %s ', request.originalUrl())
 
     /**
      * making request verb/method based upon _method or falling
      * back to original method
      * @type {String}
      */
-    const method = request.input('_method', request.method())
-    const resolvedRoute = this.Route.resolve(requestUrl, method, request.hostname())
+    const method = this._getRequestMethod(request)
+    const resolvedRoute = this.route.resolve(request.url(), method, request.hostname())
     request._params = resolvedRoute.params
 
     const finalHandler = function * () {
-      self._finalHandler(resolvedRoute, request, response)
+      yield self._callRouteAction(resolvedRoute, request, response)
     }
 
+    /**
+     * do not serve static resources when request method is not
+     * GET or HEAD
+     */
     if (method !== 'GET' && method !== 'HEAD') {
-      helpers.respondRequest(this.middleware, request, response, finalHandler)
+      this._respond(request, response, finalHandler)
       return
     }
 
     this._staticHandler(request, response)
     .catch((e) => {
       if (e.status === 404) {
-        helpers.respondRequest(this.middleware, request, response, finalHandler)
+        this._respond(request, response, finalHandler)
         return
       }
-      helpers.handleRequestError(e, request, response)
+      this._handleError(e, request, response)
     })
   }
 
   /**
-   * starting a server on a given port
-   * @param String host
-   * @param String port
-   * @method listen
-   * @return {void}
+   *
+   * @returns {*}
+   * @public
+   */
+  getInstance () {
+    if (!this.httpInstance) {
+      this.httpInstance = http.createServer(this.handle.bind(this))
+    }
+
+    return this.httpInstance
+  }
+
+  /**
+   * starting a server on a given port and host
+   *
+   * @param {String} host
+   * @param {String} port
+   *
+   * @example
+   * Server.listen('localhost', 3333)
+   *
+   * @public
    */
   listen (host, port) {
     this.log.info('serving app on %s:%s', host, port)
-    http.createServer(this.handle.bind(this)).listen(port, host)
+    this.getInstance().listen(port, host)
   }
 
 }

@@ -2,18 +2,22 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const helpers = require('./helpers')
-const subdomains = require('./subdomains')
+const domains = require('./domains')
+const util = require('../../lib/util')
 
 /**
- * @class Group
- * @description Adds functionality to create group of routes and
- * keep code DRY.
- * @public
+ * Route groups to keep configuration DRY for bunch of
+ * routes.
+ * @class
+ * @alias Route.Group
  */
 class Group {
 
@@ -22,46 +26,59 @@ class Group {
   }
 
   /**
-   * @description attach middleware to group of routes.
-   * @method middlewares
-   * @param  {Array}    arrayOfNamedMiddleware
-   * @return {Object}                           reference to this for chaining
-   * @public
+   * @see module:Route~middlewares
    */
-  middlewares (arrayOfNamedMiddleware) {
-    helpers.appendMiddleware(this.routes, arrayOfNamedMiddleware)
+  middlewares () {
+    helpers.appendMiddleware(
+      this.routes,
+      util.spread.apply(this, arguments)
+    )
     return this
   }
 
   /**
-   * @description prefix group of routes
-   * @method prefix
-   * @param  {String} prefix
-   * @return {Object}        reference to this for chaining
+   * @see module:Route~middleware
    */
-  prefix (prefix) {
-    helpers.prefixRoute(this.routes, prefix)
+  middleware () {
+    return this.middlewares.apply(this, arguments)
+  }
+
+  /**
+   * prefix group of routes with a given pattern
+   *
+   * @param  {String} pattern
+   *
+   * @return {Object} - reference to this for chaining
+   *
+   * @example
+   * Route.group('...').prefix('/v1')
+   *
+   * @public
+   */
+  prefix (pattern) {
+    helpers.prefixRoute(this.routes, pattern)
     return this
   }
 
   /**
-   * @description add subdomain to group of routes
-   * @method domain
-   * @param  {String} subdomain
-   * @return {Object}           reference to this for chaining
+   * add domain to group of routes. All routes inside the group
+   * will be matched on define domain
+   *
+   * @param  {String} domain
+   * @return {Object} - reference to this for chaining
+   *
+   * @example
+   * Route.group('...').domain(':user.example.com')
+   *
+   * @public
    */
-  domain (subdomain) {
-    subdomains.add(helpers.makeRoutePattern(subdomain))
-    helpers.addSubdomain(this.routes, subdomain)
+  domain (domain) {
+    domains.add(helpers.makeRoutePattern(domain))
+    helpers.addDomain(this.routes, domain)
   }
 
   /**
-   * @description adds formats to an array of routes
-   * @method formats
-   * @param  {Array} formats [description]
-   * @param  {Boolean} strict  [description]
-   * @return {Object}         [description]
-   * @public
+   * @see module:Route~formats
    */
   formats (formats, strict) {
     helpers.addFormats(this.routes, formats, strict)

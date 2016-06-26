@@ -2,72 +2,119 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const nunjucks = require('nunjucks')
 const ViewLoader = require('./loader')
 const viewFilters = require('./filters')
-const viewExtensions = require('./extensions')
+const viewGlobals = require('./globals')
 
 /**
- * @module View
- * @description View class for adonis framework ,
- * serve jinja like views
+ * View class for adonis framework to serve jinja like views
+ * @class
+ * @alias View
  */
-function View (Helpers, Config, Route) {
-  const viewsPath = Helpers.viewsPath()
-  const viewsCache = Config.get('app.views.cache', true)
-  this.viewsEnv = new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
-  viewExtensions(this.viewsEnv)
-  viewFilters(this.viewsEnv, Route)
-}
+class View {
 
-/**
- * @description compile a view with give template and data
- * @method make
- * @param  {String} template_path
- * @param  {Object} data
- * @return {Promise}
- * @public
- */
-View.prototype.make = function (template_path, data) {
-  let self = this
-  return new Promise(function (resolve, reject) {
-    self.viewsEnv.render(template_path, data, function (err, templateContent) {
-      if (err) {
-        reject(err)
-      } else {
+  constructor (Helpers, Config, Route) {
+    const viewsPath = Helpers.viewsPath()
+    const viewsCache = Config.get('app.views.cache', true)
+    const injectServices = Config.get('app.views.injectServices', false)
+    this.viewsEnv = new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
+
+    /**
+     * only register use, make and yield when the end user
+     * has enabled injectServices inside the config file.
+     */
+    if (injectServices) {
+      require('./services')(this.viewsEnv)
+    }
+
+    viewGlobals(this.viewsEnv, Route)
+    viewFilters(this.viewsEnv, Route)
+  }
+
+  /**
+   * compile a view with give template and data
+   *
+   * @param  {String} template_path
+   * @param  {Object} [data]
+   * @return {Promise}
+   *
+   * @example
+   * View
+   *   .make('index', {})
+   *   .then()
+   *   .catch()
+   * @public
+   */
+  make (templatePath, data) {
+    let self = this
+    return new Promise(function (resolve, reject) {
+      self.viewsEnv.render(templatePath, data, function (err, templateContent) {
+        if (err) {
+          reject(err)
+          return
+        }
         resolve(templateContent)
-      }
+      })
     })
-  })
-}
+  }
 
-/**
- * @description add a filter to view, it also support async execution
- * @method filter
- * @param  {String}   name
- * @param  {Function} callback
- * @param  {Boolean}   async
- * @return {void}
- * @public
- */
-View.prototype.filter = function (name, callback, async) {
-  this.viewsEnv.addFilter(name, callback, async)
-}
+  /**
+   * makes a view from string instead of path, it is
+   * helpful for making quick templates on the
+   * fly.
+   *
+   * @param  {String}   templateString
+   * @param  {Object}   [data]
+   * @return {String}
+   *
+   * @example
+   * view.makeString('Hello {{ user }}', {user: 'doe'})
+   *
+   * @public
+   */
+  makeString (templateString, data) {
+    return this.viewsEnv.renderString(templateString, data)
+  }
 
-/**
- * @description add a global method to views
- * @method global
- * @param  {String} name
- * @param  {Mixed} value
- * @return {void}
- * @public
- */
-View.prototype.global = function (name, value) {
-  this.viewsEnv.addGlobal(name, value)
+  /**
+   * add a filter to view, it also support async execution
+   *
+   * @param  {String}   name
+   * @param  {Function} callback
+   * @param  {Boolean}   async
+   *
+   * @example
+   * View.filter('name', function () {
+   * }, true)
+   *
+   * @public
+   */
+  filter (name, callback, async) {
+    this.viewsEnv.addFilter(name, callback, async)
+  }
+
+  /**
+   * add a global method to views
+   *
+   * @param  {String} name
+   * @param  {Mixed} value
+   *
+   * @example
+   * View.global('key', value)
+   *
+   * @public
+   */
+  global (name, value) {
+    this.viewsEnv.addGlobal(name, value)
+  }
 }
 
 module.exports = View

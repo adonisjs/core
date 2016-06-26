@@ -2,16 +2,21 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const fs = require('fs')
 const mkdirp = require('mkdirp')
 
 /**
- * @class  File
- * @description File driver for session provider
+ * File driver to session provider, to save sessions
+ * inside a file
+ * @class
+ * @alias SessionFileDriver
  */
 class File {
 
@@ -22,12 +27,13 @@ class File {
   }
 
   /**
-   * @description write file to disk for a given session
+   * write file to disk for a given session
    * and session data
-   * @method _writeSessionToFile
+   *
    * @param  {String}            filePath
    * @param  {String}            data
    * @return {void}
+   *
    * @private
    */
   _writeSessionToFile (filePath, data) {
@@ -42,11 +48,12 @@ class File {
   }
 
   /**
-   * @description ensures storage directory by creating
+   * ensures storage directory by creating
    * it or using previously created one.
-   * @method _makeStorageDir
+   *
    * @param  {String}        storagePath
    * @return {void}
+   *
    * @private
    */
   _makeStorageDir (storagePath) {
@@ -62,11 +69,13 @@ class File {
   }
 
   /**
-   * @description reads a given file and returning
+   * reads a given file and returning
    * back into valid promise
-   * @method _readSession
+   *
    * @param {String} filePath
    * @return {Mixed}
+   *
+   * @private
    */
   _readSession (filePath) {
     return new Promise(function (resolve, reject) {
@@ -80,11 +89,14 @@ class File {
   }
 
   /**
-   * @description writes session data to disk
-   * @method write
+   * writes session data to disk
+   *
    * @param  {String} sessionId
    * @param  {String} data
-   * @return {void}
+   *
+   * @example
+   * yield fileDriver.write(sessionId, values)
+   *
    * @public
    */
   * write (sessionId, data) {
@@ -94,11 +106,15 @@ class File {
   }
 
   /**
-   * @description reads session value for a given
+   * reads session value for a given
    * sessionId
-   * @method read
+   *
    * @param  {String} sessionId
    * @return {Object}
+   *
+   * @example
+   * yield fileDriver.read(sessionId)
+   *
    * @public
    */
   * read (sessionId) {

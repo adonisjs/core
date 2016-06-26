@@ -2,8 +2,11 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const pathToRegexp = require('path-to-regexp')
@@ -12,49 +15,52 @@ const _ = require('lodash')
 let RouterHelper = exports = module.exports = {}
 
 /**
- * @function construct
- * @description construct a new route using path-to-regexp
+ * construct a new route using path-to-regexp
+ *
  * @param  {String}   route
  * @param  {String}   verb
  * @param  {Any}      handler
+ *
  * @return {Object}
- * @public
+ * @private
  */
 RouterHelper.construct = function (route, verb, handler, group) {
   route = route.startsWith('/') ? route : `/${route}`
   const pattern = RouterHelper.makeRoutePattern(route)
   const middlewares = []
-  const subdomain = null
+  const domain = null
   const name = route
 
   verb = _.isArray(verb) ? verb : [verb] // a route can register for multiple verbs
-  return {route, verb, handler, pattern, middlewares, name, group, subdomain}
+  return {route, verb, handler, pattern, middlewares, name, group, domain}
 }
 
 /**
- * @function makeRoutePattern
- * @description make regex pattern for a given route
+ * make regex pattern for a given route
+ *
  * @param  {String} route
  * @return {Regex}
- * @public
+ *
+ * @private
  */
 RouterHelper.makeRoutePattern = function (route) {
   return pathToRegexp(route, [])
 }
 
 /**
- * @function returnMatchingRouteToUrl
- * @description resolve route from routes store based upon current url
+ * resolve route from routes store based upon current url
+ *
  * @param  {Object} routes
  * @param  {String} url
  * @param  {String} verb
  * @return {Object}
- * @public
+ *
+ * @private
  */
 RouterHelper.returnMatchingRouteToUrl = function (routes, urlPath, verb) {
   let maps = _.filter(routes, function (route) {
-    if (route.subdomain) {
-      route.pattern = RouterHelper.makeRoutePattern(route.subdomain + route.route)
+    if (route.domain) {
+      route.pattern = RouterHelper.makeRoutePattern(route.domain + route.route)
     }
     return (route.pattern.test(urlPath) && _.includes(route.verb, verb))
   })
@@ -66,12 +72,13 @@ RouterHelper.returnMatchingRouteToUrl = function (routes, urlPath, verb) {
 }
 
 /**
- * @function returnRouteArguments
- * @description return params passed to a given resolved route
+ * return params passed to a given resolved route
+ *
  * @param  {Object} route
  * @param  {String} urlPath
  * @return {Object}
- * @public
+ *
+ * @private
  */
 RouterHelper.returnRouteArguments = function (route, urlPath) {
   const routeShallowCopy = _.clone(route)
@@ -85,25 +92,26 @@ RouterHelper.returnRouteArguments = function (route, urlPath) {
 }
 
 /**
- * @function compileRouteToUrl
- * @description return compiled url based on input route
+ * return compiled url based on input route
+ *
  * @param  {String} route
  * @param  {Object} values
  * @return {String}
- * @public
+ *
+ * @private
  */
 RouterHelper.compileRouteToUrl = function (route, values) {
   return pathToRegexp.compile(route)(values)
 }
 
 /**
- * @description general purpose method to append new middlewares to
+ * general purpose method to append new middlewares to
  * a route or group of routes
  * @method appendMiddleware
  * @param  {Array|Object}         routes
  * @param  {Array}         middlewares
  * @return {void}
- * @public
+ * @private
  */
 RouterHelper.appendMiddleware = function (routes, middlewares) {
   if (_.isArray(routes)) {
@@ -116,12 +124,12 @@ RouterHelper.appendMiddleware = function (routes, middlewares) {
 }
 
 /**
- * @description adds formats to routes or an array of routes
- * @method addFormats
+ * adds formats to routes or an array of routes
+ *
  * @param  {Array|Object}   routes
  * @param  {Boolean}   strict
  * @param  {void}   format
- * @public
+ * @private
  */
 RouterHelper.addFormats = function (routes, formats, strict) {
   const flag = strict ? '' : '?'
@@ -138,12 +146,13 @@ RouterHelper.addFormats = function (routes, formats, strict) {
 }
 
 /**
- * @description general purpose method to prefix group of routes
- * @method prefixRoute
+ * general purpose method to prefix group of routes
+ *
  * @param  {Array}    routes
  * @param  {String}    prefix
  * @return {void}
- * @public
+ *
+ * @private
  */
 RouterHelper.prefixRoute = function (routes, prefix) {
   _.each(routes, function (route) {
@@ -154,14 +163,15 @@ RouterHelper.prefixRoute = function (routes, prefix) {
 }
 
 /**
- * @description adds subdomain to group of routes.
- * @method addSubdomain
+ * adds domain to group of routes.
+ *
  * @param  {Array}     routes
- * @param  {String}     subdomain
+ * @param  {String}     domain
+ *
+ * @private
  */
-RouterHelper.addSubdomain = function (routes, subdomain) {
+RouterHelper.addDomain = function (routes, domain) {
   _.each(routes, function (route) {
-    route.subdomain = subdomain
+    route.domain = domain
   })
 }
-

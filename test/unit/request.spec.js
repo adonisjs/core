@@ -119,6 +119,18 @@ describe('Request', function () {
     expect(res.body.name).to.equal(null)
   })
 
+  it('should get nested value for a given key using input method', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const name = request.input("profile.name")
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({name}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/?profile[name]=foo").expect(200).end()
+    expect(res.body.name).to.equal("foo")
+  })
+
   it('should return default value when value for input key is not available', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
@@ -131,7 +143,6 @@ describe('Request', function () {
     expect(res.body.name).to.equal('doe')
   })
 
-
   it('should return get and post values when using all', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
@@ -143,6 +154,54 @@ describe('Request', function () {
 
     const res = yield supertest(server).get("/?name=foo").expect(200).end()
     expect(res.body.all).deep.equal({name:"foo",age:22})
+  })
+
+  it('should group and return an array of items', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._body = {username: ['virk', 'aman', 'nikk'], email: ['virk@gmail.com', 'aman@gmail.com', 'nikk@gmail.com']}
+      const contacts = request.collect('username', 'email')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({contacts}),'utf8')
+    })
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.contacts).deep.equal([{username: 'virk', email: 'virk@gmail.com'}, {username: 'aman', email: 'aman@gmail.com'}, {username: 'nikk', email: 'nikk@gmail.com'}])
+  })
+
+  it('should group and return null for fields not present inside the object', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._body = {username: ['virk', 'aman', 'nikk']}
+      const contacts = request.collect('username', 'age')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({contacts}),'utf8')
+    })
+    const res = yield supertest(server).get("/?name=foo").expect(200).end()
+    expect(res.body.contacts).deep.equal([{username: 'virk', age: null}, {username: 'aman', age: null}, {username: 'nikk', age: null}])
+  })
+
+  it('should group and return null for fields not present inside the object at different order', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._body = {username: ['virk', 'aman', 'nikk'], email: ['virk@foo.com', 'aman@foo.com', 'nikk@foo.com']}
+      const contacts = request.collect('name', 'email')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({contacts}),'utf8')
+    })
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.contacts).deep.equal([{name: null, email: 'virk@foo.com'}, {name: null, email: 'aman@foo.com'}, {name: null, email: 'nikk@foo.com'}])
+  })
+
+  it('should group and return null for fields not present inside the object in mix order', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      request._body = {username: ['virk', 'aman', 'nikk'], email: ['virk@foo.com', 'aman@foo.com', 'nikk@foo.com'], password: ['vi', 'am', 'ni']}
+      const contacts = request.collect('password', 'name', 'username')
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({contacts}),'utf8')
+    })
+    const res = yield supertest(server).get("/").expect(200).end()
+    expect(res.body.contacts).deep.equal([{password: 'vi', name: null, username: 'virk'}, {password: 'am', name: null, username: 'aman'}, {password: 'ni', name: null, username: 'nikk'}])
   })
 
   it('should return all values expect defined keys', function * () {
@@ -219,7 +278,7 @@ describe('Request', function () {
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({all}),'utf8')
     })
-  
+
     const res = yield supertest(server).get("/?name=foo").expect(200).end()
     expect(res.body.all).deep.equal({})
   })
@@ -463,7 +522,6 @@ describe('Request', function () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
       const html = request.accepts(['json', 'html'])
-      console.log(html)
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({html}),'utf8')
     })
@@ -476,7 +534,6 @@ describe('Request', function () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)
       const html = request.accepts('json','javascript', 'html')
-      console.log(html)
       res.writeHead(200, {"Content-type":"application/json"})
       res.end(JSON.stringify({html}),'utf8')
     })
@@ -533,6 +590,18 @@ describe('Request', function () {
 
     const res = yield supertest(server).get("/").set('Cookie',['name=foo']).expect(200).end()
     expect(res.body.age).to.equal(null)
+  })
+
+  it('should return default value when cookie value for a given key does not exists', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const age = request.cookie('age', 18)
+      res.writeHead(200, {"Content-type":"application/json"})
+      res.end(JSON.stringify({age}),'utf8')
+    })
+
+    const res = yield supertest(server).get("/").set('Cookie',['name=foo']).expect(200).end()
+    expect(res.body.age).to.equal(18)
   })
 
   it('should return route params', function * () {
@@ -613,6 +682,111 @@ describe('Request', function () {
     })
     const res = yield supertest(server).get("/").attach('logo',__dirname+'/uploads/npm-logo.svg').expect(200).end()
     expect(res.body.file).to.equal(true)
+  })
+
+  it('should return an array of uploaded files instances when multiple files are uploaded', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logos = request.file('logo[]')
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({logo1: logos[0] instanceof File, logo2: logos[1] instanceof File}), 'utf8')
+      })
+    })
+    const res = yield supertest(server).get("/")
+      .attach('logo[]',__dirname+'/uploads/npm-logo.svg')
+      .attach('logo[]',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+
+    expect(res.body.logo1).to.equal(true)
+    expect(res.body.logo2).to.equal(true)
+  })
+
+  it('should be able to define max size for a given file', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logo = request.file('logo', {maxSize: '1kb'})
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+      })
+    })
+
+    const res = yield supertest(server).get("/")
+      .attach('logo',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+    expect(res.body.logo.maxSize).to.equal(1024)
+  })
+
+  it('should be able to define allowed extensions for a given file', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logo = request.file('logo', {allowedExtensions: ['jpg']})
+        res.writeHead(200, {"Content-type":"application/json"})
+        res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+      })
+    })
+
+    const res = yield supertest(server).get("/")
+      .attach('logo',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+    expect(res.body.logo.allowedExtensions).deep.equal(['jpg'])
+  })
+
+  it('should return error when trying to move a file of larger size', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logo = request.file('logo', {maxSize: '100b'})
+        logo
+        .move()
+        .then(() => {
+          res.writeHead(200, {"Content-type":"application/json"})
+          res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+        })
+      })
+    })
+
+    const res = yield supertest(server).get("/")
+      .attach('logo',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+    expect(res.body.logo.error).to.equal('Uploaded file size 235B exceeds the limit of 100B')
+  })
+
+  it('should return error when trying to move a file of invalid extension', function * () {
+    const server = http.createServer(function (req, res) {
+      var form = new formidable.IncomingForm({multiples: true});
+      const request = new Request(req, res, Config)
+      form.parse(req, function(err, fields, files) {
+        request._files = files
+        const logo = request.file('logo', {allowedExtensions: ['jpg']})
+        logo
+        .move()
+        .then(() => {
+          res.writeHead(200, {"Content-type":"application/json"})
+          res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+        })
+      })
+    })
+
+    const res = yield supertest(server).get("/")
+      .attach('logo',__dirname+'/uploads/npm-logo.svg')
+      .expect(200)
+      .end()
+    expect(res.body.logo.error).to.equal('Uploaded file extension svg is not valid')
   })
 
   it('should return true when a pattern matches the current route url', function * () {
@@ -756,296 +930,20 @@ describe('Request', function () {
     expect(res.body.isInstances).deep.equal([true,true])
   })
 
-  it('should throw an error when flash message is not an object', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        yield request.flash('username', 'foo')
-      }).then(function () {
-        res.writeHead(200)
-        res.end()
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify({message:err.message}))
-      })
+  it('should be able to add macro to the request prototype', function () {
+    Request.macro('foo', function () {
+      return 'foo'
     })
-
-    const res = yield supertest(server).get("/").expect(500).end()
-    expect(res.body.message).to.match(/Flash values should be an object/)
+    const request = new Request({}, {}, {get: function () {}})
+    expect(request.foo()).to.equal('foo')
   })
 
-  it('should flash messages to session', function * () {
-
-    SessionManager.driver = 'cookie'
-    SessionManager.options = {}
-    SessionManager.options.cookie = 'adonis-session'
-    SessionManager.options.browserClear = true
-    SessionManager.config = Config
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        yield request.flash({username:'foo'})
-      }).then(function () {
-        res.writeHead(200)
-        res.end()
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
+  it('should have access to instance inside the callback', function * () {
+    Request.macro('foo', function () {
+      return this.request.name
     })
-
-    const res = yield supertest(server).get("/").expect(200).end()
-    const flashMessage = res.headers['set-cookie'][0].split('=')
-    let body = {}
-    body.flash_messages = {d:JSON.stringify({username:'foo'}),t:'Object'}
-    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
-  })
-
-  it('should read flash messages and if set clear them off from request', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        request._flash_messages = yield sessionManager.pull('flash_messages', {})
-        return request.old('username')
-      }).then(function (response) {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end(JSON.stringify({response}))
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const body = {}
-    body.flash_messages = {d:JSON.stringify({username:'virk'}),t:'Object'}
-    const res = yield supertest(server).get("/").set('Cookie',['adonis-session=j:'+JSON.stringify(body)]).expect(200).end()
-    expect(res.body.response).to.equal('virk')
-  })
-
-  it('should return null when flash message value does not exists', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        request._flash_messages = yield sessionManager.pull('flash_messages', {})
-        return request.old('username')
-      }).then(function (response) {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end(JSON.stringify({response}))
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const res = yield supertest(server).get("/").expect(200).end()
-    expect(res.body.response).to.equal(null)
-  })
-
-
-  it('should return default value when flash message value does not exists', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        request._flash_messages = yield sessionManager.pull('flash_messages', {})
-        return request.old('username', 'foo')
-      }).then(function (response) {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end(JSON.stringify({response}))
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const res = yield supertest(server).get("/").expect(200).end()
-    expect(res.body.response).to.equal('foo')
-  })
-
-  it('should auto set flash messages to an empty object when it does exists', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        return request.old('username', 'foo')
-      }).then(function (response) {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end(JSON.stringify({response}))
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const res = yield supertest(server).get("/").expect(200).end()
-    expect(res.body.response).to.equal('foo')
-  })
-
-  it('should flash all request inputs using flashAll method', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        return yield request.flashAll()
-      }).then(function () {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end()
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
-    const flashMessage = res.headers['set-cookie'][0].split('=')
-    let body = {}
-    body.flash_messages = {d:JSON.stringify({username:'foo',age:"22"}),t:'Object'}
-    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
-  })
-
-  it('should flash all request inputs except defined keys using flashExcept method', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        return yield request.flashExcept('age')
-      }).then(function () {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end()
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
-    const flashMessage = res.headers['set-cookie'][0].split('=')
-    let body = {}
-    body.flash_messages = {d:JSON.stringify({username:'foo'}),t:'Object'}
-    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
-  })
-
-  it('should flash all request inputs except defined keys using flashExcept method when passing array', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        return yield request.flashExcept(['age'])
-      }).then(function () {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end()
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
-    const flashMessage = res.headers['set-cookie'][0].split('=')
-    let body = {}
-    body.flash_messages = {d:JSON.stringify({username:'foo'}),t:'Object'}
-    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
-  })
-
-  it('should flash all request inputs only for defined keys using flashOnly method', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        return yield request.flashOnly('age')
-      }).then(function () {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end()
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
-    const flashMessage = res.headers['set-cookie'][0].split('=')
-    let body = {}
-    body.flash_messages = {d:JSON.stringify({age:'22'}),t:'Object'}
-    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
-  })
-
-  it('should flash all request inputs only for defined keys using flashOnly method when passing an array', function * () {
-
-    SessionManager.driver = 'cookie'
-    let sessionManager
-
-    const server = http.createServer(function (req, res) {
-      sessionManager = new SessionManager(req, res)
-      const request = new Request(req, res, Config)
-      request.session = sessionManager
-      co(function * () {
-        return yield request.flashOnly(['age'])
-      }).then(function () {
-        res.writeHead(200, {"content-type":"application/json"})
-        res.end()
-      }).catch(function (err) {
-        res.writeHead(500, {"content-type":"application/json"})
-        res.end(JSON.stringify(err))
-      })
-    })
-
-    const res = yield supertest(server).get("/?username=foo&age=22").expect(200).end()
-    const flashMessage = res.headers['set-cookie'][0].split('=')
-    let body = {}
-    body.flash_messages = {d:JSON.stringify({age:'22'}),t:'Object'}
-    expect(flashMessage[1]).to.equal(querystring.escape('j:'+JSON.stringify(body)))
+    const request = new Request({name: 'bar'}, {}, {get: function () {}})
+    expect(request.foo()).to.equal('bar')
   })
 
 })

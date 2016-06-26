@@ -9,17 +9,22 @@
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
 
+/**
+ * yield tag for views
+ * @class
+ */
 function ViewsYield () {
   this.tags = ['yield']
 
   /**
-   * @description nunjucks standard parser it looks for yield
+   * nunjucks standard parser it looks for yield
    * tag and returns everything inside it.
-   * @method parse
+   *
    * @param  {Object} parser
    * @param  {Function} nodes
    * @param  {Object} lexer
    * @return {Object}
+   *
    * @public
    */
   this.parse = function (parser, nodes) {
@@ -30,13 +35,13 @@ function ViewsYield () {
   }
 
   /**
-   * @description nunjucks run function, it will run this Function
+   * nunjucks run function, it will run this Function
    * everytime it finds an execution block with yield tag
-   * @method run
+   *
    * @param  {Object}   context
    * @param  {Object}   injections
    * @param  {Function} callback
-   * @return {void}
+   *
    * @public
    */
   this.run = function (context, injections, callback) {
@@ -44,7 +49,7 @@ function ViewsYield () {
     var index = keys[0]
     var method = injections[index]
 
-    co(function *() {
+    co(function * () {
       return yield method
     })
     .then(function (response) {

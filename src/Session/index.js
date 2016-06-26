@@ -2,27 +2,36 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const Drivers = require('./Drivers')
 const Ioc = require('adonis-fold').Ioc
 const SessionManager = require('./SessionManager')
+const NE = require('node-exceptions')
 
 /**
- * @class Session
- * @description Session provider
+ * Session class for reading and writing sessions
+ * during http request
+ * @returns {SessionManager}
+ * @class
  */
 class Session {
 
   /**
-   * @description extend method for ioc to extend
+   * extend method for ioc to extend
    * session provider
-   * @method extend
-   * @param  {String} key
-   * @param  {Object} value
-   * @return {void}
+   *
+   * @param  {String} key - name of the driver
+   * @param  {Object} value - Driver implmentation
+   *
+   * @example
+   * Session.extend('redis', new RedisImplementation)
+   *
    * @public
    */
   static extend (key, value) {
@@ -67,7 +76,7 @@ class Session {
         /**
          * throw error when unable to locate driver
          */
-        throw new Error('Unable to locate ' + driver + ' session driver')
+        throw new NE.RuntimeException(`Unable to locate ${driver} session driver`)
       }
     }
     SessionManager.driver = driverInstance
@@ -75,7 +84,6 @@ class Session {
     SessionManager.config = Config
     return SessionManager
   }
-
 }
 
 module.exports = Session

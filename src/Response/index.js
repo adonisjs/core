@@ -13,8 +13,9 @@ let routeInstance = null
 let configInstance = null
 
 /**
- * @class  Response class to be passed on
- * every node request to make responses.
+ * Glued http response to end requests by sending
+ * proper formatted response.
+ * @class
  */
 class Response {
 
@@ -22,21 +23,25 @@ class Response {
     this.request = request
     this.response = response
     if (configInstance.get('app.http.setPoweredBy', true)) {
-      nodeRes.header(this.response, 'X-Powered-By', 'Adonis')
+      nodeRes.header(this.response, 'X-Powered-By', 'AdonisJs')
     }
     nodeRes.descriptiveMethods.forEach((method) => {
       this[method] = (body) => {
-        nodeRes[method](this.request, this.response, body)
+        nodeRes[method](this.request.request, this.response, body)
       }
     })
   }
 
   /**
-   * @description set key/value pair on response header
-   * @method header
-   * @param  {String} key
-   * @param  {Mixed} value
-   * @return {Object}
+   * sets key/value pair on response header
+   *
+   * @param  {String} key - key to set value for
+   * @param  {Mixed} value - key to save corresponding to given key
+   * @return {Object} - Reference to class instance for chaining methods
+   *
+   * @example
+   * response.header('Content-type', 'application/json')
+   *
    * @public
    */
   header (key, value) {
@@ -45,11 +50,17 @@ class Response {
   }
 
   /**
-   * @description creates a new view using View class
-   * @method view
+   * creates a new view using View class
+   * @async
+   *
    * @param  {String} template
    * @param  {Object} options
-   * @return {void}
+   * @returns {Html} - compiled html template
+   *
+   * @example
+   * yield response.view('index')
+   * yield response.view('profile', {name: 'doe'})
+   *
    * @public
    */
   * view (template, options) {
@@ -57,12 +68,16 @@ class Response {
   }
 
   /**
-   * @description creates a new view using View class
-   * and sends it back as response
-   * @method sendView
+   * creates a new view using View class and ends the
+   * response by sending compilied html template
+   * back as response content.
+   *
    * @param  {String} template
    * @param  {Object} options
-   * @return {void}
+   *
+   * @example
+   * yield response.sendView('index')
+   * yield response.sendView('profile', {name: 'doe'})
    * @public
    */
   * sendView (template, options) {
@@ -71,10 +86,14 @@ class Response {
   }
 
   /**
-   * @description removes header from response.
-   * @method removeHeader
+   * removes previously added header.
+   *
    * @param  {String}     key
-   * @return {Object}
+   * @return {Object} - reference to class instance for chaining
+   *
+   * @example
+   * response.removeHeader('Accept')
+   *
    * @public
    */
   removeHeader (key) {
@@ -83,10 +102,15 @@ class Response {
   }
 
   /**
-   * @description set's response status
-   * @method status
+   * set's response status, make it adhers to RFC specifications
+   *
+   * @see {@link https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html}
+   *
    * @param  {Number} statusCode
-   * @return {Object}
+   * @return {Object} - reference to class instance for chaining
+   *
+   * @example
+   * response.status(200)
    * @public
    */
   status (statusCode) {
@@ -97,8 +121,7 @@ class Response {
   /**
    * ends response, should not be used with
    * send method
-   * @method end
-   * @return {void}
+   *
    * @public
    */
   end () {
@@ -106,90 +129,109 @@ class Response {
   }
 
   /**
-   * @description writes to response body and ends it
-   * @method send
+   * writes content to response and sends it back as
+   * response body
+   *
    * @param  {Mixed} body
-   * @return {void}
+   *
    * @public
    */
   send (body) {
-    nodeRes.send(this.request, this.response, body)
+    nodeRes.send(this.request.request, this.response, body)
   }
 
   /**
-   * @description writes json response using send method
-   * @method json
+   * writes json response using send method and sets content-type
+   * to application/json
+   *
    * @param  {Object} body
-   * @return {void}
+   *
    * @public
    */
   json (body) {
-    nodeRes.json(this.request, this.response, body)
+    nodeRes.json(this.request.request, this.response, body)
   }
 
   /**
-   * @description writes jsonp response using send method
-   * @method json
+   * writes jsonp response using send method and sets content-type
+   * to text/javascript
+   *
+   * @uses app.http.jsonpCallback
    * @param  {Object} body
-   * @return {void}
+   *
    * @public
    */
   jsonp (body) {
     const callback = this.request.input('callback') || configInstance.get('app.http.jsonpCallback')
-    nodeRes.jsonp(this.request, this.response, body, callback)
+    nodeRes.jsonp(this.request.request, this.response, body, callback)
   }
 
   /**
-   * @description sends input file for downloading
-   * @method download
-   * @param  {String} filePath
-   * @return {void}
+   * streams file content to response and ends request
+   * once done.
+   *
+   * @param  {String} filePath - path to file from where to read contents
+   *
+   * @example
+   * response.download('absolute/path/to/file')
+   *
    * @public
    */
   download (filePath) {
-    nodeRes.download(this.response, filePath)
+    nodeRes.download(this.request, this.response, filePath)
   }
 
   /**
-   * @description force download input file by setting content-disposition
-   * to attachment
-   * @method attachment
-   * @param  {String}   filePath
-   * @param  {String}   name
-   * @param  {String}   disposition
-   * @return {void}
+   * force download input file by setting content-disposition
+   *
+   * @param  {String}   filePath - path to file from where to read contents
+   * @param  {String}   name - downloaded file name
+   * @param  {String}   [disposition=attachment] - content disposition
+   *
+   * @example
+   * response.attach('absolute/path/to/file', 'name')
+   *
+   * @public
    */
   attachment (filePath, name, disposition) {
-    nodeRes.attachment(this.response, filePath, name, disposition)
+    nodeRes.attachment(this.request, this.response, filePath, name, disposition)
   }
 
   /**
-   * @description sets location header on response
-   * @method location
+   * sets location header on response
+   *
    * @param  {String} toUrl
-   * @return {Object}
+   * @return {Object} - reference to class instance for chaining
+   *
+   * @public
    */
   location (toUrl) {
+    if (toUrl === 'back') {
+      toUrl = this.request.header('Referrer') || '/'
+    }
     nodeRes.location(this.response, toUrl)
     return this
   }
 
   /**
-   * @description redirect request to a given url
-   * @method redirect
-   * @param  {String} toUrl
-   * @param  {Number} status
-   * @return {void}
+   * redirect request to a given url and ends the request
+   *
+   * @param  {String} toUrl - url to redirect to
+   * @param  {Number} [status=302] - http status code
+   *
    */
   redirect (toUrl, status) {
-    nodeRes.redirect(this.request, this.response, toUrl, status)
+    if (toUrl === 'back') {
+      toUrl = this.request.header('Referrer') || '/'
+    }
+    nodeRes.redirect(this.request.request, this.response, toUrl, status)
   }
 
   /**
-   * @description sets vary header on response
-   * @method vary
+   * sets vary header on response
+   *
    * @param  {String} field
-   * @return {Object}
+   * @return {Object} - reference to class instance for chaining
    */
   vary (field) {
     nodeRes.vary(this.response, field)
@@ -197,13 +239,15 @@ class Response {
   }
 
   /**
-   * @description redirects to a url created using route url
-   * helper
-   * @method route
-   * @param  {String} route
-   * @param  {Object} data
-   * @param  {Number} status
-   * @return {void}
+   * redirects to a registered route from routes.js files
+   *
+   * @param  {String} route - name of the route
+   * @param  {Object} data - route params
+   * @param  {Number} [status=302] - http status code
+   *
+   * @example
+   * response.route('/profile/:id', {id: 1})
+   * response.route('user.profile', {id: 1})
    * @public
    */
   route (route, data, status) {
@@ -212,12 +256,20 @@ class Response {
   }
 
   /**
-   * @description updates cookie header while making response
-   * @method cookie
-   * @param  {String} key
-   * @param  {Mixed} value
-   * @param  {Object} options
-   * @return {Object}
+   * adds new cookie to response cookies
+   *
+   * @param  {String} key - cookie name
+   * @param  {Mixed} value - value to be saved next for cookie name
+   * @param  {Object} options - options to define cookie path,host age etc.
+   * @return {Object} - reference to class instance for chaining
+   *
+   * @example
+   * response.cookie('cart', values)
+   * response.cookie('cart', values, {
+   *   maxAge: 1440,
+   *   httpOnly: false
+   * })
+   *
    * @public
    */
   cookie (key, value, options) {
@@ -228,24 +280,32 @@ class Response {
   }
 
   /**
-   * @description clears existing cookie from response header
-   * @method clearCookie
+   * clears existing cookie from response header
+   *
    * @param  {String}    key
    * @param  {Object}    options
-   * @return {Object}
+   *
+   * @return {Object} - reference to class instance for chaining
    */
   clearCookie (key, options) {
     nodeCookie.clear(this.request.request, this.response, key, options)
     return this
   }
 
+  /**
+   * adds a new method to the response prototype
+   *
+   * @param  {String}   name
+   * @param  {Function} callback
+   *
+   * @public
+   */
+  static macro (name, callback) {
+    this.prototype[name] = callback
+  }
+
 }
 
-/**
- * @class  ResponseBuilder
- * @description returns Response class after setting up
- * view instance.
- */
 class ResponseBuilder {
   constructor (View, Route, Config) {
     viewInstance = View

@@ -10,14 +10,19 @@ const nunjucks = require('nunjucks')
 const path = require('path')
 const fs = require('fs')
 
+/**
+ * Views loader
+ * @module
+ * @alias Views.Loader
+ */
 exports = module.exports = nunjucks.Loader.extend({
   /**
-   * @description Initiates views loader
-   * @method init
+   * Initiates views loader
+   *
    * @param  {String} viewsPath
    * @param  {Boolean} noWatch Not considered
    * @param  {Boolean} noCache
-   * @return {void}
+   *
    * @public
    */
   init: function (viewsPath, noWatch, noCache) {
@@ -27,16 +32,17 @@ exports = module.exports = nunjucks.Loader.extend({
   },
 
   /**
-   * @description get content of a file required while rendering
-   * @method getSource
+   * get content of a file required while rendering
    * template
+   *
    * @param  {String}   name
    * @param  {Function} callback
-   * @return {*}
+   *
    * @public
    */
   getSource: function (name, callback) {
-    name = path.extname(name) === '.html' ? name : `${name}.html`
+    name = name.replace(/((?!\.+\/)\.(?!njk))/g, '/')
+    name = path.extname(name) === '.njk' ? name : `${name}.njk`
     const viewPath = path.resolve(this.viewsPath, name)
     const self = this
 

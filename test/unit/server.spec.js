@@ -17,41 +17,51 @@ const Ioc = require('adonis-fold').Ioc
 const supertest = require('co-supertest')
 const expect = chai.expect
 const http = require('http')
-const App = require('../../src/App')
+const EventProvider = require('../../src/Event')
 const path = require('path')
+const stderr = require('test-console').stderr
 
 class Session {
 
 }
 const Config = {
   get: function (key) {
-    if(key === 'http.trustProxy') {
-      return true
-    } else if(key === 'static.indexFile') {
-      return 'index.html'
-    } else {
-      return 2
+    switch (key) {
+      case 'app.static':
+        return {}
+      case 'event':
+        return {
+          wildcard: true,
+          delimiter: ':'
+        }
+      case 'app.http.allowMethodSpoofing':
+        return true
+      default:
+        return 2
     }
   }
 }
+
+const Helpers = {
+  publicPath: function () {
+    return path.join(__dirname, './public')
+  },
+  makeNameSpace: function (base, toPath) {
+    return `App/${base}/${toPath}`
+  }
+}
+
+const Event = new EventProvider(Config)
 
 require('co-mocha')
 
 describe("Server", function () {
 
   before(function () {
-    const Helpers = {
-      publicPath: function () {
-        return path.join(__dirname, './public')
-      },
-      appNameSpace : function () {
-        return 'App'
-      }
-    }
     Ioc.autoload('App',path.join(__dirname, './app'))
     const staticServer = new Static(Helpers, Config)
     const Response = new ResponseBuilder({}, {}, Config)
-    this.server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session, Config)
+    this.server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, Config, Event)
   })
 
   beforeEach(function () {
@@ -73,6 +83,11 @@ describe("Server", function () {
   it("should make 404 error when unable to find static resource", function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     yield supertest(testServer).get('/foo.css').expect(404).end()
+  })
+
+  it("should not serve static resources with route is not GET or HEAD", function * () {
+    const testServer = http.createServer(this.server.handle.bind(this.server))
+    yield supertest(testServer).post('/style.css').expect(404).end()
   })
 
   it("should serve static resource even if route is defined", function * () {
@@ -99,6 +114,47 @@ describe("Server", function () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/?_method=PUT').expect(200).end()
     expect(res.body.rendered).to.equal(true)
+  })
+
+  it("should not spoof request method when allowMethodSpoofing is not turned on", function * () {
+    Route.put('/', function * (request, response) {
+      response.send({rendered:true})
+    })
+    const staticServer = new Static(Helpers, Config)
+    const Response = new ResponseBuilder({}, {}, Config)
+    const customConfig = {
+      get: function (key) {
+        if (key === 'app.http.allowMethodSpoofing') {
+          return false
+        }
+        return Config.get(key)
+      }
+    }
+    const server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session, customConfig, Event)
+    const testServer = http.createServer(server.handle.bind(server))
+    const res = yield supertest(testServer).get('/?_method=PUT').expect(404).end()
+  })
+
+  it("should not log warning when allowMethodSpoofing is not turned on but trying to spoof method", function * () {
+    Route.put('/', function * (request, response) {
+      response.send({rendered:true})
+    })
+    const inspect = stderr.inspect()
+    const staticServer = new Static(Helpers, Config)
+    const Response = new ResponseBuilder({}, {}, Config)
+    const customConfig = {
+      get: function (key) {
+        if (key === 'app.http.allowMethodSpoofing') {
+          return false
+        }
+        return Config.get(key)
+      }
+    }
+    const server = new Server(Request, Response, Route, Helpers, Middleware,staticServer, Session, customConfig, Event)
+    const testServer = http.createServer(server.handle.bind(server))
+    const res = yield supertest(testServer).get('/?_method=PUT').expect(404).end()
+    inspect.restore()
+    expect(inspect.output.join('')).to.match(/You are making use of method spoofing/)
   })
 
   it("should call route action via controller method", function * () {
@@ -211,7 +267,7 @@ describe("Server", function () {
   })
 
   it("should emit error event when there are listeners attach to error", function * () {
-    App.on('error', function (error, request, response) {
+    Event.when('Http:error:*', function (error, request, response) {
       response.status(401).send('Forbidden')
     })
     Route.get('/', function * () {
@@ -220,6 +276,16 @@ describe("Server", function () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(401).end()
     expect(res.error.text).to.equal('Forbidden')
+  })
+
+  it("should server instance is null", function * () {
+    expect(this.server.httpInstance).to.be.null
+  })
+
+  it("should server instance is http.Server", function * () {
+    const httpServer = this.server.getInstance()
+    expect(httpServer).to.be.instanceOf(http.Server)
+    expect(this.server.httpInstance).to.be.instanceOf(http.Server)
   })
 
   it('should listen to server on a given port and host using listen method', function * () {

@@ -2,50 +2,50 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const serveStatic = require('serve-static')
 
 /**
- * @class  Static
- * @description serves the purpose of serving static files
+ * serves static files for a given directory
+ * @class
  */
 class Static {
 
   constructor (Helpers, Config) {
-    this.publicPath = Helpers.publicPath()
-
-    const options = {
-      lastModified: Config.get('static.lastModified', true),
-      maxAge: Config.get('static.cache', 3600),
-      index: Config.get('static.indexFile', 'index.html'),
-      fallthrough: false,
-      etag: Config.get('static.etag', true)
-    }
-
-    this.server = serveStatic(this.publicPath, options)
+    const publicPath = Helpers.publicPath()
+    const options = Config.get('app.static', {})
+    options.fallthrough = false
+    this.server = serveStatic(publicPath, options)
   }
 
   /**
-   * @description serves static file based upon
-   * request url
-   * @method serve
+   * serves static file for a given request url
+   *
    * @param  {Object} request
    * @param  {Object} response
-   * @param  {Function} done
-   * @return {void}
+   * @return {Promise}
+   *
+   * @example
+   * static
+   *   .serve(req, res)
+   *   .then()
+   *   .catch()
+   * @public
    */
   serve (request, response) {
     return new Promise((resolve, reject) => {
-      this.server(request, response, function (err, good) {
-        if (err) {
-          err.message = `Route ${err.message} while resolving ${request.url}`
-          reject(err)
-          return
+      this.server(request, response, (error) => {
+        if (!error) {
+          return resolve()
         }
-        resolve(good)
+        error.message = `Route ${error.message} while resolving ${request.url}`
+        reject(error)
       })
     })
   }

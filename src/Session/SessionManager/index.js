@@ -9,17 +9,24 @@
 const nodeCookie = require('node-cookie')
 const Type = require('type-of-is')
 const _ = require('lodash')
+const NE = require('node-exceptions')
 const uuid = require('node-uuid')
 const util = require('../../../lib/util')
 
+/**
+ * Session facade to expose methods to read
+ * and write values inside the session
+ * store.
+ * @class
+ */
 class SessionManager {
 
   constructor (request, response) {
     this.request = request
     this.response = response
     /**
-     * session cookie payload is the original of session cookie when request
-     * has been started and incrementally, we will update this value until
+     * session cookie payload is the original value of session cookie when request
+     * is started and incrementally we will update this value until
      * request is over.
      * @type {Mixed}
      */
@@ -27,9 +34,10 @@ class SessionManager {
   }
 
   /**
-   * @description returns cookie value for session key
-   * @method _getSessionCookie
+   * returns cookie value for session key
+   *
    * @return {Mixed}
+   *
    * @private
    */
   _getSessionCookie () {
@@ -42,9 +50,10 @@ class SessionManager {
   }
 
   /**
-   * @description writes session key/value pair on cookie
-   * @method _setSessionCookie
+   * writes session key/value pair on cookie
+   *
    * @param  {Mixed}    session
+   *
    * @private
    */
   _setSessionCookie (session) {
@@ -77,12 +86,13 @@ class SessionManager {
   }
 
   /**
-   * @description converts value to a valid safe string
+   * converts value to a valid safe string
    * to be stored inside cookies
-   * @method _makeBody
+   *
    * @param  {String}  key
    * @param  {Mixed}  value
    * @return {Object}
+   *
    * @private
    */
   _makeBody (key, value) {
@@ -133,11 +143,12 @@ class SessionManager {
   }
 
   /**
-   * @description it returns formatted value from body
-   * created via _makeBody
-   * @method _reverseBody
+   * it returns formatted value from body
+   * previously created via _makeBody
+   *
    * @param  {Object}     value
    * @return {Mixed}
+   *
    * @private
    */
   _reverseBody (value) {
@@ -169,10 +180,11 @@ class SessionManager {
   }
 
   /**
-   * @description add values to existing session via cookies
-   * @method _setViaCookie
+   * add values to existing session via cookies
+   *
    * @param  {Mixed}      key
    * @param  {Mixed}      value
+   *
    * @private
    */
   _setViaCookie (key, value) {
@@ -185,13 +197,14 @@ class SessionManager {
   }
 
   /**
-   * @description makes session body by setting/updating values on existing
+   * makes session body by setting/updating values on existing
    * session.
-   * @method _makeSessionBody
+   *
    * @param  {Object}         existingSession
    * @param  {Mixed}         key
    * @param  {Mixed}         value
    * @return {Object}
+   *
    * @private
    */
   _makeSessionBody (existingSession, key, value) {
@@ -229,9 +242,10 @@ class SessionManager {
   }
 
   /**
-   * @description get value from session from a given key
-   * @method _getViaCookie
+   * get value from session from a given key
+   *
    * @return {Object}
+   *
    * @private
    */
   _getViaCookie () {
@@ -242,22 +256,23 @@ class SessionManager {
   }
 
   /**
-   * @description sets session value using session driver
-   * @method _setViaDriver
+   * sets session value using session driver
+   *
    * @param  {Mixed}      key
    * @param  {Mixed}      value
+   *
    * @private
    */
   * _setViaDriver (key, value) {
     let sessionId = this._getSessionCookie()
 
     /**
-     * here we create a new session id if session if does not exists
-     * in cookies. Also we need to handle migration from cookie
-     * driver to other drivers, as with cookie driver the value
-     * of sessionId will be the actual session valuesm which is
-     * going to be an object. So we need to re-create the
-     * sessionId when sessionId is not a string.
+     * here we create a new session id if does not exists in cookies.
+     * Also we need to handle migration from cookie driver to other
+     * drivers, as with cookie driver the value of sessionId will
+     * be the actual session values which is going to be an
+     * object. So we need to re-create the sessionId when
+     * sessionId is not a string.
      */
     if (!sessionId || typeof (sessionId) !== 'string') {
       sessionId = uuid.v1()
@@ -270,9 +285,8 @@ class SessionManager {
   }
 
   /**
-   * @description get session value from active driver
-   * store
-   * @method _getViaDriver
+   * get session value from active driver store
+   *
    * @return {Object}
    */
   * _getViaDriver () {
@@ -287,9 +301,13 @@ class SessionManager {
   }
 
   /**
-   * @description returns all session values
-   * @method all
+   * returns all session values
+   *
    * @return {Object}
+   *
+   * @example
+   * yield session.all()
+   *
    * @public
    */
   * all () {
@@ -301,18 +319,21 @@ class SessionManager {
   }
 
   /**
-   * @description save key/value inside session store
-   * @method put
-   * @param  {Mixed} key
-   * @param  {Mixed} value
-   * @return {void}
-   * @throws {Invalid arguments} If key/value does not exists or argument
-   *                             is not an object
+   * save key/value pair inside session store
+   *
+   * @param  {Mixed} key - Session key to which value should be saved. Also
+   *                       it can be a self contained object
+   * @param  {Mixed} [value] - Value to save next to key. Must not be set when
+   *                           key itself is an object
+   * @example
+   * yield session.put('name', 'doe')
+   * yield session.put({name: 'doe'})
+   *
    * @public
    */
   * put (key, value) {
     if (key && typeof (value) === 'undefined' && typeof (key) !== 'object') {
-      throw new Error('put expects key/value pair or an object of keys and values')
+      throw new NE.InvalidArgumentException('put expects key/value pair or an object of keys and values')
     }
     const activeDriver = this.constructor.driver
 
@@ -324,10 +345,13 @@ class SessionManager {
   }
 
   /**
-   * @description removes key/value pair from existing session
-   * @method forget
+   * removes key/value pair from existing session
+   *
    * @param  {String} key
-   * @return {void}
+   *
+   * @example
+   * yield session.forget('name')
+   *
    * @public
    */
   * forget (key) {
@@ -335,11 +359,17 @@ class SessionManager {
   }
 
   /**
-   * @description get value for a given key from session
-   * @method get
-   * @param  {String} key
-   * @param  {Mixed} defaultValue
+   * get value for a given key from session
+   *
+   * @param  {String} key - key to get value for
+   * @param  {Mixed} defaultValue - default value when actual value is
+   *                                undefined for null
    * @return {Mixed}
+   *
+   * @example
+   * yield session.get('name')
+   * yield session.get('name', 'defaultName')
+   *
    * @public
    */
   * get (key, defaultValue) {
@@ -349,12 +379,17 @@ class SessionManager {
   }
 
   /**
-   * @description combination of get and forget under
-   * single method
-   * @method pull
-   * @param  {String} key
-   * @param  {Mixed} defaultValue
+   * combination of get and forget under single method
+   *
+   * @param  {String} key - key to get value for
+   * @param  {Mixed} defaultValue - default value when actual value is
+   *                                undefined for null
    * @return {Mixed}
+   *
+   * @example
+   * yield session.pull('name')
+   * yield session.pull('name', 'defaultValue')
+   *
    * @public
    */
   * pull (key, defaultValue) {
