@@ -12,6 +12,8 @@ const Resource = require('./resource')
 const domains = require('./domains')
 const util = require('../../lib/util')
 const _ = require('lodash')
+const CatLog = require('cat-log')
+const logger = new CatLog('adonis:framework')
 
 /**
  * holding reference to registered routes
@@ -313,7 +315,7 @@ Route._lastRoute = function () {
 /**
  * assign array of named middlewares to route
  *
- * @method middlewares
+ * @method middleware
  * @synonym middleware
  *
  * @param  {Mixed} keys - an array of middleware or multiple parameters
@@ -325,7 +327,7 @@ Route._lastRoute = function () {
  *
  * @public
  */
-Route.middlewares = function () {
+Route.middleware = function () {
   helpers.appendMiddleware(
     Route._lastRoute(),
     util.spread.apply(this, arguments)
@@ -334,10 +336,12 @@ Route.middlewares = function () {
 }
 
 /**
- * @see module:Route~middlewares
- * @method middleware
+ * @see module:Route~middleware
  */
-Route.middleware = Route.middlewares
+Route.middlewares = function () {
+  logger.warn('route@middlewares: consider using method middleware, instead of middlewares')
+  Route.middleware.apply(Route, arguments)
+}
 
 /**
  * create a new group of routes to apply rules on a group

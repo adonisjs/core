@@ -11,6 +11,8 @@ const helpers = require('./helpers')
 const CatLog = require('cat-log')
 const logger = new CatLog('adonis:framework')
 const util = require('../../lib/util')
+const ResourceMember = require('./ResourceMember')
+const ResourceCollection = require('./ResourceCollection')
 const NE = require('node-exceptions')
 
 /**
@@ -45,14 +47,17 @@ class Resource {
    * @param  {String}       route
    * @param  {String}       handler
    * @param  {String}       name
-   * @return {void}
+   *
+   * @return {Object}
    *
    * @private
    */
   _registerRoute (verb, route, handler, name) {
     const resourceName = (this.basename === '/' || !this.basename) ? name : `${this.basename}.${name}`
     this.RouteHelper.route(route, verb, `${handler}.${name}`).as(resourceName)
-    this.routes.push(this.RouteHelper._lastRoute())
+    const registeredRoute = this.RouteHelper._lastRoute()
+    this.routes.push(registeredRoute)
+    return registeredRoute
   }
 
   /**
@@ -101,11 +106,47 @@ class Resource {
    * @param  {Array}       pairKeys
    * @return {Array}
    *
+   * @throws {Error} If pairKeys are not defines as array
+   *
    * @private
    */
   _transformKeys (pairKeys) {
+    if (!_.isArray(pairKeys)) {
+      throw new Error('Resource route methods must be defined as an array')
+    }
     return pairKeys.map((item) => {
       return `${this.basename}.${item}`
+    })
+  }
+
+  /**
+   * registers an expression of middleware to the specified
+   * actions
+   *
+   * @param   {Object} expression
+   *
+   * @private
+   */
+  _registerMiddlewareViaExpression (expression) {
+    _(expression)
+    .map((methods, middleware) => {
+      const routes = _.filter(this.routes, (route) => this._transformKeys(methods).indexOf(route.name) > -1)
+      return {routes, middleware}
+    })
+    .each((item) => this._addMiddleware(item.routes, item.middleware))
+  }
+
+  /**
+   * adds an array of middleware to the given routes
+   *
+   * @param   {Array} routes
+   * @param   {Array} middleware
+   *
+   * @private
+   */
+  _addMiddleware (routes, middleware) {
+    _.each(routes, (route) => {
+      helpers.appendMiddleware(route, middleware)
     })
   }
 
@@ -188,10 +229,10 @@ class Resource {
   /**
    * add a member route to the resource
    *
-   * @param  {String} action - the handle action method
-   *
    * @param  {String} route - Route and action to be added to the resource
    * @param  {Mixed}  [verbs=['GET', 'HEAD']]  - An array of verbs
+   * @param {Function} [callback]
+   *
    * @return {Object} - reference to resource instance for chaining
    *
    * @example
@@ -199,24 +240,27 @@ class Resource {
    *
    * @public
    */
-  addMember (route, verbs) {
+  addMember (route, verbs, callback) {
     if (_.isEmpty(route)) {
       throw new NE.InvalidArgumentException('action argument must be present')
     }
 
     verbs = verbs || ['GET', 'HEAD']
     verbs = _.isArray(verbs) ? verbs : [verbs]
-    this._registerRoute(verbs, `${this.pattern}/:id/${route}`, this.handler, route)
+    const registeredRoute = this._registerRoute(verbs, `${this.pattern}/:id/${route}`, this.handler, route)
+    if (typeof (callback) === 'function') {
+      callback(new ResourceMember(registeredRoute))
+    }
     return this
   }
 
   /**
    * add a collection route to the resource
    *
-   * @param  {String} action - the handle action method
-   *
    * @param  {String} route - Route and action to be added to the resource
    * @param  {Mixed}  [verbs=['GET', 'HEAD']]  - An array of verbs
+   * @param {Function} [callback]
+   *
    * @return {Object} - reference to resource instance for chaining
    *
    * @example
@@ -224,15 +268,63 @@ class Resource {
    *
    * @public
    */
-  addCollection (route, verbs) {
+  addCollection (route, verbs, callback) {
     if (_.isEmpty(route)) {
       throw new NE.InvalidArgumentException('action argument must be present')
     }
 
     verbs = verbs || ['GET', 'HEAD']
     verbs = _.isArray(verbs) ? verbs : [verbs]
-    this._registerRoute(verbs, `${this.pattern}/${route}`, this.handler, route)
+    const registeredRoute = this._registerRoute(verbs, `${this.pattern}/${route}`, this.handler, route)
+    if (typeof (callback) === 'function') {
+      callback(new ResourceCollection(registeredRoute))
+    }
     return this
+  }
+
+  /**
+   * @see this.middleware
+   */
+  middlewares () {
+    logger.warn('resource@middlewares: consider using method middleware, instead of middlewares')
+    return this.middleware.apply(this, arguments)
+  }
+
+  /**
+   * adds middleware to the resource
+   *
+   * @param  {Mixed} middlewareExpression
+   *
+   * @return {Object}
+   *
+   * @example
+   * Route.resource(...).middleware('auth')
+   * Route.resource(...).middleware({
+   *  auth: ['store', 'update', 'delete'],
+   *  web: ['index']
+   * })
+   *
+   * @public
+   */
+  middleware (middlewareExpression) {
+    if (_.isObject(middlewareExpression) && !_.isArray(middlewareExpression)) {
+      this._registerMiddlewareViaExpression(middlewareExpression)
+      return this
+    }
+    this._addMiddleware(this.routes, util.spread.apply(this, arguments))
+    return this
+  }
+
+  /**
+   * returns routes JSON representation, helpful for
+   * inspection
+   *
+   * @return {Array}
+   *
+   * @public
+   */
+  toJSON () {
+    return this.routes
   }
 
 }

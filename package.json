@@ -1,6 +1,6 @@
 {
   "name": "adonis-framework",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
@@ -42,7 +42,7 @@
     "cat-log": "^1.0.2",
     "co": "^4.6.0",
     "dotenv": "^2.0.0",
-    "eventemitter2": "^1.0.2",
+    "eventemitter2": "^2.0.0",
     "lodash": "^4.11.2",
     "mkdirp": "^0.5.1",
     "node-cookie": "^1.0.2",
