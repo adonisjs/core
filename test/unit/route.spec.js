@@ -605,6 +605,72 @@ describe('Route',function () {
       expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
     })
 
+    it('should update controller binding for added member', function () {
+      Route
+      .resource('/tasks','SomeController')
+      .addMember('completed', ['GET', 'HEAD'], function (member) {
+        member.bindAction('SomeController.getCompleted')
+      })
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.handler]
+      }))
+      expect(routes.length).to.equal(8)
+      expect(verbs['/tasks-GET/HEAD']).to.equal('SomeController.index')
+      expect(verbs['/tasks/create-GET/HEAD']).to.equal('SomeController.create')
+      expect(verbs['/tasks-POST']).to.equal('SomeController.store')
+      expect(verbs['/tasks/:id-GET/HEAD']).to.equal('SomeController.show')
+      expect(verbs['/tasks/:id/edit-GET/HEAD']).to.equal('SomeController.edit')
+      expect(verbs['/tasks/:id-PUT/PATCH']).to.equal('SomeController.update')
+      expect(verbs['/tasks/:id-DELETE']).to.equal('SomeController.destroy')
+      expect(verbs['/tasks/:id/completed-GET/HEAD']).to.equal('SomeController.getCompleted')
+    })
+
+    it('should be able to assign middleware to the member', function () {
+      Route
+      .resource('/tasks','SomeController')
+      .addMember('completed', ['GET', 'HEAD'], function (member) {
+        member.bindAction('SomeController.getCompleted').middleware('auth')
+      })
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.middlewares]
+      }))
+      expect(routes.length).to.equal(8)
+      expect(verbs['/tasks/:id/completed-GET/HEAD']).deep.equal(['auth'])
+    })
+
+    it('should be able to update member route name', function () {
+      Route
+      .resource('/tasks','SomeController')
+      .addMember('completed', ['GET', 'HEAD'], function (member) {
+        member.bindAction('SomeController.getCompleted').as('getCompletedTasks')
+      })
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.name]
+      }))
+      expect(routes.length).to.equal(8)
+      expect(verbs['/tasks/:id/completed-GET/HEAD']).deep.equal('getCompletedTasks')
+    })
+
+    it('should return route defination using toJSON method', function () {
+      let resourceMember = {}
+      Route
+      .resource('/tasks','SomeController')
+      .addMember('completed', ['GET', 'HEAD'], function (member) {
+        resourceMember = member.toJSON()
+      })
+      expect(resourceMember).to.be.an('object')
+      expect(resourceMember.verb).deep.equal(['GET', 'HEAD'])
+      expect(resourceMember.handler).to.equal('SomeController.completed')
+      expect(resourceMember.middlewares).deep.equal([])
+      expect(resourceMember.name).to.equal('tasks.completed')
+    })
+
     it('should register resourceful routes with collection paths', function () {
       Route
       .resource('/tasks','SomeController')
@@ -660,6 +726,61 @@ describe('Route',function () {
       }
 
       expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
+    })
+
+    it('should be able to bind controller action to the resource collection', function () {
+      Route
+      .resource('/tasks','SomeController')
+      .addCollection('completed', ['GET', 'HEAD'], function (collection) {
+        collection.bindAction('SomeController.getCompletedTasks')
+      })
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.handler]
+      }))
+
+      expect(routes.length).to.equal(8)
+      expect(verbs['/tasks-GET/HEAD']).to.equal('SomeController.index')
+      expect(verbs['/tasks/create-GET/HEAD']).to.equal('SomeController.create')
+      expect(verbs['/tasks-POST']).to.equal('SomeController.store')
+      expect(verbs['/tasks/:id-GET/HEAD']).to.equal('SomeController.show')
+      expect(verbs['/tasks/:id/edit-GET/HEAD']).to.equal('SomeController.edit')
+      expect(verbs['/tasks/:id-PUT/PATCH']).to.equal('SomeController.update')
+      expect(verbs['/tasks/:id-DELETE']).to.equal('SomeController.destroy')
+      expect(verbs['/tasks/completed-GET/HEAD']).to.equal('SomeController.getCompletedTasks')
+    })
+
+    it('should be able to assign middleware to the resource collection', function () {
+      Route
+      .resource('/tasks','SomeController')
+      .addCollection('completed', ['GET', 'HEAD'], function (collection) {
+        collection.middleware('auth')
+      })
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.middlewares]
+      }))
+
+      expect(routes.length).to.equal(8)
+      expect(verbs['/tasks/completed-GET/HEAD']).deep.equal(['auth'])
+    })
+
+    it('should be able to change route name for the resource collection', function () {
+      Route
+      .resource('/tasks','SomeController')
+      .addCollection('completed', ['GET', 'HEAD'], function (collection) {
+        collection.as('tasks.getCompleted')
+      })
+
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'),route.name]
+      }))
+
+      expect(routes.length).to.equal(8)
+      expect(verbs['/tasks/completed-GET/HEAD']).deep.equal('tasks.getCompleted')
     })
 
     it('should be able to override collection route name', function(){
