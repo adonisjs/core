@@ -29,7 +29,7 @@
     "mocha-lcov-reporter": "^1.1.0",
     "pem": "^1.8.1",
     "standard": "^7.1.2",
-    "supertest": "^1.1.0",
+    "supertest": "^2.0.0",
     "test-console": "^1.0.0",
     "zombie": "^4.2.1"
   },
