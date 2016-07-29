@@ -1,3 +1,14 @@
+<a name="3.0.1"></a>
+## [3.0.1](https://github.com/adonisjs/adonis-framework/compare/v3.0.0...v3.0.1) (2016-07-29)
+
+
+### Features
+
+* **resource:middleware:** chain middleware method on route resource([04d6acc](https://github.com/adonisjs/adonis-framework/commit/04d6acc))
+* **route:resource:** resource members & coll accepts callback([6603d4f](https://github.com/adonisjs/adonis-framework/commit/6603d4f))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/adonisjs/adonis-framework/compare/v2.0.9...v3.0.0) (2016-06-26)
 
