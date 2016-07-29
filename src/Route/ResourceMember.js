@@ -11,6 +11,8 @@
 
 const helpers = require('./helpers')
 const util = require('../../lib/util')
+const CatLog = require('cat-log')
+const logger = new CatLog('adonis:framework')
 
 class ResourceMember {
 
@@ -37,6 +39,7 @@ class ResourceMember {
    * @see this.middleware
    */
   middlewares () {
+    logger.warn('member@middlewares: consider using method middleware, instead of middlewares')
     return this.middleware.apply(this, arguments)
   }
 

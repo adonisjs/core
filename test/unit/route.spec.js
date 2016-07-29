@@ -1099,5 +1099,96 @@ describe('Route',function () {
       yield routes[0].handler({foo: 'bar'}, res)
       expect(requestPassed).deep.equal({foo: 'bar'})
     })
+
+    it('should be able to bind middleware to the resource', function () {
+      Route.resource('tasks', 'TaskController').middleware('auth')
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'), route.middlewares]
+      }))
+      expect(routes).to.have.length(7)
+      expect(verbs['/tasks-GET/HEAD']).deep.equal(['auth'])
+      expect(verbs['/tasks/create-GET/HEAD']).deep.equal(['auth'])
+      expect(verbs['/tasks-POST']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id-GET/HEAD']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id/edit-GET/HEAD']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id-PUT/PATCH']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id-DELETE']).deep.equal(['auth'])
+    })
+
+    it('should be able to bind middleware on selected actions', function () {
+      Route.resource('tasks', 'TaskController').middleware({
+        auth: ['store']
+      })
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'), route.middlewares]
+      }))
+      expect(routes).to.have.length(7)
+      expect(verbs['/tasks-GET/HEAD']).deep.equal([])
+      expect(verbs['/tasks/create-GET/HEAD']).deep.equal([])
+      expect(verbs['/tasks-POST']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id-GET/HEAD']).deep.equal([])
+      expect(verbs['/tasks/:id/edit-GET/HEAD']).deep.equal([])
+      expect(verbs['/tasks/:id-PUT/PATCH']).deep.equal([])
+      expect(verbs['/tasks/:id-DELETE']).deep.equal([])
+    })
+
+    it('should be able to bind multiple middleware on selected actions', function () {
+      Route.resource('tasks', 'TaskController').middleware({
+        auth: ['store'],
+        web: ['index', 'show']
+      })
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'), route.middlewares]
+      }))
+      expect(routes).to.have.length(7)
+      expect(verbs['/tasks-GET/HEAD']).deep.equal(['web'])
+      expect(verbs['/tasks/create-GET/HEAD']).deep.equal([])
+      expect(verbs['/tasks-POST']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id-GET/HEAD']).deep.equal(['web'])
+      expect(verbs['/tasks/:id/edit-GET/HEAD']).deep.equal([])
+      expect(verbs['/tasks/:id-PUT/PATCH']).deep.equal([])
+      expect(verbs['/tasks/:id-DELETE']).deep.equal([])
+    })
+
+    it('should throw an error when actions are not defined as array', function () {
+      try {
+        Route.resource('tasks', 'TaskController').middleware({auth: 'store'})
+        expect(true).to.equal(false)
+      } catch (e) {
+        expect(e.message).to.equal('Resource route methods must be defined as an array')
+      }
+    })
+
+    it('should be able to bind an array middleware to the resource', function () {
+      Route.resource('tasks', 'TaskController').middleware(['auth'])
+      const routes = Route.routes()
+      const verbs = _.fromPairs(_.map(routes, function (route) {
+        return [route.route + '-' + route.verb.join('/'), route.middlewares]
+      }))
+      expect(routes).to.have.length(7)
+      expect(verbs['/tasks-GET/HEAD']).deep.equal(['auth'])
+      expect(verbs['/tasks/create-GET/HEAD']).deep.equal(['auth'])
+      expect(verbs['/tasks-POST']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id-GET/HEAD']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id/edit-GET/HEAD']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id-PUT/PATCH']).deep.equal(['auth'])
+      expect(verbs['/tasks/:id-DELETE']).deep.equal(['auth'])
+    })
+
+    it('should return an array of routes for a given resource', function () {
+      const resourceRoutes = Route
+        .resource('tasks', 'TaskController')
+        .only(['store', 'update'])
+        .middleware(['auth'])
+        .toJSON()
+      expect(resourceRoutes).to.have.length(2)
+      expect(resourceRoutes[0].route).to.equal('/tasks')
+      expect(resourceRoutes[1].route).to.equal('/tasks/:id')
+      expect(resourceRoutes[0].middlewares).deep.equal(['auth'])
+      expect(resourceRoutes[1].middlewares).deep.equal(['auth'])
+    })
   })
 })

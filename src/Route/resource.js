@@ -106,11 +106,47 @@ class Resource {
    * @param  {Array}       pairKeys
    * @return {Array}
    *
+   * @throws {Error} If pairKeys are not defines as array
+   *
    * @private
    */
   _transformKeys (pairKeys) {
+    if (!_.isArray(pairKeys)) {
+      throw new Error('Resource route methods must be defined as an array')
+    }
     return pairKeys.map((item) => {
       return `${this.basename}.${item}`
+    })
+  }
+
+  /**
+   * registers an expression of middleware to the specified
+   * actions
+   *
+   * @param   {Object} expression
+   *
+   * @private
+   */
+  _registerMiddlewareViaExpression (expression) {
+    _(expression)
+    .map((methods, middleware) => {
+      const routes = _.filter(this.routes, (route) => this._transformKeys(methods).indexOf(route.name) > -1)
+      return {routes, middleware}
+    })
+    .each((item) => this._addMiddleware(item.routes, item.middleware))
+  }
+
+  /**
+   * adds an array of middleware to the given routes
+   *
+   * @param   {Array} routes
+   * @param   {Array} middleware
+   *
+   * @private
+   */
+  _addMiddleware (routes, middleware) {
+    _.each(routes, (route) => {
+      helpers.appendMiddleware(route, middleware)
     })
   }
 
@@ -244,6 +280,51 @@ class Resource {
       callback(new ResourceCollection(registeredRoute))
     }
     return this
+  }
+
+  /**
+   * @see this.middleware
+   */
+  middlewares () {
+    logger.warn('resource@middlewares: consider using method middleware, instead of middlewares')
+    return this.middleware.apply(this, arguments)
+  }
+
+  /**
+   * adds middleware to the resource
+   *
+   * @param  {Mixed} middlewareExpression
+   *
+   * @return {Object}
+   *
+   * @example
+   * Route.resource(...).middleware('auth')
+   * Route.resource(...).middleware({
+   *  auth: ['store', 'update', 'delete'],
+   *  web: ['index']
+   * })
+   *
+   * @public
+   */
+  middleware (middlewareExpression) {
+    if (_.isObject(middlewareExpression) && !_.isArray(middlewareExpression)) {
+      this._registerMiddlewareViaExpression(middlewareExpression)
+      return this
+    }
+    this._addMiddleware(this.routes, util.spread.apply(this, arguments))
+    return this
+  }
+
+  /**
+   * returns routes JSON representation, helpful for
+   * inspection
+   *
+   * @return {Array}
+   *
+   * @public
+   */
+  toJSON () {
+    return this.routes
   }
 
 }
