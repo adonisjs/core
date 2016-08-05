@@ -39,6 +39,7 @@
     "mocha": "^3.0.1",
     "mocha-lcov-reporter": "^1.1.0",
     "pem": "^1.8.1",
+    "sinon": "^1.17.5",
     "standard": "^7.1.2",
     "supertest": "^1.1.0",
     "test-console": "^1.0.0",
