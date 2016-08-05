@@ -14,8 +14,7 @@ class EnvProvider extends ServiceProvider {
     this.app.singleton('Adonis/Src/Env', function (app) {
       const Env = require('../src/Env')
       const Helpers = app.use('Adonis/Src/Helpers')
-      const Event = app.use('Adonis/Src/Event')
-      return new Env(Helpers, Event)
+      return new Env(Helpers)
     })
   }
 }

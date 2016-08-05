@@ -66,18 +66,13 @@ describe('Providers', function () {
   })
 
   context('Env', function () {
-    it('should inject Helpers and Event providers', function () {
+    it('should inject Helpers provider', function () {
       const Helpers = Ioc.use('Adonis/Src/Helpers')
-      const Event = Ioc.use('Adonis/Src/Event')
       sinon.spy(Helpers, 'basePath')
-      sinon.spy(Event, 'fire')
       const Env = require('../../src/Env')
       const env = Ioc.use('Adonis/Src/Env')
       expect(env).to.be.an.instanceof(Env)
       expect(Helpers.basePath.calledOnce).to.equal(true)
-      expect(Event.fire.calledOnce).to.equal(true)
-      expect(Event.fire.calledWith('env:loaded')).to.equal(true)
-      Event.fire.restore()
       Helpers.basePath.restore()
     })
   })

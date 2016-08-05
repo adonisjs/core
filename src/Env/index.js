@@ -20,7 +20,7 @@ const util = require('../../lib/util')
  */
 class Env {
 
-  constructor (Helpers, Event) {
+  constructor (Helpers) {
     const envLocation = this.envPath()
     const options = {
       path: path.isAbsolute(envLocation) ? envLocation : path.join(Helpers.basePath(), envLocation),
@@ -28,7 +28,6 @@ class Env {
       encoding: process.env.ENV_ENCODING || 'utf8'
     }
     dotenv.load(options)
-    Event.fire('env:loaded')
   }
 
   /**

@@ -53,18 +53,6 @@ describe('Env', function () {
     expect(env.get('APP_PORT')).to.equal('3000')
   })
 
-  it('should fire an event when able to load .env file', function () {
-    let eventName = null
-    class Event {
-      static fire (name) {
-        eventName = name
-      }
-    }
-    /*eslint-disable no-new*/
-    new Env(Helpers, Event)
-    expect(eventName).to.equal('env:loaded')
-  })
-
   it('should return default value when it does exists in .env file', function () {
     const env = new Env(Helpers, Event)
     expect(env.get('APP_KEY', 'foo')).to.equal('foo')
