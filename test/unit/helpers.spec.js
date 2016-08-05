@@ -43,11 +43,28 @@ describe('Helpers', function () {
   })
 
   context('After Load', function () {
-    before(function () {
+    beforeEach(function () {
       Helpers.load(path.join(basePath, './package.test.json'))
     })
+
     it('should return project base directory path', function () {
       expect(Helpers.basePath()).to.equal(basePath)
+    })
+
+    it('should return the tree of appDirectories', function () {
+      expect(Helpers.getProjectDirectories()).deep.equal({
+        public: 'public',
+        storage: 'storage',
+        database: 'database',
+        resources: 'resources',
+        config: 'config',
+        app: './app'
+      })
+    })
+
+    it('should be able to override a given directory path', function () {
+      Helpers.setProjectDirectory('public', 'dist')
+      expect(Helpers.publicPath()).to.match(/dist$/)
     })
 
     it('should return project app directory path', function () {
