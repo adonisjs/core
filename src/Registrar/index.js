@@ -8,41 +8,73 @@
 
 const parallel = require('co-parallel')
 const co = require('co')
+const Ioc = require('../Ioc')
 const _ = require('lodash')
 const requireStack = require('require-stack')
 
 let Registrar = exports = module.exports = {}
 
 /**
- * @description requires an array of provider and returns
- * their register method
- * @method require
- * @param  {Array} arrayOfProviders
- * @return {Array}
- * @public
+ * map over all the providers and return an array
+ * of unique providers
+ *
+ * @param   {Array} arrayOfProviders
+ *
+ * @return  {Array}                  [description]
+ *
+ * @private
  */
-Registrar.require = function (arrayOfProviders) {
+Registrar._mapProviders = function (arrayOfProviders) {
   return _.chain(arrayOfProviders)
   .unique()
   .map(function (provider) {
     provider = provider.trim()
     const Module = requireStack(provider)
-    const module = new Module()
-    return module.register()
+    return new Module()
   }).value()
 }
 
 /**
- * @description registers an array of providers by
+ * calls register method on all the given providers
+ *
+ * @param  {Array} providers
+ *
+ * @return {Array}
+ */
+Registrar._callRegister = function (providers) {
+  return providers.map((provider) => provider.register())
+}
+
+/**
+ * call boot method on provider if defined
+ *
+ * @param  {Array} providers
+ *
+ * @return {Array}
+ */
+Registrar._callBoot = function (providers) {
+  return _(providers)
+  .filter((provider) => typeof (provider.boot) === 'function')
+  .map((provider) => provider.boot())
+  .value()
+}
+
+/**
+ * registers an array of providers by
  * called their register method.
- * @method register
+ *
  * @param  {Array} arrayOfProviders
+ *
  * @return {void}
+ *
  * @public
  */
 Registrar.register = function (arrayOfProviders) {
-  arrayOfProviders = Registrar.require(arrayOfProviders)
+  const providers = Registrar._mapProviders(arrayOfProviders)
   return co(function * () {
-    return yield parallel(arrayOfProviders)
+    yield parallel(Registrar._callRegister(providers))
+    Ioc.emit('providers:registered')
+    yield parallel(Registrar._callBoot(providers))
+    Ioc.emit('providers:booted')
   })
 }
