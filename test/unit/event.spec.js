@@ -28,8 +28,7 @@ const Helpers = {
   }
 }
 
-describe('Event', function() {
-
+describe('Event', function () {
   it('should be able to register an event', function (done) {
     const event = new Event(Config, Helpers)
     event.on('foo', function (data) {
@@ -201,7 +200,7 @@ describe('Event', function() {
   it('should be able to register one time only event listener', function (done) {
     let count = 0
     const event = new Event(Config, Helpers)
-    event.once('foo',function () {
+    event.once('foo', function () {
       count++
     })
     event.fire('foo')
@@ -212,8 +211,7 @@ describe('Event', function() {
 
   it('should be able to get list of listeners for a specific event', function () {
     const event = new Event(Config, Helpers)
-    event.once('foo',function () {
-    })
+    event.once('foo', function () {})
     const listeners = event.getListeners('foo')
     expect(listeners).to.be.an('array')
     expect(listeners.length).to.equal(1)
@@ -221,8 +219,7 @@ describe('Event', function() {
 
   it('should be able to get list of listeners for wildcard events', function () {
     const event = new Event(Config, Helpers)
-    event.once('foo.bar',function () {
-    })
+    event.once('foo.bar', function () {})
     const listeners = event.getListeners('foo.*')
     expect(listeners).to.be.an('array')
     expect(listeners.length).to.equal(1)
@@ -230,8 +227,7 @@ describe('Event', function() {
 
   it('should tell whether there are any listeners for a given event', function () {
     const event = new Event(Config, Helpers)
-    event.once('foo.bar',function () {
-    })
+    event.once('foo.bar', function () {})
     expect(event.hasListeners('foo.*')).to.equal(true)
   })
 
@@ -250,10 +246,8 @@ describe('Event', function() {
 
   it('should be able to remove named events', function () {
     const event = new Event(Config, Helpers)
-    event.on('foo', 'fooEvent', function () {
-    })
-    event.on('foo', 'anotherEvent', function () {
-    })
+    event.on('foo', 'fooEvent', function () {})
+    event.on('foo', 'anotherEvent', function () {})
     event.removeListener('foo', 'fooEvent')
     const listeners = event.getListeners('foo')
     expect(listeners.length).to.equal(1)
@@ -282,10 +276,8 @@ describe('Event', function() {
 
   it('should be able to remove all listeners for a given event', function () {
     const event = new Event(Config, Helpers)
-    event.on('foo', function () {
-    })
-    event.on('foo', function () {
-    })
+    event.on('foo', function () {})
+    event.on('foo', function () {})
     event.removeListeners('foo')
     const listeners = event.getListeners('foo')
     expect(listeners.length).to.equal(0)
@@ -293,10 +285,8 @@ describe('Event', function() {
 
   it('should be able to remove all listeners for all events', function () {
     const event = new Event(Config, Helpers)
-    event.on('foo', function () {
-    })
-    event.on('bar', function () {
-    })
+    event.on('foo', function () {})
+    event.on('bar', function () {})
     event.removeListeners()
     expect(event.getListeners('foo').length).to.equal(0)
     expect(event.getListeners('bar').length).to.equal(0)

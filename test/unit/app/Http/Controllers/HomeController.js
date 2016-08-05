@@ -3,7 +3,7 @@
 class HomeController {
 
   * index (request, response) {
-    response.send({rendered:true})
+    response.send({rendered: true})
   }
 
 }

@@ -6,7 +6,10 @@
   "scripts": {
     "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test/unit test/acceptance && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "coverage": "npm run lint && istanbul cover _mocha test/unit test/acceptance  --bail",
-    "lint": "standard src/**/*.js src/**/**/*.js providers/*.js"
+    "lint": "standard src/**/*.js src/**/**/*.js test/**/*.js providers/*.js"
+  },
+  "standard": {
+    "global": ["it", "describe", "context", "before", "after", "beforeEach", "afterEach"]
   },
   "keywords": [
     "adonis-framework",

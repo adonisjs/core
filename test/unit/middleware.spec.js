@@ -15,11 +15,10 @@ const NE = require('node-exceptions')
 require('co-mocha')
 
 describe('Middleware', function () {
-
   afterEach(function () {
     Middleware.new()
     Ioc.new()
-    Ioc.autoload('App',path.join(__dirname,'./app'))
+    Ioc.autoload('App', path.join(__dirname, './app'))
   })
 
   it('should register a global middleware', function () {
@@ -29,15 +28,15 @@ describe('Middleware', function () {
   })
 
   it('should register a named middleware', function () {
-    Middleware.register('bar','App/Foo/Bar')
+    Middleware.register('bar', 'App/Foo/Bar')
     const named = Middleware.getNamed()
     expect(named.bar).to.equal('App/Foo/Bar')
   })
 
   it('should bulk register global middleware', function () {
-    Middleware.global(['App/Foo/Bar','App/Foo/Baz'])
+    Middleware.global(['App/Foo/Bar', 'App/Foo/Baz'])
     const global = Middleware.getGlobal()
-    expect(global).deep.equal(['App/Foo/Bar','App/Foo/Baz'])
+    expect(global).deep.equal(['App/Foo/Bar', 'App/Foo/Baz'])
   })
 
   it('should bulk register a named middleware', function () {
@@ -90,7 +89,7 @@ describe('Middleware', function () {
     expect(resolved[0]).to.have.property('method')
     expect(resolved[0]).to.have.property('parameters')
     expect(resolved[0].parameters).deep.equal(['basic'])
-   })
+  })
 
   it('should resolve global and named named middleware using resolve method', function () {
     Middleware.register('auth', 'App/Http/Middleware/AuthMiddleware')
@@ -155,5 +154,4 @@ describe('Middleware', function () {
     expect(request.count).to.equal(1)
     expect(request.scheme).to.equal('basic')
   })
-
 })

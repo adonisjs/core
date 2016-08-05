@@ -41,12 +41,12 @@ describe('Form Helper', function () {
   })
 
   it('should be able to define additional attributes on form tag', function () {
-    const formTag = form.open({url: '/user', method: 'POST', files: true, novalidate: true })
+    const formTag = form.open({url: '/user', method: 'POST', files: true, novalidate: true})
     expect(formTag.val).to.equal('<form method="POST" action="/user" enctype="multipart/form-data" novalidate="true">')
   })
 
   it('should be able to define multiple classes from formtag', function () {
-    const formTag = form.open({url: '/user', method: 'POST', class: 'form form--small' })
+    const formTag = form.open({url: '/user', method: 'POST', class: 'form form--small'})
     expect(formTag.val).to.equal('<form method="POST" action="/user" enctype="application/x-www-form-urlencoded" class="form form--small">')
   })
 
@@ -70,16 +70,16 @@ describe('Form Helper', function () {
     Route.post('/users', 'UserController.store').as('users.store')
 
     try {
-      const formTag = form.open({ route: 'user.store', method: 'POST' })
+      form.open({ route: 'user.store', method: 'POST' })
       expect(true).to.be.false
-    } catch(e) {
+    } catch (e) {
       expect(e.message).to.match(/The route user.store has not been found/)
     }
   })
 
   it('should be able to make url using route name with params', function () {
     Route.delete('/user/:id', 'UserController.delete').as('deleteUser')
-    const formTag = form.open({route: 'deleteUser', params: {id: 1} })
+    const formTag = form.open({route: 'deleteUser', params: {id: 1}})
     expect(formTag.val).to.equal('<form method="POST" action="/user/1?_method=DELETE" enctype="application/x-www-form-urlencoded">')
   })
 
@@ -164,7 +164,6 @@ describe('Form Helper', function () {
     expect(input.val).to.equal('<input type="text" name="username" id="username" />')
   })
 
-
   it('should create a url input using url method', function () {
     const label = form.url('blogLink')
     expect(label.val).to.equal('<input type="url" name="blogLink" id="blogLink" />')
@@ -223,7 +222,7 @@ describe('Form Helper', function () {
   it('should be able to create a selectbox', function () {
     const label = form.select('countries', ['India', 'Usa', 'Brazil'])
     const expected =
-`<select name="countries" id="countries">
+    `<select name="countries" id="countries">
 <option value="India"> India </option>
 <option value="Usa"> Usa </option>
 <option value="Brazil"> Brazil </option>
@@ -234,7 +233,7 @@ describe('Form Helper', function () {
   it('should be able to define diffrent keys and values for options', function () {
     const label = form.select('countries', {'ind': 'India', 'us': 'Usa'})
     const expected =
-`<select name="countries" id="countries">
+    `<select name="countries" id="countries">
 <option value="ind"> India </option>
 <option value="us"> Usa </option>
 </select>`
@@ -244,7 +243,7 @@ describe('Form Helper', function () {
   it('should be able to define attributes on select box', function () {
     const label = form.select('countries', {'ind': 'India', 'us': 'Usa'}, null, null, {multiple: true})
     const expected =
-`<select name="countries" multiple="true" id="countries">
+    `<select name="countries" multiple="true" id="countries">
 <option value="ind"> India </option>
 <option value="us"> Usa </option>
 </select>`
@@ -254,7 +253,7 @@ describe('Form Helper', function () {
   it('should be able to define selected option on select box', function () {
     const label = form.select('countries', {'ind': 'India', 'us': 'Usa'}, 'ind')
     const expected =
-`<select name="countries" id="countries">
+    `<select name="countries" id="countries">
 <option selected="true" value="ind"> India </option>
 <option value="us"> Usa </option>
 </select>`
@@ -264,7 +263,7 @@ describe('Form Helper', function () {
   it('should be able to define selected option on select box when using array', function () {
     const label = form.select('countries', ['India', 'Usa', 'Brazil'], 'India')
     const expected =
-`<select name="countries" id="countries">
+    `<select name="countries" id="countries">
 <option selected="true" value="India"> India </option>
 <option value="Usa"> Usa </option>
 <option value="Brazil"> Brazil </option>
@@ -275,7 +274,7 @@ describe('Form Helper', function () {
   it('should be able to define multiple selected option on select box', function () {
     const label = form.select('countries', {'ind': 'India', 'us': 'Usa'}, ['ind', 'us'])
     const expected =
-`<select name="countries" id="countries">
+    `<select name="countries" id="countries">
 <option selected="true" value="ind"> India </option>
 <option selected="true" value="us"> Usa </option>
 </select>`
@@ -285,7 +284,7 @@ describe('Form Helper', function () {
   it('should be able to define empty input as first option', function () {
     const label = form.select('countries', {'ind': 'India', 'us': 'Usa'}, null, 'Select Country')
     const expected =
-`<select name="countries" id="countries">
+    `<select name="countries" id="countries">
 <option value=""> Select Country </option>
 <option value="ind"> India </option>
 <option value="us"> Usa </option>
@@ -296,7 +295,7 @@ describe('Form Helper', function () {
   it('should be able to define range inside select box', function () {
     const label = form.selectRange('number', 1, 4)
     const expected =
-`<select name="number" id="number">
+    `<select name="number" id="number">
 <option value="1"> 1 </option>
 <option value="2"> 2 </option>
 <option value="3"> 3 </option>
@@ -307,7 +306,7 @@ describe('Form Helper', function () {
   it('should be able to define opposite range inside select box', function () {
     const label = form.selectRange('number', 3, 0)
     const expected =
-`<select name="number" id="number">
+    `<select name="number" id="number">
 <option value="3"> 3 </option>
 <option value="2"> 2 </option>
 <option value="1"> 1 </option>

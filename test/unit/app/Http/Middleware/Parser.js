@@ -1,8 +1,8 @@
 'use strict'
 
-class Parser{
+class Parser {
 
-  *handle (request, response, next) {
+  * handle (request, response, next) {
     request.count = 0
     yield next
   }

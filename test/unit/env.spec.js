@@ -7,25 +7,26 @@
 */
 
 const Env = require('../../src/Env')
-const stderr = require("test-console").stderr
+const stderr = require('test-console').stderr
+const path = require('path')
 const chai = require('chai')
 const expect = chai.expect
 
 const Helpers = {
   basePath: function () {
-    return __dirname + '/app'
+    return path.join(__dirname, '/config')
   }
 }
 
-describe('Env', function() {
+describe('Env', function () {
   it('should load .env file by initiating Env class', function () {
-    new Env(Helpers)
+    Env(Helpers)
   })
 
   it('should load .env file from the location defined as ENV_PATH flag', function () {
     const inspect = stderr.inspect()
     process.env.ENV_PATH = '/users/.env'
-    new Env(Helpers)
+    Env(Helpers)
     inspect.restore()
     expect(inspect.output[0]).to.match(/\/users\/\.env/)
     process.env.ENV_PATH = ''
@@ -38,12 +39,12 @@ describe('Env', function() {
 
   it('should return default value when it does exists in .env file', function () {
     const env = new Env(Helpers)
-    expect(env.get('APP_KEY','foo')).to.equal('foo')
+    expect(env.get('APP_KEY', 'foo')).to.equal('foo')
   })
 
   it('should return default value when it does exists in .env file and default value is a boolean', function () {
     const env = new Env(Helpers)
-    expect(env.get('APP_KEY',false)).to.equal(false)
+    expect(env.get('APP_KEY', false)).to.equal(false)
   })
 
   it('should override defined values', function () {
@@ -54,19 +55,19 @@ describe('Env', function() {
 
   it('should convert boolean strings into a valid boolean', function () {
     const env = new Env(Helpers)
-    env.set('CACHE_VIEWS',false)
+    env.set('CACHE_VIEWS', false)
     expect(env.get('CACHE_VIEWS')).to.equal(false)
   })
 
   it('should convert 0 and 1 to true and false', function () {
     const env = new Env(Helpers)
-    env.set('CACHE_VIEWS',0)
+    env.set('CACHE_VIEWS', 0)
     expect(env.get('CACHE_VIEWS')).to.equal(false)
   })
 
   it('should convert true defined as string to a boolean', function () {
     const env = new Env(Helpers)
-    env.set('CACHE_VIEWS',true)
+    env.set('CACHE_VIEWS', true)
     expect(env.get('CACHE_VIEWS')).to.equal(true)
   })
-});
+})

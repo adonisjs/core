@@ -12,7 +12,7 @@ const chai = require('chai')
 const expect = chai.expect
 const server = require('./setup')
 const Helpers = require('../../src/Helpers')
-const Ioc = require("adonis-fold").Ioc
+const Ioc = require('adonis-fold').Ioc
 const queryString = require('querystring')
 const Middleware = require('../../src/Middleware')
 require('co-mocha')
@@ -21,10 +21,9 @@ Browser.localhost('localhost', 3333)
 const browser = new Browser()
 
 describe('App Exceptations', function () {
-
   before(function () {
-    server().listen('0.0.0.0',3333);
-    Ioc.autoload(Helpers.appNameSpace(),Helpers.appPath())
+    server().listen('0.0.0.0', 3333)
+    Ioc.autoload(Helpers.appNameSpace(), Helpers.appPath())
   })
 
   beforeEach(function () {
@@ -37,7 +36,7 @@ describe('App Exceptations', function () {
       response.send('Hello zombie')
     })
     yield browser.visit('/')
-    expect(browser.text("body").trim()).to.equal('Hello zombie')
+    expect(browser.text('body').trim()).to.equal('Hello zombie')
   })
 
   it('should respond to http request as json', function * () {
@@ -48,32 +47,32 @@ describe('App Exceptations', function () {
       response.json({user})
     })
     yield browser.visit('/json')
-    expect(browser.text("body")).to.equal(JSON.stringify({user}))
+    expect(browser.text('body')).to.equal(JSON.stringify({user}))
   })
 
   it('should respond via controller', function * () {
     Route.get('/', 'HomeController.index')
     yield browser.visit('/')
-    expect(browser.text("body").trim()).to.equal('Hello zombie via controller')
+    expect(browser.text('body').trim()).to.equal('Hello zombie via controller')
   })
 
   it('should set cookies on response', function * () {
     Route.get('/', 'HomeController.cookies')
     yield browser.visit('/')
-    const cartCookie = JSON.parse(queryString.unescape(browser.getCookie('cart')).replace('j:',''))
+    const cartCookie = JSON.parse(queryString.unescape(browser.getCookie('cart')).replace('j:', ''))
     expect(cartCookie).to.have.property('price')
     expect(cartCookie).to.have.property('items')
   })
 
   it('should serve static resources when route is not registered', function * () {
     yield browser.visit('/style.css')
-    expect(browser.text).to.match(/(?:\s*\S+\s*{[^}]*})+/g);
+    expect(browser.text).to.match(/(?:\s*\S+\s*{[^}]*})+/g)
   })
 
   it('should throw 404 when nothing is found', function * () {
-    try{
+    try {
       yield browser.visit('/production.js')
-    }catch (e){
+    } catch (e) {
       browser.assert.status(404)
     }
   })
@@ -87,7 +86,7 @@ describe('App Exceptations', function () {
   it('should reach route action when middleware yields next', function * () {
     Middleware.global(['App/Http/Middleware/Counter'])
     Route.get('/', function * (request, response) {
-      response.send(request.counter);
+      response.send(request.counter)
     })
     yield browser.visit('/')
     expect(browser.text('body').trim()).to.equal('1')
@@ -118,11 +117,11 @@ describe('App Exceptations', function () {
 
   it('should clear existing cookies', function * () {
     Route.get('/', function * (request, response) {
-      response.clearCookie('name').send('');
+      response.clearCookie('name').send('')
     })
     browser.setCookie({name: 'name', value: 'virk'})
     yield browser.visit('/')
-    expect(browser.getCookie('name')).to.equal(null);
+    expect(browser.getCookie('name')).to.equal(null)
   })
 
   it('should response to a url with .json extension', function * () {
@@ -130,7 +129,7 @@ describe('App Exceptations', function () {
       response.send('sending via json route')
     }).formats(['json'])
     yield browser.visit('/.json')
-    expect(browser.text('body').trim()).to.equal('sending via json route');
+    expect(browser.text('body').trim()).to.equal('sending via json route')
   })
 
   it('should throw 404 when route is not found using a non-registered extension', function * () {
@@ -157,7 +156,7 @@ describe('App Exceptations', function () {
       yield response.sendView('index')
     })
     yield browser.visit('/')
-    expect(browser.text('body').trim()).to.equal('sending via view');
+    expect(browser.text('body').trim()).to.equal('sending via view')
   })
 
   it('should make use of form global helper to setup a form', function * () {

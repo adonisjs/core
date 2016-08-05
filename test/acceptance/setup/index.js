@@ -11,7 +11,8 @@ const Helpers = require('../../../src/Helpers')
 const path = require('path')
 const Static = require('../../../src/Static')
 
-class Session {}
+class Session {
+}
 
 const Config = {
   get: function (key) {
@@ -26,13 +27,12 @@ const Config = {
   }
 }
 
-
 module.exports = function () {
-  Helpers.load(path.join(__dirname,'../package.test.json'))
+  Helpers.load(path.join(__dirname, '../package.test.json'))
   const view = new View(Helpers, Config, Route)
   const Response = new ResponseBuilder(view, Route, Config)
   const staticServer = new Static(Helpers, Config)
   const Event = new EventProvider(Config)
   const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, Config, Event)
-  return server;
+  return server
 }
