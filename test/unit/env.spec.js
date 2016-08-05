@@ -14,21 +14,33 @@ const expect = chai.expect
 
 const Helpers = {
   basePath: function () {
-    return path.join(__dirname, '/config')
+    return path.join(__dirname, './app')
   }
 }
 
 describe('Env', function () {
   it('should load .env file by initiating Env class', function () {
-    Env(Helpers)
+    /*eslint-disable no-new*/
+    new Env(Helpers)
   })
 
   it('should load .env file from the location defined as ENV_PATH flag', function () {
     const inspect = stderr.inspect()
     process.env.ENV_PATH = '/users/.env'
-    Env(Helpers)
+    /*eslint-disable no-new*/
+    new Env(Helpers)
     inspect.restore()
     expect(inspect.output[0]).to.match(/\/users\/\.env/)
+    process.env.ENV_PATH = ''
+  })
+
+  it('should not inherit path from the basePath when ENV_PATH location has absolute path', function () {
+    const inspect = stderr.inspect()
+    process.env.ENV_PATH = '/.env'
+    /*eslint-disable no-new*/
+    new Env(Helpers)
+    inspect.restore()
+    expect(inspect.output[0]).to.match(/\.env/)
     process.env.ENV_PATH = ''
   })
 
