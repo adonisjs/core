@@ -28,6 +28,7 @@
     "co-parallel": "^1.0.0",
     "coveralls": "^2.11.12",
     "dwell": "^1.0.0",
+    "eventemitter2": "^2.1.0",
     "lodash": "^3.10.1",
     "require-stack": "^1.0.1"
   },
