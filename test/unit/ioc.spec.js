@@ -195,6 +195,7 @@ describe('Ioc', function () {
 
     it('should be able to fetch binding from ioc container with type hinted depedencies', function () {
       class Foo {
+        /*eslint-disable camelcase*/
         constructor (App_Bar) {
           this.bar = App_Bar
         }
@@ -392,7 +393,7 @@ describe('Ioc', function () {
     })
 
     it('should be able to deep inject classes from autoloaded path', function () {
-      Ioc.autoload('App', __dirname + '/app')
+      Ioc.autoload('App', path.join(__dirname, '/app'))
 
       class Foo {
         static get inject () {
