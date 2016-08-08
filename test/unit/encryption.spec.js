@@ -104,14 +104,14 @@ describe('Encryption', function () {
     const fn = function () {
       return encryption.getJsonPayload('Int9Ig==')
     }
-    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRYPTION_PAYLOAD: The payload is invalid.')
+    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRYPTION_PAYLOAD: The payload is invalid')
   })
 
   it('should throw error when payload is not an json object', function () {
     const fn = function () {
       return encryption.getJsonPayload('foo')
     }
-    expect(fn).to.throw('RuntimeException: E_MALFORMED_JSON: The payload is not an json object')
+    expect(fn).to.throw('RuntimeException: E_MALFORMED_JSON: The payload is not a json object')
   })
 
   it('should throw error when mac is invalid', function () {

@@ -9,7 +9,7 @@
 const nodeCookie = require('node-cookie')
 const Type = require('type-of-is')
 const _ = require('lodash')
-const NE = require('node-exceptions')
+const CE = require('../../Exceptions')
 const uuid = require('node-uuid')
 const util = require('../../../lib/util')
 
@@ -333,7 +333,7 @@ class SessionManager {
    */
   * put (key, value) {
     if (key && typeof (value) === 'undefined' && typeof (key) !== 'object') {
-      throw new NE.InvalidArgumentException('put expects key/value pair or an object of keys and values')
+      throw CE.InvalidArgumentException.invalidParameter('Session.put expects a key/value pair or an object of keys and values')
     }
     const activeDriver = this.constructor.driver
 

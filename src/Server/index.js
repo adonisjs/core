@@ -14,7 +14,7 @@ const helpers = require('./helpers')
 const http = require('http')
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
-const NE = require('node-exceptions')
+const CE = require('../Exceptions')
 
 /**
  * Http server for adonis framework
@@ -68,7 +68,7 @@ class Server {
    */
   _callRouteAction (resolvedRoute, request, response) {
     if (!resolvedRoute.handler) {
-      throw new NE.HttpException(`Route not found ${request.url()}`, 404)
+      throw new CE.HttpException(`Route not found ${request.url()}`, 404)
     }
     const routeAction = this._makeRouteAction(resolvedRoute.handler)
     const chain = helpers.makeMiddlewareChain(this.middleware, routeAction, false, resolvedRoute)
@@ -92,7 +92,7 @@ class Server {
     if (typeof (handler) === 'string') {
       return this._makeControllerAction(handler)
     }
-    throw new NE.InvalidArgumentException('Invalid route handler, attach a controller method or a closure', 500)
+    throw CE.InvalidArgumentException.invalidParameter('Route action must be a function or a reference to the controller method')
   }
 
   /**

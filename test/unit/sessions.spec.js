@@ -39,7 +39,7 @@ describe('Session', function () {
       const fn = function () {
         return new Session(Config)
       }
-      expect(fn).to.throw(/Unable to locate mongo session driver/i)
+      expect(fn).to.throw('RuntimeException: E_INVALID_SESSION_DRIVER: Unable to locate mongo session driver')
     })
 
     it('should extend session drivers using extend method', function * () {
@@ -82,12 +82,12 @@ describe('Session', function () {
   })
 
   context('Session Manager', function () {
-    it('should not put values to existing session when key/value pair is not provided', function * () {
+    it('should throw an exception when values passed to put method are not valid', function * () {
       const sessionManager = new SessionManager()
       try {
         yield sessionManager.put('key')
       } catch (e) {
-        expect(e.message).to.match(/put expects/)
+        expect(e.message).to.equal('E_INVALID_PARAMETER: Session.put expects a key/value pair or an object of keys and values')
       }
     })
 

@@ -68,13 +68,13 @@ describe('Form Helper', function () {
 
   it("should throw an exception when you make url using a route name that doesn't exists", function () {
     Route.post('/users', 'UserController.store').as('users.store')
+    const fn = () => form.open({ route: 'user.store', method: 'POST' })
+    expect(fn).to.throw('RuntimeException: E_MISSING_ROUTE: The route user.store has not been found')
+  })
 
-    try {
-      form.open({ route: 'user.store', method: 'POST' })
-      expect(true).to.be.false
-    } catch (e) {
-      expect(e.message).to.match(/The route user.store has not been found/)
-    }
+  it("should throw an exception when you make url using a route handler that doesn't exists", function () {
+    const fn = () => form.open({ action: 'UserController.foo', method: 'POST' })
+    expect(fn).to.throw('RuntimeException: E_MISSING_ROUTE_ACTION: The action UserController.foo has not been found')
   })
 
   it('should be able to make url using route name with params', function () {

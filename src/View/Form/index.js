@@ -10,6 +10,7 @@
 */
 
 const _ = require('lodash')
+const CE = require('../../Exceptions')
 
 /**
  * Form helper for views
@@ -171,7 +172,7 @@ class Form {
       const route = this.route.getRoute({ name: options.route })
 
       if (route === void 0) {
-        throw Error(`The route ${options.route} has not been found`)
+        throw CE.RuntimeException.missingRoute(options.route)
       }
 
       options.method = route.verb[0]
@@ -184,6 +185,11 @@ class Form {
      */
     if (options.action) {
       const route = this.route.getRoute({handler: options.action})
+
+      if (route === void 0) {
+        throw CE.RuntimeException.missingRouteAction(options.action)
+      }
+
       options.method = route.verb[0]
       options.route = route.route
     }
