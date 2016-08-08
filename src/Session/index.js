@@ -12,7 +12,7 @@
 const Drivers = require('./Drivers')
 const Ioc = require('adonis-fold').Ioc
 const SessionManager = require('./SessionManager')
-const NE = require('node-exceptions')
+const CE = require('../Exceptions')
 
 /**
  * Session class for reading and writing sessions
@@ -76,7 +76,7 @@ class Session {
         /**
          * throw error when unable to locate driver
          */
-        throw new NE.RuntimeException(`Unable to locate ${driver} session driver`)
+        throw CE.RuntimeException.invalidSessionDriver(driver)
       }
     }
     SessionManager.driver = driverInstance

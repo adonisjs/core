@@ -9,7 +9,6 @@
 const Route = require('../../src/Route')
 const chai = require('chai')
 const _ = require('lodash')
-const NE = require('node-exceptions')
 const expect = chai.expect
 const stderr = require('test-console').stderr
 require('co-mocha')
@@ -95,7 +94,7 @@ describe('Route', function () {
       const fn = function () {
         Route.resource('/', function * () {})
       }
-      expect(fn).to.throw(NE.DomainException, /You can only bind controllers to resources/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: You can only bind controllers to resources')
     })
 
     it('should log warning when trying to bind resource to the base route', function () {
@@ -595,8 +594,7 @@ describe('Route', function () {
       const fn = function () {
         Route.resource('/tasks', 'SomeController').addMember()
       }
-
-      expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Resource.addMember expects a route')
     })
 
     it('should update controller binding for added member', function () {
@@ -718,8 +716,7 @@ describe('Route', function () {
           .resource('/tasks', 'SomeController')
           .addCollection()
       }
-
-      expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Resource.addCollection expects a route')
     })
 
     it('should be able to bind controller action to the resource collection', function () {
@@ -1145,12 +1142,8 @@ describe('Route', function () {
     })
 
     it('should throw an error when actions are not defined as array', function () {
-      try {
-        Route.resource('tasks', 'TaskController').middleware({auth: 'store'})
-        expect(true).to.equal(false)
-      } catch (e) {
-        expect(e.message).to.equal('Resource route methods must be defined as an array')
-      }
+      const fn = () => Route.resource('tasks', 'TaskController').middleware({auth: 'store'})
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Resource route methods must be defined as an array')
     })
 
     it('should be able to bind an array middleware to the resource', function () {

@@ -102,16 +102,9 @@ describe('View', function () {
     expect(profile.trim()).to.equal('/1')
   })
 
-  // TODO: Change the codebase to handle this test
-  it.skip('should throw an exception when make use of route filter and the route is not defined', function * () {
-    Route.get('/:id', 'ProfileController.show').as('profiles')
-
-    try {
-      yield this.view.make('profile', { id: 1 })
-      expect(true).to.be.false
-    } catch (e) {
-      expect(e.message).to.match(/The route profile has not been found/)
-    }
+  it('should throw exception when unable to find route action inside route filter', function * () {
+    const fn = () => this.view.makeString('{{ "ProfileController.show" | action({id:1}) }}')
+    expect(fn).to.throw(/RuntimeException: E_MISSING_ROUTE_ACTION: The action ProfileController\.show has not been found/)
   })
 
   it('should make an anchor link to a given route', function * () {
@@ -136,11 +129,6 @@ describe('View', function () {
     Route.get('profile/:id', 'ProfileController.show')
     const viewString = this.view.makeString('{{ linkToAction("ProfileController.show", "View Profile", {id: 1}, "_blank") }}')
     expect(viewString.trim()).to.equal('<a href="/profile/1" target="_blank"> View Profile </a>')
-  })
-
-  it('should return empty string when unable to find route action', function * () {
-    const profile = this.view.makeString('{{ "ProfileController.show" | action({id:1}) }}', {id: 1})
-    expect(profile.trim()).to.equal('')
   })
 
   it('should stringify json', function * () {

@@ -11,7 +11,7 @@
 
 const _ = require('lodash')
 const Ioc = require('adonis-fold').Ioc
-const NE = require('node-exceptions')
+const CE = require('../Exceptions')
 
 let globalMiddleware = []
 let namedMiddleware = {}
@@ -152,7 +152,7 @@ Middleware.formatNamedMiddleware = function (keys) {
     const keyOptions = key.split(':')
     const namespace = namedMiddleware[keyOptions[0]]
     if (!namespace) {
-      throw new NE.RuntimeException(`${keyOptions[0]} is not registered as a named middleware`)
+      throw CE.RuntimeException.missingNamedMiddleware(keyOptions[0])
     }
     structured[namespace] = Middleware.fetchParams(keyOptions[1])
   })

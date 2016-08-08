@@ -29,6 +29,24 @@ const Helpers = {
 }
 
 describe('Event', function () {
+  it('should throw an exception when event handler is not a valid function or reference to function', function () {
+    const event = new Event(Config, Helpers)
+    const fn = () => event.on('foo', {})
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: ')
+  })
+
+  it('should throw an exception when event.once handler is not a valid function or reference to function', function () {
+    const event = new Event(Config, Helpers)
+    const fn = () => event.once('foo', {})
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: ')
+  })
+
+  it('should throw an exception when event.any handler is not a valid function or reference to function', function () {
+    const event = new Event(Config, Helpers)
+    const fn = () => event.any({})
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: ')
+  })
+
   it('should be able to register an event', function (done) {
     const event = new Event(Config, Helpers)
     event.on('foo', function (data) {
@@ -258,7 +276,7 @@ describe('Event', function () {
     const fn = function () {
       event.removeListener('foo', 'fooEvent')
     }
-    expect(fn).to.throw(/There is no named event with fooEvent name for foo event/)
+    expect(fn).to.throw('InvalidArgumentException: E_MISSING_NAMED_EVENT: Cannot find an event with fooEvent name for foo event')
   })
 
   it('should be able to remove the correct named events', function (done) {

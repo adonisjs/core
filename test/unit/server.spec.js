@@ -167,7 +167,7 @@ describe('Server', function () {
     Route.get('/', {})
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
-    expect(res.error.text).to.match(/Invalid route handler/)
+    expect(res.error.text).to.match(/InvalidArgumentException: E_INVALID_PARAMETER: Route action must be a function or a reference to the controller method/)
   })
 
   it('should return error when unable to find controller', function * () {
