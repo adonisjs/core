@@ -10,6 +10,7 @@
 */
 
 const crypto = require('crypto')
+const NE = require('node-exceptions')
 
 /**
  * Encrypt and decrypt values using nodeJs crypto, make
@@ -25,11 +26,11 @@ class Encryption {
     this.algorithm = Config.get('app.encryption.algorithm', 'aes-256-cbc')
 
     if (!this.appKey) {
-      throw new Error('App key needs to be specified in order to make use of Encryption.')
+      throw new NE.RuntimeException('App key needs to be specified in order to make use of Encryption.', 500, 'E_MISSING_APPKEY')
     }
 
     if (!this.supported(this.appKey, this.algorithm)) {
-      throw new Error('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths.')
+      throw new NE.RuntimeException('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths.', 500, 'E_INVALID_ENCRPYTION_CIPHER')
     }
   }
 
@@ -59,17 +60,16 @@ class Encryption {
    * @public
    */
   encrypt (value, encoding) {
-    encoding = encoding || 'utf8'
+    if (!value) {
+      throw new NE.InvalidArgumentException('Could not encrypt the data.', 500, 'E_MISSING_PARAMETER')
+    }
 
+    encoding = encoding || 'utf8'
     let iv = crypto.randomBytes(this.getIvSize())
 
     const cipher = crypto.createCipheriv(this.algorithm, this.appKey, iv)
     value = cipher.update(value, encoding, 'base64')
     value += cipher.final('base64')
-
-    if (!value) {
-      throw new Error('Could not encrypt the data.')
-    }
 
     // Once we have the encrypted value we will go ahead base64_encode the input
     // vector and create the MAC for the encrypted value so we can verify its
@@ -102,7 +102,7 @@ class Encryption {
     decrypted += decipher.final(encoding)
 
     if (!decrypted) {
-      throw new Error('Could not decrypt the data.')
+      throw new NE.RuntimeException('Could not decrypt the data.', 500, 'E_ENCRYPTION_DECRYPT_FAILED')
     }
     return decrypted
   }
@@ -120,16 +120,16 @@ class Encryption {
     try {
       payload = JSON.parse(json)
     } catch (e) {
-      throw new Error('The payload is not an json object.')
+      throw new NE.RuntimeException('The payload is not an json object.', 500, 'E_MALFORMED_JSON')
     }
     // If the payload is not valid JSON or does not have the proper keys set we will
     // assume it is invalid and bail out of the routine since we will not be able
     // to decrypt the given value. We'll also check the MAC for this encryption.
     if (!payload || this.invalidPayload(payload)) {
-      throw new Error('The payload is invalid.')
+      throw new NE.RuntimeException('The payload is invalid.', 500, 'E_INVALID_ENCRYPTION_PAYLOAD')
     }
     if (!this.validMac(payload)) {
-      throw new Error('The MAC is invalid.')
+      throw new NE.RuntimeException('The MAC is invalid.', 500, 'E_INVALID_ENCRYPTION_MAC')
     }
     return payload
   }
