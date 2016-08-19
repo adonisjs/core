@@ -38,6 +38,13 @@ describe('Middleware', function () {
     expect(global).deep.equal(['App/Foo/Bar', 'App/Foo/Baz'])
   })
 
+  it('should register only unique middleware to the global list', function () {
+    Middleware.global(['App/Foo/Bar', 'App/Foo/Bar'])
+    const global = Middleware.getGlobal()
+    expect(global).have.length(1)
+    expect(global[0]).to.equal('App/Foo/Bar')
+  })
+
   it('should bulk register a named middleware', function () {
     const namedMiddleware = {
       'bar': 'App/Foo/Bar',
@@ -141,7 +148,7 @@ describe('Middleware', function () {
     expect(request.count).to.equal(1)
   })
 
-  it('should pass parameters to be middleware', function * () {
+  it('should pass parameters to the middleware', function * () {
     Middleware.global(['App/Http/Middleware/Parser', 'App/Http/Middleware/Cycle2'])
     Middleware.register('auth', 'App/Http/Middleware/AuthMiddleware')
     const request = {}
@@ -152,5 +159,18 @@ describe('Middleware', function () {
     yield compose()
     expect(request.count).to.equal(1)
     expect(request.scheme).to.equal('basic')
+  })
+
+  it('should be able to compose a closure attached to the middleware', function * () {
+    const request = {}
+    const response = {}
+    const middleware = function * (request, response) {
+      request.count = 1
+      response.count = 1
+    }
+    const compose = Middleware.compose([middleware], request, response)
+    yield compose()
+    expect(request.count).to.equal(1)
+    expect(response.count).to.equal(1)
   })
 })

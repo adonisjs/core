@@ -49,6 +49,7 @@
     "adonis-fold": "^3.0.2"
   },
   "dependencies": {
+    "adonis-binding-resolver": "^1.0.1",
     "bcryptjs": "^2.3.0",
     "bytes": "^2.4.0",
     "cat-log": "^1.0.2",

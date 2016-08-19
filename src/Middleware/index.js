@@ -17,6 +17,39 @@ let globalMiddleware = []
 let namedMiddleware = {}
 
 /**
+ * composes a closure to an object for consistent behaviour
+ *
+ * @method  _composeFunction
+ *
+ * @param   {Function}         middleware
+ *
+ * @return  {Object}
+ *
+ * @private
+ */
+const _composeFunction = function (middleware) {
+  return {instance: null, method: middleware, parameters: []}
+}
+
+/**
+ * composes a consistent object from the actual
+ * middleware object
+ *
+ * @method  _composeObject
+ *
+ * @param   {Object}       middleware
+ *
+ * @return  {Object}
+ *
+ * @private
+ */
+const _composeObject = function (middleware) {
+  const instance = middleware.instance || null
+  const method = instance ? instance[middleware.method] : middleware.method
+  return {instance, method, parameters: middleware.parameters}
+}
+
+/**
  * Http middleware layer to register and resolve middleware
  * for a given HTTP request.
  * @module Middleware
@@ -72,7 +105,7 @@ Middleware.register = function (key, namespace) {
  * @public
  */
 Middleware.global = function (arrayOfMiddleware) {
-  globalMiddleware = globalMiddleware.concat(arrayOfMiddleware)
+  globalMiddleware = globalMiddleware.concat(_.uniq(arrayOfMiddleware))
 }
 
 /**
@@ -88,9 +121,7 @@ Middleware.global = function (arrayOfMiddleware) {
  * @public
  */
 Middleware.named = function (namedMiddleware) {
-  _.each(namedMiddleware, function (namespace, key) {
-    Middleware.register(key, namespace)
-  })
+  _.each(namedMiddleware, (namespace, key) => Middleware.register(key, namespace))
 }
 
 /**
@@ -103,7 +134,7 @@ Middleware.named = function (namedMiddleware) {
  * @public
  */
 Middleware.getGlobal = function () {
-  return _.uniq(globalMiddleware)
+  return globalMiddleware
 }
 
 /**
@@ -122,6 +153,7 @@ Middleware.getNamed = function () {
 /**
  * fetch params defined next to named middleware while
  * consuming them.
+ *
  * @method fetchParams
  *
  * @param  {String|Undefined}    params
@@ -142,21 +174,25 @@ Middleware.fetchParams = function (params) {
  * @param  {Array}              keys
  * @return {Object}
  *
+ * @example
+ * Middleware.formatNamedMiddleware(['auth:basic,jwt'])
+ * returns
+ * {'Adonis/Middleware/Auth': ['basic', 'jwt']}
+ *
  * @throws {RunTimeException} If named middleware for a given
  *                            key is not registered.
  * @public
  */
 Middleware.formatNamedMiddleware = function (keys) {
-  const structured = {}
-  keys.forEach(function (key) {
-    const keyOptions = key.split(':')
-    const namespace = namedMiddleware[keyOptions[0]]
-    if (!namespace) {
-      throw CE.RuntimeException.missingNamedMiddleware(keyOptions[0])
+  return _.reduce(keys, (structured, key) => {
+    const tokens = key.split(':')
+    const middlewareNamespace = namedMiddleware[tokens[0]]
+    if (!middlewareNamespace) {
+      throw CE.RuntimeException.missingNamedMiddleware(tokens[0])
     }
-    structured[namespace] = Middleware.fetchParams(keyOptions[1])
-  })
-  return structured
+    structured[middlewareNamespace] = Middleware.fetchParams(tokens[1])
+    return structured
+  }, {})
 }
 
 /**
@@ -170,11 +206,15 @@ Middleware.formatNamedMiddleware = function (keys) {
  *
  * @return {Array}
  *
+ * @example
+ * Middleware.resolve({}, true) // all global
+ * Middleware.resolve(Middleware.formatNamedMiddleware(['auth:basic', 'acl:user']))
+ *
  * @public
  */
 Middleware.resolve = function (namedMiddlewareHash, includeGlobal) {
   const finalSet = includeGlobal ? Middleware.getGlobal().concat(_.keys(namedMiddlewareHash)) : _.keys(namedMiddlewareHash)
-  return _.map(finalSet, function (item) {
+  return _.map(finalSet, (item) => {
     const func = Ioc.makeFunc(`${item}.handle`)
     func.parameters = namedMiddlewareHash[item] || []
     return func
@@ -193,17 +233,18 @@ Middleware.resolve = function (namedMiddlewareHash, includeGlobal) {
  *
  * @public
  */
-Middleware.compose = function (middleware, request, response) {
+Middleware.compose = function (middlewareList, request, response) {
   function * noop () {}
   return function * (next) {
     next = next || noop()
-    let i = middleware.length
-    while (i--) {
-      const instance = middleware[i].instance
-      const method = instance ? instance[middleware[i].method] : middleware[i].method
-      const values = [request, response, next].concat(middleware[i].parameters)
-      next = method.apply(instance, values)
-    }
+    _(middlewareList)
+    .map((middleware) => {
+      return typeof (middleware) === 'function' ? _composeFunction(middleware) : _composeObject(middleware)
+    })
+    .forEachRight((middleware) => {
+      const values = [request, response, next].concat(middleware.parameters)
+      next = middleware.method.apply(middleware.instance, values)
+    })
     return yield * next
   }
 }
