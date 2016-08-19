@@ -492,7 +492,7 @@ class Request {
      * empty instance of file object.
      */
     if (!this._files[key]) {
-      return this._toFileInstance({})
+      return null
     }
 
     /**
@@ -502,8 +502,8 @@ class Request {
     const fileToReturn = this._files[key]
 
     /**
-     * if multiple file upload , convert of them to
-     * file instance
+     * if multiple file upload , convert them to
+     * file instances
      */
     if (_.isArray(fileToReturn)) {
       return _.map(fileToReturn, (file) => this._toFileInstance(file.toJSON(), options))

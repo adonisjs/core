@@ -912,7 +912,7 @@ describe('Request', function () {
     expect(res.body.format).to.equal('json')
   })
 
-  it('should return an empty file instance when file is not uploaded', function * () {
+  it('should return an null when file is not uploaded', function * () {
     const server = http.createServer(function (req, res) {
       var form = new formidable.IncomingForm()
       const request = new Request(req, res, Config)
@@ -925,11 +925,11 @@ describe('Request', function () {
         request._files = files
         const file = request.file('logo')
         res.writeHead(200, {'Content-type': 'application/json'})
-        res.end(JSON.stringify({exists: file.exists()}), 'utf8')
+        res.end(JSON.stringify({file}), 'utf8')
       })
     })
     const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.exists).to.equal(false)
+    expect(res.body.file).to.equal(null)
   })
 
   it('should return all uploaded file as an instance of File object', function * () {
