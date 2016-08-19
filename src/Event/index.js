@@ -11,6 +11,8 @@
 
 const EventEmitter2 = require('eventemitter2').EventEmitter2
 const Ioc = require('adonis-fold').Ioc
+const Resolver = require('adonis-binding-resolver')
+const resolver = new Resolver(Ioc)
 const _ = require('lodash')
 const util = require('../../lib/util')
 const co = require('co')
@@ -28,23 +30,6 @@ class Event {
   }
 
   /**
-   * validates the handler by making sure that it
-   * is a closure or a reference to the IoC
-   * container.
-   *
-   * @param   {String|Function} handler
-   *
-   * @throws {InvalidArgumentException:invalidParameter} If handler does not exceptions
-   *
-   * @private
-   */
-  _validateHandler (handler) {
-    if (typeof (handler) !== 'function' && typeof (handler) !== 'string') {
-      throw CE.InvalidArgumentException.invalidParameter('Event handler must be a function or a reference to Ioc Container namespace')
-    }
-  }
-
-  /**
    * here we resolve the handler from the IoC container
    * or the actual callback if a closure was passed.
    *
@@ -54,7 +39,8 @@ class Event {
    * @private
    */
   _resolveHandler (handler) {
-    return typeof (handler) === 'string' ? Ioc.makeFunc(this.helpers.makeNameSpace(this.listenersPath, handler)) : handler
+    const formattedHandler = typeof (handler) === 'string' ? this.helpers.makeNameSpace(this.listenersPath, handler) : handler
+    return resolver.resolveBinding(formattedHandler)
   }
 
   /**
@@ -223,7 +209,7 @@ class Event {
    * @public
    */
   any (handler) {
-    this._validateHandler(handler)
+    resolver.validateBinding(handler)
     handler = this._resolveHandler(handler)
     handler = this._makeHandler(handler)
     this.emitter.onAny(handler)
@@ -255,7 +241,7 @@ class Event {
       handler = name
       name = null
     }
-    this._validateHandler(handler)
+    resolver.validateBinding(handler)
     handler = this._resolveHandler(handler)
     handler = this._makeHandler(handler)
     if (name) {
@@ -302,7 +288,7 @@ class Event {
    * @public
    */
   once (event, handler) {
-    this._validateHandler(handler)
+    resolver.validateBinding(handler)
     handler = this._resolveHandler(handler)
     handler = this._makeHandler(handler)
     this.emitter.once(event, handler)

@@ -32,19 +32,19 @@ describe('Event', function () {
   it('should throw an exception when event handler is not a valid function or reference to function', function () {
     const event = new Event(Config, Helpers)
     const fn = () => event.on('foo', {})
-    expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: ')
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure')
   })
 
   it('should throw an exception when event.once handler is not a valid function or reference to function', function () {
     const event = new Event(Config, Helpers)
     const fn = () => event.once('foo', {})
-    expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: ')
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure')
   })
 
   it('should throw an exception when event.any handler is not a valid function or reference to function', function () {
     const event = new Event(Config, Helpers)
     const fn = () => event.any({})
-    expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: ')
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure')
   })
 
   it('should be able to register an event', function (done) {
