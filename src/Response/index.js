@@ -33,6 +33,42 @@ class Response {
   }
 
   /**
+   * returns whether request has been
+   * finished or not
+   *
+   * @method finished
+   *
+   * @return {Boolean}
+   */
+  get finished () {
+    return this.response.finished
+  }
+
+  /**
+   * returns whether request headers
+   * have been sent or not
+   *
+   * @method headersSent
+   *
+   * @return {Boolean}
+   */
+  get headersSent () {
+    return this.response.headersSent
+  }
+
+  /**
+   * returns whether a request is pending
+   * or not
+   *
+   * @method isPending
+   *
+   * @return {Boolean}
+   */
+  get isPending () {
+    return (!this.headersSent && !this.finished)
+  }
+
+  /**
    * sets key/value pair on response header
    *
    * @param  {String} key - key to set value for

@@ -365,4 +365,40 @@ describe('Response', function () {
     const response = new Response({name: 'bar'}, {setHeader: function () {}})
     expect(response.foo()).to.equal('bar')
   })
+
+  it('should return true for isPending when request has not been ended', function * () {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req, res, Config)
+      const Response = new ResponseBuilder({}, Route, Config)
+      const response = new Response(request, res)
+      const isPending = response.isPending
+      response.send({isPending})
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.isPending).to.equal(true)
+  })
+
+  it('should return false for finished when request has not been ended', function * () {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req, res, Config)
+      const Response = new ResponseBuilder({}, Route, Config)
+      const response = new Response(request, res)
+      const finished = response.finished
+      response.send({finished})
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.finished).to.equal(false)
+  })
+
+  it('should return false for headersSent when request has not been ended', function * () {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req, res, Config)
+      const Response = new ResponseBuilder({}, Route, Config)
+      const response = new Response(request, res)
+      const headersSent = response.headersSent
+      response.send({headersSent})
+    })
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.body.headersSent).to.equal(false)
+  })
 })
