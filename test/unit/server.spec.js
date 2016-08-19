@@ -167,7 +167,7 @@ describe('Server', function () {
     Route.get('/', {})
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
-    expect(res.error.text).to.match(/InvalidArgumentException: E_INVALID_PARAMETER: Route action must be a function or a reference to the controller method/)
+    expect(res.error.text).to.match(/InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure/)
   })
 
   it('should return error when unable to find controller', function * () {

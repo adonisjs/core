@@ -13,7 +13,9 @@ const CatLog = require('cat-log')
 const helpers = require('./helpers')
 const http = require('http')
 const co = require('co')
+const Resolver = require('adonis-binding-resolver')
 const Ioc = require('adonis-fold').Ioc
+const resolver = new Resolver(Ioc)
 const CE = require('../Exceptions')
 
 /**
@@ -86,41 +88,9 @@ class Server {
    * @private
    */
   _makeRouteAction (handler) {
-    if (typeof (handler) === 'function') {
-      return this._makeClosureAction(handler)
-    }
-    if (typeof (handler) === 'string') {
-      return this._makeControllerAction(handler)
-    }
-    throw CE.InvalidArgumentException.invalidParameter('Route action must be a function or a reference to the controller method')
-  }
-
-  /**
-   * returns route closure by wrapping it inside an object,
-   * same is done to make it compatible with middleware
-   * compose method
-   *
-   * @param  {Function}           closure
-   * @return {Object}
-   *
-   * @private
-   */
-  _makeClosureAction (closure) {
-    this.log.verbose('responding to route using closure')
-    return {instance: null, method: closure}
-  }
-
-  /**
-   * resolves controller action from the Ioc container by
-   * creating the proper namespace
-   *
-   * @param  {String}              handler
-   * @return {Object}
-   *
-   * @private
-   */
-  _makeControllerAction (handler) {
-    return Ioc.makeFunc(this.helpers.makeNameSpace(this.controllersPath, handler))
+    const formattedHandler = typeof (handler) === 'string' ? this.helpers.makeNameSpace(this.controllersPath, handler) : handler
+    resolver.validateBinding(formattedHandler)
+    return resolver.resolveBinding(formattedHandler)
   }
 
   /**
