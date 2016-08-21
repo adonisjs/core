@@ -10,5 +10,6 @@
 */
 
 module.exports = {
-  file: require('./File')
+  file: require('./File'),
+  cookie: require('./Cookie')
 }
