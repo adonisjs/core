@@ -96,4 +96,16 @@ describe('Providers', function () {
       expect(Response.name).to.equal('Response')
     })
   })
+
+  context('Session', function () {
+    it('should return Session class', function () {
+      const Config = Ioc.use('Adonis/Src/Config')
+      const get = sinon.stub(Config, 'get')
+      get.withArgs('session.driver').returns('cookie')
+      const sessionManager = Ioc.use('Adonis/Src/Session')
+      const Session = require('../../src/Session')
+      expect(sessionManager).deep.equal(Session)
+      Config.get.restore()
+    })
+  })
 })

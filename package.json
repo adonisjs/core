@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test/unit test/acceptance && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "npm run lint && istanbul cover _mocha test/unit test/acceptance  --bail",
+    "coverage": "npm run lint && istanbul cover _mocha test/unit test/acceptance --bail",
     "lint": "standard src/**/*.js src/**/**/*.js test/**/*.js providers/*.js"
   },
   "standard": {
@@ -28,6 +28,7 @@
   "license": "MIT",
   "devDependencies": {
     "adonis-fold": "^3.0.2",
+    "adonis-redis": "^1.0.0",
     "chai": "^3.3.0",
     "cheerio": "^0.20.0",
     "co-mocha": "^1.1.3",

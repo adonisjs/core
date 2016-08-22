@@ -107,12 +107,6 @@ class Cookie {
   }
 
   /**
-   * Cookie values are automatically deleted as per
-   * their expiry. This method does not do anything
-   */
-  * gc () {}
-
-  /**
    * called by session class to pass on the request
    * and response object.
    *

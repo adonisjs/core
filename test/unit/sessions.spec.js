@@ -19,6 +19,8 @@ const Session = require('../../src/Session')
 const Drivers = require('../../src/Session/Drivers')
 const CookieDriver = Drivers.cookie
 const FileDriver = Drivers.file
+const RedisDriver = Drivers.redis
+const RedisFactory = require('adonis-redis/src/RedisFactory')
 const Store = require('../../src/Session/Store')
 const SessionManager = require('../../src/Session/SessionManager')
 const querystring = require('querystring')
@@ -46,7 +48,12 @@ const makeConfigObject = function (appKey, sessionObject) {
     path: '/',
     clearWithBrowser: true,
     age: 10,
-    secure: false
+    secure: false,
+    redis: {
+      host: '127.0.0.1',
+      port: '6379',
+      keyPrefix: 'session:'
+    }
   }, sessionObject)
   return {
     app: { appKey: appKey || null },
@@ -78,8 +85,8 @@ describe('Session', function () {
     it('should extend session drivers using extend method', function * () {
       class Redis {
       }
-      SessionManager.extend('redis', new Redis())
-      const config = new Config(null, {driver: 'redis'})
+      SessionManager.extend('my-redis', new Redis())
+      const config = new Config(null, {driver: 'my-redis'})
       const session = new SessionManager(config)
       expect(session.driver instanceof Redis).to.equal(true)
     })
@@ -816,6 +823,247 @@ describe('Session', function () {
       const sessionId = removeCookieAttribures(cookies['adonis-session'])
       const sessionValues = yield fs.readJson(path.join(this.Helpers.storagePath(), sessionId))
       expect(sessionValues).deep.equal({age: Store.guardPair('age', 22)})
+    })
+
+    it('should be remove session file on flush', function * () {
+      const config = new Config()
+      Session.driver = new FileDriver(this.Helpers, config)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          yield session.put('name', 'foo')
+          yield session.flush()
+        }).then(function () {
+          res.writeHead(200, {'content-type': 'application/json'})
+          res.end()
+        }).catch(function (err) {
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const sessionId = '39000'
+      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      const sessionFileExists = yield fs.exists(path.join(this.Helpers.storagePath(), sessionId))
+      expect(sessionFileExists).to.equal(false)
+    })
+  })
+
+  context('Redis Driver @redis', function () {
+    before(function () {
+      this.Helpers = {}
+      this.redis = new RedisFactory(new Config().get('session.redis'), this.Helpers, false)
+    })
+
+    afterEach(function * () {
+      const all = yield this.redis.keys('session:*')
+      const pipeline = this.redis.multi()
+      all.forEach((key) => {
+        pipeline.del(key)
+      })
+      yield pipeline.exec()
+    })
+
+    it('should set session using redis driver', function * () {
+      const config = new Config()
+      Session.driver = new RedisDriver(this.Helpers, config, RedisFactory)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          yield session.put('name', 'virk')
+        }).then(function () {
+          res.writeHead(200)
+          res.end()
+        }).catch(function (err) {
+          console.log(err)
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const res = yield supertest(server).get('/').expect(200).end()
+      const cookies = parseCookies(res.headers['set-cookie'])
+      expect(cookies).to.have.property('adonis-session')
+      const sessionId = removeCookieAttribures(cookies['adonis-session'])
+      const sessionValues = yield this.redis.get(sessionId)
+      expect(JSON.parse(sessionValues)).deep.equal({name: Store.guardPair('name', 'virk')})
+    })
+
+    it('should update session values when session already exists', function * () {
+      const config = new Config()
+      Session.driver = new RedisDriver(this.Helpers, config, RedisFactory)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          return yield session.put('name', 'updated name')
+        }).then(function () {
+          res.writeHead(200)
+          res.end()
+        }).catch(function (err) {
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const sessionId = '122002'
+      yield this.redis.set(sessionId, JSON.stringify({name: Store.guardPair('name', 'foo')}))
+      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200).end()
+      const cookies = parseCookies(res.headers['set-cookie'])
+      expect(cookies['adonis-session']).to.equal('122002; Domain=localhost; Path=/')
+      const sessionValues = yield this.redis.get(sessionId)
+      expect(JSON.parse(sessionValues)).deep.equal({name: Store.guardPair('name', 'updated name')})
+    })
+
+    it('should read value for a given key from session using redis driver', function * () {
+      const config = new Config()
+      Session.driver = new RedisDriver(this.Helpers, config, RedisFactory)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          return yield session.get('name')
+        }).then(function (name) {
+          res.writeHead(200, {'content-type': 'application/json'})
+          res.end(JSON.stringify({name}))
+        }).catch(function (err) {
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const sessionId = '122002'
+      yield this.redis.set(sessionId, JSON.stringify({name: Store.guardPair('name', 'foo')}))
+      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200).end()
+      expect(res.body.name).to.equal('foo')
+    })
+
+    it('should be able to put values to session store multiple times in a single request', function * () {
+      const config = new Config()
+      Session.driver = new RedisDriver(this.Helpers, config, RedisFactory)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          yield session.put('name', 'foo')
+          yield session.flush()
+          yield session.put('age', 22)
+        }).then(function () {
+          res.writeHead(200, {'content-type': 'application/json'})
+          res.end()
+        }).catch(function (err) {
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const res = yield supertest(server).get('/').expect(200).end()
+      const cookies = parseCookies(res.headers['set-cookie'])
+      const sessionId = removeCookieAttribures(cookies['adonis-session'])
+      const sessionValues = yield this.redis.get(sessionId)
+      expect(JSON.parse(sessionValues)).deep.equal({age: Store.guardPair('age', 22)})
+    })
+
+    it('should remove session key from redis on flush', function * () {
+      const config = new Config()
+      Session.driver = new RedisDriver(this.Helpers, config, RedisFactory)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          yield session.put('name', 'foo')
+          yield session.flush()
+        }).then(function () {
+          res.writeHead(200, {'content-type': 'application/json'})
+          res.end()
+        }).catch(function (err) {
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const sessionId = '102010'
+      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      const sessionValues = yield this.redis.get(sessionId)
+      expect(sessionValues).to.equal(null)
+    })
+
+    it('should set proper ttl on the session id', function * () {
+      const config = new Config(null, {age: 120})
+      Session.driver = new RedisDriver(this.Helpers, config, RedisFactory)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          yield session.put('name', 'foo')
+        }).then(function () {
+          res.writeHead(200, {'content-type': 'application/json'})
+          res.end()
+        }).catch(function (err) {
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const sessionId = '102010'
+      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      const sessionTTL = yield this.redis.ttl(sessionId)
+      expect(sessionTTL).to.equal(120)
+    })
+
+    it('should return null when value does not exists in the session store', function * () {
+      const config = new Config(null, {age: 120})
+      Session.driver = new RedisDriver(this.Helpers, config, RedisFactory)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          return yield session.get('age')
+        }).then(function (age) {
+          res.writeHead(200, {'content-type': 'application/json'})
+          res.end(JSON.stringify({age}))
+        }).catch(function (err) {
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const sessionId = '102010'
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      expect(res.body.age).to.equal(null)
+    })
+
+    it('should return null when the sessionId does not exists in the session store', function * () {
+      const config = new Config(null, {age: 120})
+      Session.driver = new RedisDriver(this.Helpers, config, RedisFactory)
+      Session.config = config
+
+      const server = http.createServer(function (req, res) {
+        const session = new Session(req, res)
+        co(function * () {
+          return yield session.get('age')
+        }).then(function (age) {
+          res.writeHead(200, {'content-type': 'application/json'})
+          res.end(JSON.stringify({age}))
+        }).catch(function (err) {
+          res.writeHead(500, {'content-type': 'application/json'})
+          res.end(JSON.stringify(err))
+        })
+      })
+
+      const sessionId = new Date().getTime()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      expect(res.body.age).to.equal(null)
     })
   })
 })
