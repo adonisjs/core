@@ -10,6 +10,7 @@ const helpers = require('./helpers')
 const _ = require('lodash')
 const requireStack = require('require-stack')
 const CatLog = require('cat-log')
+const CE = require('../Exceptions')
 const log = new CatLog('adonis:ioc')
 const EventEmitter2 = require('eventemitter2').EventEmitter2
 const emitter = new EventEmitter2({
@@ -81,7 +82,7 @@ let Ioc = exports = module.exports = {}
  */
 Ioc._bind = function (namespace, closure, singleton) {
   if (typeof (closure) !== 'function') {
-    throw new Error('Invalid arguments, bind expects a callback')
+    throw CE.InvalidArgumentException.invalidParameters('Ioc.bind expects 2nd parameter to be a closure')
   }
   namespace = namespace.trim()
   log.verbose('binding %s to ioc container', namespace)
@@ -310,7 +311,7 @@ Ioc.singleton = function (namespace, closure) {
  */
 Ioc.manager = function (namespace, defination) {
   if (!defination.extend) {
-    throw new Error('Incomplete implementation, manager objects should have extend method')
+    throw CE.InvalidArgumentException.invalidIocManager(namespace)
   }
   log.verbose('registering manager for %s', namespace)
   providerManagers[namespace] = defination
@@ -332,7 +333,7 @@ Ioc.manager = function (namespace, defination) {
  */
 Ioc.extend = function (namespace, key, closure) {
   if (typeof (closure) !== 'function') {
-    throw new Error('Invalid arguments, extend expects a callback')
+    throw CE.InvalidArgumentException.invalidParameters('Ioc.extend expects 3rd parameter to be a closure')
   }
   const args = _.drop(_.toArray(arguments), 3)
   log.verbose('extending %s adding %s', namespace, key)
@@ -483,14 +484,14 @@ Ioc.make = function (Binding) {
 Ioc.makeFunc = function (Binding) {
   const parts = Binding.split('.')
   if (parts.length !== 2) {
-    throw new Error('Unable to make ' + Binding)
+    throw CE.InvalidArgumentException.invalidMakeString(Binding)
   }
 
   const instance = Ioc.make(parts[0])
   const method = parts[1]
 
   if (!instance[method]) {
-    throw new Error(method + ' does not exists on ' + parts[0])
+    throw CE.RuntimeException.missingMethod(parts[0], method)
   }
   return {instance, method}
 }
@@ -505,7 +506,7 @@ Ioc.makeFunc = function (Binding) {
  */
 Ioc.fake = function (namespace, closure) {
   if (typeof (closure) !== 'function') {
-    throw new Error('Invalid arguments, fake expects a callback')
+    throw CE.InvalidArgumentException.invalidParameters('Ioc.fake expects 2nd parameter to be a closure')
   }
   namespace = namespace.trim()
   fakes[namespace] = {closure}

@@ -30,7 +30,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.bind('App/Foo', 'bar')
       }
-      expect(fn).to.throw(/Invalid arguments/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Ioc.bind expects 2nd parameter to be a closure')
     })
 
     it('should be able to inject other depedencies', function () {
@@ -77,7 +77,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.manager('App/Foo', Foo)
       }
-      expect(fn).to.throw(/Incomplete implementation/g)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_IOC_MANAGER: Make sure App/Foo does have a extend method. Report this issue to the provider author')
     })
 
     it('should be able to extend provider even if the actual provider does not exists', function () {
@@ -308,7 +308,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.extend('App/Cache', 'redis', 'Redis')
       }
-      expect(fn).to.throw(/Invalid arguments, extend expects a callback/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Ioc.extend expects 3rd parameter to be a closure')
     })
   })
 
@@ -439,7 +439,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.makeFunc('App/Baz')
       }
-      expect(fn).to.throw(/Unable to make/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_MAKE_STRING: Ioc.makeFunc expects a string in module.method format instead received App/Baz')
     })
 
     it('should throw an error, when function does not exists on class', function () {
@@ -447,7 +447,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.makeFunc('App/Services/Service.hello')
       }
-      expect(fn).to.throw(/hello does not exists/)
+      expect(fn).to.throw('RuntimeException: E_UNDEFINED_METHOD: Method hello missing on App/Services/Service')
     })
 
     it('should return class instance and method using makeFunc method', function () {
@@ -734,7 +734,7 @@ describe('Ioc', function () {
 
     it('should throw an exception when fake does not pass a callback as 2nd param', function () {
       const fn = () => Ioc.fake('Adonis/Src/Redis', 'fake')
-      expect(fn).to.throw(/Invalid arguments, fake expects a callback/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Ioc.fake expects 2nd parameter to be a closure')
     })
   })
 })

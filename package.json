@@ -30,6 +30,7 @@
     "dwell": "^1.0.0",
     "eventemitter2": "^2.1.0",
     "lodash": "^3.10.1",
+    "node-exceptions": "^1.0.3",
     "require-stack": "^1.0.1"
   },
   "repository": {
