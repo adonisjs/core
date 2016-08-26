@@ -42,7 +42,10 @@ Registrar._mapProviders = function (arrayOfProviders) {
  * @return {Array}
  */
 Registrar._callRegister = function (providers) {
-  return providers.map((provider) => provider.register())
+  return _(providers)
+  .filter((provider) => typeof (provider.register) === 'function')
+  .map((provider) => provider.register())
+  .value()
 }
 
 /**
