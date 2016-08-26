@@ -1,6 +1,6 @@
 {
   "name": "adonis-fold",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
   "directories": {
@@ -18,16 +18,19 @@
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.5",
     "istanbul": "^0.3.22",
-    "mocha": "^2.3.3",
+    "mocha": "^3.0.1",
     "mocha-lcov-reporter": "^1.0.0",
-    "standard": "^5.4.1"
+    "standard": "^7.1.2"
   },
   "dependencies": {
-    "co": "^4.6.0",
     "cat-log": "^1.0.0",
+    "co": "^4.6.0",
     "co-parallel": "^1.0.0",
+    "coveralls": "^2.11.12",
     "dwell": "^1.0.0",
+    "eventemitter2": "^2.1.0",
     "lodash": "^3.10.1",
+    "node-exceptions": "^1.0.3",
     "require-stack": "^1.0.1"
   },
   "repository": {

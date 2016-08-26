@@ -30,7 +30,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.bind('App/Foo', 'bar')
       }
-      expect(fn).to.throw(/Invalid arguments/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Ioc.bind expects 2nd parameter to be a closure')
     })
 
     it('should be able to inject other depedencies', function () {
@@ -77,7 +77,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.manager('App/Foo', Foo)
       }
-      expect(fn).to.throw(/Incomplete implementation/g)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_IOC_MANAGER: Make sure App/Foo does have a extend method. Report this issue to the provider author')
     })
 
     it('should be able to extend provider even if the actual provider does not exists', function () {
@@ -195,6 +195,7 @@ describe('Ioc', function () {
 
     it('should be able to fetch binding from ioc container with type hinted depedencies', function () {
       class Foo {
+        /*eslint-disable camelcase*/
         constructor (App_Bar) {
           this.bar = App_Bar
         }
@@ -307,7 +308,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.extend('App/Cache', 'redis', 'Redis')
       }
-      expect(fn).to.throw(/Invalid arguments, extend expects a callback/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Ioc.extend expects 3rd parameter to be a closure')
     })
   })
 
@@ -392,7 +393,7 @@ describe('Ioc', function () {
     })
 
     it('should be able to deep inject classes from autoloaded path', function () {
-      Ioc.autoload('App', __dirname + '/app')
+      Ioc.autoload('App', path.join(__dirname, '/app'))
 
       class Foo {
         static get inject () {
@@ -438,7 +439,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.makeFunc('App/Baz')
       }
-      expect(fn).to.throw(/Unable to make/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_MAKE_STRING: Ioc.makeFunc expects a string in module.method format instead received App/Baz')
     })
 
     it('should throw an error, when function does not exists on class', function () {
@@ -446,7 +447,7 @@ describe('Ioc', function () {
       const fn = function () {
         return Ioc.makeFunc('App/Services/Service.hello')
       }
-      expect(fn).to.throw(/hello does not exists/)
+      expect(fn).to.throw('RuntimeException: E_UNDEFINED_METHOD: Method hello missing on App/Services/Service')
     })
 
     it('should return class instance and method using makeFunc method', function () {
@@ -518,6 +519,222 @@ describe('Ioc', function () {
       }
       const makeUser = Ioc.make(User)
       expect(makeUser.prop).to.equal('i am prop')
+    })
+  })
+
+  context('Events', function () {
+    it('should fire an event when a binding is registered', function () {
+      const binding = {}
+      Ioc.on('bind:provider', function (namespace, singleton) {
+        binding.namespace = namespace
+        binding.singleton = singleton
+      })
+      Ioc.bind('App/Foo', function () {})
+      expect(binding.namespace).to.equal('App/Foo')
+      expect(binding.singleton).to.equal(false)
+      Ioc.removeAllListeners('bind:provider')
+    })
+
+    it('should fire an event when a singleton is registered', function () {
+      const binding = {}
+      Ioc.on('bind:provider', function (namespace, singleton) {
+        binding.namespace = namespace
+        binding.singleton = singleton
+      })
+      Ioc.singleton('App/Foo', function () {})
+      expect(binding.namespace).to.equal('App/Foo')
+      expect(binding.singleton).to.equal(true)
+      Ioc.removeAllListeners('bind:provider')
+    })
+
+    it('should be able to remove registered listeners', function () {
+      const callback = function () { }
+      Ioc.on('bind:provider', callback)
+      expect(Ioc.listenerCount('bind:provider')).to.equal(1)
+      Ioc.removeListener('bind:provider', callback)
+      expect(Ioc.listenerCount('bind:provider')).to.equal(0)
+    })
+
+    it('should emit event when autoload directory is defined', function () {
+      const autoload = {}
+      Ioc.on('bind:autoload', function (namespace, toPath) {
+        autoload.namespace = namespace
+        autoload.path = toPath
+      })
+      Ioc.autoload('App', 'foo')
+      expect(autoload.namespace).to.equal('App')
+      expect(autoload.path).to.equal('foo')
+      Ioc.removeAllListeners('bind:autoload')
+    })
+
+    it('should emit event when autoload directory is defined', function () {
+      const autoload = {}
+      Ioc.on('bind:autoload', function (namespace, toPath) {
+        autoload.namespace = namespace
+        autoload.path = toPath
+      })
+      Ioc.autoload('App', 'foo')
+      expect(autoload.namespace).to.equal('App')
+      expect(autoload.path).to.equal('foo')
+      Ioc.removeAllListeners('bind:autoload')
+    })
+
+    it('should emit event when an alias is registered', function () {
+      const aliasing = {}
+      Ioc.on('bind:alias', function (alias, namespace) {
+        aliasing.alias = alias
+        aliasing.namespace = namespace
+      })
+      Ioc.alias('Event', 'Adonis/Src/Event')
+      expect(aliasing.alias).to.equal('Event')
+      expect(aliasing.namespace).to.equal('Adonis/Src/Event')
+      Ioc.removeAllListeners('bind:alias')
+    })
+
+    it('should emit event when a provider is extend', function () {
+      const binding = {}
+      Ioc.on('extend:provider', function (key, namespace) {
+        binding.key = key
+        binding.namespace = namespace
+      })
+      Ioc.extend('Adonis/Src/Event', 'redis', function () {})
+      expect(binding.key).to.equal('redis')
+      expect(binding.namespace).to.equal('Adonis/Src/Event')
+      Ioc.removeAllListeners('extend:provider')
+    })
+
+    it('should fire event when a provider is resolved', function () {
+      const binding = {}
+      Ioc.on('provider:resolved', function (namespace, value) {
+        binding.namespace = namespace
+        binding.value = value
+      })
+      Ioc.bind('Adonis/Src/Event', function () {
+        return 'event'
+      })
+      Ioc.use('Adonis/Src/Event')
+      expect(binding.value).to.equal('event')
+      expect(binding.namespace).to.equal('Adonis/Src/Event')
+      Ioc.removeAllListeners('provider:resolved')
+    })
+
+    it('should fire event when a singleton is resolved', function () {
+      const binding = {}
+      Ioc.on('provider:resolved', function (namespace, value) {
+        binding.namespace = namespace
+        binding.value = value
+      })
+      Ioc.singleton('Adonis/Src/Event', function () {
+        return 'event'
+      })
+      Ioc.use('Adonis/Src/Event')
+      expect(binding.value).to.equal('event')
+      expect(binding.namespace).to.equal('Adonis/Src/Event')
+      Ioc.removeAllListeners('provider:resolved')
+    })
+
+    it('should fire event when a singleton is resolved for multiple times', function () {
+      const binding = []
+      Ioc.on('provider:resolved', function (namespace, value) {
+        binding.push({namespace, value})
+      })
+      Ioc.singleton('Adonis/Src/Event', function () {
+        return 'event'
+      })
+      Ioc.use('Adonis/Src/Event')
+      Ioc.use('Adonis/Src/Event')
+      expect(binding).to.be.an('array')
+      expect(binding[0].value).to.equal('event')
+      expect(binding[1].value).to.equal('event')
+      expect(binding[0].namespace).to.equal('Adonis/Src/Event')
+      expect(binding[1].namespace).to.equal('Adonis/Src/Event')
+      Ioc.removeAllListeners('provider:resolved')
+    })
+
+    it('should fire event when an autoloaded module is resolved', function () {
+      const module = {}
+      Ioc.autoload('App', path.join(__dirname, './app'))
+      Ioc.on('module:resolved', function (namespace, namespacePath, value) {
+        module.namespace = namespace
+        module.namespacePath = namespacePath
+        module.value = value
+      })
+      Ioc.use('App/Http/routes')
+      expect(module.value).to.equal('routes')
+      expect(module.namespace).to.equal('App/Http/routes')
+      expect(module.namespacePath).to.equal(path.join(__dirname, './app/Http/routes'))
+      Ioc.removeAllListeners('module:resolved')
+    })
+
+    it('should be able to add fake implementation for a binding', function () {
+      Ioc.bind('Adonis/Src/Redis', function () {
+        return 'redis'
+      })
+      Ioc.fake('Adonis/Src/Redis', function () {
+        return 'fakeRedis'
+      })
+      const Redis = Ioc.use('Adonis/Src/Redis')
+      expect(Redis).to.equal('fakeRedis')
+    })
+
+    it('should get ioc container instance on the faker callback', function () {
+      Ioc.bind('Adonis/Src/Redis', function () {
+        return 'redis'
+      })
+      Ioc.bind('Adonis/Src/Config', function () {
+        return 'config'
+      })
+      Ioc.fake('Adonis/Src/Redis', function (app) {
+        return app.use('Adonis/Src/Config')
+      })
+      const Redis = Ioc.use('Adonis/Src/Redis')
+      expect(Redis).to.equal('config')
+    })
+
+    it('should return fake instance when alias is used', function () {
+      Ioc.bind('Adonis/Src/Redis', function () {
+        return 'redis'
+      })
+      Ioc.fake('Adonis/Src/Redis', function () {
+        return 'fakeRedis'
+      })
+      Ioc.alias('Redis', 'Adonis/Src/Redis')
+      const Redis = Ioc.use('Redis')
+      expect(Redis).to.equal('fakeRedis')
+    })
+
+    it('should give priority to a fake when trying to use an autoloaded path', function () {
+      Ioc.autoload('App', path.join(__dirname, './app'))
+      Ioc.fake('App/Http/routes', function () {
+        return 'fakeRoutes'
+      })
+      const routes = Ioc.use('App/Http/routes')
+      expect(routes).to.equal('fakeRoutes')
+    })
+
+    it('should give priority to a fake when trying to make an autoloaded path', function () {
+      Ioc.autoload('App', path.join(__dirname, './app'))
+      Ioc.fake('App/Http/routes', function () {
+        return 'fakeRoutes'
+      })
+      const routes = Ioc.make('App/Http/routes')
+      expect(routes).to.equal('fakeRoutes')
+    })
+
+    it('should return fake implementation when trying to make a provider', function () {
+      Ioc.bind('Adonis/Src/Redis', function () {
+        return 'redis'
+      })
+      Ioc.fake('Adonis/Src/Redis', function () {
+        return 'fakeRedis'
+      })
+      const Redis = Ioc.make('Adonis/Src/Redis')
+      expect(Redis).to.equal('fakeRedis')
+    })
+
+    it('should throw an exception when fake does not pass a callback as 2nd param', function () {
+      const fn = () => Ioc.fake('Adonis/Src/Redis', 'fake')
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Ioc.fake expects 2nd parameter to be a closure')
     })
   })
 })

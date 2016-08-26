@@ -3,22 +3,17 @@
 const ServiceProvider = require('../../../../').ServiceProvider
 
 class Foo {
-
-  constructor() {
+  constructor () {
     this.foo = 'bar'
   }
-
 }
 
 class FooProvider extends ServiceProvider {
-
-  * register() {
+  * register () {
     this.app.bind('Providers/Foo', function () {
-      return new Foo
+      return new Foo()
     })
-
   }
-
 }
 
 module.exports = FooProvider

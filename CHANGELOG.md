@@ -1,3 +1,12 @@
+<a name="3.0.3"></a>
+## 3.0.3 (2016-08-26)
+
+### Features
+
+* **ioc:** add event and support for fakes ([98fae41](https://github.com/poppinss/adonis-fold/commit/98fae41))
+* **providers:** add support for boot method ([f7157a4](https://github.com/poppinss/adonis-fold/commit/f7157a4))
+
+
 <a name="3.0.2"></a>
 ## 3.0.2 (2016-06-26)
 

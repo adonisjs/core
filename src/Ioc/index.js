@@ -10,7 +10,20 @@ const helpers = require('./helpers')
 const _ = require('lodash')
 const requireStack = require('require-stack')
 const CatLog = require('cat-log')
+const CE = require('../Exceptions')
 const log = new CatLog('adonis:ioc')
+const EventEmitter2 = require('eventemitter2').EventEmitter2
+const emitter = new EventEmitter2({
+  wildcard: false,
+  newListener: false
+})
+
+/**
+ * fakes to be used for testing
+ *
+ * @type {Object}
+ */
+let fakes = {}
 
 /**
  * list of registered providers
@@ -69,10 +82,11 @@ let Ioc = exports = module.exports = {}
  */
 Ioc._bind = function (namespace, closure, singleton) {
   if (typeof (closure) !== 'function') {
-    throw new Error('Invalid arguments, bind expects a callback')
+    throw CE.InvalidArgumentException.invalidParameters('Ioc.bind expects 2nd parameter to be a closure')
   }
   namespace = namespace.trim()
   log.verbose('binding %s to ioc container', namespace)
+  emitter.emit('bind:provider', namespace, singleton)
   providers[namespace] = {closure, singleton, instance: null}
 }
 
@@ -95,16 +109,34 @@ Ioc.new = function () {
  * @description resolves eagerly loaded provider
  * by setting up dependencies in right order
  * @method _resolveProvider
- * @param  {Object}
+ * @param  {String} namespace
  * @return {*}
  * @private
  */
-Ioc._resolveProvider = function (provider) {
+Ioc._resolveProvider = function (namespace) {
+  log.verbose('resolving provider %s', namespace)
+  const provider = providers[namespace]
   if (!provider.singleton) {
-    return provider.closure(Ioc)
+    const returnValue = provider.closure(Ioc)
+    emitter.emit('provider:resolved', namespace, returnValue)
+    return returnValue
   }
   provider.instance = provider.instance || provider.closure(Ioc)
+  emitter.emit('provider:resolved', namespace, provider.instance)
   return provider.instance
+}
+
+/**
+ * resolves a fake for the fakes list
+ *
+ * @param   {String} namespace
+ *
+ * @return  {Mixed}
+ *
+ * @private
+ */
+Ioc._resolveFake = function (namespace) {
+  return fakes[namespace].closure(Ioc)
 }
 
 /**
@@ -140,10 +172,10 @@ Ioc._extendProvider = function (namespace) {
  * @private
  */
 Ioc._autoLoad = function (namespace) {
-  namespace = namespace.replace(autoloadDirectory.namespace, autoloadDirectory.directoryPath)
-  log.verbose('autoloading %s from ioc container', namespace)
+  const namespacePath = namespace.replace(autoloadDirectory.namespace, autoloadDirectory.directoryPath)
+  log.verbose('resolving %s from path %s', namespace, namespacePath)
   try {
-    let result = requireStack(namespace)
+    let result = requireStack(namespacePath)
     /**
      * autoloaded paths can have multiple hooks to be called
      * everytime it is required. Lucid is an example of
@@ -156,6 +188,7 @@ Ioc._autoLoad = function (namespace) {
         }
       })
     }
+    emitter.emit('module:resolved', namespace, namespacePath, result)
     return result
   } catch (e) {
     throw e
@@ -185,6 +218,10 @@ Ioc._isClass = function (Binding) {
 Ioc._type = function (binding) {
   if (typeof (binding) !== 'string') {
     return 'UNKNOWN'
+  }
+
+  if (fakes[binding]) {
+    return 'FAKE'
   }
 
   if (providers[binding]) {
@@ -242,7 +279,7 @@ Ioc.getExtenders = function () {
  * @public
  */
 Ioc.bind = function (namespace, closure) {
-  Ioc._bind(namespace, closure)
+  Ioc._bind(namespace, closure, false)
 }
 
 /**
@@ -274,7 +311,7 @@ Ioc.singleton = function (namespace, closure) {
  */
 Ioc.manager = function (namespace, defination) {
   if (!defination.extend) {
-    throw new Error('Incomplete implementation, manager objects should have extend method')
+    throw CE.InvalidArgumentException.invalidIocManager(namespace)
   }
   log.verbose('registering manager for %s', namespace)
   providerManagers[namespace] = defination
@@ -296,10 +333,11 @@ Ioc.manager = function (namespace, defination) {
  */
 Ioc.extend = function (namespace, key, closure) {
   if (typeof (closure) !== 'function') {
-    throw new Error('Invalid arguments, extend expects a callback')
+    throw CE.InvalidArgumentException.invalidParameters('Ioc.extend expects 3rd parameter to be a closure')
   }
   const args = _.drop(_.toArray(arguments), 3)
-  log.verbose('extending %s', namespace)
+  log.verbose('extending %s adding %s', namespace, key)
+  emitter.emit('extend:provider', key, namespace)
   providerExtenders[namespace] = providerExtenders[namespace] || []
   providerExtenders[namespace].push({key, closure, args})
 }
@@ -314,6 +352,7 @@ Ioc.extend = function (namespace, key, closure) {
  * @public
  */
 Ioc.autoload = function (namespace, directoryPath) {
+  emitter.emit('bind:autoload', namespace, directoryPath)
   log.verbose('autoloading directory is set to %s under %s namespace', directoryPath, namespace)
   autoloadDirectory = {namespace, directoryPath}
 }
@@ -330,10 +369,11 @@ Ioc.use = function (namespace) {
   const type = Ioc._type(namespace)
 
   switch (type) {
+    case 'FAKE':
+      return Ioc._resolveFake(namespace)
     case 'PROVIDER':
-      log.verbose('resolving provider %s', namespace)
       Ioc._extendProvider(namespace)
-      return Ioc._resolveProvider(providers[namespace])
+      return Ioc._resolveProvider(namespace)
     case 'AUTOLOAD':
       return Ioc._autoLoad(namespace)
     case 'ALIAS':
@@ -367,6 +407,7 @@ Ioc.aliases = function (hash) {
  */
 Ioc.alias = function (key, namespace) {
   log.verbose('%s has been aliased as %s', namespace, key)
+  emitter.emit('bind:alias', key, namespace)
   aliases[key] = namespace
 }
 
@@ -387,7 +428,7 @@ Ioc.make = function (Binding) {
    * return the binding from container and should not act
    * smart
    */
-  if (type === 'PROVIDER' || type === 'ALIAS') {
+  if (type === 'PROVIDER' || type === 'ALIAS' || type === 'FAKE') {
     return Ioc.use(Binding)
   }
 
@@ -443,14 +484,40 @@ Ioc.make = function (Binding) {
 Ioc.makeFunc = function (Binding) {
   const parts = Binding.split('.')
   if (parts.length !== 2) {
-    throw new Error('Unable to make ' + Binding)
+    throw CE.InvalidArgumentException.invalidMakeString(Binding)
   }
 
   const instance = Ioc.make(parts[0])
   const method = parts[1]
 
   if (!instance[method]) {
-    throw new Error(method + ' does not exists on ' + parts[0])
+    throw CE.RuntimeException.missingMethod(parts[0], method)
   }
   return {instance, method}
 }
+
+/**
+ * registers fake for a given namespace
+ *
+ * @param  {String} namespace
+ * @param  {Function} closure
+ *
+ * @public
+ */
+Ioc.fake = function (namespace, closure) {
+  if (typeof (closure) !== 'function') {
+    throw CE.InvalidArgumentException.invalidParameters('Ioc.fake expects 2nd parameter to be a closure')
+  }
+  namespace = namespace.trim()
+  fakes[namespace] = {closure}
+}
+
+/**
+ * adding methods of the event emitter
+ */
+Ioc.on = emitter.on.bind(emitter)
+Ioc.once = emitter.once.bind(emitter)
+Ioc.listenerCount = emitter.listenerCount.bind(emitter)
+Ioc.removeListener = emitter.removeListener.bind(emitter)
+Ioc.removeAllListeners = emitter.removeAllListeners.bind(emitter)
+Ioc.emit = emitter.emit.bind(emitter)
