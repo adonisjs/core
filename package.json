@@ -4,8 +4,8 @@
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && node --harmony_proxies ./node_modules/.bin/istanbul cover _mocha --report lcovonly -- -R spec test/unit test/acceptance && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "npm run lint && node --harmony_proxies ./node_modules/.bin/istanbul cover _mocha test/unit test/acceptance --bail",
+    "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test/unit test/acceptance && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "coverage": "npm run lint && istanbul cover _mocha test/unit test/acceptance --bail",
     "lint": "standard src/**/*.js src/**/**/*.js test/**/*.js providers/*.js"
   },
   "standard": {
