@@ -181,7 +181,7 @@ describe('Server', function () {
     Route.get('/', 'HomeController.foo')
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
-    expect(res.error.text).to.match(/foo does not exists/)
+    expect(res.error.text).to.match(/RuntimeException: E_UNDEFINED_METHOD: Method foo missing on App\/Http\/Controllers\/HomeController/)
   })
 
   it('should call all global middleware before reaching the route handler', function * () {
@@ -221,7 +221,7 @@ describe('Server', function () {
     Route.get('/', 'HomeController.index').middlewares(['auth'])
     const testServer = http.createServer(this.server.handle.bind(this.server))
     const res = yield supertest(testServer).get('/').expect(500).end()
-    expect(res.error.text).to.match(/handle does not exists/)
+    expect(res.error.text).to.match(/RuntimeException: E_UNDEFINED_METHOD: Method handle missing on App\/Http\/Middleware\/NoHandle/)
   })
 
   it('should handle call middleware attached to a route', function * () {
