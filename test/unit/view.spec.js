@@ -12,6 +12,7 @@
 const View = require('../../src/View')
 const Route = require('../../src/Route')
 const chai = require('chai')
+const cheerio = require('cheerio')
 const path = require('path')
 const expect = chai.expect
 require('co-mocha')
@@ -198,5 +199,11 @@ describe('View', function () {
     })
     const compiledView = yield view.make('services')
     expect(compiledView.trim()).to.equal('undefined')
+  })
+
+  it('be able to include a view inside a for loop', function * () {
+    const compiledView = yield this.view.make('for', {users: [{username: 'foo'}, {username: 'bar'}]})
+    const $ = cheerio.load(compiledView.trim())
+    expect($('li').length).to.equal(2)
   })
 })
