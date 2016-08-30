@@ -7,3 +7,4 @@ test
 .editorconfig
 benchmarks
 .idea
+bin
