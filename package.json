@@ -46,9 +46,6 @@
     "test-console": "^1.0.0",
     "zombie": "^4.2.1"
   },
-  "peerDependencies": {
-    "adonis-fold": "^3.0.2"
-  },
   "dependencies": {
     "adonis-binding-resolver": "^1.0.1",
     "bcryptjs": "^2.3.0",
