@@ -391,6 +391,19 @@ class Request {
    * @public
    */
   method () {
+    if (!this.config.get('app.http.allowMethodSpoofing')) {
+      return nodeReq.method(this.request)
+    }
+    return this.input('_method', this.intended())
+  }
+
+  /**
+   * Returns the original HTTP request method, regardless
+   * of the spoofing input.
+   *
+   * @returns {String}
+   */
+  intended () {
     return nodeReq.method(this.request)
   }
 

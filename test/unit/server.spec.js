@@ -134,9 +134,9 @@ describe('Server', function () {
     yield supertest(testServer).get('/?_method=PUT').expect(404).end()
   })
 
-  it('should not log warning when allowMethodSpoofing is not turned on but trying to spoof method', function * () {
+  it('should log warning when allowMethodSpoofing is not turned on but trying to spoof method', function * () {
     Route.put('/', function * (request, response) {
-      response.send({rendered: true})
+      response.send({method: request.method()})
     })
     const inspect = stderr.inspect()
     const staticServer = new Static(Helpers, Config)
@@ -291,5 +291,25 @@ describe('Server', function () {
     const testServer = supertest.agent('http://127.0.0.1:8000')
     const res = yield testServer.get('/').expect(200).end()
     expect(res.body).deep.equal({rendered: true})
+  })
+
+  it('should return the spoofed method instead of original method when _method is present', function * () {
+    Route.post('/', function * (request, response) {
+      response.send(request.method())
+    })
+    this.server.listen('0.0.0.0', 8000)
+    const testServer = supertest.agent('http://127.0.0.1:8000')
+    const res = yield testServer.get('/?_method=POST').expect(200).end()
+    expect(res.text).equal('POST')
+  })
+
+  it('should return the original method by calling intended even if _method is present', function * () {
+    Route.post('/', function * (request, response) {
+      response.send({method: request.method(), intended: request.intended()})
+    })
+    this.server.listen('0.0.0.0', 8000)
+    const testServer = supertest.agent('http://127.0.0.1:8000')
+    const res = yield testServer.get('/?_method=POST').expect(200).end()
+    expect(res.body).deep.equal({method: 'POST', intended: 'GET'})
   })
 })
