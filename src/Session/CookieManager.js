@@ -27,7 +27,9 @@ class CookieManager {
     this.options = {
       domain: Config.get('session.domain'),
       path: Config.get('session.path', '/'),
-      secure: Config.get('session.secure', false)
+      secure: Config.get('session.secure', false),
+      httpOnly: Config.get('session.httpOnly', false),
+      sameSite: Config.get('session.sameSite', false)
     }
     if (!Config.get('session.clearWithBrowser', false)) {
       this.options.expires = new Date(Date.now() + (Config.get('session.age', 120) * 60 * 1000))
