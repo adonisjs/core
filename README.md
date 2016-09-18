@@ -47,7 +47,7 @@ $ cd awesome-project
 $ npm run start
 ```
 
-[Official Documentation](http://adonisjs.com/docs/2.0/installation)
+[Official Documentation](http://adonisjs.com/docs/installation)
 
 ## <a name="contribution-guidelines"></a>Contribution Guidelines
 
