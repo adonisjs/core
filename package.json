@@ -27,7 +27,7 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "^3.0.2",
+    "adonis-fold": "^3.0.3",
     "adonis-redis": "^1.0.0",
     "chai": "^3.3.0",
     "cheerio": "^0.22.0",
