@@ -13,8 +13,10 @@ const CatLog = require('cat-log')
 const helpers = require('./helpers')
 const http = require('http')
 const co = require('co')
+const Resolver = require('adonis-binding-resolver')
 const Ioc = require('adonis-fold').Ioc
-const NE = require('node-exceptions')
+const resolver = new Resolver(Ioc)
+const CE = require('../Exceptions')
 
 /**
  * Http server for adonis framework
@@ -68,7 +70,7 @@ class Server {
    */
   _callRouteAction (resolvedRoute, request, response) {
     if (!resolvedRoute.handler) {
-      throw new NE.HttpException(`Route not found ${request.url()}`, 404)
+      throw new CE.HttpException(`Route not found ${request.url()}`, 404)
     }
     const routeAction = this._makeRouteAction(resolvedRoute.handler)
     const chain = helpers.makeMiddlewareChain(this.middleware, routeAction, false, resolvedRoute)
@@ -86,41 +88,9 @@ class Server {
    * @private
    */
   _makeRouteAction (handler) {
-    if (typeof (handler) === 'function') {
-      return this._makeClosureAction(handler)
-    }
-    if (typeof (handler) === 'string') {
-      return this._makeControllerAction(handler)
-    }
-    throw new NE.InvalidArgumentException('Invalid route handler, attach a controller method or a closure', 500)
-  }
-
-  /**
-   * returns route closure by wrapping it inside an object,
-   * same is done to make it compatible with middleware
-   * compose method
-   *
-   * @param  {Function}           closure
-   * @return {Object}
-   *
-   * @private
-   */
-  _makeClosureAction (closure) {
-    this.log.verbose('responding to route using closure')
-    return {instance: null, method: closure}
-  }
-
-  /**
-   * resolves controller action from the Ioc container by
-   * creating the proper namespace
-   *
-   * @param  {String}              handler
-   * @return {Object}
-   *
-   * @private
-   */
-  _makeControllerAction (handler) {
-    return Ioc.makeFunc(this.helpers.makeNameSpace(this.controllersPath, handler))
+    const formattedHandler = typeof (handler) === 'string' ? this.helpers.makeNameSpace(this.controllersPath, handler) : handler
+    resolver.validateBinding(formattedHandler)
+    return resolver.resolveBinding(formattedHandler)
   }
 
   /**
@@ -203,13 +173,10 @@ class Server {
    * @private
    */
   _getRequestMethod (request) {
-    if (!this.config.get('app.http.allowMethodSpoofing')) {
-      if (request.input('_method')) {
-        this.log.warn('You are making use of method spoofing but it\'s not enabled. Make sure to enable it inside config/app.js file.')
-      }
-      return request.method().toUpperCase()
+    if (!this.config.get('app.http.allowMethodSpoofing') && request.input('_method')) {
+      this.log.warn('You are making use of method spoofing but it\'s not enabled. Make sure to enable it inside config/app.js file.')
     }
-    return request.input('_method', request.method()).toUpperCase()
+    return request.method().toUpperCase()
   }
 
   /**

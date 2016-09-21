@@ -8,15 +8,15 @@
 
 const Config = require('../../src/Config')
 const chai = require('chai')
+const path = require('path')
 const expect = chai.expect
 const Helpers = {
   configPath: function () {
-    return __dirname + '/config'
+    return path.join(__dirname, '/config')
   }
 }
 
-describe('Config', function() {
-
+describe('Config', function () {
   it('should ignore any files apart from .js files inside the config directory', function () {
     const config = new Config(Helpers)
     expect(config.config).not.have.property('.gitkeep')
@@ -63,7 +63,7 @@ describe('Config', function() {
   it('should set mid level paths via key', function () {
     const config = new Config(Helpers)
     config.set('database.mysql', {
-      connection : {
+      connection: {
         host: '127.0.0.1'
       }
     })
@@ -77,6 +77,4 @@ describe('Config', function() {
     const debug = config.get('database.mysql.debug')
     expect(debug).to.equal(true)
   })
-
-
-});
+})

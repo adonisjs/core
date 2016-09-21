@@ -12,13 +12,14 @@
 const View = require('../../src/View')
 const Route = require('../../src/Route')
 const chai = require('chai')
+const cheerio = require('cheerio')
 const path = require('path')
 const expect = chai.expect
 require('co-mocha')
 
 const Helpers = {
   viewsPath: function () {
-    return path.join(__dirname,'./app/views')
+    return path.join(__dirname, './app/views')
   }
 }
 const Config = {
@@ -27,8 +28,7 @@ const Config = {
   }
 }
 
-describe('View',function () {
-
+describe('View', function () {
   before(function () {
     this.view = new View(Helpers, Config, Route)
   })
@@ -38,20 +38,20 @@ describe('View',function () {
   })
 
   it('should throw an error when unable to find view', function * () {
-    try{
-       yield this.view.make('foo.html')
-       expect(true).to.be.false
-    } catch(e) {
+    try {
+      yield this.view.make('foo.html')
+      expect(true).to.be.false
+    } catch (e) {
       expect(e.message).to.match(/template not found/)
     }
   })
 
-  it('should make a view using it\'s path', function * () {
+  it("should make a view using it's path", function * () {
     const index = yield this.view.make('index.njk')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
 
-  it('should make a view using it\'s path without .njk extension', function * () {
+  it("should make a view using it's path without .njk extension", function * () {
     const index = yield this.view.make('index')
     expect(index.trim()).to.equal('<h2> Hello world </h2>')
   })
@@ -92,62 +92,49 @@ describe('View',function () {
   })
 
   it('should make use of route filter inside views', function * () {
-    Route.get('/:id','ProfileController.show').as('profile')
-    const profile = yield this.view.make('profile',{id:1})
+    Route.get('/:id', 'ProfileController.show').as('profile')
+    const profile = yield this.view.make('profile', {id: 1})
     expect(profile.trim()).to.equal('/1')
   })
 
   it('should make use of action filter inside views', function * () {
-    Route.get('/:id','ProfileController.show').as('profile')
-    const profile = yield this.view.make('profileAction',{id:1})
+    Route.get('/:id', 'ProfileController.show').as('profile')
+    const profile = yield this.view.make('profileAction', {id: 1})
     expect(profile.trim()).to.equal('/1')
   })
 
-  // TODO: Change the codebase to handle this test
-  it.skip('should throw an exception when make use of route filter and the route is not defined', function * () {
-
-    Route.get('/:id', 'ProfileController.show').as('profiles')
-
-    try {
-      const profile = yield this.view.make('profile', { id: 1 })
-      expect(true).to.be.false
-    } catch (e) {
-      expect(e.message).to.match(/The route profile has not been found/)
-    }
+  it('should throw exception when unable to find route action inside route filter', function * () {
+    const fn = () => this.view.makeString('{{ "ProfileController.show" | action({id:1}) }}')
+    expect(fn).to.throw(/RuntimeException: E_MISSING_ROUTE_ACTION: The action ProfileController\.show has not been found/)
   })
 
   it('should make an anchor link to a given route', function * () {
-    Route.get('/:id','ProfileController.show').as('profile')
+    Route.get('/:id', 'ProfileController.show').as('profile')
     const viewString = this.view.makeString('{{ linkTo("profile", "View Profile", {id: 1}) }}')
     expect(viewString.trim()).to.equal('<a href="/1" > View Profile </a>')
   })
 
   it('should make an anchor link with defined target to a given route', function * () {
-    Route.get('/users','ProfileController.show').as('listUsers')
+    Route.get('/users', 'ProfileController.show').as('listUsers')
     const viewString = this.view.makeString('{{ linkTo("listUsers", "View Profile", {}, "_blank") }}')
     expect(viewString.trim()).to.equal('<a href="/users" target="_blank"> View Profile </a>')
   })
 
   it('should make an anchor link to a given action', function * () {
-    Route.get('profile/:id','ProfileController.show')
+    Route.get('profile/:id', 'ProfileController.show')
     const viewString = this.view.makeString('{{ linkToAction("ProfileController.show", "View Profile", {id: 1}) }}')
     expect(viewString.trim()).to.equal('<a href="/profile/1" > View Profile </a>')
   })
 
   it('should make an anchor link with defined target to a given action', function * () {
-    Route.get('profile/:id','ProfileController.show')
+    Route.get('profile/:id', 'ProfileController.show')
     const viewString = this.view.makeString('{{ linkToAction("ProfileController.show", "View Profile", {id: 1}, "_blank") }}')
     expect(viewString.trim()).to.equal('<a href="/profile/1" target="_blank"> View Profile </a>')
   })
 
-  it('should return empty string when unable to find route action', function * () {
-    const profile = this.view.makeString('{{ "ProfileController.show" | action({id:1}) }}',{id:1})
-    expect(profile.trim()).to.equal('')
-  })
-
   it('should stringify json', function * () {
-    const jsonView = yield this.view.make('json',{profile:{name:"virk"}})
-    expect(jsonView.trim()).to.equal(JSON.stringify({name:"virk"}, null, 2))
+    const jsonView = yield this.view.make('json', {profile: {name: 'virk'}})
+    expect(jsonView.trim()).to.equal(JSON.stringify({name: 'virk'}, null, 2))
   })
 
   it('should be able to make use of yield keyword inside view', function * () {
@@ -156,7 +143,7 @@ describe('View',function () {
         return 'virk'
       }
     }
-    const asyncView = yield this.view.make('async',{profile})
+    const asyncView = yield this.view.make('async', {profile})
     expect(asyncView.trim()).to.equal('virk')
   })
 
@@ -166,9 +153,9 @@ describe('View',function () {
         throw new Error('What you want?')
       }
     }
-    try{
-      yield this.view.make('async',{profile})
-    }catch(e){
+    try {
+      yield this.view.make('async', {profile})
+    } catch (e) {
       expect(e.message).to.match(/What you/)
     }
   })
@@ -191,7 +178,7 @@ describe('View',function () {
   })
 
   it('should be able to make use of use method when injectServices is true', function * () {
-    const time = new Date().getTime()
+    new Date().getTime()
     this.view.global('typeof', function (value) {
       return typeof (value)
     })
@@ -200,7 +187,7 @@ describe('View',function () {
   })
 
   it('should not be able to make use of use method when injectServices is false', function * () {
-    const time = new Date().getTime()
+    new Date().getTime()
     const customConfig = {
       get: function () {
         return false
@@ -214,4 +201,9 @@ describe('View',function () {
     expect(compiledView.trim()).to.equal('undefined')
   })
 
+  it('be able to include a view inside a for loop', function * () {
+    const compiledView = yield this.view.make('for', {users: [{username: 'foo'}, {username: 'bar'}]})
+    const $ = cheerio.load(compiledView.trim())
+    expect($('li').length).to.equal(2)
+  })
 })

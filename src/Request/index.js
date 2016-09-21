@@ -391,6 +391,19 @@ class Request {
    * @public
    */
   method () {
+    if (!this.config.get('app.http.allowMethodSpoofing')) {
+      return nodeReq.method(this.request)
+    }
+    return this.input('_method', this.intended())
+  }
+
+  /**
+   * Returns the original HTTP request method, regardless
+   * of the spoofing input.
+   *
+   * @returns {String}
+   */
+  intended () {
     return nodeReq.method(this.request)
   }
 
@@ -492,7 +505,7 @@ class Request {
      * empty instance of file object.
      */
     if (!this._files[key]) {
-      return this._toFileInstance({})
+      return null
     }
 
     /**
@@ -502,8 +515,8 @@ class Request {
     const fileToReturn = this._files[key]
 
     /**
-     * if multiple file upload , convert of them to
-     * file instance
+     * if multiple file upload , convert them to
+     * file instances
      */
     if (_.isArray(fileToReturn)) {
       return _.map(fileToReturn, (file) => this._toFileInstance(file.toJSON(), options))

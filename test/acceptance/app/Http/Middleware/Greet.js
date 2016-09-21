@@ -3,7 +3,7 @@
 class Greet {
 
   * handle (request, response, next) {
-    response.status(200).send('Greetings!');
+    response.status(200).send('Greetings!')
   }
 
 }

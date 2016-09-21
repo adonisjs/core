@@ -23,7 +23,7 @@ class Env {
   constructor (Helpers) {
     const envLocation = this.envPath()
     const options = {
-      path: path.join(Helpers.basePath(), envLocation),
+      path: path.isAbsolute(envLocation) ? envLocation : path.join(Helpers.basePath(), envLocation),
       silent: process.env.ENV_SILENT || false,
       encoding: process.env.ENV_ENCODING || 'utf8'
     }

@@ -22,6 +22,7 @@ const viewGlobals = require('./globals')
 class View {
 
   constructor (Helpers, Config, Route) {
+    nunjucks.nodes.For = nunjucks.nodes.AsyncEach // monkey patch for with asyncEach
     const viewsPath = Helpers.viewsPath()
     const viewsCache = Config.get('app.views.cache', true)
     const injectServices = Config.get('app.views.injectServices', false)

@@ -11,9 +11,12 @@
 
 const EventEmitter2 = require('eventemitter2').EventEmitter2
 const Ioc = require('adonis-fold').Ioc
+const Resolver = require('adonis-binding-resolver')
+const resolver = new Resolver(Ioc)
 const _ = require('lodash')
 const util = require('../../lib/util')
 const co = require('co')
+const CE = require('../Exceptions')
 
 class Event {
 
@@ -36,7 +39,8 @@ class Event {
    * @private
    */
   _resolveHandler (handler) {
-    return typeof (handler) === 'string' ? Ioc.makeFunc(this.helpers.makeNameSpace(this.listenersPath, handler)) : handler
+    const formattedHandler = typeof (handler) === 'string' ? this.helpers.makeNameSpace(this.listenersPath, handler) : handler
+    return resolver.resolveBinding(formattedHandler)
   }
 
   /**
@@ -161,7 +165,7 @@ class Event {
   removeListener (event, name) {
     const handler = this.namedListeners[name]
     if (!handler) {
-      throw new Error(`There is no named event with ${name} name for ${event} event`)
+      throw CE.InvalidArgumentException.missingEvent(event, name)
     }
     this.emitter.removeListener(event, handler)
   }
@@ -205,6 +209,7 @@ class Event {
    * @public
    */
   any (handler) {
+    resolver.validateBinding(handler)
     handler = this._resolveHandler(handler)
     handler = this._makeHandler(handler)
     this.emitter.onAny(handler)
@@ -236,6 +241,7 @@ class Event {
       handler = name
       name = null
     }
+    resolver.validateBinding(handler)
     handler = this._resolveHandler(handler)
     handler = this._makeHandler(handler)
     if (name) {
@@ -282,6 +288,7 @@ class Event {
    * @public
    */
   once (event, handler) {
+    resolver.validateBinding(handler)
     handler = this._resolveHandler(handler)
     handler = this._makeHandler(handler)
     this.emitter.once(event, handler)
