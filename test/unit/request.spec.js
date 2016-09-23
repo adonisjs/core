@@ -591,6 +591,50 @@ describe('Request', function () {
     expect(res.body.age).to.equal(18)
   })
 
+  it('should return plain cookies even when encryption is on', function * () {
+    const server = http.createServer(function (req, res) {
+      const alternateConfig = {
+        get: function (key) {
+          switch (key) {
+            case 'app.appKey':
+              return 'n96M1TPG821EdN4mMIjnGKxGytx9W2UJ'
+          }
+        }
+      }
+      const request = new Request(req, res, alternateConfig)
+      const cookies = request.cookies()
+      const plainCookies = request.plainCookies()
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({cookies, plainCookies}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200).end()
+    expect(res.body.cookies).deep.equal({})
+    expect(res.body.plainCookies).deep.equal({name: 'foo'})
+  })
+
+  it('should return value for a given key from plain cookies even when encryption is on', function * () {
+    const server = http.createServer(function (req, res) {
+      const alternateConfig = {
+        get: function (key) {
+          switch (key) {
+            case 'app.appKey':
+              return 'n96M1TPG821EdN4mMIjnGKxGytx9W2UJ'
+          }
+        }
+      }
+      const request = new Request(req, res, alternateConfig)
+      const name = request.cookie('name')
+      const plainName = request.plainCookie('name')
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({name, plainName}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Cookie', ['name=bar']).expect(200).end()
+    expect(res.body.name).to.equal(null)
+    expect(res.body.plainName).to.equal('bar')
+  })
+
   it('should return route params', function * () {
     const server = http.createServer(function (req, res) {
       const request = new Request(req, res, Config)

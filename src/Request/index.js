@@ -446,6 +446,33 @@ class Request {
   }
 
   /**
+   * Returns an object of plain cookies without decrypting
+   * or unsigning them. It is required and helpful when
+   * want to read cookies not set by AdonisJs.
+   *
+   * @return {Object}
+   */
+  plainCookies () {
+    return nodeCookie.parse(this.request)
+  }
+
+  /**
+   * Returns plain cookie value without decrypting or
+   * unsigning it. It is required and helpful when
+   * want to read cookies not set by AdonisJs.
+   *
+   * @param  {String} key
+   * @param  {Mixed} [defaultValue]
+   *
+   * @return {Mixed}
+   */
+  plainCookie (key, defaultValue) {
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
+    const cookies = this.plainCookies()
+    return util.existy(cookies[key]) ? cookies[key] : defaultValue
+  }
+
+  /**
    * return route param value for a given key
    *
    * @param  {String} key - key for which the value should be return
