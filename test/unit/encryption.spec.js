@@ -19,17 +19,16 @@ class Config {
     this.algorithm = algorithm || 'aes-256-cbc'
   }
   get (key) {
-    if(key === 'app.appKey'){
+    if (key === 'app.appKey') {
       return this.key
     }
-    if(key === 'app.encryption.algorithm'){
+    if (key === 'app.encryption.algorithm') {
       return this.algorithm
     }
   }
 }
 
-describe('Encryption', function() {
-
+describe('Encryption', function () {
   before(function () {
     config = new Config('a'.repeat(32), 'aes-256-cbc')
     encryption = new Encryption(config)
@@ -39,35 +38,35 @@ describe('Encryption', function() {
     const fn = function () {
       return new Encryption(new Config())
     }
-    expect(fn).to.throw(/App key needs to be specified in order to make use of Encryption\./i)
+    expect(fn).to.throw('RuntimeException: E_MISSING_APPKEY: App key needs to be specified in order to make use of Encryption')
   })
 
   it('should throw error when APP_KEY to long', function () {
     const fn = function () {
       return new Encryption(new Config('a'.repeat(32), 'aes-128-cbc'))
     }
-    expect(fn).to.throw(/The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths\./i)
+    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRPYTION_CIPHER: The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths')
   })
 
   it('should throw error when APP_KEY is wrong', function () {
     const fn = function () {
       return new Encryption(new Config('a'.repeat(5), 'aes-256-cbc'))
     }
-    expect(fn).to.throw(/The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths\./i)
+    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRPYTION_CIPHER: The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths')
   })
 
   it('should throw error when cipher is unsupported', function () {
     const fn = function () {
       return new Encryption(new Config('a'.repeat(16), 'AES-256-CFB8'))
     }
-    expect(fn).to.throw(/The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths\./i)
+    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRPYTION_CIPHER: The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths')
   })
 
   it('should throw error when APP_KEY length is wrong and cipher is unsupported', function () {
     const fn = function () {
       return new Encryption(new Config('a'.repeat(16), 'AES-256-CFB8'))
     }
-    expect(fn).to.throw(/The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths\./i)
+    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRPYTION_CIPHER: The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths')
   })
 
   it('should calculate a correct sha256 hash', function () {
@@ -91,12 +90,12 @@ describe('Encryption', function() {
   })
 
   it('should detect valid payload', function () {
-    const invalid = encryption.invalidPayload({iv:'', value:'', mac:''})
+    const invalid = encryption.invalidPayload({iv: '', value: '', mac: ''})
     expect(invalid).to.equal(false)
   })
 
   it('should detect valid mac', function () {
-    const payload = {iv:'gD+wK78S1q4L3Vzgullp8Q==', value:'These Aren\'t the Droids You\'re Looking For', mac:'ffcfa6ced2727ba646467688e1f3ae0d38ccb7c5b4a9c6f9876d6d749100c2bd'}
+    const payload = {iv: 'gD+wK78S1q4L3Vzgullp8Q==', value: 'These Aren\'t the Droids You\'re Looking For', mac: 'ffcfa6ced2727ba646467688e1f3ae0d38ccb7c5b4a9c6f9876d6d749100c2bd'}
     const invalid = encryption.validMac(payload)
     expect(invalid).to.equal(true)
   })
@@ -105,14 +104,14 @@ describe('Encryption', function() {
     const fn = function () {
       return encryption.getJsonPayload('Int9Ig==')
     }
-    expect(fn).to.throw(/The payload is invalid\./i)
+    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRYPTION_PAYLOAD: The payload is invalid')
   })
 
   it('should throw error when payload is not an json object', function () {
     const fn = function () {
       return encryption.getJsonPayload('foo')
     }
-    expect(fn).to.throw(/The payload is not an json object\./i)
+    expect(fn).to.throw('RuntimeException: E_MALFORMED_JSON: The payload is not a json object')
   })
 
   it('should throw error when mac is invalid', function () {
@@ -123,7 +122,12 @@ describe('Encryption', function() {
     const fn = function () {
       return encryption.getJsonPayload(base64)
     }
-    expect(fn).to.throw(/The MAC is invalid\./i)
+    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRYPTION_MAC: The MAC is invalid')
+  })
+
+  it('should throw error when encrypt value is empty', function () {
+    const fn = () => encryption.encrypt('')
+    expect(fn).to.throw('InvalidArgumentException: E_MISSING_PARAMETER: Could not encrypt the data')
   })
 
   it('should decrypt values using defined algorithm', function () {
@@ -138,7 +142,6 @@ describe('Encryption', function() {
       const b = new Encryption(new Config('b'.repeat(32), 'aes-256-cbc'))
       console.log(b.decrypt(a.encrypt('These Aren\'t the Droids You\'re Looking For')))
     }
-    expect(fn).to.throw(/The MAC is invalid\./i)
+    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRYPTION_MAC: The MAC is invalid')
   })
-
 })

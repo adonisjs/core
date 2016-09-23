@@ -13,7 +13,7 @@ const logger = new CatLog('adonis:framework')
 const util = require('../../lib/util')
 const ResourceMember = require('./ResourceMember')
 const ResourceCollection = require('./ResourceCollection')
-const NE = require('node-exceptions')
+const CE = require('../Exceptions')
 
 /**
  * Resource management for Http routes.
@@ -24,7 +24,7 @@ class Resource {
 
   constructor (RouteHelper, pattern, handler) {
     if (typeof (handler) !== 'string') {
-      throw new NE.DomainException('You can only bind controllers to resources')
+      throw CE.InvalidArgumentException.invalidParameter('You can only bind controllers to resources')
     }
     if (pattern === '/') {
       logger.warn('You are registering a resource for / path, which is not a good practice')
@@ -112,7 +112,7 @@ class Resource {
    */
   _transformKeys (pairKeys) {
     if (!_.isArray(pairKeys)) {
-      throw new Error('Resource route methods must be defined as an array')
+      throw CE.InvalidArgumentException.invalidParameter('Resource route methods must be defined as an array')
     }
     return pairKeys.map((item) => {
       return `${this.basename}.${item}`
@@ -242,7 +242,7 @@ class Resource {
    */
   addMember (route, verbs, callback) {
     if (_.isEmpty(route)) {
-      throw new NE.InvalidArgumentException('action argument must be present')
+      throw CE.InvalidArgumentException.invalidParameter('Resource.addMember expects a route')
     }
 
     verbs = verbs || ['GET', 'HEAD']
@@ -270,7 +270,7 @@ class Resource {
    */
   addCollection (route, verbs, callback) {
     if (_.isEmpty(route)) {
-      throw new NE.InvalidArgumentException('action argument must be present')
+      throw CE.InvalidArgumentException.invalidParameter('Resource.addCollection expects a route')
     }
 
     verbs = verbs || ['GET', 'HEAD']

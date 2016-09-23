@@ -1,9 +1,9 @@
 'use strict'
 
-class GlobalCatch{
+class GlobalCatch {
 
-  *handle (request, response, next) {
-    response.status(401).send("Login")
+  * handle (request, response, next) {
+    response.status(401).send('Login')
   }
 }
 

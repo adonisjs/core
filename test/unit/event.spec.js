@@ -28,7 +28,24 @@ const Helpers = {
   }
 }
 
-describe('Event', function() {
+describe('Event', function () {
+  it('should throw an exception when event handler is not a valid function or reference to function', function () {
+    const event = new Event(Config, Helpers)
+    const fn = () => event.on('foo', {})
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure')
+  })
+
+  it('should throw an exception when event.once handler is not a valid function or reference to function', function () {
+    const event = new Event(Config, Helpers)
+    const fn = () => event.once('foo', {})
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure')
+  })
+
+  it('should throw an exception when event.any handler is not a valid function or reference to function', function () {
+    const event = new Event(Config, Helpers)
+    const fn = () => event.any({})
+    expect(fn).to.throw('InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure')
+  })
 
   it('should be able to register an event', function (done) {
     const event = new Event(Config, Helpers)
@@ -201,7 +218,7 @@ describe('Event', function() {
   it('should be able to register one time only event listener', function (done) {
     let count = 0
     const event = new Event(Config, Helpers)
-    event.once('foo',function () {
+    event.once('foo', function () {
       count++
     })
     event.fire('foo')
@@ -212,8 +229,7 @@ describe('Event', function() {
 
   it('should be able to get list of listeners for a specific event', function () {
     const event = new Event(Config, Helpers)
-    event.once('foo',function () {
-    })
+    event.once('foo', function () {})
     const listeners = event.getListeners('foo')
     expect(listeners).to.be.an('array')
     expect(listeners.length).to.equal(1)
@@ -221,8 +237,7 @@ describe('Event', function() {
 
   it('should be able to get list of listeners for wildcard events', function () {
     const event = new Event(Config, Helpers)
-    event.once('foo.bar',function () {
-    })
+    event.once('foo.bar', function () {})
     const listeners = event.getListeners('foo.*')
     expect(listeners).to.be.an('array')
     expect(listeners.length).to.equal(1)
@@ -230,8 +245,7 @@ describe('Event', function() {
 
   it('should tell whether there are any listeners for a given event', function () {
     const event = new Event(Config, Helpers)
-    event.once('foo.bar',function () {
-    })
+    event.once('foo.bar', function () {})
     expect(event.hasListeners('foo.*')).to.equal(true)
   })
 
@@ -250,10 +264,8 @@ describe('Event', function() {
 
   it('should be able to remove named events', function () {
     const event = new Event(Config, Helpers)
-    event.on('foo', 'fooEvent', function () {
-    })
-    event.on('foo', 'anotherEvent', function () {
-    })
+    event.on('foo', 'fooEvent', function () {})
+    event.on('foo', 'anotherEvent', function () {})
     event.removeListener('foo', 'fooEvent')
     const listeners = event.getListeners('foo')
     expect(listeners.length).to.equal(1)
@@ -264,7 +276,7 @@ describe('Event', function() {
     const fn = function () {
       event.removeListener('foo', 'fooEvent')
     }
-    expect(fn).to.throw(/There is no named event with fooEvent name for foo event/)
+    expect(fn).to.throw('InvalidArgumentException: E_MISSING_NAMED_EVENT: Cannot find an event with fooEvent name for foo event')
   })
 
   it('should be able to remove the correct named events', function (done) {
@@ -282,10 +294,8 @@ describe('Event', function() {
 
   it('should be able to remove all listeners for a given event', function () {
     const event = new Event(Config, Helpers)
-    event.on('foo', function () {
-    })
-    event.on('foo', function () {
-    })
+    event.on('foo', function () {})
+    event.on('foo', function () {})
     event.removeListeners('foo')
     const listeners = event.getListeners('foo')
     expect(listeners.length).to.equal(0)
@@ -293,10 +303,8 @@ describe('Event', function() {
 
   it('should be able to remove all listeners for all events', function () {
     const event = new Event(Config, Helpers)
-    event.on('foo', function () {
-    })
-    event.on('bar', function () {
-    })
+    event.on('foo', function () {})
+    event.on('bar', function () {})
     event.removeListeners()
     expect(event.getListeners('foo').length).to.equal(0)
     expect(event.getListeners('bar').length).to.equal(0)

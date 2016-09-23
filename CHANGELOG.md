@@ -1,3 +1,27 @@
+<a name="3.0.2"></a>
+## [3.0.2](https://github.com/adonisjs/adonis-framework/compare/v3.0.1...v3.0.2) (2016-09-23)
+
+
+### Bug Fixes
+
+* **docs:** broken links to docs ([#277](https://github.com/adonisjs/adonis-framework/issues/277)) ([6dedd5b](https://github.com/adonisjs/adonis-framework/commit/6dedd5b))
+* **env:** using ENV_PATH value as it is if isAbsolute ([e5913d4](https://github.com/adonisjs/adonis-framework/commit/e5913d4))
+* **file:** return null when file not uploaded ([4d05d2d](https://github.com/adonisjs/adonis-framework/commit/4d05d2d))
+* **tests:** fix breaking test after mocha3.0 ([8d96862](https://github.com/adonisjs/adonis-framework/commit/8d96862))
+* **view:** patch view for to work as asyncEach ([d283916](https://github.com/adonisjs/adonis-framework/commit/d283916)), closes [#258](https://github.com/adonisjs/adonis-framework/issues/258)
+
+
+### Features
+
+* **exceptions:** add support for custom exceptions ([fd0c008](https://github.com/adonisjs/adonis-framework/commit/fd0c008))
+* **request:** add support for fetching plain cookies ([10b6c44](https://github.com/adonisjs/adonis-framework/commit/10b6c44))
+* **request:** add support for intended method ([837ab7f](https://github.com/adonisjs/adonis-framework/commit/837ab7f))
+* **response:** add few more properties ([46930eb](https://github.com/adonisjs/adonis-framework/commit/46930eb))
+* **session:** add support for redis session driver ([677cc4e](https://github.com/adonisjs/adonis-framework/commit/677cc4e)), closes [#190](https://github.com/adonisjs/adonis-framework/issues/190)
+* **session:** make use of additional cookie options ([4b2825c](https://github.com/adonisjs/adonis-framework/commit/4b2825c))
+
+
+
 <a name="3.0.1"></a>
 ## [3.0.1](https://github.com/adonisjs/adonis-framework/compare/v3.0.0...v3.0.1) (2016-07-29)
 

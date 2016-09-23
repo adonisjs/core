@@ -11,7 +11,7 @@ const chai = require('chai')
 const expect = chai.expect
 require('co-mocha')
 
-describe('Hashing', function() {
+describe('Hashing', function () {
   it('should hash a value using make method', function * () {
     yield Hash.make('foo')
   })
@@ -26,20 +26,20 @@ describe('Hashing', function() {
     expect(verified).to.equal(false)
   })
   it('should throw error when wrong values are passed during make method', function * () {
-    try{
-      yield Hash.make('foo','bar')
+    try {
+      yield Hash.make('foo', 'bar')
       expect(true).to.equal(false)
-    }catch (e){
+    } catch (e) {
       expect(e.message).to.match(/Invalid salt version/)
     }
   })
 
   it('should throw error when wrong values are passed during verify method', function * () {
-    try{
+    try {
       yield Hash.verify('foo')
       expect(true).to.equal(false)
-    }catch (e){
+    } catch (e) {
       expect(e.message).to.match(/Illegal arguments/)
     }
   })
-});
+})

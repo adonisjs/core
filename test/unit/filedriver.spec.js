@@ -8,67 +8,37 @@
 
 const chai = require('chai')
 const expect = chai.expect
-const fs = require('fs')
+const fs = require('co-fs-extra')
+const path = require('path')
 const FileDriver = require('../../src/Session/Drivers').file
 
 const Helpers = {
-  storagePath : function() {
-    return __dirname + '/storage/sessions'
+  storagePath: function () {
+    return path.join(__dirname, '/storage/sessions')
   }
 }
 
 const Config = {
-  get:function() {
+  get: function () {
     return 'sessions'
   }
 }
 
-const readFile = function (filePath) {
-  return new Promise(function (resolve, reject) {
-    fs.readFile(filePath, function (err, contents) {
-      if(err){
-        return reject(err)
-      }
-      resolve(contents.toString())
-    })
-  })
-}
-
 require('co-mocha')
 
-describe('Session File Driver', function  () {
-
+describe('Session File Driver', function () {
   this.timeout(5000)
 
-  it('should create session directory if does not exists', function * () {
-    const fileDriver = new FileDriver(Helpers, Config)
-    yield fileDriver._makeStorageDir(__dirname+'/storage/sessions')
+  this.beforeEach(function * () {
+    yield fs.remove(path.join(__dirname, '/storage/sessions'))
   })
 
-  it('should create file and write data to it', function * () {
-    const fileDriver = new FileDriver(Helpers, Config)
-    const filePath = __dirname+'/storage/sessions/102102201'
-    yield fileDriver._writeSessionToFile(filePath,'hello world')
-    const contents = yield readFile(filePath)
-    expect(contents).to.equal('hello world')
-  })
-
-  it('should throw an error when unable to create file', function * () {
-    const fileDriver = new FileDriver(Helpers, Config)
-    const filePath = __dirname+'/storage/foo/102102201'
-    try{
-      yield fileDriver._writeSessionToFile(filePath,'hello world')
-    }catch(e){
-      expect(e.message).to.match(/no such file/)
-    }
-  })
-
-  it('save session values using put method', function * () {
+  it('should save session values using create method', function * () {
     const fileDriver = new FileDriver(Helpers, Config)
     const sessionId = '102102201'
-    yield fileDriver.write(sessionId,'bye world')
-    const contents = yield readFile(__dirname+'/storage/sessions/'+sessionId)
-    expect(contents).to.equal('bye world')
+    yield fileDriver.write(sessionId, {greeting: 'bye world'})
+    const contents = yield fs.readFile(path.join(__dirname, '/storage/sessions/' + sessionId), 'utf-8')
+    expect(JSON.parse(contents)).deep.equal({greeting: 'bye world'})
   })
 
   it('should make use of sessions directory when no directory is specified under config', function * () {
@@ -77,9 +47,9 @@ describe('Session File Driver', function  () {
     }
     const fileDriver = new FileDriver(Helpers, Config)
     const sessionId = '102102201'
-    yield fileDriver.write(sessionId,'bye world')
-    const contents = yield readFile(__dirname+'/storage/sessions/'+sessionId)
-    expect(contents).to.equal('bye world')
+    yield fileDriver.write(sessionId, {greeting: 'bye world'})
+    const contents = yield fs.readFile(path.join(__dirname, '/storage/sessions/' + sessionId), 'utf-8')
+    expect(JSON.parse(contents)).deep.equal({greeting: 'bye world'})
   })
 
   it('should read session value from a given file', function * () {
@@ -88,9 +58,9 @@ describe('Session File Driver', function  () {
     }
     const fileDriver = new FileDriver(Helpers, Config)
     const sessionId = '102102201'
-    yield fileDriver.write(sessionId,JSON.stringify({name:"virk"}))
+    yield fileDriver.write(sessionId, JSON.stringify({name: 'virk'}))
     const contents = yield fileDriver.read(sessionId)
-    expect(contents).deep.equal({name:"virk"})
+    expect(JSON.parse(contents)).deep.equal({name: 'virk'})
   })
 
   it('should return empty object when unable to read file', function * () {
@@ -98,10 +68,32 @@ describe('Session File Driver', function  () {
       return null
     }
     const fileDriver = new FileDriver(Helpers, Config)
-    const sessionId = '102102201'
-    yield fileDriver.write(sessionId,JSON.stringify({name:"virk"}))
+    const sessionId = '10010'
+    yield fileDriver.write(sessionId, JSON.stringify({name: 'virk'}))
     const contents = yield fileDriver.read('102102202')
     expect(contents).deep.equal({})
   })
 
+  it('should be able to destroy a session file', function * () {
+    Config.get = function () {
+      return null
+    }
+    const fileDriver = new FileDriver(Helpers, Config)
+    const sessionId = '10010'
+    yield fileDriver.write(sessionId, JSON.stringify({name: 'virk'}))
+    yield fileDriver.destroy(sessionId)
+    const contents = yield fileDriver.read(sessionId)
+    expect(contents).deep.equal({})
+  })
+
+  it('should return silently when session file does not exists', function * () {
+    Config.get = function () {
+      return null
+    }
+    const fileDriver = new FileDriver(Helpers, Config)
+    const sessionId = 'abc'
+    yield fileDriver.destroy(sessionId)
+    const contents = yield fileDriver.read(sessionId)
+    expect(contents).deep.equal({})
+  })
 })

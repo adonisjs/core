@@ -11,15 +11,13 @@ const expect = chai.expect
 const Ioc = require('adonis-fold').Ioc
 const path = require('path')
 const Middleware = require('../../src/Middleware')
-const NE = require('node-exceptions')
 require('co-mocha')
 
 describe('Middleware', function () {
-
   afterEach(function () {
     Middleware.new()
     Ioc.new()
-    Ioc.autoload('App',path.join(__dirname,'./app'))
+    Ioc.autoload('App', path.join(__dirname, './app'))
   })
 
   it('should register a global middleware', function () {
@@ -29,15 +27,22 @@ describe('Middleware', function () {
   })
 
   it('should register a named middleware', function () {
-    Middleware.register('bar','App/Foo/Bar')
+    Middleware.register('bar', 'App/Foo/Bar')
     const named = Middleware.getNamed()
     expect(named.bar).to.equal('App/Foo/Bar')
   })
 
   it('should bulk register global middleware', function () {
-    Middleware.global(['App/Foo/Bar','App/Foo/Baz'])
+    Middleware.global(['App/Foo/Bar', 'App/Foo/Baz'])
     const global = Middleware.getGlobal()
-    expect(global).deep.equal(['App/Foo/Bar','App/Foo/Baz'])
+    expect(global).deep.equal(['App/Foo/Bar', 'App/Foo/Baz'])
+  })
+
+  it('should register only unique middleware to the global list', function () {
+    Middleware.global(['App/Foo/Bar', 'App/Foo/Bar'])
+    const global = Middleware.getGlobal()
+    expect(global).have.length(1)
+    expect(global[0]).to.equal('App/Foo/Bar')
   })
 
   it('should bulk register a named middleware', function () {
@@ -78,7 +83,7 @@ describe('Middleware', function () {
     const formatted = function () {
       return Middleware.formatNamedMiddleware(['auth:basic'])
     }
-    expect(formatted).to.throw(NE.RuntimeException, /auth is not register/)
+    expect(formatted).to.throw('RuntimeException: E_MISSING_NAMED_MIDDLEWARE: auth is not registered as a named middleware')
   })
 
   it('should resolve named middleware using resolve method', function () {
@@ -90,7 +95,7 @@ describe('Middleware', function () {
     expect(resolved[0]).to.have.property('method')
     expect(resolved[0]).to.have.property('parameters')
     expect(resolved[0].parameters).deep.equal(['basic'])
-   })
+  })
 
   it('should resolve global and named named middleware using resolve method', function () {
     Middleware.register('auth', 'App/Http/Middleware/AuthMiddleware')
@@ -143,7 +148,7 @@ describe('Middleware', function () {
     expect(request.count).to.equal(1)
   })
 
-  it('should pass parameters to be middleware', function * () {
+  it('should pass parameters to the middleware', function * () {
     Middleware.global(['App/Http/Middleware/Parser', 'App/Http/Middleware/Cycle2'])
     Middleware.register('auth', 'App/Http/Middleware/AuthMiddleware')
     const request = {}
@@ -156,4 +161,16 @@ describe('Middleware', function () {
     expect(request.scheme).to.equal('basic')
   })
 
+  it('should be able to compose a closure attached to the middleware', function * () {
+    const request = {}
+    const response = {}
+    const middleware = function * (request, response) {
+      request.count = 1
+      response.count = 1
+    }
+    const compose = Middleware.compose([middleware], request, response)
+    yield compose()
+    expect(request.count).to.equal(1)
+    expect(response.count).to.equal(1)
+  })
 })

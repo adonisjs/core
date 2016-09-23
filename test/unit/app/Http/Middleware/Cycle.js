@@ -1,8 +1,8 @@
 'use strict'
 
-class Cycle{
+class Cycle {
 
-  *handle (request, response, next) {
+  * handle (request, response, next) {
     request.count++
   }
 

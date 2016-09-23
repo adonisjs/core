@@ -9,22 +9,18 @@
 const Route = require('../../src/Route')
 const chai = require('chai')
 const _ = require('lodash')
-const NE = require('node-exceptions')
 const expect = chai.expect
-const stderr = require("test-console").stderr
-const pathToRegexp = require('path-to-regexp')
+const stderr = require('test-console').stderr
 require('co-mocha')
 
-describe('Route',function () {
-
+describe('Route', function () {
   beforeEach(function () {
     Route.new()
   })
 
   context('Register', function () {
-
     it('should register a route with GET verb', function () {
-      Route.get('/','SomeController.method')
+      Route.get('/', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
@@ -32,7 +28,7 @@ describe('Route',function () {
     })
 
     it('should register a route with POST verb', function () {
-      Route.post('/','SomeController.method')
+      Route.post('/', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
@@ -40,14 +36,14 @@ describe('Route',function () {
     })
 
     it('should add / when route defination does not have one', function () {
-      Route.post('admin','SomeController.method')
+      Route.post('admin', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].route).to.equal('/admin')
     })
 
     it('should register a route with PUT verb', function () {
-      Route.put('/','SomeController.method')
+      Route.put('/', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
@@ -55,7 +51,7 @@ describe('Route',function () {
     })
 
     it('should register a route with DELETE verb', function () {
-      Route.delete('/','SomeController.method')
+      Route.delete('/', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
@@ -63,7 +59,7 @@ describe('Route',function () {
     })
 
     it('should register a route with PATCH verb', function () {
-      Route.patch('/','SomeController.method')
+      Route.patch('/', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
@@ -71,7 +67,7 @@ describe('Route',function () {
     })
 
     it('should register a route with OPTIONS verb', function () {
-      Route.options('/','SomeController.method')
+      Route.options('/', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
@@ -79,27 +75,26 @@ describe('Route',function () {
     })
 
     it('should register a route with multiple verbs using match method', function () {
-      Route.match(['get','post'],'/','SomeController.method')
+      Route.match(['get', 'post'], '/', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
-      expect(routes[0].verb).deep.equal(['GET','POST'])
+      expect(routes[0].verb).deep.equal(['GET', 'POST'])
     })
 
     it('should register a route for all verbs using any method', function () {
-      Route.any('/','SomeController.method')
+      Route.any('/', 'SomeController.method')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].handler).to.equal('SomeController.method')
-      expect(routes[0].verb).deep.equal(['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
+      expect(routes[0].verb).deep.equal(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'])
     })
 
     it('should throw an error when handler binded to resource is not a controller', function () {
       const fn = function () {
-        Route.resource('/', function * () {
-        })
+        Route.resource('/', function * () {})
       }
-      expect(fn).to.throw(NE.DomainException, /You can only bind controllers to resources/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: You can only bind controllers to resources')
     })
 
     it('should log warning when trying to bind resource to the base route', function () {
@@ -109,14 +104,14 @@ describe('Route',function () {
       expect(inspect.output[inspect.output.length - 2].trim()).to.match(/You are registering a resource for \/ path, which is not a good practice/)
     })
 
-    it('should be able to get a route with it\'s name', function () {
+    it("should be able to get a route with it's name", function () {
       Route.get('/user/:id', 'UsersController.show').as('user.show')
       const route = Route.getRoute({name: 'user.show'})
       expect(route).to.be.an('object')
       expect(route.handler).to.equal('UsersController.show')
     })
 
-    it('should be able to get a route with it\'s handler name', function () {
+    it("should be able to get a route with it's handler name", function () {
       Route.get('/user/:id', 'UsersController.show').as('user.show')
       const route = Route.getRoute({handler: 'UsersController.show'})
       expect(route).to.be.an('object')
@@ -124,10 +119,10 @@ describe('Route',function () {
     })
 
     it('should register resourceful routes', function () {
-      Route.resource('/','SomeController')
+      Route.resource('/', 'SomeController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(7)
       expect(verbs['/-GET/HEAD']).to.equal('SomeController.index')
@@ -140,7 +135,7 @@ describe('Route',function () {
     })
 
     it('should not have / in resourceful routes', function () {
-      Route.resource('/','SomeController')
+      Route.resource('/', 'SomeController')
       const routes = Route.routes()
       const names = _.map(routes, function (route) {
         return route.name
@@ -150,10 +145,10 @@ describe('Route',function () {
     })
 
     it('should register resourceful routes when base route is not /', function () {
-      Route.resource('/admin','SomeController')
+      Route.resource('/admin', 'SomeController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(7)
       expect(verbs['/admin-GET/HEAD']).to.equal('SomeController.index')
@@ -165,7 +160,7 @@ describe('Route',function () {
     })
 
     it('should not have / in resourceful routes when resourceful is not /', function () {
-      Route.resource('/admin','SomeController')
+      Route.resource('/admin', 'SomeController')
       const routes = Route.routes()
       const names = _.map(routes, function (route) {
         return route.name
@@ -175,7 +170,7 @@ describe('Route',function () {
     })
 
     it('should not have / in resourceful routes when resourceful does not starts with /', function () {
-      Route.resource('admin','SomeController')
+      Route.resource('admin', 'SomeController')
       const routes = Route.routes()
       const names = _.map(routes, function (route) {
         return route.name
@@ -185,36 +180,36 @@ describe('Route',function () {
     })
 
     it('should be able to name routes', function () {
-      Route.any('/','SomeController.method').as('home')
+      Route.any('/', 'SomeController.method').as('home')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].name).to.equal('home')
     })
 
     it('should be able to attach middlewares to a given route', function () {
-      Route.any('/','SomeController.method').middlewares(['auth'])
+      Route.any('/', 'SomeController.method').middlewares(['auth'])
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].middlewares).deep.equal(['auth'])
     })
 
     it('should be able to attach middlewares as multiple parameters', function () {
-      Route.any('/','SomeController.method').middlewares('auth', 'web')
+      Route.any('/', 'SomeController.method').middlewares('auth', 'web')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].middlewares).deep.equal(['auth', 'web'])
     })
 
     it('should be able to attach middlewares using middleware method', function () {
-      Route.any('/','SomeController.method').middleware('auth', 'web')
+      Route.any('/', 'SomeController.method').middleware('auth', 'web')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].middlewares).deep.equal(['auth', 'web'])
     })
 
     it('should be able to group routes', function () {
-      Route.group('admin',function () {
-        Route.get('/','SomeController.method')
+      Route.group('admin', function () {
+        Route.get('/', 'SomeController.method')
       })
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
@@ -222,8 +217,8 @@ describe('Route',function () {
     })
 
     it('should be able to attach middleware to group routes', function () {
-      Route.group('admin',function () {
-        Route.get('/','SomeController.method')
+      Route.group('admin', function () {
+        Route.get('/', 'SomeController.method')
       }).middlewares(['auth'])
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
@@ -232,8 +227,8 @@ describe('Route',function () {
     })
 
     it('should be able to attach middlewares as multiple parameters on a group', function () {
-      Route.group('admin',function () {
-        Route.get('/','SomeController.method')
+      Route.group('admin', function () {
+        Route.get('/', 'SomeController.method')
       }).middlewares('auth', 'web')
 
       const routes = Route.routes()
@@ -242,8 +237,8 @@ describe('Route',function () {
     })
 
     it('should be able to attach middlewares using middleware method', function () {
-      Route.group('admin',function () {
-        Route.get('/','SomeController.method')
+      Route.group('admin', function () {
+        Route.get('/', 'SomeController.method')
       }).middleware('auth', 'web')
 
       const routes = Route.routes()
@@ -252,35 +247,34 @@ describe('Route',function () {
     })
 
     it('should be able to attach middleware to group routes and isolated middleware to routes inside group', function () {
-      Route.group('admin',function () {
-        Route.get('/','SomeController.method')
-        Route.get('/cors','SomeController.method').middlewares(['cors'])
+      Route.group('admin', function () {
+        Route.get('/', 'SomeController.method')
+        Route.get('/cors', 'SomeController.method').middlewares(['cors'])
       }).middlewares(['auth'])
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].group).to.equal('admin')
       expect(routes[0].middlewares).deep.equal(['auth'])
       expect(routes[1].group).to.equal('admin')
-      expect(routes[1].middlewares).deep.equal(['cors','auth'])
+      expect(routes[1].middlewares).deep.equal(['cors', 'auth'])
     })
 
     it('should be able to prefix routes inside a group', function () {
-      Route.group('admin',function () {
-        Route.get('/','SomeController.method')
+      Route.group('admin', function () {
+        Route.get('/', 'SomeController.method')
       }).prefix('/v1')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
       expect(routes[0].route).to.equal('/v1')
     })
 
-
     it('should prefix all resourceful routes under a group', function () {
-      Route.group('v1',function () {
-        Route.resource('admin','SomeController')
+      Route.group('v1', function () {
+        Route.resource('admin', 'SomeController')
       }).prefix('/v1')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(7)
       expect(verbs['/v1/admin-GET/HEAD']).to.equal('SomeController.index')
@@ -293,10 +287,10 @@ describe('Route',function () {
     })
 
     it('should be able to create nested resources seperated with dots', function () {
-      Route.resource('user.posts','PostController')
+      Route.resource('user.posts', 'PostController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(7)
       expect(verbs['/user/:user_id/posts-GET/HEAD']).to.equal('PostController.index')
@@ -309,7 +303,7 @@ describe('Route',function () {
     })
 
     it('should create proper names for nested routes', function () {
-      Route.resource('user.posts','SomeController')
+      Route.resource('user.posts', 'SomeController')
       const routes = Route.routes()
       const names = _.map(routes, function (route) {
         return route.name
@@ -319,10 +313,10 @@ describe('Route',function () {
     })
 
     it('should be able to create end number of nested resources seperated with dots', function () {
-      Route.resource('user.post.comments','CommentsController')
+      Route.resource('user.post.comments', 'CommentsController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(7)
       expect(verbs['/user/:user_id/post/:post_id/comments-GET/HEAD']).to.equal('CommentsController.index')
@@ -335,13 +329,13 @@ describe('Route',function () {
     })
 
     it('should be define same resource under a group and without a group', function () {
-      Route.resource('users','UsersController')
+      Route.resource('users', 'UsersController')
       Route.group('v', function () {
         Route.resource('users', 'V1UsersController')
       }).prefix('/v1')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(14)
       expect(verbs['/users-GET/HEAD']).to.equal('UsersController.index')
@@ -364,13 +358,13 @@ describe('Route',function () {
     })
 
     it('should be define same resource under a group and without a group binded to same controller', function () {
-      Route.resource('users','UsersController')
+      Route.resource('users', 'UsersController')
       Route.group('v', function () {
         Route.resource('users', 'UsersController')
       }).prefix('/v1')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(14)
       expect(verbs['/users-GET/HEAD']).to.equal('UsersController.index')
@@ -395,10 +389,10 @@ describe('Route',function () {
     })
 
     it('all route resources should have a name', function () {
-      Route.resource('user.posts','PostController')
+      Route.resource('user.posts', 'PostController')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
       expect(routes.length).to.equal(7)
       expect(verbs['/user/:user_id/posts-GET/HEAD']).to.equal('user.posts.index')
@@ -411,13 +405,13 @@ describe('Route',function () {
     })
 
     it('should be able to override route resource names', function () {
-      Route.resource('user.posts','PostController').as({
+      Route.resource('user.posts', 'PostController').as({
         edit: 'post.showEdit',
         destroy: 'post.remove'
       })
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
       expect(routes.length).to.equal(7)
       expect(verbs['/user/:user_id/posts-GET/HEAD']).to.equal('user.posts.index')
@@ -430,10 +424,10 @@ describe('Route',function () {
     })
 
     it('should be able to define route required routes for a resource', function () {
-      Route.resource('user.posts','PostController').only(['create', 'store', 'index'])
+      Route.resource('user.posts', 'PostController').only(['create', 'store', 'index'])
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
       expect(routes.length).to.equal(3)
       expect(verbs['/user/:user_id/posts-GET/HEAD']).to.equal('user.posts.index')
@@ -446,10 +440,10 @@ describe('Route',function () {
     })
 
     it('should be able to define route required routes for a resource as multiple parameters', function () {
-      Route.resource('user.posts','PostController').only('create', 'store', 'index')
+      Route.resource('user.posts', 'PostController').only('create', 'store', 'index')
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
       expect(routes.length).to.equal(3)
       expect(verbs['/user/:user_id/posts-GET/HEAD']).to.equal('user.posts.index')
@@ -461,12 +455,11 @@ describe('Route',function () {
       expect(verbs['/user/:user_id/posts/:id-DELETE']).to.equal(undefined)
     })
 
-
     it('should be able to define route actions not required when creating resources', function () {
-      Route.resource('user.posts','PostController').except(['create', 'store', 'index'])
+      Route.resource('user.posts', 'PostController').except(['create', 'store', 'index'])
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
       expect(routes.length).to.equal(4)
       expect(verbs['/user/:user_id/posts-GET/HEAD']).to.equal(undefined)
@@ -480,21 +473,21 @@ describe('Route',function () {
 
     it('should filter routes from resource routes copy also when using except', function () {
       Route
-        .resource('user.posts','PostController')
+        .resource('user.posts', 'PostController')
         .except(['create', 'store', 'index'])
         .as({
           store: 'users.save'
         })
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
       expect(verbs['/user/:user_id/posts-POST']).to.equal(undefined)
     })
 
     it('should be able to define domain for a given route', function () {
-      Route.group('admin',function () {
-        Route.get('/','SomeController.method')
+      Route.group('admin', function () {
+        Route.get('/', 'SomeController.method')
       }).domain('v1.example.org')
       const routes = Route.routes()
       expect(routes[0]).to.be.an('object')
@@ -553,13 +546,13 @@ describe('Route',function () {
 
     it('should register resourceful routes with member paths', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addMember('completed', ['GET', 'HEAD'])
-      .addMember('mark_as', 'POST')
+        .resource('/tasks', 'SomeController')
+        .addMember('completed', ['GET', 'HEAD'])
+        .addMember('mark_as', 'POST')
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(9)
       expect(verbs['/tasks-GET/HEAD']).to.equal('SomeController.index')
@@ -575,46 +568,45 @@ describe('Route',function () {
 
     it('should be able to add member paths to nested resources', function () {
       Route
-      .resource('user.tasks','SomeController')
-      .addMember('completed', 'PUT')
+        .resource('user.tasks', 'SomeController')
+        .addMember('completed', 'PUT')
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(verbs['/user/:user_id/tasks/:id/completed-PUT']).to.equal('SomeController.completed')
     })
 
     it('should make use of GET and HEAD verbs when no verbs are defined with addMember', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addMember('completed')
+        .resource('/tasks', 'SomeController')
+        .addMember('completed')
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(verbs['/tasks/:id/completed-GET/HEAD']).to.equal('SomeController.completed')
     })
 
     it('should throw an error when the action is not present for member route', function () {
-      const fn = function(){
-        Route.resource('/tasks','SomeController').addMember()
+      const fn = function () {
+        Route.resource('/tasks', 'SomeController').addMember()
       }
-
-      expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Resource.addMember expects a route')
     })
 
     it('should update controller binding for added member', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addMember('completed', ['GET', 'HEAD'], function (member) {
-        member.bindAction('SomeController.getCompleted')
-      })
+        .resource('/tasks', 'SomeController')
+        .addMember('completed', ['GET', 'HEAD'], function (member) {
+          member.bindAction('SomeController.getCompleted')
+        })
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(routes.length).to.equal(8)
       expect(verbs['/tasks-GET/HEAD']).to.equal('SomeController.index')
@@ -629,14 +621,14 @@ describe('Route',function () {
 
     it('should be able to assign middleware to the member', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addMember('completed', ['GET', 'HEAD'], function (member) {
-        member.bindAction('SomeController.getCompleted').middleware('auth')
-      })
+        .resource('/tasks', 'SomeController')
+        .addMember('completed', ['GET', 'HEAD'], function (member) {
+          member.bindAction('SomeController.getCompleted').middleware('auth')
+        })
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.middlewares]
+        return [route.route + '-' + route.verb.join('/'), route.middlewares]
       }))
       expect(routes.length).to.equal(8)
       expect(verbs['/tasks/:id/completed-GET/HEAD']).deep.equal(['auth'])
@@ -644,14 +636,14 @@ describe('Route',function () {
 
     it('should be able to update member route name', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addMember('completed', ['GET', 'HEAD'], function (member) {
-        member.bindAction('SomeController.getCompleted').as('getCompletedTasks')
-      })
+        .resource('/tasks', 'SomeController')
+        .addMember('completed', ['GET', 'HEAD'], function (member) {
+          member.bindAction('SomeController.getCompleted').as('getCompletedTasks')
+        })
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
       expect(routes.length).to.equal(8)
       expect(verbs['/tasks/:id/completed-GET/HEAD']).deep.equal('getCompletedTasks')
@@ -660,10 +652,10 @@ describe('Route',function () {
     it('should return route defination using toJSON method', function () {
       let resourceMember = {}
       Route
-      .resource('/tasks','SomeController')
-      .addMember('completed', ['GET', 'HEAD'], function (member) {
-        resourceMember = member.toJSON()
-      })
+        .resource('/tasks', 'SomeController')
+        .addMember('completed', ['GET', 'HEAD'], function (member) {
+          resourceMember = member.toJSON()
+        })
       expect(resourceMember).to.be.an('object')
       expect(resourceMember.verb).deep.equal(['GET', 'HEAD'])
       expect(resourceMember.handler).to.equal('SomeController.completed')
@@ -673,13 +665,13 @@ describe('Route',function () {
 
     it('should register resourceful routes with collection paths', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addCollection('completed', ['GET', 'HEAD'])
-      .addCollection('mark_as', 'POST')
+        .resource('/tasks', 'SomeController')
+        .addCollection('completed', ['GET', 'HEAD'])
+        .addCollection('mark_as', 'POST')
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
 
       expect(routes.length).to.equal(9)
@@ -696,48 +688,47 @@ describe('Route',function () {
 
     it('should be able to add collection paths to nested resources', function () {
       Route
-      .resource('user.tasks','SomeController')
-      .addCollection('completed', ['GET', 'HEAD'])
+        .resource('user.tasks', 'SomeController')
+        .addCollection('completed', ['GET', 'HEAD'])
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(verbs['/user/:user_id/tasks/completed-GET/HEAD']).to.equal('SomeController.completed')
     })
 
     it('should make use of GET and HEAD verbs when no verbs are defined with addCollection', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addCollection('completed')
+        .resource('/tasks', 'SomeController')
+        .addCollection('completed')
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
       expect(verbs['/tasks/completed-GET/HEAD']).to.equal('SomeController.completed')
     })
 
     it('should throw an error when the action is not present for collection route', function () {
-      const fn = function(){
+      const fn = function () {
         Route
-        .resource('/tasks','SomeController')
-        .addCollection()
+          .resource('/tasks', 'SomeController')
+          .addCollection()
       }
-
-      expect(fn).to.throw(NE.InvalidArgumentException, /action argument must be present/)
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Resource.addCollection expects a route')
     })
 
     it('should be able to bind controller action to the resource collection', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addCollection('completed', ['GET', 'HEAD'], function (collection) {
-        collection.bindAction('SomeController.getCompletedTasks')
-      })
+        .resource('/tasks', 'SomeController')
+        .addCollection('completed', ['GET', 'HEAD'], function (collection) {
+          collection.bindAction('SomeController.getCompletedTasks')
+        })
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.handler]
+        return [route.route + '-' + route.verb.join('/'), route.handler]
       }))
 
       expect(routes.length).to.equal(8)
@@ -753,14 +744,14 @@ describe('Route',function () {
 
     it('should be able to assign middleware to the resource collection', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addCollection('completed', ['GET', 'HEAD'], function (collection) {
-        collection.middleware('auth')
-      })
+        .resource('/tasks', 'SomeController')
+        .addCollection('completed', ['GET', 'HEAD'], function (collection) {
+          collection.middleware('auth')
+        })
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.middlewares]
+        return [route.route + '-' + route.verb.join('/'), route.middlewares]
       }))
 
       expect(routes.length).to.equal(8)
@@ -769,31 +760,31 @@ describe('Route',function () {
 
     it('should be able to change route name for the resource collection', function () {
       Route
-      .resource('/tasks','SomeController')
-      .addCollection('completed', ['GET', 'HEAD'], function (collection) {
-        collection.as('tasks.getCompleted')
-      })
+        .resource('/tasks', 'SomeController')
+        .addCollection('completed', ['GET', 'HEAD'], function (collection) {
+          collection.as('tasks.getCompleted')
+        })
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
 
       expect(routes.length).to.equal(8)
       expect(verbs['/tasks/completed-GET/HEAD']).deep.equal('tasks.getCompleted')
     })
 
-    it('should be able to override collection route name', function(){
+    it('should be able to override collection route name', function () {
       Route
-      .resource('/posts','PostController')
-      .addCollection('thrending', ['GET', 'HEAD'])
-      .as({
-        thrending: 'posts.threndingPosts',
-      })
+        .resource('/posts', 'PostController')
+        .addCollection('thrending', ['GET', 'HEAD'])
+        .as({
+          thrending: 'posts.threndingPosts'
+        })
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
 
       expect(routes.length).to.equal(8)
@@ -807,17 +798,17 @@ describe('Route',function () {
       expect(verbs['/posts/thrending-GET/HEAD']).to.equal('posts.threndingPosts')
     })
 
-    it('should be able to override member route name', function(){
+    it('should be able to override member route name', function () {
       Route
-      .resource('/posts','PostController')
-      .addMember('preview', ['GET', 'HEAD'])
-      .as({
-        preview: 'posts.previewPost',
-      })
+        .resource('/posts', 'PostController')
+        .addMember('preview', ['GET', 'HEAD'])
+        .as({
+          preview: 'posts.previewPost'
+        })
 
       const routes = Route.routes()
       const verbs = _.fromPairs(_.map(routes, function (route) {
-        return [route.route + '-' + route.verb.join('/'),route.name]
+        return [route.route + '-' + route.verb.join('/'), route.name]
       }))
 
       expect(routes.length).to.equal(8)
@@ -833,15 +824,14 @@ describe('Route',function () {
   })
 
   context('Resolve', function () {
-
     it('should return an empty object when unable to resolve route', function () {
-      const home = Route.resolve('/','GET')
+      const home = Route.resolve('/', 'GET')
       expect(home).deep.equal({})
     })
 
     it('should resolve a given route', function () {
-      Route.get('/','SomeController.method')
-      const home = Route.resolve('/','GET')
+      Route.get('/', 'SomeController.method')
+      const home = Route.resolve('/', 'GET')
       expect(home.route).to.equal('/')
       expect(home.matchedVerb).to.equal('GET')
       expect(home.handler).to.equal('SomeController.method')
@@ -853,16 +843,16 @@ describe('Route',function () {
 
     it('should return route arguments', function () {
       Route.get('/:id', 'SomeController.method')
-      const home = Route.resolve('/1','GET')
-      expect(home.params).deep.equal({id:"1"})
+      const home = Route.resolve('/1', 'GET')
+      expect(home.params).deep.equal({id: '1'})
     })
 
     it('should resolve a route prefixed via group', function () {
-      Route.group('v1',function () {
-        Route.get('/','SomeController.method')
+      Route.group('v1', function () {
+        Route.get('/', 'SomeController.method')
       }).prefix('/v1')
 
-      const home = Route.resolve('/v1','GET')
+      const home = Route.resolve('/v1', 'GET')
       expect(home.route).to.equal('/v1')
       expect(home.matchedVerb).to.equal('GET')
       expect(home.handler).to.equal('SomeController.method')
@@ -870,14 +860,13 @@ describe('Route',function () {
       expect(home.middlewares).deep.equal([])
       expect(home.domain).to.equal(null)
       expect(home.params).deep.equal({})
-
     })
 
     it('should resolve a route registered with multiple verbs', function () {
-      Route.match(['get','post'], '/', 'SomeController.method')
-      const home = Route.resolve('/','GET')
+      Route.match(['get', 'post'], '/', 'SomeController.method')
+      const home = Route.resolve('/', 'GET')
       expect(home.route).to.equal('/')
-      expect(home.verb).deep.equal(['GET','POST'])
+      expect(home.verb).deep.equal(['GET', 'POST'])
       expect(home.matchedVerb).to.equal('GET')
       expect(home.handler).to.equal('SomeController.method')
       expect(home.group).to.equal(null)
@@ -888,7 +877,7 @@ describe('Route',function () {
 
     it('should return route middlewares if registered with route', function () {
       Route.get('/', 'SomeController.method').middlewares(['auth'])
-      const home = Route.resolve('/','GET')
+      const home = Route.resolve('/', 'GET')
       expect(home.middlewares).deep.equal(['auth'])
     })
 
@@ -896,7 +885,7 @@ describe('Route',function () {
       Route.group('admin', function () {
         Route.get('/', 'SomeController.method')
       }).middlewares(['auth'])
-      const home = Route.resolve('/','GET')
+      const home = Route.resolve('/', 'GET')
       expect(home.middlewares).deep.equal(['auth'])
     })
 
@@ -904,15 +893,15 @@ describe('Route',function () {
       Route.group('admin', function () {
         Route.get('/', 'SomeController.method').middlewares(['cors'])
       }).middlewares(['auth'])
-      const home = Route.resolve('/','GET')
-      expect(home.middlewares).deep.equal(['cors','auth'])
+      const home = Route.resolve('/', 'GET')
+      expect(home.middlewares).deep.equal(['cors', 'auth'])
     })
 
     it('should resolve routes with domains', function () {
       Route.group('admin', function () {
         Route.get('/', 'SomeController.method')
       }).domain('virk.me')
-      const home = Route.resolve('/','GET','virk.me')
+      const home = Route.resolve('/', 'GET', 'virk.me')
       expect(home.route).to.equal('/')
       expect(home.handler).to.equal('SomeController.method')
     })
@@ -921,20 +910,20 @@ describe('Route',function () {
       Route.group('admin', function () {
         Route.get('/', 'SomeController.method')
       }).domain('virk.me')
-      const home = Route.resolve('/','GET')
+      const home = Route.resolve('/', 'GET')
       expect(home).deep.equal({})
     })
 
     it('should resolve routes registered as resource', function () {
       Route.resource('users', 'UsersController')
-      const usersIndex = Route.resolve('/users','GET')
+      const usersIndex = Route.resolve('/users', 'GET')
       expect(usersIndex.name).to.equal('users.index')
       expect(usersIndex.handler).to.equal('UsersController.index')
     })
 
     it('should resolve routes registered as nested resource', function () {
       Route.resource('users.posts', 'PostController')
-      const postsIndex = Route.resolve('/users/1/posts','GET')
+      const postsIndex = Route.resolve('/users/1/posts', 'GET')
       expect(postsIndex.name).to.equal('users.posts.index')
       expect(postsIndex.handler).to.equal('PostController.index')
     })
@@ -943,7 +932,7 @@ describe('Route',function () {
       Route.group('v1', function () {
         Route.resource('users.posts', 'PostController')
       }).prefix('/v1')
-      const postsIndex = Route.resolve('/v1/users/1/posts','GET')
+      const postsIndex = Route.resolve('/v1/users/1/posts', 'GET')
       expect(postsIndex.name).to.equal('users.posts.index')
       expect(postsIndex.handler).to.equal('PostController.index')
     })
@@ -953,19 +942,19 @@ describe('Route',function () {
       Route.group('v1', function () {
         Route.resource('users.posts', 'V1PostController')
       }).prefix('/v1')
-      const V1postsIndex = Route.resolve('/v1/users/1/posts','GET')
+      const V1postsIndex = Route.resolve('/v1/users/1/posts', 'GET')
       expect(V1postsIndex.name).to.equal('users.posts.index')
       expect(V1postsIndex.handler).to.equal('V1PostController.index')
 
-      const postsIndex = Route.resolve('/users/1/posts','GET')
+      const postsIndex = Route.resolve('/users/1/posts', 'GET')
       expect(postsIndex.name).to.equal('users.posts.index')
       expect(postsIndex.handler).to.equal('PostController.index')
     })
 
     it('should be able to define and resolve routes using formats', function () {
       Route.get('/users', 'UsersController.index').formats(['json', 'xml'])
-      const userIndex = Route.resolve('/users','GET')
-      const withJson = Route.resolve('/users.json','GET')
+      const userIndex = Route.resolve('/users', 'GET')
+      const withJson = Route.resolve('/users.json', 'GET')
       const withXml = Route.resolve('/users.xml', 'GET')
       expect(userIndex.handler).to.equal(withJson.handler)
       expect(userIndex.handler).to.equal(withXml.handler)
@@ -975,8 +964,8 @@ describe('Route',function () {
       Route.group('v2', function () {
         Route.get('/users', 'UsersController.index')
       }).prefix('/v2').formats(['json', 'xml'])
-      const userIndex = Route.resolve('/v2/users','GET')
-      const withJson = Route.resolve('/v2/users.json','GET')
+      const userIndex = Route.resolve('/v2/users', 'GET')
+      const withJson = Route.resolve('/v2/users.json', 'GET')
       const withXml = Route.resolve('/v2/users.xml', 'GET')
       expect(userIndex.handler).to.equal(withJson.handler)
       expect(userIndex.handler).to.equal(withXml.handler)
@@ -986,8 +975,8 @@ describe('Route',function () {
       Route.group('v2', function () {
         Route.get('/users', 'UsersController.index').formats(['html'])
       }).prefix('/v2').formats(['json', 'xml'])
-      const userIndex = Route.resolve('/v2/users','GET')
-      const withJson = Route.resolve('/v2/users.json','GET')
+      const userIndex = Route.resolve('/v2/users', 'GET')
+      const withJson = Route.resolve('/v2/users.json', 'GET')
       const withXml = Route.resolve('/v2/users.xml', 'GET')
       const withHtml = Route.resolve('/v2/users.html', 'GET')
       expect(userIndex.handler).deep.equal(withJson.handler)
@@ -997,8 +986,8 @@ describe('Route',function () {
 
     it('should be to define able formats on route resources', function () {
       Route.resource('users', 'UsersController').formats(['json', 'html'])
-      const userIndex = Route.resolve('/users','GET')
-      const withJson = Route.resolve('/users.json','GET')
+      const userIndex = Route.resolve('/users', 'GET')
+      const withJson = Route.resolve('/users.json', 'GET')
       const withHtml = Route.resolve('/users.html', 'GET')
       expect(userIndex.handler).deep.equal(withJson.handler)
       expect(userIndex.handler).deep.equal(withHtml.handler)
@@ -1006,8 +995,8 @@ describe('Route',function () {
 
     it('should return format as params when using formats', function () {
       Route.resource('users', 'UsersController').formats(['json', 'html'])
-      const userIndex = Route.resolve('/users','GET')
-      const withJson = Route.resolve('/users.json','GET')
+      const userIndex = Route.resolve('/users', 'GET')
+      const withJson = Route.resolve('/users.json', 'GET')
       const withHtml = Route.resolve('/users.html', 'GET')
       expect(userIndex.params.format).to.equal(undefined)
       expect(withJson.params.format).to.equal('.json')
@@ -1016,37 +1005,36 @@ describe('Route',function () {
   })
 
   context('Building Url', function () {
-
     it('should make url for any url , even if not registered inside routes', function () {
-      const url = Route.url('http://amanvirk.me/:post',{post:'hello-world'})
+      const url = Route.url('http://amanvirk.me/:post', {post: 'hello-world'})
       expect(url).to.equal('http://amanvirk.me/hello-world')
     })
 
     it('should make for any given route', function () {
-      Route.get('/:post','SomeController.index')
-      const url = Route.url('/:post',{post:'hello-world'})
+      Route.get('/:post', 'SomeController.index')
+      const url = Route.url('/:post', {post: 'hello-world'})
       expect(url).to.equal('/hello-world')
     })
 
     it('should make url for a named route', function () {
-      Route.get('/:post','SomeController.index').as('post')
-      const url = Route.url('post',{post:'hello-world'})
+      Route.get('/:post', 'SomeController.index').as('post')
+      const url = Route.url('post', {post: 'hello-world'})
       expect(url).to.equal('/hello-world')
     })
 
     it('should make url for a prefixed named route', function () {
       Route.group('v1', function () {
-        Route.get('/:post','SomeController.index').as('post')
+        Route.get('/:post', 'SomeController.index').as('post')
       }).prefix('/v1')
-      const url = Route.url('post',{post:'hello-world'})
+      const url = Route.url('post', {post: 'hello-world'})
       expect(url).to.equal('/v1/hello-world')
     })
 
     it('should make url for route registered inside domain', function () {
       Route.group('v1', function () {
-        Route.get('/:post','SomeController.index').as('post')
+        Route.get('/:post', 'SomeController.index').as('post')
       }).domain('amanvirk.me')
-      const url = Route.url('post',{post:'hello-world'})
+      const url = Route.url('post', {post: 'hello-world'})
       expect(url).to.equal('amanvirk.me/hello-world')
     })
 
@@ -1154,12 +1142,8 @@ describe('Route',function () {
     })
 
     it('should throw an error when actions are not defined as array', function () {
-      try {
-        Route.resource('tasks', 'TaskController').middleware({auth: 'store'})
-        expect(true).to.equal(false)
-      } catch (e) {
-        expect(e.message).to.equal('Resource route methods must be defined as an array')
-      }
+      const fn = () => Route.resource('tasks', 'TaskController').middleware({auth: 'store'})
+      expect(fn).to.throw('InvalidArgumentException: E_INVALID_PARAMETER: Resource route methods must be defined as an array')
     })
 
     it('should be able to bind an array middleware to the resource', function () {

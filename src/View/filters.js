@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
 */
 
+const CE = require('../Exceptions')
+
 module.exports = function (env, Route) {
   /**
    * adds route filter and makes use of route to build
@@ -23,9 +25,11 @@ module.exports = function (env, Route) {
    */
   env.addFilter('action', function (val, options) {
     const route = Route.getRoute({handler: val})
-    if (!route || !route.route) {
-      return null
+
+    if (route === void 0) {
+      throw CE.RuntimeException.missingRouteAction(val)
     }
+
     return Route.url(route.route, options)
   })
 

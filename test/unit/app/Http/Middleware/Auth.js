@@ -2,7 +2,7 @@
 
 class Auth {
 
-  *handle (request, response, next) {
+  * handle (request, response, next) {
     request.count++
     yield next
   }

@@ -10,13 +10,36 @@
 */
 
 const path = require('path')
+const _ = require('lodash')
 const CatLog = require('cat-log')
 const log = new CatLog('adonis:framework')
 const NE = require('node-exceptions')
 
 let rootPath = '' // application root path
-let appPath = '' // path to application app directory
-let autoloadNameSpace = '' // autoloading namespace
+let autoloadNameSpace = '' // autoloading namespace | required for backword compatibility
+
+/**
+ * path to base directories with relative
+ * paths from the project root.
+ *
+ * @type {Object}
+ */
+let originalProjectDirectories = {
+  public: 'public',
+  storage: 'storage',
+  database: 'database',
+  resources: 'resources',
+  config: 'config',
+  app: 'app'
+}
+
+/**
+ * cloning over original app directories so that orignal
+ * reset method should be able to restore it.
+ *
+ * @type {Object}
+ */
+let projectDirectories = _.clone(originalProjectDirectories)
 
 /**
  * Manage commonly required methods to be used anywhere inside
@@ -39,6 +62,7 @@ let Helpers = exports = module.exports = {}
  * @public
  */
 Helpers.load = function (packagePath, Ioc) {
+  Helpers.reset() // reset itself before start
   log.verbose('reading autoload settings from %s', packagePath)
 
   rootPath = path.dirname(packagePath)
@@ -54,11 +78,66 @@ Helpers.load = function (packagePath, Ioc) {
   }
 
   autoloadNameSpace = autoloadSettings[0]
-  appPath = path.join(rootPath, packageFile.autoload[autoloadNameSpace])
-
+  Helpers.setProjectDirectory('app', packageFile.autoload[autoloadNameSpace])
   if (Ioc && Ioc.autoload) {
-    Ioc.autoload(autoloadNameSpace, appPath)
+    Ioc.autoload(autoloadNameSpace, path.join(rootPath, projectDirectories.app))
   }
+}
+
+/**
+ * the load method to be shipped with 3.1
+ *
+ * @param  {String} appRoot
+ *
+ * @public
+ */
+Helpers.loadInFuture = function (appRoot) {
+  rootPath = appRoot
+}
+
+/**
+ * reset helpers state back to original
+ *
+ * @public
+ */
+Helpers.reset = function () {
+  projectDirectories = _.clone(originalProjectDirectories)
+  rootPath = null
+  autoloadNameSpace = null
+}
+
+/**
+ * returns the current mapping of directories
+ *
+ * @return {Object}
+ *
+ * @public
+ */
+Helpers.getProjectDirectories = function () {
+  return projectDirectories
+}
+
+/**
+ * overrides the current mapping of directories
+ *
+ * @param  {Object} directories
+ *
+ * @public
+ */
+Helpers.setProjectDirectories = function (directories) {
+  projectDirectories = directories
+}
+
+/**
+ * overrides a give mapping of directories.
+ *
+ * @param  {String} name
+ * @param  {String} toPath
+ *
+ * @public
+ */
+Helpers.setProjectDirectory = function (name, toPath) {
+  projectDirectories[name] = toPath
 }
 
 /**
@@ -81,7 +160,8 @@ Helpers.basePath = function () {
  * @return {String}
  */
 Helpers.appPath = function () {
-  return appPath
+  const toDir = projectDirectories.app
+  return Helpers._makePath(rootPath, toDir)
 }
 
 /**
@@ -94,7 +174,7 @@ Helpers.appPath = function () {
  * @return {String}
  */
 Helpers.publicPath = function (toFile) {
-  const toDir = './public'
+  const toDir = projectDirectories.public
   return Helpers._makePath(rootPath, toDir, toFile)
 }
 
@@ -140,7 +220,7 @@ Helpers.makeNameSpace = function (baseNameSpace, toPath) {
  * @return {String}
  */
 Helpers.configPath = function (toFile) {
-  const toDir = './config'
+  const toDir = projectDirectories.config
   return Helpers._makePath(rootPath, toDir, toFile)
 }
 
@@ -156,7 +236,7 @@ Helpers.configPath = function (toFile) {
  * @public
  */
 Helpers.storagePath = function (toFile) {
-  const toDir = './storage'
+  const toDir = projectDirectories.storage
   return Helpers._makePath(rootPath, toDir, toFile)
 }
 
@@ -172,7 +252,7 @@ Helpers.storagePath = function (toFile) {
  * @public
  */
 Helpers.resourcesPath = function (toFile) {
-  const toDir = './resources'
+  const toDir = projectDirectories.resources
   return Helpers._makePath(rootPath, toDir, toFile)
 }
 
@@ -232,7 +312,7 @@ Helpers.factoriesPath = function (toFile) {
  * @public
  */
 Helpers.databasePath = function (toFile) {
-  const toDir = './database'
+  const toDir = projectDirectories.database
   return Helpers._makePath(rootPath, toDir, toFile)
 }
 
@@ -277,6 +357,6 @@ Helpers.viewsPath = function () {
  * @private
  */
 Helpers._makePath = function (base, toDir, toFile) {
-  const incremental = toFile ? `/${toDir}/${toFile}` : toDir
-  return path.join(base, incremental)
+  toDir = path.isAbsolute(toDir) ? toDir : path.join(base, toDir)
+  return toFile ? path.join(toDir, toFile) : toDir
 }

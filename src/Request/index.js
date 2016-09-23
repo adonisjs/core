@@ -391,6 +391,19 @@ class Request {
    * @public
    */
   method () {
+    if (!this.config.get('app.http.allowMethodSpoofing')) {
+      return nodeReq.method(this.request)
+    }
+    return this.input('_method', this.intended())
+  }
+
+  /**
+   * Returns the original HTTP request method, regardless
+   * of the spoofing input.
+   *
+   * @returns {String}
+   */
+  intended () {
     return nodeReq.method(this.request)
   }
 
@@ -430,6 +443,33 @@ class Request {
     }
 
     return this.cookiesObject
+  }
+
+  /**
+   * Returns an object of plain cookies without decrypting
+   * or unsigning them. It is required and helpful when
+   * want to read cookies not set by AdonisJs.
+   *
+   * @return {Object}
+   */
+  plainCookies () {
+    return nodeCookie.parse(this.request)
+  }
+
+  /**
+   * Returns plain cookie value without decrypting or
+   * unsigning it. It is required and helpful when
+   * want to read cookies not set by AdonisJs.
+   *
+   * @param  {String} key
+   * @param  {Mixed} [defaultValue]
+   *
+   * @return {Mixed}
+   */
+  plainCookie (key, defaultValue) {
+    defaultValue = util.existy(defaultValue) ? defaultValue : null
+    const cookies = this.plainCookies()
+    return util.existy(cookies[key]) ? cookies[key] : defaultValue
   }
 
   /**
@@ -492,7 +532,7 @@ class Request {
      * empty instance of file object.
      */
     if (!this._files[key]) {
-      return this._toFileInstance({})
+      return null
     }
 
     /**
@@ -502,8 +542,8 @@ class Request {
     const fileToReturn = this._files[key]
 
     /**
-     * if multiple file upload , convert of them to
-     * file instance
+     * if multiple file upload , convert them to
+     * file instances
      */
     if (_.isArray(fileToReturn)) {
       return _.map(fileToReturn, (file) => this._toFileInstance(file.toJSON(), options))
