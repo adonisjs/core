@@ -28,7 +28,7 @@
   "license": "MIT",
   "devDependencies": {
     "adonis-fold": "^3.0.3",
-    "adonis-redis": "^1.0.0",
+    "adonis-redis": "^1.0.1",
     "chai": "^3.3.0",
     "cheerio": "^0.22.0",
     "co-mocha": "^1.1.3",
