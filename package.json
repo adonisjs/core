@@ -42,7 +42,7 @@
     "pem": "^1.8.1",
     "shelljs": "^0.7.4",
     "sinon": "^1.17.5",
-    "standard": "^8.1.0",
+    "standard": "^8.2.0",
     "supertest": "^1.1.0",
     "test-console": "^1.0.0",
     "zombie": "^4.2.1"
