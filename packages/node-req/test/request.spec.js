@@ -508,6 +508,7 @@ describe('Http Request', function () {
     const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
     expect(res.body.is).to.equal(true)
   })
+
   it('should tell which content type is accepted based on Accept header', function * () {
     const server = http.createServer(function (req, res) {
       const html = Request.accepts(req, ['html', 'json'])
@@ -518,6 +519,18 @@ describe('Http Request', function () {
 
     const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
     expect(res.body.html).to.equal('html')
+  })
+
+  it('should return list of all content types', function * () {
+    const server = http.createServer(function (req, res) {
+      const types = Request.types(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({types}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Accept', 'text/html').expect(200).end()
+    expect(res.body.types).deep.equal(['text/html'])
   })
 
   it('should return true when request has body to read', function * () {
@@ -542,5 +555,77 @@ describe('Http Request', function () {
 
     const res = yield supertest(server).get('/').expect(200).end()
     expect(res.body.hasBody).to.equal(false)
+  })
+
+  it('should return the language mentioned in the headers', function * () {
+    const server = http.createServer(function (req, res) {
+      const lang = Request.language(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({lang}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('accept-language', 'en').expect(200).end()
+    expect(res.body.lang).to.equal('en')
+  })
+
+  it('should return all the languages mentioned in the headers', function * () {
+    const server = http.createServer(function (req, res) {
+      const languages = Request.languages(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({languages}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('accept-language', 'en').expect(200).end()
+    expect(res.body.languages).deep.equal(['en'])
+  })
+
+  it('should return the encoding mentioned in the headers', function * () {
+    const server = http.createServer(function (req, res) {
+      const encoding = Request.encoding(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({encoding}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('accept-encoding', 'gzip').expect(200).end()
+    expect(res.body.encoding).to.equal('gzip')
+  })
+
+  it('should return all the encoding mentioned in the headers', function * () {
+    const server = http.createServer(function (req, res) {
+      const encodings = Request.encodings(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({encodings}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('accept-encoding', 'gzip').expect(200).end()
+    expect(res.body.encodings).deep.equal(['gzip', 'identity'])
+  })
+
+  it('should return the charset mentioned in the headers', function * () {
+    const server = http.createServer(function (req, res) {
+      const charset = Request.charset(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({charset}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('accept-charset', 'utf8').expect(200).end()
+    expect(res.body.charset).deep.equal('utf8')
+  })
+
+  it('should return the charsets mentioned in the headers', function * () {
+    const server = http.createServer(function (req, res) {
+      const charsets = Request.charsets(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({charsets}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('accept-charset', 'utf8').expect(200).end()
+    expect(res.body.charsets).deep.equal(['utf8'])
   })
 })

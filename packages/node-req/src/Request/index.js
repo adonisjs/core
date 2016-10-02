@@ -345,6 +345,89 @@ Request.accepts = function (request, keys) {
 }
 
 /**
+ * @description Returns list of all mime types.
+ * @method types
+ * @param  {Object} request
+ * @return {Array}
+ */
+Request.types = function (request) {
+  const accept = accepts(request)
+  return accept.types()
+}
+
+/**
+ * @description Returns one of the most preferrable language
+ * @method language
+ * @param  {Object} request
+ * @param  {Array} accepted
+ * @return {String}
+ */
+Request.language = function (request, accepted) {
+  const accept = accepts(request)
+  const acceptedLangs = accept.language(accepted)
+  return (acceptedLangs instanceof Array) ? acceptedLangs[0] : acceptedLangs
+}
+
+/**
+ * @description Returns list of all accepted languages.
+ * @method languages
+ * @param  {Object} request
+ * @return {Array}
+ */
+Request.languages = function (request) {
+  const accept = accepts(request)
+  return accept.languages()
+}
+
+/**
+ * @description Returns the best maching encoding
+ * @method encoding
+ * @param  {Object} request
+ * @param  {Array} accepted
+ * @return {String}
+ */
+Request.encoding = function (request, accepted) {
+  const accept = accepts(request)
+  const acceptedEncoding = accept.encoding(accepted)
+  return (acceptedEncoding instanceof Array) ? acceptedEncoding[0] : acceptedEncoding
+}
+
+/**
+ * @description Returns list of all encodings
+ * @method encodings
+ * @param  {Object} request
+ * @return {Array}
+ */
+Request.encodings = function (request) {
+  const accept = accepts(request)
+  return accept.encodings()
+}
+
+/**
+ * @description Returns the best maching encoding
+ * @method charset
+ * @param  {Object} request
+ * @param  {Array} accepted
+ * @return {String}
+ */
+Request.charset = function (request, accepted) {
+  const accept = accepts(request)
+  const acceptedCharsets = accept.charset(accepted)
+  return (acceptedCharsets instanceof Array) ? acceptedCharsets[0] : acceptedCharsets
+}
+
+/**
+ * @description Returns a list of all charsets
+ * @method charsets
+ * @param  {Object} request
+ * @return {Array}
+ */
+Request.charsets = function (request) {
+  const accept = accepts(request)
+  return accept.charsets()
+}
+
+/**
  * @description tells whether request has body or
  * not to be read by any body parser
  * @method accepts
