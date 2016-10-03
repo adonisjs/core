@@ -612,6 +612,72 @@ class Request {
   }
 
   /**
+   * Returns the request language set via Accept-Language
+   * header.
+   *
+   * @param  {Array} [languages]
+   *
+   * @return {String}
+   */
+  language (languages) {
+    return nodeReq.language(this.request, languages)
+  }
+
+  /**
+   * Returns list of request languages set via Accept-Language
+   * header.
+   *
+   * @return {Array}
+   */
+  languages () {
+    return nodeReq.languages(this.request)
+  }
+
+  /**
+   * Returns the request encoding set via Accept-Encoding
+   * header.
+   *
+   * @param  {Array} [encodings]
+   *
+   * @return {String}
+   */
+  encoding (encodings) {
+    return nodeReq.encoding(this.request, encodings)
+  }
+
+  /**
+   * Returns list of request encodings set via Accept-Encoding
+   * header.
+   *
+   * @return {Array}
+   */
+  encodings () {
+    return nodeReq.encodings(this.request)
+  }
+
+  /**
+   * Returns the request charset set via Accept-Charset
+   * header.
+   *
+   * @param  {Array} [encodings]
+   *
+   * @return {String}
+   */
+  charset (charsets) {
+    return nodeReq.charset(this.request)
+  }
+
+  /**
+   * Returns list of request charsets set via Accept-Charset
+   * header.
+   *
+   * @return {Array}
+   */
+  charsets () {
+    return nodeReq.charsets(this.request)
+  }
+
+  /**
    * adds a new method to the request prototype
    *
    * @param  {String}   name

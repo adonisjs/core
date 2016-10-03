@@ -7,6 +7,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/adonisjs/adonis-framework/master.svg?style=flat-square)](https://coveralls.io/github/adonisjs/adonis-framework?branch=master)
 [![Downloads](https://img.shields.io/npm/dt/adonis-framework.svg?style=flat-square)](https://www.npmjs.com/package/adonis-framework)
 [![License](https://img.shields.io/npm/l/adonis-framework.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Support AdonisJs](https://img.shields.io/badge/patreon-support-brightgreen.svg?style=flat-square)](https://www.patreon.com/adonisframework)
 
 > :pray: This repository contains the core of the AdonisJS framework.
 
