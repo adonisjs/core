@@ -1,3 +1,13 @@
+<a name="3.0.3"></a>
+## [3.0.3](https://github.com/adonisjs/adonis-framework/compare/v3.0.2...v3.0.3) (2016-10-03)
+
+
+### Features
+
+* **request:** add extended support for accept header ([7aaf09e](https://github.com/adonisjs/adonis-framework/commit/7aaf09e))
+
+
+
 <a name="3.0.2"></a>
 ## [3.0.2](https://github.com/adonisjs/adonis-framework/compare/v3.0.1...v3.0.2) (2016-09-23)
 
