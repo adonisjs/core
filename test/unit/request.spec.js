@@ -1079,4 +1079,28 @@ describe('Request', function () {
     const res = yield supertest(server).get('/').set('Accept-Charset', 'utf8').expect(200).end()
     expect(res.body.charsets).deep.equal(['utf8'])
   })
+
+  it('should return the partially allowed language', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const language = request.language('en')
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({language}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Accept-Language', 'en-us, en-uk').expect(200).end()
+    expect(res.body.language).to.equal('en')
+  })
+
+  it('should return false when partially allowed language is not allowed', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const language = request.language('fr')
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({language}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Accept-Language', 'en-us, en-uk').expect(200).end()
+    expect(res.body.language).to.equal(false)
+  })
 })
