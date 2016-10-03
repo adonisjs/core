@@ -59,7 +59,7 @@
     "lodash": "^4.14.1",
     "node-cookie": "^1.0.2",
     "node-exceptions": "^1.0.3",
-    "node-req": "^1.0.3",
+    "node-req": "^1.0.5",
     "node-res": "^3.0.0",
     "node-uuid": "^1.4.7",
     "nunjucks": "^2.3.0",

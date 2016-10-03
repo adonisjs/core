@@ -1008,11 +1008,75 @@ describe('Request', function () {
     expect(request.foo()).to.equal('foo')
   })
 
-  it('should have access to instance inside the callback', function * () {
-    Request.macro('foo', function () {
-      return this.request.name
+  it('should be able to get request language', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const language = request.language()
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({language}), 'utf8')
     })
-    const request = new Request({name: 'bar'}, {}, {get: function () {}})
-    expect(request.foo()).to.equal('bar')
+
+    const res = yield supertest(server).get('/').set('Accept-Language', 'en').expect(200).end()
+    expect(res.body.language).to.equal('en')
+  })
+
+  it('should be able to get the list of request languages', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const languages = request.languages()
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({languages}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Accept-Language', 'en').expect(200).end()
+    expect(res.body.languages).deep.equal(['en'])
+  })
+
+  it('should be able to get request encoding', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const encoding = request.encoding()
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({encoding}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Accept-Encoding', 'gzip').expect(200).end()
+    expect(res.body.encoding).to.equal('gzip')
+  })
+
+  it('should be able to list of get request encodings', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const encodings = request.encodings()
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({encodings}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Accept-Encoding', 'gzip').expect(200).end()
+    expect(res.body.encodings).deep.equal(['gzip', 'identity'])
+  })
+
+  it('should be able to get request charset', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const charset = request.charset()
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({charset}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Accept-Charset', 'utf8').expect(200).end()
+    expect(res.body.charset).to.equal('utf8')
+  })
+
+  it('should be able to get list of request charsets', function * () {
+    const server = http.createServer(function (req, res) {
+      const request = new Request(req, res, Config)
+      const charsets = request.charsets()
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({charsets}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').set('Accept-Charset', 'utf8').expect(200).end()
+    expect(res.body.charsets).deep.equal(['utf8'])
   })
 })
