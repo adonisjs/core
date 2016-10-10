@@ -234,12 +234,27 @@ class Server {
 
   /**
    *
+   * @param {Mixed} httpsSettings
+   *
    * @returns {*}
    * @public
    */
-  getInstance () {
+  getInstance(httpsSettings) {
     if (!this.httpInstance) {
-      this.httpInstance = http.createServer(this.handle.bind(this))
+      if (httpsSettings === false) {
+        this.httpInstance = http.createServer(this.handle.bind(this))
+      } else {
+        const https = require('https')
+        let defaultSettings = {
+          ciphers: ["ECDHE-RSA-AES256-SHA384", "DHE-RSA-AES256-SHA384", "ECDHE-RSA-AES256-SHA256", "DHE-RSA-AES256-SHA256", "ECDHE-RSA-AES128-SHA256", "DHE-RSA-AES128-SHA256", "HIGH", "!aNULL", "!eNULL", "!EXPORT", "!DES", "!RC4", "!MD5", "!PSK", "!SRP", "!CAMELLIA"].join(':'),
+          honorCipherOrder: true,
+          requestCert: false
+        };
+        // combine defautl settings and given settings
+        Object.assign(defaultSettings, httpsSettings);
+        // create https instance
+        this.httpInstance = https.createServer(defaultSettings, this.handle.bind(this));
+      }
     }
 
     return this.httpInstance
@@ -250,15 +265,16 @@ class Server {
    *
    * @param {String} host
    * @param {String} port
+   * @param {Mixed} useHttps
    *
    * @example
    * Server.listen('localhost', 3333)
    *
    * @public
    */
-  listen (host, port) {
-    this.log.info('serving app on %s:%s', host, port)
-    this.getInstance().listen(port, host)
+  listen (host, port, httpsSettings = false) {
+    this.log.info('serving app on %s:%s using https: %s', host, port, httpsSettings !== false ? 'on' : 'off')
+    this.getInstance(httpsSettings).listen(port, host)
   }
 
 }
