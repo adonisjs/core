@@ -265,7 +265,7 @@ class Server {
    *
    * @param {String} host
    * @param {String} port
-   * @param {Mixed} useHttps
+   * @param {Mixed} httpsSettings
    *
    * @example
    * Server.listen('localhost', 3333)
