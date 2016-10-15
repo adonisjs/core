@@ -250,6 +250,7 @@ class Server {
    *
    * @param {String} host
    * @param {String} port
+   * @return {instance of http.Server}
    *
    * @example
    * Server.listen('localhost', 3333)
@@ -258,7 +259,7 @@ class Server {
    */
   listen (host, port) {
     this.log.info('serving app on %s:%s', host, port)
-    this.getInstance().listen(port, host)
+    return this.getInstance().listen(port, host)
   }
 
 }
