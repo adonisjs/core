@@ -285,6 +285,12 @@ describe('Server', function () {
     expect(this.server.httpInstance).to.be.instanceOf(http.Server)
   })
 
+  it('should listen method returns the server instance', function * () {
+    const httpServer = this.server.listen('0.0.0.0', 8000)
+    expect(httpServer).to.be.instanceOf(http.Server)
+    expect(this.server.httpInstance).to.be.instanceOf(http.Server)
+  })
+
   it('should listen to server on a given port and host using listen method', function * () {
     Route.get('/', 'HomeController.index')
     this.server.listen('0.0.0.0', 8000)
