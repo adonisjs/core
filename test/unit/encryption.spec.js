@@ -90,7 +90,11 @@ describe('Encryption', function () {
   })
 
   it('should detect valid payload', function () {
-    const invalid = encryption.invalidPayload({iv: '', value: '', mac: ''})
+    const invalid = encryption.invalidPayload({
+      iv: 'KjDyHTg6Z0qhkwKJIwn9cg==',
+      value: '06Id2p56AJpz42CWqbTpbA==',
+      mac: '0afd4d87ef39c85929ee28cd7e3637c1c17859c9f050a81811b4a0db2606297f'
+    })
     expect(invalid).to.equal(false)
   })
 
