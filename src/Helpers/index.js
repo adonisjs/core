@@ -204,7 +204,7 @@ Helpers.appNameSpace = function () {
  */
 Helpers.makeNameSpace = function (baseNameSpace, toPath) {
   const appNameSpace = Helpers.appNameSpace()
-  if (toPath.startsWith(appNameSpace)) {
+  if (toPath.startsWith(`${appNameSpace}/`)) {
     return toPath
   }
   return path.normalize(`${appNameSpace}/${baseNameSpace}/${toPath}`)

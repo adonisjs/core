@@ -140,5 +140,10 @@ describe('Helpers', function () {
       const hook = Helpers.makeNameSpace('Model/Hooks', 'App/Model/Hooks/UserHook.validate')
       expect(hook).to.equal('App/Model/Hooks/UserHook.validate')
     })
+
+    it('should make complete namespace for a given namespace starting with  toPath is already a complete namespace', function () {
+      const hook = Helpers.makeNameSpace('Model/Hooks', 'Apple.validate')
+      expect(hook).to.equal('App/Model/Hooks/Apple.validate')
+    })
   })
 })
