@@ -94,6 +94,18 @@ describe('Encryption', function () {
     expect(invalid).to.equal(false)
   })
 
+  it('should detect when we tampered the iv and value', function () {
+    const payload = JSON.parse(encryption.base64Decode(encryption.encrypt('example')))
+    const tamperedPayload = {
+      iv: payload.iv + payload.value.slice(0, 5),
+      value: payload.value.slice(5),
+      mac: payload.mac
+    }
+
+    const invalid = encryption.invalidPayload(tamperedPayload)
+    expect(invalid).to.be.true
+  })
+
   it('should detect valid mac', function () {
     const payload = {iv: 'gD+wK78S1q4L3Vzgullp8Q==', value: 'These Aren\'t the Droids You\'re Looking For', mac: 'ffcfa6ced2727ba646467688e1f3ae0d38ccb7c5b4a9c6f9876d6d749100c2bd'}
     const invalid = encryption.validMac(payload)
