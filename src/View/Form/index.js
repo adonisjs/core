@@ -120,7 +120,7 @@ class Form {
    */
   _makeOptionsAttributes (value, selected) {
     const attributes = {
-      selected: selected.indexOf(value) > -1 ? true : null,
+      selected: selected.find((v) => v == value) ? true : null,
       value: value
     }
     return this._makeHtmlAttributes(attributes).join(' ')
