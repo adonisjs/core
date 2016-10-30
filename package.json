@@ -40,7 +40,7 @@
     "mocha": "^3.1.1",
     "mocha-lcov-reporter": "^1.1.0",
     "pem": "^1.8.1",
-    "shelljs": "^0.7.4",
+    "shelljs": "^0.7.5",
     "sinon": "^1.17.5",
     "standard": "^8.2.0",
     "supertest": "^1.1.0",
