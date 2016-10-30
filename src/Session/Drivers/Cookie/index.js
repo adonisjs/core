@@ -116,6 +116,9 @@ class Cookie {
   setRequest (request, response) {
     this.request = request
     this.response = response
+    this.response.once('finish', () => {
+      this.cookieJar = {}
+    })
   }
 
 }
