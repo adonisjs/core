@@ -20,7 +20,7 @@
 
 AdonisJs is a MVC framework for Node.js built around practical use cases to give you a perfect solution that meets all of your needs. We focus on writing elegant code and being one of the most stable frameworks in the Node Community. :evergreen_tree:
 
-It is the first Node.js framework with support for [Dependency Injection](http://adonisjs.com/docs/3.1/controllers#_dependency_injection) and to have a lean [IoC Container](http://adonisjs.com/docs/3.1/ioc-container) to help you resolve and mock dependencies. It borrows the concept of [Service Providers](http://adonisjs.com/docs/3.1/ioc-container#_service_providers) from the popular [PHP framework Laravel](https://laravel.com) that lets you easily write scalable applications.
+It is the first Node.js framework with support for [Dependency Injection](http://adonisjs.com/docs/controllers#_dependency_injection) and to have a lean [IoC Container](http://adonisjs.com/docs/ioc-container) to help you resolve and mock dependencies. It borrows the concept of [Service Providers](http://adonisjs.com/docs/ioc-container#_service_providers) from the popular [PHP framework Laravel](https://laravel.com) that lets you easily write scalable applications.
 
 You can learn more about AdonisJs and all of its awesomeness on http://adonisjs.com :rocket:
 
@@ -56,11 +56,11 @@ $ cd awesome-project
 $ npm run start
 ```
 
-:point_right: [Read the Official Documentation](http://adonisjs.com/docs/3.1/installation)
+:point_right: [Read the Official Documentation](http://adonisjs.com/docs/installation)
 
 <br>
 ## <a name="contribution-guidelines"></a>Contribution Guidelines
 
 In favor of active development we accept contributions from everyone. You can contribute by submitting a bug, creating pull requests or even improving documentation.
 
-You can find a complete guide to be followed strictly before submitting your pull requests in the [Official Documentation](http://adonisjs.com/docs/3.1/contributing).
+You can find a complete guide to be followed strictly before submitting your pull requests in the [Official Documentation](http://adonisjs.com/docs/contributing).
