@@ -1,3 +1,19 @@
+<a name="3.0.4"></a>
+## [3.0.4](https://github.com/adonisjs/adonis-framework/compare/v3.0.3...v3.0.4) (2016-11-02)
+
+
+### Bug Fixes
+
+* **helpers:** add / to namespace check in makeNameSpace ([2b0053c](https://github.com/adonisjs/adonis-framework/commit/2b0053c))
+* **session:** clear cookie jar on request finish ([7eaa051](https://github.com/adonisjs/adonis-framework/commit/7eaa051)), closes [#330](https://github.com/adonisjs/adonis-framework/issues/330)
+
+
+### Features
+
+* **server:** Server.listen() return the http.Server instance ([#319](https://github.com/adonisjs/adonis-framework/issues/319)) ([29a631b](https://github.com/adonisjs/adonis-framework/commit/29a631b))
+
+
+
 <a name="3.0.3"></a>
 ## [3.0.3](https://github.com/adonisjs/adonis-framework/compare/v3.0.2...v3.0.3) (2016-10-03)
 
