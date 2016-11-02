@@ -7,7 +7,7 @@ class HomeController {
   }
 
   * cookies (request, response) {
-    response.cookie('cart', {price: 20,items: 2}).send('')
+    response.cookie('cart', {price: 20, items: 2}).send('')
   }
 
   * redirect (request, response) {

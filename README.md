@@ -13,7 +13,7 @@
 
 Adonis is a MVC framework for NodeJS built on solid foundations.
 
-It is the first NodeJS framework with support for [Dependency Injection](http://adonisjs.com/docs/2.0/dependency-injection) and has a lean [IoC Container](http://adonisjs.com/docs/2.0/ioc-container) to resolve and mock dependencies. It borrows the concept of [Service Providers](http://adonisjs.com/docs/2.0/service-providers) from the popular [PHP framework Laravel](https://laravel.com) to write scalable applications.
+It is the first NodeJS framework with support for [Dependency Injection](http://adonisjs.com/docs/3.1/controllers#_dependency_injection) and has a lean [IoC Container](http://adonisjs.com/docs/3.1/ioc-container) to resolve and mock dependencies. It borrows the concept of [Service Providers](http://adonisjs.com/docs/3.1/ioc-container#_service_providers) from the popular [PHP framework Laravel](https://laravel.com) to write scalable applications.
 
 You can learn more about AdonisJS and all of its awesomeness on http://adonisjs.com :evergreen_tree:
 
@@ -48,10 +48,10 @@ $ cd awesome-project
 $ npm run start
 ```
 
-[Official Documentation](http://adonisjs.com/docs/installation)
+[Official Documentation](http://adonisjs.com/docs/3.1/installation)
 
 ## <a name="contribution-guidelines"></a>Contribution Guidelines
 
 In favor of active development we accept contributions for everyone. You can contribute by submitting a bug, creating pull requests or even improving documentation.
 
-You can find a complete guide to be followed strictly before submitting your pull requests in the [Official Documentation](http://adonisjs.com/docs/community).
+You can find a complete guide to be followed strictly before submitting your pull requests in the [Official Documentation](http://adonisjs.com/docs/3.1/contributing).

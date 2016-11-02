@@ -24,14 +24,14 @@ const Helpers = {
 
 describe('Env', function () {
   it('should load .env file by initiating Env class', function () {
-    /*eslint-disable no-new*/
+    /* eslint-disable no-new */
     new Env(Helpers, Event)
   })
 
   it('should load .env file from the location defined as ENV_PATH flag', function () {
     const inspect = stderr.inspect()
     process.env.ENV_PATH = '/users/.env'
-    /*eslint-disable no-new*/
+    /* eslint-disable no-new */
     new Env(Helpers, Event)
     inspect.restore()
     expect(inspect.output[0]).to.match(/\/users\/\.env/)
@@ -41,7 +41,7 @@ describe('Env', function () {
   it('should not inherit path from the basePath when ENV_PATH location has absolute path', function () {
     const inspect = stderr.inspect()
     process.env.ENV_PATH = '/.env'
-    /*eslint-disable no-new*/
+    /* eslint-disable no-new */
     new Env(Helpers, Event)
     inspect.restore()
     expect(inspect.output[0]).to.match(/\.env/)
