@@ -3,5 +3,5 @@ node_modules
 .DS_Store
 npm-debug.log
 .idea
-.dump-rdb
+dump.rdb
 test/unit/storage/sessions
