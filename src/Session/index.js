@@ -89,8 +89,8 @@ class Session {
    * @private
    */
   _setDriverRequest () {
-    if (this.constructor.driver.setRequest) {
-      this.constructor.driver.setRequest(this.request, this.response)
+    if (this.driver.setRequest) {
+      this.driver.setRequest(this.request, this.response)
     }
   }
 
@@ -104,6 +104,7 @@ class Session {
     this.cookieManager = new CookieManager(this.constructor.config)
     this.sessionCookieName = this.constructor.config.get('session.cookie', 'adonis-session')
     this.sessionExpiryMs = this.constructor.config.get('session.age', 120) * 60 * 1000
+    this.driver = typeof (this.constructor.driver.fresh) === 'function' ? this.constructor.driver.fresh() : this.constructor.driver
     this.sessionId = null
     this.sessionPayload = null
   }
@@ -150,7 +151,7 @@ class Session {
     if (this.sessionPayload) {
       return this.sessionPayload
     }
-    const sessionValues = yield this.constructor.driver.read(sessionId)
+    const sessionValues = yield this.driver.read(sessionId)
     this.sessionPayload = Store.unPackValues(sessionValues)
     return this.sessionPayload
   }
@@ -176,7 +177,7 @@ class Session {
       _.set(sessionValues, key, value)
     }
     this.sessionPayload = sessionValues
-    return yield this.constructor.driver.write(sessionId, Store.packValues(this.sessionPayload))
+    return yield this.driver.write(sessionId, Store.packValues(this.sessionPayload))
   }
 
   /**
@@ -286,7 +287,7 @@ class Session {
    * @return {Boolean}
    */
   * flush () {
-    yield this.constructor.driver.destroy(this.getSessionId())
+    yield this.driver.destroy(this.getSessionId())
     this.sessionPayload = null
     this.sessionId = null
     return this.cookieManager.remove(this.request, this.response, this.sessionCookieName)

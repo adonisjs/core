@@ -109,6 +109,17 @@ describe('Session', function () {
       const session = new SessionManager(Config)
       expect(session.driver.sessionPath).to.equal('')
     })
+
+    it('should set the driver to the value returned by fresh method', function * () {
+      class Redis {
+        fresh () {
+          return 'foo'
+        }
+      }
+      SessionManager.extend('my-redis', new Redis())
+      const Session = new SessionManager(new Config(null, {driver: 'my-redis'}))
+      expect(new Session().driver).to.equal('foo')
+    })
   })
 
   context('Session class @session', function () {
@@ -705,31 +716,6 @@ describe('Session', function () {
       const res = yield supertest(server).get('/').expect(200).end()
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies['adonis-session']).to.match(/Expires=\w{3},\s*\d{1,}\s*\w{3}\s*\d{4}/)
-    })
-
-    it('should clean cookie jar when request gets over', function * () {
-      const config = new Config()
-      Session.driver = new CookieDriver(config)
-      Session.config = config
-
-      const server = http.createServer(function (req, res) {
-        const session = new Session(req, res)
-        co(function * () {
-          yield session.put('name', 'virk')
-          return Session.driver.cookieJar
-        }).then(function (jar) {
-          res.writeHead(200, {'content-type': 'application/json'})
-          res.write(JSON.stringify({jar}))
-          res.end()
-        }).catch(function (err) {
-          res.writeHead(500, {'content-type': 'application/json'})
-          res.end(JSON.stringify(err))
-        })
-      })
-
-      const res = yield supertest(server).get('/').expect(200).end()
-      expect(res.body.jar).deep.equal({name: {d: 'virk', t: 'String'}})
-      expect(Session.driver.cookieJar).deep.equal({})
     })
   })
 
