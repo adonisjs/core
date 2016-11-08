@@ -12,23 +12,8 @@
 const CookieManager = require('../../CookieManager')
 const _ = require('lodash')
 
-/**
- * Cookie driver for the session manager
- * @class
- * @alias SessionCookieDriver
- */
-class Cookie {
+class RequestCookie {
 
-  /**
-   * Injects ['Adonis/Src/Config']
-   */
-  static get inject () {
-    return ['Adonis/Src/Config']
-  }
-
-  /**
-   * @constructor
-   */
   constructor (Config) {
     this.cookieName = `${Config.get('session.cookie', 'adonis-session')}-value`
     this.cookieManager = new CookieManager(Config)
@@ -116,9 +101,39 @@ class Cookie {
   setRequest (request, response) {
     this.request = request
     this.response = response
-    this.response.once('finish', () => {
-      this.cookieJar = {}
-    })
+  }
+
+}
+
+/**
+ * Cookie driver for the session manager
+ * @class
+ * @alias SessionCookieDriver
+ */
+class Cookie {
+
+  /**
+   * Injects ['Adonis/Src/Config']
+   */
+  static get inject () {
+    return ['Adonis/Src/Config']
+  }
+
+  /**
+   * @constructor
+   */
+  constructor (Config) {
+    this.Config = Config
+  }
+
+  /**
+   * This method is called by session instance to get
+   * the fresh instance of cookie driver.
+   *
+   * @return {Object}
+   */
+  fresh () {
+    return new RequestCookie(this.Config)
   }
 
 }
