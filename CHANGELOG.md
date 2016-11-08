@@ -1,3 +1,13 @@
+<a name="3.0.5"></a>
+## [3.0.5](https://github.com/adonisjs/adonis-framework/compare/v3.0.4...v3.0.5) (2016-11-08)
+
+
+### Bug Fixes
+
+* **session:** new cookie driver instance for each request ([c784fbb](https://github.com/adonisjs/adonis-framework/commit/c784fbb))
+
+
+
 <a name="3.0.4"></a>
 ## [3.0.4](https://github.com/adonisjs/adonis-framework/compare/v3.0.3...v3.0.4) (2016-11-02)
 
