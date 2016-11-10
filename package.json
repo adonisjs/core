@@ -46,7 +46,7 @@
     "standard": "^8.5.0",
     "supertest": "^2.0.1",
     "test-console": "^1.0.0",
-    "zombie": "^5.0.1"
+    "zombie": "^5.0.4"
   },
   "dependencies": {
     "adonis-binding-resolver": "^1.0.1",
