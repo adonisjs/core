@@ -316,6 +316,30 @@ class Response {
   }
 
   /**
+   * adds new plain cookie to response without decrypting or
+   * unsigning it. It is required and helpful when
+   * want to read cookies outside AdonisJs.
+   *
+   * @param  {String} key - cookie name
+   * @param  {Mixed} value - value to be saved next for cookie name
+   * @param  {Object} options - options to define cookie path,host age etc.
+   * @return {Object} - reference to class instance for chaining
+   *
+   * @example
+   * response.plainCookie('cart', values)
+   * response.plainCookie('cart', values, {
+   *   maxAge: 1440,
+   *   httpOnly: false
+   * })
+   *
+   * @public
+   */
+  plainCookie (key, value, options) {
+    nodeCookie.create(this.request.request, this.response, key, value, options)
+    return this
+  }
+
+  /**
    * clears existing cookie from response header
    *
    * @param  {String}    key
