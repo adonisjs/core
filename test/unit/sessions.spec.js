@@ -8,7 +8,7 @@
 
 const chai = require('chai')
 const http = require('http')
-const supertest = require('co-supertest')
+const supertest = require('supertest')
 const co = require('co')
 const Ioc = require('adonis-fold').Ioc
 const expect = chai.expect
@@ -345,7 +345,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies).to.have.property('adonis-session')
       expect(cookies).to.have.property('adonis-session-value')
@@ -371,7 +371,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies).to.have.property('adonis-session')
       expect(cookies).to.have.property('adonis-session-value')
@@ -400,7 +400,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies).to.have.property('adonis-session')
       expect(cookies).to.have.property('adonis-session-value')
@@ -428,7 +428,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies).to.have.property('adonis-session')
       expect(cookies).to.have.property('adonis-session-value')
@@ -455,7 +455,7 @@ describe('Session', function () {
           res.end(JSON.stringify(err))
         })
       })
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=11']).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=11']).expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies['adonis-session']).to.equal('11; Domain=localhost; Path=/')
     })
@@ -484,7 +484,7 @@ describe('Session', function () {
         data: {}
       }
       body.data.name = Store.guardPair('name', 'virk')
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=11']).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=11']).expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies).to.have.property('adonis-session')
       expect(cookies['adonis-session']).to.equal('11; Domain=localhost; Path=/')
@@ -516,7 +516,7 @@ describe('Session', function () {
         data: {}
       }
       body.data.name = Store.guardPair('name', 'virk')
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session-value=j:' + JSON.stringify(body)]).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session-value=j:' + JSON.stringify(body)]).expect(200)
       expect(res.body.name).deep.equal({})
     })
 
@@ -543,7 +543,7 @@ describe('Session', function () {
         data: {}
       }
       body.data.name = Store.guardPair('name', 'virk')
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=11; adonis-session-value=j:' + JSON.stringify(body) + ';']).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=11; adonis-session-value=j:' + JSON.stringify(body) + ';']).expect(200)
       expect(res.body.name).deep.equal({name: 'virk'})
     })
 
@@ -570,7 +570,7 @@ describe('Session', function () {
         data: {}
       }
       body.data.name = Store.guardPair('name', 'virk')
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=20; adonis-session-value=j:' + JSON.stringify(body)]).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=20; adonis-session-value=j:' + JSON.stringify(body)]).expect(200)
       expect(res.body.name).to.equal('virk')
     })
 
@@ -592,7 +592,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       expect(res.body.name).to.equal('foo')
     })
 
@@ -620,7 +620,7 @@ describe('Session', function () {
       }
       body.data.name = Store.guardPair('name', 'virk')
       body.data.age = Store.guardPair('age', 22)
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=40; adonis-session-value=j:' + JSON.stringify(body)]).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=40; adonis-session-value=j:' + JSON.stringify(body)]).expect(200)
       expect(res.body.name).to.equal('virk')
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies['adonis-session']).to.equal('40; Domain=localhost; Path=/')
@@ -651,7 +651,7 @@ describe('Session', function () {
       }
 
       body.data.name = Store.guardPair('name', 'virk')
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=40; adonis-session-value=j:' + JSON.stringify(body)]).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=40; adonis-session-value=j:' + JSON.stringify(body)]).expect(200)
       expect(res.body.name).to.equal('virk')
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies['adonis-session']).to.equal('40; Domain=localhost; Path=/')
@@ -683,7 +683,7 @@ describe('Session', function () {
       }
 
       body.data.name = Store.guardPair('name', 'virk')
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=40; adonis-session-value=j:' + JSON.stringify(body)]).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=40; adonis-session-value=j:' + JSON.stringify(body)]).expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies['adonis-session']).to.equal('; Expires=Thu, 01 Jan 1970 00:00:00 GMT')
       expect(cookies['adonis-session-value']).to.equal('; Expires=Thu, 01 Jan 1970 00:00:00 GMT')
@@ -713,7 +713,7 @@ describe('Session', function () {
       }
 
       body.data.name = Store.guardPair('name', 'virk')
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies['adonis-session']).to.match(/Expires=\w{3},\s*\d{1,}\s*\w{3}\s*\d{4}/)
     })
@@ -750,7 +750,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies).to.have.property('adonis-session')
       const sessionId = removeCookieAttribures(cookies['adonis-session'])
@@ -778,7 +778,7 @@ describe('Session', function () {
 
       const sessionId = '122002'
       yield fs.writeJson(path.join(this.Helpers.storagePath(), sessionId), {name: Store.guardPair('name', 'foo')})
-      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies['adonis-session']).to.equal('122002; Domain=localhost; Path=/')
       const sessionValues = yield fs.readJson(path.join(this.Helpers.storagePath(), sessionId))
@@ -805,7 +805,7 @@ describe('Session', function () {
 
       const sessionId = '122002'
       yield fs.writeJson(path.join(this.Helpers.storagePath(), sessionId), {name: Store.guardPair('name', 'virk')})
-      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200)
       expect(res.body.name).to.equal('virk')
     })
 
@@ -829,7 +829,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       const sessionId = removeCookieAttribures(cookies['adonis-session'])
       const sessionValues = yield fs.readJson(path.join(this.Helpers.storagePath(), sessionId))
@@ -856,7 +856,7 @@ describe('Session', function () {
       })
 
       const sessionId = '39000'
-      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200)
       const sessionFileExists = yield fs.exists(path.join(this.Helpers.storagePath(), sessionId))
       expect(sessionFileExists).to.equal(false)
     })
@@ -896,7 +896,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies).to.have.property('adonis-session')
       const sessionId = removeCookieAttribures(cookies['adonis-session'])
@@ -924,7 +924,7 @@ describe('Session', function () {
 
       const sessionId = '122002'
       yield this.redis.set(sessionId, JSON.stringify({name: Store.guardPair('name', 'foo')}))
-      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       expect(cookies['adonis-session']).to.equal('122002; Domain=localhost; Path=/')
       const sessionValues = yield this.redis.get(sessionId)
@@ -951,7 +951,7 @@ describe('Session', function () {
 
       const sessionId = '122002'
       yield this.redis.set(sessionId, JSON.stringify({name: Store.guardPair('name', 'foo')}))
-      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', 'adonis-session=' + sessionId).expect(200)
       expect(res.body.name).to.equal('foo')
     })
 
@@ -975,7 +975,7 @@ describe('Session', function () {
         })
       })
 
-      const res = yield supertest(server).get('/').expect(200).end()
+      const res = yield supertest(server).get('/').expect(200)
       const cookies = parseCookies(res.headers['set-cookie'])
       const sessionId = removeCookieAttribures(cookies['adonis-session'])
       const sessionValues = yield this.redis.get(sessionId)
@@ -1002,7 +1002,7 @@ describe('Session', function () {
       })
 
       const sessionId = '102010'
-      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200)
       const sessionValues = yield this.redis.get(sessionId)
       expect(sessionValues).to.equal(null)
     })
@@ -1026,7 +1026,7 @@ describe('Session', function () {
       })
 
       const sessionId = '102010'
-      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200)
       const sessionTTL = yield this.redis.ttl(sessionId)
       expect(sessionTTL).to.equal(120)
     })
@@ -1050,7 +1050,7 @@ describe('Session', function () {
       })
 
       const sessionId = '102010'
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200)
       expect(res.body.age).to.equal(null)
     })
 
@@ -1073,7 +1073,7 @@ describe('Session', function () {
       })
 
       const sessionId = new Date().getTime()
-      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200).end()
+      const res = yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200)
       expect(res.body.age).to.equal(null)
     })
   })

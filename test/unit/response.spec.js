@@ -15,7 +15,7 @@ const View = require('../../src/View')
 const http = require('http')
 const path = require('path')
 const co = require('co')
-const supertest = require('co-supertest')
+const supertest = require('supertest')
 
 require('co-mocha')
 
@@ -57,7 +57,7 @@ describe('Response', function () {
       response.send('Hello world')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.text).to.equal('Hello world')
   })
 
@@ -68,7 +68,7 @@ describe('Response', function () {
       response.ok('Hello world')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.text).to.equal('Hello world')
   })
 
@@ -79,7 +79,7 @@ describe('Response', function () {
       response.unauthorized('Login first')
     })
 
-    const res = yield supertest(server).get('/').expect(401).end()
+    const res = yield supertest(server).get('/').expect(401)
     expect(res.text).to.equal('Login first')
   })
 
@@ -89,7 +89,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.internalServerError('Error first')
     })
-    const res = yield supertest(server).get('/').expect(500).end()
+    const res = yield supertest(server).get('/').expect(500)
     expect(res.text).to.equal('Error first')
   })
 
@@ -100,7 +100,7 @@ describe('Response', function () {
       response.header('country', 'India').send('')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers.country).to.equal('India')
   })
 
@@ -111,7 +111,7 @@ describe('Response', function () {
       response.removeHeader('country', 'India').send('')
     })
 
-    const res = yield supertest(server).get('/').set('country', 'India').expect(200).end()
+    const res = yield supertest(server).get('/').set('country', 'India').expect(200)
     expect(res.headers.country).to.equal(undefined)
   })
 
@@ -122,7 +122,7 @@ describe('Response', function () {
       response.json({name: 'foo'})
     })
 
-    const res = yield supertest(server).get('/').expect(200).expect('Content-type', /json/).end()
+    const res = yield supertest(server).get('/').expect(200).expect('Content-type', /json/)
     expect(res.body).deep.equal({name: 'foo'})
   })
 
@@ -133,7 +133,7 @@ describe('Response', function () {
       response.jsonp({name: 'foo'})
     })
 
-    const res = yield supertest(server).get('/?callback=angular').expect(200).expect('Content-type', /javascript/).end()
+    const res = yield supertest(server).get('/?callback=angular').expect(200).expect('Content-type', /javascript/)
     expect(res.text).to.match(/typeof angular/)
   })
 
@@ -144,7 +144,7 @@ describe('Response', function () {
       response.jsonp({name: 'foo'})
     })
 
-    const res = yield supertest(server).get('/').expect(200).expect('Content-type', /javascript/).end()
+    const res = yield supertest(server).get('/').expect(200).expect('Content-type', /javascript/)
     expect(res.text).to.match(/typeof callback/)
   })
 
@@ -154,7 +154,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.status(304).json({name: 'foo'})
     })
-    yield supertest(server).get('/').expect(304).end()
+    yield supertest(server).get('/').expect(304)
   })
 
   it('should download a given file using its path', function * () {
@@ -163,7 +163,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.download(path.join(__dirname, './public/style.css'))
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.text).to.match(/(?:\s*\S+\s*{[^}]*})+/g)
   })
 
@@ -173,7 +173,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.attachment(path.join(__dirname, './public/style.css'))
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers['content-disposition']).to.equal('attachment; filename="style.css"')
   })
 
@@ -183,7 +183,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.attachment(path.join(__dirname, './public/style.css'), 'production.css')
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers['content-disposition']).to.equal('attachment; filename="production.css"')
   })
 
@@ -193,7 +193,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.location('http://amanvirk.me').send('')
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers.location).to.equal('http://amanvirk.me')
   })
 
@@ -203,7 +203,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.location('back').send('')
     })
-    const res = yield supertest(server).get('/').set('Referrer', '/foo').expect(200).end()
+    const res = yield supertest(server).get('/').set('Referrer', '/foo').expect(200)
     expect(res.headers.location).to.equal('/foo')
   })
 
@@ -213,7 +213,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.location('back').send('')
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers.location).to.equal('/')
   })
 
@@ -223,7 +223,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.redirect('http://amanvirk.me')
     })
-    const res = yield supertest(server).get('/').expect(302).end()
+    const res = yield supertest(server).get('/').expect(302)
     expect(res.headers.location).to.equal('http://amanvirk.me')
   })
 
@@ -233,7 +233,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.redirect('back')
     })
-    const res = yield supertest(server).get('/').set('Referrer', '/bar').expect(302).end()
+    const res = yield supertest(server).get('/').set('Referrer', '/bar').expect(302)
     expect(res.headers.location).to.equal('/bar')
   })
 
@@ -243,7 +243,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.redirect('back')
     })
-    const res = yield supertest(server).get('/').expect(302).end()
+    const res = yield supertest(server).get('/').expect(302)
     expect(res.headers.location).to.equal('/')
   })
 
@@ -254,7 +254,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.route('profile', {id: 1})
     })
-    const res = yield supertest(server).get('/').expect(302).end()
+    const res = yield supertest(server).get('/').expect(302)
     expect(res.headers.location).to.equal('/user/1')
   })
 
@@ -268,7 +268,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.route('profile', {id: 1})
     })
-    const res = yield supertest(server).get('/').expect(302).end()
+    const res = yield supertest(server).get('/').expect(302)
     expect(res.headers.location).to.equal('virk.adonisjs.com/user/1')
   })
 
@@ -278,7 +278,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.vary('Accepts').send('')
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers.vary).to.equal('Accepts')
   })
 
@@ -288,7 +288,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.cookie('name', 'virk').end()
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers['set-cookie']).deep.equal(['name=virk'])
   })
 
@@ -304,7 +304,7 @@ describe('Response', function () {
         response.status(200).send(err)
       })
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.text.trim()).to.equal('<h2> Hello world </h2>')
   })
 
@@ -318,7 +318,7 @@ describe('Response', function () {
         response.status(200).send(err)
       })
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.text.trim()).to.equal('<h2> Hello world </h2>')
   })
 
@@ -328,7 +328,7 @@ describe('Response', function () {
       const response = new this.Response(request, res)
       response.send()
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers).to.have.property('x-powered-by')
   })
 
@@ -344,7 +344,7 @@ describe('Response', function () {
       const response = new Response(request, res)
       response.send()
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.headers).not.have.property('x-powered-by')
   })
 
@@ -374,7 +374,7 @@ describe('Response', function () {
       const isPending = response.isPending
       response.send({isPending})
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.isPending).to.equal(true)
   })
 
@@ -386,7 +386,7 @@ describe('Response', function () {
       const finished = response.finished
       response.send({finished})
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.finished).to.equal(false)
   })
 
@@ -398,7 +398,7 @@ describe('Response', function () {
       const headersSent = response.headersSent
       response.send({headersSent})
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.headersSent).to.equal(false)
   })
 })
