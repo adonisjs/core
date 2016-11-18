@@ -42,8 +42,8 @@ describe('Response', function () {
       }
     }
 
-    const view = new View(Helpers, Config, Route)
-    this.Response = new ResponseBuilder(view, Route, Config)
+    this.view = new View(Helpers, Config, Route)
+    this.Response = new ResponseBuilder(this.view, Route, Config)
   })
 
   beforeEach(function () {
@@ -290,6 +290,30 @@ describe('Response', function () {
     })
     const res = yield supertest(server).get('/').expect(200)
     expect(res.headers['set-cookie']).deep.equal(['name=virk'])
+  })
+
+  it('should set plain cookie using plainCookie method even when encryption is on', function * () {
+    const server = http.createServer((req, res) => {
+      const alternateConfig = {
+        get: function (key) {
+          switch (key) {
+            case 'app.appKey':
+              return 'n96M1TPG821EdN4mMIjnGKxGytx9W2UJ'
+          }
+        }
+      }
+      const request = new Request(req, res, Config)
+      const Response = new ResponseBuilder(this.view, Route, alternateConfig)
+      const response = new Response(request, res)
+      response.plainCookie('name', 'virk').end()
+    })
+    const res = yield supertest(server).get('/').expect(200)
+    expect(res.headers['set-cookie']).deep.equal(['name=virk'])
+    /**
+     * Re intiating ResponseBuilder since it updates a global
+     * value inside Response/index.js file.
+     */
+    this.Response = new ResponseBuilder(this.view, Route, Config)
   })
 
   it('should make a view using response view method', function * () {
