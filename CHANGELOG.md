@@ -1,3 +1,13 @@
+<a name="3.0.6"></a>
+## [3.0.6](https://github.com/adonisjs/adonis-framework/compare/v3.0.5...v3.0.6) (2016-11-18)
+
+
+### Features
+
+* **response:** add response.plainCookie to add plain cookies ([dd5a5e9](https://github.com/adonisjs/adonis-framework/commit/dd5a5e9))
+
+
+
 <a name="3.0.5"></a>
 ## [3.0.5](https://github.com/adonisjs/adonis-framework/compare/v3.0.4...v3.0.5) (2016-11-08)
 
