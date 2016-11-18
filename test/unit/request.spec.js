@@ -12,7 +12,7 @@ const Request = require('../../src/Request')
 const http = require('http')
 const File = require('../../src/File')
 const https = require('https')
-const supertest = require('co-supertest')
+const supertest = require('supertest')
 const path = require('path')
 const pem = require('pem')
 const formidable = require('formidable')
@@ -41,7 +41,7 @@ describe('Request', function () {
       res.end(JSON.stringify({query}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.query).to.be.an('object')
     expect(res.body.query).deep.equal({name: 'foo'})
   })
@@ -54,7 +54,7 @@ describe('Request', function () {
       res.end(JSON.stringify({query}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.query).to.be.an('object')
     expect(res.body.query).deep.equal({})
   })
@@ -68,7 +68,7 @@ describe('Request', function () {
       res.end(JSON.stringify({body}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.body).to.be.an('object')
     expect(res.body.body).deep.equal({name: 'foo'})
   })
@@ -81,7 +81,7 @@ describe('Request', function () {
       res.end(JSON.stringify({body}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.body).to.be.an('object')
     expect(res.body.body).deep.equal({})
   })
@@ -94,7 +94,7 @@ describe('Request', function () {
       res.end(JSON.stringify({name}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.name).to.equal('foo')
   })
 
@@ -106,7 +106,7 @@ describe('Request', function () {
       res.end(JSON.stringify({name}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.name).to.equal(null)
   })
 
@@ -118,7 +118,7 @@ describe('Request', function () {
       res.end(JSON.stringify({name}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?profile[name]=foo').expect(200).end()
+    const res = yield supertest(server).get('/?profile[name]=foo').expect(200)
     expect(res.body.name).to.equal('foo')
   })
 
@@ -130,7 +130,7 @@ describe('Request', function () {
       res.end(JSON.stringify({name}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.name).to.equal('doe')
   })
 
@@ -143,7 +143,7 @@ describe('Request', function () {
       res.end(JSON.stringify({all}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.all).deep.equal({name: 'foo', age: 22})
   })
 
@@ -155,7 +155,7 @@ describe('Request', function () {
       res.writeHead(200, {'Content-type': 'application/json'})
       res.end(JSON.stringify({contacts}), 'utf8')
     })
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.contacts).deep.equal([{username: 'virk', email: 'virk@gmail.com'}, {username: 'aman', email: 'aman@gmail.com'}, {username: 'nikk', email: 'nikk@gmail.com'}])
   })
 
@@ -167,7 +167,7 @@ describe('Request', function () {
       res.writeHead(200, {'Content-type': 'application/json'})
       res.end(JSON.stringify({contacts}), 'utf8')
     })
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.contacts).deep.equal([{username: 'virk', age: null}, {username: 'aman', age: null}, {username: 'nikk', age: null}])
   })
 
@@ -179,7 +179,7 @@ describe('Request', function () {
       res.writeHead(200, {'Content-type': 'application/json'})
       res.end(JSON.stringify({contacts}), 'utf8')
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.contacts).deep.equal([{name: null, email: 'virk@foo.com'}, {name: null, email: 'aman@foo.com'}, {name: null, email: 'nikk@foo.com'}])
   })
 
@@ -191,7 +191,7 @@ describe('Request', function () {
       res.writeHead(200, {'Content-type': 'application/json'})
       res.end(JSON.stringify({contacts}), 'utf8')
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.contacts).deep.equal([{password: 'vi', name: null, username: 'virk'}, {password: 'am', name: null, username: 'aman'}, {password: 'ni', name: null, username: 'nikk'}])
   })
 
@@ -204,7 +204,7 @@ describe('Request', function () {
       res.end(JSON.stringify({all}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.all).deep.equal({name: 'foo'})
   })
 
@@ -217,7 +217,7 @@ describe('Request', function () {
       res.end(JSON.stringify({all}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.all).deep.equal({name: 'foo'})
   })
 
@@ -230,7 +230,7 @@ describe('Request', function () {
       res.end(JSON.stringify({all}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.all).deep.equal({name: 'foo', age: 22})
   })
 
@@ -243,7 +243,7 @@ describe('Request', function () {
       res.end(JSON.stringify({all}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.all).deep.equal({age: 22})
   })
 
@@ -256,7 +256,7 @@ describe('Request', function () {
       res.end(JSON.stringify({all}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.all).deep.equal({age: 22})
   })
 
@@ -269,7 +269,7 @@ describe('Request', function () {
       res.end(JSON.stringify({all}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
+    const res = yield supertest(server).get('/?name=foo').expect(200)
     expect(res.body.all).deep.equal({})
   })
 
@@ -281,7 +281,7 @@ describe('Request', function () {
       res.end(JSON.stringify({headers}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('username', 'admin').expect(200).end()
+    const res = yield supertest(server).get('/').set('username', 'admin').expect(200)
     expect(res.body.headers).to.have.property('username')
     expect(res.body.headers.username).to.equal('admin')
   })
@@ -294,7 +294,7 @@ describe('Request', function () {
       res.end(JSON.stringify({username}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('username', 'admin').expect(200).end()
+    const res = yield supertest(server).get('/').set('username', 'admin').expect(200)
     expect(res.body.username).to.equal('admin')
   })
 
@@ -306,7 +306,7 @@ describe('Request', function () {
       res.end(JSON.stringify({fresh}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('if-none-match', '*').expect(200).end()
+    const res = yield supertest(server).get('/').set('if-none-match', '*').expect(200)
     expect(res.body.fresh).to.equal(true)
   })
 
@@ -318,7 +318,7 @@ describe('Request', function () {
       res.end(JSON.stringify({stale}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('if-none-match', '*').expect(200).end()
+    const res = yield supertest(server).get('/').set('if-none-match', '*').expect(200)
     expect(res.body.stale).to.equal(false)
   })
 
@@ -330,7 +330,7 @@ describe('Request', function () {
       res.end(JSON.stringify({ip}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.ip).to.match(/127\.0\.0\.1/)
   })
 
@@ -342,7 +342,7 @@ describe('Request', function () {
       res.end(JSON.stringify({ips}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.ips).to.be.an('array')
   })
 
@@ -381,7 +381,7 @@ describe('Request', function () {
       res.end(JSON.stringify({subdomains}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('X-Forwarded-Host', 'virk.adonisjs.com').expect(200).end()
+    const res = yield supertest(server).get('/').set('X-Forwarded-Host', 'virk.adonisjs.com').expect(200)
     expect(res.body.subdomains).deep.equal(['virk'])
   })
 
@@ -393,7 +393,7 @@ describe('Request', function () {
       res.end(JSON.stringify({ajax}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('X-Requested-With', 'xmlhttprequest').expect(200).end()
+    const res = yield supertest(server).get('/').set('X-Requested-With', 'xmlhttprequest').expect(200)
     expect(res.body.ajax).to.equal(true)
   })
 
@@ -405,7 +405,7 @@ describe('Request', function () {
       res.end(JSON.stringify({pjax}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('X-PJAX', true).expect(200).end()
+    const res = yield supertest(server).get('/').set('X-PJAX', true).expect(200)
     expect(res.body.pjax).to.equal(true)
   })
 
@@ -417,7 +417,7 @@ describe('Request', function () {
       res.end(JSON.stringify({hostname}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.hostname).to.equal('127.0.0.1')
   })
 
@@ -429,7 +429,7 @@ describe('Request', function () {
       res.end(JSON.stringify({url}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?query=string').expect(200).end()
+    const res = yield supertest(server).get('/?query=string').expect(200)
     expect(res.body.url).to.equal('/')
   })
 
@@ -441,7 +441,7 @@ describe('Request', function () {
       res.end(JSON.stringify({originalUrl}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/?query=string').expect(200).end()
+    const res = yield supertest(server).get('/?query=string').expect(200)
     expect(res.body.originalUrl).to.equal('/?query=string')
   })
 
@@ -453,7 +453,7 @@ describe('Request', function () {
       res.end(JSON.stringify({method}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.method).to.equal('GET')
   })
 
@@ -465,7 +465,7 @@ describe('Request', function () {
       res.end(JSON.stringify({isHtml}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
+    const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200)
     expect(res.body.isHtml).to.equal(true)
   })
 
@@ -477,7 +477,7 @@ describe('Request', function () {
       res.end(JSON.stringify({isHtml}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
+    const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200)
     expect(res.body.isHtml).to.equal(true)
   })
 
@@ -489,7 +489,7 @@ describe('Request', function () {
       res.end(JSON.stringify({isHtml}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
+    const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200)
     expect(res.body.isHtml).to.equal(true)
   })
 
@@ -501,7 +501,7 @@ describe('Request', function () {
       res.end(JSON.stringify({html}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept', 'text/html').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept', 'text/html').expect(200)
     expect(res.body.html).to.equal('html')
   })
 
@@ -513,7 +513,7 @@ describe('Request', function () {
       res.end(JSON.stringify({html}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept', 'text/html').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept', 'text/html').expect(200)
     expect(res.body.html).to.equal('html')
   })
 
@@ -525,7 +525,7 @@ describe('Request', function () {
       res.end(JSON.stringify({html}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept', 'text/html').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept', 'text/html').expect(200)
     expect(res.body.html).to.equal('html')
   })
 
@@ -537,7 +537,7 @@ describe('Request', function () {
       res.end(JSON.stringify({cookies}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200).end()
+    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200)
     expect(res.body.cookies).deep.equal({name: 'foo'})
   })
 
@@ -551,7 +551,7 @@ describe('Request', function () {
       res.end(JSON.stringify({cookies: cookiesAgain}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200).end()
+    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200)
     expect(res.body.cookies).deep.equal({name: 'foo', age: 22})
   })
 
@@ -563,7 +563,7 @@ describe('Request', function () {
       res.end(JSON.stringify({name}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200).end()
+    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200)
     expect(res.body.name).to.equal('foo')
   })
 
@@ -575,7 +575,7 @@ describe('Request', function () {
       res.end(JSON.stringify({age}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200).end()
+    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200)
     expect(res.body.age).to.equal(null)
   })
 
@@ -587,7 +587,7 @@ describe('Request', function () {
       res.end(JSON.stringify({age}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200).end()
+    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200)
     expect(res.body.age).to.equal(18)
   })
 
@@ -608,7 +608,7 @@ describe('Request', function () {
       res.end(JSON.stringify({cookies, plainCookies}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200).end()
+    const res = yield supertest(server).get('/').set('Cookie', ['name=foo']).expect(200)
     expect(res.body.cookies).deep.equal({})
     expect(res.body.plainCookies).deep.equal({name: 'foo'})
   })
@@ -630,7 +630,7 @@ describe('Request', function () {
       res.end(JSON.stringify({name, plainName}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Cookie', ['name=bar']).expect(200).end()
+    const res = yield supertest(server).get('/').set('Cookie', ['name=bar']).expect(200)
     expect(res.body.name).to.equal(null)
     expect(res.body.plainName).to.equal('bar')
   })
@@ -644,7 +644,7 @@ describe('Request', function () {
       res.end(JSON.stringify({params}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.params).deep.equal({id: 1})
   })
 
@@ -656,7 +656,7 @@ describe('Request', function () {
       res.end(JSON.stringify({params}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.params).deep.equal({})
   })
 
@@ -669,7 +669,7 @@ describe('Request', function () {
       res.end(JSON.stringify({id}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.id).to.equal(1)
   })
 
@@ -682,7 +682,7 @@ describe('Request', function () {
       res.end(JSON.stringify({name}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.name).to.equal(null)
   })
 
@@ -695,7 +695,7 @@ describe('Request', function () {
       res.end(JSON.stringify({name}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.name).to.equal('bar')
   })
 
@@ -715,7 +715,7 @@ describe('Request', function () {
         res.end(JSON.stringify({file: file instanceof File}), 'utf8')
       })
     })
-    const res = yield supertest(server).get('/').attach('logo', path.join(__dirname, '/uploads/npm-logo.svg')).expect(200).end()
+    const res = yield supertest(server).get('/').attach('logo', path.join(__dirname, '/uploads/npm-logo.svg')).expect(200)
     expect(res.body.file).to.equal(true)
   })
 
@@ -739,7 +739,6 @@ describe('Request', function () {
       .attach('logo[]', path.join(__dirname, '/uploads/npm-logo.svg'))
       .attach('logo[]', path.join(__dirname, '/uploads/npm-logo.svg'))
       .expect(200)
-      .end()
 
     expect(res.body.logo1).to.equal(true)
     expect(res.body.logo2).to.equal(true)
@@ -765,7 +764,7 @@ describe('Request', function () {
     const res = yield supertest(server).get('/')
       .attach('logo', path.join(__dirname, '/uploads/npm-logo.svg'))
       .expect(200)
-      .end()
+
     expect(res.body.logo.maxSize).to.equal(1024)
   })
 
@@ -789,7 +788,7 @@ describe('Request', function () {
     const res = yield supertest(server).get('/')
       .attach('logo', path.join(__dirname, '/uploads/npm-logo.svg'))
       .expect(200)
-      .end()
+
     expect(res.body.logo.allowedExtensions).deep.equal(['jpg'])
   })
 
@@ -817,7 +816,7 @@ describe('Request', function () {
     const res = yield supertest(server).get('/')
       .attach('logo', path.join(__dirname, '/uploads/npm-logo.svg'))
       .expect(200)
-      .end()
+
     expect(res.body.logo.error).to.equal('Uploaded file size 235B exceeds the limit of 100B')
   })
 
@@ -845,7 +844,7 @@ describe('Request', function () {
     const res = yield supertest(server).get('/')
       .attach('logo', path.join(__dirname, '/uploads/npm-logo.svg'))
       .expect(200)
-      .end()
+
     expect(res.body.logo.error).to.equal('Uploaded file extension svg is not valid')
   })
 
@@ -857,7 +856,7 @@ describe('Request', function () {
       res.end(JSON.stringify({matches}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/user/1/profile').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').expect(200)
     expect(res.body.matches).to.equal(true)
   })
 
@@ -869,7 +868,7 @@ describe('Request', function () {
       res.end(JSON.stringify({matches}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/user/1/profile').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').expect(200)
     expect(res.body.matches).to.equal(false)
   })
 
@@ -880,7 +879,7 @@ describe('Request', function () {
       res.writeHead(200, {'Content-type': 'application/json'})
       res.end(JSON.stringify({matches}), 'utf8')
     })
-    const res = yield supertest(server).get('/user/1/profile').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').expect(200)
     expect(res.body.matches).to.equal(true)
   })
 
@@ -891,7 +890,7 @@ describe('Request', function () {
       res.writeHead(200, {'Content-type': 'application/json'})
       res.end(JSON.stringify({matches}), 'utf8')
     })
-    const res = yield supertest(server).get('/user/1/profile').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').expect(200)
     expect(res.body.matches).to.equal(false)
   })
 
@@ -903,7 +902,7 @@ describe('Request', function () {
       res.end(JSON.stringify({matches}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/user/1/profile').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').expect(200)
     expect(res.body.matches).to.equal(true)
   })
 
@@ -915,7 +914,7 @@ describe('Request', function () {
       res.end(JSON.stringify({matches}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/user/1/profile').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').expect(200)
     expect(res.body.matches).to.equal(false)
   })
 
@@ -927,7 +926,7 @@ describe('Request', function () {
       res.end(JSON.stringify({hasBody}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/user/1/profile').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').expect(200)
     expect(res.body.hasBody).to.equal(false)
   })
 
@@ -939,7 +938,7 @@ describe('Request', function () {
       res.end(JSON.stringify({hasBody}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/user/1/profile').send('name', 'doe').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').send('name', 'doe').expect(200)
     expect(res.body.hasBody).to.equal(true)
   })
 
@@ -952,7 +951,7 @@ describe('Request', function () {
       res.end(JSON.stringify({format}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/user/1/profile').expect(200).end()
+    const res = yield supertest(server).get('/user/1/profile').expect(200)
     expect(res.body.format).to.equal('json')
   })
 
@@ -972,7 +971,7 @@ describe('Request', function () {
         res.end(JSON.stringify({file}), 'utf8')
       })
     })
-    const res = yield supertest(server).get('/').expect(200).end()
+    const res = yield supertest(server).get('/').expect(200)
     expect(res.body.file).to.equal(null)
   })
 
@@ -996,7 +995,7 @@ describe('Request', function () {
         res.end(JSON.stringify({isInstances}), 'utf8')
       })
     })
-    const res = yield supertest(server).get('/').attach('logo', path.join(__dirname, '/uploads/npm-logo.svg')).attach('favicon', path.join(__dirname, '/public/favicon.ico')).expect(200).end()
+    const res = yield supertest(server).get('/').attach('logo', path.join(__dirname, '/uploads/npm-logo.svg')).attach('favicon', path.join(__dirname, '/public/favicon.ico')).expect(200)
     expect(res.body.isInstances).deep.equal([true, true])
   })
 
@@ -1016,7 +1015,7 @@ describe('Request', function () {
       res.end(JSON.stringify({language}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept-Language', 'en').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept-Language', 'en').expect(200)
     expect(res.body.language).to.equal('en')
   })
 
@@ -1028,7 +1027,7 @@ describe('Request', function () {
       res.end(JSON.stringify({languages}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept-Language', 'en').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept-Language', 'en').expect(200)
     expect(res.body.languages).deep.equal(['en'])
   })
 
@@ -1040,7 +1039,7 @@ describe('Request', function () {
       res.end(JSON.stringify({encoding}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept-Encoding', 'gzip').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept-Encoding', 'gzip').expect(200)
     expect(res.body.encoding).to.equal('gzip')
   })
 
@@ -1052,7 +1051,7 @@ describe('Request', function () {
       res.end(JSON.stringify({encodings}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept-Encoding', 'gzip').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept-Encoding', 'gzip').expect(200)
     expect(res.body.encodings).deep.equal(['gzip', 'identity'])
   })
 
@@ -1064,7 +1063,7 @@ describe('Request', function () {
       res.end(JSON.stringify({charset}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept-Charset', 'utf8').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept-Charset', 'utf8').expect(200)
     expect(res.body.charset).to.equal('utf8')
   })
 
@@ -1076,7 +1075,7 @@ describe('Request', function () {
       res.end(JSON.stringify({charsets}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept-Charset', 'utf8').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept-Charset', 'utf8').expect(200)
     expect(res.body.charsets).deep.equal(['utf8'])
   })
 
@@ -1088,7 +1087,7 @@ describe('Request', function () {
       res.end(JSON.stringify({language}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept-Language', 'en-us, en-uk').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept-Language', 'en-us, en-uk').expect(200)
     expect(res.body.language).to.equal('en')
   })
 
@@ -1100,7 +1099,7 @@ describe('Request', function () {
       res.end(JSON.stringify({language}), 'utf8')
     })
 
-    const res = yield supertest(server).get('/').set('Accept-Language', 'en-us, en-uk').expect(200).end()
+    const res = yield supertest(server).get('/').set('Accept-Language', 'en-us, en-uk').expect(200)
     expect(res.body.language).to.equal(false)
   })
 })

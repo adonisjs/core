@@ -316,6 +316,21 @@ class Response {
   }
 
   /**
+   * Set a plain non-encrypted cookie on the response
+   *
+   * @param  {String} key
+   * @param  {Mixed} value
+   * @param  {Object} [options]
+   *
+   * @example
+   * Response.plainCookie('foo', 'bar')
+   */
+  plainCookie (key, value, options) {
+    nodeCookie.create(this.request.request, this.response, key, value, options)
+    return this
+  }
+
+  /**
    * clears existing cookie from response header
    *
    * @param  {String}    key

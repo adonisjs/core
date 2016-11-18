@@ -14,7 +14,7 @@ const Route = require('../../src/Route')
 const Middleware = require('../../src/Middleware')
 const chai = require('chai')
 const Ioc = require('adonis-fold').Ioc
-const supertest = require('co-supertest')
+const supertest = require('supertest')
 const expect = chai.expect
 const http = require('http')
 const EventProvider = require('../../src/Event')
@@ -70,23 +70,23 @@ describe('Server', function () {
 
   it('should serve static resource from a given directory', function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/style.css').expect('Content-type', /css/).expect(200).end()
+    const res = yield supertest(testServer).get('/style.css').expect('Content-type', /css/).expect(200)
     expect(res.text).to.match(/(?:\s*\S+\s*{[^}]*})+/g)
   })
 
   it('should serve favicon when request is for favicon', function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    yield supertest(testServer).get('/favicon.ico').expect('Content-type', /x-icon/).expect(200).end()
+    yield supertest(testServer).get('/favicon.ico').expect('Content-type', /x-icon/).expect(200)
   })
 
   it('should make 404 error when unable to find static resource', function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    yield supertest(testServer).get('/foo.css').expect(404).end()
+    yield supertest(testServer).get('/foo.css').expect(404)
   })
 
   it('should not serve static resources with route is not GET or HEAD', function * () {
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    yield supertest(testServer).post('/style.css').expect(404).end()
+    yield supertest(testServer).post('/style.css').expect(404)
   })
 
   it('should serve static resource even if route is defined', function * () {
@@ -94,7 +94,7 @@ describe('Server', function () {
       response.send({rendered: true})
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    yield supertest(testServer).get('/favicon.ico').expect('Content-type', /x-icon/).expect(200).end()
+    yield supertest(testServer).get('/favicon.ico').expect('Content-type', /x-icon/).expect(200)
   })
 
   it('should call route action if defined', function * () {
@@ -102,7 +102,7 @@ describe('Server', function () {
       response.send({rendered: true})
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200).end()
+    const res = yield supertest(testServer).get('/').expect(200)
     expect(res.body.rendered).to.equal(true)
   })
 
@@ -111,7 +111,7 @@ describe('Server', function () {
       response.send({rendered: true})
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/?_method=PUT').expect(200).end()
+    const res = yield supertest(testServer).get('/?_method=PUT').expect(200)
     expect(res.body.rendered).to.equal(true)
   })
 
@@ -131,7 +131,7 @@ describe('Server', function () {
     }
     const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, customConfig, Event)
     const testServer = http.createServer(server.handle.bind(server))
-    yield supertest(testServer).get('/?_method=PUT').expect(404).end()
+    yield supertest(testServer).get('/?_method=PUT').expect(404)
   })
 
   it('should log warning when allowMethodSpoofing is not turned on but trying to spoof method', function * () {
@@ -151,7 +151,7 @@ describe('Server', function () {
     }
     const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, customConfig, Event)
     const testServer = http.createServer(server.handle.bind(server))
-    yield supertest(testServer).get('/?_method=PUT').expect(404).end()
+    yield supertest(testServer).get('/?_method=PUT').expect(404)
     inspect.restore()
     expect(inspect.output.join('')).to.match(/You are making use of method spoofing/)
   })
@@ -159,28 +159,28 @@ describe('Server', function () {
   it('should call route action via controller method', function * () {
     Route.get('/', 'HomeController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200).end()
+    const res = yield supertest(testServer).get('/').expect(200)
     expect(res.body.rendered).to.equal(true)
   })
 
   it('should return error when route handler is not of a valid type', function * () {
     Route.get('/', {})
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500).end()
+    const res = yield supertest(testServer).get('/').expect(500)
     expect(res.error.text).to.match(/InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure/)
   })
 
   it('should return error when unable to find controller', function * () {
     Route.get('/', 'FooController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500).end()
+    const res = yield supertest(testServer).get('/').expect(500)
     expect(res.error.text).to.match(/Cannot find module/)
   })
 
   it('should return error when unable to find controller method', function * () {
     Route.get('/', 'HomeController.foo')
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500).end()
+    const res = yield supertest(testServer).get('/').expect(500)
     expect(res.error.text).to.match(/RuntimeException: E_UNDEFINED_METHOD: Method foo missing on App\/Http\/Controllers\/HomeController/)
   })
 
@@ -188,7 +188,7 @@ describe('Server', function () {
     Middleware.global(['App/Http/Middleware/Global'])
     Route.get('/', 'UserController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200).end()
+    const res = yield supertest(testServer).get('/').expect(200)
     expect(res.text).to.equal('2')
   })
 
@@ -196,7 +196,7 @@ describe('Server', function () {
     Middleware.global(['App/Http/Middleware/GlobalCatch'])
     Route.get('/', 'UserController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(401).end()
+    const res = yield supertest(testServer).get('/').expect(401)
     expect(res.error.text).to.equal('Login')
   })
 
@@ -204,7 +204,7 @@ describe('Server', function () {
     Middleware.global(['App/Http/Middleware/GlobalThrow'])
     Route.get('/', 'UserController.index')
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(401).end()
+    const res = yield supertest(testServer).get('/').expect(401)
     expect(res.error.text).to.match(/Error: Login/)
   })
 
@@ -212,7 +212,7 @@ describe('Server', function () {
     Middleware.register('auth', ['App/Auth'])
     Route.get('/', 'HomeController.index').middlewares(['auth'])
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500).end()
+    const res = yield supertest(testServer).get('/').expect(500)
     expect(res.error.text).to.match(/Cannot find module/)
   })
 
@@ -220,7 +220,7 @@ describe('Server', function () {
     Middleware.register('auth', ['App/Http/Middleware/NoHandle'])
     Route.get('/', 'HomeController.index').middlewares(['auth'])
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500).end()
+    const res = yield supertest(testServer).get('/').expect(500)
     expect(res.error.text).to.match(/RuntimeException: E_UNDEFINED_METHOD: Method handle missing on App\/Http\/Middleware\/NoHandle/)
   })
 
@@ -229,7 +229,7 @@ describe('Server', function () {
     Middleware.register('cycle', 'App/Http/Middleware/Cycle2')
     Route.get('/', 'UserController.index').middlewares(['parser', 'cycle'])
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200).end()
+    const res = yield supertest(testServer).get('/').expect(200)
     expect(res.text).to.equal('1')
   })
 
@@ -241,7 +241,7 @@ describe('Server', function () {
     }).middlewares(['parser', 'cycle'])
 
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200).end()
+    const res = yield supertest(testServer).get('/').expect(200)
     expect(res.text).to.equal('1')
   })
 
@@ -250,7 +250,7 @@ describe('Server', function () {
       throw new Error('Unable to login')
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500).end()
+    const res = yield supertest(testServer).get('/').expect(500)
     expect(res.error.text).to.match(/Unable to login/)
   })
 
@@ -259,7 +259,7 @@ describe('Server', function () {
       throw new Error()
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500).end()
+    const res = yield supertest(testServer).get('/').expect(500)
     expect(res.error.text).to.match(/Error/)
   })
 
@@ -271,7 +271,7 @@ describe('Server', function () {
       throw new Error('Forbidden')
     })
     const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(401).end()
+    const res = yield supertest(testServer).get('/').expect(401)
     expect(res.error.text).to.equal('Forbidden')
   })
 
@@ -295,7 +295,7 @@ describe('Server', function () {
     Route.get('/', 'HomeController.index')
     this.server.listen('0.0.0.0', 8000)
     const testServer = supertest.agent('http://127.0.0.1:8000')
-    const res = yield testServer.get('/').expect(200).end()
+    const res = yield testServer.get('/').expect(200)
     expect(res.body).deep.equal({rendered: true})
   })
 
@@ -305,7 +305,7 @@ describe('Server', function () {
     })
     this.server.listen('0.0.0.0', 8000)
     const testServer = supertest.agent('http://127.0.0.1:8000')
-    const res = yield testServer.get('/?_method=POST').expect(200).end()
+    const res = yield testServer.get('/?_method=POST').expect(200)
     expect(res.text).equal('POST')
   })
 
@@ -315,7 +315,7 @@ describe('Server', function () {
     })
     this.server.listen('0.0.0.0', 8000)
     const testServer = supertest.agent('http://127.0.0.1:8000')
-    const res = yield testServer.get('/?_method=POST').expect(200).end()
+    const res = yield testServer.get('/?_method=POST').expect(200)
     expect(res.body).deep.equal({method: 'POST', intended: 'GET'})
   })
 })

@@ -1,11 +1,11 @@
 {
   "name": "adonis-framework",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && node ./bin/test.js",
-    "coverage": "npm run lint && node ./bin/coverage.js",
+    "test": "npm run lint && FORCE_COLOR=true node ./bin/test.js",
+    "coverage": "npm run lint && FORCE_COLOR=true node ./bin/coverage.js",
     "lint": "standard"
   },
   "standard": {
@@ -32,7 +32,6 @@
     "chai": "^3.5.0",
     "cheerio": "^0.22.0",
     "co-mocha": "^1.1.3",
-    "co-supertest": "0.0.10",
     "coveralls": "^2.11.14",
     "cz-conventional-changelog": "^1.2.0",
     "formidable": "^1.0.17",
