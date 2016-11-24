@@ -2,7 +2,7 @@
 
 const Server = require('../../../src/Server')
 const Route = require('../../../src/Route')
-const Request = require('../../../src/Request')
+const RequestBuilder = require('../../../src/Request')
 const ResponseBuilder = require('../../../src/Response')
 const View = require('../../../src/View')
 const Middleware = require('../../../src/Middleware')
@@ -33,6 +33,6 @@ module.exports = function () {
   const Response = new ResponseBuilder(view, Route, Config)
   const staticServer = new Static(Helpers, Config)
   const Event = new EventProvider(Config)
-  const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, Config, Event)
+  const server = new Server(new RequestBuilder(Config), Response, Route, Helpers, Middleware, staticServer, Session, Config, Event)
   return server
 }

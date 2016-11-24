@@ -8,7 +8,7 @@
 
 const chai = require('chai')
 const expect = chai.expect
-const Request = require('../../src/Request')
+const RequestBuilder = require('../../src/Request')
 const ResponseBuilder = require('../../src/Response')
 const Route = require('../../src/Route')
 const View = require('../../src/View')
@@ -43,6 +43,7 @@ describe('Response', function () {
     }
 
     this.view = new View(Helpers, Config, Route)
+    this.Request = new RequestBuilder(Config)
     this.Response = new ResponseBuilder(this.view, Route, Config)
   })
 
@@ -52,7 +53,7 @@ describe('Response', function () {
 
   it('should respond to a request using send method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.send('Hello world')
     })
@@ -63,7 +64,7 @@ describe('Response', function () {
 
   it('should make use of descriptive methods exposed by nodeRes', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.ok('Hello world')
     })
@@ -74,7 +75,7 @@ describe('Response', function () {
 
   it('should return 401 using unauthorized method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.unauthorized('Login first')
     })
@@ -85,7 +86,7 @@ describe('Response', function () {
 
   it('should return 500 using internalServerError method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.internalServerError('Error first')
     })
@@ -95,7 +96,7 @@ describe('Response', function () {
 
   it('should set header on response', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.header('country', 'India').send('')
     })
@@ -106,7 +107,7 @@ describe('Response', function () {
 
   it('should remove existing from request', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.removeHeader('country', 'India').send('')
     })
@@ -117,7 +118,7 @@ describe('Response', function () {
 
   it('should make json response using json method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.json({name: 'foo'})
     })
@@ -128,7 +129,7 @@ describe('Response', function () {
 
   it('should make jsonp response using jsonp method with correct callback', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.jsonp({name: 'foo'})
     })
@@ -139,7 +140,7 @@ describe('Response', function () {
 
   it('should make jsonp response using jsonp default callback when callback is missing in query string', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.jsonp({name: 'foo'})
     })
@@ -150,7 +151,7 @@ describe('Response', function () {
 
   it('should set request status', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.status(304).json({name: 'foo'})
     })
@@ -159,7 +160,7 @@ describe('Response', function () {
 
   it('should download a given file using its path', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.download(path.join(__dirname, './public/style.css'))
     })
@@ -169,7 +170,7 @@ describe('Response', function () {
 
   it('should force download a given file using its path and by setting content-disposition header', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.attachment(path.join(__dirname, './public/style.css'))
     })
@@ -179,7 +180,7 @@ describe('Response', function () {
 
   it('should force download a given file using its path but with different name', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.attachment(path.join(__dirname, './public/style.css'), 'production.css')
     })
@@ -189,7 +190,7 @@ describe('Response', function () {
 
   it('should set location header on response', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.location('http://amanvirk.me').send('')
     })
@@ -199,7 +200,7 @@ describe('Response', function () {
 
   it('should set location header to referrer on response', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.location('back').send('')
     })
@@ -209,7 +210,7 @@ describe('Response', function () {
 
   it('should set location header to / when there is no referrer on request', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.location('back').send('')
     })
@@ -219,7 +220,7 @@ describe('Response', function () {
 
   it('should set location header on response using redirect method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.redirect('http://amanvirk.me')
     })
@@ -229,7 +230,7 @@ describe('Response', function () {
 
   it('should set location header to referrer when using back with redirect method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.redirect('back')
     })
@@ -239,7 +240,7 @@ describe('Response', function () {
 
   it('should set location header to / when there is no referrer defined using redirect method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.redirect('back')
     })
@@ -250,7 +251,7 @@ describe('Response', function () {
   it('should redirect to a given route using route method', function * () {
     Route.get('/user/:id', function * () {}).as('profile')
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.route('profile', {id: 1})
     })
@@ -264,7 +265,7 @@ describe('Response', function () {
     }).domain('virk.adonisjs.com')
 
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.route('profile', {id: 1})
     })
@@ -274,7 +275,7 @@ describe('Response', function () {
 
   it('should add vary field to response headers', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.vary('Accepts').send('')
     })
@@ -284,7 +285,7 @@ describe('Response', function () {
 
   it('should set response cookie using cookie method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.cookie('name', 'virk').end()
     })
@@ -302,7 +303,7 @@ describe('Response', function () {
           }
         }
       }
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const Response = new ResponseBuilder(this.view, Route, alternateConfig)
       const response = new Response(request, res)
       response.plainCookie('name', 'virk').end()
@@ -318,7 +319,7 @@ describe('Response', function () {
 
   it('should make a view using response view method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       co(function * () {
         return yield response.view('index')
@@ -334,7 +335,7 @@ describe('Response', function () {
 
   it('should immediately send a view using response sendView method', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       co(function * () {
         yield response.sendView('index')
@@ -348,7 +349,7 @@ describe('Response', function () {
 
   it('should set X-Powered-By when enabled inside app.http config', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const response = new this.Response(request, res)
       response.send()
     })
@@ -363,7 +364,7 @@ describe('Response', function () {
           return false
         }
       }
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const Response = new ResponseBuilder({}, Route, Config)
       const response = new Response(request, res)
       response.send()
@@ -392,7 +393,7 @@ describe('Response', function () {
 
   it('should return true for isPending when request has not been ended', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const Response = new ResponseBuilder({}, Route, Config)
       const response = new Response(request, res)
       const isPending = response.isPending
@@ -404,7 +405,7 @@ describe('Response', function () {
 
   it('should return false for finished when request has not been ended', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const Response = new ResponseBuilder({}, Route, Config)
       const response = new Response(request, res)
       const finished = response.finished
@@ -416,7 +417,7 @@ describe('Response', function () {
 
   it('should return false for headersSent when request has not been ended', function * () {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, res, Config)
+      const request = new this.Request(req, res, Config)
       const Response = new ResponseBuilder({}, Route, Config)
       const response = new Response(request, res)
       const headersSent = response.headersSent
