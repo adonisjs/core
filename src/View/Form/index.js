@@ -120,7 +120,11 @@ class Form {
    */
   _makeOptionsAttributes (value, selected) {
     const attributes = {
-      selected: selected.indexOf(value) > -1 ? true : null,
+      /* eslint eqeqeq: "off" */
+      /**
+       * Intentionally doing a type insensitive comparison
+       */
+      selected: _.find(selected, (val) => val == value) ? true : null,
       value: value
     }
     return this._makeHtmlAttributes(attributes).join(' ')

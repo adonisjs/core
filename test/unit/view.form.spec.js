@@ -353,4 +353,28 @@ describe('Form Helper', function () {
     const label = form.button('Clear Form', 'clear', {type: 'reset'})
     expect(label.val).to.equal('<button type="reset" name="clear" value="Clear Form" id="clear"> Clear Form </button>')
   })
+
+  context('Regression', function () {
+    it('should be able to define integer value as selected option on select box', function () {
+      const options = {1: 'India', 2: 'Usa'}
+      const label = form.select('countries', options, 1)
+      const expected =
+      `<select name="countries" id="countries">
+<option selected="true" value="1"> India </option>
+<option value="2"> Usa </option>
+</select>`
+      expect(label.val).to.equal(expected)
+    })
+
+    it('should be able to define integer value as selected option when options are array itself', function () {
+      const options = [1, 2]
+      const label = form.select('countries', options, 1)
+      const expected =
+      `<select name="countries" id="countries">
+<option selected="true" value="1"> 1 </option>
+<option value="2"> 2 </option>
+</select>`
+      expect(label.val).to.equal(expected)
+    })
+  })
 })
