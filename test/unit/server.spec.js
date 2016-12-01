@@ -7,7 +7,7 @@
 */
 
 const Server = require('../../src/Server')
-const Request = require('../../src/Request')
+const RequestBuilder = require('../../src/Request')
 const ResponseBuilder = require('../../src/Response')
 const Static = require('../../src/Static')
 const Route = require('../../src/Route')
@@ -22,8 +22,8 @@ const path = require('path')
 const stderr = require('test-console').stderr
 
 class Session {
-
 }
+
 const Config = {
   get: function (key) {
     switch (key) {
@@ -56,16 +56,18 @@ const Event = new EventProvider(Config)
 require('co-mocha')
 
 describe('Server', function () {
-  before(function () {
+  beforeEach(function () {
     Ioc.autoload('App', path.join(__dirname, './app'))
     const staticServer = new Static(Helpers, Config)
     const Response = new ResponseBuilder({}, {}, Config)
+    const Request = new RequestBuilder(Config)
     this.server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, Config, Event)
-  })
-
-  beforeEach(function () {
     Route.new()
     Middleware.new()
+  })
+
+  afterEach(function () {
+    this.server.getInstance().close()
   })
 
   it('should serve static resource from a given directory', function * () {
@@ -129,7 +131,8 @@ describe('Server', function () {
         return Config.get(key)
       }
     }
-    const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, customConfig, Event)
+    const AlternateRequest = new RequestBuilder(customConfig)
+    const server = new Server(AlternateRequest, Response, Route, Helpers, Middleware, staticServer, Session, customConfig, Event)
     const testServer = http.createServer(server.handle.bind(server))
     yield supertest(testServer).get('/?_method=PUT').expect(404)
   })
@@ -149,7 +152,7 @@ describe('Server', function () {
         return Config.get(key)
       }
     }
-    const server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, customConfig, Event)
+    const server = new Server(new RequestBuilder(customConfig), Response, Route, Helpers, Middleware, staticServer, Session, customConfig, Event)
     const testServer = http.createServer(server.handle.bind(server))
     yield supertest(testServer).get('/?_method=PUT').expect(404)
     inspect.restore()
@@ -279,7 +282,7 @@ describe('Server', function () {
     expect(this.server.httpInstance).to.be.null
   })
 
-  it('should server instance is http.Server', function * () {
+  it('should tell whether server is an instance of http.Server', function * () {
     const httpServer = this.server.getInstance()
     expect(httpServer).to.be.instanceOf(http.Server)
     expect(this.server.httpInstance).to.be.instanceOf(http.Server)
@@ -303,9 +306,12 @@ describe('Server', function () {
     Route.post('/', function * (request, response) {
       response.send(request.method())
     })
-    this.server.listen('0.0.0.0', 8000)
-    const testServer = supertest.agent('http://127.0.0.1:8000')
-    const res = yield testServer.get('/?_method=POST').expect(200)
+    const AlternateRequest = new RequestBuilder(Config)
+    const Response = new ResponseBuilder({}, {}, Config)
+    const staticServer = new Static(Helpers, Config)
+    const server = new Server(AlternateRequest, Response, Route, Helpers, Middleware, staticServer, Session, Config, Event)
+    const testServer = http.createServer(server.handle.bind(server))
+    const res = yield supertest(testServer).get('/?_method=POST').expect(200)
     expect(res.text).equal('POST')
   })
 

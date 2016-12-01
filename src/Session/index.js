@@ -12,7 +12,7 @@
  */
 
 const _ = require('lodash')
-const uuid = require('node-uuid')
+const uuid = require('uuid')
 
 const Store = require('./Store')
 const CookieManager = require('./CookieManager')

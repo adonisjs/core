@@ -194,7 +194,7 @@ class Server {
    */
   handle (req, res) {
     const self = this
-    const request = new this.Request(req, res, this.config)
+    const request = new this.Request(req, res)
     const response = new this.Response(request, res)
     const session = new this.Session(req, res)
     request.session = session

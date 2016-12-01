@@ -16,6 +16,8 @@ const pathToRegexp = require('path-to-regexp')
 const _ = require('lodash')
 const util = require('../../lib/util')
 
+let configInstance = null
+
 /**
  * Glued http request object to read values for
  * a given request. Instance of this class
@@ -25,10 +27,9 @@ const util = require('../../lib/util')
  */
 class Request {
 
-  constructor (request, response, Config) {
+  constructor (request, response) {
     this.request = request
     this.response = response
-    this.config = Config
     this._body = {}
     this._files = []
 
@@ -36,7 +37,7 @@ class Request {
      * secret to parse and decrypt cookies
      * @type {String}
      */
-    this.secret = this.config.get('app.appKey')
+    this.secret = configInstance.get('app.appKey')
 
     /**
      * holding references to cookies once they
@@ -247,7 +248,7 @@ class Request {
    * @public
    */
   ip () {
-    return nodeReq.ip(this.request, this.config.get('app.http.trustProxy'))
+    return nodeReq.ip(this.request, configInstance.get('app.http.trustProxy'))
   }
 
   /**
@@ -262,7 +263,7 @@ class Request {
    * @public
    */
   ips () {
-    return nodeReq.ips(this.request, this.config.get('app.http.trustProxy'))
+    return nodeReq.ips(this.request, configInstance.get('app.http.trustProxy'))
   }
 
   /**
@@ -289,7 +290,7 @@ class Request {
    * @public
    */
   subdomains () {
-    return nodeReq.subdomains(this.request, this.config.get('app.http.trustProxy'), this.config.get('app.http.subdomainOffset'))
+    return nodeReq.subdomains(this.request, configInstance.get('app.http.trustProxy'), configInstance.get('app.http.subdomainOffset'))
   }
 
   /**
@@ -325,7 +326,7 @@ class Request {
    * @public
    */
   hostname () {
-    return nodeReq.hostname(this.request, this.config.get('app.http.trustProxy'))
+    return nodeReq.hostname(this.request, configInstance.get('app.http.trustProxy'))
   }
 
   /**
@@ -391,7 +392,7 @@ class Request {
    * @public
    */
   method () {
-    if (!this.config.get('app.http.allowMethodSpoofing')) {
+    if (!configInstance.get('app.http.allowMethodSpoofing')) {
       return nodeReq.method(this.request)
     }
     return this.input('_method', this.intended())
@@ -690,4 +691,11 @@ class Request {
   }
 }
 
-module.exports = Request
+class RequestBuilder {
+  constructor (Config) {
+    configInstance = Config
+    return Request
+  }
+}
+
+module.exports = RequestBuilder
