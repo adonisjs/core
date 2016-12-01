@@ -1,3 +1,13 @@
+<a name="3.0.7"></a>
+## [3.0.7](https://github.com/adonisjs/adonis-framework/compare/v3.0.6...v3.0.7) (2016-12-01)
+
+
+### Bug Fixes
+
+* **form:select:** do a type insensitive comparison ([69a4eb9](https://github.com/adonisjs/adonis-framework/commit/69a4eb9)), closes [#378](https://github.com/adonisjs/adonis-framework/issues/378)
+
+
+
 <a name="3.0.6"></a>
 ## [3.0.6](https://github.com/adonisjs/adonis-framework/compare/v3.0.5...v3.0.6) (2016-11-18)
 
