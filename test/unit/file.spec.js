@@ -16,6 +16,7 @@ require('co-mocha')
 
 describe('File', function () {
   beforeEach(function () {
+    fs.closeSync(fs.openSync(path.join(__dirname, './uploads/tmp'), 'w'))
     this.file = new File({
       name: 'npm-logo.svg',
       path: path.join(__dirname, './uploads/npm-logo.svg'),
@@ -51,6 +52,53 @@ describe('File', function () {
     expect(this.file.moved()).to.equal(true)
     expect(this.file.uploadName()).to.equal('logo.svg')
     expect(this.file.uploadPath()).to.equal(path.join(__dirname, './public/logo.svg'))
+  })
+
+  it('should be able to delete before being moved', function * () {
+    this.file.file.path = path.join(__dirname, './uploads/tmp')
+    expect(fs.existsSync(this.file.tmpPath())).to.equal(true)
+    yield this.file.delete()
+    expect(fs.existsSync(this.file.tmpPath())).to.equal(false)
+    expect(this.file.exists()).to.equal(false)
+  })
+
+  it('should be able to delete after being moved', function * () {
+    this.file.file.path = path.join(__dirname, './uploads/tmp')
+    expect(fs.existsSync(this.file.tmpPath())).to.equal(true)
+    yield this.file.move(path.join(__dirname, './public'), 'tmp')
+    expect(fs.existsSync(this.file.tmpPath())).to.equal(false)
+    expect(fs.existsSync(this.file.uploadPath())).to.equal(true)
+    yield this.file.delete()
+    expect(fs.existsSync(this.file.uploadPath())).to.equal(false)
+    expect(this.file.exists()).to.equal(false)
+  })
+
+  it('should throw an error if try to delete twice', function * () {
+    this.file.file.path = path.join(__dirname, './uploads/tmp')
+    expect(fs.existsSync(this.file.tmpPath())).to.equal(true)
+    yield this.file.delete()
+    let error
+    try {
+      yield this.file.delete()
+    } catch (e) {
+      error = e
+    }
+    expect(error).to.be.an.instanceOf(Object)
+    expect(error.message).to.equal('E_FILE_DELETED: The file has already been deleted')
+  })
+
+  it('should throw an error if try to move after deleting', function * () {
+    this.file.file.path = path.join(__dirname, './uploads/tmp')
+    expect(fs.existsSync(this.file.tmpPath())).to.equal(true)
+    yield this.file.delete()
+    let error
+    try {
+      yield this.file.move(path.join(__dirname, './uploads/tmp2'))
+    } catch (e) {
+      error = e
+    }
+    expect(error).to.be.an.instanceOf(Object)
+    expect(error.message).to.equal('E_FILE_DELETED: The file has already been deleted')
   })
 
   it('should return file mime type', function * () {

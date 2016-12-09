@@ -12,6 +12,7 @@
 const path = require('path')
 const fs = require('fs')
 const bytes = require('bytes')
+const CE = require('../Exceptions')
 
 /**
  * Used by request object internally to manage file uploads.
@@ -25,6 +26,7 @@ class File {
   constructor (formidableObject, options) {
     options = options || {}
     this.file = formidableObject
+    this.file.deleted = false
     this.file.error = null
     this.file.fileName = ''
     this.file.maxSize = options.maxSize ? bytes(options.maxSize) : null
@@ -154,9 +156,36 @@ class File {
    * @public
    */
   move (toPath, name) {
+    if (this.file.deleted === true) {
+      throw CE.RuntimeException.fileDeleted()
+    }
     name = name || this.clientName()
     const uploadingFileName = `${toPath}/${name}`
     return this._validateAndMove(name, uploadingFileName)
+  }
+
+  /**
+   * Deletes a file
+   *
+   * @return {Boolean}
+   *
+   * @example
+   * yield file.delete()
+   *
+   * @public
+   */
+  delete () {
+    return new Promise((resolve, reject) => {
+      if (this.file.deleted === true) {
+        throw CE.RuntimeException.fileDeleted()
+      }
+      let path = this.uploadPath() || this.tmpPath()
+      fs.unlink(path, (err) => {
+        if (err) return reject(err)
+        resolve(true)
+        this.file.deleted = true
+      })
+    })
   }
 
   /**
@@ -244,7 +273,7 @@ class File {
    * @public
    */
   exists () {
-    return !!this.tmpPath()
+    return this.tmpPath() && !this.file.deleted
   }
 
   /**

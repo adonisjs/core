@@ -76,6 +76,18 @@ class RuntimeException extends NE.RuntimeException {
   }
 
   /**
+   * this exception is raised when an operation is attempted
+   * on a file that has been deleted
+   *
+   * @param  {Number} [code=500]
+   *
+   * @return {Object}
+   */
+  static fileDeleted (code) {
+    return new this('The file has already been deleted', code || this.defaultErrorCode, 'E_FILE_DELETED')
+  }
+
+  /**
    * this exception is raised when encryption class is not
    * able to decrypt a given piece of data
    *
