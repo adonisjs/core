@@ -242,7 +242,7 @@ class Form {
   label (name, value, attributes) {
     attributes = attributes || {}
     value = value || name
-    const labelAttributes = [`name="${name}"`].concat(this._makeHtmlAttributes(attributes))
+    const labelAttributes = [`for="${name}"`].concat(this._makeHtmlAttributes(attributes))
     return this.env.filters.safe(`<label ${labelAttributes.join(' ')}> ${value} </label>`)
   }
 
