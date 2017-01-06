@@ -155,6 +155,7 @@ RouterHelper.addFormats = function (routes, formats, strict) {
  * @private
  */
 RouterHelper.prefixRoute = function (routes, prefix) {
+  prefix = prefix.startsWith('/') ? prefix : `/${prefix}`
   _.each(routes, function (route) {
     route.route = route.route === '/' ? prefix : prefix + route.route
     route.pattern = RouterHelper.makeRoutePattern(route.route)
