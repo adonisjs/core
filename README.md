@@ -28,13 +28,6 @@ You can learn more about AdonisJs and all of its awesomeness on http://adonisjs.
 <hr>
 <br>
 
-## Table of Contents
-
-* [Requirements](#requirements)
-* [Getting Started](#getting-started)
-* [Contribution Guidelines](#contribution-guidelines)
-
-<br>
 ## <a name="requirements"></a>Requirements
 
 AdonisJs is built on the top of ES2015, which makes the code more enjoyable and cleaner to read. It doesn't make use of any transpilers and depends upon Core V8 implemented features.
