@@ -105,6 +105,7 @@ class Server {
    */
   _handleError (error, request, response) {
     this._normalizeError(error)
+    Error.captureStackTrace(error)
     if (this.event.wildcard() && this.event.hasListeners(['Http', 'error', '*'])) {
       this.event.fire(['Http', 'error', error.status], error, request, response)
       return
