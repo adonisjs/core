@@ -268,6 +268,15 @@ describe('Route', function () {
       expect(routes[0].route).to.equal('/v1')
     })
 
+    it('should be able to prefix routes inside a group without starting with a slash', function () {
+      Route.group('admin', function () {
+        Route.get('/', 'SomeController.method')
+      }).prefix('v1')
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].route).to.equal('/v1')
+    })
+
     it('should prefix all resourceful routes under a group', function () {
       Route.group('v1', function () {
         Route.resource('admin', 'SomeController')
