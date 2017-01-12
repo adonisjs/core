@@ -62,7 +62,7 @@
     "node-req": "^1.0.5",
     "node-res": "^3.0.1",
     "nunjucks": "^3.0.0",
-    "path-to-regexp": "^1.6.0",
+    "path-to-regexp": "^1.7.0",
     "require-all": "^2.0.0",
     "serve-static": "^1.11.1",
     "type-of-is": "^3.4.0",
