@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "adonis-binding-resolver": "^1.0.1",
+    "ain2": "^2.0.0",
     "bcryptjs": "^2.3.0",
     "bytes": "^2.4.0",
     "cat-log": "^1.0.2",
