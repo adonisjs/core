@@ -1,11 +1,24 @@
 # AdonisJs Fold
 > Dependency manager and IoC container for Node.js :rocket:
 
+<br />
+
+<p align="center">
+  <a href="http://res.cloudinary.com/adonisjs/image/upload/v1484932186/Github-Readme_mh3lqh.svg">
+    <img src="http://res.cloudinary.com/adonisjs/image/upload/v1484932186/Github-Readme_mh3lqh.svg" />
+  </a>
+</p>
+
+<br />
+
+---
+
+<br />
+
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
-
-![](https://s3-us-west-1.amazonaws.com/patreon.user/s6hrkQF2thEpkT1A3vigzCONJuVtaUzHpIyT3KaHbvENxseNcETlvOuVUO5ZzVHl_large_2.png)
+[![Appveyor][appveyor-image]][appveyor-url]
 
 [![Gitter Channel][gitter-image]][gitter-url]
 [![Trello][trello-image]][trello-url]
@@ -100,15 +113,13 @@ Checkout [LICENSE.txt](LICENSE.txt) for license information
 
 Harminder Virk (Aman) - [https://github.com/thetutlage](https://github.com/thetutlage)
 
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/github/poppinss/adonis-fold?branch=dawn&svg=true&passingText=Passing%20On%20Windows
+[appveyor-url]: https://ci.appveyor.com/project/thetutlage/adonis-fold
 
 [npm-image]: https://img.shields.io/npm/v/adonis-fold.svg?style=flat-square
-
 [npm-url]: https://npmjs.org/package/adonis-fold
 
-[npm-downloads]: https://img.shields.io/npm/dm/adonis-fold.svg?style=flat-square
-
-[travis-image]: https://img.shields.io/travis/poppinss/adonis-fold/master.svg?style=flat-square
-
+[travis-image]: https://img.shields.io/travis/poppinss/adonis-fold/dawn.svg?style=flat-square
 [travis-url]: https://travis-ci.org/poppinss/adonis-fold
 
 [gitter-url]: https://gitter.im/adonisjs/adonis-framework
@@ -119,3 +130,5 @@ Harminder Virk (Aman) - [https://github.com/thetutlage](https://github.com/thetu
 
 [patreon-url]: https://www.patreon.com/adonisframework
 [patreon-image]: https://img.shields.io/badge/patreon-support%20AdonisJs-brightgreen.svg?style=flat-square
+
+[npm-downloads]: https://img.shields.io/npm/dm/adonis-fold.svg?style=flat-square
