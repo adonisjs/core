@@ -1,25 +1,22 @@
 'use strict'
 
 /**
- * adonis-fold
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
-*/
-
-/**
- * @ignore
-*/
-const Ioc = require('../Ioc')
-
-/**
- * @class  ServiceProvider
- * @description Base class to be extended while creating
- * service providers.
- * @public
+ * Service provider is the base class to be extended by all
+ * the providers. Each provider can have register and boot
+ * methods which are called by the Registrar class as
+ * part of lifecycle hooks.
+ *
+ * @module Adonis
+ * @submodule fold
+ * @class ServiceProvider
  */
 class ServiceProvider {
 
-  constructor () {
+  constructor (Ioc) {
+    /**
+     * Reference to the Ioc container
+     * @attribute app
+     */
     this.app = Ioc
   }
 

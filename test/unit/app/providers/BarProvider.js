@@ -1,25 +1,19 @@
 'use strict'
 
-const ServiceProvider = require('../../../../').ServiceProvider
-
-class Bar {
-  constructor (foo) {
-    this.bar = foo
-  }
-}
+const ServiceProvider = require('../../../../src/ServiceProvider')
 
 class BarProvider extends ServiceProvider {
-  * register () {
-    this.app.singleton('Providers/Bar', function (app) {
-      const Foo = app.use('Providers/Foo')
-      return new Bar(Foo)
+
+  async boot () {
+    this.message = this.app.use('App/Foo')
+  }
+
+  register () {
+    this.app.bind('App/Bar', () => {
+      return this.message
     })
   }
 
-  * boot () {
-    const Bar = this.app.use('Providers/Bar')
-    Bar.boot = true
-  }
 }
 
 module.exports = BarProvider

@@ -1,523 +1,751 @@
 'use strict'
 
-/**
- * adonis-fold
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
-*/
-
-const helpers = require('./helpers')
+const path = require('path')
+const caller = require('caller')
 const _ = require('lodash')
 const requireStack = require('require-stack')
-const CatLog = require('cat-log')
-const CE = require('../Exceptions')
-const log = new CatLog('adonis:ioc')
-const EventEmitter2 = require('eventemitter2').EventEmitter2
-const emitter = new EventEmitter2({
-  wildcard: false,
-  newListener: false
-})
+const debug = require('debug')('adonis:fold')
+const CE = require('../../src/Exceptions')
+
+const toString = Function.prototype.toString
+const isClass = (fn) => {
+  return typeof (fn) === 'function' && /^class\s/.test(toString.call(fn))
+}
 
 /**
- * fakes to be used for testing
+ * Ioc container instance is used to register and fetch dependencies without
+ * dealing with system paths. Also dependencies can be dependent upon each
+ * other transparently, instead of consumer writing all the wiring code.
+ * It has support for autoloading directories, defining aliases and
+ * binding fakes. Check official documentation for that.
  *
- * @type {Object}
- */
-let fakes = {}
-
-/**
- * list of registered providers
- * @type {Object}
- * @private
- */
-let providers = {}
-
-/**
- * list of managers exposed by providers
- * they should have implemented extend
- * method
- * @type {Object}
- * @private
- */
-let providerManagers = {}
-
-/**
- * list of providers extenders
- * @type {Object}
- * @private
- */
-let providerExtenders = {}
-
-/**
- * namespace and directory path
- * to be treated as autoload
- * @private
- */
-let autoloadDirectory = {}
-
-/**
- * binding alisaes
- * @type {Object}
- * @private
- */
-let aliases = {}
-
-/**
- * @module Ioc
- * @description Ioc container to store and resolve
- * depedencies with solid dependency injection.
- */
-
-let Ioc = exports = module.exports = {}
-
-/**
- * @description binding namespace to a given closure which
- * is executed everytime a namespace is fetched.
- * @method _bind
- * @param  {String} namespace
- * @param  {Function} closure
- * @param  {Boolean} singleton
- * @return {void}
- * @private
- */
-Ioc._bind = function (namespace, closure, singleton) {
-  if (typeof (closure) !== 'function') {
-    throw CE.InvalidArgumentException.invalidParameters('Ioc.bind expects 2nd parameter to be a closure')
-  }
-  namespace = namespace.trim()
-  log.verbose('binding %s to ioc container', namespace)
-  emitter.emit('bind:provider', namespace, singleton)
-  providers[namespace] = {closure, singleton, instance: null}
-}
-
-/**
- * @description clears of all local data, like its a new
- * instance
- * @method new
- * @return {void} [description]
- * @public
- */
-Ioc.new = function () {
-  providers = {}
-  providerManagers = {}
-  providerExtenders = {}
-  autoloadDirectory = {}
-  aliases = {}
-}
-
-/**
- * @description resolves eagerly loaded provider
- * by setting up dependencies in right order
- * @method _resolveProvider
- * @param  {String} namespace
- * @return {*}
- * @private
- */
-Ioc._resolveProvider = function (namespace) {
-  log.verbose('resolving provider %s', namespace)
-  const provider = providers[namespace]
-  if (!provider.singleton) {
-    const returnValue = provider.closure(Ioc)
-    emitter.emit('provider:resolved', namespace, returnValue)
-    return returnValue
-  }
-  provider.instance = provider.instance || provider.closure(Ioc)
-  emitter.emit('provider:resolved', namespace, provider.instance)
-  return provider.instance
-}
-
-/**
- * resolves a fake for the fakes list
+ * ### Important Note
+ * A single instance of this class needs to be used by the entire application.
+ * The export method of the module makes sure to return the instantiated class,
+ * so that you won't have to manage singleton instances and start using it
+ * as `Ioc.bind`, `Ioc.make` etc.
  *
- * @param   {String} namespace
- *
- * @return  {Mixed}
- *
- * @private
+ * @module Adonis
+ * @submodule fold
+ * @class Ioc
  */
-Ioc._resolveFake = function (namespace) {
-  return fakes[namespace].closure(Ioc)
-}
+class Ioc {
 
-/**
- * @description calls provider extenders in a sequence
- * and pass key/return value to provider extend
- * method.
- * @method _extendProvider
- * @param  {String}        namespace
- * @return {void}
- * @private
- */
-Ioc._extendProvider = function (namespace) {
-  if (providerExtenders[namespace] && providerManagers[namespace]) {
-    const extender = providerExtenders[namespace]
-    const manager = providerManagers[namespace]
-    _.each(extender, function (item) {
-      const key = item.key
-      const args = item.args
-      const closureOutput = item.closure(Ioc)
-      const methodArgs = [key, closureOutput].concat(args)
-      manager.extend.apply(manager, methodArgs)
-    })
-    providerExtenders[namespace] = []
-  }
-}
-
-/**
- * autoloads a given file by making dynamic path
- * from namespace registered for autoloading
- * @method _autoLoad
- * @param  {String}  namespace
- * @return {*}
- * @private
- */
-Ioc._autoLoad = function (namespace) {
-  const namespacePath = namespace.replace(autoloadDirectory.namespace, autoloadDirectory.directoryPath)
-  log.verbose('resolving %s from path %s', namespace, namespacePath)
-  try {
-    let result = requireStack(namespacePath)
+  constructor () {
     /**
-     * autoloaded paths can have multiple hooks to be called
-     * everytime it is required. Lucid is an example of
-     * making use of it.
+     * Store list of bindings with their closures
+     *
+     * @attribute _bindings
+     * @private
+     * @type {Object}
      */
-    if (result.IocHooks && result.IocHooks.forEach) {
-      result.IocHooks.forEach(function (hook) {
-        if (typeof (result[hook]) === 'function') {
-          result[hook]()
-        }
-      })
+    this._bindings = {}
+
+    /**
+     * Stores the list of aliases and namespaces
+     * as key/value pair
+     *
+     * @attribute _aliases
+     * @private
+     * @type {Object}
+     */
+    this._aliases = {}
+
+    /**
+     * Stores list of autoloaded directories and
+     * their namespaces as key/value pair
+     *
+     * @attribute _autoloads
+     * @private
+     * @type {Object}
+     */
+    this._autoloads = {}
+
+    /**
+     * Stores list of managers for the bindings to
+     * be extended.
+     *
+     * @attribute _managers
+     * @private
+     * @type {Object}
+     */
+    this._managers = {}
+
+    /**
+     * Stores list of runtime fakes
+     *
+     * @attribute _fakes
+     * @private
+     * @type {Map}
+     */
+    this._fakes = new Map()
+  }
+
+  /**
+   * Returns the namespace of an autoloaded directory when
+   * subset of the namespace to be resolved matches. This function
+   * matches the start of the string.
+   *
+   * ```
+   * // Registered namespace: App
+   * // Namespace to be resolved: App/Controllers/UsersController
+   * 'App/Controllers/UsersController'.startsWith('App')
+   * ```
+   *
+   * @method _getAutoloadedNamespace
+   * @private
+   *
+   * @param  {String} namespace
+   * @return {String}
+   */
+  _getAutoloadedNamespace (namespace) {
+    const autoloadedKeys = _.keys(this._autoloads)
+    return _.find(autoloadedKeys, (registeredNamespace) => {
+      return namespace.startsWith(`${registeredNamespace}/`)
+    })
+  }
+
+  /**
+   * Returns whether a namespace has been registered
+   * as a binding inside the IoC container or not.
+   *
+   * @method _isBinding
+   * @private
+   *
+   * @param {String} name
+   * @return {Boolean}
+   */
+  _isBinding (namespace) {
+    return this._bindings[namespace]
+  }
+
+  /**
+   * Returns whether the given namespace is registered as an alias
+   * or not. It is does check whether the aliased namespace has
+   * been registered to the IoC container or not.
+   *
+   * @method _isAlias
+   * @private
+   *
+   * @param  {String}  namespace
+   * @return {Boolean}
+   */
+  _isAlias (namespace) {
+    return this._aliases[namespace]
+  }
+
+  /**
+   * Returns a boolean indicating whether the namespace to
+   * be resolved belongs to a autoloaded directory.
+   *
+   * @method _isAutoloadedPath
+   * @private
+   *
+   * @param  {String}  namespace
+   * @return {Boolean}
+   */
+  _isAutoloadedPath (namespace) {
+    return !!this._getAutoloadedNamespace(namespace)
+  }
+
+  /**
+   * Returns whether a given namespace has a manager
+   * or not. Managers simply required to allow a
+   * provider to be extended via Ioc container.
+   *
+   * @method _hasManager
+   * @private
+   *
+   * @param  {String}  namespace
+   * @return {Boolean}
+   */
+  _hasManager (namespace) {
+    return this._managers[namespace]
+  }
+
+  /**
+   * Returns whether a fake for the given namespace
+   * exists or not.
+   *
+   * @method _hasFake
+   * @private
+   *
+   * @param  {String}  namespace
+   * @return {Boolean}
+   */
+  _hasFake (namespace) {
+    return this._fakes.has(namespace)
+  }
+
+  /**
+   * Resolves a fake for a namespace when fake
+   * is registered.
+   *
+   * @method _resolveFake
+   * @private
+   *
+   * @param  {String} namespace
+   * @return {Mixed}
+   */
+  _resolveFake (namespace) {
+    const fakeClosure = this._fakes.get(namespace)
+    debug('resolving %s namespace as a fake', namespace)
+    return fakeClosure(this)
+  }
+
+  /**
+   * Resolves binding from the bindings map and returns the
+   * evaluated value after calling the binding closure.
+   *
+   * It is important to call _isBinding before calling this
+   * method to avoid exceptions being thrown.
+   *
+   * @method _resolveBinding
+   * @private
+   *
+   * @param {String} namespace
+   * @return {Mixed}
+   */
+  _resolveBinding (namespace) {
+    const binding = this._bindings[namespace]
+    debug('resolving %s namespace as a binding', namespace)
+    if (binding.singleton) {
+      return (binding.cachedValue = binding.cachedValue || binding.closure(this))
     }
-    emitter.emit('module:resolved', namespace, namespacePath, result)
+    return binding.closure(this)
+  }
+
+  /**
+   * Requires a file by resolving the autoloaded namespace. It
+   * is important to call _isAutoloadedPath before calling
+   * this method, to avoid exceptions been thrown.
+   *
+   * @method _resolveAutoloadedPath
+   * @private
+   *
+   * @param  {String} namespace
+   * @return {Mixed}
+   */
+  _resolveAutoloadedPath (namespace) {
+    const autoloadedNamespace = this._getAutoloadedNamespace(namespace)
+    debug('resolving %s namespace from %s path', namespace, this._autoloads[autoloadedNamespace])
+
+    const result = requireStack(namespace.replace(autoloadedNamespace, this._autoloads[autoloadedNamespace]))
+    if (!result) {
+      return result
+    }
+
+    const hooks = result.IocHooks || result.iocHooks
+    if (!_.isArray(hooks)) {
+      return result
+    }
+
+    hooks.forEach((hook) => {
+      if (_.isFunction(result[hook])) {
+        result[hook]()
+      }
+    })
     return result
-  } catch (e) {
-    throw e
-  }
-}
-
-/**
- * @description returns whether variable is a class or not
- * @method _isClass
- * @param  {Mixed}  Binding
- * @return {Boolean}
- * @private
- */
-Ioc._isClass = function (Binding) {
-  return typeof (Binding) === 'function' && typeof (Binding.constructor) === 'function' && Binding.name
-}
-
-/**
- * @description returns type of binding based on
- * its existence inside providers, autoload
- * path etc.
- * @method _type
- * @param  {String} binding [description]
- * @return {String}         [description]
- * @private
- */
-Ioc._type = function (binding) {
-  if (typeof (binding) !== 'string') {
-    return 'UNKNOWN'
-  }
-
-  if (fakes[binding]) {
-    return 'FAKE'
-  }
-
-  if (providers[binding]) {
-    return 'PROVIDER'
-  }
-
-  if (aliases[binding]) {
-    return 'ALIAS'
-  }
-
-  if (helpers.isAutoLoadPath(autoloadDirectory, binding)) {
-    return 'AUTOLOAD'
-  }
-}
-
-/**
- * @description returns all registered providers
- * @method getProviders
- * @return {Object}
- * @public
- */
-Ioc.getProviders = function () {
-  return providers
-}
-
-/**
- * @description returns all registered managers
- * @method getManagers
- * @return {Object}
- * @public
- */
-Ioc.getManagers = function () {
-  return providerManagers
-}
-
-/**
- * @description returns all extend hooks
- * on service providers
- * @method getExtenders
- * @return {Object}
- * @public
- */
-Ioc.getExtenders = function () {
-  return providerExtenders
-}
-
-/**
- * @description register an object to a given namespace
- * which can be resolved out of Ioc container
- * @method bind
- * @param  {String} namespace
- * @param  {Function} closure
- * @return {void}
- * @throws {InvalidArgumentException} If closure is a not a function
- * @public
- */
-Ioc.bind = function (namespace, closure) {
-  Ioc._bind(namespace, closure, false)
-}
-
-/**
- * @description register an object as singleton to a given
- * namespace which can be resolved out of Ioc container
- * @method singleton
- * @param  {String} namespace
- * @param  {Function} closure
- * @return {void}
- * @throws {InvalidArgumentException} If closure is a not a function
- * @public
- */
-Ioc.singleton = function (namespace, closure) {
-  Ioc._bind(namespace, closure, true)
-}
-
-/**
- * @description register an object as a manager class which
- * needs to have extend method. It is binding required
- * to expose extend functionality
- * @method manager
- * @param  {String} namespace
- * @param  {*} defination
- * @return {void}
- * @throws {IncompleteImplementation} If defination does not have extend method
- * @example
- *   Ioc.manager('Adonis/Addons/Cache',CacheManager)
- * @public
- */
-Ioc.manager = function (namespace, defination) {
-  if (!defination.extend) {
-    throw CE.InvalidArgumentException.invalidIocManager(namespace)
-  }
-  log.verbose('registering manager for %s', namespace)
-  providerManagers[namespace] = defination
-}
-
-/**
- * @description extends provider manager with the
- * power of type hinting dependencies
- * @method extend
- * @param  {String} namespace
- * @param  {String} key
- * @param  {Function} closure
- * @return {void}
- * @example
- *     Ioc.extend('Adonis/Addons/Cache', 'redis', function (app) {
- *
- *     })
- * @public
- */
-Ioc.extend = function (namespace, key, closure) {
-  if (typeof (closure) !== 'function') {
-    throw CE.InvalidArgumentException.invalidParameters('Ioc.extend expects 3rd parameter to be a closure')
-  }
-  const args = _.drop(_.toArray(arguments), 3)
-  log.verbose('extending %s adding %s', namespace, key)
-  emitter.emit('extend:provider', key, namespace)
-  providerExtenders[namespace] = providerExtenders[namespace] || []
-  providerExtenders[namespace].push({key, closure, args})
-}
-
-/**
- * @description setting up a directory to be autoloaded
- * under a given namespace
- * @method autoload
- * @param  {String} namespace
- * @param  {String} directoryPath
- * @return {void}
- * @public
- */
-Ioc.autoload = function (namespace, directoryPath) {
-  emitter.emit('bind:autoload', namespace, directoryPath)
-  log.verbose('autoloading directory is set to %s under %s namespace', directoryPath, namespace)
-  autoloadDirectory = {namespace, directoryPath}
-}
-
-/**
- * @description resolve any binding from ioc container
- * using it's namespace.
- * @method use
- * @param  {String} namespace
- * @return {*}
- * @public
- */
-Ioc.use = function (namespace) {
-  const type = Ioc._type(namespace)
-
-  switch (type) {
-    case 'FAKE':
-      return Ioc._resolveFake(namespace)
-    case 'PROVIDER':
-      Ioc._extendProvider(namespace)
-      return Ioc._resolveProvider(namespace)
-    case 'AUTOLOAD':
-      return Ioc._autoLoad(namespace)
-    case 'ALIAS':
-      return Ioc.use(aliases[namespace])
-    default:
-      return requireStack(namespace)
-  }
-}
-
-/**
- * @description sets up aliases using an object
- * @method aliases
- * @param  {Object} hash
- * @return {void}
- * @public
- */
-Ioc.aliases = function (hash) {
-  _.each(hash, function (value, key) {
-    Ioc.alias(key, value)
-  })
-}
-
-/**
- * @description alias any namespace registered under
- * ioc container
- * @method alias
- * @param  {String} key
- * @param  {String} namespace
- * @return {void}
- * @public
- */
-Ioc.alias = function (key, namespace) {
-  log.verbose('%s has been aliased as %s', namespace, key)
-  emitter.emit('bind:alias', key, namespace)
-  aliases[key] = namespace
-}
-
-/**
- * make an instance of class by injecting
- * required dependencies.
- * @method make
- * @param {Object} Binding
- * @return {*}
- * @public
- */
-Ioc.make = function (Binding) {
-  const _bind = Function.prototype.bind
-  const type = Ioc._type(Binding)
-
-  /**
-   * if binding type is a provider or alias, we should simply
-   * return the binding from container and should not act
-   * smart
-   */
-  if (type === 'PROVIDER' || type === 'ALIAS' || type === 'FAKE') {
-    return Ioc.use(Binding)
   }
 
   /**
-   * if binding is autoload, than we should transform
-   * the binding value by requiring it
+   * Returns instance of an object if it is a valid
+   * ES6 class. Also injects the dependencies
+   * defined under static inject method.
+   *
+   * If `Item` is not a class, it will return the
+   * input back as output.
+   *
+   * @method _makeInstanceOf
+   * @private
+   *
+   * @param  {Mixed} Item
+   * @return {Mixed}
+   *
+   * @example
+   * ```
+   * class Foo {
+   *   static get inject () {
+   *     return ['App/Bar']
+   *   }
+   *
+   *   constructor (Bar) {
+   *     this.Bar = Bar
+   *   }
+   * }
+   *
+   * Ioc._makeInstanceOf(Foo)
+   * ```
    */
-  if (type === 'AUTOLOAD') {
-    Binding = Ioc.use(Binding)
+  _makeInstanceOf (Item) {
+    if (!isClass(Item) || Item.makePlain) {
+      return Item
+    }
+
+    const injections = (Item.inject || []).map((injection) => {
+      return this.make(injection)
+    })
+    return new Item(...injections)
   }
 
   /**
-   * if binding is a string and is not part of autoload directory
-   * we should try to require it and return output
+   * Requires a file just like node.js native require.
+   *
+   * @private
+   * @method _require
+   *
+   * @param {String} namespace
+   * @return {Mixed}
+   *
+   * @throws Error when unable to load the module
    */
-  if (type !== 'AUTOLOAD' && typeof (Binding) === 'string') {
-    return requireStack(Binding)
+  _require (namespace) {
+    if (namespace.startsWith('./') || namespace.startsWith('/')) {
+      /**
+       * Since _require method is first called by this module, we
+       * need to fetch the 2nd caller.
+       */
+      const callerPath = path.dirname(caller(2))
+      return requireStack(path.join(callerPath, namespace))
+    }
+
+    debug('falling back to native require for %s namespace', namespace)
+    return requireStack(namespace)
   }
 
   /**
-   * if binding is not a class or makePlain is defined as
-   * true, then we should return it's original value.
+   * Returns a cloned copy of registered bindings.
+   *
+   * @method getBindings
+   *
+   * @return {Object}
    */
-  if (!Ioc._isClass(Binding) || Binding.makePlain) {
-    return Binding
+  getBindings () {
+    return _.clone(this._bindings)
   }
 
   /**
-   * if binding is a valid class, make an instance
-   * of it by injecting dependencies
+   * Returns a cloned copy of registered aliases.
+   *
+   * @method getBindings
+   *
+   * @return {Object}
    */
-  log.verbose('making class %s', Binding.name)
-  const injections = Binding.inject || helpers.introspect(Binding.toString())
-  if (!injections || _.size(injections) === 0) {
-    return new Binding()
+  getAliases () {
+    return _.clone(this._aliases)
   }
 
-  const resolvedInjections = _.map(injections, function (injection) {
-    return Ioc.make(injection)
-  })
+  /**
+   * Returns a cloned copy of registered autoloads
+   * directories and their namespaces.
+   *
+   * @method getAutoloads
+   *
+   * @return {Object}
+   */
+  getAutoloads () {
+    return _.clone(this._autoloads)
+  }
 
-  return new (_bind.apply(Binding, [null].concat(resolvedInjections)))()
+  /**
+   * Returns a cloned copy of managers.
+   *
+   * @method getManagers
+   *
+   * @return {Object}
+   */
+  getManagers () {
+    return _.clone(this._managers)
+  }
+
+  /**
+   * Returns a map of fakes
+   *
+   * @method getFakes
+   *
+   * @return {Map}
+   */
+  getFakes () {
+    return new Map(this._fakes)
+  }
+
+  /**
+   * Registers an alias for a namespace. It is okay
+   * if that namespace does not exists when alias
+   * is defined.
+   *
+   * @method alias
+   *
+   * @param  {String} namespace
+   * @param  {String} alias
+   *
+   * @example
+   * ```
+   * Ioc.alias('Adonis/Src/View', 'View')
+   * ```
+   */
+  alias (namespace, alias) {
+    debug('defining %s as an alias for %s namespace', alias, namespace)
+    this._aliases[alias] = namespace
+  }
+
+  /**
+   * Autoloads a given directory within the given namespace.
+   * Value of `pathTo` must be an absolute path, Also this
+   * method does not check if the path exists or not.
+   *
+   * @method autoload
+   *
+   * @param  {String} pathTo
+   * @param  {String} namespace
+   *
+   * @example
+   * ```
+   * Ioc.autoload(path.join(__dirname, './app'), 'App')
+   * ```
+   */
+  autoload (pathTo, namespace) {
+    this._autoloads[namespace] = pathTo
+  }
+
+  /**
+   * Binds a namespace to the Ioc container as a binding. Given
+   * closure is a factory method, called everytime the binding
+   * is resolved and return value of closure will be returned
+   * back.
+   *
+   * @method bind
+   *
+   * @param {String} namespace
+   * @param {Function} closure
+   * @throws InvalidArgumentException if closure is not a function
+   *
+   * @example
+   * ```
+   * Ioc.bind('App/Foo', (app) => {
+   *   const Config = app.use('Adonis/Src/Config')
+   *
+   *   class Foo {
+   *     constructor (Config) {
+   *     }
+   *   }
+   *
+   *   return new Foo(Config)
+   * })
+   * ```
+   */
+  bind (namespace, closure) {
+    if (typeof (closure) !== 'function') {
+      throw CE.InvalidArgumentException.invalidParameters('Ioc.bind expects 2nd parameter to be a closure')
+    }
+
+    debug('binding %s namespace to ioc container', namespace)
+
+    this._bindings[namespace] = {
+      closure,
+      singleton: false,
+      cachedValue: null
+    }
+  }
+
+  /**
+   * Similar to bind except it will bind the namespace as
+   * a singleton and will call the closure only once.
+   *
+   * @method singleton
+   *
+   * @param {String} namespace
+   * @param {Function} closure
+   * @throws InvalidArgumentException if closure is not a function
+   *
+   * @example
+   * ```
+   * Ioc.singleton('App/Foo', (app) => {
+   *   const Config = app.use('Adonis/Src/Config')
+   *
+   *   class Foo {
+   *     constructor (Config) {
+   *     }
+   *   }
+   *
+   *   return new Foo(Config)
+   * })
+   * ```
+   */
+  singleton (namespace, closure) {
+    if (typeof (closure) !== 'function') {
+      throw CE.InvalidArgumentException.invalidParameters('Ioc.singleton expects 2nd parameter to be a closure')
+    }
+
+    debug('binding %s namespace as singleton to ioc container', namespace)
+
+    this._bindings[namespace] = {
+      closure,
+      singleton: true,
+      cachedValue: null
+    }
+  }
+
+  /**
+   * Registers a manager for a binding. Managers are registered
+   * to tell Ioc container that binding can be extended by the
+   * outside world using `Ioc.extend` method.
+   *
+   * It is okay to register the manager before registering the
+   * actual binding.
+   *
+   * @method manager
+   *
+   * @param  {String} namespace
+   * @param  {Mixed} bindingInterface
+   * @throws {InvalidArgumentException} If bindingInterface does not have extend method.
+   *
+   * @example
+   * ```
+   * class Foo {
+   *   static extend (driver, implmentation) {
+   *     this.drivers[driver] = implementation
+   *   }
+   * }
+   *
+   * // Inside provider
+   * this.manager('App/Foo', Foo)
+   * ```
+   *
+   * @example
+   * ```
+   * Ioc.extend('App/Foo', 'my-driver', function (app) {
+   *   const Config = app.use('Adonis/Src/Config')
+   *   return new MyDriverClass(Config)
+   * })
+   * ```
+   */
+  manager (namespace, bindingInterface) {
+    if (typeof (bindingInterface.extend) !== 'function') {
+      throw CE.InvalidArgumentException.invalidIocManager(namespace)
+    }
+
+    debug('exposing %s namespace to be extended by outside world', namespace)
+    this._managers[namespace] = bindingInterface
+  }
+
+  /**
+   * Extends a binding by the calling the extend method
+   * on the registered manager.
+   *
+   * @method extend
+   *
+   * @param  {String}    namespace
+   * @param  {String}    key
+   * @param  {Function}  closure
+   * @param  {...Spread} [options]
+   *
+   * @throws {InvalidArgumentException} If binding is not supposed to be extended
+   * @throws {InvalidArgumentException} If closure is not a function
+   *
+   * @example
+   * ```
+   * Ioc.extend('Adonis/Src/Session', 'mongo', () => {
+   *   return new MongoDriver()
+   * })
+   * ```
+   */
+  extend (namespace, key, closure, ...options) {
+    if (!this._hasManager(namespace)) {
+      throw CE.InvalidArgumentException.cannotBeExtended(namespace)
+    }
+
+    if (typeof (closure) !== 'function') {
+      throw CE.InvalidArgumentException.invalidParameters('Ioc.extend expects 3rd parameter to be a closure')
+    }
+
+    const resolvedValue = closure(this)
+    debug('extending %s namespace %j', namespace, { key, options: [...options] })
+    this._managers[namespace].extend(key, resolvedValue, ...options)
+  }
+
+  /**
+   * Registers a fake for a namespace, quite helpful
+   * when writing tests.
+   *
+   * @method fake
+   *
+   * @param  {String} namespace
+   * @param  {Function} closure
+   *
+   * @example
+   * ```
+   * Ioc.fake('Adonis/Src/Lucid', function () {
+   *   return FakeModel
+   * })
+   *
+   * // Restore after testing
+   * Ioc.restore('Adonis/Src/Lucid')
+   * ```
+   */
+  fake (namespace, closure) {
+    if (typeof (closure) !== 'function') {
+      throw CE.InvalidArgumentException.invalidParameters('Ioc.fake expects 2nd parameter to be a closure')
+    }
+
+    debug('creating fake for %s namespace', namespace)
+    this._fakes.set(namespace, closure)
+  }
+
+  /**
+   * Restores fake(s).
+   *
+   * @method restore
+   *
+   * @param  {...Spread|Array} namespaces
+   *
+   * @example
+   * ```
+   * Ioc.restore('Adonis/Src/Lucid')
+   * Ioc.restore('Adonis/Src/Lucid', 'Adonis/Src/Config')
+   * Ioc.restore() // restore all
+   * ```
+   */
+  restore (...namespaces) {
+    namespaces = namespaces[0] instanceof Array ? namespaces[0] : namespaces
+    if (!namespaces.length) {
+      this._fakes.clear()
+    }
+    namespaces.forEach((namespace) => this._fakes.delete(namespace))
+  }
+
+  /**
+   * Attempts to resolve a namespace in following order.
+   *
+   * 1. Look for a registered binding.
+   * 2. Look for an alias, if found: Repeat step 1 with alias namespace
+   * 3. Look for an autoload module path.
+   * 4. Fallback to native require method.
+   *
+   * @method use
+   *
+   * @param {String} namespace
+   * @return {Mixed} resolved value
+   *
+   * @example
+   * ```
+   *  Ioc.use('View') // via alias
+   *  Ioc.use('Adonis/Src/View') // via complete namespace
+   *  Ioc.use('App/Http/Controllers/UsersController') // autoloaded namespace
+   *  Ioc.use('lodash') // node module
+   * ```
+   */
+  use (namespace) {
+    if (this._hasFake(namespace)) {
+      return this._resolveFake(namespace)
+    }
+
+    if (this._isBinding(namespace)) {
+      return this._resolveBinding(namespace)
+    }
+
+    if (this._isAlias(namespace)) {
+      return this.use(this._aliases[namespace])
+    }
+
+    if (this._isAutoloadedPath(namespace)) {
+      return this._resolveAutoloadedPath(namespace)
+    }
+
+    return this._require(namespace)
+  }
+
+  /**
+   * Works as same as the `use` method, but instead returns
+   * an instance of the class when resolved value is a
+   * ES6 class and not a registered binding. Bindings
+   * registered via `Ioc.bind` are supposed to
+   * return the final untouched value.
+   *
+   * Also you can pass a class object by reference to return
+   * a automatically resolved instance.
+   *
+   * @method make
+   *
+   * @param  {String} namespace
+   * @return {Mixed}
+   *
+   * @example
+   * ```
+   * class Foo {
+   *   static get inject () {
+   *     return ['App/Bar']
+   *   }
+   *
+   *   constructor (bar) {
+   *     this.bar = bar
+   *   }
+   * }
+   *
+   * const fooInstance = Ioc.make(Foo)
+   * ```
+   */
+  make (namespace) {
+    if (typeof (namespace) !== 'string') {
+      return this._makeInstanceOf(namespace)
+    }
+
+    if (this._hasFake(namespace)) {
+      return this._resolveFake(namespace)
+    }
+
+    if (this._isBinding(namespace)) {
+      return this._resolveBinding(namespace)
+    }
+
+    if (this._isAlias(namespace)) {
+      return this.make(this._aliases[namespace])
+    }
+
+    if (this._isAutoloadedPath(namespace)) {
+      return this._makeInstanceOf(this._resolveAutoloadedPath(namespace))
+    }
+
+    return this._require(namespace)
+  }
+
+  /**
+   * Same as `make` but instead returns the instance of the object
+   * with the check that a method exists on the resolved object.
+   * If that method does not exists it will throw an exception.
+   *
+   * It is helpful for scanerios like Route controller binding.
+   *
+   * @method makeFunc
+   *
+   * @param  {String} pattern
+   * @return {Object}
+   *
+   * @throws {InvalidArgumentException} If pattern is not a string with dot notation.
+   * @throws {RuntimeException} If method on the given namespace is missing.
+   *
+   * @example
+   * ```
+   * Ioc.makeFunc('App/Http/Controllers/UsersController.index')
+   * // returns
+   * { instance: UsersControllerInstance, method: index }
+   * // usage
+   * instance[method].apply(instance, [...args])
+   * ```
+   */
+  makeFunc (pattern) {
+    const [namespace, method] = pattern.split('.')
+    if (!namespace || !method) {
+      throw CE.InvalidArgumentException.invalidMakeString(pattern)
+    }
+
+    const instance = this.make(namespace)
+
+    if (!instance[method]) {
+      throw CE.RuntimeException.missingMethod(namespace, method)
+    }
+    return {instance, method}
+  }
 }
 
-/**
- * @description it makes class instance using its namespace
- * and return requested method.
- * @method makeFunc
- * @param  {String} Binding
- * @return {Object}
- * @public
- */
-Ioc.makeFunc = function (Binding) {
-  const parts = Binding.split('.')
-  if (parts.length !== 2) {
-    throw CE.InvalidArgumentException.invalidMakeString(Binding)
-  }
-
-  const instance = Ioc.make(parts[0])
-  const method = parts[1]
-
-  if (!instance[method]) {
-    throw CE.RuntimeException.missingMethod(parts[0], method)
-  }
-  return {instance, method}
-}
-
-/**
- * registers fake for a given namespace
- *
- * @param  {String} namespace
- * @param  {Function} closure
- *
- * @public
- */
-Ioc.fake = function (namespace, closure) {
-  if (typeof (closure) !== 'function') {
-    throw CE.InvalidArgumentException.invalidParameters('Ioc.fake expects 2nd parameter to be a closure')
-  }
-  namespace = namespace.trim()
-  fakes[namespace] = {closure}
-}
-
-/**
- * adding methods of the event emitter
- */
-Ioc.on = emitter.on.bind(emitter)
-Ioc.once = emitter.once.bind(emitter)
-Ioc.listenerCount = emitter.listenerCount.bind(emitter)
-Ioc.removeListener = emitter.removeListener.bind(emitter)
-Ioc.removeAllListeners = emitter.removeAllListeners.bind(emitter)
-Ioc.emit = emitter.emit.bind(emitter)
+module.exports = Ioc

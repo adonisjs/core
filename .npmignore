@@ -5,6 +5,4 @@ npm-debug.log
 test
 .travis.yml
 .editorconfig
-.jshintrc
-jshint.json
-.hound.yml
+examples

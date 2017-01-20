@@ -1,35 +1,46 @@
 {
   "name": "adonis-fold",
-  "version": "3.0.3",
+  "version": "4.0.0-alpha",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "istanbul cover _mocha test/unit --bail",
-    "lint": "standard src/**/*.js test/**/*.spec.js"
+    "test:local": "npm run lint && node bin/tasks test:local",
+    "test:win": "npm run lint && node bin/tasks test:win",
+    "coverage": "npm run lint && node bin/tasks coverage",
+    "test": "npm run lint && node bin/tasks test",
+    "lint": "standard"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "before",
+      "use",
+      "make"
+    ],
+    "ignore": [
+      "**/out/"
+    ]
   },
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^3.3.0",
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.5",
-    "istanbul": "^0.3.22",
-    "mocha": "^3.0.1",
-    "mocha-lcov-reporter": "^1.0.0",
-    "standard": "^7.1.2"
+    "istanbul": "^0.4.5",
+    "japa": "^1.0.0",
+    "require-all": "^2.1.0",
+    "shelljs": "^0.7.6",
+    "standard": "^8.6.0",
+    "ygor": "^4.0.1"
   },
   "dependencies": {
-    "cat-log": "^1.0.0",
-    "co": "^4.6.0",
-    "co-parallel": "^1.0.0",
-    "coveralls": "^2.11.12",
-    "dwell": "^1.0.0",
-    "eventemitter2": "^2.1.0",
-    "lodash": "^3.10.1",
+    "caller": "^1.0.1",
+    "debug": "^2.6.0",
+    "lodash": "^4.17.4",
     "node-exceptions": "^1.0.3",
     "require-stack": "^1.0.1"
   },

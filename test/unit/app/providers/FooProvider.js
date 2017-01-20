@@ -1,19 +1,15 @@
 'use strict'
 
-const ServiceProvider = require('../../../../').ServiceProvider
+const ServiceProvider = require('../../../../src/ServiceProvider')
 
-class Foo {
-  constructor () {
-    this.foo = 'bar'
-  }
-}
+class Provider extends ServiceProvider {
 
-class FooProvider extends ServiceProvider {
-  * register () {
-    this.app.bind('Providers/Foo', function () {
-      return new Foo()
+  register () {
+    this.app.bind('App/Foo', function () {
+      return 'foo'
     })
   }
+
 }
 
-module.exports = FooProvider
+module.exports = Provider

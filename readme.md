@@ -1,43 +1,121 @@
-# Fold
+# AdonisJs Fold
+> Dependency manager and IoC container for Node.js :rocket:
 
-[![Gitter](https://img.shields.io/badge/+%20GITTER-JOIN%20CHAT%20%E2%86%92-1DCE73.svg?style=flat-square)](https://gitter.im/adonisjs/adonis-framework)
-[![Trello](https://img.shields.io/badge/TRELLO-%E2%86%92-89609E.svg?style=flat-square)](https://trello.com/b/yzpqCgdl/adonis-for-humans)
-[![Version](https://img.shields.io/npm/v/adonis-fold.svg?style=flat-square)](https://www.npmjs.com/package/adonis-fold)
-[![Build Status](https://img.shields.io/travis/poppinss/adonis-fold/master.svg?style=flat-square)](https://travis-ci.org/poppinss/adonis-fold)
-[![Coverage Status](https://img.shields.io/coveralls/poppinss/adonis-fold/master.svg?style=flat-square)](https://coveralls.io/github/poppinss/adonis-fold?branch=master)
-[![Downloads](https://img.shields.io/npm/dt/adonis-fold.svg?style=flat-square)](https://www.npmjs.com/package/adonis-fold)
-[![License](https://img.shields.io/npm/l/adonis-fold.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Downloads Stats][npm-downloads]][npm-url]
 
-> :pray: This repository contains the IOC container for adonis framework. It can be used standalone too.
+![](https://s3-us-west-1.amazonaws.com/patreon.user/s6hrkQF2thEpkT1A3vigzCONJuVtaUzHpIyT3KaHbvENxseNcETlvOuVUO5ZzVHl_large_2.png)
 
-Fold is an IOC container for Node applications to make dependency injection simpler and powerful. It has following features and used in [adonis framework](](http://adonisjs.com))
+[![Gitter Channel][gitter-image]][gitter-url]
+[![Trello][trello-image]][trello-url]
+[![Patreon][patreon-image]][patreon-url]
 
-1. Service Provider
-2. Service Manager
-3. Namespaces/Auto Loading
+Fold is a dependency manager for Node.js used by AdonisJs framework. Below is the list of features.
 
-IOC container enables solid Dependency Injection through out your application and makes it easier for you to test your modules by mocking dependencies with ease.
+## Features
 
-You can learn more about AdonisJS and all of its awesomeness on http://adonisjs.com :evergreen_tree:
+1. Support for binding dependencies with unique namespaces.
+2. Autoloading multiple directories under a namespace.
+3. Defining aliases for bindings.
+4. Automatic resolution of namespaces and transparent dependency injection.
+5. Support for `fakes` when writing tests.
+6. Support for service providers, to bind dependencies in structured way.
 
-## Table of Contents
 
-* [Team Members](#team-members)
-* [Requirements](#requirements)
-* [Contribution Guidelines](#contribution-guidelines)
+## Installation
+You can install the package from npm.
+```bash
+npm i --save adonis-fold
+```
 
-## <a name="team-members"></a>Team Members
+## Basic Usage
 
-* Harminder Virk ([Caffiene Blogging](http://amanvirk.me/)) <virk.officials@gmail.com>
+```js
+const fold = require('adonis-fold')
+const Ioc = fold.Ioc
 
-## <a name="requirements"></a>Requirements
+class Foo {
+}
 
-AdonisJS is build on the top of ES2015, which makes the code more enjoyable and cleaner to read. It doesn't make use of any transpiler and depends upon Core V8 implemented features.
+Ioc.bind('App/Foo', function () {
+  return new Foo()
+})
 
-For these reasons, AdonisJS require you to use `node >= 4.0` and `npm >= 3.0`.
+const foo = Ioc.use('App/Foo')
+// return Foo class instance
+```
 
-## <a name="contribution-guidelines"></a>Contribution Guidelines
+Simple enough! But we do not see the real power of the Ioc container, since we can instantiate the class manually too. Right? NO
 
-In favor of active development we accept contributions for everyone. You can contribute by submitting a bug, creating pull requests or even improving documentation.
+Here are the following benefits.
 
-You can find a complete guide to be followed strictly before submitting your pull requests in the [Official Documentation](http://adonisjs.com/docs/2.0/contributing).
+1. The author of the `Foo` class can decide how to instantiate the class and return a properly configured instance, instead of leaving it to the consumer.
+
+2. While you are making use of the Ioc container, one binding can be dependent upon others, without much work. For example
+
+```js
+
+class Foo {
+  constructor (config) {
+    //
+  }
+}
+
+Ioc.bind('App/Foo', function (app) {
+  const config = app.use('App/Config')
+  return new Foo(config)
+})
+
+const foo = Ioc.use('App/Foo')
+```
+
+This time, we injected `App/Config` behind the scenes and the consumer of the `Foo` class won't have to worry about passing the config manually.
+
+## Moving Forward
+Checkout the [official documentation](http://adonisjs.com/docs/ioc-container) at the AdonisJs website for more info.
+
+## Tests
+Tests are written using `mocha` and `chaijs`. Run the following commands to run tests.
+
+```bash
+npm run test
+npm run test -- --coverage
+npm run test -- --lcov
+```
+
+1. `--coverage` will output the coverage to the `coverage` directory.
+
+2. `--lcov` will output the coverage to Coveralls.
+
+## Release History
+
+Checkout [CHANGELOG.md](CHANGELOG.md) file for release history.
+
+## Meta
+
+AdonisJs – [@adonisframework](https://twitter.com/adonisframework) – virk@adonisjs.com
+
+Checkout [LICENSE.txt](LICENSE.txt) for license information
+
+Harminder Virk (Aman) - [https://github.com/thetutlage](https://github.com/thetutlage)
+
+
+[npm-image]: https://img.shields.io/npm/v/adonis-fold.svg?style=flat-square
+
+[npm-url]: https://npmjs.org/package/adonis-fold
+
+[npm-downloads]: https://img.shields.io/npm/dm/adonis-fold.svg?style=flat-square
+
+[travis-image]: https://img.shields.io/travis/poppinss/adonis-fold/master.svg?style=flat-square
+
+[travis-url]: https://travis-ci.org/poppinss/adonis-fold
+
+[gitter-url]: https://gitter.im/adonisjs/adonis-framework
+[gitter-image]: https://img.shields.io/badge/gitter-join%20us-1DCE73.svg?style=flat-square
+
+[trello-url]: https://trello.com/b/yzpqCgdl/adonis-for-humans
+[trello-image]: https://img.shields.io/badge/trello-roadmap-89609E.svg?style=flat-square
+
+[patreon-url]: https://www.patreon.com/adonisframework
+[patreon-image]: https://img.shields.io/badge/patreon-support%20AdonisJs-brightgreen.svg?style=flat-square

@@ -60,6 +60,18 @@ class InvalidArgumentException extends NE.InvalidArgumentException {
   static invalidMakeString (input, code) {
     return new this(`Ioc.makeFunc expects a string in module.method format instead received ${input}`, code || this.defaultErrorCode, 'E_INVALID_MAKE_STRING')
   }
+
+  /**
+   * This exception is raised when trying to extend a
+   * binding which does not have a manager to be
+   * used for extending the binding
+   * @param  {String} namespace
+   * @param  {Number} [code=500]
+   * @return {Object}
+   */
+  static cannotBeExtended (namespace, code) {
+    return new this(`${namespace} cannot be extended, since their is no public interface to extend`, code || this.defaultErrorCode, 'E_CANNOT_EXTEND_BINDING')
+  }
 }
 
 class RuntimeException extends NE.RuntimeException {
@@ -86,6 +98,19 @@ class RuntimeException extends NE.RuntimeException {
    */
   static missingMethod (parent, method, code) {
     return new this(`Method ${method} missing on ${parent}`, code || this.defaultErrorCode, 'E_UNDEFINED_METHOD')
+  }
+
+  /**
+   * This exception is raised when a service provider is not
+   * extended by the base service provider class.
+   *
+   * @param {String} name
+   * @param {Number} [code=500]
+   *
+   * @return {Object}
+   */
+  static invalidServiceProvider (name, code) {
+    return new this(`${name} must extend base service provider class`, code || this.defaultErrorCode, 'E_INVALID_SERVICE_PROVIDER')
   }
 }
 
