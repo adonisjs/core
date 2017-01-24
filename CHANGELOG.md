@@ -1,3 +1,21 @@
+<a name="3.0.8"></a>
+## [3.0.8](https://github.com/adonisjs/adonis-framework/compare/v3.0.7...v3.0.8) (2017-01-24)
+
+
+### Bug Fixes
+
+* make code consistent with node 7.0 ([58b22e9](https://github.com/adonisjs/adonis-framework/commit/58b22e9))
+* **package:** update dotenv to version 3.0.0 ([#417](https://github.com/adonisjs/adonis-framework/issues/417)) ([4f4af56](https://github.com/adonisjs/adonis-framework/commit/4f4af56))
+* **routing:** allow to prefix a group without a starting slash ([#416](https://github.com/adonisjs/adonis-framework/issues/416)) ([391b149](https://github.com/adonisjs/adonis-framework/commit/391b149))
+* **view:** fix label default attribute, use for instead of name ([#406](https://github.com/adonisjs/adonis-framework/issues/406)) ([c0fc707](https://github.com/adonisjs/adonis-framework/commit/c0fc707))
+
+
+### Features
+
+* **file:** add delete method to delete file ([24825f0](https://github.com/adonisjs/adonis-framework/commit/24825f0))
+
+
+
 <a name="3.0.7"></a>
 ## [3.0.7](https://github.com/adonisjs/adonis-framework/compare/v3.0.6...v3.0.7) (2016-12-01)
 
