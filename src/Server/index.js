@@ -105,7 +105,6 @@ class Server {
    */
   _handleError (error, request, response) {
     this._normalizeError(error)
-    Error.captureStackTrace(error)
     if (this.event.wildcard() && this.event.hasListeners(['Http', 'error', '*'])) {
       this.event.fire(['Http', 'error', error.status], error, request, response)
       return
@@ -115,7 +114,7 @@ class Server {
       return
     }
     this.log.error(error.stack)
-    response.status(error.status).send(error.stack)
+    response.status(error.status).send(`${error.name}: ${error.message}`)
   }
 
   /**
@@ -129,7 +128,6 @@ class Server {
   _normalizeError (error) {
     error.status = error.status || 500
     error.message = error.message || 'Internal server error'
-    error.stack = error.stack || error.message
   }
 
   /**
