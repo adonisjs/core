@@ -17,10 +17,10 @@ module.exports = function (env, Route) {
   env.addGlobal('linkTo', function (route, text, options, target, html) {
     const url = env.filters.route(route, options)
     target = target ? `target="${target}"` : ''
-    var props = ""
-    for (var prop_key in html) {
-      const new_prop = (prop_key + "=" + "\"" + html[prop_key]  + "\"" )
-      props = (props + new_prop + " ")
+    var props = ''
+    for (var propKey in html) {
+      const newProp = (propKey + '=' + '"' + html[propKey] + '"')
+      props = (props + newProp + ' ')
     }
     return env.filters.safe(`<a href="${url}" ${target} ${props}> ${text} </a>`)
   })
@@ -28,10 +28,10 @@ module.exports = function (env, Route) {
   env.addGlobal('linkToAction', function (action, text, options, target, html) {
     const url = env.filters.action(action, options)
     target = target ? `target="${target}"` : ''
-    var props = ""
-    for (var prop_key in html) {
-      const new_prop = (prop_key + "=" + "\"" + html[prop_key]  + "\"" )
-      props = (props + new_prop + " ")
+    var props = ''
+    for (var propKey in html) {
+      const newProp = (propKey + '=' + '"' + html[propKey] + '"')
+      props = (props + newProp + ' ')
     }
     return env.filters.safe(`<a href="${url}" ${target} ${props}> ${text} </a>`)
   })
