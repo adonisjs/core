@@ -43,7 +43,7 @@
     "shelljs": "^0.7.6",
     "sinon": "^1.17.7",
     "standard": "^8.6.0",
-    "supertest": "^2.0.1",
+    "supertest": "^3.0.0",
     "test-console": "^1.0.0",
     "zombie": "^5.0.5"
   },
