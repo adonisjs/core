@@ -10,7 +10,7 @@
 */
 
 const path = require('path')
-const fs = require('fs')
+const fs = require('co-fs-extra')
 const bytes = require('bytes')
 const CE = require('../Exceptions')
 
@@ -126,21 +126,18 @@ class File {
    * @param   {String} fileName
    * @param   {String} completePath
    *
-   * @return  {Promise}
-   *
    * @private
    */
-  _validateAndMove (fileName, completePath) {
-    return new Promise((resolve) => {
-      if (!this.validate()) {
-        resolve()
-        return
-      }
-      fs.rename(this.tmpPath(), completePath, (error) => {
-        error ? this._setError(error) : this._setUploadedFile(fileName, completePath)
-        resolve()
-      })
-    })
+  * _validateAndMove (fileName, completePath) {
+    if (!this.validate()) {
+      return
+    }
+    try {
+      yield fs.move(this.tmpPath(), completePath)
+      this._setUploadedFile(fileName, completePath)
+    } catch (error) {
+      this._setError(error)
+    }
   }
 
   /**

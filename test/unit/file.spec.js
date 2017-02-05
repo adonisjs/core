@@ -36,9 +36,9 @@ describe('File', function () {
   })
 
   it('should throw an error when unable to move file', function * () {
-    yield this.file.move('./boom')
+    yield this.file.move('/etc/boom')
     expect(this.file.moved()).to.equal(false)
-    expect(this.file.errors().message).to.match(/no such file or directory/)
+    expect(this.file.errors().message).to.match(/EACCES: permission denied/)
   })
 
   it('should move file to a given path with its original name', function * () {
