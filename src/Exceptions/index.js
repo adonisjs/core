@@ -1,5 +1,12 @@
 'use strict'
 
+/**
+ * adonis-framework
+ *
+ * @license MIT
+ * @copyright AdonisJs - Harminder Virk <virk@adonisjs.com>
+ */
+
 const NE = require('node-exceptions')
 
 class RuntimeException extends NE.RuntimeException {

@@ -2,9 +2,10 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
-*/
+ *
+ * @license MIT
+ * @copyright AdonisJs - Harminder Virk <virk@adonisjs.com>
+ */
 
 const chai = require('chai')
 const http = require('http')

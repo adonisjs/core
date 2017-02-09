@@ -2,9 +2,10 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
-*/
+ *
+ * @license MIT
+ * @copyright AdonisJs - Harminder Virk <virk@adonisjs.com>
+ */
 
 const Browser = require('zombie')
 const Route = require('../../src/Route')
