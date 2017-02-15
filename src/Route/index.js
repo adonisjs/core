@@ -371,7 +371,7 @@ Route.group = function (name, cb) {
   cb()
   groupChain.push(name)
   const groupRoutes = _.filter(routes, function (route) {
-    return groupChain.includes(route.group)
+    return _.includes(groupChain, route.group)
   })
   return new Group(groupRoutes)
 }
