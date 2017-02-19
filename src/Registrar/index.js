@@ -23,6 +23,7 @@ class Registrar {
    * Listen for registrar specific events
    *
    * @method on
+   *
    * @param {string} name
    * @param {function} callback
    */
@@ -35,6 +36,7 @@ class Registrar {
    * just for one time
    *
    * @method once
+   *
    * @param {string} name
    * @param {function} callback
    */
@@ -46,6 +48,7 @@ class Registrar {
    * Remove a listener
    *
    * @method removeListener
+   *
    * @param {string} name
    * @param {function} callback
    */
@@ -79,8 +82,11 @@ class Registrar {
    * the files in the process.
    *
    * @private
+   *
    * @method _getProvidersInstance
+   *
    * @param {Array} arrayOfProviders
+   *
    * @return {Array}
    */
   _getProvidersInstance (arrayOfProviders) {
@@ -102,7 +108,9 @@ class Registrar {
    * method will be skipped.
    *
    * @private
+   *
    * @method _registerProviders
+   *
    * @param {Array} providers
    */
   _registerProviders (providers) {
@@ -117,8 +125,11 @@ class Registrar {
    * skipped.
    *
    * @private
+   *
    * @method _bootProviders
+   *
    * @param {Array} providers
+   *
    * @return {Promise}
    */
   _bootProviders (providers) {
@@ -133,6 +144,9 @@ class Registrar {
    * also emit events after completing each step.
    *
    * @method register
+   *
+   * @async
+   *
    * @param {Array} arrayOfProviders
    */
   async register (arrayOfProviders) {

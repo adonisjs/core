@@ -336,7 +336,7 @@ class Ioc {
   }
 
   /**
-   * Returns a cloned copy of registered autoloads
+   * Returns a cloned copy of registered autoloaded
    * directories and their namespaces.
    *
    * @method getAutoloads
@@ -573,6 +573,8 @@ class Ioc {
    * @param  {String} namespace
    * @param  {Function} closure
    *
+   * @throws {InvalidArgumentException} If closure is not a function
+   *
    * @example
    * ```
    * Ioc.fake('Adonis/Src/Lucid', function () {
@@ -609,18 +611,21 @@ class Ioc {
   restore (...namespaces) {
     namespaces = namespaces[0] instanceof Array ? namespaces[0] : namespaces
     if (!namespaces.length) {
+      debug('restoring all fakes')
       this._fakes.clear()
     }
+    debug('restoring %d fakes', namespaces)
     namespaces.forEach((namespace) => this._fakes.delete(namespace))
   }
 
   /**
    * Attempts to resolve a namespace in following order.
    *
-   * 1. Look for a registered binding.
-   * 2. Look for an alias, if found: Repeat step 1 with alias namespace
-   * 3. Look for an autoload module path.
-   * 4. Fallback to native require method.
+   * 1. Look for a registered fake.
+   * 2. Look for a registered binding.
+   * 3. Look for an alias, if found: Repeat step 1 with alias namespace.
+   * 4. Look for an autoload module path.
+   * 5. Fallback to native require method.
    *
    * @method use
    *
@@ -659,8 +664,8 @@ class Ioc {
    * Works as same as the `use` method, but instead returns
    * an instance of the class when resolved value is a
    * ES6 class and not a registered binding. Bindings
-   * registered via `Ioc.bind` are supposed to
-   * return the final untouched value.
+   * registered via `Ioc.bind` are themselves
+   * supposed to return the final value.
    *
    * Also you can pass a class object by reference to return
    * a automatically resolved instance.
