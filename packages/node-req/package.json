@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "pretest": "npm run lint",
-    "test": "node test/request.spec.js",
-    "coverage": "istanbul cover test/request.spec.js",
+    "test": "node --harmony-async-await test/request.spec.js",
+    "coverage": "node --harmony-async-await ./node_modules/.bin/istanbul cover test/request.spec.js && istanbul-coveralls",
     "lint": "standard"
   },
   "keywords": [
@@ -21,6 +21,7 @@
     "coveralls": "^2.11.16",
     "formidable": "^1.1.1",
     "istanbul": "^1.1.0-alpha.1",
+    "istanbul-coveralls": "^1.0.3",
     "japa": "^1.0.1",
     "pem": "^1.9.4",
     "standard": "^8.6.0",
