@@ -4,9 +4,9 @@
   "description": "I/O parser for nodejs http request",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "npm run lint && istanbul cover _mocha test --bail",
-    "lint": "standard src/**/*.js test/*.js"
+    "pretest": "npm run lint",
+    "test": "node test/request.spec.js",
+    "lint": "standard"
   },
   "keywords": [
     "node-req",
@@ -17,26 +17,21 @@
   "author": "amanvirk",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^3.3.0",
-    "co": "^4.6.0",
-    "co-mocha": "^1.1.2",
-    "co-supertest": "0.0.10",
-    "coveralls": "^2.11.4",
-    "formidable": "^1.0.17",
-    "istanbul": "^0.3.22",
-    "mocha": "^2.3.3",
-    "mocha-lcov-reporter": "^1.0.0",
-    "pem": "^1.8.1",
-    "standard": "^5.4.1",
-    "supertest": "^1.1.0"
+    "coveralls": "^2.11.16",
+    "formidable": "^1.1.1",
+    "istanbul": "^0.4.5",
+    "japa": "^1.0.1",
+    "pem": "^1.9.4",
+    "standard": "^8.6.0",
+    "supertest": "^3.0.0"
   },
   "dependencies": {
-    "accepts": "^1.3.0",
-    "fresh": "^0.3.0",
-    "parseurl": "^1.3.0",
-    "proxy-addr": "^1.0.8",
-    "qs": "^5.2.0",
-    "type-is": "^1.6.9"
+    "accepts": "^1.3.3",
+    "fresh": "^0.5.0",
+    "parseurl": "^1.3.1",
+    "proxy-addr": "^1.1.3",
+    "qs": "^6.3.1",
+    "type-is": "^1.6.14"
   },
   "directories": {
     "test": "test"

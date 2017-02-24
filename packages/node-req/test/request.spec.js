@@ -1,24 +1,40 @@
 'use strict'
 
-/**
+/*
  * node-req
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
-/* global it, describe */
-const Request = require('../')
-const supertest = require('co-supertest')
+const supertest = require('supertest')
 const http = require('http')
-const chai = require('chai')
 const pem = require('pem')
 const https = require('https')
-const expect = chai.expect
+const test = require('japa')
+const Request = require('../')
 
-require('co-mocha')
+test.group('Http Request', () => {
+  test('should parse http request to return all query string parameters', (assert, done) => {
+    assert.plan(1)
+    const server = http.createServer((req, res) => {
+      const query = Request.get(req)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify(query))
+      res.end()
+    })
 
-describe('Http Request', function () {
-  it('should parse http request to return all query string parameters', function * () {
+    supertest(server).get('/?name=foo').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body, {name: 'foo'})
+      done()
+    })
+  })
+
+  test('should return an empty object when there is no query string', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const query = Request.get(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -26,23 +42,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/?name=foo').expect(200).end()
-    expect(res.body).deep.equal({name: 'foo'})
-  })
-
-  it('should return an empty object when there is no query string', function * () {
-    const server = http.createServer(function (req, res) {
-      const query = Request.get(req)
-      res.writeHead(200, {'content-type': 'application/json'})
-      res.write(JSON.stringify(query))
-      res.end()
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body, {})
+      done()
     })
-
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body).deep.equal({})
   })
 
-  it('should return request http verb', function * () {
+  test('should return request http verb', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const method = Request.method(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -50,11 +58,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body).deep.equal({method: 'GET'})
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body, {method: 'GET'})
+      done()
+    })
   })
 
-  it('should return request headers', function * () {
+  test('should return request headers', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const headers = Request.headers(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -62,11 +74,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('time', 'now').expect(200).end()
-    expect(res.body.time).to.equal('now')
+    supertest(server).get('/').set('time', 'now').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.time, 'now')
+      done()
+    })
   })
 
-  it('should return request referrer header', function * () {
+  test('should return request referrer header', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const referrer = Request.header(req, 'Referrer')
       res.writeHead(200, {'content-type': 'application/json'})
@@ -74,11 +90,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Referrer', '/').expect(200).end()
-    expect(res.body.referrer).to.equal('/')
+    supertest(server).get('/').set('Referrer', '/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.referrer, '/')
+      done()
+    })
   })
 
-  it('should return request referrer header when request referrer is using the alternate name', function * () {
+  test('should return request referrer header when request referrer is using the alternate name', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const referrer = Request.header(req, 'Referrer')
       res.writeHead(200, {'content-type': 'application/json'})
@@ -86,11 +106,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Referer', '/').expect(200).end()
-    expect(res.body.referrer).to.equal('/')
+    supertest(server).get('/').set('Referer', '/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.referrer, '/')
+      done()
+    })
   })
 
-  it('should return request referrer header when parameter key is using the alternate name', function * () {
+  test('should return request referrer header when parameter key is using the alternate name', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const referrer = Request.header(req, 'Referer')
       res.writeHead(200, {'content-type': 'application/json'})
@@ -98,11 +122,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Referrer', '/foo').expect(200).end()
-    expect(res.body.referrer).to.equal('/foo')
+    supertest(server).get('/').set('Referrer', '/foo').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.referrer, '/foo')
+      done()
+    })
   })
 
-  it('should return request single header by its key', function * () {
+  test('should return request single header by its key', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const time = Request.header(req, 'time')
       res.writeHead(200, {'content-type': 'application/json'})
@@ -110,11 +138,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('time', 'now').expect(200).end()
-    expect(res.body.time).to.equal('now')
+    supertest(server).get('/').set('time', 'now').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.time, 'now')
+      done()
+    })
   })
 
-  it('should check for request freshness', function * () {
+  test('should check for request freshness', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const fresh = Request.fresh(req, res)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -122,11 +154,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('if-none-match', '*').expect(200).end()
-    expect(res.body.fresh).to.equal(true)
+    supertest(server).get('/').set('if-none-match', '*').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.fresh, true)
+      done()
+    })
   })
 
-  it('should only check freshness for GET and HEAD requests', function * () {
+  test('should only check freshness for GET and HEAD requests', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const fresh = Request.fresh(req, res)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -134,11 +170,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).post('/').set('if-none-match', '*').expect(200).end()
-    expect(res.body.fresh).to.equal(false)
+    supertest(server).post('/').set('if-none-match', '*').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.fresh, false)
+      done()
+    })
   })
 
-  it('should only check freshness if response status is one of the rfc2616 14.26 defined status', function * () {
+  test('should only check freshness if response status is one of the rfc2616 14.26 defined status', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       res.statusCode = 500
       const fresh = Request.fresh(req, res)
@@ -147,10 +187,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('if-none-match', '*').expect(200).end()
-    expect(res.body.fresh).to.equal(false)
+    supertest(server).get('/').set('if-none-match', '*').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.fresh, false)
+      done()
+    })
   })
-  it('should tell whether request is stale or not', function * () {
+
+  test('should tell whether request is stale or not', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const stale = Request.stale(req, res)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -158,10 +203,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('if-none-match', '*').expect(200).end()
-    expect(res.body.stale).to.equal(false)
+    supertest(server).get('/').set('if-none-match', '*').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.stale, false)
+      done()
+    })
   })
-  it('should return request ip address', function * () {
+
+  test('should return request ip address', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const ip = Request.ip(req, function (addr) {
         return true
@@ -171,21 +222,33 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.ip).to.match(/127\.0\.0\.1/)
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.match(res.body.ip, /127\.0\.0\.1/)
+      done()
+    })
   })
-  it('should return all request ip addresses', function * () {
+
+  test('should return all request ip addresses', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const ips = Request.ips(req, true)
       res.writeHead(200, {'content-type': 'application/json'})
       res.write(JSON.stringify({ips}))
       res.end()
     })
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.ips).deep.equal([])
+
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.ips, [])
+      done()
+    })
   })
 
-  it('should request protocol', function * () {
+  test('should request protocol', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const protocol = Request.protocol(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -193,11 +256,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.protocol).to.equal('http')
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.protocol, 'http')
+      done()
+    })
   })
 
-  it('should request X-Forwarded-Proto when trust proxy is enabled', function * () {
+  test('should request X-Forwarded-Proto when trust proxy is enabled', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const protocol = Request.protocol(req, true)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -205,11 +273,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('X-Forwarded-Proto', 'https').expect(200).end()
-    expect(res.body.protocol).to.equal('https')
+    supertest(server).get('/').set('X-Forwarded-Proto', 'https').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.protocol, 'https')
+      done()
+    })
   })
 
-  it('should actual protocol when trust proxy is enabled but X-Forwarded-Proto is missing', function * () {
+  test('should actual protocol when trust proxy is enabled but X-Forwarded-Proto is missing', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const protocol = Request.protocol(req, true)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -217,11 +290,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.protocol).to.equal('http')
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.protocol, 'http')
+      done()
+    })
   })
 
-  it('should tell whether request is on https or not', function (done) {
+  test('should tell whether request is on https or not', (assert, done) => {
+    assert.plan(1)
+
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     pem.createCertificate({days: 1, selfSigned: true}, function (err, keys) {
       const server = https.createServer({key: keys.serviceKey, cert: keys.certificate}, function (req, res) {
@@ -235,29 +313,35 @@ describe('Http Request', function () {
         res.write(JSON.stringify({secure}))
         res.end()
       })
-      supertest(server).get('/').expect(200).end(function (err, res) {
-        if (err) {
-          done(err)
-          return
-        }
-        expect(res.body.secure).to.equal(true)
+
+      supertest(server).get('/').expect(200).end(function (error, res) {
+        if (error) return done(error)
+        assert.equal(res.body.secure, true)
         done()
       })
     })
   })
 
-  it('should not return www as subdomain for a given url', function * () {
+  test('should not return www as subdomain for a given url', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const subdomains = Request.subdomains(req, true)
       res.writeHead(200, {'content-type': 'application/json'})
       res.write(JSON.stringify({subdomains}))
       res.end()
     })
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.subdomains).deep.equal([])
+
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.subdomains, [])
+      done()
+    })
   })
 
-  it('should return subdomains and should not remove www if not the base subdomain', function * () {
+  test('should return subdomains and should not remove www if not the base subdomain', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       req.headers.host = 'virk.www.adonisjs.com'
       const subdomains = Request.subdomains(req, true)
@@ -265,11 +349,16 @@ describe('Http Request', function () {
       res.write(JSON.stringify({subdomains}))
       res.end()
     })
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.subdomains).deep.equal(['www', 'virk'])
+
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.subdomains, ['www', 'virk'])
+      done()
+    })
   })
 
-  it('should return subdomains for a given url and remove www if is the base subdomain', function * () {
+  test('should return subdomains for a given url and remove www if is the base subdomain', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       req.headers.host = 'www.virk.adonisjs.com'
       const subdomains = Request.subdomains(req, true)
@@ -277,11 +366,16 @@ describe('Http Request', function () {
       res.write(JSON.stringify({subdomains}))
       res.end()
     })
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.subdomains).deep.equal(['virk'])
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.subdomains, ['virk'])
+      done()
+    })
   })
 
-  it('should return empty array when hostname is an ip address', function * () {
+  test('should return empty array when hostname is an ip address', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       req.headers.host = '127.0.0.1'
       const subdomains = Request.subdomains(req, true)
@@ -289,11 +383,17 @@ describe('Http Request', function () {
       res.write(JSON.stringify({subdomains}))
       res.end()
     })
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.subdomains).deep.equal([])
+
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.subdomains, [])
+      done()
+    })
   })
 
-  it('should tell whether request is ajax or not', function * () {
+  test('should tell whether request is ajax or not', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const ajax = Request.ajax(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -301,10 +401,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('X-Requested-With', 'xmlhttprequest').expect(200).end()
-    expect(res.body.ajax).to.equal(true)
+    supertest(server).get('/').set('X-Requested-With', 'xmlhttprequest').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.ajax, true)
+      done()
+    })
   })
-  it('should return false when request does not X-Requested-With header', function * () {
+
+  test('should return false when request does not X-Requested-With header', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const ajax = Request.ajax(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -312,10 +418,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.ajax).to.equal(false)
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.ajax, false)
+      done()
+    })
   })
-  it('should tell whether request is pjax or not', function * () {
+
+  test('should tell whether request is pjax or not', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const pjax = Request.pjax(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -323,10 +434,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('X-Pjax', true).expect(200).end()
-    expect(res.body.pjax).to.equal(true)
+    supertest(server).get('/').set('X-Pjax', true).expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.pjax, true)
+      done()
+    })
   })
-  it('should return false when request does not have X-Pjax header', function * () {
+
+  test('should return false when request does not have X-Pjax header', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const pjax = Request.pjax(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -334,11 +451,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.pjax).to.equal(false)
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.pjax, false)
+      done()
+    })
   })
 
-  it('should return request hostname', function * () {
+  test('should return request hostname', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const hostname = Request.hostname(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -346,11 +468,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.hostname).to.equal('127.0.0.1')
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, '127.0.0.1')
+      done()
+    })
   })
 
-  it('should return request hostname from X-Forwarded-Host when trust proxy is defined as a position', function * () {
+  test('should return request hostname from X-Forwarded-Host when trust proxy is defined as a position', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const hostname = Request.hostname(req, 1)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -358,11 +485,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('X-Forwarded-Host', '10.0.0.1').expect(200).end()
-    expect(res.body.hostname).to.equal('10.0.0.1')
+    supertest(server).get('/').set('X-Forwarded-Host', '10.0.0.1').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, '10.0.0.1')
+      done()
+    })
   })
 
-  it('should return undefined when unable to get hostname', function * () {
+  test('should return undefined when unable to get hostname', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const hostname = Request.hostname(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -370,11 +502,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Host', '').expect(200).end()
-    expect(res.body.hostname).to.equal(undefined)
+    supertest(server).get('/').set('Host', '').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, undefined)
+      done()
+    })
   })
 
-  it('should return request hostname from X-Forwarded-Host when trust proxy is enabled', function * () {
+  test('should return request hostname from X-Forwarded-Host when trust proxy is enabled', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       req.headers['x-forwarded-host'] = 'amanvirk.me'
       const hostname = Request.hostname(req, true)
@@ -383,11 +520,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.hostname).to.equal('amanvirk.me')
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, 'amanvirk.me')
+      done()
+    })
   })
 
-  it('should return request hostname from X-Forwarded-Host when trust proxy is a function', function * () {
+  test('should return request hostname from X-Forwarded-Host when trust proxy is a function', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       req.headers['x-forwarded-host'] = 'amanvirk.me'
       const hostname = Request.hostname(req, function (addr) {
@@ -398,11 +540,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.hostname).to.equal('amanvirk.me')
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, 'amanvirk.me')
+      done()
+    })
   })
 
-  it('should return request connection remoteAddress when trust proxy is disabled', function * () {
+  test('should return request connection remoteAddress when trust proxy is disabled', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       req.headers['x-forwarded-host'] = 'amanvirk.me'
       const hostname = Request.hostname(req, false)
@@ -411,11 +558,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.hostname).to.equal('127.0.0.1')
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, '127.0.0.1')
+      done()
+    })
   })
 
-  it('should return request connection X-Forwarded-Host when trust proxy is loopback, since we are on localhost', function * () {
+  test('should return request connection X-Forwarded-Host when trust proxy is loopback, since we are on localhost', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       req.headers['x-forwarded-host'] = 'amanvirk.me'
       const hostname = Request.hostname(req, 'loopback')
@@ -424,11 +576,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.hostname).to.equal('amanvirk.me')
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, 'amanvirk.me')
+      done()
+    })
   })
 
-  it('should work with ipv6 hostnames', function * () {
+  test('should work with ipv6 hostnames', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const hostname = Request.hostname(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -436,11 +593,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Host', '[::1]').expect(200).end()
-    expect(res.body.hostname).to.equal('[::1]')
+    supertest(server).get('/').set('Host', '[::1]').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, '[::1]')
+      done()
+    })
   })
 
-  it('should work with ipv6 hostnames and port', function * () {
+  test('should work with ipv6 hostnames and port', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const hostname = Request.hostname(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -448,11 +610,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Host', '[::1]:3000').expect(200).end()
-    expect(res.body.hostname).to.equal('[::1]')
+    supertest(server).get('/').set('Host', '[::1]:3000').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, '[::1]')
+      done()
+    })
   })
 
-  it('should return original host when X-Forwarded-Host is not trusted', function * () {
+  test('should return original host when X-Forwarded-Host is not trusted', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const hostname = Request.hostname(req, '192.168.0.1')
       res.writeHead(200, {'content-type': 'application/json'})
@@ -460,11 +627,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('X-Forwarded-Host', '10.0.0.1').expect(200).end()
-    expect(res.body.hostname).to.equal('127.0.0.1')
+    supertest(server).get('/').set('X-Forwarded-Host', '10.0.0.1').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hostname, '127.0.0.1')
+      done()
+    })
   })
 
-  it('should return request url without query string or hash', function * () {
+  test('should return request url without query string or hash', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const url = Request.url(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -472,10 +643,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/about?ref=1#20').expect(200).end()
-    expect(res.body.url).to.equal('/about')
+    supertest(server).get('/about?ref=1#20').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.url, '/about')
+      done()
+    })
   })
-  it('should return request original url query string', function * () {
+
+  test('should return request original url query string', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const url = Request.originalUrl(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -483,10 +660,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/about?ref=1').expect(200).end()
-    expect(res.body.url).to.equal('/about?ref=1')
+    supertest(server).get('/about?ref=1').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.url, '/about?ref=1')
+      done()
+    })
   })
-  it('should return false when request does not accept certain type of content', function * () {
+
+  test('should return false when request does not accept certain type of content', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const is = Request.is(req, 'html')
       res.writeHead(200, {'content-type': 'application/json'})
@@ -494,11 +677,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Content-type', 'application/json').expect(200).end()
-    expect(res.body.is).to.equal(false)
+    supertest(server).get('/').set('Content-type', 'application/json').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.is, false)
+      done()
+    })
   })
 
-  it('should return the closest matched type', function * () {
+  test('should return the closest matched type', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const is = Request.is(req, ['html', 'json'])
       res.writeHead(200, {'content-type': 'application/json'})
@@ -506,11 +693,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
-    expect(res.body.is).to.equal('html')
+    supertest(server).get('/').set('Content-type', 'text/html').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.is, 'html')
+      done()
+    })
   })
 
-  it('should tell which content type is accepted based on Accept header', function * () {
+  test('should tell which content type is accepted based on Accept header', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const html = Request.accepts(req, ['html', 'json'])
       res.writeHead(200, {'content-type': 'application/json'})
@@ -518,11 +709,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
-    expect(res.body.html).to.equal('html')
+    supertest(server).get('/').set('Content-type', 'text/html').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.html, 'html')
+      done()
+    })
   })
 
-  it('should return list of all content types', function * () {
+  test('should return list of all content types', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const types = Request.types(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -530,11 +725,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('Accept', 'text/html').expect(200).end()
-    expect(res.body.types).deep.equal(['text/html'])
+    supertest(server).get('/').set('Accept', 'text/html').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.types, ['text/html'])
+      done()
+    })
   })
 
-  it('should return true when request has body to read', function * () {
+  test('should return true when request has body to read', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const hasBody = Request.hasBody(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -542,11 +741,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').send('name', 'doe').expect(200).end()
-    expect(res.body.hasBody).to.equal(true)
+    supertest(server).get('/').send('name', 'doe').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hasBody, true)
+      done()
+    })
   })
 
-  it('should return false when request does not have body to be read', function * () {
+  test('should return false when request does not have body to be read', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const hasBody = Request.hasBody(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -554,11 +757,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.body.hasBody).to.equal(false)
+    supertest(server).get('/').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.hasBody, false)
+      done()
+    })
   })
 
-  it('should return the language mentioned in the headers', function * () {
+  test('should return the language mentioned in the headers', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const lang = Request.language(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -566,11 +773,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('accept-language', 'en').expect(200).end()
-    expect(res.body.lang).to.equal('en')
+    supertest(server).get('/').set('accept-language', 'en').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.lang, 'en')
+      done()
+    })
   })
 
-  it('should return all the languages mentioned in the headers', function * () {
+  test('should return all the languages mentioned in the headers', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const languages = Request.languages(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -578,11 +789,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('accept-language', 'en').expect(200).end()
-    expect(res.body.languages).deep.equal(['en'])
+    supertest(server).get('/').set('accept-language', 'en').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.languages, ['en'])
+      done()
+    })
   })
 
-  it('should return the encoding mentioned in the headers', function * () {
+  test('should return the encoding mentioned in the headers', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const encoding = Request.encoding(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -590,11 +806,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('accept-encoding', 'gzip').expect(200).end()
-    expect(res.body.encoding).to.equal('gzip')
+    supertest(server).get('/').set('accept-encoding', 'gzip').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.equal(res.body.encoding, 'gzip')
+      done()
+    })
   })
 
-  it('should return all the encoding mentioned in the headers', function * () {
+  test('should return all the encoding mentioned in the headers', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const encodings = Request.encodings(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -602,11 +823,16 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('accept-encoding', 'gzip').expect(200).end()
-    expect(res.body.encodings).deep.equal(['gzip', 'identity'])
+    supertest(server).get('/').set('accept-encoding', 'gzip').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.encodings, ['gzip', 'identity'])
+      done()
+    })
   })
 
-  it('should return the charset mentioned in the headers', function * () {
+  test('should return the charset mentioned in the headers', (assert, done) => {
+    assert.plan(1)
+
     const server = http.createServer(function (req, res) {
       const charset = Request.charset(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -614,11 +840,15 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('accept-charset', 'utf8').expect(200).end()
-    expect(res.body.charset).deep.equal('utf8')
+    supertest(server).get('/').set('accept-charset', 'utf8').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.charset, 'utf8')
+      done()
+    })
   })
 
-  it('should return the charsets mentioned in the headers', function * () {
+  test('should return the charsets mentioned in the headers', (assert, done) => {
+    assert.plan(1)
     const server = http.createServer(function (req, res) {
       const charsets = Request.charsets(req)
       res.writeHead(200, {'content-type': 'application/json'})
@@ -626,7 +856,10 @@ describe('Http Request', function () {
       res.end()
     })
 
-    const res = yield supertest(server).get('/').set('accept-charset', 'utf8').expect(200).end()
-    expect(res.body.charsets).deep.equal(['utf8'])
+    supertest(server).get('/').set('accept-charset', 'utf8').expect(200).end((error, res) => {
+      if (error) return done(error)
+      assert.deepEqual(res.body.charsets, ['utf8'])
+      done()
+    })
   })
 })
