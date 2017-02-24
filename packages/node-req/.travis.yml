@@ -1,8 +1,7 @@
 language: node_js
 node_js:
 - node
-- 4.0.0
-- 5.3.0
+- 7.0.0
 sudo: false
 install:
 - npm install

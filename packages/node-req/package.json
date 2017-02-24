@@ -6,6 +6,7 @@
   "scripts": {
     "pretest": "npm run lint",
     "test": "node test/request.spec.js",
+    "coverage": "istanbul cover test/request.spec.js",
     "lint": "standard"
   },
   "keywords": [
@@ -19,7 +20,7 @@
   "devDependencies": {
     "coveralls": "^2.11.16",
     "formidable": "^1.1.1",
-    "istanbul": "^0.4.5",
+    "istanbul": "^1.1.0-alpha.1",
     "japa": "^1.0.1",
     "pem": "^1.9.4",
     "standard": "^8.6.0",

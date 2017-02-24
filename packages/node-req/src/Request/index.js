@@ -269,8 +269,7 @@ Request.secure = function (request) {
  *
  * @return {Array}
  */
-Request.subdomains = function (request, trust, offset) {
-  offset = offset || 2
+Request.subdomains = function (request, trust, offset = 2) {
   const hostname = Request.hostname(request, trust)
 
   if (!hostname || isIP(hostname)) {
