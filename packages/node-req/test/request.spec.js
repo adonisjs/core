@@ -497,7 +497,8 @@ describe('Http Request', function () {
     const res = yield supertest(server).get('/').set('Content-type', 'application/json').expect(200).end()
     expect(res.body.is).to.equal(false)
   })
-  it('should return true when request accept any one type of content', function * () {
+
+  it('should return the closest matched type', function * () {
     const server = http.createServer(function (req, res) {
       const is = Request.is(req, ['html', 'json'])
       res.writeHead(200, {'content-type': 'application/json'})
@@ -506,7 +507,7 @@ describe('Http Request', function () {
     })
 
     const res = yield supertest(server).get('/').set('Content-type', 'text/html').expect(200).end()
-    expect(res.body.is).to.equal(true)
+    expect(res.body.is).to.equal('html')
   })
 
   it('should tell which content type is accepted based on Accept header', function * () {

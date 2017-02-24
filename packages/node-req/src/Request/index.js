@@ -1,9 +1,12 @@
 'use strict'
 
-/**
+/*
  * node-req
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const parseurl = require('parseurl')
@@ -14,84 +17,104 @@ const isIP = require('net').isIP
 const accepts = require('accepts')
 const is = require('type-is')
 
-/**
- * @description compiles different values of trust proxy
- * into an invokable function.
- * INSPIRED BY EXPRESS
- * @method compileTrust
- * @param  {Mixed}     value
- * @return {Function}
- */
 const compileTrust = function (value) {
+  /**
+   * If value is a function, return it right away.
+   */
   if (typeof (value) === 'function') {
     return value
   }
+
+  /**
+   * Wrap a boolean true inside a function
+   * and return true
+   */
   if (value === true) {
     return function () {
       return true
     }
   }
+
+  /**
+   * Wrap number inside a function and perform
+   * required operations.
+   */
   if (typeof (value) === 'number') {
     return function (a, i) {
       return i < value
     }
   }
+
+  /**
+   * Support comma-separated values
+   */
   if (typeof value === 'string') {
     value = value.split(/ *, */)
   }
+
+  /**
+   * Finally let proxyaddr understand
+   * and compile the input.
+   */
   return proxyaddr.compile(value || [])
 }
 
 /**
- * @module Request
- * @description Lean io module for parsing http
- * request.
- * @type {Object}
+ * Request class is used for reading request
+ * information from native HTTP request.
+ *
+ * @class Request
+ * @static
  */
 let Request = exports = module.exports = {}
 
 /**
- * @description returns all query string parameters
+ * returns all query string parameters
+ *
  * @method get
+ *
  * @param  {Object} request
+ *
  * @return {Object}
- * @public
  */
 Request.get = function (request) {
   return qs.parse(parseurl(request).query)
 }
 
 /**
- * @description return request method (also known as http verb)
+ * return request method (also known as http verb)
+ *
  * @method method
+ *
  * @param  {Object} request
+ *
  * @return {String}
- * @public
  */
 Request.method = function (request) {
   return request.method
 }
 
 /**
- * @description returns header present on a request
+ * returns header present on a request
  * as an object
+ *
  * @method headers
+ *
  * @param  {Object} request
+ *
  * @return {Object}
- * @public
  */
 Request.headers = function (request) {
   return request.headers
 }
 
 /**
- * @description return value for a given header
+ * return value for a given header
  * using it's key
  * @method header
  * @param  {Object} request
  * @param  {String} key
- * @return {Mixed}
- * @public
+ * @return {String}
  */
 Request.header = function (request, key) {
   key = key.toLowerCase()
@@ -100,20 +123,22 @@ Request.header = function (request, key) {
   switch (key) {
     case 'referer':
     case 'referrer':
-      return headers.referrer || headers.referer
+      return headers.referrer || headers.referer || ''
     default:
-      return headers[key]
+      return headers[key] || ''
   }
 }
 
 /**
- * @description determines request freshness using
- * Last-modified and Etag ( reference from express )
+ * determines request freshness using
+ * Last-modified and Etag
+ *
  * @method fresh
+ *
  * @param  {Object} request
  * @param  {Object} response
+ *
  * @return {Boolean}
- * @public
  */
 Request.fresh = function (request, response) {
   const method = Request.method(request)
@@ -137,22 +162,36 @@ Request.fresh = function (request, response) {
 }
 
 /**
- * @description opposite of fresh
+ * opposite of fresh
+ *
  * @method stale
+ *
  * @param  {Request} request
+ *
  * @return {Boolean}
- * @public
  */
 Request.stale = function (request, response) {
   return !Request.fresh(request, response)
 }
 
 /**
- * @description returns remote address from trusted
- * proxy or returns closest untrusted address
+ * returns remote address from trusted proxy or
+ * returns closest untrusted address
+ *
  * @method ip
- * @param  {Object}   request
- * @param  {Mixed} trust
+ *
+ * @param  {Object} request
+ * @param  {Mixed}  trust
+ *
+ * @example
+ * ```
+ * Request.ip(req, '127.0.0.1')
+ * Request.ip(req, ['::1/128', 'fe80::/10'])
+ * ```
+ *
+ * `trust` parameter can be a boolean or a valid parameter defined
+ * as in [proxy-addr docs](https://www.npmjs.com/package/proxy-addr)
+ *
  * @return {String}
  */
 Request.ip = function (request, trust) {
@@ -160,13 +199,19 @@ Request.ip = function (request, trust) {
 }
 
 /**
- * @description returns list of all remote addresses
- * ordered in closest to furthest trusted address
+ * returns list of all remote addresses ordered
+ * in closest to furthest trusted address.
+ *
  * @method ips
+ *
  * @param  {Object} request
  * @param  {Mixed} trust
+ *
  * @return {Array}
- * @public
+ *
+ * `trust` parameter can be a boolean or a valid parameter defined
+ * as in [proxy-addr docs](https://www.npmjs.com/package/proxy-addr)
+ *
  */
 Request.ips = function (request, trust) {
   const addresses = proxyaddr.all(request, compileTrust(trust))
@@ -174,30 +219,40 @@ Request.ips = function (request, trust) {
 }
 
 /**
- * @description returns request protocol based upon encrypted connection
- * or X-Forwaded-Proto header
+ * returns request protocol based upon encrypted
+ * connection or X-Forwaded-Proto header.
+ *
  * @method protocol
+ *
  * @param  {Object} request
+ * @param  {Mixed} trust
+ *
  * @return {String}
- * @public
+ *
+ * `trust` parameter can be a boolean or a valid parameter defined
+ * as in [proxy-addr docs](https://www.npmjs.com/package/proxy-addr)
  */
 Request.protocol = function (request, trust) {
   let proto = request.connection.encrypted ? 'https' : 'http'
   trust = compileTrust(trust)
+
   if (!trust(request.connection.remoteAddress, 0)) {
     return proto
   }
+
   proto = Request.header(request, 'X-Forwarded-Proto') || proto
   return proto.split(/\s*,\s*/)[0]
 }
 
 /**
- * @description looks for request protocol to check
- * for https existence or returns false
+ * looks for request protocol to check for
+ * https existence or returns false
+ *
  * @method secure
+ *
  * @param  {Object} request
+ *
  * @return {Boolean}
- * @public
  */
 Request.secure = function (request) {
   return Request.protocol(request) === 'https'
@@ -205,12 +260,14 @@ Request.secure = function (request) {
 
 /**
  * returns request subdomain
+ *
  * @method subdomains
+ *
  * @param  {Object}   request
- * @param  {Mixed}    trust
- * @param  {Number}   offset
+ * @param  {Mixed}    [trust]
+ * @param  {Number}   [offset] subdomain offset
+ *
  * @return {Array}
- * @public
  */
 Request.subdomains = function (request, trust, offset) {
   offset = offset || 2
@@ -220,8 +277,8 @@ Request.subdomains = function (request, trust, offset) {
     return []
   }
 
-  let subdomains = hostname.split('.').reverse()
-  subdomains = subdomains.slice(offset)
+  const subdomains = hostname.split('.').reverse().slice(offset)
+
   /**
    * remove www if is the last subdomain
    * after reverse
@@ -233,12 +290,14 @@ Request.subdomains = function (request, trust, offset) {
 }
 
 /**
- * @description determines whether request is an ajax
- * request or not based on X-Requested-With header.
+ * determines whether request is an ajax request
+ * or not based on X-Requested-With header.
+ *
  * @method ajax
+ *
  * @param  {Object} request
+ *
  * @return {Boolean}
- * @public
  */
 Request.ajax = function (request) {
   const xhr = Request.header(request, 'X-Requested-With') || ''
@@ -246,26 +305,27 @@ Request.ajax = function (request) {
 }
 
 /**
- * @description tells whether request has x-jax
+ * tells whether request has X-Pjax
  * header or not
+ *
  * @method pjax
+ *
  * @param  {Object} request
+ *
  * @return {Boolean}
- * @public
  */
 Request.pjax = function (request) {
-  if (Request.header(request, 'X-Pjax')) {
-    return true
-  }
-  return false
+  return !!Request.header(request, 'X-Pjax')
 }
 
 /**
- * @description returns request hostname
+ * returns request hostname
+ *
  * @method hostname
+ *
  * @param  {Object} request
+ *
  * @return {String}
- * @public
  */
 Request.hostname = function (request, trust) {
   trust = compileTrust(trust)
@@ -292,51 +352,55 @@ Request.hostname = function (request, trust) {
 }
 
 /**
- * @description returns request url without query string
- * or hashes
+ * returns request url without query string
+ *
  * @method url
+ *
  * @param  {Object} request
+ *
  * @return {String}
- * @public
  */
 Request.url = function (request) {
   return parseurl(request).pathname
 }
 
 /**
- * @description returns actual url
+ * returns actual url
+ *
  * @method url
+ *
  * @param  {Object} request
+ *
  * @return {String}
- * @public
  */
 Request.originalUrl = function (request) {
   return parseurl(request).href
 }
 
 /**
- * @description tells whether request accept content
- * of a given type or not (based on Content-type)
- * header
+ * tells whether request accept content of a given
+ * type or not (based on Content-type) header
+ *
  * @method is
+ *
  * @param  {Object}  request
  * @param  {Mixed}   keys
+ *
  * @return {Boolean}
- * @public
  */
 Request.is = function (request, keys) {
-  if (is.is(request, keys)) {
-    return true
-  }
-  return false
+  return is.is(request, keys)
 }
 
 /**
- * @description returns best possible accept type
+ * returns best possible accept type
  * based upon Accept header
+ *
  * @method accepts
+ *
  * @param  {Object} request
  * @param  {Mixed} keys
+ *
  * @return {String}
  */
 Request.accepts = function (request, keys) {
@@ -345,9 +409,12 @@ Request.accepts = function (request, keys) {
 }
 
 /**
- * @description Returns list of all mime types.
+ * Returns list of all mime types.
+ *
  * @method types
+ *
  * @param  {Object} request
+ *
  * @return {Array}
  */
 Request.types = function (request) {
@@ -356,10 +423,13 @@ Request.types = function (request) {
 }
 
 /**
- * @description Returns one of the most preferrable language
+ * Returns one of the most preferrable language
+ *
  * @method language
+ *
  * @param  {Object} request
  * @param  {Array} accepted
+ *
  * @return {String}
  */
 Request.language = function (request, accepted) {
@@ -369,9 +439,12 @@ Request.language = function (request, accepted) {
 }
 
 /**
- * @description Returns list of all accepted languages.
+ * Returns list of all accepted languages.
+ *
  * @method languages
+ *
  * @param  {Object} request
+ *
  * @return {Array}
  */
 Request.languages = function (request) {
@@ -380,10 +453,13 @@ Request.languages = function (request) {
 }
 
 /**
- * @description Returns the best maching encoding
+ * Returns the best maching encoding
+ *
  * @method encoding
+ *
  * @param  {Object} request
  * @param  {Array} accepted
+ *
  * @return {String}
  */
 Request.encoding = function (request, accepted) {
@@ -393,9 +469,12 @@ Request.encoding = function (request, accepted) {
 }
 
 /**
- * @description Returns list of all encodings
+ * Returns list of all encodings
+ *
  * @method encodings
+ *
  * @param  {Object} request
+ *
  * @return {Array}
  */
 Request.encodings = function (request) {
@@ -404,10 +483,13 @@ Request.encodings = function (request) {
 }
 
 /**
- * @description Returns the best maching encoding
+ * Returns the best maching encoding
+ *
  * @method charset
+ *
  * @param  {Object} request
  * @param  {Array} accepted
+ *
  * @return {String}
  */
 Request.charset = function (request, accepted) {
@@ -417,8 +499,10 @@ Request.charset = function (request, accepted) {
 }
 
 /**
- * @description Returns a list of all charsets
+ * Returns a list of all charsets
+ *
  * @method charsets
+ *
  * @param  {Object} request
  * @return {Array}
  */
@@ -428,9 +512,11 @@ Request.charsets = function (request) {
 }
 
 /**
- * @description tells whether request has body or
+ * tells whether request has body or
  * not to be read by any body parser
+ *
  * @method accepts
+ *
  * @param  {Object} request
  * @return {Boolean}
  */
