@@ -1028,7 +1028,7 @@ describe('Session', function () {
       const sessionId = '102010'
       yield supertest(server).get('/').set('Cookie', ['adonis-session=' + sessionId]).expect(200)
       const sessionTTL = yield this.redis.ttl(sessionId)
-      expect(sessionTTL).to.equal(120)
+      expect(sessionTTL).to.equal(120 * 60)
     })
 
     it('should return null when value does not exists in the session store', function * () {
