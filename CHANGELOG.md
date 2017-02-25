@@ -1,3 +1,13 @@
+<a name="3.0.11"></a>
+## [3.0.11](https://github.com/adonisjs/adonis-framework/compare/v3.0.10...v3.0.11) (2017-02-25)
+
+
+### Bug Fixes
+
+* **session:** fix breaking test ([24f953e](https://github.com/adonisjs/adonis-framework/commit/24f953e))
+
+
+
 <a name="3.0.10"></a>
 ## [3.0.10](https://github.com/adonisjs/adonis-framework/compare/v3.0.9...v3.0.10) (2017-02-25)
 
