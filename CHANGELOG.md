@@ -1,3 +1,15 @@
+<a name="3.0.10"></a>
+## [3.0.10](https://github.com/adonisjs/adonis-framework/compare/v3.0.9...v3.0.10) (2017-02-25)
+
+
+### Bug Fixes
+
+* **file:** fix breaking tests ([8235b8c](https://github.com/adonisjs/adonis-framework/commit/8235b8c))
+* **file:** fix to move file across devices ([1e36b4f](https://github.com/adonisjs/adonis-framework/commit/1e36b4f)), closes [#438](https://github.com/adonisjs/adonis-framework/issues/438)
+* **session:** convert session age minutes to seconds ([c697665](https://github.com/adonisjs/adonis-framework/commit/c697665)), closes [#459](https://github.com/adonisjs/adonis-framework/issues/459)
+
+
+
 <a name="3.0.9"></a>
 ## [3.0.9](https://github.com/adonisjs/adonis-framework/compare/v3.0.8...v3.0.9) (2017-01-28)
 

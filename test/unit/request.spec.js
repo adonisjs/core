@@ -16,6 +16,7 @@ const supertest = require('supertest')
 const path = require('path')
 const pem = require('pem')
 const formidable = require('formidable')
+const co = require('co')
 
 const Config = {
   get: function (key) {
@@ -860,12 +861,13 @@ describe('Request', function () {
         }
         request._files = files
         const logo = request.file('logo', {maxSize: '100b'})
-        logo
-          .move()
-          .then(() => {
-            res.writeHead(200, {'Content-type': 'application/json'})
-            res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
-          })
+        co(function * () {
+          return yield logo.move()
+        })
+        .then(() => {
+          res.writeHead(200, {'Content-type': 'application/json'})
+          res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+        })
       })
     })
 
@@ -889,12 +891,13 @@ describe('Request', function () {
         }
         request._files = files
         const logo = request.file('logo', {allowedExtensions: ['jpg']})
-        logo
-          .move()
-          .then(() => {
-            res.writeHead(200, {'Content-type': 'application/json'})
-            res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
-          })
+        co(function * () {
+          return yield logo.move()
+        })
+        .then(() => {
+          res.writeHead(200, {'Content-type': 'application/json'})
+          res.end(JSON.stringify({logo: logo.toJSON()}), 'utf8')
+        })
       })
     })
 

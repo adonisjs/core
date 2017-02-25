@@ -1,6 +1,6 @@
 {
   "name": "adonis-framework",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "cheerio": "^0.22.0",
     "co-mocha": "^1.1.3",
     "coveralls": "^2.11.15",
-    "cz-conventional-changelog": "^1.2.0",
+    "cz-conventional-changelog": "^2.0.0",
     "formidable": "^1.1.1",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
@@ -43,7 +43,7 @@
     "shelljs": "^0.7.6",
     "sinon": "^1.17.7",
     "standard": "^8.6.0",
-    "supertest": "^2.0.1",
+    "supertest": "^3.0.0",
     "test-console": "^1.0.0",
     "zombie": "^5.0.5"
   },
