@@ -29,7 +29,7 @@ class Redis {
    */
   constructor (Helpers, Config, RedisFactory) {
     const redisConfig = Config.get('session.redis')
-    this.ttl = Config.get('session.age')
+    this.ttl = Config.get('session.age', 120) * 60 // converting to seconds
     this.redis = new RedisFactory(redisConfig, Helpers, false) // do not use cluster for sessions
   }
 
