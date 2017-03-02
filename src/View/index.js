@@ -13,6 +13,7 @@ const nunjucks = require('nunjucks')
 const ViewLoader = require('./loader')
 const viewFilters = require('./filters')
 const viewGlobals = require('./globals')
+const _ = require('lodash')
 
 /**
  * View class for adonis framework to serve jinja like views
@@ -21,12 +22,15 @@ const viewGlobals = require('./globals')
  */
 class View {
 
-  constructor (Helpers, Config, Route) {
+  constructor (Helpers, Config, Route, viewsEnv) {
+    this.Helpers = Helpers
+    this.Config = Config
+    this.Route = Route
     nunjucks.nodes.For = nunjucks.nodes.AsyncEach // monkey patch for with asyncEach
     const viewsPath = Helpers.viewsPath()
     const viewsCache = Config.get('app.views.cache', true)
     const injectServices = Config.get('app.views.injectServices', false)
-    this.viewsEnv = new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
+    this.viewsEnv = viewsEnv || new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
 
     /**
      * only register use, make and yield when the end user
@@ -115,6 +119,19 @@ class View {
    */
   global (name, value) {
     this.viewsEnv.addGlobal(name, value)
+  }
+
+  /**
+   * Returns a cloned instance of itself to be used for
+   * having isoloted instance of views. This is required
+   * to attach globals during request lifecycle.
+   *
+   * @method clone
+   *
+   * @return {Object}
+   */
+  clone () {
+    return new View(this.Helpers, this.Config, this.Route, _.cloneDeep(this.viewsEnv))
   }
 }
 
