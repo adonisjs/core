@@ -242,9 +242,7 @@ class Event {
       name = null
     }
 
-    if (!Array.isArray(handlers)) {
-      handlers = [handlers]
-    }
+    handlers = _.isArray(handlers) ? handlers : [handlers]
 
     for (let handler of handlers) {
       resolver.validateBinding(handler)
