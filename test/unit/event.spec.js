@@ -235,6 +235,30 @@ describe('Event', function () {
     expect(listeners.length).to.equal(1)
   })
 
+  it('should be able to define multiple listeners for one event', function (done) {
+    let count = 0
+    const event = new Event(Config, Helpers)
+    class Foo {
+      * bar (data) {
+        expect(data).deep.equal({foo: 'bar'})
+        count++
+      }
+
+      * baz (data) {
+        expect(data).deep.equal({foo: 'bar'})
+        count++
+      }
+    }
+    Ioc.bind('App/Listeners/Foo', function () {
+      return new Foo()
+    })
+
+    event.on('foo', ['Foo.bar', 'Foo.baz'])
+    event.fire('foo', {foo: 'bar'})
+    expect(count).to.equal(2)
+    done()
+  })
+
   it('should be able to get list of listeners for wildcard events', function () {
     const event = new Event(Config, Helpers)
     event.once('foo.bar', function () {})
