@@ -55,7 +55,7 @@
     "co": "^4.6.0",
     "co-fs-extra": "^1.2.1",
     "dotenv": "^2.0.0",
-    "eventemitter2": "^3.0.0",
+    "eventemitter2": "^4.0.0",
     "lodash": "^4.17.4",
     "node-cookie": "^1.0.3",
     "node-exceptions": "^1.0.3",
