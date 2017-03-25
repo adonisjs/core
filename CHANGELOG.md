@@ -1,3 +1,13 @@
+<a name="3.0.12"></a>
+## [3.0.12](https://github.com/adonisjs/adonis-framework/compare/v3.0.11...v3.0.12) (2017-03-25)
+
+
+### Bug Fixes
+
+* **view:** attach isolated instance of view to response object ([08bdca3](https://github.com/adonisjs/adonis-framework/commit/08bdca3)), closes [#489](https://github.com/adonisjs/adonis-framework/issues/489)
+
+
+
 <a name="3.0.11"></a>
 ## [3.0.11](https://github.com/adonisjs/adonis-framework/compare/v3.0.10...v3.0.11) (2017-02-25)
 

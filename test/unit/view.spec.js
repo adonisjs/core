@@ -206,4 +206,25 @@ describe('View', function () {
     const $ = cheerio.load(compiledView.trim())
     expect($('li').length).to.equal(2)
   })
+
+  it('return a clone instance of itself', function () {
+    const clonedView = this.view.clone()
+    expect(clonedView).instanceOf(this.view.constructor)
+  })
+
+  it('should not mutate the original view when made changes to cloned copy', function () {
+    const clonedView = this.view.clone()
+    clonedView.global('name', 'foo')
+    expect(this.view.viewsEnv.globals.name).is.undefined
+    expect(clonedView.viewsEnv.globals.name).to.equal('foo')
+  })
+
+  it('should not mutate the sibling clones', function () {
+    const clonedView = this.view.clone()
+    const clonedView1 = this.view.clone()
+    clonedView.global('name', 'foo')
+    expect(this.view.viewsEnv.globals.name).is.undefined
+    expect(clonedView1.viewsEnv.globals.name).is.undefined
+    expect(clonedView.viewsEnv.globals.name).to.equal('foo')
+  })
 })

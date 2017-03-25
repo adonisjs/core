@@ -30,6 +30,7 @@ class Response {
         nodeRes[method](this.request.request, this.response, body)
       }
     })
+    this.viewInstance = viewInstance.clone ? viewInstance.clone() : viewInstance
   }
 
   /**
@@ -100,7 +101,7 @@ class Response {
    * @public
    */
   * view (template, options) {
-    return viewInstance.make(template, options)
+    return this.viewInstance.make(template, options)
   }
 
   /**
