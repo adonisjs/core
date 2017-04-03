@@ -7,11 +7,13 @@
     "test": "test"
   },
   "scripts": {
-    "test:local": "npm run lint && node bin/tasks test:local",
-    "test:win": "npm run lint && node bin/tasks test:win",
-    "coverage": "npm run lint && node bin/tasks coverage",
-    "test": "npm run lint && node bin/tasks test",
-    "lint": "standard"
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "node --harmony-async-await ./node_modules/.bin/japa",
+    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test:win": "node --harmony-async-await ./node_modules/japa-cli/index.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "standard": {
     "globals": [
@@ -30,12 +32,10 @@
   "devDependencies": {
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.5",
-    "istanbul": "^0.4.5",
     "japa": "^1.0.0",
-    "require-all": "^2.1.0",
-    "shelljs": "^0.7.6",
-    "standard": "^8.6.0",
-    "ygor": "^4.0.1"
+    "japa-cli": "^1.0.1",
+    "nyc": "^10.2.0",
+    "standard": "^8.6.0"
   },
   "dependencies": {
     "caller": "^1.0.1",

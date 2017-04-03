@@ -7,3 +7,4 @@ test
 .editorconfig
 examples
 out
+.nyc_output
