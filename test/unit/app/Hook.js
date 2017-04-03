@@ -1,7 +1,6 @@
 'use strict'
 
 class Hook {
-
   static get IocHooks () {
     return ['extend']
   }

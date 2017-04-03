@@ -30,7 +30,6 @@ const isClass = (fn) => {
  * @class Ioc
  */
 class Ioc {
-
   constructor () {
     /**
      * Store list of bindings with their closures

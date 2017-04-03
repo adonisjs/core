@@ -3,7 +3,6 @@
 const ServiceProvider = require('../../../../src/ServiceProvider')
 
 class BarProvider extends ServiceProvider {
-
   async boot () {
     this.message = this.app.use('App/Foo')
   }
@@ -13,7 +12,6 @@ class BarProvider extends ServiceProvider {
       return this.message
     })
   }
-
 }
 
 module.exports = BarProvider

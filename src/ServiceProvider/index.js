@@ -11,7 +11,6 @@
  * @class ServiceProvider
  */
 class ServiceProvider {
-
   constructor (Ioc) {
     /**
      * Reference to the Ioc container
@@ -19,7 +18,6 @@ class ServiceProvider {
      */
     this.app = Ioc
   }
-
 }
 
 module.exports = ServiceProvider
