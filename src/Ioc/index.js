@@ -23,7 +23,7 @@ const isClass = (fn) => {
  * A single instance of this class needs to be used by the entire application.
  * The export method of the module makes sure to return the instantiated class,
  * so that you won't have to manage singleton instances and start using it
- * as `Ioc.bind`, `Ioc.make` etc.
+ * as `Ioc.bind`, `Ioc.make` etc directly.
  *
  * @module Adonis
  * @submodule fold
