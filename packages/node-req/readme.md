@@ -67,6 +67,7 @@ Object
 const queryString = nodeReq.get(req)
 ```
 
+----
 ### method
 Returns the exact copy of `request.method`. Defined
 [here](https://nodejs.org/api/http.html#http_message_method)
@@ -85,6 +86,7 @@ String
 const method = nodeReq.method(req)
 ```
 
+----
 ### headers
 Returns an object of headers for a given
 request.
@@ -103,6 +105,7 @@ Object
 const headers = nodeReq.headers(req)
 ```
 
+----
 ### header
 Returns header value for a given key. Also
 it will handle the inconsistencies between
@@ -123,6 +126,7 @@ String
 const authHeader = nodeReq.header(req, 'Authorization')
 ```
 
+----
 ### fresh
 Returns the freshness of a response inside the client
 cache. If client cache has the latest response, this
@@ -149,6 +153,7 @@ if (nodeReq.fresh(req, res)) {
 }
 ```
 
+----
 ### stale
 This method is the opposite of the {{#crossLink "Request/fresh"}}{{/crossLink}} method
 
@@ -168,6 +173,7 @@ if (!nodeReq.stale(req, res)) {
 }
 ```
 
+----
 ### ip
 Returns the most trusted ip address for the HTTP
 request. It will handle the use cases where your
@@ -192,6 +198,7 @@ nodeReq.ip(req, '127.0.0.1')
 nodeReq.ip(req, ['::1/128', 'fe80::/10'])
 ```
 
+----
 ### ips
 Returns list of all remote addresses ordered with
 most trusted on the top of the list.
@@ -215,6 +222,7 @@ nodeReq.ips(req, '127.0.0.1')
 nodeReq.ips(req, ['::1/128', 'fe80::/10'])
 ```
 
+----
 ### protocol
 Returns request protocol based upon encrypted
 connection or X-Forwaded-Proto header.
@@ -237,6 +245,7 @@ String
 const protocol = nodeReq.protocol(req)
 ```
 
+----
 ### secure
 Looks for request protocol to check for
 https existence or returns false.
@@ -255,6 +264,7 @@ Boolean
 const isHttps = nodeReq.secure(req)
 ```
 
+----
 ### subdomains
 Returns the request subdomains as an array. Also
 it will make sure to exclude `www` from the
@@ -279,6 +289,7 @@ Array
 const subdomains = nodeReq.subdomains(req)
 ```
 
+----
 ### ajax
 Determines whether request is an ajax request
 or not, based on X-Requested-With header.
@@ -301,6 +312,7 @@ if (nodeReq.ajax(req)) {
 }
 ```
 
+----
 ### pjax
 Tells whether request has X-Pjax
 header or not.
@@ -323,6 +335,7 @@ if (nodeReq.pjax(req)) {
 }
 ```
 
+----
 ### hostname
 Returns the hostname of HTTP request.
 
@@ -344,6 +357,7 @@ String
 const hostname = nodeReq.hostname(request)
 ```
 
+----
 ### url
 Returns request url after removing the query
 string.
@@ -362,6 +376,7 @@ String
 const url = nodeReq.url(request)
 ```
 
+----
 ### url
 Returns the untouched url.
 
@@ -379,6 +394,7 @@ String
 const url = nodeReq.originalUrl(request)
 ```
 
+----
 ### is
 Tells whether request accept content of a given
 type or not (based on Content-type) header.
@@ -404,6 +420,7 @@ nodeReq.is(req, ['application/*']) // application/json
 nodeReq.is(req, ['html']) // '<empty string>'
 ```
 
+----
 ### accepts
 Return the best possible response accepted by the
 client. This is based on the `Accept` header.
@@ -440,6 +457,7 @@ switch(type) {
 }
 ```
 
+----
 ### types
 This method is similar to {{#crossLink "Request/accepts"}}{{/crossLink}},
 instead it will return an array of types from most to least preferred
@@ -454,6 +472,7 @@ one.
 **Returns**
 Array
 
+----
 ### language
 Returns one of the most preferrable language.
 
@@ -467,6 +486,7 @@ Returns one of the most preferrable language.
 **Returns**
 String
 
+----
 ### languages
 Returns list of all accepted languages from most
 to least preferred one.
@@ -480,6 +500,7 @@ to least preferred one.
 **Returns**
 Array
 
+----
 ### encoding
 Returns the best maching encoding
 
@@ -493,6 +514,7 @@ Returns the best maching encoding
 **Returns**
 String
 
+----
 ### encodings
 Returns list of all encodings from most
 to least preferred one.
@@ -506,6 +528,7 @@ to least preferred one.
 **Returns**
 Array
 
+----
 ### charset
 Returns the best maching charset based upon
 `Accept-Charset` header.
@@ -520,6 +543,7 @@ Returns the best maching charset based upon
 **Returns**
 String
 
+----
 ### charsets
 Returns a list of all charsets from most
 to least preferred one based upon
@@ -534,6 +558,7 @@ to least preferred one based upon
 **Returns**
 Array
 
+----
 ### hasBody
 Tells whether request has body or
 not to be read by any body parser.
@@ -553,6 +578,8 @@ if (nodeReq.hasBody(request)) {
    // use body parser
 }
 ```
+
+----
 
 
 [appveyor-image]: https://ci.appveyor.com/api/projects/status/github/poppinss/node-req?branch=master&svg=true&passingText=Passing%20On%20Windows
