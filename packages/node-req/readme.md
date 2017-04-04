@@ -1,25 +1,38 @@
 # Node Req
 
-![](http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png)
+> Read data of the Node.js HTTP request with no side-effects.
 
-![](https://img.shields.io/travis/poppinss/node-req.svg)
-[![Coverage Status](https://coveralls.io/repos/poppinss/node-req/badge.svg?branch=master&service=github)](https://coveralls.io/github/poppinss/node-req?branch=master)
+<br />
+
+<p align="center">
+  <a href="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png">
+    <img src="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png" width="600px" />
+  </a>
+</p>
+
+<br />
+
+---
+
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Appveyor][appveyor-image]][appveyor-url]
 
 `node-req` is an i/o module for parsing and returning values out of HTTP request object using helper methods.It is not express, neither connect. It is just an i/o module for parsing request object.
 
 ## See also
 
-1. node-res
-2. node-cookie
+1. [node-res](http://npmjs.org/package/node-res)
+2. [node-cookie](http://npmjs.org/package/node-cookie)
 
-## Http 
+## Http Server
 
 ```javascript
 var http = require('http')
 var nodeReq = require('node-req')
 
 http.createServer(function (req, res) {
-  
+
   // get query string from req
   var query = nodeReq.get(req)
 
@@ -36,14 +49,14 @@ Yes, that's all, `node-req` makes no assumption on how to add routes or handle H
 ## Methods
 
 #### get (req)
-returns request query string parameters
+Returns request query string parameters.
 
 ```javascript
 // req url is /user?name=doe
 
 nodeReq.get(req)
 
-// returns {name:'doe'}
+// returns { name:'doe' }
 ```
 
 #### method (req)
@@ -198,24 +211,17 @@ tells whether request has body to be read by any body parser.
 ```javascript
 if (nodeReq.hasBody(req)) {
   req.on('data', function (chunk) {
-    // ... 
+    // ...
   })
 }
 ```
 
-## License 
-(The MIT License)
 
-Copyright (c) 2015 Poppins
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/github/poppinss/node-req?branch=master&svg=true&passingText=Passing%20On%20Windows
+[appveyor-url]: https://ci.appveyor.com/project/thetutlage/node-req
 
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
+[npm-image]: https://img.shields.io/npm/v/node-req.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/node-req
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+[travis-image]: https://img.shields.io/travis/poppinss/node-req/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/poppinss/node-req

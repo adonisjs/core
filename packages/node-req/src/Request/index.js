@@ -69,20 +69,23 @@ const compileTrust = function (value) {
 let Request = exports = module.exports = {}
 
 /**
- * returns all query string parameters
+ * Parses query string from url an returns
+ * an object.
  *
  * @method get
  *
  * @param  {Object} request
+ * @param  {Object} [options] - Options are passed to [qs](https://www.npmjs.com/package/qs)
  *
  * @return {Object}
  */
-Request.get = function (request) {
-  return qs.parse(parseurl(request).query)
+Request.get = function (request, options = {}) {
+  return qs.parse(parseurl(request).query, options)
 }
 
 /**
- * return request method (also known as http verb)
+ * Returns the exact copy of `request.method`. Defined
+ * [here](https://nodejs.org/api/http.html#http_message_method)
  *
  * @method method
  *
@@ -95,8 +98,8 @@ Request.method = function (request) {
 }
 
 /**
- * returns header present on a request
- * as an object
+ * Returns an object of headers for a given
+ * request.
  *
  * @method headers
  *
@@ -109,9 +112,12 @@ Request.headers = function (request) {
 }
 
 /**
- * return value for a given header
- * using it's key
+ * Returns header value for a given key. Also
+ * it will handle the inconsistencies between
+ * `referer` and `referrer` header.
+ *
  * @method header
+ *
  * @param  {Object} request
  * @param  {String} key
  * @return {String}
@@ -130,8 +136,13 @@ Request.header = function (request, key) {
 }
 
 /**
- * determines request freshness using
- * Last-modified and Etag
+ * Returns the freshness of a response inside the client
+ * cache. If client cache has the latest response, this
+ * method will return `true`, otherwise it will return
+ * `false`.
+ *
+ * Also when HTTP header `Cache-Control: no-cache` is present
+ * this method will return false everytime.
  *
  * @method fresh
  *
@@ -162,11 +173,11 @@ Request.fresh = function (request, response) {
 }
 
 /**
- * opposite of fresh
+ * This method is the opposite of the {{#crossLink "Request/fresh"}}{{/crossLink}} method
  *
  * @method stale
  *
- * @param  {Request} request
+ * @param  {Object} request
  *
  * @return {Boolean}
  */
@@ -175,22 +186,23 @@ Request.stale = function (request, response) {
 }
 
 /**
- * returns remote address from trusted proxy or
- * returns closest untrusted address
+ * Returns the most trusted ip address for the HTTP
+ * request. It will handle the use cases where your
+ * server is behind a proxy.
+ *
+ * Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+ * for the available options for `trust`.
  *
  * @method ip
  *
  * @param  {Object} request
- * @param  {Mixed}  trust
+ * @param  {Mixed}  [trust]
  *
  * @example
  * ```
  * Request.ip(req, '127.0.0.1')
  * Request.ip(req, ['::1/128', 'fe80::/10'])
  * ```
- *
- * `trust` parameter can be a boolean or a valid parameter defined
- * as in [proxy-addr docs](https://www.npmjs.com/package/proxy-addr)
  *
  * @return {String}
  */
@@ -199,18 +211,18 @@ Request.ip = function (request, trust) {
 }
 
 /**
- * returns list of all remote addresses ordered
- * in closest to furthest trusted address.
+ * Returns list of all remote addresses ordered with
+ * most trusted on the top of the list.
+ *
+ * Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+ * for the available options for `trust`.
  *
  * @method ips
  *
  * @param  {Object} request
- * @param  {Mixed} trust
+ * @param  {Mixed}  [trust]
  *
  * @return {Array}
- *
- * `trust` parameter can be a boolean or a valid parameter defined
- * as in [proxy-addr docs](https://www.npmjs.com/package/proxy-addr)
  *
  */
 Request.ips = function (request, trust) {
@@ -219,18 +231,18 @@ Request.ips = function (request, trust) {
 }
 
 /**
- * returns request protocol based upon encrypted
+ * Returns request protocol based upon encrypted
  * connection or X-Forwaded-Proto header.
+ *
+ * Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+ * for the available options for `trust`.
  *
  * @method protocol
  *
  * @param  {Object} request
- * @param  {Mixed} trust
+ * @param  {Mixed} [trust]
  *
  * @return {String}
- *
- * `trust` parameter can be a boolean or a valid parameter defined
- * as in [proxy-addr docs](https://www.npmjs.com/package/proxy-addr)
  */
 Request.protocol = function (request, trust) {
   let proto = request.connection.encrypted ? 'https' : 'http'
@@ -245,8 +257,8 @@ Request.protocol = function (request, trust) {
 }
 
 /**
- * looks for request protocol to check for
- * https existence or returns false
+ * Looks for request protocol to check for
+ * https existence or returns false.
  *
  * @method secure
  *
@@ -259,13 +271,18 @@ Request.secure = function (request) {
 }
 
 /**
- * returns request subdomain
+ * Returns the request subdomains as an array. Also
+ * it will make sure to exclude `www` from the
+ * subdomains list.
+ *
+ * Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+ * for the available options for `trust`.
  *
  * @method subdomains
  *
  * @param  {Object}   request
  * @param  {Mixed}    [trust]
- * @param  {Number}   [offset] subdomain offset
+ * @param  {Number}   [offset = 2] subdomain offset
  *
  * @return {Array}
  */
@@ -289,8 +306,8 @@ Request.subdomains = function (request, trust, offset = 2) {
 }
 
 /**
- * determines whether request is an ajax request
- * or not based on X-Requested-With header.
+ * Determines whether request is an ajax request
+ * or not, based on X-Requested-With header.
  *
  * @method ajax
  *
@@ -304,8 +321,8 @@ Request.ajax = function (request) {
 }
 
 /**
- * tells whether request has X-Pjax
- * header or not
+ * Tells whether request has X-Pjax
+ * header or not.
  *
  * @method pjax
  *
@@ -318,11 +335,15 @@ Request.pjax = function (request) {
 }
 
 /**
- * returns request hostname
+ * Returns the hostname of HTTP request.
+ *
+ * Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+ * for the available options for `trust`.
  *
  * @method hostname
  *
  * @param  {Object} request
+ * @param  {Mixed}  [trust]
  *
  * @return {String}
  */
@@ -339,7 +360,7 @@ Request.hostname = function (request, trust) {
   }
 
   if (!host) {
-    return
+    return null
   }
 
   /**
@@ -351,7 +372,8 @@ Request.hostname = function (request, trust) {
 }
 
 /**
- * returns request url without query string
+ * Returns request url after removing the query
+ * string.
  *
  * @method url
  *
@@ -364,7 +386,7 @@ Request.url = function (request) {
 }
 
 /**
- * returns actual url
+ * Returns the untouched url.
  *
  * @method url
  *
@@ -377,23 +399,35 @@ Request.originalUrl = function (request) {
 }
 
 /**
- * tells whether request accept content of a given
- * type or not (based on Content-type) header
+ * Tells whether request accept content of a given
+ * type or not (based on Content-type) header.
  *
  * @method is
  *
  * @param  {Object}  request
  * @param  {Mixed}   keys
  *
- * @return {Boolean}
+ * @return {String}
+ *
+ * @example
+ * ```js
+ * // req.headers.content-type = 'application/json'
+ *
+ * nodeReq.is(req, ['json']) // json
+ * nodeReq.is(req, ['json', 'html']) // json
+ * nodeReq.is(req, ['application/*']) // application/json
+ *
+ * nodeReq.is(req, ['html']) // '<empty string>'
+ * ```
  */
 Request.is = function (request, keys) {
-  return is.is(request, keys)
+  return is.is(request, keys) || ''
 }
 
 /**
- * returns best possible accept type
- * based upon Accept header
+ * Return the best possible response accepted by the
+ * client. This is based on the `Accept` header.
+ * [Learn more about it](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept)
  *
  * @method accepts
  *
@@ -401,6 +435,27 @@ Request.is = function (request, keys) {
  * @param  {Mixed} keys
  *
  * @return {String}
+ *
+ * @example
+ * ```js
+ * const type = nodeReq.accepts(req, ['json', 'html'])
+ *
+ * switch(type) {
+ *  case 'json':
+ *    res.setHeader('Content-Type', 'application/json')
+ *    res.write('{"hello":"world!"}')
+ *    break
+ *
+ *  case 'html':
+ *    res.setHeader('Content-Type', 'text/html')
+ *    res.write('<b>hello, world!</b>')
+ *    break
+ *
+ *  default:
+ *    res.setHeader('Content-Type', 'text/plain')
+ *    res.write('hello, world!')
+ * }
+ * ```
  */
 Request.accepts = function (request, keys) {
   const accept = accepts(request)
@@ -408,7 +463,9 @@ Request.accepts = function (request, keys) {
 }
 
 /**
- * Returns list of all mime types.
+ * This method is similar to {{#crossLink "Request/accepts"}}{{/crossLink}},
+ * instead it will return an array of types from most to least preferred
+ * one.
  *
  * @method types
  *
@@ -422,7 +479,7 @@ Request.types = function (request) {
 }
 
 /**
- * Returns one of the most preferrable language
+ * Returns one of the most preferrable language.
  *
  * @method language
  *
@@ -438,7 +495,8 @@ Request.language = function (request, accepted) {
 }
 
 /**
- * Returns list of all accepted languages.
+ * Returns list of all accepted languages from most
+ * to least preferred one.
  *
  * @method languages
  *
@@ -468,7 +526,8 @@ Request.encoding = function (request, accepted) {
 }
 
 /**
- * Returns list of all encodings
+ * Returns list of all encodings from most
+ * to least preferred one.
  *
  * @method encodings
  *
@@ -482,7 +541,8 @@ Request.encodings = function (request) {
 }
 
 /**
- * Returns the best maching encoding
+ * Returns the best maching charset based upon
+ * `Accept-Charset` header.
  *
  * @method charset
  *
@@ -498,7 +558,9 @@ Request.charset = function (request, accepted) {
 }
 
 /**
- * Returns a list of all charsets
+ * Returns a list of all charsets from most
+ * to least preferred one based upon
+ * `Accept-Charset` header.
  *
  * @method charsets
  *
@@ -511,10 +573,10 @@ Request.charsets = function (request) {
 }
 
 /**
- * tells whether request has body or
- * not to be read by any body parser
+ * Tells whether request has body or
+ * not to be read by any body parser.
  *
- * @method accepts
+ * @method hasBody
  *
  * @param  {Object} request
  * @return {Boolean}

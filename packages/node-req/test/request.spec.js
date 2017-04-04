@@ -411,7 +411,7 @@ test.group('Http Request', () => {
     assert.equal(res.body.hostname, '10.0.0.1')
   })
 
-  test('should return undefined when unable to get hostname', async (assert) => {
+  test('should return null when unable to get hostname', async (assert) => {
     assert.plan(1)
 
     const server = http.createServer(function (req, res) {
@@ -422,7 +422,7 @@ test.group('Http Request', () => {
     })
 
     const res = await supertest(server).get('/').set('Host', '').expect(200)
-    assert.equal(res.body.hostname, undefined)
+    assert.equal(res.body.hostname, null)
   })
 
   test('should return request hostname from X-Forwarded-Host when trust proxy is enabled', async (assert) => {
