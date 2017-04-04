@@ -377,7 +377,7 @@ const url = nodeReq.url(request)
 ```
 
 ----
-### url
+### originalUrl
 Returns the untouched url.
 
 **Params**
@@ -390,14 +390,14 @@ Returns the untouched url.
 String
 
 **Example**
-```
+```js
 const url = nodeReq.originalUrl(request)
 ```
 
 ----
 ### is
 Tells whether request accept content of a given
-type or not (based on Content-type) header.
+type or not (based on **Content-type**) header.
 
 **Params**
 

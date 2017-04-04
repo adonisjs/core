@@ -470,14 +470,14 @@ Request.url = function (request) {
 /**
  * Returns the untouched url.
  *
- * @method url
+ * @method originalUrl
  *
  * @param  {Object} request
  *
  * @return {String}
  *
  * @example
- * ```
+ * ```js
  * const url = nodeReq.originalUrl(request)
  * ```
  */
@@ -487,7 +487,7 @@ Request.originalUrl = function (request) {
 
 /**
  * Tells whether request accept content of a given
- * type or not (based on Content-type) header.
+ * type or not (based on **Content-type**) header.
  *
  * @method is
  *
