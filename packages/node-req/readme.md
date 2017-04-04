@@ -48,171 +48,509 @@ Yes, that's all, `node-req` makes no assumption on how to add routes or handle H
 
 ## Methods
 
-#### get (req)
-Returns request query string parameters.
+### get
+Parses query string from url an returns
+an object.
 
-```javascript
-// req url is /user?name=doe
+**Params**
 
-nodeReq.get(req)
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| options | Object | No | Options are passed to https://www.npmjs.com/package/qs |
 
-// returns { name:'doe' }
+**Returns**
+Object
+
+**Example**
+```js
+const queryString = nodeReq.get(req)
 ```
 
-#### method (req)
-returns request method, or you can say HTTP verb
+### method
+Returns the exact copy of `request.method`. Defined
+[here](https://nodejs.org/api/http.html#http_message_method)
 
-```javascript
-nodeReq.method(req)
+**Params**
 
-// returns GET,POST etc
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+const method = nodeReq.method(req)
 ```
 
-#### headers (req)
-returns request headers
+### headers
+Returns an object of headers for a given
+request.
 
-```javascript
-nodeReq.headers(req)
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Object
+
+**Example**
+```js
+const headers = nodeReq.headers(req)
 ```
 
-#### header (req, key)
-returns request header for a given key
+### header
+Returns header value for a given key. Also
+it will handle the inconsistencies between
+`referer` and `referrer` header.
 
-```javascript
-nodeReq.header(req, 'Content-Type')
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| key | String | Yes | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+const authHeader = nodeReq.header(req, 'Authorization')
 ```
 
-#### fresh (req, res)
-test for request freshness based on E-tag and expires header
+### fresh
+Returns the freshness of a response inside the client
+cache. If client cache has the latest response, this
+method will return `true`, otherwise it will return
+`false`.
 
-```javascript
-nodeReq.fresh(req, res)
+Also when HTTP header `Cache-Control: no-cache` is present
+this method will return false everytime.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| response | Object | Yes | &nbsp; |
+
+**Returns**
+Boolean
+
+**Example**
+```js
+if (nodeReq.fresh(req, res)) {
+   res.writeHead(304)
+}
 ```
 
-#### stale (req, res)
-opposite of fresh
+### stale
+This method is the opposite of the {{#crossLink "Request/fresh"}}{{/crossLink}} method
 
-```javascript
-nodeReq.stale(req, res)
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Boolean
+
+**Example**
+```js
+if (!nodeReq.stale(req, res)) {
+   res.writeHead(304)
+}
 ```
 
-#### ip (req, trust)
-Returns request ip based on trusted proxy, check out [proxyaddr](https://www.npmjs.com/package/proxy-addr) for more info
+### ip
+Returns the most trusted ip address for the HTTP
+request. It will handle the use cases where your
+server is behind a proxy.
 
-```javascript
-nodeReq.ip(req, ['127.0.0.0/8', '10.0.0.0/8'])
+Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+for the available options for `trust`.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| trust | Mixed | No | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+nodeReq.ip(req, '127.0.0.1')
+nodeReq.ip(req, ['::1/128', 'fe80::/10'])
 ```
 
-#### ips (req, trust)
-Returns list of all IP address associated with a request, starting from closest to furthest based on trusted proxy. Also check out [proxyaddr](https://www.npmjs.com/package/proxy-addr) for more info
+### ips
+Returns list of all remote addresses ordered with
+most trusted on the top of the list.
 
-```javascript
-nodeReq.ips(req, function (remoteAddress) {
-  return remoteAddress === '127.0.0.1'
-})
+Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+for the available options for `trust`.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| trust | Mixed | No | &nbsp; |
+
+**Returns**
+Array
+
+**Example**
+```
+nodeReq.ips(req, '127.0.0.1')
+nodeReq.ips(req, ['::1/128', 'fe80::/10'])
 ```
 
-#### secure (req)
-Is request from https ?
+### protocol
+Returns request protocol based upon encrypted
+connection or X-Forwaded-Proto header.
 
-```javascript
-nodeReq.secure(req)
+Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+for the available options for `trust`.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| trust | Mixed | No | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```
+const protocol = nodeReq.protocol(req)
 ```
 
-#### subdomains (req, trust, offset=2)
-List of subdomains on a given request. If trust is enabled it will refer to the `X-Forwarded-Host` header. Also check out [proxyaddr](https://www.npmjs.com/package/proxy-addr) for more info
+### secure
+Looks for request protocol to check for
+https existence or returns false.
 
-```javascript
-// request url gig.baz.com
-nodeReq.subdomains(req, false)
+**Params**
 
-// returns ['gig']
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Boolean
+
+**Example**
+```
+const isHttps = nodeReq.secure(req)
 ```
 
-whereas
+### subdomains
+Returns the request subdomains as an array. Also
+it will make sure to exclude `www` from the
+subdomains list.
 
-```javascript
-// request url www.baz.com
-nodeReq.subdomains(req)
+Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+for the available options for `trust`.
 
-// returns []
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| trust | Mixed | No | &nbsp; |
+| offset  | Number | No | subdomain offset |
+
+**Returns**
+Array
+
+**Example**
+```js
+const subdomains = nodeReq.subdomains(req)
 ```
 
-#### ajax (req)
-determines whether a request is ajax or not based on `X-Requested-With` header.
+### ajax
+Determines whether request is an ajax request
+or not, based on X-Requested-With header.
 
-```javascript
-nodeReq.ajax(req)
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Boolean
+
+**Example**
+```js
+if (nodeReq.ajax(req)) {
+   res.writeHead(200, {"Content-type": "application/json"})
+} else {
+   res.writeHead(200, {"Content-type": "text/html"})
+}
 ```
 
-#### pjax (req)
-determines whether a request is pjax or not based on `X-Pjax` header
+### pjax
+Tells whether request has X-Pjax
+header or not.
 
-```javascript
-nodeReq.pjax(req)
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Boolean
+
+**Example**
+```js
+if (nodeReq.pjax(req)) {
+   // return partial content
+} else {
+   // full page refresh
+}
 ```
 
-#### hostname (req, trust)
-returns request hostname and if trust is enabled, it will refer to the `X-Forwarded-Host` header. Also check out [proxyaddr](https://www.npmjs.com/package/proxy-addr) for more info
+### hostname
+Returns the hostname of HTTP request.
 
-```javascript
-nodeReq.hostname(req, trust)
+Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
+for the available options for `trust`.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| trust | Mixed | No | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+const hostname = nodeReq.hostname(request)
 ```
 
-#### url (req)
-returns request URL without the query string
+### url
+Returns request url after removing the query
+string.
 
-```javascript
-// request url /users?offset=0&limit=10
+**Params**
 
-nodeReq.url(req)
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
 
-// returns /users
+**Returns**
+String
+
+**Example**
+```js
+const url = nodeReq.url(request)
 ```
 
-#### originalUrl (req)
-returns request originalUrl with query string
+### url
+Returns the untouched url.
 
-```javascript
-// request url /users?offset=0&limit=10
+**Params**
 
-nodeReq.originalUrl(req)
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
 
-// returns /users?offset=0&limit=10
+**Returns**
+String
+
+**Example**
+```
+const url = nodeReq.originalUrl(request)
 ```
 
-#### is (req, [types])
-tells whether request is of certain type or not based on `Content-type` header.
+### is
+Tells whether request accept content of a given
+type or not (based on Content-type) header.
 
-```javascript
-nodeReq.is(req, 'html')
-// true
-nodeReq.is(req, 'text/html')
-// true
-nodeReq.is(req, ['json','html'])
-//true
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| keys | Mixed | Yes | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+// req.headers.content-type = 'application/json'
+
+nodeReq.is(req, ['json']) // json
+nodeReq.is(req, ['json', 'html']) // json
+nodeReq.is(req, ['application/*']) // application/json
+
+nodeReq.is(req, ['html']) // '<empty string>'
 ```
 
-#### accepts (req, [types])
-tells whether request accepts data of certain type based on `Accepts` header.
+### accepts
+Return the best possible response accepted by the
+client. This is based on the `Accept` header.
+[Learn more about it](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept)
 
-```javascript
-nodeReq.accepts(req, 'html')
-// 'html'
-nodeReq.accepts(req, 'text/html')
-// 'text/html'
-nodeReq.accepts(req, ['json','html'])
-// 'html'
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| keys | Mixed | Yes | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+const type = nodeReq.accepts(req, ['json', 'html'])
+
+switch(type) {
+ case 'json':
+   res.setHeader('Content-Type', 'application/json')
+   res.write('{"hello":"world!"}')
+   break
+
+ case 'html':
+   res.setHeader('Content-Type', 'text/html')
+   res.write('<b>hello, world!</b>')
+   break
+
+ default:
+   res.setHeader('Content-Type', 'text/plain')
+   res.write('hello, world!')
+}
 ```
 
-#### hasBody (req)
-tells whether request has body to be read by any body parser.
+### types
+This method is similar to {{#crossLink "Request/accepts"}}{{/crossLink}},
+instead it will return an array of types from most to least preferred
+one.
 
-```javascript
-if (nodeReq.hasBody(req)) {
-  req.on('data', function (chunk) {
-    // ...
-  })
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Array
+
+### language
+Returns one of the most preferrable language.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| accepted | Array | Yes | &nbsp; |
+
+**Returns**
+String
+
+### languages
+Returns list of all accepted languages from most
+to least preferred one.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Array
+
+### encoding
+Returns the best maching encoding
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| accepted | Array | Yes | &nbsp; |
+
+**Returns**
+String
+
+### encodings
+Returns list of all encodings from most
+to least preferred one.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Array
+
+### charset
+Returns the best maching charset based upon
+`Accept-Charset` header.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+| accepted | Array | Yes | &nbsp; |
+
+**Returns**
+String
+
+### charsets
+Returns a list of all charsets from most
+to least preferred one based upon
+`Accept-Charset` header.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Array
+
+### hasBody
+Tells whether request has body or
+not to be read by any body parser.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| request | Object | Yes | &nbsp; |
+
+**Returns**
+Boolean
+
+**Example**
+```js
+if (nodeReq.hasBody(request)) {
+   // use body parser
 }
 ```
 

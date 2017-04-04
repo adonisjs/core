@@ -75,9 +75,14 @@ let Request = exports = module.exports = {}
  * @method get
  *
  * @param  {Object} request
- * @param  {Object} [options] - Options are passed to [qs](https://www.npmjs.com/package/qs)
+ * @param  {Object} [options]    Options are passed to https://www.npmjs.com/package/qs
  *
  * @return {Object}
+ *
+ * @example
+ * ```js
+ * const queryString = nodeReq.get(req)
+ * ```
  */
 Request.get = function (request, options = {}) {
   return qs.parse(parseurl(request).query, options)
@@ -92,6 +97,11 @@ Request.get = function (request, options = {}) {
  * @param  {Object} request
  *
  * @return {String}
+ *
+ * @example
+ * ```js
+ * const method = nodeReq.method(req)
+ * ```
  */
 Request.method = function (request) {
   return request.method
@@ -106,6 +116,11 @@ Request.method = function (request) {
  * @param  {Object} request
  *
  * @return {Object}
+ *
+ * @example
+ * ```js
+ * const headers = nodeReq.headers(req)
+ * ```
  */
 Request.headers = function (request) {
   return request.headers
@@ -121,6 +136,11 @@ Request.headers = function (request) {
  * @param  {Object} request
  * @param  {String} key
  * @return {String}
+ *
+ * @example
+ * ```js
+ * const authHeader = nodeReq.header(req, 'Authorization')
+ * ```
  */
 Request.header = function (request, key) {
   key = key.toLowerCase()
@@ -150,6 +170,13 @@ Request.header = function (request, key) {
  * @param  {Object} response
  *
  * @return {Boolean}
+ *
+ * @example
+ * ```js
+ * if (nodeReq.fresh(req, res)) {
+ *    res.writeHead(304)
+ * }
+ * ```
  */
 Request.fresh = function (request, response) {
   const method = Request.method(request)
@@ -180,6 +207,13 @@ Request.fresh = function (request, response) {
  * @param  {Object} request
  *
  * @return {Boolean}
+ *
+ * @example
+ * ```js
+ * if (!nodeReq.stale(req, res)) {
+ *    res.writeHead(304)
+ * }
+ * ```
  */
 Request.stale = function (request, response) {
   return !Request.fresh(request, response)
@@ -198,13 +232,13 @@ Request.stale = function (request, response) {
  * @param  {Object} request
  * @param  {Mixed}  [trust]
  *
- * @example
- * ```
- * Request.ip(req, '127.0.0.1')
- * Request.ip(req, ['::1/128', 'fe80::/10'])
- * ```
- *
  * @return {String}
+ *
+ * @example
+ * ```js
+ * nodeReq.ip(req, '127.0.0.1')
+ * nodeReq.ip(req, ['::1/128', 'fe80::/10'])
+ * ```
  */
 Request.ip = function (request, trust) {
   return proxyaddr(request, compileTrust(trust))
@@ -224,6 +258,11 @@ Request.ip = function (request, trust) {
  *
  * @return {Array}
  *
+ * @example
+ * ```
+ * nodeReq.ips(req, '127.0.0.1')
+ * nodeReq.ips(req, ['::1/128', 'fe80::/10'])
+ * ```
  */
 Request.ips = function (request, trust) {
   const addresses = proxyaddr.all(request, compileTrust(trust))
@@ -243,6 +282,11 @@ Request.ips = function (request, trust) {
  * @param  {Mixed} [trust]
  *
  * @return {String}
+ *
+ * @example
+ * ```
+ * const protocol = nodeReq.protocol(req)
+ * ```
  */
 Request.protocol = function (request, trust) {
   let proto = request.connection.encrypted ? 'https' : 'http'
@@ -265,6 +309,11 @@ Request.protocol = function (request, trust) {
  * @param  {Object} request
  *
  * @return {Boolean}
+ *
+ * @example
+ * ```
+ * const isHttps = nodeReq.secure(req)
+ * ```
  */
 Request.secure = function (request) {
   return Request.protocol(request) === 'https'
@@ -285,6 +334,11 @@ Request.secure = function (request) {
  * @param  {Number}   [offset = 2] subdomain offset
  *
  * @return {Array}
+ *
+ * @example
+ * ```js
+ * const subdomains = nodeReq.subdomains(req)
+ * ```
  */
 Request.subdomains = function (request, trust, offset = 2) {
   const hostname = Request.hostname(request, trust)
@@ -314,6 +368,15 @@ Request.subdomains = function (request, trust, offset = 2) {
  * @param  {Object} request
  *
  * @return {Boolean}
+ *
+ * @example
+ * ```js
+ * if (nodeReq.ajax(req)) {
+ *    res.writeHead(200, {"Content-type": "application/json"})
+ * } else {
+ *    res.writeHead(200, {"Content-type": "text/html"})
+ * }
+ * ```
  */
 Request.ajax = function (request) {
   const xhr = Request.header(request, 'X-Requested-With') || ''
@@ -329,6 +392,15 @@ Request.ajax = function (request) {
  * @param  {Object} request
  *
  * @return {Boolean}
+ *
+ * @example
+ * ```js
+ * if (nodeReq.pjax(req)) {
+ *    // return partial content
+ * } else {
+ *    // full page refresh
+ * }
+ * ```
  */
 Request.pjax = function (request) {
   return !!Request.header(request, 'X-Pjax')
@@ -346,6 +418,11 @@ Request.pjax = function (request) {
  * @param  {Mixed}  [trust]
  *
  * @return {String}
+ *
+ * @example
+ * ```js
+ * const hostname = nodeReq.hostname(request)
+ * ```
  */
 Request.hostname = function (request, trust) {
   trust = compileTrust(trust)
@@ -380,6 +457,11 @@ Request.hostname = function (request, trust) {
  * @param  {Object} request
  *
  * @return {String}
+ *
+ * @example
+ * ```js
+ * const url = nodeReq.url(request)
+ * ```
  */
 Request.url = function (request) {
   return parseurl(request).pathname
@@ -393,6 +475,11 @@ Request.url = function (request) {
  * @param  {Object} request
  *
  * @return {String}
+ *
+ * @example
+ * ```
+ * const url = nodeReq.originalUrl(request)
+ * ```
  */
 Request.originalUrl = function (request) {
   return parseurl(request).href
@@ -580,6 +667,13 @@ Request.charsets = function (request) {
  *
  * @param  {Object} request
  * @return {Boolean}
+ *
+ * @example
+ * ```js
+ * if (nodeReq.hasBody(request)) {
+ *    // use body parser
+ * }
+ * ```
  */
 Request.hasBody = function (request) {
   return is.hasBody(request)
