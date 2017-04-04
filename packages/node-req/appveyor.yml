@@ -13,7 +13,7 @@ install:
 test_script:
   - node --version
   - npm --version
-  - npm run test
+  - npm run test:win
 
 build: off
 clone_depth: 1
