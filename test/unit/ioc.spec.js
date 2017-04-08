@@ -445,4 +445,16 @@ test.group('Ioc', function () {
     const foo = ioc.use('App/Hook')
     assert.equal(foo.called, true)
   })
+
+  test('ignore escaped . when calling makeFunc', function () {
+    const ioc = new Ioc()
+    const obj = {
+      handle: function () {}
+    }
+
+    ioc.bind('Foo.Baz', function () {
+      return obj
+    })
+    assert.deepEqual(ioc.makeFunc('Foo\\.Baz.handle'), { instance: obj, method: 'handle' })
+  })
 })

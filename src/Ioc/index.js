@@ -738,15 +738,16 @@ class Ioc {
    * ```
    */
   makeFunc (pattern) {
-    const [namespace, method] = pattern.split('.')
-    if (!namespace || !method) {
+    const [namespace, method, ...rest] = pattern.split(/\b\./g)
+    if (!namespace || !method || rest.length) {
       throw CE.InvalidArgumentException.invalidMakeString(pattern)
     }
 
-    const instance = this.make(namespace)
+    const normalizedNamespace = namespace.replace(/\\./g, '.')
+    const instance = this.make(normalizedNamespace)
 
     if (!instance[method]) {
-      throw CE.RuntimeException.missingMethod(namespace, method)
+      throw CE.RuntimeException.missingMethod(normalizedNamespace, method)
     }
     return {instance, method}
   }
