@@ -749,7 +749,7 @@ class Ioc {
     if (!instance[method]) {
       throw CE.RuntimeException.missingMethod(normalizedNamespace, method)
     }
-    return {instance, method}
+    return {instance, method: instance[method]}
   }
 }
 

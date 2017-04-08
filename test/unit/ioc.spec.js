@@ -436,7 +436,7 @@ test.group('Ioc', function () {
     ioc.bind('Foo', function () {
       return obj
     })
-    assert.deepEqual(ioc.makeFunc('Foo.handle'), { instance: obj, method: 'handle' })
+    assert.deepEqual(ioc.makeFunc('Foo.handle'), { instance: obj, method: obj.handle })
   })
 
   test('should call the Ioc hooks when defined on the autoloaded object', function () {
@@ -455,6 +455,6 @@ test.group('Ioc', function () {
     ioc.bind('Foo.Baz', function () {
       return obj
     })
-    assert.deepEqual(ioc.makeFunc('Foo\\.Baz.handle'), { instance: obj, method: 'handle' })
+    assert.deepEqual(ioc.makeFunc('Foo\\.Baz.handle'), { instance: obj, method: obj.handle })
   })
 })
