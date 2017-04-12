@@ -171,7 +171,13 @@ class Encryption {
    * @public
    */
   base64Encode (unencoded) {
-    return Buffer.from(unencoded || '').toString('base64')
+    if (typeof Buffer.from === 'function') {
+      // Node 5.10+
+      return Buffer.from(unencoded || '').toString('base64')
+    } else {
+      // older Node versions
+      return new Buffer(unencoded || '').toString('base64') // eslint-disable-line node/no-deprecated-api
+    }
   }
 
   /**
@@ -185,9 +191,22 @@ class Encryption {
    */
   base64Decode (encoded, raw) {
     if (raw) {
-      return Buffer.from(encoded || '', 'base64')
+      if (typeof Buffer.from === 'function') {
+        // Node 5.10+
+        return Buffer.from(encoded || '', 'base64')
+      } else {
+        // older Node versions
+        return new Buffer(encoded || '', 'base64') // eslint-disable-line node/no-deprecated-api
+      }
     }
-    return Buffer.from(encoded || '', 'base64').toString('utf8')
+
+    if (typeof Buffer.from === 'function') {
+      // Node 5.10+
+      return Buffer.from(encoded || '', 'base64').toString('utf8')
+    } else {
+      // older Node versions
+      return new Buffer(encoded || '', 'base64').toString('utf8') // eslint-disable-line node/no-deprecated-api
+    }
   }
 
   /**
