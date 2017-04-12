@@ -22,7 +22,6 @@ const CE = require('../Exceptions')
  * @alias Request.file
  */
 class File {
-
   constructor (formidableObject, options) {
     options = options || {}
     this.file = formidableObject
@@ -306,7 +305,6 @@ class File {
   toJSON () {
     return this.file
   }
-
 }
 
 module.exports = File

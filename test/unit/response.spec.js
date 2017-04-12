@@ -29,7 +29,7 @@ const Config = {
       case 'app.http.setPoweredBy':
         return true
       default:
-        true
+        return true
     }
   }
 }

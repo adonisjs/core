@@ -9,7 +9,6 @@
 const ServiceProvider = require('adonis-fold').ServiceProvider
 
 class SessionProvider extends ServiceProvider {
-
   * register () {
     const SessionManager = require('../src/Session/SessionManager')
     this.app.singleton('Adonis/Src/Session', function (app) {

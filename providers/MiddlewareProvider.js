@@ -9,7 +9,6 @@
 const ServiceProvider = require('adonis-fold').ServiceProvider
 
 class MiddlewareProvider extends ServiceProvider {
-
   * register () {
     this.app.bind('Adonis/Src/Middleware', function () {
       return require('../src/Middleware')

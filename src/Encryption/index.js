@@ -10,6 +10,7 @@
 */
 
 const crypto = require('crypto')
+const semver = require('semver')
 const CE = require('../Exceptions')
 
 /**
@@ -20,7 +21,6 @@ const CE = require('../Exceptions')
  * @class
  */
 class Encryption {
-
   constructor (Config) {
     this.appKey = Config.get('app.appKey')
     this.algorithm = Config.get('app.encryption.algorithm', 'aes-256-cbc')
@@ -172,7 +172,13 @@ class Encryption {
    * @public
    */
   base64Encode (unencoded) {
-    return new Buffer(unencoded || '').toString('base64')
+    if (semver.gte(process.version, '6.0.0')) {
+      // Node 5.10+
+      return Buffer.from(unencoded || '').toString('base64')
+    } else {
+      // older Node versions
+      return new Buffer(unencoded || '').toString('base64') // eslint-disable-line node/no-deprecated-api
+    }
   }
 
   /**
@@ -186,9 +192,22 @@ class Encryption {
    */
   base64Decode (encoded, raw) {
     if (raw) {
-      return new Buffer(encoded || '', 'base64')
+      if (semver.gte(process.version, '6.0.0')) {
+        // Node 5.10+
+        return Buffer.from(encoded || '', 'base64')
+      } else {
+        // older Node versions
+        return new Buffer(encoded || '', 'base64') // eslint-disable-line node/no-deprecated-api
+      }
     }
-    return new Buffer(encoded || '', 'base64').toString('utf8')
+
+    if (semver.gte(process.version, '6.0.0')) {
+      // Node 5.10+
+      return Buffer.from(encoded || '', 'base64').toString('utf8')
+    } else {
+      // older Node versions
+      return new Buffer(encoded || '', 'base64').toString('utf8') // eslint-disable-line node/no-deprecated-api
+    }
   }
 
   /**
@@ -227,7 +246,6 @@ class Encryption {
   getIvSize () {
     return 16
   }
-
 }
 
 module.exports = Encryption

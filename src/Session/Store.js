@@ -90,7 +90,7 @@ Store.unGuardPair = function (pair) {
   }
 
   /** if parsed do not re parse */
-  if (typeof (pair.d) === pair.t.toLowerCase()) {
+  if (typeof (pair.d) === pair.t.toLowerCase()) { // eslint-disable-line valid-typeof
     return pair.d
   }
 

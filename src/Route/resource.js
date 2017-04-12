@@ -21,7 +21,6 @@ const CE = require('../Exceptions')
  * @alias Route.Resource
  */
 class Resource {
-
   constructor (RouteHelper, pattern, handler) {
     if (typeof (handler) !== 'string') {
       throw CE.InvalidArgumentException.invalidParameter('You can only bind controllers to resources')
@@ -326,7 +325,6 @@ class Resource {
   toJSON () {
     return this.routes
   }
-
 }
 
 module.exports = Resource

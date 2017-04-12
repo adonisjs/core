@@ -16,7 +16,6 @@
  * @alias SessionRedisDriver
  */
 class Redis {
-
   /**
    * Injects ['Adonis/Src/Helpers', 'Adonis/Src/Config']
    */
@@ -75,7 +74,6 @@ class Redis {
     const response = yield this.redis.del(sessionId)
     return !!response
   }
-
 }
 
 module.exports = Redis

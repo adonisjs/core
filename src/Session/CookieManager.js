@@ -17,7 +17,6 @@ const nodeCookie = require('node-cookie')
  * @class
  */
 class CookieManager {
-
   /**
    * @constructor
    */
@@ -76,7 +75,6 @@ class CookieManager {
   remove (request, response, cookieName) {
     return nodeCookie.clear(request, response, cookieName)
   }
-
 }
 
 module.exports = CookieManager

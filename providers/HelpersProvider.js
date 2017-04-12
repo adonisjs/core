@@ -9,7 +9,6 @@
 const ServiceProvider = require('adonis-fold').ServiceProvider
 
 class HelpersProvider extends ServiceProvider {
-
   * register () {
     this.app.bind('Adonis/Src/Helpers', function () {
       return require('../src/Helpers')

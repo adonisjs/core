@@ -9,7 +9,6 @@
 const ServiceProvider = require('adonis-fold').ServiceProvider
 
 class RouteProvider extends ServiceProvider {
-
   * register () {
     this.app.bind('Adonis/Src/Route', function () {
       return require('../src/Route')

@@ -18,7 +18,6 @@ let configInstance = null
  * @class
  */
 class Response {
-
   constructor (request, response) {
     this.request = request
     this.response = response
@@ -310,7 +309,7 @@ class Response {
    * @public
    */
   cookie (key, value, options) {
-    const secret = configInstance.get('app.appKey')
+    const secret = typeof configInstance.get('app.appKey') === 'string' ? configInstance.get('app.appKey') : ''
     const encrypt = !!secret
     nodeCookie.create(this.request.request, this.response, key, value, options, secret, encrypt)
     return this
@@ -355,7 +354,6 @@ class Response {
   static macro (name, callback) {
     this.prototype[name] = callback
   }
-
 }
 
 class ResponseBuilder {

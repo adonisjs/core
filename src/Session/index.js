@@ -29,7 +29,6 @@ let sessionManagerConfig = {}
  * @class
  */
 class Session {
-
   /**
    * @constructor
    */
@@ -292,7 +291,6 @@ class Session {
     this.sessionId = null
     return this.cookieManager.remove(this.request, this.response, this.sessionCookieName)
   }
-
 }
 
 module.exports = Session

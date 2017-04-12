@@ -21,7 +21,6 @@ const _ = require('lodash')
  * @alias View
  */
 class View {
-
   constructor (Helpers, Config, Route, viewsEnv) {
     this.Helpers = Helpers
     this.Config = Config

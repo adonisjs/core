@@ -9,7 +9,6 @@
 const ServiceProvider = require('adonis-fold').ServiceProvider
 
 class ConfigProvider extends ServiceProvider {
-
   * register () {
     this.app.singleton('Adonis/Src/Config', function (app) {
       const Config = require('../src/Config')

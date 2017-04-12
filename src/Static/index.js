@@ -16,7 +16,6 @@ const serveStatic = require('serve-static')
  * @class
  */
 class Static {
-
   constructor (Helpers, Config) {
     const publicPath = Helpers.publicPath()
     const options = Config.get('app.static', {})
@@ -49,7 +48,6 @@ class Static {
       })
     })
   }
-
 }
 
 module.exports = Static
