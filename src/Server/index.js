@@ -23,7 +23,6 @@ const CE = require('../Exceptions')
  * @class
  */
 class Server {
-
   constructor (Request, Response, Route, Helpers, Middleware, Static, Session, Config, Event) {
     this.Request = Request
     this.controllersPath = 'Http/Controllers'
@@ -260,7 +259,6 @@ class Server {
     this.log.info('serving app on %s:%s', host, port)
     return this.getInstance().listen(port, host)
   }
-
 }
 
 module.exports = Server

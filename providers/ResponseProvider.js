@@ -9,7 +9,6 @@
 const ServiceProvider = require('adonis-fold').ServiceProvider
 
 class ResponseProvider extends ServiceProvider {
-
   * register () {
     this.app.singleton('Adonis/Src/Response', function (app) {
       const View = app.use('Adonis/Src/View')

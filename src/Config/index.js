@@ -18,7 +18,6 @@ const util = require('../../lib/util')
  * reading all .js files from config directory.
  */
 class Config {
-
   constructor (Helpers) {
     const configPath = Helpers.configPath()
     /**

@@ -40,7 +40,7 @@ describe('View', function () {
   it('should throw an error when unable to find view', function * () {
     try {
       yield this.view.make('foo.html')
-      expect(true).to.be.false
+      expect(0).to.equal(1)
     } catch (e) {
       expect(e.message).to.match(/template not found/)
     }
@@ -215,7 +215,7 @@ describe('View', function () {
   it('should not mutate the original view when made changes to cloned copy', function () {
     const clonedView = this.view.clone()
     clonedView.global('name', 'foo')
-    expect(this.view.viewsEnv.globals.name).is.undefined
+    expect(typeof this.view.viewsEnv.globals.name).to.equal('undefined')
     expect(clonedView.viewsEnv.globals.name).to.equal('foo')
   })
 
@@ -223,8 +223,8 @@ describe('View', function () {
     const clonedView = this.view.clone()
     const clonedView1 = this.view.clone()
     clonedView.global('name', 'foo')
-    expect(this.view.viewsEnv.globals.name).is.undefined
-    expect(clonedView1.viewsEnv.globals.name).is.undefined
+    expect(typeof this.view.viewsEnv.globals.name).to.equal('undefined')
+    expect(typeof clonedView1.viewsEnv.globals.name).to.equal('undefined')
     expect(clonedView.viewsEnv.globals.name).to.equal('foo')
   })
 })

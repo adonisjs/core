@@ -12,7 +12,6 @@
 const ServiceProvider = require('adonis-fold').ServiceProvider
 
 class EventProvider extends ServiceProvider {
-
   * register () {
     this.app.singleton('Adonis/Src/Event', function (app) {
       const Event = require('../src/Event')

@@ -3,7 +3,6 @@
 const NE = require('node-exceptions')
 
 class RuntimeException extends NE.RuntimeException {
-
   /**
    * default error code to be used for raising
    * exceptions
@@ -150,11 +149,9 @@ class RuntimeException extends NE.RuntimeException {
   static missingNamedMiddleware (name, code) {
     return new this(`${name} is not registered as a named middleware`, code || this.defaultErrorCode, 'E_MISSING_NAMED_MIDDLEWARE')
   }
-
 }
 
 class InvalidArgumentException extends NE.InvalidArgumentException {
-
   /**
    * default error code to be used for raising
    * exceptions
@@ -204,7 +201,6 @@ class InvalidArgumentException extends NE.InvalidArgumentException {
   static missingEvent (event, name, code) {
     return new this(`Cannot find an event with ${name} name for ${event} event`, code || this.defaultErrorCode, 'E_MISSING_NAMED_EVENT')
   }
-
 }
 
 module.exports = {RuntimeException, InvalidArgumentException, HttpException: NE.HttpException}

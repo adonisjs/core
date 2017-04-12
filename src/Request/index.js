@@ -26,7 +26,6 @@ let configInstance = null
  * @class
  */
 class Request {
-
   constructor (request, response) {
     this.request = request
     this.response = response

@@ -279,7 +279,7 @@ describe('Server', function () {
   })
 
   it('should server instance is null', function * () {
-    expect(this.server.httpInstance).to.be.null
+    expect(this.server.httpInstance).to.equal(null)
   })
 
   it('should tell whether server is an instance of http.Server', function * () {

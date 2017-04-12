@@ -20,7 +20,6 @@ const CE = require('../Exceptions')
  * @class
  */
 class Encryption {
-
   constructor (Config) {
     this.appKey = Config.get('app.appKey')
     this.algorithm = Config.get('app.encryption.algorithm', 'aes-256-cbc')
@@ -172,7 +171,7 @@ class Encryption {
    * @public
    */
   base64Encode (unencoded) {
-    return new Buffer(unencoded || '').toString('base64')
+    return Buffer.from(unencoded || '').toString('base64')
   }
 
   /**
@@ -186,9 +185,9 @@ class Encryption {
    */
   base64Decode (encoded, raw) {
     if (raw) {
-      return new Buffer(encoded || '', 'base64')
+      return Buffer.from(encoded || '', 'base64')
     }
-    return new Buffer(encoded || '', 'base64').toString('utf8')
+    return Buffer.from(encoded || '', 'base64').toString('utf8')
   }
 
   /**
@@ -227,7 +226,6 @@ class Encryption {
   getIvSize () {
     return 16
   }
-
 }
 
 module.exports = Encryption

@@ -42,7 +42,6 @@ const _makeDriverInstance = (driver, drivers, extendedDrivers, callback) => {
  * @class
  */
 class SessionManager {
-
   /**
    * Extend session provider by adding a new named
    * driver. This method is used the IoC container, so

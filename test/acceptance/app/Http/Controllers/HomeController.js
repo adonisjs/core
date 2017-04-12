@@ -1,7 +1,6 @@
 'use strict'
 
 class HomeController {
-
   * index (request, response) {
     response.send('Hello zombie via controller')
   }
@@ -17,7 +16,6 @@ class HomeController {
   * profile (request, response) {
     response.send(request.param('id'))
   }
-
 }
 
 module.exports = HomeController

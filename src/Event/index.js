@@ -19,7 +19,6 @@ const co = require('co')
 const CE = require('../Exceptions')
 
 class Event {
-
   constructor (Config, Helpers) {
     const options = Config.get('event')
     this.listenersPath = 'Listeners'
@@ -293,7 +292,6 @@ class Event {
     handler = this._makeHandler(handler)
     this.emitter.once(event, handler)
   }
-
 }
 
 module.exports = Event

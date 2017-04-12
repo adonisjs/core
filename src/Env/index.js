@@ -19,7 +19,6 @@ const util = require('../../lib/util')
  * @class
  */
 class Env {
-
   constructor (Helpers) {
     const envLocation = this.envPath()
     const options = {
@@ -87,7 +86,6 @@ class Env {
   set (key, value) {
     process.env[key] = value
   }
-
 }
 
 module.exports = Env

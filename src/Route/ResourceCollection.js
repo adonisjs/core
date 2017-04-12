@@ -15,7 +15,6 @@ const CatLog = require('cat-log')
 const logger = new CatLog('adonis:framework')
 
 class ResourceCollection {
-
   constructor (route) {
     this.route = route
   }
@@ -82,7 +81,6 @@ class ResourceCollection {
   toJSON () {
     return this.route
   }
-
 }
 
 module.exports = ResourceCollection

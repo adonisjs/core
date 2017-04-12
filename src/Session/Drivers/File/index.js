@@ -18,7 +18,6 @@ const fs = require('co-fs-extra')
  * @alias SessionFileDriver
  */
 class File {
-
   /**
    * Injects ['Adonis/Src/Helpers', 'Adonis/Src/Config']
    */

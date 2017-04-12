@@ -13,7 +13,6 @@ const CookieManager = require('../../CookieManager')
 const _ = require('lodash')
 
 class RequestCookie {
-
   constructor (Config) {
     this.cookieName = `${Config.get('session.cookie', 'adonis-session')}-value`
     this.cookieManager = new CookieManager(Config)
@@ -102,7 +101,6 @@ class RequestCookie {
     this.request = request
     this.response = response
   }
-
 }
 
 /**
@@ -111,7 +109,6 @@ class RequestCookie {
  * @alias SessionCookieDriver
  */
 class Cookie {
-
   /**
    * Injects ['Adonis/Src/Config']
    */
@@ -135,7 +132,6 @@ class Cookie {
   fresh () {
     return new RequestCookie(this.Config)
   }
-
 }
 
 module.exports = Cookie

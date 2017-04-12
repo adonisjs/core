@@ -112,7 +112,6 @@ describe('Event', function () {
   it('should be able to make class instance from Ioc Container', function (done) {
     const event = new Event(Config, Helpers)
     class Foo {
-
       constructor () {
         this.name = 'foo'
       }

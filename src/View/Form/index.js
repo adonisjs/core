@@ -18,7 +18,6 @@ const CE = require('../../Exceptions')
  * @alias View.Form
  */
 class Form {
-
   constructor (viewsEnv, Route) {
     this.env = viewsEnv
     this.specialKeywords = ['url', 'files', 'method', 'route', 'action', 'params']
@@ -600,7 +599,6 @@ class Form {
   selectRange (name, start, end, selected, emptyOption, attributes) {
     return this.select(name, _.range(start, end), selected, emptyOption, attributes)
   }
-
 }
 
 module.exports = Form

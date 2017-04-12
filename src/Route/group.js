@@ -20,7 +20,6 @@ const util = require('../../lib/util')
  * @alias Route.Group
  */
 class Group {
-
   constructor (routes) {
     this.routes = routes
   }
@@ -84,7 +83,6 @@ class Group {
     helpers.addFormats(this.routes, formats, strict)
     return this
   }
-
 }
 
 module.exports = Group

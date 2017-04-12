@@ -18,7 +18,6 @@ let configInstance = null
  * @class
  */
 class Response {
-
   constructor (request, response) {
     this.request = request
     this.response = response
@@ -355,7 +354,6 @@ class Response {
   static macro (name, callback) {
     this.prototype[name] = callback
   }
-
 }
 
 class ResponseBuilder {
