@@ -10,6 +10,7 @@
 */
 
 const crypto = require('crypto')
+const semver = require('semver')
 const CE = require('../Exceptions')
 
 /**
@@ -171,7 +172,7 @@ class Encryption {
    * @public
    */
   base64Encode (unencoded) {
-    if (typeof Buffer.from === 'function') {
+    if (semver.gte(process.version, '6.0.0')) {
       // Node 5.10+
       return Buffer.from(unencoded || '').toString('base64')
     } else {
@@ -191,7 +192,7 @@ class Encryption {
    */
   base64Decode (encoded, raw) {
     if (raw) {
-      if (typeof Buffer.from === 'function') {
+      if (semver.gte(process.version, '6.0.0')) {
         // Node 5.10+
         return Buffer.from(encoded || '', 'base64')
       } else {
@@ -200,7 +201,7 @@ class Encryption {
       }
     }
 
-    if (typeof Buffer.from === 'function') {
+    if (semver.gte(process.version, '6.0.0')) {
       // Node 5.10+
       return Buffer.from(encoded || '', 'base64').toString('utf8')
     } else {

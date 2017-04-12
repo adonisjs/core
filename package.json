@@ -64,6 +64,7 @@
     "nunjucks": "^3.0.0",
     "path-to-regexp": "^1.7.0",
     "require-all": "^2.1.0",
+    "semver": "^5.3.0",
     "serve-static": "^1.11.2",
     "type-of-is": "^3.4.0",
     "uuid": "^3.0.1"
