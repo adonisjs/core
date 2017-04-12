@@ -309,7 +309,7 @@ class Response {
    * @public
    */
   cookie (key, value, options) {
-    const secret = configInstance.get('app.appKey')
+    const secret = typeof configInstance.get('app.appKey') === 'string' ? configInstance.get('app.appKey') : ''
     const encrypt = !!secret
     nodeCookie.create(this.request.request, this.response, key, value, options, secret, encrypt)
     return this
