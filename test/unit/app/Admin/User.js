@@ -1,1 +1,3 @@
-module.exports = class AdminUser {}
+module.exports = class AdminUser {
+  get () {}
+}

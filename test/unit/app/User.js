@@ -1,1 +1,3 @@
-module.exports = class User {}
+module.exports = class User {
+  get () {}
+}
