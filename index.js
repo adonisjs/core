@@ -9,11 +9,12 @@
  * file that was distributed with this source code.
 */
 
-const Ioc = new (require('./src/Ioc'))()
+const ioc = new (require('./src/Ioc'))()
 const ServiceProvider = require('./src/ServiceProvider')
-const Registrar = new (require('./src/Registrar'))(Ioc)
+const registrar = new (require('./src/Registrar'))(ioc)
+const resolver = new (require('./src/Resolver/Manager'))(ioc)
 
-global.use = Ioc.use.bind(Ioc)
-global.make = Ioc.make.bind(Ioc)
+global.use = ioc.use.bind(ioc)
+global.make = ioc.make.bind(ioc)
 
-module.exports = { Ioc, ServiceProvider, Registrar }
+module.exports = { ioc, ServiceProvider, registrar, resolver }
