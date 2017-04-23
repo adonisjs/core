@@ -1,429 +1,237 @@
 'use strict'
 
-/**
+/*
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
-const chai = require('chai')
-const expect = chai.expect
-const RequestBuilder = require('../../src/Request')
-const ResponseBuilder = require('../../src/Response')
-const Route = require('../../src/Route')
-const View = require('../../src/View')
-const http = require('http')
 const path = require('path')
-const co = require('co')
+const test = require('japa')
+const http = require('http')
 const supertest = require('supertest')
 
-require('co-mocha')
+const Response = require('../../src/Response')
 
-const Config = {
-  get: function (key) {
-    switch (key) {
-      case 'app.views.cache':
-        return true
-      case 'app.http.jsonpCallback':
-        return 'callback'
-      case 'app.http.setPoweredBy':
-        return true
-      default:
-        true
-    }
-  }
-}
-
-describe('Response', function () {
-  before(function () {
-    const Helpers = {
-      viewsPath: function () {
-        return path.join(__dirname, './app/views')
-      }
-    }
-
-    this.view = new View(Helpers, Config, Route)
-    this.Request = new RequestBuilder(Config)
-    this.Response = new ResponseBuilder(this.view, Route, Config)
-  })
-
-  beforeEach(function () {
-    Route.new()
-  })
-
-  it('should respond to a request using send method', function * () {
+test.group('Response', () => {
+  test('send raw string as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.send('Hello world')
+      const response = new Response(req, res)
+      response.send('hello world')
+      response.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.text).to.equal('Hello world')
+    const res = await supertest(server).get('/').expect('Content-Type', /plain/).expect(200)
+    assert.equal(res.text, 'hello world')
   })
 
-  it('should make use of descriptive methods exposed by nodeRes', function * () {
+  test('send json object as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.ok('Hello world')
+      const response = new Response(req, res)
+      response.send({name: 'virk'})
+      response.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.text).to.equal('Hello world')
+    const res = await supertest(server).get('/').expect('Content-Type', /json/).expect(200)
+    assert.deepEqual(res.body, {name: 'virk'})
   })
 
-  it('should return 401 using unauthorized method', function * () {
+  test('send number as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.unauthorized('Login first')
+      const response = new Response(req, res)
+      response.send(22)
+      response.end()
     })
 
-    const res = yield supertest(server).get('/').expect(401)
-    expect(res.text).to.equal('Login first')
+    const res = await supertest(server).get('/').expect('Content-Type', /plain/).expect(200)
+    assert.equal(res.text, 22)
   })
 
-  it('should return 500 using internalServerError method', function * () {
+  test('send boolean as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.internalServerError('Error first')
+      const response = new Response(req, res)
+      response.send(true)
+      response.end()
     })
-    const res = yield supertest(server).get('/').expect(500)
-    expect(res.text).to.equal('Error first')
+
+    const res = await supertest(server).get('/').expect('Content-Type', /plain/).expect(200)
+    assert.equal(res.text, 'true')
   })
 
-  it('should set header on response', function * () {
+  test('send html as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.header('country', 'India').send('')
+      const response = new Response(req, res)
+      response.send('<h2> Hello world </h2>')
+      response.end()
     })
 
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers.country).to.equal('India')
+    const res = await supertest(server).get('/').expect('Content-Type', /html/).expect(200)
+    assert.equal(res.text, '<h2> Hello world </h2>')
   })
 
-  it('should remove existing from request', function * () {
+  test('set http response status', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.removeHeader('country', 'India').send('')
+      const response = new Response(req, res)
+      response.status(304).send('hello')
+      response.end()
     })
-
-    const res = yield supertest(server).get('/').set('country', 'India').expect(200)
-    expect(res.headers.country).to.equal(undefined)
+    await supertest(server).get('/').expect(304)
   })
 
-  it('should make json response using json method', function * () {
+  test('set http request header', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.json({name: 'foo'})
+      const response = new Response(req, res)
+      response.header('Link', ['<http://localhost/>', '<http://localhost:3000/>'])
+      response.end()
     })
-
-    const res = yield supertest(server).get('/').expect(200).expect('Content-type', /json/)
-    expect(res.body).deep.equal({name: 'foo'})
+    await supertest(server).get('/').expect('link', '<http://localhost/>, <http://localhost:3000/>')
   })
 
-  it('should make jsonp response using jsonp method with correct callback', function * () {
+  test('only set the header when does not exists', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.jsonp({name: 'foo'})
+      const response = new Response(req, res)
+      response.safeHeader('Content-Type', 'application/json')
+      response.safeHeader('Content-Type', 'text/plain')
+      response.send('')
+      response.end()
     })
-
-    const res = yield supertest(server).get('/?callback=angular').expect(200).expect('Content-type', /javascript/)
-    expect(res.text).to.match(/typeof angular/)
+    await supertest(server).get('/').expect('Content-Type', /json/)
   })
 
-  it('should make jsonp response using jsonp default callback when callback is missing in query string', function * () {
+  test('remove response header', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.jsonp({name: 'foo'})
+      const response = new Response(req, res)
+      response.header('Link', ['<http://localhost/>', '<http://localhost:3000/>'])
+      response.removeHeader('link')
+      response.end()
     })
-
-    const res = yield supertest(server).get('/').expect(200).expect('Content-type', /javascript/)
-    expect(res.text).to.match(/typeof callback/)
+    const res = await supertest(server).get('/')
+    assert.notProperty(res.headers, 'link')
   })
 
-  it('should set request status', function * () {
+  test('get value for existing header', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.status(304).json({name: 'foo'})
+      const response = new Response(req, res)
+      response.header('Link', ['<http://localhost/>', '<http://localhost:3000/>'])
+      response.send(response.getHeader('link'))
+      response.end()
     })
-    yield supertest(server).get('/').expect(304)
+    const res = await supertest(server).get('/').expect(200)
+    assert.deepEqual(res.body, ['<http://localhost/>', '<http://localhost:3000/>'])
   })
 
-  it('should download a given file using its path', function * () {
+  test('download file', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.download(path.join(__dirname, './public/style.css'))
+      const response = new Response(req, res)
+      response.download(path.join(__dirname, '../../package.json'))
     })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.text).to.match(/(?:\s*\S+\s*{[^}]*})+/g)
+    const res = await supertest(server).get('/').expect(200)
+    assert.isObject(res.body)
+    assert.equal(res.body.name, '@adonisjs/framework')
   })
 
-  it('should force download a given file using its path and by setting content-disposition header', function * () {
+  test('send 404 when file does not exists', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.attachment(path.join(__dirname, './public/style.css'))
+      const response = new Response(req, res)
+      response.download(path.join(__dirname, '../../logo.svg'))
     })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers['content-disposition']).to.equal('attachment; filename="style.css"')
+    await supertest(server).get('/').expect(404)
   })
 
-  it('should force download a given file using its path but with different name', function * () {
+  test('force download the file by setting content-disposition', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.attachment(path.join(__dirname, './public/style.css'), 'production.css')
+      const response = new Response(req, res)
+      response.attachment(path.join(__dirname, '../../package.json'))
     })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers['content-disposition']).to.equal('attachment; filename="production.css"')
+
+    const res = await supertest(server).get('/').expect('Content-Disposition', /filename="package.json"/)
+    assert.isObject(res.body)
+    assert.equal(res.body.name, '@adonisjs/framework')
   })
 
-  it('should set location header on response', function * () {
+  test('force download the file with different file name', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.location('http://amanvirk.me').send('')
+      const response = new Response(req, res)
+      response.attachment(path.join(__dirname, '../../package.json'), 'adonis.json')
     })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers.location).to.equal('http://amanvirk.me')
+
+    const res = await supertest(server).get('/').expect('Content-Disposition', /filename="adonis.json"/)
+    assert.isObject(res.body)
+    assert.equal(res.body.name, '@adonisjs/framework')
   })
 
-  it('should set location header to referrer on response', function * () {
+  test('set the location http header', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.location('back').send('')
+      const response = new Response(req, res)
+      response.location('http://adonisjs.com')
+      response.end()
     })
-    const res = yield supertest(server).get('/').set('Referrer', '/foo').expect(200)
-    expect(res.headers.location).to.equal('/foo')
+
+    await supertest(server).get('/').expect('Location', 'http://adonisjs.com')
   })
 
-  it('should set location header to / when there is no referrer on request', function * () {
+  test('redirect the request', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.location('back').send('')
+      const response = new Response(req, res)
+      response.redirect('http://adonisjs.com')
     })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers.location).to.equal('/')
+
+    await supertest(server).get('/').expect('Location', 'http://adonisjs.com').expect(302)
   })
 
-  it('should set location header on response using redirect method', function * () {
+  test('set content-type based on type', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.redirect('http://amanvirk.me')
+      const response = new Response(req, res)
+      response.type('html').send({username: 'virk'})
+      response.end()
     })
-    const res = yield supertest(server).get('/').expect(302)
-    expect(res.headers.location).to.equal('http://amanvirk.me')
+
+    await supertest(server).get('/').expect('Content-Type', /html/).expect(200)
   })
 
-  it('should set location header to referrer when using back with redirect method', function * () {
+  test('send content as json with content-type explicitly set to text/javascript', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.redirect('back')
+      const response = new Response(req, res)
+      response.jsonp({username: 'virk'})
+      response.end()
     })
-    const res = yield supertest(server).get('/').set('Referrer', '/bar').expect(302)
-    expect(res.headers.location).to.equal('/bar')
+
+    await supertest(server).get('/').expect('Content-Type', /javascript/).expect(200)
   })
 
-  it('should set location header to / when there is no referrer defined using redirect method', function * () {
+  test('use the request query param callback for jsonp response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.redirect('back')
+      const response = new Response(req, res)
+      response.jsonp({username: 'virk'})
+      response.end()
     })
-    const res = yield supertest(server).get('/').expect(302)
-    expect(res.headers.location).to.equal('/')
+
+    const res = await supertest(server).get('/?callback=exec').expect(200)
+    assert.equal(res.text, `/**/ typeof exec === 'function' && exec({"username":"virk"});`)
   })
 
-  it('should redirect to a given route using route method', function * () {
-    Route.get('/user/:id', function * () {}).as('profile')
+  test('use the explicit callbackFn over request query param', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.route('profile', {id: 1})
+      const response = new Response(req, res)
+      response.jsonp({username: 'virk'}, 'eval')
+      response.end()
     })
-    const res = yield supertest(server).get('/').expect(302)
-    expect(res.headers.location).to.equal('/user/1')
+
+    const res = await supertest(server).get('/?callback=exec').expect(200)
+    assert.equal(res.text, `/**/ typeof eval === 'function' && eval({"username":"virk"});`)
   })
 
-  it('should redirect to a given route using route method when it is under a domain', function * () {
-    Route.group('g', function () {
-      Route.get('/user/:id', function * () {}).as('profile')
-    }).domain('virk.adonisjs.com')
-
+  test('set 401 as the status via unauthorized method', async (assert) => {
     const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.route('profile', {id: 1})
+      const response = new Response(req, res)
+      response.unauthorized('Login First')
+      response.end()
     })
-    const res = yield supertest(server).get('/').expect(302)
-    expect(res.headers.location).to.equal('virk.adonisjs.com/user/1')
-  })
 
-  it('should add vary field to response headers', function * () {
-    const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.vary('Accepts').send('')
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers.vary).to.equal('Accepts')
-  })
-
-  it('should set response cookie using cookie method', function * () {
-    const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.cookie('name', 'virk').end()
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers['set-cookie']).deep.equal(['name=virk'])
-  })
-
-  it('should set plain cookie using plainCookie method even when encryption is on', function * () {
-    const server = http.createServer((req, res) => {
-      const alternateConfig = {
-        get: function (key) {
-          switch (key) {
-            case 'app.appKey':
-              return 'n96M1TPG821EdN4mMIjnGKxGytx9W2UJ'
-          }
-        }
-      }
-      const request = new this.Request(req, res, Config)
-      const Response = new ResponseBuilder(this.view, Route, alternateConfig)
-      const response = new Response(request, res)
-      response.plainCookie('name', 'virk').end()
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers['set-cookie']).deep.equal(['name=virk'])
-    /**
-     * Re intiating ResponseBuilder since it updates a global
-     * value inside Response/index.js file.
-     */
-    this.Response = new ResponseBuilder(this.view, Route, Config)
-  })
-
-  it('should make a view using response view method', function * () {
-    const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      co(function * () {
-        return yield response.view('index')
-      }).then(function (responseView) {
-        response.send(responseView)
-      }).catch(function (err) {
-        response.status(200).send(err)
-      })
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.text.trim()).to.equal('<h2> Hello world </h2>')
-  })
-
-  it('should immediately send a view using response sendView method', function * () {
-    const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      co(function * () {
-        yield response.sendView('index')
-      }).catch(function (err) {
-        response.status(200).send(err)
-      })
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.text.trim()).to.equal('<h2> Hello world </h2>')
-  })
-
-  it('should set X-Powered-By when enabled inside app.http config', function * () {
-    const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const response = new this.Response(request, res)
-      response.send()
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers).to.have.property('x-powered-by')
-  })
-
-  it('should not set X-Powered-By when not enabled inside app.http config', function * () {
-    const server = http.createServer((req, res) => {
-      const Config = {
-        get: function () {
-          return false
-        }
-      }
-      const request = new this.Request(req, res, Config)
-      const Response = new ResponseBuilder({}, Route, Config)
-      const response = new Response(request, res)
-      response.send()
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.headers).not.have.property('x-powered-by')
-  })
-
-  it('should be able to add macro to the response prototype', function () {
-    const Response = new ResponseBuilder({}, Route, Config)
-    Response.macro('foo', function () {
-      return 'foo'
-    })
-    const response = new Response({}, {setHeader: function () {}})
-    expect(response.foo()).to.equal('foo')
-  })
-
-  it('should have access to instance inside the callback', function * () {
-    const Response = new ResponseBuilder({}, Route, Config)
-    Response.macro('foo', function () {
-      return this.request.name
-    })
-    const response = new Response({name: 'bar'}, {setHeader: function () {}})
-    expect(response.foo()).to.equal('bar')
-  })
-
-  it('should return true for isPending when request has not been ended', function * () {
-    const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const Response = new ResponseBuilder({}, Route, Config)
-      const response = new Response(request, res)
-      const isPending = response.isPending
-      response.send({isPending})
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.body.isPending).to.equal(true)
-  })
-
-  it('should return false for finished when request has not been ended', function * () {
-    const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const Response = new ResponseBuilder({}, Route, Config)
-      const response = new Response(request, res)
-      const finished = response.finished
-      response.send({finished})
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.body.finished).to.equal(false)
-  })
-
-  it('should return false for headersSent when request has not been ended', function * () {
-    const server = http.createServer((req, res) => {
-      const request = new this.Request(req, res, Config)
-      const Response = new ResponseBuilder({}, Route, Config)
-      const response = new Response(request, res)
-      const headersSent = response.headersSent
-      response.send({headersSent})
-    })
-    const res = yield supertest(server).get('/').expect(200)
-    expect(res.body.headersSent).to.equal(false)
+    const res = await supertest(server).get('/').expect(401)
+    assert.equal(res.text, 'Login First')
   })
 })

@@ -1,22 +1,20 @@
 {
-  "name": "adonis-framework",
-  "version": "3.0.14",
+  "name": "@adonisjs/framework",
+  "version": "4.0.2",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && FORCE_COLOR=true node ./bin/test.js",
-    "coverage": "npm run lint && FORCE_COLOR=true node ./bin/coverage.js",
-    "lint": "standard"
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "FORCE_COLOR=true node bin/index.js --local",
+    "test": "nyc npm run test:local",
+    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "standard": {
     "global": [
-      "it",
-      "describe",
-      "context",
-      "before",
-      "after",
-      "beforeEach",
-      "afterEach"
+      "use"
     ]
   },
   "keywords": [
@@ -27,46 +25,52 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "^3.0.3",
-    "adonis-redis": "^1.0.1",
-    "chai": "^3.5.0",
-    "cheerio": "^0.22.0",
-    "co-mocha": "^1.1.3",
-    "coveralls": "^2.11.15",
+    "@adonisjs/fold": "^4.0.0",
+    "@adonisjs/sink": "^1.0.8",
+    "cookie-signature": "^1.0.6",
+    "coveralls": "^2.13.1",
     "cz-conventional-changelog": "^2.0.0",
-    "formidable": "^1.1.1",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
-    "mocha-lcov-reporter": "^1.2.0",
-    "pem": "^1.9.4",
+    "fs-extra": "^3.0.1",
+    "japa": "^1.0.3",
+    "japa-cli": "^1.0.1",
+    "nyc": "^11.0.2",
+    "pify": "^3.0.0",
     "semver": "^5.3.0",
-    "shelljs": "^0.7.6",
-    "sinon": "^1.17.7",
-    "standard": "^8.6.0",
+    "simple-encryptor": "^1.1.0",
+    "standard": "^10.0.2",
     "supertest": "^3.0.0",
-    "test-console": "^1.0.0",
-    "zombie": "^5.0.5"
+    "test-console": "^1.0.0"
   },
   "dependencies": {
-    "adonis-binding-resolver": "^1.0.1",
-    "bcryptjs": "^2.4.0",
-    "bytes": "^2.4.0",
-    "cat-log": "^1.0.2",
-    "co": "^4.6.0",
-    "co-fs-extra": "^1.2.1",
-    "dotenv": "^2.0.0",
-    "eventemitter2": "^3.0.0",
+    "bcryptjs": "^2.4.3",
+    "co-compose": "^3.0.0",
+    "dotenv": "^4.0.0",
+    "edge.js": "^1.0.1",
+    "eventemitter2": "^4.1.0",
+    "haye": "^1.0.1",
     "lodash": "^4.17.4",
-    "node-cookie": "1.0.4",
-    "node-exceptions": "1.0.3",
-    "node-req": "1.0.5",
-    "node-res": "3.0.1",
-    "nunjucks": "^3.0.0",
+    "macroable": "^1.0.0",
+    "node-cookie": "^2.0.0",
+    "node-exceptions": "^2.0.2",
+    "node-req": "^2.0.1",
+    "node-res": "^4.0.0",
     "path-to-regexp": "^1.7.0",
-    "require-all": "^2.1.0",
-    "serve-static": "^1.11.2",
-    "type-of-is": "^3.4.0",
-    "uuid": "^3.0.1"
+    "require-all": "^2.2.0",
+    "resetable": "^1.0.2",
+    "serve-static": "^1.12.3",
+    "upcast": "^1.0.4",
+    "useragent": "^2.1.13",
+    "winston": "^2.3.1",
+    "youch": "^2.0.5"
+  },
+  "nyc": {
+    "include": [
+      "src",
+      "lib"
+    ],
+    "exclude": [
+      "src/Logger/index.js"
+    ]
   },
   "config": {
     "commitizen": {
@@ -83,5 +87,8 @@
   "bugs": {
     "url": "https://github.com/adonisjs/adonis-framework/issues"
   },
-  "homepage": "https://github.com/adonisjs/adonis-framework#readme"
+  "homepage": "https://github.com/adonisjs/adonis-framework#readme",
+  "bin": {
+    "framework": "index.js"
+  }
 }

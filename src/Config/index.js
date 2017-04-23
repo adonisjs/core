@@ -9,62 +9,140 @@
  * file that was distributed with this source code.
 */
 
-const requireAll = require('require-all')
 const _ = require('lodash')
-const util = require('../../lib/util')
+const requireAll = require('require-all')
+const debug = require('debug')('adonis:framework')
 
 /**
- * Manage configuration for an application by
- * reading all .js files from config directory.
+ * The Adonis framework is the core module containing all the required
+ * classes to run an HTTP server based application.
+ *
+ * @module Adonis
+ * @submodule framework
+ */
+
+/**
+ * Manages configuration by recursively reading all
+ * `.js` files from the `config` folder.
+ *
+ * @namespace Adonis/Src/Config
+ * @alias Config
+ * @singleton
+ *
+ * @class Config
+ * @constructor
  */
 class Config {
-
-  constructor (Helpers) {
-    const configPath = Helpers.configPath()
-    /**
-     * @type {Object}
-     */
-    this.config = requireAll({
-      dirname: configPath,
-      filters: /(.*)\.js$/
-    })
+  constructor (configPath) {
+    this._configPath = configPath
+    this._config = {}
+    this.syncWithFileSystem()
   }
 
   /**
-   * get value for a given key from config store.
+   * Syncs the in-memory config store with the
+   * file system. Ideally you should keep your
+   * config static and never update the file
+   * system on the fly.
    *
-   * @param  {String} key - Configuration key to return value for
-   * @param  {Mixed} [defaultValue] - Default value to return when actual value
-   *                                  is null or undefined
+   * @method syncWithFileSystem
+   */
+  syncWithFileSystem () {
+    try {
+      this._config = requireAll({
+        dirname: this._configPath,
+        filters: /(.*)\.js$/
+      })
+      debug('loaded all config files from %s', this._configPath)
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error
+      }
+    }
+  }
+
+  /**
+   * Get value for a given key from the config store. Nested
+   * values can be accessed via (dot notation). Values
+   * referenced with `self::` are further resolved.
+   *
+   * @method get
+   *
+   * @param  {String} key
+   * @param  {Mixed} [defaultValue]
+   *
    * @return {Mixed}
    *
    * @example
-   * Config.get('database.connection')
-   * Config.get('database.mysql.host')
+   * ```
+   * Config.get('database.mysql')
    *
-   * @public
+   * // referenced
+   * {
+   *   prodMysql: 'self::database.mysql'
+   * }
+   * Config.get('database.prodMysql')
+   * ```
    */
   get (key, defaultValue) {
-    defaultValue = util.existy(defaultValue) ? defaultValue : null
-    const returnValue = _.get(this.config, key)
-    return util.existy(returnValue) ? returnValue : defaultValue
+    const value = _.get(this._config, key, defaultValue)
+    if (typeof (value) === 'string' && value.startsWith('self::')) {
+      return this.get(value.replace('self::', ''))
+    }
+    return value
   }
 
   /**
-   * set/update value for a given key inside
-   * config store.
+   * Merge default values with the resolved values.
+   * This is to provide a default set of values
+   * when it does not exists. This method uses
+   * lodash `_.mergeWith` method.
    *
-   * @param  {String} key - Key to set value for
-   * @param  {Mixed} value - Value to be saved next to defined key
+   * @since 4.0.0
+   * @method merge
+   *
+   * @param  {String} key
+   * @param  {Object} defaultValues
+   * @param  {Function} [customizer]
+   *
+   * @return {Object}
    *
    * @example
-   * Config.set('database.connection', 'mysql')
-   * Config.set('database.mysql.host', 'localhost')
+   * ```js
+   * Config.merge('services.redis', {
+   *   port: 6379,
+   *   host: 'localhost'
+   * })
+   * ```
+   */
+  merge (key, defaultValues, customizer) {
+    const value = _.get(this._config, key, {})
+    return _.mergeWith(defaultValues, value, customizer)
+  }
+
+  /**
+   * Update value for a given key inside the config store. If
+   * value does not exists it will be created.
    *
-   * @public
+   * ## Note
+   * This method updates the value in memory and not on the
+   * file system.
+   *
+   * @method set
+   *
+   * @param  {String} key
+   * @param  {Mixed} value
+   *
+   * @example
+   * ```
+   * Config.set('database.mysql.host', '127.0.0.1')
+   *
+   * // later get the value
+   * Config.get('database.mysql.host')
+   * ```
    */
   set (key, value) {
-    _.set(this.config, key, value)
+    _.set(this._config, key, value)
   }
 }
 

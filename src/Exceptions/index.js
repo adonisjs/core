@@ -1,210 +1,112 @@
 'use strict'
 
+/*
+ * adonis-framework
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+*/
+
 const NE = require('node-exceptions')
+const upcast = require('upcast')
 
-class RuntimeException extends NE.RuntimeException {
-
-  /**
-   * default error code to be used for raising
-   * exceptions
-   *
-   * @return {Number}
-   */
-  static get defaultErrorCode () {
-    return 500
-  }
-
-  /**
-   * this exception is thrown when a route action is referenced
-   * inside a view but not registered within the routes file.
-   *
-   * @param  {String} action
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static missingRouteAction (action, code) {
-    return new this(`The action ${action} has not been found`, code || this.defaultErrorCode, 'E_MISSING_ROUTE_ACTION')
-  }
-
-  /**
-   * this exception is thrown when a route is referenced inside
-   * a view but not registered within the routes file.
-   *
-   * @param  {String} route
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static missingRoute (route, code) {
-    return new this(`The route ${route} has not been found`, code || this.defaultErrorCode, 'E_MISSING_ROUTE')
-  }
-
-  /**
-   * this exceptions is raised when mac is invalid when
-   * trying to encrypt data
-   *
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static invalidEncryptionMac (code) {
-    return new this('The MAC is invalid', code || this.defaultErrorCode, 'E_INVALID_ENCRYPTION_MAC')
-  }
-
-  /**
-   * this exception is raised when encryption payload is not valid
-   *
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static invalidEncryptionPayload (code) {
-    return new this('The payload is invalid', code || this.defaultErrorCode, 'E_INVALID_ENCRYPTION_PAYLOAD')
-  }
-
-  /**
-   * this exception is raised when expected value is
-   * not a valid json object.
-   *
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static malformedJSON (code) {
-    return new this('The payload is not a json object', code || this.defaultErrorCode, 'E_MALFORMED_JSON')
-  }
-
-  /**
-   * this exception is raised when an operation is attempted
-   * on a file that has been deleted
-   *
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static fileDeleted (code) {
-    return new this('The file has already been deleted', code || this.defaultErrorCode, 'E_FILE_DELETED')
-  }
-
-  /**
-   * this exception is raised when encryption class is not
-   * able to decrypt a given piece of data
-   *
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static decryptFailed (code) {
-    return new this('Could not decrypt the data', code || this.defaultErrorCode, 'E_ENCRYPTION_DECRYPT_FAILED')
-  }
-
-  /**
-   * this exception is raised when the encryption cipher is
-   * not supported or app key length is not in-sync with
-   * given cipher
-   *
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static invalidEncryptionCipher (code) {
-    return new this('The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths', code || this.defaultErrorCode, 'E_INVALID_ENCRPYTION_CIPHER')
-  }
-
-  /**
-   * this exception is raised when app key is missing
-   * inside config/app.js file.
-   *
-   * @param  {String} message
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static missingAppKey (message, code) {
-    return new this(message, code || this.defaultErrorCode, 'E_MISSING_APPKEY')
-  }
-
-  /**
-   * this exception is raised when an uknown
-   * session driver is used
-   *
-   * @param  {String} driver
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static invalidSessionDriver (driver, code) {
-    return new this(`Unable to locate ${driver} session driver`, code || this.defaultErrorCode, 'E_INVALID_SESSION_DRIVER')
-  }
-
-  /**
-   * this exception is raised when a named middleware is used
-   * but not registered
-   *
-   * @param  {String} name
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static missingNamedMiddleware (name, code) {
-    return new this(`${name} is not registered as a named middleware`, code || this.defaultErrorCode, 'E_MISSING_NAMED_MIDDLEWARE')
-  }
-
+const toValueType = function (value) {
+  const type = upcast.type(value)
+  return type === 'object' ? `${type}:${JSON.stringify(value, null, 2)}` : `${type}:${upcast.to(value, 'string')}`
 }
 
+/**
+ * @module Adonis
+ * @submodule framework
+ */
+
+/**
+ * Exception thrown whenever the function/method argument
+ * is invalid.
+ *
+ * @class InvalidArgumentException
+ * @constructor
+ */
 class InvalidArgumentException extends NE.InvalidArgumentException {
-
   /**
-   * default error code to be used for raising
-   * exceptions
+   * Throws exception by instantiating the class and setting error code
+   * to `E_INVALID_PARAMETER`.
    *
-   * @return {Number}
-   */
-  static get defaultErrorCode () {
-    return 500
-  }
-
-  /**
-   * this exception is raised when a method parameter is
-   * missing but expected to exist.
+   * @method invalidParameter
    *
-   * @param  {String} message
-   * @param  {Number} [code=500]
+   * @param  {String}        message
+   * @param  {Mixed}         [actualValue]
    *
    * @return {Object}
    */
-  static missingParameter (message, code) {
-    return new this(message, code || this.defaultErrorCode, 'E_MISSING_PARAMETER')
+  static invalidParameter (message, actualValue = null) {
+    message = actualValue ? `${message} instead received {${toValueType(actualValue)}}` : message
+    return new this(message, 500, 'E_INVALID_PARAMETER')
   }
-
-  /**
-   * this exception is raised when a method parameter value
-   * is invalid.
-   *
-   * @param  {String} message
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static invalidParameter (message, code) {
-    return new this(message, code || this.defaultErrorCode, 'E_INVALID_PARAMETER')
-  }
-
-  /**
-   * this exception is raised when unable to find
-   * an event with a given name
-   *
-   * @param  {String} event
-   * @param  {String} name
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static missingEvent (event, name, code) {
-    return new this(`Cannot find an event with ${name} name for ${event} event`, code || this.defaultErrorCode, 'E_MISSING_NAMED_EVENT')
-  }
-
 }
 
-module.exports = {RuntimeException, InvalidArgumentException, HttpException: NE.HttpException}
+/**
+ * Class to throw runtime exceptions.
+ *
+ * @class RuntimeException
+ * @constructor
+ */
+class RuntimeException extends NE.RuntimeException {
+  /**
+   * This exception is thrown when someone tries to make
+   * use of nested groups using `Route.group`.
+   *
+   * @method nestedGroup
+   *
+   * @return {Object}
+   */
+  static nestedGroup () {
+    return new this('Nested route groups are not allowed', 500, 'E_NESTED_ROUTE_GROUPS')
+  }
+
+  /**
+   * This exception is thrown when a named middleware is referenced
+   * but never registered with the `Server` provider
+   *
+   * @method missingNamedMiddleware
+   *
+   * @param  {String}               name
+   *
+   * @return {Object}
+   */
+  static missingNamedMiddleware (name) {
+    return new this(`Cannot find any named middleware for {${name}}. Make sure you have registered it inside start/kernel.js file.`, 500, 'E_MISSING_NAMED_MIDDLEWARE')
+  }
+
+  /**
+   * This exception is thrown when app key is not defined inside
+   * config/app.js file
+   *
+   * @method missingAppKey
+   *
+   * @param  {String}      providerName
+   *
+   * @return {Object}
+   */
+  static missingAppKey (providerName) {
+    return new this(`Make sure to define appKey inside config/app.js file before using ${providerName} provider`, 500, 'E_MISSING_APP_KEY')
+  }
+
+  /**
+   * This exception is raised when logger driver does not
+   * exists
+   *
+   * @method invalidLoggerDriver
+   *
+   * @param  {String}            name
+   *
+   * @return {Object}
+   */
+  static invalidLoggerDriver (name) {
+    return new this(`Logger driver ${name} does not exists.`, 500, 'E_INVALID_LOGGER_DRIVER')
+  }
+}
+
+module.exports = { InvalidArgumentException, RuntimeException, HttpException: NE.HttpException }

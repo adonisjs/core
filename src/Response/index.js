@@ -1,43 +1,99 @@
 'use strict'
 
-/**
+/*
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
 const nodeRes = require('node-res')
-const nodeCookie = require('node-cookie')
-let viewInstance = null
-let routeInstance = null
-let configInstance = null
+const nodeReq = require('node-req')
+const Macroable = require('macroable')
 
 /**
- * Glued http response to end requests by sending
- * proper formatted response.
- * @class
+ * @module Adonis
+ * @submodule framework
  */
-class Response {
 
+/**
+ * A facade over Node.js HTTP `res` object, making it
+ * easier and simpler to make HTTP response. You can
+ * access the original **response** object as
+ * `response.response`
+ *
+ * @namespace Adonis/Src/Response
+ *
+ * @class Response
+ */
+class Response extends Macroable {
   constructor (request, response) {
+    super()
+    /**
+     * Refrence to native HTTP request object
+     *
+     * @attribute request
+     * @type {Object}
+     */
     this.request = request
+
+    /**
+     * Refrence to native HTTP response object
+     *
+     * @attribute response
+     * @type {Object}
+     */
     this.response = response
-    if (configInstance.get('app.http.setPoweredBy', true)) {
-      nodeRes.header(this.response, 'X-Powered-By', 'AdonisJs')
+
+    /**
+     * Here we store the body of the response and wait
+     * for the entire HTTP life-cycle to finish unless
+     * we end the response. This gives a chance to
+     * modify the response via middlewares executed
+     * after the route handler or controller method.
+     *
+     * @attribute _lazyBody
+     *
+     * @type {Object}
+     * @private
+     */
+    this._lazyBody = {
+      method: 'send',
+      content: null,
+      args: []
     }
-    nodeRes.descriptiveMethods.forEach((method) => {
-      this[method] = (body) => {
-        nodeRes[method](this.request.request, this.response, body)
-      }
-    })
-    this.viewInstance = viewInstance.clone ? viewInstance.clone() : viewInstance
+
+    /**
+     * Flag to know whether a file was sent as the response. In this
+     * case the response will be closed immediately once stream is
+     * finished
+     *
+     * @attribute _sentFile
+     *
+     * @type {Boolean}
+     * @private
+     */
+    this._sentFile = false
+  }
+
+  /**
+   * lazyBody to be set as the response body.
+   *
+   * @method lazyBody
+   *
+   * @return {Object}
+   */
+  get lazyBody () {
+    return this._lazyBody
   }
 
   /**
    * returns whether request has been
    * finished or not
    *
-   * @method finished
+   * @attribute finished
    *
    * @return {Boolean}
    */
@@ -49,7 +105,7 @@ class Response {
    * returns whether request headers
    * have been sent or not
    *
-   * @method headersSent
+   * @attribute headersSent
    *
    * @return {Boolean}
    */
@@ -61,7 +117,7 @@ class Response {
    * returns whether a request is pending
    * or not
    *
-   * @method isPending
+   * @attribute isPending
    *
    * @return {Boolean}
    */
@@ -70,85 +126,13 @@ class Response {
   }
 
   /**
-   * sets key/value pair on response header
+   * Set the response status code.
    *
-   * @param  {String} key - key to set value for
-   * @param  {Mixed} value - key to save corresponding to given key
-   * @return {Object} - Reference to class instance for chaining methods
-   *
-   * @example
-   * response.header('Content-type', 'application/json')
-   *
-   * @public
-   */
-  header (key, value) {
-    nodeRes.header(this.response, key, value)
-    return this
-  }
-
-  /**
-   * creates a new view using View class
-   * @async
-   *
-   * @param  {String} template
-   * @param  {Object} options
-   * @returns {Html} - compiled html template
-   *
-   * @example
-   * yield response.view('index')
-   * yield response.view('profile', {name: 'doe'})
-   *
-   * @public
-   */
-  * view (template, options) {
-    return this.viewInstance.make(template, options)
-  }
-
-  /**
-   * creates a new view using View class and ends the
-   * response by sending compilied html template
-   * back as response content.
-   *
-   * @param  {String} template
-   * @param  {Object} options
-   *
-   * @example
-   * yield response.sendView('index')
-   * yield response.sendView('profile', {name: 'doe'})
-   * @public
-   */
-  * sendView (template, options) {
-    const view = yield this.view(template, options)
-    this.send(view)
-  }
-
-  /**
-   * removes previously added header.
-   *
-   * @param  {String}     key
-   * @return {Object} - reference to class instance for chaining
-   *
-   * @example
-   * response.removeHeader('Accept')
-   *
-   * @public
-   */
-  removeHeader (key) {
-    nodeRes.removeHeader(this.response, key)
-    return this
-  }
-
-  /**
-   * set's response status, make it adhers to RFC specifications
-   *
-   * @see {@link https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html}
+   * @method status
    *
    * @param  {Number} statusCode
-   * @return {Object} - reference to class instance for chaining
    *
-   * @example
-   * response.status(200)
-   * @public
+   * @chainable
    */
   status (statusCode) {
     nodeRes.status(this.response, statusCode)
@@ -156,119 +140,137 @@ class Response {
   }
 
   /**
-   * ends response, should not be used with
-   * send method
+   * Set HTTP response header. Resetting same header
+   * multiple times will append to the existing
+   * value.
    *
-   * @public
+   * @method header
+   *
+   * @param  {String} key
+   * @param  {String} value
+   *
+   * @chainable
    */
-  end () {
-    nodeRes.end(this.response)
-  }
-
-  /**
-   * writes content to response and sends it back as
-   * response body
-   *
-   * @param  {Mixed} body
-   *
-   * @public
-   */
-  send (body) {
-    nodeRes.send(this.request.request, this.response, body)
-  }
-
-  /**
-   * writes json response using send method and sets content-type
-   * to application/json
-   *
-   * @param  {Object} body
-   *
-   * @public
-   */
-  json (body) {
-    nodeRes.json(this.request.request, this.response, body)
-  }
-
-  /**
-   * writes jsonp response using send method and sets content-type
-   * to text/javascript
-   *
-   * @uses app.http.jsonpCallback
-   * @param  {Object} body
-   *
-   * @public
-   */
-  jsonp (body) {
-    const callback = this.request.input('callback') || configInstance.get('app.http.jsonpCallback')
-    nodeRes.jsonp(this.request.request, this.response, body, callback)
-  }
-
-  /**
-   * streams file content to response and ends request
-   * once done.
-   *
-   * @param  {String} filePath - path to file from where to read contents
-   *
-   * @example
-   * response.download('absolute/path/to/file')
-   *
-   * @public
-   */
-  download (filePath) {
-    nodeRes.download(this.request, this.response, filePath)
-  }
-
-  /**
-   * force download input file by setting content-disposition
-   *
-   * @param  {String}   filePath - path to file from where to read contents
-   * @param  {String}   name - downloaded file name
-   * @param  {String}   [disposition=attachment] - content disposition
-   *
-   * @example
-   * response.attach('absolute/path/to/file', 'name')
-   *
-   * @public
-   */
-  attachment (filePath, name, disposition) {
-    nodeRes.attachment(this.request, this.response, filePath, name, disposition)
-  }
-
-  /**
-   * sets location header on response
-   *
-   * @param  {String} toUrl
-   * @return {Object} - reference to class instance for chaining
-   *
-   * @public
-   */
-  location (toUrl) {
-    if (toUrl === 'back') {
-      toUrl = this.request.header('Referrer') || '/'
-    }
-    nodeRes.location(this.response, toUrl)
+  header (key, value) {
+    nodeRes.header(this.response, key, value)
     return this
   }
 
   /**
-   * redirect request to a given url and ends the request
+   * Set HTTP response header only if it does not
+   * exists already
    *
-   * @param  {String} toUrl - url to redirect to
-   * @param  {Number} [status=302] - http status code
+   * @method safeHeader
    *
+   * @param  {String}   key
+   * @param  {String}   value
+   *
+   * @chainable
    */
-  redirect (toUrl, status) {
-    if (toUrl === 'back') {
-      toUrl = this.request.header('Referrer') || '/'
-    }
-    nodeRes.redirect(this.request.request, this.response, toUrl, status)
+  safeHeader (key, value) {
+    nodeRes.safeHeader(this.response, key, value)
+    return this
   }
 
   /**
-   * sets vary header on response
+   * Remove the existing HTTP response header.
+   *
+   * @method removeHeader
+   *
+   * @param  {String}     key
+   *
+   * @chainable
+   */
+  removeHeader (key) {
+    nodeRes.removeHeader(this.response, key)
+    return this
+  }
+
+  /**
+   * Returns the value of header for a given key.
+   *
+   * @method getHeader
+   *
+   * @param  {String}  key
+   *
+   * @return {Mixed}
+   */
+  getHeader (key) {
+    return nodeRes.getHeader(this.response, key)
+  }
+
+  /**
+   * Stream a file to the client as HTTP response.
+   *
+   * Options are passed directly to [send](https://www.npmjs.com/package/send)
+   *
+   * @method download
+   *
+   * @param  {String} filePath
+   * @param  {Object} options
+   *
+   * @return {void}
+   */
+  download (filePath, options = {}) {
+    this._sentFile = true
+    nodeRes.download(this.request, this.response, filePath, options)
+  }
+
+  /**
+   * Force download the file by setting `Content-disposition`
+   * header.
+   *
+   * @method attachment
+   *
+   * @param  {String}   filePath
+   * @param  {String}   [name]
+   * @param  {String}   [disposition]
+   * @param  {Object}   [options = {}]
+   *
+   * @return {void}
+   */
+  attachment (filePath, name, disposition, options = {}) {
+    this._sentFile = true
+    nodeRes.attachment(this.request, this.response, filePath, name, disposition, options)
+  }
+
+  /**
+   * Set the `Location` header on HTTP response.
+   *
+   * @method location
+   *
+   * @param  {String} url
+   *
+   * @chainable
+   */
+  location (url) {
+    nodeRes.location(this.response, url)
+    return this
+  }
+
+  /**
+   * Redirect the request by setting the `Location`
+   * header and ending the response
+   *
+   * @method redirect
+   *
+   * @param  {String} url
+   * @param  {Number} [status = 302]
+   *
+   * @return {void}
+   */
+  redirect (url, status) {
+    nodeRes.redirect(this.request, this.response, url, status)
+  }
+
+  /**
+   * Add the HTTP `Vary` header
+   *
+   * @method vary
    *
    * @param  {String} field
-   * @return {Object} - reference to class instance for chaining
+   *
+   * @chainable
    */
   vary (field) {
     nodeRes.vary(this.response, field)
@@ -276,95 +278,109 @@ class Response {
   }
 
   /**
-   * redirects to a registered route from routes.js files
+   * Sets the `Content-type` header based on the
+   * type passed to this method.
    *
-   * @param  {String} route - name of the route
-   * @param  {Object} data - route params
-   * @param  {Number} [status=302] - http status code
+   * @method type
    *
-   * @example
-   * response.route('/profile/:id', {id: 1})
-   * response.route('user.profile', {id: 1})
-   * @public
+   * @param  {String} type
+   * @param  {String} [charset = 'utf-8']
+   *
+   * @chainable
    */
-  route (route, data, status) {
-    const toUrl = routeInstance.url(route, data)
-    this.redirect(toUrl, status)
-  }
-
-  /**
-   * adds new cookie to response cookies
-   *
-   * @param  {String} key - cookie name
-   * @param  {Mixed} value - value to be saved next for cookie name
-   * @param  {Object} options - options to define cookie path,host age etc.
-   * @return {Object} - reference to class instance for chaining
-   *
-   * @example
-   * response.cookie('cart', values)
-   * response.cookie('cart', values, {
-   *   maxAge: 1440,
-   *   httpOnly: false
-   * })
-   *
-   * @public
-   */
-  cookie (key, value, options) {
-    const secret = configInstance.get('app.appKey')
-    const encrypt = !!secret
-    nodeCookie.create(this.request.request, this.response, key, value, options, secret, encrypt)
+  type (type, charset = 'utf-8') {
+    nodeRes.type(this.response, type, charset)
     return this
   }
 
   /**
-   * Set a plain non-encrypted cookie on the response
+   * Sets the response body for the HTTP request.
    *
-   * @param  {String} key
-   * @param  {Mixed} value
-   * @param  {Object} [options]
+   * @method send
    *
-   * @example
-   * Response.plainCookie('foo', 'bar')
+   * @param  {Mixed} body
+   *
+   * @return {void}
    */
-  plainCookie (key, value, options) {
-    nodeCookie.create(this.request.request, this.response, key, value, options)
-    return this
+  send (body) {
+    this._lazyBody = {
+      method: 'send',
+      content: body,
+      args: []
+    }
   }
 
   /**
-   * clears existing cookie from response header
+   * Sets the response body for the HTTP request with
+   * explicit `content-type` set to `application/json`.
    *
-   * @param  {String}    key
-   * @param  {Object}    options
+   * @method json
    *
-   * @return {Object} - reference to class instance for chaining
+   * @param  {Object} body
+   *
+   * @return {void}
    */
-  clearCookie (key, options) {
-    nodeCookie.clear(this.request.request, this.response, key, options)
-    return this
+  json (body) {
+    this._lazyBody = {
+      method: 'json',
+      content: body,
+      args: []
+    }
   }
 
   /**
-   * adds a new method to the response prototype
+   * Sets the response body for the HTTP request with
+   * explicit `content-type` set to `text/javascript`.
    *
-   * @param  {String}   name
-   * @param  {Function} callback
+   * @method jsonp
    *
-   * @public
+   * @param  {Object} body
+   * @param  {String} [callbackFn = 'callback'] - Callback name.
+   *
+   * @return {void}
    */
-  static macro (name, callback) {
-    this.prototype[name] = callback
+  jsonp (body, callbackFn) {
+    callbackFn = callbackFn || nodeReq.get(this.request).callback || 'callback'
+    this._lazyBody = {
+      method: 'jsonp',
+      content: body,
+      args: [callbackFn]
+    }
   }
 
-}
-
-class ResponseBuilder {
-  constructor (View, Route, Config) {
-    viewInstance = View
-    routeInstance = Route
-    configInstance = Config
-    return Response
+  /**
+   * Ends the response by setting the `_lazyBody` as the
+   * response body.
+   *
+   * @method end
+   *
+   * @return {void}
+   */
+  end () {
+    if (!this._sentFile) {
+      const method = this._lazyBody.method || 'send'
+      const args = [this.request, this.response, this._lazyBody.content].concat(this._lazyBody.args)
+      nodeRes[method].apply(nodeRes, args)
+    }
   }
 }
 
-module.exports = ResponseBuilder
+/**
+ * Defining _macros and _getters property
+ * for Macroable class
+ *
+ * @type {Object}
+ */
+Response._macros = {}
+Response._getters = {}
+
+/**
+ * Setting descriptive methods on the response prototype.
+ */
+nodeRes.descriptiveMethods.forEach((method) => {
+  Response.prototype[method] = function (content) {
+    this._lazyBody = { method, content, args: [] }
+  }
+})
+
+module.exports = Response

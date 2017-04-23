@@ -1,327 +1,624 @@
 'use strict'
 
-/**
+/*
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
-const Server = require('../../src/Server')
-const RequestBuilder = require('../../src/Request')
-const ResponseBuilder = require('../../src/Response')
-const Static = require('../../src/Static')
-const Route = require('../../src/Route')
-const Middleware = require('../../src/Middleware')
-const chai = require('chai')
-const Ioc = require('adonis-fold').Ioc
-const supertest = require('supertest')
-const expect = chai.expect
+const test = require('japa')
 const http = require('http')
-const EventProvider = require('../../src/Event')
-const path = require('path')
-const stderr = require('test-console').stderr
+const { setupResolver, Config, Logger } = require('@adonisjs/sink')
+const { ioc } = require('@adonisjs/fold')
+const supertest = require('supertest')
+const NE = require('node-exceptions')
 
-class Session {
-}
+const Server = require('../../src/Server')
+const Route = require('../../src/Route/Manager')
+const RouteStore = require('../../src/Route/Store')
+const Request = require('../../src/Request')
+const Response = require('../../src/Response')
+const Context = require('../../src/Context')
+const Exception = require('../../src/Exception')
 
-const Config = {
-  get: function (key) {
-    switch (key) {
-      case 'app.static':
-        return {}
-      case 'event':
-        return {
-          wildcard: true,
-          delimiter: ':'
-        }
-      case 'app.http.allowMethodSpoofing':
-        return true
-      default:
-        return 2
+const config = new Config()
+
+test.group('Server | Middleware', (group) => {
+  test('register global middleware', (assert) => {
+    const server = new Server()
+    server.registerGlobal(['foo', 'bar'])
+    assert.deepEqual(server.middleware._store.global, ['foo', 'bar'])
+  })
+
+  test('append middleware when registerGlobal called multiple times', (assert) => {
+    const server = new Server()
+    server.registerGlobal(['foo', 'bar']).registerGlobal(['baz'])
+    assert.deepEqual(server.middleware._store.global, ['foo', 'bar', 'baz'])
+  })
+
+  test('throw exception when middleware is not an array', (assert) => {
+    const server = new Server()
+    const fn = () => server.registerGlobal('foo')
+    assert.throw(fn, 'server.registerGlobal accepts an array of middleware instead received {string:foo}')
+  })
+
+  test('log warning when duplicate middleware are registered', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+    server.registerGlobal(['foo']).registerGlobal(['foo'])
+    assert.isTrue(
+      logger.has('warn', 'Duplicate global middleware {foo} will be discarded and existing one\'s will be used.')
+    )
+    assert.deepEqual(server.middleware._store.global, ['foo'])
+  })
+
+  test('register named middleware', (assert) => {
+    const server = new Server()
+    const named = {
+      auth: 'App/Middleware/Auth'
     }
-  }
-}
-
-const Helpers = {
-  publicPath: function () {
-    return path.join(__dirname, './public')
-  },
-  makeNameSpace: function (base, toPath) {
-    return `App/${base}/${toPath}`
-  }
-}
-
-const Event = new EventProvider(Config)
-
-require('co-mocha')
-
-describe('Server', function () {
-  beforeEach(function () {
-    Ioc.autoload('App', path.join(__dirname, './app'))
-    const staticServer = new Static(Helpers, Config)
-    const Response = new ResponseBuilder({}, {}, Config)
-    const Request = new RequestBuilder(Config)
-    this.server = new Server(Request, Response, Route, Helpers, Middleware, staticServer, Session, Config, Event)
-    Route.new()
-    Middleware.new()
+    server.registerNamed(named)
+    assert.deepEqual(server._namedHash, named)
+    assert.deepEqual(server.middleware._store.named, ['auth'])
   })
 
-  afterEach(function () {
-    this.server.getInstance().close()
+  test('log warning when duplicate named middleware are registered', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger)
+    const named = {
+      auth: 'App/Middleware/Auth'
+    }
+
+    server.registerNamed(named).registerNamed(named)
+    assert.isTrue(logger.has('warn', 'Duplicate named middleware {auth} will be discarded and existing one\'s will be used.'))
+    assert.deepEqual(server.middleware._store.named, ['auth'])
   })
 
-  it('should serve static resource from a given directory', function * () {
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/style.css').expect('Content-type', /css/).expect(200)
-    expect(res.text).to.match(/(?:\s*\S+\s*{[^}]*})+/g)
+  test('throw exception when named middleware payload is not an object', (assert) => {
+    const server = new Server()
+    const fn = () => server.registerNamed(['foo'])
+    assert.throw(fn, `server.registerNamed accepts a key/value pair of middleware instead received {array:foo}`)
   })
 
-  it('should serve favicon when request is for favicon', function * () {
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    yield supertest(testServer).get('/favicon.ico').expect('Content-type', /x-icon/).expect(200)
+  test('register server level middleware', (assert) => {
+    const server = new Server()
+    server.use(['foo'])
+    assert.deepEqual(server.middleware._store.server, ['foo'])
+  })
+})
+
+test.group('Server | Calls', (group) => {
+  group.before(() => {
+    Context.getter('request', function () {
+      return new Request(this.req, this.res, new Config())
+    }, true)
+
+    Context.getter('response', function () {
+      return new Response(this.req, this.res)
+    }, true)
+    setupResolver()
   })
 
-  it('should make 404 error when unable to find static resource', function * () {
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    yield supertest(testServer).get('/foo.css').expect(404)
+  group.beforeEach(() => {
+    this.logger = new Logger()
+    this.exception = Exception
+    RouteStore.clear()
+    ioc.restore()
+    this.exception.clear()
   })
 
-  it('should not serve static resources with route is not GET or HEAD', function * () {
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    yield supertest(testServer).post('/style.css').expect(404)
-  })
-
-  it('should serve static resource even if route is defined', function * () {
-    Route.get('/favicon.ico', function * (request, response) {
-      response.send({rendered: true})
+  test('respond to a http request using the route handler', async (assert) => {
+    Route.get('/', function ({ response }) {
+      response.send('foo')
     })
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    yield supertest(testServer).get('/favicon.ico').expect('Content-type', /x-icon/).expect(200)
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'foo')
   })
 
-  it('should call route action if defined', function * () {
-    Route.get('/', function * (request, response) {
-      response.send({rendered: true})
+  test('respond http request when route handler is an async function', async (assert) => {
+    Route.get('/', async function ({ response }) {
+      response.send('foo')
     })
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200)
-    expect(res.body.rendered).to.equal(true)
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'foo')
   })
 
-  it('should invoke route for verb defined using _method', function * () {
-    Route.put('/', function * (request, response) {
-      response.send({rendered: true})
+  test('respond http request by returning a value', async (assert) => {
+    Route.get('/', async function () {
+      return 'foo'
     })
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/?_method=PUT').expect(200)
-    expect(res.body.rendered).to.equal(true)
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'foo')
   })
 
-  it('should not spoof request method when allowMethodSpoofing is not turned on', function * () {
-    Route.put('/', function * (request, response) {
-      response.send({rendered: true})
+  test('send 500 when route has an unhandled exception', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
     })
-    const staticServer = new Static(Helpers, Config)
-    const Response = new ResponseBuilder({}, {}, Config)
-    const customConfig = {
-      get: function (key) {
-        if (key === 'app.http.allowMethodSpoofing') {
-          return false
-        }
-        return Config.get(key)
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.equal(res.text.split('\n')[0].trim(), 'Error: error')
+  })
+
+  test('run route middleware when defined', async (assert) => {
+    Route.get('/', async function ({ request }) {
+      return request.called
+    }).middleware(async function ({ request }, next) {
+      request.called = true
+      await next()
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'true')
+  })
+
+  test('execute global middleware before named middleware', async (assert) => {
+    Route.get('/', async function ({ request }) {
+      return request.middleware
+    }).middleware(async function ({ request }, next) {
+      request.middleware.push('named')
+      await next()
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal([async function ({ request }, next) {
+      request.middleware = request.middleware || []
+      request.middleware.push('global')
+      await next()
+    }])
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.deepEqual(res.body, ['global', 'named'])
+  })
+
+  test('do not execute middleware when route not found', async (assert) => {
+    const executions = []
+
+    Route.get('/', async function () {
+    }).middleware(async function (ctx, next) {
+      executions.push(true)
+      await next()
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal([async function (next) {
+      executions.push(true)
+      await next()
+    }])
+    const app = http.createServer(server.handle.bind(server))
+
+    await supertest(app).get('/foo').expect(404)
+    assert.lengthOf(executions, 0)
+    assert.deepEqual(executions, [])
+  })
+
+  test('execute server level middleware when no route is found', async (assert) => {
+    const executions = []
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal([async function (ctx, next) {
+      executions.push('global')
+      await next()
+    }])
+
+    server.use([async function (ctx, next) {
+      executions.push('server')
+      await next()
+    }])
+
+    const app = http.createServer(server.handle.bind(server))
+
+    await supertest(app).get('/foo').expect(404)
+    assert.lengthOf(executions, 1)
+    assert.deepEqual(executions, ['server'])
+  })
+
+  test('execute middleware in reverse after controller', async (assert) => {
+    Route.get('/', async function ({ request }) {
+      return request.middleware
+    }).middleware(async function ({ request, response }, next) {
+      request.middleware.push('named')
+      await next()
+      response.lazyBody.content.push('after named')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal([async function ({ request, response }, next) {
+      request.middleware = request.middleware || []
+      request.middleware.push('global')
+      await next()
+      response.lazyBody.content.push('after global')
+    }])
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.deepEqual(res.body, ['global', 'named', 'after named', 'after global'])
+  })
+
+  test('change response in after middleware even after send is called', async (assert) => {
+    Route.get('/', async function ({ response }) {
+      response.send('foo')
+    }).middleware(async function ({ response }, next) {
+      await next()
+      response.send('changed foo to bar')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'changed foo to bar')
+  })
+
+  test('stack should point to right line when route has error', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('foo')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.include(res.text.split('\n')[2], 'server.spec.js:277')
+  })
+
+  test('do not execute anything once server level middleware ends the response', async (assert) => {
+    const executions = []
+
+    Route.get('/', async function () {
+      executions.push('route')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal([async function (ctx, next) {
+      executions.push('global')
+      await next()
+    }])
+
+    server.use([async function ({ response }) {
+      executions.push('server')
+      response.send('serve css file')
+    }])
+
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'serve css file')
+    assert.lengthOf(executions, 1)
+    assert.deepEqual(executions, ['server'])
+  })
+
+  test('do not execute route once global middleware ends the response', async (assert) => {
+    const executions = []
+
+    Route.get('/', async function () {
+      executions.push('route')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal([async function ({ response }, next) {
+      executions.push('global')
+      response.send('ending here')
+    }])
+
+    server.use([async function () {
+      executions.push('server')
+    }])
+
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'ending here')
+    assert.lengthOf(executions, 2)
+    assert.deepEqual(executions, ['server', 'global'])
+  })
+
+  test('pass route params to route handler', async (assert) => {
+    Route.get('/:username', async function ({ params }) {
+      return params.username
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/virk').expect(200)
+    assert.equal(res.text, 'virk')
+  })
+
+  test('pass null when route param is optional and missing', async (assert) => {
+    Route.get('/:username?', async function ({ params }) {
+      return params.username === null ? 'virk' : params.username
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'virk')
+  })
+
+  test('middleware should also be to access params', async (assert) => {
+    Route.get('/:username', async function () {
+    }).middleware(async function ({ response, params }, next) {
+      response.send(params.username)
+      await next()
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/nikk').expect(200)
+    assert.equal(res.text, 'nikk')
+  })
+
+  test('bind controller to route', async (assert) => {
+    class HomeController {
+      async render () {
+        return 'hello world'
       }
     }
-    const AlternateRequest = new RequestBuilder(customConfig)
-    const server = new Server(AlternateRequest, Response, Route, Helpers, Middleware, staticServer, Session, customConfig, Event)
-    const testServer = http.createServer(server.handle.bind(server))
-    yield supertest(testServer).get('/?_method=PUT').expect(404)
+
+    ioc.fake('App/Controllers/Http/HomeController', function () {
+      return new HomeController()
+    })
+
+    Route.get('/', 'HomeController.render')
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'hello world')
   })
 
-  it('should log warning when allowMethodSpoofing is not turned on but trying to spoof method', function * () {
-    Route.put('/', function * (request, response) {
-      response.send({method: request.method()})
+  test('throw exception when controller does not exists', async (assert) => {
+    Route.get('/', 'HomeController.render')
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.equal(res.text.split('\n')[0], `Error: Cannot find module 'App/Controllers/Http/HomeController'`)
+  })
+
+  test('throw exception when controller method does not exists', async (assert) => {
+    class HomeController {
+    }
+
+    ioc.fake('App/Controllers/Http/HomeController', function () {
+      return new HomeController()
     })
-    const inspect = stderr.inspect()
-    const staticServer = new Static(Helpers, Config)
-    const Response = new ResponseBuilder({}, {}, Config)
-    const customConfig = {
-      get: function (key) {
-        if (key === 'app.http.allowMethodSpoofing') {
-          return false
-        }
-        return Config.get(key)
+
+    Route.get('/', 'HomeController.render')
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.equal(res.text.split('\n')[0], 'RuntimeException: E_UNDEFINED_METHOD: Method render missing on App/Controllers/Http/HomeController')
+  })
+
+  test('bind global middleware via ioc container', async (assert) => {
+    class AppMiddleware {
+      async handle ({ response }) {
+        response.send('hello from middleware')
       }
     }
-    const server = new Server(new RequestBuilder(customConfig), Response, Route, Helpers, Middleware, staticServer, Session, customConfig, Event)
-    const testServer = http.createServer(server.handle.bind(server))
-    yield supertest(testServer).get('/?_method=PUT').expect(404)
-    inspect.restore()
-    expect(inspect.output.join('')).to.match(/You are making use of method spoofing/)
-  })
 
-  it('should call route action via controller method', function * () {
-    Route.get('/', 'HomeController.index')
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200)
-    expect(res.body.rendered).to.equal(true)
-  })
-
-  it('should return error when route handler is not of a valid type', function * () {
-    Route.get('/', {})
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500)
-    expect(res.error.text).to.match(/InvalidArgumentException: E_INVALID_IOC_BINDING: Handler must point to a valid namespace or a closure/)
-  })
-
-  it('should return error when unable to find controller', function * () {
-    Route.get('/', 'FooController.index')
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500)
-    expect(res.error.text).to.match(/Cannot find module/)
-  })
-
-  it('should return error when unable to find controller method', function * () {
-    Route.get('/', 'HomeController.foo')
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500)
-    expect(res.error.text).to.match(/RuntimeException: E_UNDEFINED_METHOD: Method foo missing on App\/Http\/Controllers\/HomeController/)
-  })
-
-  it('should call all global middleware before reaching the route handler', function * () {
-    Middleware.global(['App/Http/Middleware/Global'])
-    Route.get('/', 'UserController.index')
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200)
-    expect(res.text).to.equal('2')
-  })
-
-  it('should catch errors created by global middleware', function * () {
-    Middleware.global(['App/Http/Middleware/GlobalCatch'])
-    Route.get('/', 'UserController.index')
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(401)
-    expect(res.error.text).to.equal('Login')
-  })
-
-  it('should catch errors thrown by global middleware', function * () {
-    Middleware.global(['App/Http/Middleware/GlobalThrow'])
-    Route.get('/', 'UserController.index')
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(401)
-    expect(res.error.text).to.match(/Error: Login/)
-  })
-
-  it('should return error when unable to resolve middleware', function * () {
-    Middleware.register('auth', ['App/Auth'])
-    Route.get('/', 'HomeController.index').middlewares(['auth'])
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500)
-    expect(res.error.text).to.match(/Cannot find module/)
-  })
-
-  it('should return error when unable to find handle method on middleware', function * () {
-    Middleware.register('auth', ['App/Http/Middleware/NoHandle'])
-    Route.get('/', 'HomeController.index').middlewares(['auth'])
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500)
-    expect(res.error.text).to.match(/RuntimeException: E_UNDEFINED_METHOD: Method handle missing on App\/Http\/Middleware\/NoHandle/)
-  })
-
-  it('should handle call middleware attached to a route', function * () {
-    Middleware.register('parser', 'App/Http/Middleware/Parser')
-    Middleware.register('cycle', 'App/Http/Middleware/Cycle2')
-    Route.get('/', 'UserController.index').middlewares(['parser', 'cycle'])
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200)
-    expect(res.text).to.equal('1')
-  })
-
-  it('should call middlewares attached on route with closure as handler', function * () {
-    Middleware.register('parser', 'App/Http/Middleware/Parser')
-    Middleware.register('cycle', 'App/Http/Middleware/Cycle2')
-    Route.get('/', function * (request, response) {
-      response.send(request.count)
-    }).middlewares(['parser', 'cycle'])
-
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(200)
-    expect(res.text).to.equal('1')
-  })
-
-  it('should report error thrown my route closure', function * () {
-    Route.get('/', function * () {
-      throw new Error('Unable to login')
+    ioc.fake('Middleware/AppMiddleware', function () {
+      return new AppMiddleware()
     })
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500)
-    expect(res.error.text).to.match(/Unable to login/)
+
+    Route.get('/', async function () {})
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal(['Middleware/AppMiddleware'])
+
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'hello from middleware')
   })
 
-  it('should show default error stack when error itself does not have any message', function * () {
-    Route.get('/', function * () {
-      throw new Error()
+  test('bind named middleware via ioc container', async (assert) => {
+    class AppMiddleware {
+      async handle ({ response }) {
+        response.send('hello from middleware')
+      }
+    }
+
+    ioc.fake('Middleware/AppMiddleware', function () {
+      return new AppMiddleware()
     })
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(500)
-    expect(res.error.text).to.match(/Error/)
-  })
 
-  it('should emit error event when there are listeners attach to error', function * () {
-    Event.when('Http:error:*', function (error, request, response) {
-      response.status(401).send(error.message)
+    Route.get('/', async function () {}).middleware('app')
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerNamed({
+      'app': 'Middleware/AppMiddleware'
     })
-    Route.get('/', function * () {
-      throw new Error('Forbidden')
+
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.equal(res.text, 'hello from middleware')
+  })
+
+  test('throw exception when named middleware is missing', async (assert) => {
+    Route.get('/', async function () {}).middleware('app')
+    const server = new Server(Context, Route, this.logger, this.exception)
+
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.equal(res.text.split('\n')[0], 'RuntimeException: E_MISSING_NAMED_MIDDLEWARE: Cannot find any named middleware for {app}. Make sure you have registered it inside start/kernel.js file.')
+  })
+
+  test('pass runtime middleware arguments middleware', async (assert) => {
+    class Auth {
+      async handle ({ response }, next, authenticators) {
+        response.send(authenticators)
+      }
+    }
+
+    ioc.fake('Middleware/Auth', function () {
+      return new Auth()
     })
-    const testServer = http.createServer(this.server.handle.bind(this.server))
-    const res = yield supertest(testServer).get('/').expect(401)
-    expect(res.error.text).to.equal('Forbidden')
-  })
 
-  it('should server instance is null', function * () {
-    expect(this.server.httpInstance).to.be.null
-  })
-
-  it('should tell whether server is an instance of http.Server', function * () {
-    const httpServer = this.server.getInstance()
-    expect(httpServer).to.be.instanceOf(http.Server)
-    expect(this.server.httpInstance).to.be.instanceOf(http.Server)
-  })
-
-  it('should listen method returns the server instance', function * () {
-    const httpServer = this.server.listen('0.0.0.0', 8000)
-    expect(httpServer).to.be.instanceOf(http.Server)
-    expect(this.server.httpInstance).to.be.instanceOf(http.Server)
-  })
-
-  it('should listen to server on a given port and host using listen method', function * () {
-    Route.get('/', 'HomeController.index')
-    this.server.listen('0.0.0.0', 8000)
-    const testServer = supertest.agent('http://127.0.0.1:8000')
-    const res = yield testServer.get('/').expect(200)
-    expect(res.body).deep.equal({rendered: true})
-  })
-
-  it('should return the spoofed method instead of original method when _method is present', function * () {
-    Route.post('/', function * (request, response) {
-      response.send(request.method())
+    Route.get('/', async function () {}).middleware('auth:jwt,basic')
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerNamed({
+      'auth': 'Middleware/Auth'
     })
-    const AlternateRequest = new RequestBuilder(Config)
-    const Response = new ResponseBuilder({}, {}, Config)
-    const staticServer = new Static(Helpers, Config)
-    const server = new Server(AlternateRequest, Response, Route, Helpers, Middleware, staticServer, Session, Config, Event)
-    const testServer = http.createServer(server.handle.bind(server))
-    const res = yield supertest(testServer).get('/?_method=POST').expect(200)
-    expect(res.text).equal('POST')
+
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.deepEqual(res.body, ['jwt', 'basic'])
   })
 
-  it('should return the original method by calling intended even if _method is present', function * () {
-    Route.post('/', function * (request, response) {
-      response.send({method: request.method(), intended: request.intended()})
+  test('serve on existing http server', async (assert) => {
+    Route.get('/', async function () {
+      return 'hello world'
     })
-    this.server.listen('0.0.0.0', 8000)
-    const testServer = supertest.agent('http://127.0.0.1:8000')
-    const res = yield testServer.get('/?_method=POST').expect(200)
-    expect(res.body).deep.equal({method: 'POST', intended: 'GET'})
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = server.getInstance(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.deepEqual(res.text, 'hello world')
+  })
+
+  test('pass exception to exception handler', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
+    })
+
+    this.exception.handle('*', (error, { response }) => {
+      response.status(error.status).send('Hijacked')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.equal(res.text.trim(), 'Hijacked')
+  })
+
+  test('exception handler can be async', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
+    })
+
+    this.exception.handle('*', (error, { response }) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          response.status(error.status).send('Hijacked')
+          resolve()
+        }, 200)
+      })
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.equal(res.text.trim(), 'Hijacked')
+  })
+
+  test('report error to exception reporter', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
+    })
+
+    const reportedError = {}
+    this.exception.report('*', (error, { request }) => {
+      reportedError.name = error.name
+      reportedError.url = request.url()
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    await supertest(app).get('/').expect(500)
+    assert.deepEqual(reportedError, { name: 'Error', url: '/' })
+  })
+
+  test('report error to exception reporter even when it\'s async', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
+    })
+
+    const reportedError = {}
+    this.exception.report('*', async (error, { request }) => {
+      reportedError.name = error.name
+      reportedError.url = request.url()
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    await supertest(app).get('/').expect(500)
+    assert.deepEqual(reportedError, { name: 'Error', url: '/' })
+  })
+
+  test('exceptions should be able to handle themselves', async (assert) => {
+    class HttpException extends NE.LogicalException {
+      handle (error, { response }) {
+        response.status(500).send({ name: error.name, message: error.message })
+      }
+    }
+
+    Route.get('/', async function () {
+      throw new HttpException('Something went bad')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    const { body } = await supertest(app).get('/').expect(500)
+    assert.deepEqual(body, { name: 'HttpException', message: 'Something went bad' })
+  })
+
+  test('exceptions should be able to report themselves', async (assert) => {
+    let reportedMessage = null
+
+    class HttpException extends NE.LogicalException {
+      handle (error, { response }) {
+        response.status(500).send({ name: error.name, message: error.message })
+      }
+
+      report ({ message }) {
+        reportedMessage = message
+      }
+    }
+
+    Route.get('/', async function () {
+      throw new HttpException('Something went bad')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    await supertest(app).get('/').expect(500)
+    assert.equal(reportedMessage, 'Something went bad')
   })
 })

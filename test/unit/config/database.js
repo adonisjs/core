@@ -7,7 +7,9 @@ module.exports = {
       user: ''
     }
   },
-
+  sqlite: {
+    client: 'sqlite'
+  },
+  mysqlProduction: 'self::database.mysql',
   connection: false
-
 }
