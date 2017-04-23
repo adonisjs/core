@@ -1,0 +1,66 @@
+{
+  "name": "adonis-framework",
+  "version": "3.0.9",
+  "description": "Adonis framework makes it easy for you to write webapps with less code",
+  "main": "index.js",
+  "scripts": {},
+  "standard": {
+    "global": [
+      "it",
+      "describe",
+      "context",
+      "before",
+      "after",
+      "beforeEach",
+      "afterEach"
+    ]
+  },
+  "keywords": [
+    "adonis-framework",
+    "mvc",
+    "mvc-framework"
+  ],
+  "author": "adonisjs",
+  "license": "MIT",
+  "devDependencies": {
+    "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
+    "adonis-sink": "^1.0.1",
+    "cookie-signature": "^1.0.6",
+    "cz-conventional-changelog": "^2.0.0",
+    "japa": "^1.0.3",
+    "japa-cli": "^1.0.1",
+    "nyc": "^10.2.0",
+    "simple-encryptor": "^1.1.0",
+    "standard": "^10.0.2",
+    "supertest": "^3.0.0"
+  },
+  "dependencies": {
+    "co-compose": "^2.0.1",
+    "haye": "^1.0.1",
+    "lodash": "^4.17.4",
+    "node-cookie": "git+https://github.com/poppinss/node-cookie.git#develop",
+    "node-exceptions": "^2.0.1",
+    "node-req": "git+https://github.com/poppinss/node-req.git#develop",
+    "node-res": "git+https://github.com/poppinss/node-res.git#develop",
+    "path-to-regexp": "^1.7.0",
+    "require-all": "^2.2.0",
+    "upcast": "^1.0.4",
+    "useragent": "^2.1.13"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonisjs/adonis-framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-framework/issues"
+  },
+  "homepage": "https://github.com/adonisjs/adonis-framework#readme"
+}

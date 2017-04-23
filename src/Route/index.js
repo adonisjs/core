@@ -1,0 +1,356 @@
+'use strict'
+
+/*
+ * adonis-framework
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+*/
+
+const _ = require('lodash')
+const pathToRegexp = require('path-to-regexp')
+const CE = require('../Exceptions')
+
+/**
+ * @module Adonis
+ * @submodule framework
+ */
+
+/**
+ * This class defines a single route. It supports dynamic
+ * **url segments**, **formats**, **middleware**
+ * and **named routes**.
+ *
+ * Generally you will get the instance of the by calling
+ * one of the route method on the {{#crossLink "RouteManager"}}{{/crossLink}}
+ * class.
+ * Example: `Route.get`, `Route.post`.
+ *
+ * @class Route
+ * @constructor
+ *
+ * @example
+ * ```
+ * const route = new Route('users', 'HomeController.index', ['GET'])
+ * ```
+ */
+class Route {
+  constructor (route, handler, verbs = ['HEAD', 'GET']) {
+    this._instantiate(route, verbs, handler)
+    this._makeRoutePattern(route)
+  }
+
+  /**
+   * Validates the route to make sure it is a
+   * valid string
+   *
+   * @method _validateRoute
+   *
+   * @param  {String}       route
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _validateRoute (route) {
+    if (typeof (route) !== 'string') {
+      throw CE.InvalidArgumentException.invalidParamter('Cannot instantiate route without a valid url string', route)
+    }
+  }
+
+  /**
+   * Validates the handler to make sure it is a function
+   * or a string, which is considered to be a reference
+   * to the IoC container.
+   *
+   * @method _validateHandler
+   *
+   * @param  {Function|String}         handler
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _validateHandler (handler) {
+    if (['string', 'function'].indexOf(typeof (handler)) === -1) {
+      throw CE.InvalidArgumentException.invalidParamter('Cannot instantiate route without route handler', handler)
+    }
+  }
+
+  /**
+   * Validate HTTP verbs to make sure it is an
+   * array
+   *
+   * @method _validateVerbs
+   *
+   * @param  {Array}       verbs
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _validateVerbs (verbs) {
+    if (!Array.isArray(verbs)) {
+      throw CE.InvalidArgumentException.invalidParamter('New route expects HTTP verbs to be an array', verbs)
+    }
+  }
+
+  /**
+   * Instantiate private properties on the route instance
+   *
+   * @method _instantiate
+   *
+   * @param  {String}              route
+   * @param  {Array}               verbs
+   * @param  {Function|String}     handler
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _instantiate (route, verbs, handler) {
+    this._validateRoute(route)
+    this._validateVerbs(verbs)
+    this._validateHandler(handler)
+
+    route = `/${route.replace(/^\/|\/$/g, '')}`
+    this._route = route
+    this._verbs = verbs
+    this._handler = handler
+    this._name = route
+    this._domain = null
+    this._middleware = []
+  }
+
+  /**
+   * Make the regexp pattern for the route. Later this
+   * expression is used to match urls.
+   *
+   * @method _makeRoutePattern
+   *
+   * @param  {String}          route
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _makeRoutePattern (route) {
+    this._regexp = pathToRegexp(route, [])
+  }
+
+  /**
+   * Define domain for the route. If domain is defined
+   * then route will only resolve when domain matches.
+   *
+   * @method domain
+   *
+   * @param  {String}  domain
+   *
+   * @chainable
+   *
+   * @example
+   * ```js
+   * Route
+   *   .get(...)
+   *   .domain('blog.adonisjs.com')
+   * ```
+   */
+  domain (domain) {
+    domain = `${domain.replace(/^\/|\/$/g, '')}`
+    this._domain = pathToRegexp(domain, [])
+    return this
+  }
+
+  /**
+   * Define formats on a given route. Formats can be
+   * used to do explicit content negotiation based
+   * upon the url extension.
+   *
+   * @method formats
+   *
+   * @param  {Array}  formats
+   * @param  {Boolean} [strict = false] - Strict flag will only allow route with format extension.
+   *
+   * @chainable
+   *
+   * @example
+   * ```js
+   * Route
+   *   .get(...)
+   *   .formats(['json', 'html'])
+   * ```
+   */
+  formats (formats, strict = false) {
+    const flag = strict ? '' : '?'
+    const formatsPattern = `:format(.${formats.join('|.')})${flag}`
+    this._makeRoutePattern(`${this._route}${formatsPattern}`)
+    return this
+  }
+
+  /**
+   * Give name to the route, easier to remember
+   * and resolve later.
+   *
+   * @method as
+   *
+   * @param  {String} name
+   *
+   * @chainable
+   *
+   * @example
+   * ```js
+   * Route
+   *   .get(...)
+   *   .as('name')
+   * ```
+   */
+  as (name) {
+    this._name = name
+    return this
+  }
+
+  /**
+   * Add middleware to the middleware queue to be executed
+   * before the route handler is executed.
+   *
+   * Calling this method for the multiple times will `concat`
+   * to the list of middleware.
+   *
+   * @method middleware
+   *
+   * @param  {...Spread} middleware
+   *
+   * @chainable
+   *
+   * @example
+   * ```js
+   * Route
+   *   .get('...')
+   *   .middleware('auth')
+   *
+   * // Or
+   * Route
+   *   .get('...')
+   *   .middleware(['auth', 'acl'])
+   *
+   * // Also pure functions
+   * Route
+   *   .get('...')
+   *   .middleware(async function () {
+   *
+   *   })
+   * ```
+   */
+  middleware (...middleware) {
+    this._middleware = this._middleware.concat(_.flatten(middleware))
+    return this
+  }
+
+  /**
+   * Prefix the route with some string. Generally
+   * used by the Route group to prefix a bunch
+   * of routes.
+   *
+   * @method prefix
+   *
+   * @param  {String} prefix
+   *
+   * @chainable
+   *
+   * @example
+   * ```
+   * Route
+   *   .get(...)
+   *   .prefix('api/v1')
+   * ```
+   */
+  prefix (prefix) {
+    prefix = `/${prefix.replace(/^\/|\/$/g, '')}`
+    this._route = `${prefix}${this._route}`
+    this._makeRoutePattern(this._route)
+    return this
+  }
+
+  /**
+   * Resolves the url by matching it against
+   * the registered route and verbs. It will
+   * return `null` when url does not belongs
+   * to this route.
+   *
+   * @method resolve
+   *
+   * @param  {String} url
+   * @param  {String} verb
+   * @param  {String} [host] - Required only when route has subdomain
+   *
+   * @return {Object|Null}
+   *
+   * @example
+   * ```js
+   * // Register route
+   * const route = new Route('make/:drink', 'DrinkController.make', ['GET'])
+   *
+   * // Resolve url
+   * route.resolve('make/coffee', 'GET')
+   *
+   * // Returns
+   * { url: 'make/coffee', params: ['coffee'] }
+   * ```
+   */
+  resolve (url, verb, host) {
+    /**
+     * Return null when verb mis-matches
+     */
+    if (this._verbs.indexOf(verb) === -1) {
+      return null
+    }
+
+    /**
+     * Check for matching domain when route domain
+     * is defined.
+     */
+    if (this._domain && !this._domain.test(host)) {
+      return null
+    }
+
+    /**
+     * Get route tokens if matched otherwise
+     * return null.
+     */
+    const tokens = this._regexp.exec(url)
+    if (!tokens) {
+      return null
+    }
+
+    const params = _.transform(this._regexp.keys, (result, key, index) => {
+      let value = tokens[index + 1] || null
+      value = key.repeat && value ? value.split('/') : value
+      result[key.name] = value
+      return result
+    }, {})
+
+    return { url, params }
+  }
+
+  /**
+   * Returns the JSON representation of the route.
+   *
+   * @method toJSON
+   *
+   * @return {Object}
+   */
+  toJSON () {
+    return {
+      route: this._route,
+      verbs: this._verbs,
+      handler: this._handler,
+      middleware: this._middleware,
+      name: this._name,
+      domain: this._domain
+    }
+  }
+}
+
+module.exports = Route
