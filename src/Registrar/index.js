@@ -17,6 +17,7 @@ const ServiceProvider = require('../../src/ServiceProvider')
 class Registrar {
   constructor (Ioc) {
     this.Ioc = Ioc
+    this._providers = []
   }
 
   /**
@@ -140,24 +141,59 @@ class Registrar {
   }
 
   /**
-   * Async method to register and boot the providers. This method
-   * also emit events after completing each step.
+   * Setting providers that will later be registered
+   * and booted.
    *
-   * @method register
+   * @method providers
    *
-   * @async
+   * @param  {Array} arrayOfProviders
    *
-   * @param {Array} arrayOfProviders
+   * @chainable
    */
-  async register (arrayOfProviders) {
+  providers (arrayOfProviders) {
     if (arrayOfProviders instanceof Array === false) {
       throw CE.InvalidArgumentException.invalidParameters('register expects an array of providers to be registered')
     }
-    const providersInstance = this._getProvidersInstance(arrayOfProviders)
-    this._registerProviders(providersInstance)
+    this._providers = this._getProvidersInstance(arrayOfProviders)
+    return this
+  }
+
+  /**
+   * Register providers earlier defined via the
+   * `providers` method.
+   *
+   * @method register
+   *
+   * @return {void}
+   */
+  register () {
+    this._registerProviders(this._providers)
     emitter.emit(this.PROVIDERS_REGISTERED)
-    await Promise.all(this._bootProviders(providersInstance))
+  }
+
+  /**
+   * Boot providers earlier defined via the
+   * `providers` method.
+   *
+   * @method boot
+   *
+   * @return {void}
+   */
+  async boot () {
+    await Promise.all(this._bootProviders(this._providers))
     emitter.emit(this.PROVIDERS_BOOTED)
+  }
+
+  /**
+   * Register and boot providers together
+   *
+   * @method registerAndBoot
+   *
+   * @return {void}
+   */
+  async registerAndBoot () {
+    this.register()
+    await this.boot()
   }
 }
 
