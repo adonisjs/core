@@ -1,3 +1,8 @@
+<a name="3.0.13"></a>
+## [3.0.13](https://github.com/adonisjs/adonis-framework/compare/v3.0.12...v3.0.13) (2017-04-25)
+
+
+
 <a name="3.0.12"></a>
 ## [3.0.12](https://github.com/adonisjs/adonis-framework/compare/v3.0.11...v3.0.12) (2017-03-25)
 
