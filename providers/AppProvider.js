@@ -13,11 +13,31 @@ const { ServiceProvider } = require('adonis-fold')
 
 class AppProvider extends ServiceProvider {
   register () {
+    this._registerEnv()
     this._registerConfig()
     this._registerRequest()
     this._registerResponse()
     this._registerRoute()
     this._registerServer()
+  }
+
+  /**
+   * Registering the env provider under
+   * Adonis/Src/Env namespace.
+   *
+   * @method _registerEnv
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _registerEnv () {
+    this.app.singleton('Adonis/Src/Env', (app) => {
+      const Helpers = app.use('Adonis/Src/Helpers')
+      const Env = require('../src/Env')
+      return new Env(Helpers._appRoot)
+    })
+    this.app.alias('Adonis/Src/Env', 'Env')
   }
 
   /**
@@ -36,6 +56,7 @@ class AppProvider extends ServiceProvider {
       const Config = require('../src/Config')
       return new Config(Helpers.configPath())
     })
+    this.app.alias('Adonis/Src/Config', 'Config')
   }
 
   /**
@@ -84,6 +105,7 @@ class AppProvider extends ServiceProvider {
     this.app.singleton('Adonis/Src/Route', () => {
       return require('../src/Route/Manager')
     })
+    this.app.alias('Adonis/Src/Route', 'Route')
   }
 
   /**
@@ -111,6 +133,7 @@ class AppProvider extends ServiceProvider {
       const Server = require('../src/Server')
       return new Server(Request, Response, Route, Logger, Config)
     })
+    this.app.alias('Adonis/Src/Server', 'Server')
   }
 }
 
