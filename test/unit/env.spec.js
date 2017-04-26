@@ -24,7 +24,7 @@ test.group('Env', (group) => {
 
     /* eslint-disable no-new */
     try {
-      new Env(this.helpers)
+      new Env(this.helpers._appRoot)
     } catch ({ message }) {
       assert.match(message, /ENOENT: no such file or directory, open/)
     }
@@ -34,7 +34,7 @@ test.group('Env', (group) => {
     process.env.ENV_SILENT = true
 
     /* eslint-disable no-new */
-    new Env(this.helpers)
+    new Env(this.helpers._appRoot)
     delete process.env.ENV_SILENT
   })
 
@@ -42,7 +42,7 @@ test.group('Env', (group) => {
     process.env.ENV_PATH = './user/.env'
 
     /* eslint-disable no-new */
-    new Env(this.helpers)
+    new Env(this.helpers._appRoot)
     assert.equal(process.env.HELLO, 'WORLD')
   })
 
@@ -50,7 +50,7 @@ test.group('Env', (group) => {
     process.env.ENV_PATH = './user/.env'
 
     /* eslint-disable no-new */
-    const env = new Env(this.helpers)
+    const env = new Env(this.helpers._appRoot)
     assert.equal(env.get('HELLO'), 'WORLD')
   })
 
@@ -58,7 +58,7 @@ test.group('Env', (group) => {
     process.env.ENV_PATH = './user/.env'
 
     /* eslint-disable no-new */
-    const env = new Env(this.helpers)
+    const env = new Env(this.helpers._appRoot)
     assert.equal(env.get('FOO', 'BAR'), 'BAR')
   })
 
@@ -66,7 +66,7 @@ test.group('Env', (group) => {
     process.env.ENV_PATH = './user/.env'
 
     /* eslint-disable no-new */
-    const env = new Env(this.helpers)
+    const env = new Env(this.helpers._appRoot)
     env.set('FOO', 'BAZ')
     assert.equal(env.get('FOO', 'BAR'), 'BAZ')
   })

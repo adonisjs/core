@@ -28,12 +28,15 @@ const dotenv = require('dotenv')
  *
  * Can define a different location by setting `ENV_PATH`
  * environment variable.
+ *
+ * @class Env
+ * @static
  */
 class Env {
-  constructor (Helpers) {
+  constructor (appRoot) {
     const envLocation = this.envPath()
     const options = {
-      path: path.isAbsolute(envLocation) ? envLocation : path.join(Helpers._appRoot, envLocation),
+      path: path.isAbsolute(envLocation) ? envLocation : path.join(appRoot, envLocation),
       encoding: process.env.ENV_ENCODING || 'utf8'
     }
 
