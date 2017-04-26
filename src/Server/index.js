@@ -206,6 +206,14 @@ class Server {
     const serverMiddleware = this.middleware.tag('server').get() || []
     const middleware = serverMiddleware.map((middleware) => new MiddlewareWrapper(middleware))
 
+    /**
+     * Resolve empty promise when middleware does
+     * not exists.
+     */
+    if (!middleware.length) {
+      return () => Promise.resolve()
+    }
+
     return this
       .middleware
       .resolve(this._resolveMiddleware.bind(this))
@@ -231,13 +239,16 @@ class Server {
    * @private
    */
   _wrapRouteHandler (handler, request, response) {
-    const { instance, method } = this._makeHandlerInstance(handler, request, response, 'httpControllers')
-    return async function (next) {
-      const params = _.values(this.request._params)
-      const value = await method.bind(instance)(...params)
-      this.response.lazyBody.content = response.lazyBody.content || value || null
-      this.response.lazyBody.method = response.lazyBody.method || 'send'
-      await next()
+    return (next) => {
+      const { instance, method } = this._makeHandlerInstance(handler, request, response, 'httpControllers')
+      const params = _.values(instance.request._params)
+      return Promise
+        .resolve(method.bind(instance)(...params))
+        .then((value) => {
+          instance.response.lazyBody.content = response.lazyBody.content || value || null
+          instance.response.lazyBody.method = response.lazyBody.method || 'send'
+          return next()
+        })
     }
   }
 
@@ -382,48 +393,46 @@ class Server {
     const response = new this.Response(req, res)
     const params = [request, response]
 
-    try {
-      await this._composeServerMiddleware(params)()
+    this
+      ._composeServerMiddleware(params)()
+      .then(() => {
+        /**
+         * If any server level middleware ends the response, there is no
+         * need of executing the route or global middleware.
+         */
+        if (response.lazyBody.content && response.lazyBody.method && response.isPending) {
+          response.end()
+          return
+        }
 
-      /**
-       * If any server level middleware ends the response, there is no
-       * need of executing the route or global middleware.
-       */
-      if (response.lazyBody.content && response.lazyBody.method && response.isPending) {
-        response.end()
-        return
-      }
+        const route = this.Route.match(request.url(), request.method(), request.hostname())
 
-      const route = this.Route.match(request.url(), request.method(), request.hostname())
+        /**
+         * Throw 404 exception when route is not found
+         */
+        if (!route) {
+          throw new CE.HttpException(`Route not found ${request.url()}`, 404)
+        }
 
-      /**
-       * Throw 404 exception when route is not found
-       */
-      if (!route) {
-        throw new CE.HttpException(`Route not found ${request.url()}`, 404)
-      }
+        /**
+         * Setting up params as the private
+         * property on middleware
+         *
+         * @type {Object}
+         */
+        request._params = route.params
 
-      /**
-       * Setting up params as the private
-       * property on middleware
-       *
-       * @type {Object}
-       */
-      request._params = route.params
-
-      const finalHandler = this._wrapRouteHandler(route.route._handler, request, response)
-      await this._composeRequestMiddleware(route.route._middleware, finalHandler, params)()
-
-      /**
-       * End the response only when it has not been ended
-       * so far.
-       */
-      if (response.isPending) {
-        response.end()
-      }
-    } catch (error) {
-      this._handleExpection(error, request, response)
-    }
+        const finalHandler = this._wrapRouteHandler(route.route._handler, request, response)
+        return this._composeRequestMiddleware(route.route._middleware, finalHandler, params)()
+      })
+      .then(() => {
+        if (response.isPending) {
+          response.end()
+        }
+      })
+      .catch((error) => {
+        this._handleExpection(error, request, response)
+      })
   }
 
   /**
