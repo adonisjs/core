@@ -1,89 +1,73 @@
 'use strict'
 
-/**
+/*
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
-const Env = require('../../src/Env')
-const stderr = require('test-console').stderr
+const test = require('japa')
 const path = require('path')
-const chai = require('chai')
-const expect = chai.expect
+const Env = require('../../src/Env')
+const { Helpers } = require('@adonisjs/sink')
 
-class Event {
-  static fire () {}
-}
+test.group('Env', (group) => {
+  group.beforeEach(() => {
+    this.helpers = new Helpers(path.join(__dirname))
+  })
 
-const Helpers = {
-  basePath: function () {
-    return path.join(__dirname, './app')
-  }
-}
+  test('load .env file by initiating Env class', (assert) => {
+    assert.plan(1)
 
-describe('Env', function () {
-  it('should load .env file by initiating Env class', function () {
     /* eslint-disable no-new */
-    new Env(Helpers, Event)
+    try {
+      new Env(this.helpers._appRoot)
+    } catch ({ message }) {
+      assert.match(message, /ENOENT: no such file or directory, open/)
+    }
   })
 
-  it('should load .env file from the location defined as ENV_PATH flag', function () {
-    const inspect = stderr.inspect()
-    process.env.ENV_PATH = '/users/.env'
+  test('ignore error when file is ENV_SILENT is true', (assert) => {
+    process.env.ENV_SILENT = true
+
     /* eslint-disable no-new */
-    new Env(Helpers, Event)
-    inspect.restore()
-    expect(inspect.output[0]).to.match(/\/users\/\.env/)
-    process.env.ENV_PATH = ''
+    new Env(this.helpers._appRoot)
+    delete process.env.ENV_SILENT
   })
 
-  it('should not inherit path from the basePath when ENV_PATH location has absolute path', function () {
-    const inspect = stderr.inspect()
-    process.env.ENV_PATH = '/.env'
+  test('load env file from a different location', (assert) => {
+    process.env.ENV_PATH = './user/.env'
+
     /* eslint-disable no-new */
-    new Env(Helpers, Event)
-    inspect.restore()
-    expect(inspect.output[0]).to.match(/\.env/)
-    process.env.ENV_PATH = ''
+    new Env(this.helpers._appRoot)
+    assert.equal(process.env.HELLO, 'WORLD')
   })
 
-  it('should get values defined in .env file', function () {
-    const env = new Env(Helpers, Event)
-    expect(env.get('APP_PORT')).to.equal('3000')
+  test('get value for a given key', (assert) => {
+    process.env.ENV_PATH = './user/.env'
+
+    /* eslint-disable no-new */
+    const env = new Env(this.helpers._appRoot)
+    assert.equal(env.get('HELLO'), 'WORLD')
   })
 
-  it('should return default value when it does exists in .env file', function () {
-    const env = new Env(Helpers, Event)
-    expect(env.get('APP_KEY', 'foo')).to.equal('foo')
+  test('get default value when actual value is missing', (assert) => {
+    process.env.ENV_PATH = './user/.env'
+
+    /* eslint-disable no-new */
+    const env = new Env(this.helpers._appRoot)
+    assert.equal(env.get('FOO', 'BAR'), 'BAR')
   })
 
-  it('should return default value when it does exists in .env file and default value is a boolean', function () {
-    const env = new Env(Helpers, Event)
-    expect(env.get('APP_KEY', false)).to.equal(false)
-  })
+  test('set value for a given key', (assert) => {
+    process.env.ENV_PATH = './user/.env'
 
-  it('should override defined values', function () {
-    const env = new Env(Helpers, Event)
-    env.set('APP_PORT', 4000)
-    expect(env.get('APP_PORT')).to.equal('4000')
-  })
-
-  it('should convert boolean strings into a valid boolean', function () {
-    const env = new Env(Helpers, Event)
-    env.set('CACHE_VIEWS', false)
-    expect(env.get('CACHE_VIEWS')).to.equal(false)
-  })
-
-  it('should convert 0 and 1 to true and false', function () {
-    const env = new Env(Helpers, Event)
-    env.set('CACHE_VIEWS', 0)
-    expect(env.get('CACHE_VIEWS')).to.equal(false)
-  })
-
-  it('should convert true defined as string to a boolean', function () {
-    const env = new Env(Helpers, Event)
-    env.set('CACHE_VIEWS', true)
-    expect(env.get('CACHE_VIEWS')).to.equal(true)
+    /* eslint-disable no-new */
+    const env = new Env(this.helpers._appRoot)
+    env.set('FOO', 'BAZ')
+    assert.equal(env.get('FOO', 'BAR'), 'BAZ')
   })
 })

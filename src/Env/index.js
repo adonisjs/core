@@ -8,38 +8,65 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
 */
+
+const _ = require('lodash')
 const path = require('path')
 const dotenv = require('dotenv')
-const util = require('../../lib/util')
+const debug = require('debug')('adonis:framework')
 
 /**
- * Manage environment variables by reading .env file
- * inside the project root.
+ * @module Adonis
+ * @submodule framework
+ */
+
+/**
+ * Manages the application environment variables by
+ * reading the `.env` file from the project root.
  *
- * @class
+ * If `.env` file is missing, an exception will be thrown
+ * to supress the exception, pass `ENV_SILENT=true` when
+ * starting the app.
+ *
+ * Can define different location by setting `ENV_PATH`
+ * environment variable.
+ *
+ * @namespace Adonis/Src/Env
+ * @alias Env
+ * @singleton
+ *
+ * @class Env
+ * @constructor
  */
 class Env {
+  constructor (appRoot) {
+    const envLocation = this.getEnvPath()
 
-  constructor (Helpers) {
-    const envLocation = this.envPath()
     const options = {
-      path: path.isAbsolute(envLocation) ? envLocation : path.join(Helpers.basePath(), envLocation),
-      silent: process.env.ENV_SILENT || false,
+      path: path.isAbsolute(envLocation) ? envLocation : path.join(appRoot, envLocation),
       encoding: process.env.ENV_ENCODING || 'utf8'
     }
-    dotenv.load(options)
+
+    debug('loading .env file from %s', options.path)
+    const env = dotenv.config(options)
+
+    /**
+     * Throwing the exception when ENV_SILENT is not set to true
+     * and ofcourse there is an error
+     */
+    if (env.error && process.env.ENV_SILENT !== 'true') {
+      throw env.error
+    }
   }
 
   /**
-   * returns envPath by checking the environment variables
+   * Returns the path from where the `.env`
+   * file will be loaded.
    *
-   * @method envPath
+   * @method getEnvPath
    *
    * @return {String}
-   *
-   * @public
    */
-  envPath () {
+  getEnvPath () {
     if (!process.env.ENV_PATH || process.env.ENV_PATH.length === 0) {
       return '.env'
     }
@@ -47,47 +74,42 @@ class Env {
   }
 
   /**
-   * get value of an existing key from
-   * env file.
+   * Get value for a given key from the `process.env`
+   * object.
    *
-   * @param  {String} key - key to read value for
-   * @param  {Mixed} [defaultValue] - default value to be used when actual value
-   *                                  is undefined or null.
+   * @method get
+   *
+   * @param  {String} key
+   * @param  {Mixed} [defaultValue = null]
+   *
    * @return {Mixed}
    *
    * @example
-   * Env.get('APP_PORT')
+   * ```js
    * Env.get('CACHE_VIEWS', false)
-   *
-   * @public
+   * ```
    */
-  get (key, defaultValue) {
-    defaultValue = util.existy(defaultValue) ? defaultValue : null
-    let returnValue = process.env[key] || defaultValue
-    if (returnValue === 'true' || returnValue === '1') {
-      return true
-    }
-    if (returnValue === 'false' || returnValue === '0') {
-      return false
-    }
-    return returnValue
+  get (key, defaultValue = null) {
+    return _.get(process.env, key, defaultValue)
   }
 
   /**
-   * set/update value for a given key
+   * Set value for a given key inside the `process.env`
+   * object. If value exists, will be updated
    *
-   * @param  {String} key - Key to set value for
-   * @param  {Mixed} value - value to save next to defined key
+   * @method set
+   *
+   * @param  {String} key
+   * @param  {Mixed} value
    *
    * @example
-   * Env.set('CACHE_VIEWS', true)
-   *
-   * @public
+   * ```js
+   * Env.set('PORT', 3333)
+   * ```
    */
   set (key, value) {
-    process.env[key] = value
+    _.set(process.env, key, value)
   }
-
 }
 
 module.exports = Env
