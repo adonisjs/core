@@ -35,7 +35,7 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
-    "co-compose": "^2.0.1",
+    "co-compose": "git+https://github.com/poppinss/co-compose.git#develop",
     "dotenv": "^4.0.0",
     "haye": "^1.0.1",
     "lodash": "^4.17.4",
