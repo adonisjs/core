@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "co-compose": "^2.0.1",
+    "dotenv": "^4.0.0",
     "haye": "^1.0.1",
     "lodash": "^4.17.4",
     "node-cookie": "git+https://github.com/poppinss/node-cookie.git#develop",
