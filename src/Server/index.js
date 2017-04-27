@@ -461,11 +461,17 @@ class Server {
    * @return {void}
    */
   handle (req, res) {
+<<<<<<< bfe5c458d3660b15fcb08d4214bc944fbb91a476
     const ctx = new this.Context(req, res)
     const response = ctx.response
     const request = ctx.request
 
     debug('new request on %s url', request.url())
+=======
+    const request = new this.Request(req, res, this.Config)
+    const response = new this.Response(req, res)
+    const params = [request, response]
+>>>>>>> refactor(server): improve route handler return value handling
 
     this
       ._composeServerMiddleware(ctx)()
