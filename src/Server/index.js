@@ -245,8 +245,10 @@ class Server {
       return Promise
         .resolve(method.bind(instance)(...params))
         .then((value) => {
-          instance.response.lazyBody.content = response.lazyBody.content || value || null
-          instance.response.lazyBody.method = response.lazyBody.method || 'send'
+          if (!instance.response.lazyBody.content && value) {
+            instance.response.lazyBody.content = value
+            instance.response.lazyBody.method = 'send'
+          }
           return next()
         })
     }
@@ -388,7 +390,7 @@ class Server {
    *
    * @return {void}
    */
-  async handle (req, res) {
+  handle (req, res) {
     const request = new this.Request(req, res, this.Config)
     const response = new this.Response(req, res)
     const params = [request, response]
