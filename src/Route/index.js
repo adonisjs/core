@@ -316,6 +316,14 @@ class Route {
     }
 
     /**
+     * Nothing needs processing, since the route
+     * and the url are same.
+     */
+    if (this._route === url) {
+      return { url, params: {} }
+    }
+
+    /**
      * Get route tokens if matched otherwise
      * return null.
      */

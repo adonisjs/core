@@ -182,6 +182,22 @@ test.group('Route | Resolve', () => {
     assert.deepEqual(route.resolve('/', 'GET', 'virk.adonisjs.com'), { url: '/', params: {} })
   })
 
+  test('return the route without process when route is /', (assert) => {
+    const route = new Route('/', function () {}, ['GET'])
+    route._regexp.exec = function () {
+      throw new Error('Never expected to reach here')
+    }
+    assert.deepEqual(route.resolve('/', 'GET'), { url: '/', params: {} })
+  })
+
+  test('return the route without processing when url and route are same', (assert) => {
+    const route = new Route('user', function () {}, ['GET'])
+    route._regexp.exec = function () {
+      throw new Error('Never expected to reach here')
+    }
+    assert.deepEqual(route.resolve('/user', 'GET'), { url: '/user', params: {} })
+  })
+
   test('return JSON representation of the route', (assert) => {
     const fn = function () {}
     const route = new Route('/', fn, ['GET']).as('home')
