@@ -76,4 +76,21 @@ test.group('Config', () => {
     const debug = config.get('database.mysql.debug')
     assert.equal(debug, true)
   })
+
+  test('merge values with the defaults', (assert) => {
+    const config = new Config(configPath)
+
+    const database = config.merge('database.sqlite', {
+      connection: {
+        filename: 'dev.sqlite3'
+      }
+    })
+
+    assert.deepEqual(database, {
+      client: 'sqlite',
+      connection: {
+        filename: 'dev.sqlite3'
+      }
+    })
+  })
 })

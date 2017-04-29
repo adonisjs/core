@@ -77,6 +77,23 @@ class Config {
   }
 
   /**
+   * Merge default values with the resolved values.
+   * This is to provide a default set of values
+   * when it does not exists.
+   *
+   * @method merge
+   *
+   * @param  {String} key
+   * @param  {Object} defaultValues
+   *
+   * @return {Object}
+   */
+  merge (key, defaultValues) {
+    const value = _.get(this._config, key, {})
+    return _.merge(defaultValues, value)
+  }
+
+  /**
    * Update value for a given key inside the config store. If
    * value does not exists it will be created.
    *
