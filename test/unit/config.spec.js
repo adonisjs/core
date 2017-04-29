@@ -152,4 +152,21 @@ test.group('Config', () => {
     assert.equal(debug, true)
 >>>>>>> feat(*): initiate re-write
   })
+
+  test('merge values with the defaults', (assert) => {
+    const config = new Config(configPath)
+
+    const database = config.merge('database.sqlite', {
+      connection: {
+        filename: 'dev.sqlite3'
+      }
+    })
+
+    assert.deepEqual(database, {
+      client: 'sqlite',
+      connection: {
+        filename: 'dev.sqlite3'
+      }
+    })
+  })
 })
