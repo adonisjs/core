@@ -27,12 +27,14 @@
     "adonis-sink": "^1.0.1",
     "cookie-signature": "^1.0.6",
     "cz-conventional-changelog": "^2.0.0",
+    "fs-extra": "^2.1.2",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
     "nyc": "^10.2.0",
     "simple-encryptor": "^1.1.0",
     "standard": "^10.0.2",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "test-console": "^1.0.0"
   },
   "dependencies": {
     "co-compose": "git+https://github.com/poppinss/co-compose.git#develop",
@@ -46,7 +48,8 @@
     "path-to-regexp": "^1.7.0",
     "require-all": "^2.2.0",
     "upcast": "^1.0.4",
-    "useragent": "^2.1.13"
+    "useragent": "^2.1.13",
+    "winston": "^2.3.1"
   },
   "config": {
     "commitizen": {
