@@ -77,6 +77,21 @@ describe('App Exceptations', function () {
     }
   })
 
+  it('should access to profile where id [A-Z]+', function * () {
+    Route.get('/:id', 'HomeController.profile').where({id: '[A-Z]+'})
+    yield browser.visit('/spain')
+    expect(browser.text('body').trim()).to.equal('spain')
+  })
+
+  it('should throw 404 profile where id [0-9]+', function * () {
+    Route.get('/:id', 'HomeController.profile').where({id: '[0-9]+'})
+    try {
+      yield browser.visit('/spain')
+    } catch (e) {
+      browser.assert.status(404)
+    }
+  })
+
   it('should run global middleware even if no route is defined', function * () {
     Middleware.global(['App/Http/Middleware/Greet'])
     yield browser.visit('/')

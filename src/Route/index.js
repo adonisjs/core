@@ -500,3 +500,22 @@ Route.formats = function (formats, strict) {
   const lastRoute = Route._lastRoute()
   helpers.addFormats(lastRoute, formats, strict)
 }
+
+/**
+ * adds conditions to routes validation, params beautiful
+ *
+ * @method where
+ *
+ * @param  {[type]}  where
+ * @return {Object} - reference to this for chaining
+ *
+ * @example
+ * Route.get('/user/:id', '...').where({id: '[0-9]+'})
+ *
+ * @public
+ */
+Route.where = function (where) {
+  const lastRoute = Route._lastRoute()
+  helpers.addWhere(lastRoute, where)
+  return this
+}

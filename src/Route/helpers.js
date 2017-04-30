@@ -176,3 +176,22 @@ RouterHelper.addDomain = function (routes, domain) {
     route.domain = domain
   })
 }
+
+/**
+ * adds regex validation of route.
+ *
+ * @param  {Object}  route
+ * @param  {String}  where
+ * @return {void}
+ *
+ * @private
+ */
+RouterHelper.addWhere = function (route, where) {
+  let routeRegex = route.route
+  _.forEach(where, (value, key) => {
+    const regex = new RegExp(`(:${key}\\b)`, 'g')
+    routeRegex = routeRegex.replace(regex, `:${key}(${value})`)
+  })
+  route.route = routeRegex
+  route.pattern = RouterHelper.makeRoutePattern(routeRegex)
+}
