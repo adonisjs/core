@@ -24,6 +24,10 @@ const requireAll = require('require-all')
  * Manages configuration by recursively reading all
  * `.js` files from the `config` folder.
  *
+ * **Namespace**: `Adonis/Src/Config` <br />
+ * **Singleton**: Yes <br />
+ * **Alias**: Config
+ *
  * @class Config
  * @constructor
  */
@@ -55,7 +59,6 @@ class Config {
    * values can be accessed via (dot notation). Values
    * referenced with `self::` are further resolved.
    *
-   * @since 1.0.0
    * @method get
    *
    * @param  {String} key
@@ -66,6 +69,12 @@ class Config {
    * @example
    * ```
    * Config.get('database.mysql')
+   *
+   * // referenced
+   * {
+   *   prodMysql: 'self::database.mysql'
+   * }
+   * Config.get('database.prodMysql')
    * ```
    */
   get (key, defaultValue) {
@@ -81,12 +90,21 @@ class Config {
    * This is to provide a default set of values
    * when it does not exists.
    *
+   * @since 4.0.0
    * @method merge
    *
    * @param  {String} key
    * @param  {Object} defaultValues
    *
    * @return {Object}
+   *
+   * @example
+   * ```js
+   * Config.merge('services.redis', {
+   *   port: 6379,
+   *   host: 'localhost'
+   * })
+   * ```
    */
   merge (key, defaultValues) {
     const value = _.get(this._config, key, {})
@@ -101,7 +119,6 @@ class Config {
    * This method updates the value in memory and not on the
    * file system.
    *
-   * @since 1.0.0
    * @method set
    *
    * @param  {String} key

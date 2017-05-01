@@ -26,29 +26,39 @@ const dotenv = require('dotenv')
  * to supress the exception, pass `ENV_SILENT=true` when
  * starting the app.
  *
- * Can define a different location by setting `ENV_PATH`
+ * Can define different location by setting `ENV_PATH`
  * environment variable.
  *
+ * **Namespace**: `Adonis/Src/Env` <br />
+ * **Singleton**: Yes <br />
+ * **Alias**: Env
+ *
  * @class Env
- * @static
+ * @constructor
  */
 class Env {
   constructor (appRoot) {
     const envLocation = this.envPath()
+
     const options = {
       path: path.isAbsolute(envLocation) ? envLocation : path.join(appRoot, envLocation),
       encoding: process.env.ENV_ENCODING || 'utf8'
     }
 
     const env = dotenv.config(options)
+
+    /**
+     * Throwing the exception when ENV_SILENT is not set to true
+     * and ofcourse there is an error
+     */
     if (env.error && process.env.ENV_SILENT !== 'true') {
       throw env.error
     }
   }
 
   /**
-   * Returns the path from where to load the `.env`
-   * file.
+   * Returns the path from where the `.env`
+   * file will be loaded.
    *
    * @method envPath
    *
@@ -62,7 +72,7 @@ class Env {
   }
 
   /**
-   * Get value for a given key from the process.env
+   * Get value for a given key from the `process.env`
    * object.
    *
    * @method get
@@ -74,7 +84,7 @@ class Env {
    *
    * @example
    * ```js
-   *   Env.get('CACHE_VIEWS', false)
+   * Env.get('CACHE_VIEWS', false)
    * ```
    */
   get (key, defaultValue = null) {
@@ -82,7 +92,7 @@ class Env {
   }
 
   /**
-   * Set set for a given key inside the `process.env`
+   * Set value for a given key inside the `process.env`
    * object. If value exists, will be updated
    *
    * @method set
@@ -92,7 +102,7 @@ class Env {
    *
    * @example
    * ```js
-   *   Env.set('PORT', 3333)
+   * Env.set('PORT', 3333)
    * ```
    */
   set (key, value) {

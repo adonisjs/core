@@ -22,7 +22,7 @@ const CE = require('../Exceptions')
  * classes to allow a public api for extending
  * the class object via `getters` and `macros`.
  *
- * Also this class is used by {{#crossLink "Request"}}{{/crossLink}} and
+ * This class is used by {{#crossLink "Request"}}{{/crossLink}} and
  * {{#crossLink "Response"}}{{/crossLink}} classes.
  *
  * @class Macroable
@@ -99,11 +99,14 @@ class Macroable {
    * use getter over macro, when you want the property
    * to be evaluated everytime it is accessed.
    *
+   * Singleton getters callback is only executed once.
+   *
    * @method getter
    * @static
    *
    * @param  {String}   name
    * @param  {Function} callback
+   * @param  {Boolean}  [singleton = false]
    *
    * @throws {InvalidArgumentException} If callback is not a function
    *
@@ -152,7 +155,7 @@ class Macroable {
    *
    * @return {Callback}
    */
-  getGetter (name) {
+  static getGetter (name) {
     return this._getters[name]
   }
 
@@ -167,8 +170,8 @@ class Macroable {
    *
    * @return {Boolean}
    */
-  hasGetter (name) {
-    return !!(this.getGetter(name) && this.prototype[name])
+  static hasGetter (name) {
+    return !!this.getGetter(name)
   }
 
   /**

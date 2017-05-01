@@ -45,8 +45,8 @@ const SECRET = 'app.secret'
 /**
  * A facade over Node.js HTTP `req` object, making it
  * easier and simpler to access request information.
- * You can access the original **request** object
- * as `request.request`
+ * You can access the original **req** object as
+ * `request.request`
  *
  * @class Request
  * @constructor
@@ -446,8 +446,8 @@ class Request extends Macroable {
   }
 
   /**
-   * Returns the best accepted response type based on
-   * the `Accept` header. If no `types` are defined
+   * Returns the best accepted response type based from
+   * the `Accept` header. If no `types` are provided
    * the return value will be array containing all
    * the `Accept` header values.
    *

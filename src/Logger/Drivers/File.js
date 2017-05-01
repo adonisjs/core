@@ -19,17 +19,20 @@ const Winston = require('winston')
  */
 
 /**
- * Winston file transport driver for Adonis
- * Logger. All the logs will be written to
- * the filename defined inside config.
+ * Winston console transport driver for {{#crossLink "Logger"}}{{/crossLink}}
+ * All the logs will be written to the filename defined inside config.
  *
  * @class WinstonFile
+ * @constructor
+ * @namespace Logger.Driver
  */
 class WinstonFile {
   /**
-   * IoC container injections
+   * Returns an array of dependencies to be injected
+   * by IoC container.
    *
    * @method inject
+   * @static
    *
    * @return {Array}
    */
@@ -69,7 +72,7 @@ class WinstonFile {
   }
 
   /**
-   * A list of available log levels
+   * A list of available log levels.
    *
    * @attribute levels
    *
