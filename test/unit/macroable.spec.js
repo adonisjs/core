@@ -56,9 +56,9 @@ test.group('Macroable', (group) => {
       calledCount++
       return 'bar'
     })
-    /* eslint no-new: "ignore" */
-    new Macroable().foo
-    new Macroable().foo
+    /* eslint no-new: "off" */
+    assert.equal(new Macroable().foo, 'bar')
+    assert.equal(new Macroable().foo, 'bar')
     assert.equal(calledCount, 2)
   })
 
@@ -92,5 +92,32 @@ test.group('Macroable', (group) => {
     assert.isFunction(Foo.prototype.foo)
     assert.isUndefined(Bar.getMacro('foo'))
     assert.isUndefined(Bar.prototype.foo)
+  })
+
+  test('define a singleton getter', (assert) => {
+    let getterCalledCounts = 0
+    Macroable.getter('foo', function () {
+      getterCalledCounts++
+      return 'bar'
+    }, true)
+    const m = new Macroable()
+    assert.equal(m.foo, 'bar')
+    assert.equal(m.foo, 'bar')
+    assert.equal(getterCalledCounts, 1)
+  })
+
+  test('singleton should be instance specific', (assert) => {
+    let getterCalledCounts = 0
+    Macroable.getter('foo', function () {
+      getterCalledCounts++
+      return 'bar'
+    }, true)
+    const m = new Macroable()
+    const m1 = new Macroable()
+    assert.equal(m.foo, 'bar')
+    assert.equal(m.foo, 'bar')
+    assert.equal(m1.foo, 'bar')
+    assert.equal(m1.foo, 'bar')
+    assert.equal(getterCalledCounts, 2)
   })
 })
