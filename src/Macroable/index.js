@@ -117,16 +117,27 @@ class Macroable {
    * request.time
    * ```
    */
-  static getter (name, callback) {
+  static getter (name, callback, singleton = false) {
     if (typeof (callback) !== 'function') {
       throw CE
         .InvalidArgumentException
         .invalidParamter(`${this.name}.getter expects callback to be a function or an asyncFunction`, callback)
     }
 
-    this._getters[name] = callback
+    /**
+     * If getter is defined as singleton, we wrap
+     * the callback inside a function which
+     * executes the callback only once.
+     */
+    const wrappedCallback = singleton ? function () {
+      const propName = `_${name}_`
+      this[propName] = this[propName] || callback()
+      return this[propName]
+    } : callback
+
+    this._getters[name] = wrappedCallback
     Object.defineProperty(this.prototype, name, {
-      get: callback,
+      get: wrappedCallback,
       configurable: true
     })
   }
