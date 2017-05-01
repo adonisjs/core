@@ -18,18 +18,21 @@ const Winston = require('winston')
  */
 
 /**
- * Winston console transport driver for Adonis
- * Logger. All the logs will be written to
- * stdout and stderr based upon the log
+ * Winston console transport driver for {{#crossLink "Logger"}}{{/crossLink}}
+ * All the logs will be written to `stdout` and `stderr` based upon the log
  * level.
  *
  * @class WinstonConsole
+ * @constructor
+ * @namespace Logger.Driver
  */
 class WinstonConsole {
   /**
-   * IoC container injections
+   * Returns an array of dependencies to be injected
+   * by IoC container.
    *
    * @method inject
+   * @static
    *
    * @return {Array}
    */

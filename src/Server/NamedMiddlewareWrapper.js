@@ -12,7 +12,7 @@ const haye = require('haye')
 const CE = require('../Exceptions')
 
 /**
- * @class NamedMiddlewareWrapper
+ * @class Server.NamedMiddlewareWrapper
  */
 class NamedMiddlewareWrapper {
   constructor (middleware, namedHash) {

@@ -43,6 +43,15 @@ test.group('Macroable', (group) => {
     assert.equal(Macroable.hasMacro('foo'), false)
   })
 
+  test('return false from {hasGetter} for unregistered getter', (assert) => {
+    assert.equal(Macroable.hasGetter('foo'), false)
+  })
+
+  test('return true from {hasGetter} for registered getter', (assert) => {
+    Macroable.getter('foo', function () {})
+    assert.equal(Macroable.hasGetter('foo'), true)
+  })
+
   test('define a getter', (assert) => {
     Macroable.getter('foo', function () {
       return 'bar'

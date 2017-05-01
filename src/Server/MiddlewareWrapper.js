@@ -10,7 +10,7 @@
 */
 
 /**
- * @class MiddlewareWrapper
+ * @class Server.MiddlewareWrapper
  */
 class MiddlewareWrapper {
   constructor (namespace) {
