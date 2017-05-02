@@ -134,7 +134,7 @@ class Macroable {
      */
     const wrappedCallback = singleton ? function () {
       const propName = `_${name}_`
-      this[propName] = this[propName] || callback()
+      this[propName] = this[propName] || callback.bind(this)()
       return this[propName]
     } : callback
 

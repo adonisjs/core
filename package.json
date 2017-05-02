@@ -6,13 +6,7 @@
   "scripts": {},
   "standard": {
     "global": [
-      "it",
-      "describe",
-      "context",
-      "before",
-      "after",
-      "beforeEach",
-      "afterEach"
+      "use"
     ]
   },
   "keywords": [
@@ -31,14 +25,17 @@
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
     "nyc": "^10.2.0",
+    "pify": "^2.3.0",
     "simple-encryptor": "^1.1.0",
     "standard": "^10.0.2",
     "supertest": "^3.0.0",
     "test-console": "^1.0.0"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "co-compose": "git+https://github.com/poppinss/co-compose.git#develop",
     "dotenv": "^4.0.0",
+    "edge.js": "^1.0.0",
     "haye": "^1.0.1",
     "lodash": "^4.17.4",
     "node-cookie": "git+https://github.com/poppinss/node-cookie.git#develop",
