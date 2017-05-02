@@ -12,60 +12,79 @@
 const bcrypt = require('bcryptjs')
 
 /**
- * Create and verify hash values using Bcrypt as underlaying
- * algorithm.
- * @module Hash
+ * @module Adonis
+ * @submodule framework
  */
-let Hash = exports = module.exports = {}
 
 /**
- * hash a value with given number of rounds
+ * Hash plain values using [bcryptjs](https://www.npmjs.com/package/bcryptjs).
+ * It is considered to be used when saving user passwords to the database,.
  *
- * @method make
- * @param  {String} value - value to hash
- * @param  {Number} [rounds=10] - number of rounds to be used for creating hash
+ * @namespace Adonis/Src/Hash
+ * @alias Hash
+ * @singleton Yes
  *
- * @return {Promise}
- *
- * @public
- *
- * @example
- * yield Hash.make('somepassword')
- * yield Hash.make('somepassword', 5)
+ * @class Hash
+ * @static
  */
-Hash.make = function (value, rounds) {
-  rounds = rounds || 10
-  return new Promise(function (resolve, reject) {
-    bcrypt.hash(value, rounds, function (error, hash) {
-      if (error) {
-        return reject(error)
-      }
-      resolve(hash)
+class Hash {
+  /**
+   * Hash plain value using bcrypt.
+   *
+   * @method make
+   *
+   * @param  {String} value
+   * @param  {Number} [rounds = 10]
+   *
+   * @return {Promise}
+   *
+   * @example
+   * ```js
+   * const hashed = await Hash.make('my-secret-password')
+   * ```
+   */
+  make (value, rounds = 10) {
+    return new Promise(function (resolve, reject) {
+      bcrypt.hash(value, rounds, function (error, hash) {
+        if (error) {
+          return reject(error)
+        }
+        resolve(hash)
+      })
     })
-  })
+  }
+
+  /**
+   * Verify an existing hash with the plain value. Though this
+   * method returns a promise, it never throws an exception
+   * and this is just for the sake of simplicity, since
+   * bcrypt errors are not something that you can act
+   * upon.
+   *
+   * @method verify
+   *
+   * @param  {String} value
+   * @param  {String} hash
+   *
+   * @return {Promise}
+   *
+   * @example
+   * ```
+   * const verified = await Hash.verify('password', 'existing-hash')
+   * if (verified) {
+   * }
+   * ```
+   */
+  verify (value, hash) {
+    return new Promise(function (resolve, reject) {
+      bcrypt.compare(value, hash, function (error, response) {
+        if (error) {
+          return resolve(false)
+        }
+        resolve(response)
+      })
+    })
+  }
 }
 
-/**
- * verifies a given value against hash value
- *
- * @method verify
- * @param  {String} value - Plain value
- * @param  {String} hash - Previously hashed value
- *
- * @return {Promise}
- *
- * @public
- *
- * @example
- * yield Hash.verify('plainpassword', 'hashpassword')
- */
-Hash.verify = function (value, hash) {
-  return new Promise(function (resolve, reject) {
-    bcrypt.compare(value, hash, function (error, response) {
-      if (error) {
-        return reject(error)
-      }
-      resolve(response)
-    })
-  })
-}
+module.exports = new Hash()

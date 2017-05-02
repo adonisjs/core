@@ -19,6 +19,7 @@ class AppProvider extends ServiceProvider {
     this._registerResponse()
     this._registerRoute()
     this._registerServer()
+    this._registerHash()
   }
 
   /**
@@ -134,6 +135,21 @@ class AppProvider extends ServiceProvider {
       return new Server(Request, Response, Route, Logger, Config)
     })
     this.app.alias('Adonis/Src/Server', 'Server')
+  }
+
+  /**
+   * Registers the hash provider
+   *
+   * @method _registerHash
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _registerHash () {
+    this.app.bind('Adonis/Src/Hash', () => {
+      return require('../src/Hash')
+    })
   }
 }
 
