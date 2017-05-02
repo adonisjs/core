@@ -1,6 +1,6 @@
 'use strict'
 
-/**
+/*
  * adonis-framework
  *
  * (c) Harminder Virk <virk@adonisjs.com>
@@ -9,129 +9,126 @@
  * file that was distributed with this source code.
 */
 
-const nunjucks = require('nunjucks')
-const ViewLoader = require('./loader')
-const viewFilters = require('./filters')
-const viewGlobals = require('./globals')
-const _ = require('lodash')
+const edge = require('edge.js')
+const BasePresenter = edge.BasePresenter
 
 /**
- * View class for adonis framework to serve jinja like views
- * @class
- * @alias View
+ * @module Adonis
+ * @submodule framework
+ */
+
+/**
+ * View engine to be used for rendering views. It makes
+ * use of Edge as the templating engine. Learn more
+ * about edge [here](http://edge.adonisjs.com/)
+ *
+ * During HTTP request/response lifecycle, you should
+ * make use of `response.view()` to render views.
+ *
+ * **Namespace**: `Adonis/Src/View` <br />
+ * **Singleton**: Yes <br />
+ * **Alias**: View
+ *
+ * @class View
+ * @constructor
  */
 class View {
-
-  constructor (Helpers, Config, Route, viewsEnv) {
-    this.Helpers = Helpers
-    this.Config = Config
-    this.Route = Route
-    nunjucks.nodes.For = nunjucks.nodes.AsyncEach // monkey patch for with asyncEach
-    const viewsPath = Helpers.viewsPath()
-    const viewsCache = Config.get('app.views.cache', true)
-    const injectServices = Config.get('app.views.injectServices', false)
-    this.viewsEnv = viewsEnv || new nunjucks.Environment(new ViewLoader(viewsPath, false, !viewsCache))
-
-    /**
-     * only register use, make and yield when the end user
-     * has enabled injectServices inside the config file.
-     */
-    if (injectServices) {
-      require('./services')(this.viewsEnv)
-    }
-
-    viewGlobals(this.viewsEnv, Route)
-    viewFilters(this.viewsEnv, Route)
-  }
-
-  /**
-   * compile a view with give template and data
-   *
-   * @param  {String} template_path
-   * @param  {Object} [data]
-   * @return {Promise}
-   *
-   * @example
-   * View
-   *   .make('index', {})
-   *   .then()
-   *   .catch()
-   * @public
-   */
-  make (templatePath, data) {
-    let self = this
-    return new Promise(function (resolve, reject) {
-      self.viewsEnv.render(templatePath, data, function (err, templateContent) {
-        if (err) {
-          reject(err)
-          return
-        }
-        resolve(templateContent)
-      })
+  constructor (Helpers, cacheViews = false) {
+    edge.configure({
+      cache: cacheViews
     })
+    edge.registerViews(Helpers.viewsPath())
+    edge.registerPresenters(Helpers.resourcesPath('presenters'))
+    this.engine = edge
   }
 
   /**
-   * makes a view from string instead of path, it is
-   * helpful for making quick templates on the
-   * fly.
+   * Base presenter to be extended when creating
+   * presenters for views.
    *
-   * @param  {String}   templateString
-   * @param  {Object}   [data]
-   * @return {String}
-   *
-   * @example
-   * view.makeString('Hello {{ user }}', {user: 'doe'})
-   *
-   * @public
+   * @attribute BasePresenter
    */
-  makeString (templateString, data) {
-    return this.viewsEnv.renderString(templateString, data)
+  get BasePresenter () {
+    return BasePresenter
   }
 
   /**
-   * add a filter to view, it also support async execution
+   * Register global with the view engine.
    *
-   * @param  {String}   name
-   * @param  {Function} callback
-   * @param  {Boolean}   async
+   * All parameters are directly
+   * passed to http://edge.adonisjs.com/docs/globals#_adding_globals
    *
-   * @example
-   * View.filter('name', function () {
-   * }, true)
    *
-   * @public
+   * @method global
+   *
+   * @param  {...Spread} params
+   *
+   * @return {void}
    */
-  filter (name, callback, async) {
-    this.viewsEnv.addFilter(name, callback, async)
+  global (...params) {
+    return this.engine.global(...params)
   }
 
   /**
-   * add a global method to views
+   * Share an object as locals with the view
+   * engine.
    *
-   * @param  {String} name
-   * @param  {Mixed} value
+   * All parameters are directly
+   * passed to http://edge.adonisjs.com/docs/data-locals#_locals
    *
-   * @example
-   * View.global('key', value)
+   * @method share
    *
-   * @public
-   */
-  global (name, value) {
-    this.viewsEnv.addGlobal(name, value)
-  }
-
-  /**
-   * Returns a cloned instance of itself to be used for
-   * having isoloted instance of views. This is required
-   * to attach globals during request lifecycle.
-   *
-   * @method clone
+   * @param  {...Spread} params
    *
    * @return {Object}
    */
-  clone () {
-    return new View(this.Helpers, this.Config, this.Route, _.cloneDeep(this.viewsEnv))
+  share (...params) {
+    return this.engine.share(...params)
+  }
+
+  /**
+   * Render a view from the `resources/views` directory.
+   *
+   * All parameters are directly
+   * passed to http://edge.adonisjs.com/docs/getting-started#_rendering_template_files
+   *
+   * @method render
+   *
+   * @param  {...Spread} params
+   *
+   * @return {String}
+   */
+  render (...params) {
+    return this.engine.render(...params)
+  }
+
+  /**
+   * Renders a plain string
+   *
+   * All parameters are directly
+   * passed to http://edge.adonisjs.com/docs/getting-started#_rendering_plain_string
+   *
+   * @method renderString
+   *
+   * @param  {...Spread}  params
+   *
+   * @return {String}
+   */
+  renderString (...params) {
+    return this.engine.renderString(...params)
+  }
+
+  /**
+   * Pass presenter to the view while rendering
+   *
+   * @method presenter
+   *
+   * @param  {...Spread} params
+   *
+   * @return {Object}
+   */
+  presenter (...params) {
+    return this.engine.presenter(...params)
   }
 }
 
