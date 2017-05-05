@@ -30,6 +30,13 @@ let routes = []
 let activeGroup = null
 
 /**
+ * global patterns for each route
+ * @type {Object}
+ * @private
+ */
+let patterns = {}
+
+/**
  * Create and register routes using regular expressions
  * @module Route
  */
@@ -77,7 +84,7 @@ Route.new = function () {
  * @public
  */
 Route.route = function (route, verb, handler) {
-  let constructedRoute = helpers.construct(route, verb, handler, activeGroup)
+  let constructedRoute = helpers.construct(route, verb, handler, activeGroup, patterns)
   routes.push(constructedRoute)
   return this
 }
@@ -518,4 +525,22 @@ Route.where = function (where) {
   const lastRoute = Route._lastRoute()
   helpers.addWhere(lastRoute, where)
   return this
+}
+
+/**
+ * add a global pattern for each rote.
+ *
+ * @method pattern
+ *
+ * @param  {String} key   [description]
+ * @param  {String} value [description]
+ *
+ * @example
+ * Route.pattern('id', '[0-9]+')
+ *
+ * @public
+ *
+ */
+Route.pattern = function (key, value) {
+  patterns[key] = value
 }
