@@ -12,28 +12,6 @@
 const { ServiceProvider } = require('adonis-fold')
 
 class ViewProvider extends ServiceProvider {
-  boot () {
-    const Response = this.app.use('Adonis/Src/Response')
-
-    /**
-     * Registers an isolated instance of view on the
-     * response object. Each view has access to
-     * the request object.
-     */
-    Response.getter('viewInstance', function () {
-      const View = use('Adonis/Src/View')
-      return View.share({ request: this.request })
-    }, true)
-
-    /**
-     * Also creating a macro on the response object, whose
-     * job is to render the view using the viewInstance.
-     */
-    Response.macro('view', function (...params) {
-      return this.viewInstance.render(...params)
-    })
-  }
-
   register () {
     this.app.singleton('Adonis/Src/View', (app) => {
       const Helpers = app.use('Adonis/Src/Helpers')
@@ -42,6 +20,20 @@ class ViewProvider extends ServiceProvider {
       const View = require('../src/View')
       return new View(Helpers, Config.get('app.views.cache'))
     })
+  }
+
+  boot () {
+    const Context = this.app.use('Adonis/Src/Context')
+
+    /**
+     * Registers an isolated instance of view on the
+     * response object. Each view has access to
+     * the request object.
+     */
+    Context.getter('view', function () {
+      const View = use('Adonis/Src/View')
+      return View.share({ request: this.request })
+    }, true)
   }
 }
 

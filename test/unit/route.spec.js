@@ -116,6 +116,14 @@ test.group('Route | Register', () => {
     route.domain(':user.adonisjs.com')
     assert.ok(route._domain.test('virk.adonisjs.com'))
   })
+
+  test('add forward slash if missing', (assert) => {
+    const route = new Route('users', function () {})
+    route.formats(['json', 'html'])
+    assert.equal(route._regexp.exec('/users')[0], '/users')
+    assert.equal(route._regexp.exec('/users.json')[1], '.json')
+    assert.equal(route._regexp.exec('/users.html')[1], '.html')
+  })
 })
 
 test.group('Route | Resolve', () => {
@@ -271,17 +279,17 @@ test.group('Route | Resource', (group) => {
 
   test('register simple resource', (assert) => {
     const resource = new RouteResource('users', 'UsersController')
-    assert.equal(resource._resource, 'users')
+    assert.equal(resource._resourceUrl, 'users')
   })
 
   test('register nested resource', (assert) => {
     const resource = new RouteResource('users.posts', 'PostsController')
-    assert.equal(resource._resource, 'users/:users_id/posts')
+    assert.equal(resource._resourceUrl, 'users/:users_id/posts')
   })
 
   test('trim extra slashes from resource name', (assert) => {
     const resource = new RouteResource('/users.posts/', 'PostsController')
-    assert.equal(resource._resource, 'users/:users_id/posts')
+    assert.equal(resource._resourceUrl, 'users/:users_id/posts')
   })
 
   test('add basic routes to the resource', (assert) => {
@@ -291,7 +299,7 @@ test.group('Route | Resource', (group) => {
     assert.lengthOf(routesList, 7)
 
     assert.deepEqual(routesList[0].toJSON(), {
-      name: 'index',
+      name: 'users.index',
       handler: 'UsersController.index',
       verbs: ['HEAD', 'GET'],
       route: '/users',
@@ -300,7 +308,7 @@ test.group('Route | Resource', (group) => {
     })
 
     assert.deepEqual(routesList[1].toJSON(), {
-      name: 'create',
+      name: 'users.create',
       handler: 'UsersController.create',
       verbs: ['HEAD', 'GET'],
       route: '/users/create',
@@ -309,7 +317,7 @@ test.group('Route | Resource', (group) => {
     })
 
     assert.deepEqual(routesList[2].toJSON(), {
-      name: 'store',
+      name: 'users.store',
       handler: 'UsersController.store',
       verbs: ['POST'],
       route: '/users',
@@ -318,7 +326,7 @@ test.group('Route | Resource', (group) => {
     })
 
     assert.deepEqual(routesList[3].toJSON(), {
-      name: 'show',
+      name: 'users.show',
       handler: 'UsersController.show',
       verbs: ['HEAD', 'GET'],
       route: '/users/:id',
@@ -327,7 +335,7 @@ test.group('Route | Resource', (group) => {
     })
 
     assert.deepEqual(routesList[4].toJSON(), {
-      name: 'edit',
+      name: 'users.edit',
       handler: 'UsersController.edit',
       verbs: ['HEAD', 'GET'],
       route: '/users/:id/edit',
@@ -336,7 +344,7 @@ test.group('Route | Resource', (group) => {
     })
 
     assert.deepEqual(routesList[5].toJSON(), {
-      name: 'update',
+      name: 'users.update',
       handler: 'UsersController.update',
       verbs: ['PUT', 'PATCH'],
       route: '/users/:id',
@@ -345,7 +353,7 @@ test.group('Route | Resource', (group) => {
     })
 
     assert.deepEqual(routesList[6].toJSON(), {
-      name: 'destroy',
+      name: 'users.destroy',
       handler: 'UsersController.destroy',
       verbs: ['DELETE'],
       route: '/users/:id',
@@ -359,13 +367,13 @@ test.group('Route | Resource', (group) => {
     const routeNames = RouteStore.list().map((route) => route._name)
     assert.lengthOf(resource._routes, 7)
     assert.deepEqual(routeNames, [
-      'admin.index',
-      'admin.create',
-      'admin.store',
-      'admin.show',
-      'admin.edit',
-      'admin.update',
-      'admin.destroy'
+      'admin.users.index',
+      'admin.users.create',
+      'admin.users.store',
+      'admin.users.show',
+      'admin.users.edit',
+      'admin.users.update',
+      'admin.users.destroy'
     ])
   })
 
@@ -375,7 +383,7 @@ test.group('Route | Resource', (group) => {
     const routeNames = RouteStore.list().map((route) => route._name)
     assert.lengthOf(routeNames, 2)
     assert.lengthOf(resource._routes, 2)
-    assert.deepEqual(routeNames, ['create', 'show'])
+    assert.deepEqual(routeNames, ['users.create', 'users.show'])
   })
 
   test('limit prefixed named routes to certain names', (assert) => {
@@ -384,7 +392,7 @@ test.group('Route | Resource', (group) => {
     const routeNames = RouteStore.list().map((route) => route._name)
     assert.lengthOf(routeNames, 2)
     assert.lengthOf(resource._routes, 2)
-    assert.deepEqual(routeNames, ['admin.create', 'admin.show'])
+    assert.deepEqual(routeNames, ['admin.users.create', 'admin.users.show'])
   })
 
   test('limit resource to apiOnly routes', (assert) => {
@@ -393,7 +401,7 @@ test.group('Route | Resource', (group) => {
     const routeNames = RouteStore.list().map((route) => route._name)
     assert.lengthOf(routeNames, 5)
     assert.lengthOf(resource._routes, 5)
-    assert.deepEqual(routeNames, ['index', 'store', 'show', 'update', 'destroy'])
+    assert.deepEqual(routeNames, ['users.index', 'users.store', 'users.show', 'users.update', 'users.destroy'])
   })
 
   test('remove routes for given names', (assert) => {
@@ -402,7 +410,7 @@ test.group('Route | Resource', (group) => {
     const routeNames = RouteStore.list().map((route) => route._name)
     assert.lengthOf(routeNames, 5)
     assert.lengthOf(resource._routes, 5)
-    assert.deepEqual(routeNames, ['index', 'store', 'edit', 'update', 'destroy'])
+    assert.deepEqual(routeNames, ['users.index', 'users.store', 'users.edit', 'users.update', 'users.destroy'])
   })
 
   test('remove prefixed named routes for given names', (assert) => {
@@ -411,7 +419,13 @@ test.group('Route | Resource', (group) => {
     const routeNames = RouteStore.list().map((route) => route._name)
     assert.lengthOf(routeNames, 5)
     assert.lengthOf(resource._routes, 5)
-    assert.deepEqual(routeNames, ['admin.index', 'admin.store', 'admin.edit', 'admin.update', 'admin.destroy'])
+    assert.deepEqual(routeNames, [
+      'admin.users.index',
+      'admin.users.store',
+      'admin.users.edit',
+      'admin.users.update',
+      'admin.users.destroy'
+    ])
   })
 
   test('add middleware', (assert) => {
@@ -558,6 +572,14 @@ test.group('Route | Manager', (group) => {
     })
     assert.lengthOf(RouteStore.list(), 7)
     const routeNames = RouteStore.list().map((route) => route._name)
-    assert.deepEqual(routeNames, ['admin.index', 'admin.create', 'admin.store', 'admin.show', 'admin.edit', 'admin.update', 'admin.destroy'])
+    assert.deepEqual(routeNames, [
+      'admin.users.index',
+      'admin.users.create',
+      'admin.users.store',
+      'admin.users.show',
+      'admin.users.edit',
+      'admin.users.update',
+      'admin.users.destroy'
+    ])
   })
 })
