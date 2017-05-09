@@ -34,9 +34,9 @@ class RouteResource {
   constructor (resource, controller, namePrefix = null) {
     this._validateResourceName(resource)
     this._validateController(controller)
-
-    this._resource = this._makeResource(resource)
+    this._resourceUrl = this._makeResourceUrl(resource)
     this._controller = controller
+
     /**
      * The name prefix is used to prefix the route names.
      * Generally used when resource is defined inside
@@ -44,7 +44,7 @@ class RouteResource {
      *
      * @type {String}
      */
-    this._namePrefix = namePrefix
+    this._namePrefix = namePrefix ? `${namePrefix}.${resource}` : resource
 
     /**
      * Keeping a local copy of routes, so that filter through
@@ -95,10 +95,10 @@ class RouteResource {
   }
 
   /**
-   * Makes the correct resource pattern by properly
+   * Makes the correct resource url by properly
    * configuring nested resources.
    *
-   * @method _makeResource
+   * @method _makeResourceUrl
    *
    * @param  {String}      resource
    *
@@ -108,11 +108,11 @@ class RouteResource {
    *
    * @example
    * ```js
-   * _makeResource('user.posts')
+   * _makeResourceUrl('user.posts')
    * // returns - user/:user_id/posts
    * ```
    */
-  _makeResource (resource) {
+  _makeResourceUrl (resource) {
     return resource
       .replace(/(\w+)\./g, (index, group) => `${group}/:${group}_id/`)
       .replace(/^\/|\/$/g, '')
@@ -131,11 +131,9 @@ class RouteResource {
    * @private
    */
   _addRoute (name, route, verbs = ['HEAD', 'GET']) {
-    const handler = `${this._controller}.${name}`
-    const prefixedName = this._namePrefix ? `${this._namePrefix}.${name}` : name
+    const routeInstance = new Route(route, `${this._controller}.${name}`, verbs)
 
-    const routeInstance = new Route(route, handler, verbs)
-    routeInstance.as(prefixedName)
+    routeInstance.as(`${this._namePrefix}.${name}`)
 
     RouteStore.add(routeInstance)
     this._routes.push({name, routeInstance})
@@ -151,13 +149,13 @@ class RouteResource {
    * @private
    */
   _addBasicRoutes () {
-    this._addRoute('index', this._resource)
-    this._addRoute('create', `${this._resource}/create`)
-    this._addRoute('store', this._resource, ['POST'])
-    this._addRoute('show', `${this._resource}/:id`)
-    this._addRoute('edit', `${this._resource}/:id/edit`)
-    this._addRoute('update', `${this._resource}/:id`, ['PUT', 'PATCH'])
-    this._addRoute('destroy', `${this._resource}/:id`, ['DELETE'])
+    this._addRoute('index', this._resourceUrl)
+    this._addRoute('create', `${this._resourceUrl}/create`)
+    this._addRoute('store', this._resourceUrl, ['POST'])
+    this._addRoute('show', `${this._resourceUrl}/:id`)
+    this._addRoute('edit', `${this._resourceUrl}/:id/edit`)
+    this._addRoute('update', `${this._resourceUrl}/:id`, ['PUT', 'PATCH'])
+    this._addRoute('destroy', `${this._resourceUrl}/:id`, ['DELETE'])
   }
 
   /**
