@@ -43,6 +43,13 @@ test.group('Macroable', (group) => {
     assert.equal(Macroable.hasMacro('foo'), false)
   })
 
+  test('define a getter', (assert) => {
+    Macroable.getter('foo', function () {
+      return 'bar'
+    })
+    assert.equal(new Macroable().foo, 'bar')
+  })
+
   test('return false from {hasGetter} for unregistered getter', (assert) => {
     assert.equal(Macroable.hasGetter('foo'), false)
   })
@@ -52,11 +59,10 @@ test.group('Macroable', (group) => {
     assert.equal(Macroable.hasGetter('foo'), true)
   })
 
-  test('define a getter', (assert) => {
-    Macroable.getter('foo', function () {
-      return 'bar'
-    })
-    assert.equal(new Macroable().foo, 'bar')
+  test('return false when removed getter from prototype', (assert) => {
+    Macroable.getter('foo', function () {})
+    Reflect.deleteProperty(Macroable.prototype, 'foo')
+    assert.equal(Macroable.hasGetter('foo'), false)
   })
 
   test('should be called everytime when fetched', (assert) => {

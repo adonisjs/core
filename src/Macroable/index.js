@@ -141,7 +141,8 @@ class Macroable {
     this._getters[name] = wrappedCallback
     Object.defineProperty(this.prototype, name, {
       get: wrappedCallback,
-      configurable: true
+      configurable: true,
+      enumerable: true
     })
   }
 
@@ -171,7 +172,7 @@ class Macroable {
    * @return {Boolean}
    */
   static hasGetter (name) {
-    return !!this.getGetter(name)
+    return !!(this.getGetter(name) && this.prototype.hasOwnProperty(name))
   }
 
   /**
