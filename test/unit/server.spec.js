@@ -20,6 +20,7 @@ const Route = require('../../src/Route/Manager')
 const RouteStore = require('../../src/Route/Store')
 const Request = require('../../src/Request')
 const Response = require('../../src/Response')
+const Context = require('../../src/Context')
 
 const config = new Config()
 
@@ -44,7 +45,7 @@ test.group('Server | Middleware', (group) => {
 
   test('log warning when duplicate middleware are registered', (assert) => {
     const logger = new Logger()
-    const server = new Server({}, {}, {}, logger, config)
+    const server = new Server({}, {}, logger, config)
     server.registerGlobal(['foo']).registerGlobal(['foo'])
     assert.isTrue(
       logger.has('warn', 'Duplicate global middleware {foo} will be discarded and existing one\'s will be used.')
@@ -64,7 +65,7 @@ test.group('Server | Middleware', (group) => {
 
   test('log warning when duplicate named middleware are registered', (assert) => {
     const logger = new Logger()
-    const server = new Server({}, {}, {}, logger, config)
+    const server = new Server({}, {}, logger, config)
     const named = {
       auth: 'App/Middleware/Auth'
     }
@@ -89,6 +90,13 @@ test.group('Server | Middleware', (group) => {
 
 test.group('Server | Calls', (group) => {
   group.before(() => {
+    Context.getter('request', function () {
+      return new Request(this.req, this.res, new Config())
+    }, true)
+
+    Context.getter('response', function () {
+      return new Response(this.req, this.res)
+    }, true)
     setupResolver()
   })
 
@@ -96,15 +104,14 @@ test.group('Server | Calls', (group) => {
     RouteStore.clear()
     ioc.restore()
     this.logger = new Logger()
-    this.config = new Config()
   })
 
   test('respond to a http request using the route handler', async (assert) => {
-    Route.get('/', function () {
-      this.response.send('foo')
+    Route.get('/', function ({ response }) {
+      response.send('foo')
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -112,11 +119,11 @@ test.group('Server | Calls', (group) => {
   })
 
   test('respond http request when route handler is an async function', async (assert) => {
-    Route.get('/', async function () {
-      this.response.send('foo')
+    Route.get('/', async function ({ response }) {
+      response.send('foo')
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -128,7 +135,7 @@ test.group('Server | Calls', (group) => {
       return 'foo'
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -140,7 +147,7 @@ test.group('Server | Calls', (group) => {
       throw new Error('error')
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -148,14 +155,14 @@ test.group('Server | Calls', (group) => {
   })
 
   test('run route middleware when defined', async (assert) => {
-    Route.get('/', async function () {
-      return this.request.called
-    }).middleware(async function (next) {
-      this.request.called = true
+    Route.get('/', async function ({ request }) {
+      return request.called
+    }).middleware(async function ({ request }, next) {
+      request.called = true
       await next()
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -163,17 +170,17 @@ test.group('Server | Calls', (group) => {
   })
 
   test('execute global middleware before named middleware', async (assert) => {
-    Route.get('/', async function () {
-      return this.request.middleware
-    }).middleware(async function (next) {
-      this.request.middleware.push('named')
+    Route.get('/', async function ({ request }) {
+      return request.middleware
+    }).middleware(async function ({ request }, next) {
+      request.middleware.push('named')
       await next()
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
-    server.registerGlobal([async function (next) {
-      this.request.middleware = this.request.middleware || []
-      this.request.middleware.push('global')
+    const server = new Server(Context, Route, this.logger)
+    server.registerGlobal([async function ({ request }, next) {
+      request.middleware = request.middleware || []
+      request.middleware.push('global')
       await next()
     }])
     const app = http.createServer(server.handle.bind(server))
@@ -186,12 +193,12 @@ test.group('Server | Calls', (group) => {
     const executions = []
 
     Route.get('/', async function () {
-    }).middleware(async function (next) {
+    }).middleware(async function (ctx, next) {
       executions.push(true)
       await next()
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     server.registerGlobal([async function (next) {
       executions.push(true)
       await next()
@@ -206,13 +213,13 @@ test.group('Server | Calls', (group) => {
   test('execute server level middleware when no route is found', async (assert) => {
     const executions = []
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
-    server.registerGlobal([async function (next) {
+    const server = new Server(Context, Route, this.logger)
+    server.registerGlobal([async function (ctx, next) {
       executions.push('global')
       await next()
     }])
 
-    server.use([async function (next) {
+    server.use([async function (ctx, next) {
       executions.push('server')
       await next()
     }])
@@ -225,20 +232,20 @@ test.group('Server | Calls', (group) => {
   })
 
   test('execute middleware in reverse after controller', async (assert) => {
-    Route.get('/', async function () {
-      return this.request.middleware
-    }).middleware(async function (next) {
-      this.request.middleware.push('named')
+    Route.get('/', async function ({ request }) {
+      return request.middleware
+    }).middleware(async function ({ request, response }, next) {
+      request.middleware.push('named')
       await next()
-      this.response.lazyBody.content.push('after named')
+      response.lazyBody.content.push('after named')
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
-    server.registerGlobal([async function (next) {
-      this.request.middleware = this.request.middleware || []
-      this.request.middleware.push('global')
+    const server = new Server(Context, Route, this.logger)
+    server.registerGlobal([async function ({ request, response }, next) {
+      request.middleware = request.middleware || []
+      request.middleware.push('global')
       await next()
-      this.response.lazyBody.content.push('after global')
+      response.lazyBody.content.push('after global')
     }])
     const app = http.createServer(server.handle.bind(server))
 
@@ -247,14 +254,14 @@ test.group('Server | Calls', (group) => {
   })
 
   test('change response in after middleware even after send is called', async (assert) => {
-    Route.get('/', async function () {
-      this.response.send('foo')
-    }).middleware(async function (next) {
+    Route.get('/', async function ({ response }) {
+      response.send('foo')
+    }).middleware(async function ({ response }, next) {
       await next()
-      this.response.send('changed foo to bar')
+      response.send('changed foo to bar')
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -266,11 +273,11 @@ test.group('Server | Calls', (group) => {
       throw new Error('foo')
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.include(res.text.split('\n')[2], 'server.spec.js:266')
+    assert.include(res.text.split('\n')[2], 'server.spec.js:273')
   })
 
   test('do not execute anything once server level middleware ends the response', async (assert) => {
@@ -280,15 +287,15 @@ test.group('Server | Calls', (group) => {
       executions.push('route')
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
-    server.registerGlobal([async function (next) {
+    const server = new Server(Context, Route, this.logger)
+    server.registerGlobal([async function (ctx, next) {
       executions.push('global')
       await next()
     }])
 
-    server.use([async function () {
+    server.use([async function ({ response }) {
       executions.push('server')
-      this.response.send('serve css file')
+      response.send('serve css file')
     }])
 
     const app = http.createServer(server.handle.bind(server))
@@ -306,10 +313,10 @@ test.group('Server | Calls', (group) => {
       executions.push('route')
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
-    server.registerGlobal([async function (next) {
+    const server = new Server(Context, Route, this.logger)
+    server.registerGlobal([async function ({ response }, next) {
       executions.push('global')
-      this.response.send('ending here')
+      response.send('ending here')
     }])
 
     server.use([async function () {
@@ -325,11 +332,11 @@ test.group('Server | Calls', (group) => {
   })
 
   test('pass route params to route handler', async (assert) => {
-    Route.get('/:username', async function (username) {
-      return username
+    Route.get('/:username', async function ({ params }) {
+      return params.username
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/virk').expect(200)
@@ -337,25 +344,25 @@ test.group('Server | Calls', (group) => {
   })
 
   test('pass null when route param is optional and missing', async (assert) => {
-    Route.get('/:username?', async function (username) {
-      return username === null ? 'virk' : username
+    Route.get('/:username?', async function ({ params }) {
+      return params.username === null ? 'virk' : params.username
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
     assert.equal(res.text, 'virk')
   })
 
-  test('middleware can access params property on request', async (assert) => {
+  test('middleware should also be to access params', async (assert) => {
     Route.get('/:username', async function () {
-    }).middleware(async function (next) {
-      this.response.send(this.request._params.username)
+    }).middleware(async function ({ response, params }, next) {
+      response.send(params.username)
       await next()
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/nikk').expect(200)
@@ -375,7 +382,7 @@ test.group('Server | Calls', (group) => {
 
     Route.get('/', 'HomeController.render')
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -385,7 +392,7 @@ test.group('Server | Calls', (group) => {
   test('throw exception when controller does not exists', async (assert) => {
     Route.get('/', 'HomeController.render')
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -402,7 +409,7 @@ test.group('Server | Calls', (group) => {
 
     Route.get('/', 'HomeController.render')
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -411,8 +418,8 @@ test.group('Server | Calls', (group) => {
 
   test('bind global middleware via ioc container', async (assert) => {
     class AppMiddleware {
-      async handle () {
-        this.response.send('hello from middleware')
+      async handle ({ response }) {
+        response.send('hello from middleware')
       }
     }
 
@@ -421,7 +428,7 @@ test.group('Server | Calls', (group) => {
     })
 
     Route.get('/', async function () {})
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     server.registerGlobal(['Middleware/AppMiddleware'])
 
     const app = http.createServer(server.handle.bind(server))
@@ -432,8 +439,8 @@ test.group('Server | Calls', (group) => {
 
   test('bind named middleware via ioc container', async (assert) => {
     class AppMiddleware {
-      async handle () {
-        this.response.send('hello from middleware')
+      async handle ({ response }) {
+        response.send('hello from middleware')
       }
     }
 
@@ -442,7 +449,7 @@ test.group('Server | Calls', (group) => {
     })
 
     Route.get('/', async function () {}).middleware('app')
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     server.registerNamed({
       'app': 'Middleware/AppMiddleware'
     })
@@ -455,7 +462,7 @@ test.group('Server | Calls', (group) => {
 
   test('throw exception when named middleware is missing', async (assert) => {
     Route.get('/', async function () {}).middleware('app')
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
 
     const app = http.createServer(server.handle.bind(server))
 
@@ -465,8 +472,8 @@ test.group('Server | Calls', (group) => {
 
   test('pass runtime middleware arguments middleware', async (assert) => {
     class Auth {
-      async handle (next, authenticators) {
-        this.response.send(authenticators)
+      async handle ({ response }, next, authenticators) {
+        response.send(authenticators)
       }
     }
 
@@ -475,7 +482,7 @@ test.group('Server | Calls', (group) => {
     })
 
     Route.get('/', async function () {}).middleware('auth:jwt,basic')
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     server.registerNamed({
       'auth': 'Middleware/Auth'
     })
@@ -491,7 +498,7 @@ test.group('Server | Calls', (group) => {
       return 'hello world'
     })
 
-    const server = new Server(Request, Response, Route, this.logger, this.config)
+    const server = new Server(Context, Route, this.logger)
     const app = server.getInstance(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)

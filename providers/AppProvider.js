@@ -12,16 +12,6 @@
 const { ServiceProvider } = require('adonis-fold')
 
 class AppProvider extends ServiceProvider {
-  register () {
-    this._registerEnv()
-    this._registerConfig()
-    this._registerRequest()
-    this._registerResponse()
-    this._registerRoute()
-    this._registerServer()
-    this._registerHash()
-  }
-
   /**
    * Registering the env provider under
    * Adonis/Src/Env namespace.
@@ -121,8 +111,7 @@ class AppProvider extends ServiceProvider {
    */
   _registerServer () {
     this.app.singleton('Adonis/Src/Server', (app) => {
-      const Request = app.use('Adonis/Src/Request')
-      const Response = app.use('Adonis/Src/Response')
+      const Context = app.use('Adonis/Src/Context')
       const Route = app.use('Adonis/Src/Route')
       const Config = app.use('Adonis/Src/Config')
       const Logger = {
@@ -132,7 +121,7 @@ class AppProvider extends ServiceProvider {
       }
 
       const Server = require('../src/Server')
-      return new Server(Request, Response, Route, Logger, Config)
+      return new Server(Context, Route, Logger, Config)
     })
     this.app.alias('Adonis/Src/Server', 'Server')
   }
@@ -150,6 +139,48 @@ class AppProvider extends ServiceProvider {
     this.app.bind('Adonis/Src/Hash', () => {
       return require('../src/Hash')
     })
+    this.app.alias('Adonis/Src/Hash', 'Hash')
+  }
+
+  /**
+   * Register the context provider
+   *
+   * @method _registerContext
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _registerContext () {
+    this.app.bind('Adonis/Src/Context', () => {
+      return require('../src/Context')
+    })
+    this.app.alias('Adonis/Src/Context', 'Context')
+  }
+
+  register () {
+    this._registerEnv()
+    this._registerConfig()
+    this._registerContext()
+    this._registerRequest()
+    this._registerResponse()
+    this._registerRoute()
+    this._registerServer()
+    this._registerHash()
+  }
+
+  boot () {
+    const Context = this.app.use('Adonis/Src/Context')
+    const Request = this.app.use('Adonis/Src/Request')
+    const Response = this.app.use('Adonis/Src/Response')
+
+    Context.getter('request', function () {
+      return new Request(this.req, this.res, use('Adonis/Src/Config'))
+    }, true)
+
+    Context.getter('response', function () {
+      return new Response(this.req, this.res)
+    }, true)
   }
 }
 

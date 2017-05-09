@@ -22,11 +22,9 @@ const CE = require('../Exceptions')
  * @class Server
  */
 class Server {
-  constructor (Request, Response, Route, Logger, Config) {
-    this.Request = Request
-    this.Response = Response
+  constructor (Context, Route, Logger) {
+    this.Context = Context
     this.Route = Route
-    this.Config = Config
     this.Logger = Logger
     this._httpInstance = null
     this.middleware = new Middleware()
@@ -80,45 +78,6 @@ class Server {
   }
 
   /**
-   * Makes the instance of route handler by resolving it from
-   * the IoC container when it is a reference string or
-   * returning the closure with a custom scope bind
-   * to it.
-   *
-   * @method _makeHandlerInstance
-   *
-   * @param  {Function|String}    handler
-   * @param  {Object}             request
-   * @param  {Object}             response
-   * @param  {String}             [handlerFor = null]
-   *
-   * @return {Object}
-   *
-   * @private
-   */
-  _makeHandlerInstance (handler, request, response, handlerFor = null) {
-    const handlerInstance = handlerFor
-    ? resolver.forDir(handlerFor).resolveFunc(handler)
-    : resolver.resolveFunc(handler)
-
-    /**
-     * Bind instance to the handler when it does exists already.
-     * Usally closures do not have instance.
-     */
-    if (!handlerInstance.instance) {
-      handlerInstance.instance = {}
-    }
-
-    /**
-     * Set request and response properties on the handler
-     * instance
-     */
-    handlerInstance.instance.request = request
-    handlerInstance.instance.response = response
-    return handlerInstance
-  }
-
-  /**
    * Resolve middleware when it is getting composed. Each middleware
    * will have access to `request` and `response` objects and should
    * call `next` to advance the middleware chain.
@@ -127,17 +86,16 @@ class Server {
    *
    * @param  {Object}           middleware
    * @param  {Object}           params
-   * @param  {Function}         next
    *
    * @return {void}
    *
    * @private
    */
-  _resolveMiddleware (middleware, [request, response, next]) {
+  _resolveMiddleware (middleware, params) {
     const handler = typeof (middleware) === 'function' ? middleware : middleware.getHandler()
-    const args = typeof (middleware) === 'function' ? [next] : [next].concat(middleware.getArgs())
-    const handlerInstance = this._makeHandlerInstance(handler, request, response)
-    return handlerInstance.method.bind(handlerInstance.instance)(...args)
+    const args = typeof (middleware) === 'function' ? params : params.concat(middleware.getArgs())
+    const handlerInstance = resolver.resolveFunc(handler)
+    return handlerInstance.method(...args)
   }
 
   /**
@@ -148,13 +106,13 @@ class Server {
    *
    * @param  {Array}        routeMiddleware
    * @param  {Function}     handler
-   * @param  {Array}        params
+   * @param  {Object}       ctx
    *
    * @return {Function}
    *
    * @private
    */
-  _composeRequestMiddleware (routeMiddleware, handler, params) {
+  _composeRequestMiddleware (routeMiddleware, handler, ctx) {
     let globalMiddleware = this.middleware.tag('global').get() || []
 
     /**
@@ -182,7 +140,7 @@ class Server {
     return this
       .middleware
       .resolve(this._resolveMiddleware.bind(this))
-      .withParams(params)
+      .withParams([ctx])
       .compose(middleware)
   }
 
@@ -196,13 +154,13 @@ class Server {
    *
    * @method _composeServerMiddleware
    *
-   * @param  {Array}                 params
+   * @param  {Object}                 ctx
    *
    * @return {Function}
    *
    * @private
    */
-  _composeServerMiddleware (params) {
+  _composeServerMiddleware (ctx) {
     const serverMiddleware = this.middleware.tag('server').get() || []
     const middleware = serverMiddleware.map((middleware) => new MiddlewareWrapper(middleware))
 
@@ -217,7 +175,7 @@ class Server {
     return this
       .middleware
       .resolve(this._resolveMiddleware.bind(this))
-      .withParams(params)
+      .withParams([ctx])
       .compose(middleware)
   }
 
@@ -231,23 +189,20 @@ class Server {
    * @method _wrapRouteHandler
    *
    * @param  {Function|String}  handler
-   * @param  {Object}           request
-   * @param  {Object}           response
    *
    * @return {Function}
    *
    * @private
    */
-  _wrapRouteHandler (handler, request, response) {
-    return (next) => {
-      const { instance, method } = this._makeHandlerInstance(handler, request, response, 'httpControllers')
-      const params = _.values(instance.request._params)
+  _wrapRouteHandler (handler) {
+    return (ctx, next) => {
+      const { method } = resolver.forDir('httpControllers').resolveFunc(handler)
       return Promise
-        .resolve(method.bind(instance)(...params))
+        .resolve(method(ctx))
         .then((value) => {
-          if (!instance.response.lazyBody.content && value) {
-            instance.response.lazyBody.content = value
-            instance.response.lazyBody.method = 'send'
+          if (!ctx.response.lazyBody.content && value) {
+            ctx.response.lazyBody.content = value
+            ctx.response.lazyBody.method = 'send'
           }
           return next()
         })
@@ -260,17 +215,16 @@ class Server {
    * the error, otherwise ends the response by sending
    * the error message
    *
-   * @method _handleExpection
+   * @method _handleException
    *
    * @param  {Object}         error
-   * @param  {Object}         request
-   * @param  {Object}         response
+   * @param  {Object}         ctx
    *
    * @return {void}
    *
    * @private
    */
-  _handleExpection (error, request, response) {
+  _handleException (error, { response }) {
     error.message = error.message || 'Internal server error'
     error.status = error.status || 500
     response.status(error.status || 500).send(`${error.name}: ${error.message}\n${error.stack}`)
@@ -391,12 +345,12 @@ class Server {
    * @return {void}
    */
   handle (req, res) {
-    const request = new this.Request(req, res, this.Config)
-    const response = new this.Response(req, res)
-    const params = [request, response]
+    const ctx = new this.Context(req, res)
+    const response = ctx.response
+    const request = ctx.request
 
     this
-      ._composeServerMiddleware(params)()
+      ._composeServerMiddleware(ctx)()
       .then(() => {
         /**
          * If any server level middleware ends the response, there is no
@@ -422,10 +376,10 @@ class Server {
          *
          * @type {Object}
          */
-        request._params = route.params
+        ctx.params = route.params
 
-        const finalHandler = this._wrapRouteHandler(route.route._handler, request, response)
-        return this._composeRequestMiddleware(route.route._middleware, finalHandler, params)()
+        const finalHandler = this._wrapRouteHandler(route.route._handler)
+        return this._composeRequestMiddleware(route.route._middleware, finalHandler, ctx)()
       })
       .then(() => {
         if (response.isPending) {
@@ -433,7 +387,7 @@ class Server {
         }
       })
       .catch((error) => {
-        this._handleExpection(error, request, response)
+        this._handleException(error, ctx)
       })
   }
 
