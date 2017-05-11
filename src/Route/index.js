@@ -39,7 +39,7 @@ const CE = require('../Exceptions')
 class Route {
   constructor (route, handler, verbs = ['HEAD', 'GET']) {
     this._instantiate(route, verbs, handler)
-    this._makeRoutePattern(route)
+    this._makeRoutePattern()
   }
 
   /**
@@ -130,14 +130,12 @@ class Route {
    *
    * @method _makeRoutePattern
    *
-   * @param  {String}          route
-   *
    * @return {void}
    *
    * @private
    */
-  _makeRoutePattern (route) {
-    this._regexp = pathToRegexp(route, [])
+  _makeRoutePattern () {
+    this._regexp = pathToRegexp(this._route, [])
   }
 
   /**
@@ -185,7 +183,8 @@ class Route {
   formats (formats, strict = false) {
     const flag = strict ? '' : '?'
     const formatsPattern = `:format(.${formats.join('|.')})${flag}`
-    this._makeRoutePattern(`${this._route}${formatsPattern}`)
+    this._route = `${this._route}${formatsPattern}`
+    this._makeRoutePattern()
     return this
   }
 
@@ -269,7 +268,7 @@ class Route {
   prefix (prefix) {
     prefix = `/${prefix.replace(/^\/|\/$/g, '')}`
     this._route = `${prefix}${this._route}`
-    this._makeRoutePattern(this._route)
+    this._makeRoutePattern()
     return this
   }
 

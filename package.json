@@ -19,6 +19,7 @@
   "devDependencies": {
     "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
     "adonis-sink": "^1.0.1",
+    "cheerio": "^0.22.0",
     "cookie-signature": "^1.0.6",
     "cz-conventional-changelog": "^2.0.0",
     "fs-extra": "^2.1.2",

@@ -29,46 +29,6 @@ const CE = require('../Exceptions')
  * @uses RouteStore
  */
 class RouteManager {
-  constructor () {
-    this._insideGroup = false
-    this._groupName = null
-    this._groupedRoutes = []
-  }
-
-  /**
-   * Starts route group by setting a flag. All
-   * routes added when flag is set to true
-   * are passed to the recently opened
-   * group.
-   *
-   * @method _startGroup
-   *
-   * @param {String} [name = null]
-   *
-   * @return {void}
-   *
-   * @private
-   */
-  _startGroup (name) {
-    this._insideGroup = true
-    this._groupName = name
-  }
-
-  /**
-   * End the recently opened group.
-   *
-   * @method _endGroup
-   *
-   * @return {void}
-   *
-   * @private
-   */
-  _endGroup () {
-    this._insideGroup = false
-    this._groupName = null
-    this._groupedRoutes = []
-  }
-
   /**
    * Validates the group closure to make sure
    * it is a function
@@ -97,8 +57,8 @@ class RouteManager {
    * @private
    */
   _validateNestedGroups () {
-    if (this._insideGroup) {
-      this._endGroup()
+    if (RouteStore.hasBreakpoint()) {
+      RouteStore.releaseBreakpoint()
       throw CE.RuntimeException.nestedGroup()
     }
   }
@@ -123,15 +83,6 @@ class RouteManager {
   route (route, handler, verbs) {
     const routeInstance = new Route(route, handler, verbs)
     RouteStore.add(routeInstance)
-
-    /**
-     * Push the route to the groupedRoutes array
-     * when group is opened.
-     */
-    if (this._insideGroup) {
-      this._groupedRoutes.push(routeInstance)
-    }
-
     return routeInstance
   }
 
@@ -355,16 +306,16 @@ class RouteManager {
 
     this._validateGroupClosure(callback)
     this._validateNestedGroups()
-    this._startGroup(name)
+    RouteStore.breakpoint(name)
     callback()
 
     /**
      * Create a new group and pass all the routes
      * to the group.
      */
-    const group = new RouteGroup(this._groupedRoutes)
+    const group = new RouteGroup(RouteStore.breakpointRoutes())
 
-    this._endGroup()
+    RouteStore.releaseBreakpoint()
     return group
   }
 
@@ -380,7 +331,7 @@ class RouteManager {
    * @return {Object}          Instance of {{#crossLink "RouteResource"}}{{/crossLink}}
    */
   resource (resource, controller) {
-    return new RouteResource(resource, controller, this._groupName)
+    return new RouteResource(resource, controller, RouteStore._breakpoint.name)
   }
 }
 

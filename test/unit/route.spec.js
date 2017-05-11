@@ -541,8 +541,8 @@ test.group('Route | Manager', (group) => {
     })
     assert.lengthOf(group._routes, 1)
     assert.equal(group._routes[0]._route, '/')
-    assert.isFalse(RouteManager._insideGroup)
-    assert.lengthOf(RouteManager._groupedRoutes, 0)
+    assert.isFalse(RouteStore._breakpoint.enabled)
+    assert.lengthOf(RouteStore._breakpoint.routes, 0)
   })
 
   test('group middleware should come after route middleware', (assert) => {
