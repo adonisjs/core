@@ -26,6 +26,64 @@ const _ = require('lodash')
 class RouteStore {
   constructor () {
     this._routes = []
+    this.releaseBreakpoint()
+  }
+
+  /**
+   * Add a breakpoint to routes. All routes after the
+   * breakpoint will be recorded seperately. Helpful
+   * for `Route.group`.
+   *
+   * Also only one breakpoint at a time is allowed.
+   *
+   * @method breakpoint
+   *
+   * @param  {String}   name
+   *
+   * @return {void}
+   */
+  breakpoint (name = null) {
+    this._breakpoint.enabled = true
+    this._breakpoint.name = name
+  }
+
+  /**
+   * Returns a boolean indicating whether breakpoint
+   * is enabled or not.
+   *
+   * @method hasBreakpoint
+   *
+   * @return {Boolean}
+   */
+  hasBreakpoint () {
+    return this._breakpoint.enabled
+  }
+
+  /**
+   * Returns the routes recorded during
+   * breakpoint.
+   *
+   * @method breakpointRoutes
+   *
+   * @return {void}
+   */
+  breakpointRoutes () {
+    return this._breakpoint.routes
+  }
+
+  /**
+   * Release the breakpoint.
+   *
+   * @method releaseBreakpoint
+   *
+   * @return {void}
+   */
+  releaseBreakpoint () {
+    this._breakpoint = {
+      enabled: false,
+      routes: [],
+      name: null
+    }
   }
 
   /**
@@ -36,6 +94,9 @@ class RouteStore {
    * @param  {Route} route
    */
   add (route) {
+    if (this.hasBreakpoint()) {
+      this._breakpoint.routes.push(route)
+    }
     this._routes.push(route)
   }
 
@@ -50,6 +111,9 @@ class RouteStore {
    */
   remove (routeToRemove) {
     _.remove(this._routes, (route) => route === routeToRemove)
+    if (this.hasBreakpoint()) {
+      _.remove(this._breakpoint.routes, (route) => route === routeToRemove)
+    }
   }
 
   /**
