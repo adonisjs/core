@@ -14,5 +14,10 @@ module.exports = function () {
     return new Helpers(path.join(__dirname, './'))
   })
   setupResolver()
-  return registrar.providers(providers).registerAndBoot()
+  return new Promise((resolve, reject) => {
+    registrar
+      .providers(providers)
+      .registerAndBoot()
+      .then(resolve).catch(reject)
+  })
 }
