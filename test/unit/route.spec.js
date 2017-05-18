@@ -227,7 +227,7 @@ test.group('Route | Resolve', () => {
     route._regexp.exec = function () {
       throw new Error('Never expected to reach here')
     }
-    assert.deepEqual(route.resolve('/', 'GET'), { url: '/', params: {} })
+    assert.deepEqual(route.resolve('/', 'GET'), { url: '/', params: {}, subdomains: {} })
   })
 
   test('return the route without processing when url and route are same', (assert) => {
@@ -235,7 +235,7 @@ test.group('Route | Resolve', () => {
     route._regexp.exec = function () {
       throw new Error('Never expected to reach here')
     }
-    assert.deepEqual(route.resolve('/user', 'GET'), { url: '/user', params: {} })
+    assert.deepEqual(route.resolve('/user', 'GET'), { url: '/user', params: {}, subdomains: {} })
   })
 
   test('return JSON representation of the route', (assert) => {
