@@ -272,6 +272,23 @@ class Route {
     return this
   }
 
+  _getSubDomains (host) {
+    if (!this._domain) {
+      return null
+    }
+
+    const domainTokens = this._domain.exec(host)
+    if (!domainTokens) {
+      return null
+    }
+
+    return _.transform(this._domain.keys, (result, key, index) => {
+      let value = domainTokens[index + 1] || null
+      result[key.name] = value
+      return result
+    }, {})
+  }
+
   /**
    * Resolves the url by matching it against
    * the registered route and verbs. It will
@@ -307,10 +324,10 @@ class Route {
     }
 
     /**
-     * Check for matching domain when route domain
-     * is defined.
+     * Check for matching subdomains
      */
-    if (this._domain && !this._domain.test(host)) {
+    const subdomains = this._getSubDomains(host)
+    if (this._domain && !subdomains) {
       return null
     }
 
@@ -319,7 +336,7 @@ class Route {
      * and the url are same.
      */
     if (this._route === url) {
-      return { url, params: {} }
+      return { url, params: {}, subdomains: subdomains || {} }
     }
 
     /**
@@ -338,7 +355,7 @@ class Route {
       return result
     }, {})
 
-    return { url, params }
+    return { url, params, subdomains: subdomains || {} }
   }
 
   /**

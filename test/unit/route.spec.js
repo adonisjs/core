@@ -129,7 +129,7 @@ test.group('Route | Register', () => {
 test.group('Route | Resolve', () => {
   test('resolve registered route', (assert) => {
     const route = new Route('/', function () {})
-    assert.deepEqual(route.resolve('/', 'GET'), { url: '/', params: {} })
+    assert.deepEqual(route.resolve('/', 'GET'), { url: '/', params: {}, subdomains: {} })
   })
 
   test('return null when unable to resolve route', (assert) => {
@@ -139,24 +139,24 @@ test.group('Route | Resolve', () => {
 
   test('resolve route with route params', (assert) => {
     const route = new Route('/make/:drink', function () {})
-    assert.deepEqual(route.resolve('/make/coffee', 'GET'), { url: '/make/coffee', params: {drink: 'coffee'} })
+    assert.deepEqual(route.resolve('/make/coffee', 'GET'), { url: '/make/coffee', params: {drink: 'coffee'}, subdomains: {} })
   })
 
   test('resolve route with route optional params', (assert) => {
     const route = new Route('/make/:drink?', function () {})
-    assert.deepEqual(route.resolve('/make/coffee', 'GET'), { url: '/make/coffee', params: {drink: 'coffee'} })
+    assert.deepEqual(route.resolve('/make/coffee', 'GET'), { url: '/make/coffee', params: {drink: 'coffee'}, subdomains: {} })
   })
 
   test('resolve route when optional param is missing', (assert) => {
     const route = new Route('/make/:drink?', function () {})
-    assert.deepEqual(route.resolve('/make', 'GET'), { url: '/make', params: {drink: null} })
+    assert.deepEqual(route.resolve('/make', 'GET'), { url: '/make', params: {drink: null}, subdomains: {} })
   })
 
   test('resolve route with zero or more dynamic params', (assert) => {
     const route = new Route('/coffee/:ingredients*', function () {})
     assert.deepEqual(
       route.resolve('/coffee/sugar/milk', 'GET'),
-      { url: '/coffee/sugar/milk', params: {ingredients: ['sugar', 'milk']} }
+      { url: '/coffee/sugar/milk', params: {ingredients: ['sugar', 'milk']}, subdomains: {} }
     )
   })
 
@@ -164,7 +164,7 @@ test.group('Route | Resolve', () => {
     const route = new Route('/coffee/:ingredients+', function () {})
     assert.deepEqual(
       route.resolve('/coffee/sugar/milk', 'GET'),
-      { url: '/coffee/sugar/milk', params: {ingredients: ['sugar', 'milk']} }
+      { url: '/coffee/sugar/milk', params: {ingredients: ['sugar', 'milk']}, subdomains: {} }
     )
   })
 
@@ -186,8 +186,14 @@ test.group('Route | Resolve', () => {
 
   test('resolve route when host matches', (assert) => {
     const route = new Route('/', function () {}, ['GET'])
-    route.domain(':name.adonisjs.com')
-    assert.deepEqual(route.resolve('/', 'GET', 'virk.adonisjs.com'), { url: '/', params: {} })
+    route.domain('virk.adonisjs.com')
+    assert.deepEqual(route.resolve('/', 'GET', 'virk.adonisjs.com'), { url: '/', params: {}, subdomains: {} })
+  })
+
+  test('resolve dynamic subdomains in route domain', (assert) => {
+    const route = new Route('/posts', function () {})
+    route.domain(':user.adonisjs.com')
+    assert.deepEqual(route.resolve('/posts', 'GET', 'virk.adonisjs.com'), { url: '/posts', params: {}, subdomains: { user: 'virk' } })
   })
 
   test('return the route without process when route is /', (assert) => {
@@ -195,7 +201,7 @@ test.group('Route | Resolve', () => {
     route._regexp.exec = function () {
       throw new Error('Never expected to reach here')
     }
-    assert.deepEqual(route.resolve('/', 'GET'), { url: '/', params: {} })
+    assert.deepEqual(route.resolve('/', 'GET'), { url: '/', params: {}, subdomains: {} })
   })
 
   test('return the route without processing when url and route are same', (assert) => {
@@ -203,7 +209,7 @@ test.group('Route | Resolve', () => {
     route._regexp.exec = function () {
       throw new Error('Never expected to reach here')
     }
-    assert.deepEqual(route.resolve('/user', 'GET'), { url: '/user', params: {} })
+    assert.deepEqual(route.resolve('/user', 'GET'), { url: '/user', params: {}, subdomains: {} })
   })
 
   test('return JSON representation of the route', (assert) => {

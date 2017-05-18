@@ -377,6 +377,7 @@ class Server {
          * @type {Object}
          */
         ctx.params = route.params
+        ctx.subdomains = route.subdomains
 
         const finalHandler = this._wrapRouteHandler(route.route._handler)
         return this._composeRequestMiddleware(route.route._middleware, finalHandler, ctx)()
