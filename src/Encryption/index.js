@@ -200,7 +200,7 @@ class Encryption {
    * @public
    */
   invalidPayload (data) {
-    return typeof data !== 'object' || !data.hasOwnProperty('iv') || !data.hasOwnProperty('value') || !data.hasOwnProperty('mac')
+    return typeof data !== 'object' || !data.hasOwnProperty('iv') || !data.hasOwnProperty('value') || !data.hasOwnProperty('mac') || data.iv.length !== 24
   }
 
   /**
