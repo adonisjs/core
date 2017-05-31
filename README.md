@@ -35,6 +35,7 @@ AdonisJs is built on the top of ES2015, which makes the code more enjoyable and 
 For these reasons, AdonisJs targets Node.js `4.0` or higher.
 
 <br>
+
 ## <a name="getting-started"></a>Getting Started
 
 AdonisJs provides a [CLI tool](https://github.com/adonisjs/adonis-cli) to scaffold and generate a project with all required dependencies.
@@ -52,6 +53,7 @@ $ npm run start
 :point_right: [Read the Official Documentation](http://adonisjs.com/docs/installation)
 
 <br>
+
 ## <a name="contribution-guidelines"></a>Contribution Guidelines
 
 In favor of active development we accept contributions from everyone. You can contribute by submitting a bug, creating pull requests or even improving documentation.
