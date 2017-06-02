@@ -143,6 +143,45 @@ describe('Request', function () {
     expect(res.body.name).to.equal('doe')
   })
 
+  it('should return true for a given key using has method', function * () {
+    const server = http.createServer(function (req, res) {
+      const Request = new RequestBuilder(Config)
+      const request = new Request(req, res)
+      const hasName = request.has('name')
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({hasName}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/?name=foo').expect(200)
+    expect(res.body.hasName).to.equal(true)
+  })
+
+  it('should return false when value for has key is not available', function * () {
+    const server = http.createServer(function (req, res) {
+      const Request = new RequestBuilder(Config)
+      const request = new Request(req, res)
+      const hasName = request.has('name')
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({hasName}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/').expect(200)
+    expect(res.body.hasName).to.equal(false)
+  })
+
+  it('should return true for a given nested value key using has method', function * () {
+    const server = http.createServer(function (req, res) {
+      const Request = new RequestBuilder(Config)
+      const request = new Request(req, res)
+      const hasProfileName = request.has('profile.name')
+      res.writeHead(200, {'Content-type': 'application/json'})
+      res.end(JSON.stringify({hasProfileName}), 'utf8')
+    })
+
+    const res = yield supertest(server).get('/?profile[name]=foo').expect(200)
+    expect(res.body.hasProfileName).to.equal(true)
+  })
+
   it('should return get and post values when using all', function * () {
     const server = http.createServer(function (req, res) {
       const Request = new RequestBuilder(Config)
