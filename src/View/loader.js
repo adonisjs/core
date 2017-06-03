@@ -2,9 +2,10 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
-*/
+ *
+ * @license MIT
+ * @copyright AdonisJs - Harminder Virk <virk@adonisjs.com>
+ */
 
 const nunjucks = require('nunjucks')
 const path = require('path')

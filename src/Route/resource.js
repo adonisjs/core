@@ -2,9 +2,10 @@
 
 /**
  * adonis-framework
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
-*/
+ *
+ * @license MIT
+ * @copyright AdonisJs - Harminder Virk <virk@adonisjs.com>
+ */
 
 const _ = require('lodash')
 const helpers = require('./helpers')
