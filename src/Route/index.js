@@ -317,23 +317,6 @@ class Route {
     return this
   }
 
-  _getSubDomains (host) {
-    if (!this._domain) {
-      return null
-    }
-
-    const domainTokens = this._domain.exec(host)
-    if (!domainTokens) {
-      return null
-    }
-
-    return _.transform(this._domain.keys, (result, key, index) => {
-      let value = domainTokens[index + 1] || null
-      result[key.name] = value
-      return result
-    }, {})
-  }
-
   /**
    * Resolves the url by matching it against
    * the registered route and verbs. It will
