@@ -93,4 +93,9 @@ test.group('Config', () => {
       }
     })
   })
+
+  test('ignore error when config directory does not exists', (assert) => {
+    /* eslint no-new: "off" */
+    new Config(path.join(__dirname, '../foo/config'))
+  })
 })

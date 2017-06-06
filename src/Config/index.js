@@ -47,10 +47,16 @@ class Config {
    * @method syncWithFileSystem
    */
   syncWithFileSystem () {
-    this._config = requireAll({
-      dirname: this._configPath,
-      filters: /(.*)\.js$/
-    })
+    try {
+      this._config = requireAll({
+        dirname: this._configPath,
+        filters: /(.*)\.js$/
+      })
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error
+      }
+    }
   }
 
   /**
