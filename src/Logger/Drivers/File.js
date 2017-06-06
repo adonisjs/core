@@ -24,7 +24,6 @@ const Winston = require('winston')
  *
  * @class WinstonFile
  * @constructor
- * @namespace Logger.Driver
  */
 class WinstonFile {
   /**

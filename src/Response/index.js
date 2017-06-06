@@ -11,7 +11,7 @@
 
 const nodeRes = require('node-res')
 const nodeReq = require('node-req')
-const Macroable = require('../Macroable')
+const Macroable = require('macroable')
 
 /**
  * @module Adonis
@@ -23,6 +23,8 @@ const Macroable = require('../Macroable')
  * easier and simpler to make HTTP response. You can
  * access the original **response** object as
  * `response.response`
+ *
+ * @namespace Adonis/Src/Response
  *
  * @class Response
  */

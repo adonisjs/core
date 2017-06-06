@@ -29,16 +29,16 @@ const dotenv = require('dotenv')
  * Can define different location by setting `ENV_PATH`
  * environment variable.
  *
- * **Namespace**: `Adonis/Src/Env` <br />
- * **Singleton**: Yes <br />
- * **Alias**: Env
+ * @namespace Adonis/Src/Env
+ * @alias Env
+ * @singleton
  *
  * @class Env
  * @constructor
  */
 class Env {
   constructor (appRoot) {
-    const envLocation = this.envPath()
+    const envLocation = this.getEnvPath()
 
     const options = {
       path: path.isAbsolute(envLocation) ? envLocation : path.join(appRoot, envLocation),
@@ -60,11 +60,11 @@ class Env {
    * Returns the path from where the `.env`
    * file will be loaded.
    *
-   * @method envPath
+   * @method getEnvPath
    *
    * @return {String}
    */
-  envPath () {
+  getEnvPath () {
     if (!process.env.ENV_PATH || process.env.ENV_PATH.length === 0) {
       return '.env'
     }

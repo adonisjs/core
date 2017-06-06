@@ -20,9 +20,9 @@ const bcrypt = require('bcryptjs')
  * Hash plain values using [bcryptjs](https://www.npmjs.com/package/bcryptjs).
  * It is considered to be used when saving user passwords to the database,.
  *
- * **Namespace**: `Adonis/Src/Hash` <br />
- * **Singleton**: Yes <br />
- * **Alias**: Hash
+ * @namespace Adonis/Src/Hash
+ * @alias Hash
+ * @singleton Yes
  *
  * @class Hash
  * @static

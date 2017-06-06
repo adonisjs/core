@@ -14,7 +14,7 @@ const requireAll = require('require-all')
 
 /**
  * The Adonis framework is the core module containing all the required
- * classes to run an HTTP server.
+ * classes to run an HTTP server based application.
  *
  * @module Adonis
  * @submodule framework
@@ -24,9 +24,9 @@ const requireAll = require('require-all')
  * Manages configuration by recursively reading all
  * `.js` files from the `config` folder.
  *
- * **Namespace**: `Adonis/Src/Config` <br />
- * **Singleton**: Yes <br />
- * **Alias**: Config
+ * @namespace Adonis/Src/Config
+ * @alias Config
+ * @singleton
  *
  * @class Config
  * @constructor
@@ -44,7 +44,6 @@ class Config {
    * config static and never update the file
    * system on the fly.
    *
-   * @since 4.0.0
    * @method syncWithFileSystem
    */
   syncWithFileSystem () {
@@ -88,13 +87,15 @@ class Config {
   /**
    * Merge default values with the resolved values.
    * This is to provide a default set of values
-   * when it does not exists.
+   * when it does not exists. This method uses
+   * lodash `_.mergeWith` method.
    *
    * @since 4.0.0
    * @method merge
    *
    * @param  {String} key
    * @param  {Object} defaultValues
+   * @param  {Function} [customizer]
    *
    * @return {Object}
    *
@@ -106,9 +107,9 @@ class Config {
    * })
    * ```
    */
-  merge (key, defaultValues) {
+  merge (key, defaultValues, customizer) {
     const value = _.get(this._config, key, {})
-    return _.merge(defaultValues, value)
+    return _.mergeWith(defaultValues, value, customizer)
   }
 
   /**

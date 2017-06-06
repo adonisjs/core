@@ -9,5 +9,3 @@
  * file that was distributed with this source code.
 */
 
-const Helpers = require('./src/Helpers')
-module.exports = { Helpers }

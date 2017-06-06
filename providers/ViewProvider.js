@@ -12,6 +12,14 @@
 const { ServiceProvider } = require('adonis-fold')
 
 class ViewProvider extends ServiceProvider {
+  /**
+   * Register method called by the Ioc container
+   * to register the provider
+   *
+   * @method register
+   *
+   * @return {void}
+   */
   register () {
     this.app.singleton('Adonis/Src/View', (app) => {
       const Helpers = app.use('Adonis/Src/Helpers')
@@ -22,6 +30,14 @@ class ViewProvider extends ServiceProvider {
     })
   }
 
+  /**
+   * Boot method called by the Ioc container to
+   * boot the provider
+   *
+   * @method boot
+   *
+   * @return {void}
+   */
   boot () {
     const Context = this.app.use('Adonis/Src/Context')
 

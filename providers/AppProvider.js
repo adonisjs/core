@@ -26,7 +26,7 @@ class AppProvider extends ServiceProvider {
     this.app.singleton('Adonis/Src/Env', (app) => {
       const Helpers = app.use('Adonis/Src/Helpers')
       const Env = require('../src/Env')
-      return new Env(Helpers._appRoot)
+      return new Env(Helpers.appRoot())
     })
     this.app.alias('Adonis/Src/Env', 'Env')
   }
@@ -158,6 +158,13 @@ class AppProvider extends ServiceProvider {
     this.app.alias('Adonis/Src/Context', 'Context')
   }
 
+  /**
+   * Register all the required providers
+   *
+   * @method register
+   *
+   * @return {void}
+   */
   register () {
     this._registerEnv()
     this._registerConfig()
@@ -169,6 +176,14 @@ class AppProvider extends ServiceProvider {
     this._registerHash()
   }
 
+  /**
+   * The boot method called by Ioc container to
+   * boot the providers
+   *
+   * @method boot
+   *
+   * @return {void}
+   */
   boot () {
     const Context = this.app.use('Adonis/Src/Context')
     const Request = this.app.use('Adonis/Src/Request')

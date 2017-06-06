@@ -30,7 +30,6 @@ const toValueType = function (value) {
  * @constructor
  */
 class InvalidArgumentException extends NE.InvalidArgumentException {
-
   /**
    * Throws exception by instantiating the class and setting error code
    * to `E_INVALID_PARAMETER`.

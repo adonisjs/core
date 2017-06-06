@@ -30,7 +30,7 @@ const nodeCookie = require('node-cookie')
 const pathToRegexp = require('path-to-regexp')
 const useragent = require('useragent')
 
-const Macroable = require('../Macroable')
+const Macroable = require('macroable')
 const $ = require('../../lib/util')
 
 const SUBDOMAIN_OFFSET = 'app.http.subdomainOffset'
@@ -47,6 +47,8 @@ const SECRET = 'app.secret'
  * easier and simpler to access request information.
  * You can access the original **req** object as
  * `request.request`
+ *
+ * @namespace Adonis/Src/Request
  *
  * @class Request
  * @constructor
@@ -78,6 +80,24 @@ class Request extends Macroable {
      * @type {Object}
      */
     this.Config = Config
+  }
+
+  /**
+   * Returns a boolean indicating if user is a bad safari.
+   * This method is used by the `fresh` method to address
+   * a known bug in safari described [here](http://tech.vg.no/2013/10/02/ios7-bug-shows-white-page-when-getting-304-not-modified-from-server/)
+   *
+   * @method _isBadSafari
+   *
+   * @return {Boolean}
+   *
+   * @private
+   */
+  _isBadSafari () {
+    const ua = this.header('user-agent')
+    const cc = this.header('cache-control')
+
+    return (useragent.is(ua).safari || useragent.is(ua).mobile_safari) && cc === 'max-age=0'
   }
 
   /**
@@ -644,24 +664,6 @@ class Request extends Macroable {
   match (routes) {
     const pattern = pathToRegexp(routes, [])
     return pattern.test(this.url())
-  }
-
-  /**
-   * Returns a boolean indicating if user is a bad safari.
-   * This method is used by the `fresh` method to address
-   * a known bug in safari described [here](http://tech.vg.no/2013/10/02/ios7-bug-shows-white-page-when-getting-304-not-modified-from-server/)
-   *
-   * @method _isBadSafari
-   *
-   * @return {Boolean}
-   *
-   * @private
-   */
-  _isBadSafari () {
-    const ua = this.header('user-agent')
-    const cc = this.header('cache-control')
-
-    return (useragent.is(ua).safari || useragent.is(ua).mobile_safari) && cc === 'max-age=0'
   }
 
   /**

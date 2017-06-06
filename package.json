@@ -3,7 +3,15 @@
   "version": "3.0.9",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "node --harmony-async-await ./node_modules/.bin/japa",
+    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test:win": "node --harmony-async-await ./node_modules/japa-cli/index.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
   "standard": {
     "global": [
       "use"
@@ -18,7 +26,7 @@
   "license": "MIT",
   "devDependencies": {
     "adonis-fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
-    "adonis-sink": "^1.0.1",
+    "adonis-sink": "git+https://github.com/adonisjs/adonis-sink.git#develop",
     "cookie-signature": "^1.0.6",
     "cz-conventional-changelog": "^2.0.0",
     "fs-extra": "^2.1.2",
@@ -38,12 +46,14 @@
     "edge.js": "^1.0.0",
     "haye": "^1.0.1",
     "lodash": "^4.17.4",
+    "macroable": "^1.0.0",
     "node-cookie": "git+https://github.com/poppinss/node-cookie.git#develop",
     "node-exceptions": "^2.0.1",
     "node-req": "git+https://github.com/poppinss/node-req.git#develop",
     "node-res": "git+https://github.com/poppinss/node-res.git#develop",
     "path-to-regexp": "^1.7.0",
     "require-all": "^2.2.0",
+    "serve-static": "^1.12.3",
     "upcast": "^1.0.4",
     "useragent": "^2.1.13",
     "winston": "^2.3.1"

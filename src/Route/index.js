@@ -139,6 +139,35 @@ class Route {
   }
 
   /**
+   * Returns an object of dynamic domains for a given
+   * route.
+   *
+   * @method _getSubDomains
+   *
+   * @param  {String}       host
+   *
+   * @return {Object|Null}
+   *
+   * @private
+   */
+  _getSubDomains (host) {
+    if (!this._domain) {
+      return null
+    }
+
+    const domainTokens = this._domain.exec(host)
+    if (!domainTokens) {
+      return null
+    }
+
+    return _.transform(this._domain.keys, (result, key, index) => {
+      let value = domainTokens[index + 1] || null
+      result[key.name] = value
+      return result
+    }, {})
+  }
+
+  /**
    * Define domain for the route. If domain is defined
    * then route will only resolve when domain matches.
    *
@@ -270,23 +299,6 @@ class Route {
     this._route = `${prefix}${this._route}`
     this._makeRoutePattern()
     return this
-  }
-
-  _getSubDomains (host) {
-    if (!this._domain) {
-      return null
-    }
-
-    const domainTokens = this._domain.exec(host)
-    if (!domainTokens) {
-      return null
-    }
-
-    return _.transform(this._domain.keys, (result, key, index) => {
-      let value = domainTokens[index + 1] || null
-      result[key.name] = value
-      return result
-    }, {})
   }
 
   /**
