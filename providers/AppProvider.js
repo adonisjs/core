@@ -159,6 +159,22 @@ class AppProvider extends ServiceProvider {
   }
 
   /**
+   * Register the static resource middleware provider
+   *
+   * @method _registerStaticMiddleware
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _registerStaticMiddleware () {
+    this.app.bind('Adonis/Middleware/Static', (app) => {
+      const Static = require('../src/Static')
+      return Static(app.use('Adonis/Src/Helpers'), app.use('Adonis/Src/Config'))
+    })
+  }
+
+  /**
    * Register all the required providers
    *
    * @method register
@@ -174,6 +190,7 @@ class AppProvider extends ServiceProvider {
     this._registerRoute()
     this._registerServer()
     this._registerHash()
+    this._registerStaticMiddleware()
   }
 
   /**
