@@ -72,6 +72,12 @@
       "src/Logger/index.js"
     ]
   },
+  "nyc": {
+    "include": [
+      "src",
+      "lib"
+    ]
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

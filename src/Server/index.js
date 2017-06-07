@@ -116,6 +116,7 @@ class Server {
    */
   _composeRequestMiddleware (routeMiddleware, handler, ctx) {
     debug('step:3 composing global and route middleware')
+
     let globalMiddleware = this.middleware.tag('global').get() || []
 
     /**

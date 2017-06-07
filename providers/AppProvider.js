@@ -113,7 +113,8 @@ class AppProvider extends ServiceProvider {
     this.app.singleton('Adonis/Src/Server', (app) => {
       const Context = app.use('Adonis/Src/Context')
       const Route = app.use('Adonis/Src/Route')
-      const Config = app.use('Adonis/Src/Config')
+      const Exception = app.use('Adonis/Src/Exception')
+
       const Logger = {
         info (...args) {
           console.log(...args)
@@ -121,7 +122,7 @@ class AppProvider extends ServiceProvider {
       }
 
       const Server = require('../src/Server')
-      return new Server(Context, Route, Logger, Config)
+      return new Server(Context, Route, Logger, Exception)
     })
     this.app.alias('Adonis/Src/Server', 'Server')
   }
@@ -175,6 +176,19 @@ class AppProvider extends ServiceProvider {
   }
 
   /**
+   * Registers the exceptions provider
+   *
+   * @method _registerException
+   *
+   * @return {void}
+   */
+  _registerException () {
+    this.app.bind('Adonis/Src/Exception', () => {
+      return require('../src/Exception')
+    })
+  }
+
+  /**
    * Register all the required providers
    *
    * @method register
@@ -190,6 +204,7 @@ class AppProvider extends ServiceProvider {
     this._registerRoute()
     this._registerServer()
     this._registerHash()
+    this._registerException()
     this._registerStaticMiddleware()
   }
 
