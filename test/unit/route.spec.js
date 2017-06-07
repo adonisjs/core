@@ -256,7 +256,7 @@ describe('Route', function () {
       expect(routes[0].group).to.equal('admin')
       expect(routes[0].middlewares).deep.equal(['auth'])
       expect(routes[1].group).to.equal('admin')
-      expect(routes[1].middlewares).deep.equal(['cors', 'auth'])
+      expect(routes[1].middlewares).deep.equal(['auth', 'cors'])
     })
 
     it('should be able to prefix routes inside a group', function () {
@@ -903,7 +903,7 @@ describe('Route', function () {
         Route.get('/', 'SomeController.method').middlewares(['cors'])
       }).middlewares(['auth'])
       const home = Route.resolve('/', 'GET')
-      expect(home.middlewares).deep.equal(['cors', 'auth'])
+      expect(home.middlewares).deep.equal(['auth', 'cors'])
     })
 
     it('should resolve routes with domains', function () {
