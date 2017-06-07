@@ -186,7 +186,7 @@ class AppProvider extends ServiceProvider {
     this.app.singleton('Adonis/Src/Exception', () => {
       return require('../src/Exception')
     })
-    this.alias('Adonis/Src/Exception', 'Exception')
+    this.app.alias('Adonis/Src/Exception', 'Exception')
   }
 
   /**
@@ -201,7 +201,7 @@ class AppProvider extends ServiceProvider {
       const Encryption = require('../src/Encryption')
       return new Encryption(app.use('Adonis/Src/Config'))
     })
-    this.alias('Adonis/Src/Encryption', 'Encryption')
+    this.app.alias('Adonis/Src/Encryption', 'Encryption')
   }
 
   /**
