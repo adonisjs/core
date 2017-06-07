@@ -11,17 +11,23 @@
 
 const semver = require('semver')
 const { spawn } = require('child_process')
-const harmonyFlag = semver.lt(process.version, '8.0.0') ? '--harmony-async-await' : ''
+const spawnArgs = []
+
+if (semver.lt(process.version, '8.0.0')) {
+  spawnArgs.push('--harmony-async-await')
+}
 
 function local () {
-  const tests = spawn('node', [harmonyFlag, './node_modules/.bin/japa'])
+  spawnArgs.push(['./node_modules/.bin/japa'])
+  const tests = spawn('node', ...spawnArgs)
   tests.stdout.on('data', (data) => process.stdout.write(data))
   tests.stderr.on('data', (data) => process.stderr.write(data))
   tests.on('close', (code) => process.exit(code))
 }
 
 function win () {
-  const tests = spawn('node', [harmonyFlag, './node_modules/japa-cli/index.js'])
+  spawnArgs.push(['./node_modules/japa-cli/index.js'])
+  const tests = spawn('node', ...spawnArgs)
   tests.stdout.on('data', (data) => process.stdout.write(data))
   tests.stderr.on('data', (data) => process.stderr.write(data))
   tests.on('close', (code) => process.exit(code))
