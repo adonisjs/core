@@ -18,16 +18,16 @@ if (semver.lt(process.version, '8.0.0')) {
 }
 
 function local () {
-  spawnArgs.push(['./node_modules/.bin/japa'])
-  const tests = spawn('node', ...spawnArgs)
+  spawnArgs.push('./node_modules/.bin/japa')
+  const tests = spawn('node', spawnArgs)
   tests.stdout.on('data', (data) => process.stdout.write(data))
   tests.stderr.on('data', (data) => process.stderr.write(data))
   tests.on('close', (code) => process.exit(code))
 }
 
 function win () {
-  spawnArgs.push(['./node_modules/japa-cli/index.js'])
-  const tests = spawn('node', ...spawnArgs)
+  spawnArgs.push('./node_modules/japa-cli/index.js')
+  const tests = spawn('node', spawnArgs)
   tests.stdout.on('data', (data) => process.stdout.write(data))
   tests.stderr.on('data', (data) => process.stderr.write(data))
   tests.on('close', (code) => process.exit(code))
