@@ -79,6 +79,20 @@ class RuntimeException extends NE.RuntimeException {
   static missingNamedMiddleware (name) {
     return new this(`Cannot find any named middleware for {${name}}. Make sure you have registered it inside start/kernel.js file.`, 500, 'E_MISSING_NAMED_MIDDLEWARE')
   }
+
+  /**
+   * This exception is thrown when app key is not defined inside
+   * config/app.js file
+   *
+   * @method missingAppKey
+   *
+   * @param  {String}      providerName
+   *
+   * @return {Object}
+   */
+  static missingAppKey (providerName) {
+    return new this(`Make sure to define appKey inside config/app.js file before using ${providerName} provider`, 500, 'E_MISSING_APP_KEY')
+  }
 }
 
 module.exports = { InvalidArgumentException, RuntimeException, HttpException: NE.HttpException }
