@@ -116,7 +116,7 @@ RouterHelper.compileRouteToUrl = function (route, values) {
 RouterHelper.appendMiddleware = function (routes, middlewares) {
   if (_.isArray(routes)) {
     _.each(routes, function (route) {
-      route.middlewares = route.middlewares.concat(middlewares)
+      route.middlewares = _.concat(middlewares, route.middlewares)
     })
   } else {
     routes.middlewares = routes.middlewares.concat(middlewares)
