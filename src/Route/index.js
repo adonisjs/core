@@ -23,6 +23,13 @@ const logger = new CatLog('adonis:framework')
 let routes = []
 
 /**
+ * chain of registered groups
+ * @type {Array}
+ * @private
+ */
+let groupChain = []
+
+/**
  * holding reference to active Group
  * @type {String}
  * @private
@@ -362,10 +369,10 @@ Route.middlewares = function () {
 Route.group = function (name, cb) {
   activeGroup = name
   cb()
+  groupChain.push(name)
   const groupRoutes = _.filter(routes, function (route) {
-    return route.group === activeGroup
+    return _.includes(groupChain, route.group)
   })
-  activeGroup = null
   return new Group(groupRoutes)
 }
 
