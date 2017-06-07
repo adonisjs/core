@@ -22,12 +22,13 @@ const CE = require('../Exceptions')
  * @class Server
  */
 class Server {
-  constructor (Context, Route, Logger) {
+  constructor (Context, Route, Logger, Exception) {
     this.Context = Context
     this.Route = Route
     this.Logger = Logger
     this._httpInstance = null
     this.middleware = new Middleware()
+    this.Exception = Exception
 
     /**
      * The keys for named middleware are stored on the
@@ -209,6 +210,12 @@ class Server {
     }
   }
 
+  _endResponse (response) {
+    if (response.isPending) {
+      response.end()
+    }
+  }
+
   /**
    * Handles the exceptions thrown during the http request
    * life-cycle. It will look for a listener to handle
@@ -224,11 +231,40 @@ class Server {
    *
    * @private
    */
-  _handleException (error, { response }) {
+  _handleException (error, ctx) {
     error.message = error.message || 'Internal server error'
     error.status = error.status || 500
-    response.status(error.status || 500).send(`${error.name}: ${error.message}\n${error.stack}`)
-    response.end()
+
+    /**
+     * Fetching exception handler, if no handler is defined then use a custom
+     * callback to return the error as response
+     */
+    const exceptionHandler = this.Exception.getHandler(error.name) || function (err, { response }) {
+      response.status(error.status).send(`${err.name}: ${err.message}\n${err.stack}`)
+    }
+
+    /**
+     * Fetching exception reporter
+     */
+    const exceptionReporter = this.Exception.getReporter(error.name)
+
+    /**
+     * If exception reporter was defined, please call it
+     */
+    if (typeof (exceptionReporter) === 'function') {
+      exceptionReporter(error, { request: ctx.request, auth: ctx.auth })
+    }
+
+    Promise
+      .resolve(exceptionHandler(error, ctx))
+      .then(() => {
+        this._endResponse(ctx.response)
+      })
+      .catch((hardError) => {
+        // was not expecting this at all
+        ctx.response.status(500).send(hardError)
+        ctx.response.end()
+      })
   }
 
   /**
@@ -383,9 +419,7 @@ class Server {
         return this._composeRequestMiddleware(route.route._middleware, finalHandler, ctx)()
       })
       .then(() => {
-        if (response.isPending) {
-          response.end()
-        }
+        this._endResponse(response)
       })
       .catch((error) => {
         this._handleException(error, ctx)

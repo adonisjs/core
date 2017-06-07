@@ -21,6 +21,7 @@ const Request = require('../../src/Request')
 const Response = require('../../src/Response')
 const Context = require('../../src/Context')
 const Static = require('../../src/Static')
+const Exception = require('../../src/Exception')
 
 test.group('Static', (group) => {
   group.before(() => {
@@ -35,8 +36,10 @@ test.group('Static', (group) => {
   })
 
   group.beforeEach(() => {
-    ioc.restore()
+    this.exception = Exception
     this.logger = new Logger()
+    ioc.restore()
+    this.exception.clear()
   })
 
   test('return 404 when static resource is not found', async (assert) => {
@@ -44,7 +47,7 @@ test.group('Static', (group) => {
       response.send('foo')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
 
     ioc.fake('Adonis/Middleware/Static', function () {
       return Static(new Helpers(__dirname), new Config())
@@ -62,7 +65,7 @@ test.group('Static', (group) => {
       response.send('foo')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
 
     ioc.fake('Adonis/Middleware/Static', function () {
       return Static(new Helpers(__dirname), new Config())

@@ -21,6 +21,7 @@ const RouteStore = require('../../src/Route/Store')
 const Request = require('../../src/Request')
 const Response = require('../../src/Response')
 const Context = require('../../src/Context')
+const Exception = require('../../src/Exception')
 
 const config = new Config()
 
@@ -65,7 +66,7 @@ test.group('Server | Middleware', (group) => {
 
   test('log warning when duplicate named middleware are registered', (assert) => {
     const logger = new Logger()
-    const server = new Server({}, {}, logger, config)
+    const server = new Server({}, {}, logger)
     const named = {
       auth: 'App/Middleware/Auth'
     }
@@ -101,9 +102,11 @@ test.group('Server | Calls', (group) => {
   })
 
   group.beforeEach(() => {
+    this.logger = new Logger()
+    this.exception = Exception
     RouteStore.clear()
     ioc.restore()
-    this.logger = new Logger()
+    this.exception.clear()
   })
 
   test('respond to a http request using the route handler', async (assert) => {
@@ -111,7 +114,7 @@ test.group('Server | Calls', (group) => {
       response.send('foo')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -123,7 +126,7 @@ test.group('Server | Calls', (group) => {
       response.send('foo')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -135,7 +138,7 @@ test.group('Server | Calls', (group) => {
       return 'foo'
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -147,7 +150,7 @@ test.group('Server | Calls', (group) => {
       throw new Error('error')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -162,7 +165,7 @@ test.group('Server | Calls', (group) => {
       await next()
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -177,7 +180,7 @@ test.group('Server | Calls', (group) => {
       await next()
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerGlobal([async function ({ request }, next) {
       request.middleware = request.middleware || []
       request.middleware.push('global')
@@ -198,7 +201,7 @@ test.group('Server | Calls', (group) => {
       await next()
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerGlobal([async function (next) {
       executions.push(true)
       await next()
@@ -213,7 +216,7 @@ test.group('Server | Calls', (group) => {
   test('execute server level middleware when no route is found', async (assert) => {
     const executions = []
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerGlobal([async function (ctx, next) {
       executions.push('global')
       await next()
@@ -240,7 +243,7 @@ test.group('Server | Calls', (group) => {
       response.lazyBody.content.push('after named')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerGlobal([async function ({ request, response }, next) {
       request.middleware = request.middleware || []
       request.middleware.push('global')
@@ -261,7 +264,7 @@ test.group('Server | Calls', (group) => {
       response.send('changed foo to bar')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -273,11 +276,11 @@ test.group('Server | Calls', (group) => {
       throw new Error('foo')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.include(res.text.split('\n')[2], 'server.spec.js:273')
+    assert.include(res.text.split('\n')[2], 'server.spec.js:276')
   })
 
   test('do not execute anything once server level middleware ends the response', async (assert) => {
@@ -287,7 +290,7 @@ test.group('Server | Calls', (group) => {
       executions.push('route')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerGlobal([async function (ctx, next) {
       executions.push('global')
       await next()
@@ -313,7 +316,7 @@ test.group('Server | Calls', (group) => {
       executions.push('route')
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerGlobal([async function ({ response }, next) {
       executions.push('global')
       response.send('ending here')
@@ -336,7 +339,7 @@ test.group('Server | Calls', (group) => {
       return params.username
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/virk').expect(200)
@@ -348,7 +351,7 @@ test.group('Server | Calls', (group) => {
       return params.username === null ? 'virk' : params.username
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -362,7 +365,7 @@ test.group('Server | Calls', (group) => {
       await next()
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/nikk').expect(200)
@@ -382,7 +385,7 @@ test.group('Server | Calls', (group) => {
 
     Route.get('/', 'HomeController.render')
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
@@ -392,7 +395,7 @@ test.group('Server | Calls', (group) => {
   test('throw exception when controller does not exists', async (assert) => {
     Route.get('/', 'HomeController.render')
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -409,7 +412,7 @@ test.group('Server | Calls', (group) => {
 
     Route.get('/', 'HomeController.render')
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -428,7 +431,7 @@ test.group('Server | Calls', (group) => {
     })
 
     Route.get('/', async function () {})
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerGlobal(['Middleware/AppMiddleware'])
 
     const app = http.createServer(server.handle.bind(server))
@@ -449,7 +452,7 @@ test.group('Server | Calls', (group) => {
     })
 
     Route.get('/', async function () {}).middleware('app')
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerNamed({
       'app': 'Middleware/AppMiddleware'
     })
@@ -462,7 +465,7 @@ test.group('Server | Calls', (group) => {
 
   test('throw exception when named middleware is missing', async (assert) => {
     Route.get('/', async function () {}).middleware('app')
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
 
     const app = http.createServer(server.handle.bind(server))
 
@@ -482,7 +485,7 @@ test.group('Server | Calls', (group) => {
     })
 
     Route.get('/', async function () {}).middleware('auth:jwt,basic')
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     server.registerNamed({
       'auth': 'Middleware/Auth'
     })
@@ -498,10 +501,83 @@ test.group('Server | Calls', (group) => {
       return 'hello world'
     })
 
-    const server = new Server(Context, Route, this.logger)
+    const server = new Server(Context, Route, this.logger, this.exception)
     const app = server.getInstance(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(200)
     assert.deepEqual(res.text, 'hello world')
+  })
+
+  test('pass exception to exception handler', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
+    })
+
+    this.exception.handle('*', (error, { response }) => {
+      response.status(error.status).send('Hijacked')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.equal(res.text.trim(), 'Hijacked')
+  })
+
+  test('exception handler can be async', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
+    })
+
+    this.exception.handle('*', (error, { response }) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          response.status(error.status).send('Hijacked')
+          resolve()
+        }, 200)
+      })
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    const res = await supertest(app).get('/').expect(500)
+    assert.equal(res.text.trim(), 'Hijacked')
+  })
+
+  test('report error to exception reporter', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
+    })
+
+    const reportedError = {}
+    this.exception.report('*', (error, { request }) => {
+      reportedError.name = error.name
+      reportedError.url = request.url()
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    await supertest(app).get('/').expect(500)
+    assert.deepEqual(reportedError, { name: 'Error', url: '/' })
+  })
+
+  test('report error to exception reporter even when it\'s async', async (assert) => {
+    Route.get('/', async function () {
+      throw new Error('error')
+    })
+
+    const reportedError = {}
+    this.exception.report('*', async (error, { request }) => {
+      reportedError.name = error.name
+      reportedError.url = request.url()
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+
+    await supertest(app).get('/').expect(500)
+    assert.deepEqual(reportedError, { name: 'Error', url: '/' })
   })
 })

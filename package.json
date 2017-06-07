@@ -60,6 +60,12 @@
     "useragent": "^2.1.13",
     "winston": "^2.3.1"
   },
+  "nyc": {
+    "include": [
+      "src",
+      "lib"
+    ]
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
