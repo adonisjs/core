@@ -1,147 +1,135 @@
 'use strict'
 
-/**
+/*
  * adonis-framework
- * Copyright(c) 2015-2016 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
-const Encryption = require('../../src/Encryption')
-const chai = require('chai')
-const crypto = require('crypto')
-const expect = chai.expect
-let config
-let encryption
+const test = require('japa')
+const { Config } = require('@adonisjs/sink')
+const _ = require('lodash')
 
-class Config {
-  constructor (key, algorithm) {
-    this.key = key
-    this.algorithm = algorithm || 'aes-256-cbc'
-  }
-  get (key) {
-    if (key === 'app.appKey') {
-      return this.key
-    }
-    if (key === 'app.encryption.algorithm') {
-      return this.algorithm
-    }
-  }
+const Encryption = require('../../src/Encryption')
+
+const getAppKey = function () {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  return _.map(_.range(0, 18), (num) => chars.charAt(Math.floor(Math.random() * chars.length))).join('')
 }
 
-describe('Encryption', function () {
-  before(function () {
-    config = new Config('a'.repeat(32), 'aes-256-cbc')
-    encryption = new Encryption(config)
+test.group('Encryption', () => {
+  test('throw exception app key is missing', (assert) => {
+    const fn = () => new Encryption(new Config())
+    assert.throw(fn, 'E_MISSING_APP_KEY: Make sure to define appKey inside config/app.js file before using Encryption provider')
   })
 
-  it('should throw error when APP_KEY is not defined', function () {
-    const fn = function () {
-      return new Encryption(new Config())
-    }
-    expect(fn).to.throw('RuntimeException: E_MISSING_APPKEY: App key needs to be specified in order to make use of Encryption')
+  test('throw exception when key is smaller than 16 digits', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', 'foo')
+    const fn = () => new Encryption(config)
+    assert.throw(fn, 'key must be at least 16 characters long')
   })
 
-  it('should throw error when APP_KEY to long', function () {
-    const fn = function () {
-      return new Encryption(new Config('a'.repeat(32), 'aes-128-cbc'))
-    }
-    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRPYTION_CIPHER: The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths')
+  test('encrypt string using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    assert.isDefined(encryption.encrypt('hello world'))
   })
 
-  it('should throw error when APP_KEY is wrong', function () {
-    const fn = function () {
-      return new Encryption(new Config('a'.repeat(5), 'aes-256-cbc'))
-    }
-    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRPYTION_CIPHER: The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths')
+  test('encrypt object using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    assert.isDefined(encryption.encrypt({name: 'virk'}))
   })
 
-  it('should throw error when cipher is unsupported', function () {
-    const fn = function () {
-      return new Encryption(new Config('a'.repeat(16), 'AES-256-CFB8'))
-    }
-    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRPYTION_CIPHER: The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths')
+  test('encrypt boolean using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    assert.isDefined(encryption.encrypt(true))
   })
 
-  it('should throw error when APP_KEY length is wrong and cipher is unsupported', function () {
-    const fn = function () {
-      return new Encryption(new Config('a'.repeat(16), 'AES-256-CFB8'))
-    }
-    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRPYTION_CIPHER: The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths')
+  test('encrypt number using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    assert.isDefined(encryption.encrypt(20))
   })
 
-  it('should calculate a correct sha256 hash', function () {
-    const hash = encryption.hash('These Aren\'t the Droids ', 'You\'re Looking For')
-    expect(hash).to.equal(crypto.createHmac('sha256', config.get('app.appKey')).update('These Aren\'t the Droids You\'re Looking For').digest('hex'))
+  test('encrypt date using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    assert.isDefined(encryption.encrypt(new Date()))
   })
 
-  it('should calculate a correct sha256 hash using HMAC method', function () {
-    const hmac = encryption.hashHmac('sha256', 'These Aren\'t the Droids You\'re Looking For', config.get('app.appKey'))
-    expect(hmac).to.equal(crypto.createHmac('sha256', config.get('app.appKey')).update('These Aren\'t the Droids You\'re Looking For').digest('hex'))
+  test('decrypt string using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    const encryptedValue = encryption.encrypt('hello world')
+    assert.equal(encryption.decrypt(encryptedValue), 'hello world')
   })
 
-  it('should encode base64', function () {
-    const base64 = encryption.base64Encode('These Aren\'t the Droids You\'re Looking For')
-    expect(base64).to.equal('VGhlc2UgQXJlbid0IHRoZSBEcm9pZHMgWW91J3JlIExvb2tpbmcgRm9y')
+  test('decrypt object using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    const encryptedValue = encryption.encrypt({name: 'virk'})
+    assert.deepEqual(encryption.decrypt(encryptedValue), {name: 'virk'})
   })
 
-  it('should decode base64', function () {
-    const plain = encryption.base64Decode('VGhlc2UgQXJlbid0IHRoZSBEcm9pZHMgWW91J3JlIExvb2tpbmcgRm9y')
-    expect(plain).to.equal('These Aren\'t the Droids You\'re Looking For')
+  test('decrypt boolean using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    const encryptedValue = encryption.encrypt(true)
+    assert.equal(encryption.decrypt(encryptedValue), true)
   })
 
-  it('should detect valid payload', function () {
-    const invalid = encryption.invalidPayload({iv: '', value: '', mac: ''})
-    expect(invalid).to.equal(false)
+  test('decrypt number using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    const encryptedValue = encryption.encrypt(20)
+    assert.equal(encryption.decrypt(encryptedValue), 20)
   })
 
-  it('should detect valid mac', function () {
-    const payload = {iv: 'gD+wK78S1q4L3Vzgullp8Q==', value: 'These Aren\'t the Droids You\'re Looking For', mac: 'ffcfa6ced2727ba646467688e1f3ae0d38ccb7c5b4a9c6f9876d6d749100c2bd'}
-    const invalid = encryption.validMac(payload)
-    expect(invalid).to.equal(true)
+  test('decrypt date using valid key', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    const date = new Date().toString()
+    const encryptedValue = encryption.encrypt(date)
+    assert.deepEqual(encryption.decrypt(encryptedValue), date)
   })
 
-  it('should throw error when payload is invalid', function () {
-    const fn = function () {
-      return encryption.getJsonPayload('Int9Ig==')
-    }
-    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRYPTION_PAYLOAD: The payload is invalid')
+  test('base64 encode a string', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    const encodedValue = encryption.base64Encode('hello world')
+    assert.isDefined(encodedValue)
   })
 
-  it('should throw error when payload is not an json object', function () {
-    const fn = function () {
-      return encryption.getJsonPayload('foo')
-    }
-    expect(fn).to.throw('RuntimeException: E_MALFORMED_JSON: The payload is not a json object')
+  test('base64 decode a string', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    const encodedValue = encryption.base64Encode('hello world')
+    assert.equal(encryption.base64Decode(encodedValue), 'hello world')
   })
 
-  it('should throw error when mac is invalid', function () {
-    let iv = crypto.randomBytes(16)
-    const mac = encryption.hash(iv = encryption.base64Encode(iv), 'These Aren\'t the Droids You\'re Looking For')
-    const json = JSON.stringify({iv: iv, value: 'These Are the Droids You\'re Looking For', mac: mac})
-    const base64 = encryption.base64Encode(json)
-    const fn = function () {
-      return encryption.getJsonPayload(base64)
-    }
-    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRYPTION_MAC: The MAC is invalid')
-  })
-
-  it('should throw error when encrypt value is empty', function () {
-    const fn = () => encryption.encrypt('')
-    expect(fn).to.throw('InvalidArgumentException: E_MISSING_PARAMETER: Could not encrypt the data')
-  })
-
-  it('should decrypt values using defined algorithm', function () {
-    const encrypted = encryption.encrypt('These Aren\'t the Droids You\'re Looking For')
-    const decrypted = encryption.decrypt(encrypted)
-    expect(decrypted).to.equal('These Aren\'t the Droids You\'re Looking For')
-  })
-
-  it('should throw error with different keys', function () {
-    const fn = function () {
-      const a = new Encryption(new Config('a'.repeat(32), 'aes-256-cbc'))
-      const b = new Encryption(new Config('b'.repeat(32), 'aes-256-cbc'))
-      console.log(b.decrypt(a.encrypt('These Aren\'t the Droids You\'re Looking For')))
-    }
-    expect(fn).to.throw('RuntimeException: E_INVALID_ENCRYPTION_MAC: The MAC is invalid')
+  test('base64 decode a buffer', (assert) => {
+    const config = new Config()
+    config.set('app.appKey', getAppKey())
+    const encryption = new Encryption(config)
+    const buff = Buffer.from('hello world')
+    assert.equal(encryption.base64Decode(buff), 'hello world')
   })
 })

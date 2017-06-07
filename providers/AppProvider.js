@@ -137,7 +137,7 @@ class AppProvider extends ServiceProvider {
    * @private
    */
   _registerHash () {
-    this.app.bind('Adonis/Src/Hash', () => {
+    this.app.singleton('Adonis/Src/Hash', () => {
       return require('../src/Hash')
     })
     this.app.alias('Adonis/Src/Hash', 'Hash')
@@ -183,9 +183,25 @@ class AppProvider extends ServiceProvider {
    * @return {void}
    */
   _registerException () {
-    this.app.bind('Adonis/Src/Exception', () => {
+    this.app.singleton('Adonis/Src/Exception', () => {
       return require('../src/Exception')
     })
+    this.alias('Adonis/Src/Exception', 'Exception')
+  }
+
+  /**
+   * Register the encryption provider
+   *
+   * @method _registerEncryption
+   *
+   * @return {void}
+   */
+  _registerEncryption () {
+    this.app.singleton('Adonis/Src/Encryption', (app) => {
+      const Encryption = require('../src/Encryption')
+      return new Encryption(app.use('Adonis/Src/Config'))
+    })
+    this.alias('Adonis/Src/Encryption', 'Encryption')
   }
 
   /**
@@ -205,6 +221,7 @@ class AppProvider extends ServiceProvider {
     this._registerServer()
     this._registerHash()
     this._registerException()
+    this._registerEncryption()
     this._registerStaticMiddleware()
   }
 
