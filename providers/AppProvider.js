@@ -100,6 +100,22 @@ class AppProvider extends ServiceProvider {
   }
 
   /**
+   * Registers the logger provider under
+   * Adonis/Src/Logger namespace
+   *
+   * @method _registerLogger
+   *
+   * @return {void}
+   */
+  _registerLogger () {
+    this.app.singleton('Adonis/Src/Logger', (app) => {
+      const LoggerManager = require('../src/Logger/Manager')
+      return new LoggerManager(app.use('Adonis/Src/Config'))
+    })
+    this.app.alias('Adonis/Src/Logger', 'Logger')
+  }
+
+  /**
    * Register the server provider under
    * Adonis/Src/Server namespace.
    *
@@ -114,13 +130,7 @@ class AppProvider extends ServiceProvider {
       const Context = app.use('Adonis/Src/Context')
       const Route = app.use('Adonis/Src/Route')
       const Exception = app.use('Adonis/Src/Exception')
-
-      const Logger = {
-        info (...args) {
-          console.log(...args)
-        }
-      }
-
+      const Logger = app.use('Adonis/Src/Logger')
       const Server = require('../src/Server')
       return new Server(Context, Route, Logger, Exception)
     })
@@ -218,6 +228,7 @@ class AppProvider extends ServiceProvider {
     this._registerRequest()
     this._registerResponse()
     this._registerRoute()
+    this._registerLogger()
     this._registerServer()
     this._registerHash()
     this._registerException()
