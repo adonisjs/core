@@ -93,6 +93,20 @@ class RuntimeException extends NE.RuntimeException {
   static missingAppKey (providerName) {
     return new this(`Make sure to define appKey inside config/app.js file before using ${providerName} provider`, 500, 'E_MISSING_APP_KEY')
   }
+
+  /**
+   * This exception is raised when logger driver does not
+   * exists
+   *
+   * @method invalidLoggerDriver
+   *
+   * @param  {String}            name
+   *
+   * @return {Object}
+   */
+  static invalidLoggerDriver (name) {
+    return new this(`Logger driver ${name} does not exists.`, 500, 'E_INVALID_LOGGER_DRIVER')
+  }
 }
 
 module.exports = { InvalidArgumentException, RuntimeException, HttpException: NE.HttpException }

@@ -12,12 +12,14 @@
 const test = require('japa')
 const path = require('path')
 const fs = require('fs-extra')
+const { ioc } = require('adonis-fold')
 const stdout = require('test-console').stdout
 const stderr = require('test-console').stderr
 const { Config, Helpers } = require('adonis-sink')
 const FileDriver = require('../../src/Logger/Drivers').file
 const ConsoleDriver = require('../../src/Logger/Drivers').console
 const Logger = require('../../src/Logger')
+const LoggerManager = require('../../src/Logger/Manager')
 
 const sysLog = {
   emerg: 0,
@@ -156,5 +158,56 @@ test.group('Logger | Instance', (group) => {
   test('get current log level', (assert) => {
     const logger = new Logger(new ConsoleDriver(this.config))
     assert.equal(logger.level, 'info')
+  })
+})
+
+test.group('Logger | Manager', (group) => {
+  group.before(() => {
+    ioc.fake('Adonis/Src/Config', () => new Config())
+    ioc.fake('Adonis/Src/Helpers', () => new Helpers(path.join(__dirname)))
+  })
+
+  test('extend logger by adding drivers', (assert) => {
+    const myDriver = {}
+    LoggerManager.extend('myDriver', myDriver)
+    assert.deepEqual(LoggerManager._drivers, { myDriver })
+  })
+
+  test('throw error when trying to access invalid logger driver', (assert) => {
+    const logger = new LoggerManager(new Config())
+    const fn = () => logger.driver('foo')
+    assert.throw(fn, 'E_INVALID_LOGGER_DRIVER: Logger driver foo does not exists')
+  })
+
+  test('return logger instance with selected driver', (assert) => {
+    const logger = new LoggerManager(new Config())
+    assert.instanceOf(logger.driver('file'), Logger)
+    assert.instanceOf(logger.driver('file').driver, FileDriver)
+  })
+
+  test('return logger instance with extended driver', (assert) => {
+    const myDriver = {}
+    LoggerManager.extend('myDriver', myDriver)
+    const logger = new LoggerManager(new Config())
+    assert.instanceOf(logger.driver('myDriver'), Logger)
+    assert.deepEqual(logger.driver('myDriver').driver, myDriver)
+  })
+
+  test('create singleton logger instances', (assert) => {
+    const logger = new LoggerManager(new Config())
+    logger.driver('file')
+    assert.lengthOf(Object.keys(logger._loggerInstances), 1)
+    logger.driver('file')
+    assert.lengthOf(Object.keys(logger._loggerInstances), 1)
+  })
+
+  test('proxy logger instance methods', (assert, done) => {
+    const logger = new LoggerManager(new Config())
+    const inspect = stdout.inspect()
+    logger.info('hello', () => {
+      inspect.restore()
+      assert.include(inspect.output[0], 'hello')
+      done()
+    })
   })
 })
