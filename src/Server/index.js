@@ -13,6 +13,7 @@ const http = require('http')
 const _ = require('lodash')
 const Middleware = require('co-compose')
 const { resolver } = require('adonis-fold')
+const debug = require('debug')('adonis:framework')
 
 const MiddlewareWrapper = require('./MiddlewareWrapper')
 const NamedMiddlewareWrapper = require('./NamedMiddlewareWrapper')
@@ -114,6 +115,8 @@ class Server {
    * @private
    */
   _composeRequestMiddleware (routeMiddleware, handler, ctx) {
+    debug('step:3 composing global and route middleware')
+
     let globalMiddleware = this.middleware.tag('global').get() || []
 
     /**
@@ -136,6 +139,7 @@ class Server {
      * 2. Named middleware ( route specific )
      * 3. The route handler ( known as finalHandler )
      */
+    debug('step:3.1 executing %d route and global middleware', globalMiddleware.length + namedMiddleware.length)
     const middleware = globalMiddleware.concat(namedMiddleware).concat([handler])
 
     return this
@@ -162,6 +166,7 @@ class Server {
    * @private
    */
   _composeServerMiddleware (ctx) {
+    debug('step:1 composing server level middleware')
     const serverMiddleware = this.middleware.tag('server').get() || []
     const middleware = serverMiddleware.map((middleware) => new MiddlewareWrapper(middleware))
 
@@ -172,6 +177,8 @@ class Server {
     if (!middleware.length) {
       return () => Promise.resolve()
     }
+
+    debug('step:1.1 executing %d server level middleware', middleware.length)
 
     return this
       .middleware
@@ -210,10 +217,97 @@ class Server {
     }
   }
 
+  /**
+   * End the response only when it's pending
+   *
+   * @method _endResponse
+   *
+   * @param  {Object}     response
+   *
+   * @return {void}
+   *
+   * @private
+   */
   _endResponse (response) {
     if (response.isPending) {
       response.end()
     }
+  }
+
+  /**
+   * Returns the exception handler to be used for handling
+   * the exception.
+   *
+   * @method _getExceptionHandler
+   *
+   * @param  {Object}             error
+   *
+   * @return {Function}
+   *
+   * @private
+   */
+  _getExceptionHandler (error) {
+    /**
+     * First we need to give priority to the manually binded
+     * exception handler and `hasHandler` only returns true
+     * when there is an explicit handler for that exception.
+     */
+    if (this.Exception.hasHandler(error.name)) {
+      return this.Exception.getHandler(error.name)
+    }
+
+    /**
+     * Next we look for handle method on the exception itself. Yes
+     * exceptions can handle themselves.
+     */
+    if (error.handle) {
+      return function (...args) { return error.handle(...args) }
+    }
+
+    /**
+     * Finally we look for a wildcard handler or fallback
+     * to custom method.
+     */
+    return this.Exception.getHandler(error.name) || function (err, { response }) {
+      response.status(error.status).send(`${err.name}: ${err.message}\n${err.stack}`)
+    }
+  }
+
+  /**
+   * Returns exception reporter to be used for reporting
+   * the error
+   *
+   * @method _getExceptionReporter
+   *
+   * @param  {Object}              error
+   *
+   * @return {Function}
+   *
+   * @private
+   */
+  _getExceptionReporter (error) {
+    /**
+     * First we need to give priority to the manually binded
+     * exception reporter and `hasReporter` only returns true
+     * when there is an explicit reporter for that exception.
+     */
+    if (this.Exception.hasReporter(error.name)) {
+      return this.Exception.getReporter(error.name)
+    }
+
+    /**
+     * Next we look for report method on the exception itself. Yes
+     * exceptions can report themselves.
+     */
+    if (error.report) {
+      return function (...args) { return error.report(...args) }
+    }
+
+    /**
+     * Finally we look for a wildcard reporter or return a
+     * fallback function
+     */
+    return this.Exception.getReporter(error.name) || function () {}
   }
 
   /**
@@ -234,26 +328,10 @@ class Server {
   _handleException (error, ctx) {
     error.message = error.message || 'Internal server error'
     error.status = error.status || 500
+    const exceptionHandler = this._getExceptionHandler(error)
+    const exceptionReporter = this._getExceptionReporter(error)
 
-    /**
-     * Fetching exception handler, if no handler is defined then use a custom
-     * callback to return the error as response
-     */
-    const exceptionHandler = this.Exception.getHandler(error.name) || function (err, { response }) {
-      response.status(error.status).send(`${err.name}: ${err.message}\n${err.stack}`)
-    }
-
-    /**
-     * Fetching exception reporter
-     */
-    const exceptionReporter = this.Exception.getReporter(error.name)
-
-    /**
-     * If exception reporter was defined, please call it
-     */
-    if (typeof (exceptionReporter) === 'function') {
-      exceptionReporter(error, { request: ctx.request, auth: ctx.auth })
-    }
+    exceptionReporter(error, { request: ctx.request, auth: ctx.auth })
 
     Promise
       .resolve(exceptionHandler(error, ctx))
@@ -385,6 +463,8 @@ class Server {
     const response = ctx.response
     const request = ctx.request
 
+    debug('new request on %s url', request.url())
+
     this
       ._composeServerMiddleware(ctx)()
       .then(() => {
@@ -393,6 +473,7 @@ class Server {
          * need of executing the route or global middleware.
          */
         if (response.lazyBody.content && response.lazyBody.method && response.isPending) {
+          debug('step:1.2 server level middleware ended the response')
           response.end()
           return
         }
@@ -414,14 +495,17 @@ class Server {
          */
         ctx.params = route.params
         ctx.subdomains = route.subdomains
+        debug('step:2 route found for %s url', request.url())
 
         const finalHandler = this._wrapRouteHandler(route.route._handler)
         return this._composeRequestMiddleware(route.route._middleware, finalHandler, ctx)()
       })
       .then(() => {
+        debug('ending response for %s url', request.url())
         this._endResponse(response)
       })
       .catch((error) => {
+        debug('received error on %s url', request.url())
         this._handleException(error, ctx)
       })
   }

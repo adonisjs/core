@@ -14,6 +14,7 @@ const http = require('http')
 const { setupResolver, Config, Logger } = require('adonis-sink')
 const { ioc } = require('adonis-fold')
 const supertest = require('supertest')
+const NE = require('node-exceptions')
 
 const Server = require('../../src/Server')
 const Route = require('../../src/Route/Manager')
@@ -280,7 +281,7 @@ test.group('Server | Calls', (group) => {
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.include(res.text.split('\n')[2], 'server.spec.js:276')
+    assert.include(res.text.split('\n')[2], 'server.spec.js:277')
   })
 
   test('do not execute anything once server level middleware ends the response', async (assert) => {
@@ -579,5 +580,45 @@ test.group('Server | Calls', (group) => {
 
     await supertest(app).get('/').expect(500)
     assert.deepEqual(reportedError, { name: 'Error', url: '/' })
+  })
+
+  test('exceptions should be able to handle themselves', async (assert) => {
+    class HttpException extends NE.LogicalException {
+      handle (error, { response }) {
+        response.status(500).send({ name: error.name, message: error.message })
+      }
+    }
+
+    Route.get('/', async function () {
+      throw new HttpException('Something went bad')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    const { body } = await supertest(app).get('/').expect(500)
+    assert.deepEqual(body, { name: 'HttpException', message: 'Something went bad' })
+  })
+
+  test('exceptions should be able to report themselves', async (assert) => {
+    let reportedMessage = null
+
+    class HttpException extends NE.LogicalException {
+      handle (error, { response }) {
+        response.status(500).send({ name: error.name, message: error.message })
+      }
+
+      report ({ message }) {
+        reportedMessage = message
+      }
+    }
+
+    Route.get('/', async function () {
+      throw new HttpException('Something went bad')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    await supertest(app).get('/').expect(500)
+    assert.equal(reportedMessage, 'Something went bad')
   })
 })

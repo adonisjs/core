@@ -29,6 +29,42 @@ class Exception {
   }
 
   /**
+   * Returns a boolean telling if a handler
+   * exists for a given exception.
+   *
+   * NOTE: This does not check for wildcard handlers.
+   * Calling `getHandler` may return handler if
+   * wildcard exists.
+   *
+   * @method hasReporter
+   *
+   * @param  {String}    name
+   *
+   * @return {Boolean}
+   */
+  hasHandler (name) {
+    return this._handlers[name]
+  }
+
+  /**
+   * Returns a boolean telling if a reporter
+   * exists for a given exception.
+   *
+   * NOTE: This does not check for wildcard reporters.
+   * Calling `getReporter` may return reporter if
+   * wildcard exists.
+   *
+   * @method hasReporter
+   *
+   * @param  {String}    name
+   *
+   * @return {Boolean}
+   */
+  hasReporter (name) {
+    return this._reporters[name]
+  }
+
+  /**
    * Returns the handler for a given exception. Will fallback
    * to wildcard handler when defined
    *
