@@ -12,6 +12,7 @@
 const _ = require('lodash')
 const path = require('path')
 const dotenv = require('dotenv')
+const debug = require('debug')('adonis:framework')
 
 /**
  * @module Adonis
@@ -45,6 +46,7 @@ class Env {
       encoding: process.env.ENV_ENCODING || 'utf8'
     }
 
+    debug('loading .env file from %s', options.path)
     const env = dotenv.config(options)
 
     /**

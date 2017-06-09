@@ -11,6 +11,7 @@
 
 const _ = require('lodash')
 const requireAll = require('require-all')
+const debug = require('debug')('adonis:framework')
 
 /**
  * The Adonis framework is the core module containing all the required
@@ -52,6 +53,7 @@ class Config {
         dirname: this._configPath,
         filters: /(.*)\.js$/
       })
+      debug('loaded all config files from %s', this._configPath)
     } catch (error) {
       if (error.code !== 'ENOENT') {
         throw error
