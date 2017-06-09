@@ -76,6 +76,9 @@
     "include": [
       "src",
       "lib"
+    ],
+    "exclude": [
+      "src/Logger/index.js"
     ]
   },
   "config": {
