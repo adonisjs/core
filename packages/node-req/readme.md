@@ -2,23 +2,17 @@
 
 > Read data of the Node.js HTTP request with no side-effects.
 
-<br />
-
-<p align="center">
-  <a href="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png">
-    <img src="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png" width="600px" />
-  </a>
-</p>
-
-<br />
-
----
-
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Appveyor][appveyor-image]][appveyor-url]
 
-`node-req` is an i/o module for parsing and returning values out of HTTP request object using helper methods.It is not express, neither connect. It is just an i/o module for parsing request object.
+<a href="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png">
+<img src="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png" width="300px" align="right" vspace="20px" />
+</a>
+
+`node-req` is an i/o module for parsing and returning values out of HTTP request object using helper methods.
+
+It is not express, neither connect. It is just an i/o module for parsing request object.
 
 ## See also
 
