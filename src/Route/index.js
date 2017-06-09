@@ -277,6 +277,22 @@ class Route {
   }
 
   /**
+   * Add middleware to the front of the route. The method is
+   * same as `middleware` instead just prepends instead of
+   * append.
+   *
+   * @method prependMiddleware
+   *
+   * @param  {...Spread}       middleware
+   *
+   * @chainable
+   */
+  prependMiddleware (...middleware) {
+    this._middleware = _.flatten(middleware).concat(this._middleware)
+    return this
+  }
+
+  /**
    * Prefix the route with some string. Generally
    * used by the Route group to prefix a bunch
    * of routes.

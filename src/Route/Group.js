@@ -56,7 +56,7 @@ class RouteGroup {
    * ```
    */
   middleware (...middleware) {
-    this._routes.forEach((route) => route.middleware(...middleware))
+    this._routes.forEach((route) => route.prependMiddleware(...middleware))
   }
 
   /**

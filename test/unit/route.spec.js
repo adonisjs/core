@@ -68,6 +68,16 @@ test.group('Route | Register', () => {
     assert.deepEqual(route._middleware, [middlewareFn, middlewareFn])
   })
 
+  test('prepend middleware', (assert) => {
+    const route = new Route('/', function () {})
+    const middlewareFn = function () {}
+    const middlewareFn1 = function () {}
+    route
+      .middleware([middlewareFn])
+      .prependMiddleware([middlewareFn1])
+    assert.deepEqual(route._middleware, [middlewareFn1, middlewareFn])
+  })
+
   test('give name to a route', (assert) => {
     const route = new Route('/', function () {})
     route.as('foo')
@@ -555,8 +565,8 @@ test.group('Route | Manager', (group) => {
     RouteManager.group(function () {
       RouteManager.get('/', function () {}).middleware('bar')
     }).middleware('foo')
-    assert.equal(RouteStore.list()[0]._middleware[0], 'bar')
-    assert.equal(RouteStore.list()[0]._middleware[1], 'foo')
+    assert.equal(RouteStore.list()[0]._middleware[0], 'foo')
+    assert.equal(RouteStore.list()[0]._middleware[1], 'bar')
   })
 
   test('throw exception when nested groups are created', (assert) => {
