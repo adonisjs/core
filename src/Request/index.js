@@ -660,6 +660,10 @@ class Request extends Macroable {
    * ```
    */
   match (routes) {
+    if (!routes || !routes.length) {
+      return false
+    }
+
     const pattern = pathToRegexp(routes, [])
     return pattern.test(this.url())
   }

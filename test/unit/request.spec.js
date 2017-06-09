@@ -638,6 +638,19 @@ test.group('Request', () => {
     assert.equal(res.body.matches, false)
   })
 
+  test('return false when matches array is empty', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req, res, config)
+      const matches = request.match([])
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.write(JSON.stringify({ matches }))
+      res.end()
+    })
+
+    const res = await supertest(server).get('/users/1/profile').expect(200)
+    assert.equal(res.body.matches, false)
+  })
+
   test('return spoofed method over the original HTTP method', async (assert) => {
     const server = http.createServer((req, res) => {
       const request = new Request(req, res, config)
