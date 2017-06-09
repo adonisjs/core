@@ -5,6 +5,7 @@
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Appveyor][appveyor-image]][appveyor-url]
+[![Coveralls][coveralls-image]][coveralls-url]
 
 <a href="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png">
 <img src="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png" width="300px" align="right" vspace="20px" />
@@ -576,7 +577,8 @@ if (nodeReq.hasBody(request)) {
 ----
 
 
-[appveyor-image]: https://ci.appveyor.com/api/projects/status/github/poppinss/node-req?branch=master&svg=true&passingText=Passing%20On%20Windows
+[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/node-req/master.svg?style=flat-square
+
 [appveyor-url]: https://ci.appveyor.com/project/thetutlage/node-req
 
 [npm-image]: https://img.shields.io/npm/v/node-req.svg?style=flat-square
@@ -584,3 +586,7 @@ if (nodeReq.hasBody(request)) {
 
 [travis-image]: https://img.shields.io/travis/poppinss/node-req/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/poppinss/node-req
+
+[coveralls-image]: https://img.shields.io/coveralls/poppinss/node-req/develop.svg?style=flat-square
+
+[coveralls-url]: https://coveralls.io/github/poppinss/node-req
