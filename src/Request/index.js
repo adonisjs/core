@@ -29,9 +29,7 @@ const nodeReq = require('node-req')
 const nodeCookie = require('node-cookie')
 const pathToRegexp = require('path-to-regexp')
 const useragent = require('useragent')
-
 const Macroable = require('macroable')
-const $ = require('../../lib/util')
 
 const SUBDOMAIN_OFFSET = 'app.http.subdomainOffset'
 const TRUST_PROXY = 'app.http.trustProxy'
@@ -628,7 +626,7 @@ class Request extends Macroable {
    * @return {Mixed}
    */
   cookie (key, defaultValue) {
-    return $.valueOrDefault(nodeCookie.get(this.request, key, this.Config.get(SECRET), true), defaultValue)
+    return _.defaultTo(nodeCookie.get(this.request, key, this.Config.get(SECRET), true), defaultValue)
   }
 
   /**
@@ -643,7 +641,7 @@ class Request extends Macroable {
    * @return {Mixed}
    */
   plainCookie (key, defaultValue) {
-    return $.valueOrDefault(nodeCookie.get(this.request, key), defaultValue)
+    return _.defaultTo(nodeCookie.get(this.request, key), defaultValue)
   }
 
   /**

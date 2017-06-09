@@ -51,7 +51,7 @@ class WinstonFile {
 
     /**
      * If filename is not absolute, save it inside the tmp path
-     * of adonis-app
+     * of adonis-app.
      */
     if (!path.isAbsolute(this.config.filename)) {
       this.config.filename = Helpers.tmpPath(this.config.filename)

@@ -76,4 +76,21 @@ test.group('Static', (group) => {
     const { text } = await supertest(app).get('/style.css').expect(200)
     assert.equal(text.trim(), `body { background: #000; }`)
   })
+
+  test('skip request when verb is not GET or HEAD', async (assert) => {
+    Route.post('/style.css', function ({ response }) {
+      response.send('style')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+
+    ioc.fake('Adonis/Middleware/Static', function () {
+      return Static(new Helpers(__dirname), new Config())
+    })
+
+    server.use(['Adonis/Middleware/Static'])
+    const app = http.createServer(server.handle.bind(server))
+    const { text } = await supertest(app).post('/style.css').expect(200)
+    assert.equal(text.trim(), 'style')
+  })
 })

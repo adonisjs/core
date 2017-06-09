@@ -38,7 +38,6 @@ class Static {
 
     try {
       await staticServer(request.request, request.response)
-      await next()
     } catch (error) {
       if (error.status === 404) {
         return next()
