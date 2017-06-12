@@ -24,8 +24,9 @@ let RouterHelper = exports = module.exports = {}
  * @return {Object}
  * @private
  */
-RouterHelper.construct = function (route, verb, handler, group) {
+RouterHelper.construct = function (route, verb, handler, group, patterns) {
   route = route.startsWith('/') ? route : `/${route}`
+  route = RouterHelper.getRegexp(route, patterns)
   const pattern = RouterHelper.makeRoutePattern(route)
   const middlewares = []
   const domain = null
@@ -175,4 +176,35 @@ RouterHelper.addDomain = function (routes, domain) {
   _.each(routes, function (route) {
     route.domain = domain
   })
+}
+
+/**
+ * adds regex validation of route.
+ *
+ * @param  {Object}  route
+ * @param  {String}  where
+ * @return {void}
+ *
+ * @private
+ */
+RouterHelper.addWhere = function (route, where) {
+  route.route = RouterHelper.getRegexp(route.route, where)
+  route.pattern = RouterHelper.makeRoutePattern(route.route)
+}
+
+/**
+ * convert a route adding RegExp.
+ *
+ * @param  {Object}  route
+ * @param  {String}  where
+ * @return {void}
+ *
+ * @private
+ */
+RouterHelper.getRegexp = function (route, where) {
+  _.forEach(where, (value, key) => {
+    const regex = new RegExp(`(:${key}\\b)`, 'g')
+    route = route.replace(regex, `:${key}(${value})`)
+  })
+  return route
 }

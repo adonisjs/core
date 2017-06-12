@@ -277,6 +277,50 @@ describe('Route', function () {
       expect(routes[0].route).to.equal('/v1')
     })
 
+    it('should be able to add where in a route', function () {
+      Route.get('/user/:id', 'SomeController.method').where({id: '[0-9]+'})
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].route).to.equal('/user/:id([0-9]+)')
+    })
+
+    it('should be able to add where in a route with similar id-n', function () {
+      Route.get('/user/:id/:idn', 'SomeController.method').where({id: '[0-9]+', idn: '[A-Z]+'})
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].route).to.equal('/user/:id([0-9]+)/:idn([A-Z]+)')
+    })
+
+    it('should be able to add where in a route with similar name', function () {
+      Route.get('/user/:id/messages/:id', 'SomeController.method').where({id: '[0-9]+'})
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].route).to.equal('/user/:id([0-9]+)/messages/:id([0-9]+)')
+    })
+
+    it('should be able to add global pattern for username', function () {
+      Route.pattern('username', '[A-Za-z]+')
+      Route.get('/user/:username', 'SomeController.method')
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].route).to.equal('/user/:username([A-Za-z]+)')
+    })
+
+    it('should be able to add global pattern for username', function () {
+      Route.pattern('modelId', '[0-9]+')
+      Route.get('/user/:username/:modelId', 'SomeController.method')
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].route).to.equal('/user/:username([A-Za-z]+)/:modelId([0-9]+)')
+    })
+
+    it('should be able to get predefined global patterns', function () {
+      Route.get('/user/:username/:modelId', 'SomeController.method')
+      const routes = Route.routes()
+      expect(routes[0]).to.be.an('object')
+      expect(routes[0].route).to.equal('/user/:username([A-Za-z]+)/:modelId([0-9]+)')
+    })
+
     it('should prefix all resourceful routes under a group', function () {
       Route.group('v1', function () {
         Route.resource('admin', 'SomeController')
