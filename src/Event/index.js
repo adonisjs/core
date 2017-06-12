@@ -232,36 +232,41 @@ class Event {
    * adds a new event listen for a specific event
    *
    * @param  {String} event
-   * @param  {Function|String} handler
+   * @param  {Function|String|Array} handler
    *
    * @public
    */
-  on (event, name, handler) {
-    if (!handler) {
-      handler = name
+  on (event, name, handlers) {
+    if (!handlers) {
+      handlers = name
       name = null
     }
-    resolver.validateBinding(handler)
-    handler = this._resolveHandler(handler)
-    handler = this._makeHandler(handler)
-    if (name) {
-      this.namedListeners[name] = handler
-    }
 
-    /**
-     * if there is a limit define, go with the many
-     * method on the emitter
-     */
-    if (this.listenerLimit) {
-      this.emitter.many(event, this.listenerLimit, handler)
-      this.listenerLimit = null
-      return
-    }
+    handlers = _.isArray(handlers) ? handlers : [handlers]
 
-    /**
-     * otherwise register normally
-     */
-    this.emitter.on(event, handler)
+    for (let handler of handlers) {
+      resolver.validateBinding(handler)
+      handler = this._resolveHandler(handler)
+      handler = this._makeHandler(handler)
+      if (name) {
+        this.namedListeners[name] = handler
+      }
+
+      /**
+       * if there is a limit define, go with the many
+       * method on the emitter
+       */
+      if (this.listenerLimit) {
+        this.emitter.many(event, this.listenerLimit, handler)
+        this.listenerLimit = null
+        return
+      }
+
+      /**
+       * otherwise register normally
+       */
+      this.emitter.on(event, handler)
+    }
   }
 
   /**
