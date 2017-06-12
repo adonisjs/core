@@ -107,6 +107,23 @@ class Request {
   }
 
   /**
+   * determining if an input value is present.
+   *
+   * @param  {String} key - Key to return value for
+   *
+   * @return {Mixed}
+   *
+   * @example
+   * request.has('name')
+   * request.has('profile.name')
+   *
+   * @public
+   */
+  has (key) {
+    return _.has(this.all(), key)
+  }
+
+  /**
    * returns all input values for defined keys only
    *
    * @param {Mixed} keys an array of keys or multiple keys to pick values for
