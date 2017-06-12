@@ -30,7 +30,7 @@
     "adonis-fold": "^3.0.3",
     "adonis-redis": "^1.0.1",
     "chai": "^3.5.0",
-    "cheerio": "^0.22.0",
+    "cheerio": "^1.0.0-rc.1",
     "co-mocha": "^1.1.3",
     "coveralls": "^2.11.15",
     "cz-conventional-changelog": "^2.0.0",
