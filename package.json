@@ -29,7 +29,7 @@
   "devDependencies": {
     "adonis-fold": "^3.0.3",
     "adonis-redis": "^1.0.1",
-    "chai": "^3.5.0",
+    "chai": "^4.0.1",
     "cheerio": "^0.22.0",
     "co-mocha": "^1.1.3",
     "coveralls": "^2.11.15",
