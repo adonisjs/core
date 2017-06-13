@@ -1,6 +1,6 @@
 {
-  "name": "adonis-fold",
-  "version": "4.0.0-alpha",
+  "name": "@adonisjs/fold",
+  "version": "1.0.0",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
   "directories": {
@@ -11,7 +11,7 @@
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test": "nyc npm run test:local",
     "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -70,5 +70,8 @@
     "include": [
       "src"
     ]
+  },
+  "bin": {
+    "fold": "index.js"
   }
 }
