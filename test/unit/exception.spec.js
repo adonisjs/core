@@ -10,8 +10,8 @@
 */
 
 const test = require('japa')
-const { ioc } = require('adonis-fold')
-const { setupResolver } = require('adonis-sink')
+const { ioc } = require('@adonisjs/fold')
+const { setupResolver } = require('@adonisjs/sink')
 const Exception = require('../../src/Exception')
 
 test.group('Exception', (group) => {

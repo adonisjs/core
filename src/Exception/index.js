@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
 */
 
-const { resolver } = require('adonis-fold')
+const { resolver } = require('@adonisjs/fold')
 
 class Exception {
   constructor () {

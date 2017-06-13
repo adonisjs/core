@@ -13,7 +13,7 @@ const test = require('japa')
 const path = require('path')
 const fs = require('fs-extra')
 const pify = require('pify')
-const { Helpers } = require('adonis-sink')
+const { Helpers } = require('@adonisjs/sink')
 const View = require('../../src/View')
 
 test.group('View', (group) => {

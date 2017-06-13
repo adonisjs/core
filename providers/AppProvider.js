@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
 */
 
-const { ServiceProvider } = require('adonis-fold')
+const { ServiceProvider } = require('@adonisjs/fold')
 
 class AppProvider extends ServiceProvider {
   /**

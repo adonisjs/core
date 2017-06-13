@@ -12,10 +12,11 @@
 const test = require('japa')
 const path = require('path')
 const fs = require('fs-extra')
-const { ioc } = require('adonis-fold')
+const { ioc } = require('@adonisjs/fold')
 const stdout = require('test-console').stdout
 const stderr = require('test-console').stderr
-const { Config, Helpers } = require('adonis-sink')
+const { Config, Helpers } = require('@adonisjs/sink')
+
 const FileDriver = require('../../src/Logger/Drivers').file
 const ConsoleDriver = require('../../src/Logger/Drivers').console
 const Logger = require('../../src/Logger')

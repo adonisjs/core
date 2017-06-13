@@ -1,7 +1,7 @@
 'use strict'
 
-const { registrar, ioc } = require('adonis-fold')
-const { Helpers, setupResolver } = require('adonis-sink')
+const { registrar, ioc } = require('@adonisjs/fold')
+const { Helpers, setupResolver } = require('@adonisjs/sink')
 const path = require('path')
 
 const providers = [
