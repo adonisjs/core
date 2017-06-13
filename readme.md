@@ -1,30 +1,14 @@
-# AdonisJs Fold
-> Dependency manager and IoC container for Node.js :rocket:
-
-<br />
-
-<p align="center">
-  <a href="http://res.cloudinary.com/adonisjs/image/upload/v1484932186/Github-Readme_mh3lqh.svg">
-    <img src="http://res.cloudinary.com/adonisjs/image/upload/v1484932186/Github-Readme_mh3lqh.svg" />
-  </a>
-</p>
-
-<br />
-
----
-
-<br />
+# AdonisJs Fold 🚀
+> Dependency manager and IoC container for Node.js
 
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 [![Appveyor][appveyor-image]][appveyor-url]
 
-[![Gitter Channel][gitter-image]][gitter-url]
-[![Trello][trello-image]][trello-url]
-[![Patreon][patreon-image]][patreon-url]
-
 Fold is a dependency manager for Node.js used by AdonisJs framework. Below is the list of features.
+
+<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="140px">
 
 ## Features
 
@@ -45,17 +29,16 @@ npm i --save adonis-fold
 ## Basic Usage
 
 ```js
-const fold = require('adonis-fold')
-const Ioc = fold.Ioc
+const { ioc } = require('adonis-fold')
 
 class Foo {
 }
 
-Ioc.bind('App/Foo', function () {
+ioc.bind('App/Foo', function () {
   return new Foo()
 })
 
-const foo = Ioc.use('App/Foo')
+const foo = ioc.use('App/Foo')
 // return Foo class instance
 ```
 
@@ -75,12 +58,12 @@ class Foo {
   }
 }
 
-Ioc.bind('App/Foo', function (app) {
+ioc.bind('App/Foo', function (app) {
   const config = app.use('App/Config')
   return new Foo(config)
 })
 
-const foo = Ioc.use('App/Foo')
+const foo = ioc.use('App/Foo')
 ```
 
 This time, we injected `App/Config` behind the scenes and the consumer of the `Foo` class won't have to worry about passing the config manually.
@@ -89,17 +72,17 @@ This time, we injected `App/Config` behind the scenes and the consumer of the `F
 Checkout the [official documentation](http://adonisjs.com/docs/ioc-container) at the AdonisJs website for more info.
 
 ## Tests
-Tests are written using `mocha` and `chaijs`. Run the following commands to run tests.
+Tests are written using [japa](http://github.com/thetutlage/japa). Run the following commands to run tests.
 
 ```bash
+npm run test:local
+
+# report coverage
 npm run test
-npm run test -- --coverage
-npm run test -- --lcov
+
+# on windows
+npm run test:win
 ```
-
-1. `--coverage` will output the coverage to the `coverage` directory.
-
-2. `--lcov` will output the coverage to Coveralls.
 
 ## Release History
 

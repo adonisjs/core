@@ -120,7 +120,10 @@ test.group('Resolver', (group) => {
     this.ioc.bind('Adonis/Src/Foo', function () {
       return fooInstance
     })
-    assert.deepEqual(resolver.resolveFunc('Adonis/Src/Foo.bar'), {instance: fooInstance, isClosure: false, method: fooInstance.bar})
+    const resolvedValue = resolver.resolveFunc('Adonis/Src/Foo.bar')
+    assert.isFunction(resolvedValue.method)
+    delete resolvedValue.method
+    assert.deepEqual(resolvedValue, { instance: fooInstance, isClosure: false })
   })
 
   test('throw exception when method does not exists', (assert) => {
@@ -156,7 +159,10 @@ test.group('Resolver', (group) => {
     this.ioc.bind('Adonis/Src.Foo', function () {
       return fooInstance
     })
-    assert.deepEqual(resolver.resolveFunc('Adonis/Src\\.Foo.bar'), {instance: fooInstance, isClosure: false, method: fooInstance.bar})
+    const resolvedValue = resolver.resolveFunc('Adonis/Src\\.Foo.bar')
+    assert.isFunction(resolvedValue.method)
+    delete resolvedValue.method
+    assert.deepEqual(resolvedValue, {instance: fooInstance, isClosure: false})
   })
 
   test('throw exception when binding is not a string, neither a callback', (assert) => {

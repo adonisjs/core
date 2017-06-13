@@ -33,10 +33,11 @@ test.group('Registrar', function () {
     const ioc = new Ioc()
     const registrar = new Registrar(ioc)
     registrar
-    .registerAndBoot([
+    .providers([
       path.join(__dirname, './app/providers/FooProvider'),
-      path.join(__dirname, './app/providers/BarProvider')]
-    )
+      path.join(__dirname, './app/providers/BarProvider')
+    ])
+    .registerAndBoot()
     .then(() => {
       assert.equal(ioc.use('App/Bar'), 'foo')
       done()
@@ -59,10 +60,11 @@ test.group('Registrar', function () {
     })
 
     registrar
-    .register([
+    .providers([
       path.join(__dirname, './app/providers/FooProvider'),
-      path.join(__dirname, './app/providers/BarProvider')]
-    )
+      path.join(__dirname, './app/providers/BarProvider')
+    ])
+    .register()
 
     assert.equal(providersRegistered, true)
     assert.equal(providersBooted, true)
@@ -83,13 +85,28 @@ test.group('Registrar', function () {
     })
 
     registrar
-    .registerAndBoot([
+    .providers([
       path.join(__dirname, './app/providers/FooProvider'),
-      path.join(__dirname, './app/providers/BarProvider')]
-    )
+      path.join(__dirname, './app/providers/BarProvider')
+    ])
+    .registerAndBoot()
     .then(() => {
       assert.equal(providersRegistered, true)
       assert.equal(providersBooted, true)
+      done()
+    })
+    .catch(done)
+  })
+
+  test('do not call boot when it does not exists', function (done) {
+    const ioc = new Ioc()
+    const registrar = new Registrar(ioc)
+    registrar
+    .providers([
+      path.join(__dirname, './app/providers/NoBootProvider')
+    ])
+    .registerAndBoot()
+    .then(() => {
       done()
     })
     .catch(done)
