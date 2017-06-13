@@ -221,9 +221,9 @@ class RouteManager {
    */
   on (route) {
     return {
-      render: (view) => {
-        return this.route(route, function () {
-          this.view.render(view)
+      render: (template) => {
+        return this.route(route, ({ view }) => {
+          return view.render(template)
         }, ['HEAD', 'GET'])
       }
     }
