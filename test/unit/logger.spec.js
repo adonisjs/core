@@ -43,6 +43,9 @@ test.group('Logger | File Driver', (group) => {
   })
 
   group.after((done) => {
+    if (process.platform === 'win32') {
+      return done()
+    }
     fs.remove(path.join(__dirname, 'tmp'), done)
   })
 

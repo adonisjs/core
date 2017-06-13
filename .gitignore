@@ -5,3 +5,4 @@ npm-debug.log
 .idea
 out
 .nyc_output
+test/tmp
