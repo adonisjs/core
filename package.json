@@ -1,5 +1,5 @@
 {
-  "name": "framework",
+  "name": "@adonisjs/framework",
   "version": "3.0.9",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
@@ -50,7 +50,7 @@
     "lodash": "^4.17.4",
     "macroable": "^1.0.0",
     "node-cookie": "^2.0.0",
-    "node-exceptions": "^2.0.1",
+    "node-exceptions": "^2.0.2",
     "node-req": "^2.0.1",
     "node-res": "^3.0.2",
     "path-to-regexp": "^1.7.0",
