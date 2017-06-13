@@ -144,9 +144,10 @@ class Server {
 
     return this
       .middleware
+      .runner(middleware)
       .resolve(this._resolveMiddleware.bind(this))
       .withParams([ctx])
-      .compose(middleware)
+      .compose()
   }
 
   /**
@@ -182,9 +183,10 @@ class Server {
 
     return this
       .middleware
+      .runner(middleware)
       .resolve(this._resolveMiddleware.bind(this))
       .withParams([ctx])
-      .compose(middleware)
+      .compose()
   }
 
   /**
