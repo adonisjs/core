@@ -200,6 +200,21 @@ class AppProvider extends ServiceProvider {
   }
 
   /**
+   * Register the exception handler
+   *
+   * @method _registerExceptionHandler
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _registerExceptionHandler () {
+    this.app.bind('Adonis/Exceptions/Handler', () => {
+      return require('../src/App/Handler')
+    })
+  }
+
+  /**
    * Register the encryption provider
    *
    * @method _registerEncryption
@@ -232,6 +247,7 @@ class AppProvider extends ServiceProvider {
     this._registerServer()
     this._registerHash()
     this._registerException()
+    this._registerExceptionHandler()
     this._registerEncryption()
     this._registerStaticMiddleware()
   }
