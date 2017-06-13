@@ -1,5 +1,5 @@
 {
-  "name": "adonis-framework",
+  "name": "framework",
   "version": "3.0.9",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test": "nyc npm run test:local",
     "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -84,5 +84,8 @@
   "bugs": {
     "url": "https://github.com/adonisjs/adonis-framework/issues"
   },
-  "homepage": "https://github.com/adonisjs/adonis-framework#readme"
+  "homepage": "https://github.com/adonisjs/adonis-framework#readme",
+  "bin": {
+    "framework": "index.js"
+  }
 }
