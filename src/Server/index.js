@@ -523,7 +523,7 @@ class Server {
    * @return {Object}
    */
   listen (host = 'localhost', port = 3333) {
-    this.Logger.info('serving app on %s:%s', host, port)
+    this.Logger.info('serving app on http://%s:%s', host, port)
     return this.getInstance().listen(port, host)
   }
 }
