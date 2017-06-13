@@ -12,7 +12,7 @@
 const test = require('japa')
 const path = require('path')
 const Env = require('../../src/Env')
-const { Helpers } = require('adonis-sink')
+const { Helpers } = require('@adonisjs/sink')
 
 test.group('Env', (group) => {
   group.beforeEach(() => {

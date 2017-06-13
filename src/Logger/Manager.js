@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
 */
 
-const { ioc } = require('adonis-fold')
+const { ioc } = require('@adonisjs/fold')
 const Drivers = require('./Drivers')
 const Logger = require('./index')
 const CE = require('../Exceptions')

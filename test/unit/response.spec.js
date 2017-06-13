@@ -130,7 +130,7 @@ test.group('Response', () => {
     })
     const res = await supertest(server).get('/').expect(200)
     assert.isObject(res.body)
-    assert.equal(res.body.name, 'adonis-framework')
+    assert.equal(res.body.name, '@adonisjs/framework')
   })
 
   test('send 404 when file does not exists', async (assert) => {
@@ -149,7 +149,7 @@ test.group('Response', () => {
 
     const res = await supertest(server).get('/').expect('Content-Disposition', /filename="package.json"/)
     assert.isObject(res.body)
-    assert.equal(res.body.name, 'adonis-framework')
+    assert.equal(res.body.name, '@adonisjs/framework')
   })
 
   test('force download the file with different file name', async (assert) => {
@@ -160,7 +160,7 @@ test.group('Response', () => {
 
     const res = await supertest(server).get('/').expect('Content-Disposition', /filename="adonis.json"/)
     assert.isObject(res.body)
-    assert.equal(res.body.name, 'adonis-framework')
+    assert.equal(res.body.name, '@adonisjs/framework')
   })
 
   test('set the location http header', async (assert) => {

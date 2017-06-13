@@ -14,10 +14,10 @@ const http = require('http')
 const supertest = require('supertest')
 const simpleEncryptor = require('simple-encryptor')
 const sig = require('cookie-signature')
-const SECRET = 'averylongsecretkey'
-const { Config } = require('adonis-sink')
+const { Config } = require('@adonisjs/sink')
 const Request = require('../../src/Request')
 
+const SECRET = 'averylongsecretkey'
 /**
  * Setting up config provider to be used
  * for testing.

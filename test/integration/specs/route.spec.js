@@ -2,7 +2,7 @@
 
 const test = require('japa')
 const supertest = require('supertest')
-const { ioc } = require('adonis-fold')
+const { ioc } = require('@adonisjs/fold')
 const RouteStore = require('../../../src/Route/Store')
 const appUrl = `http://${process.env.HOST}:${process.env.PORT}`
 

@@ -12,7 +12,7 @@
 const http = require('http')
 const _ = require('lodash')
 const Middleware = require('co-compose')
-const { resolver } = require('adonis-fold')
+const { resolver } = require('@adonisjs/fold')
 const debug = require('debug')('adonis:framework')
 
 const MiddlewareWrapper = require('./MiddlewareWrapper')

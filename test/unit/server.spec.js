@@ -11,8 +11,8 @@
 
 const test = require('japa')
 const http = require('http')
-const { setupResolver, Config, Logger } = require('adonis-sink')
-const { ioc } = require('adonis-fold')
+const { setupResolver, Config, Logger } = require('@adonisjs/sink')
+const { ioc } = require('@adonisjs/fold')
 const supertest = require('supertest')
 const NE = require('node-exceptions')
 

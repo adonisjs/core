@@ -10,9 +10,10 @@
 */
 
 const test = require('japa')
-const { Config } = require('adonis-sink')
-const Encryption = require('../../src/Encryption')
+const { Config } = require('@adonisjs/sink')
 const _ = require('lodash')
+
+const Encryption = require('../../src/Encryption')
 
 const getAppKey = function () {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
