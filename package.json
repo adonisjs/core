@@ -60,7 +60,7 @@
     "node-cookie": "^1.0.4",
     "node-exceptions": "^1.0.3",
     "node-req": "^1.0.5",
-    "node-res": "^3.0.1",
+    "node-res": "^4.0.0",
     "nunjucks": "^3.0.0",
     "path-to-regexp": "^1.7.0",
     "require-all": "^2.1.0",
