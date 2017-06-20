@@ -41,7 +41,7 @@
     "pem": "^1.9.4",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",
-    "sinon": "^1.17.7",
+    "sinon": "^2.3.5",
     "standard": "^8.6.0",
     "supertest": "^3.0.0",
     "test-console": "^1.0.0",
