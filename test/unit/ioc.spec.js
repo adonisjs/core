@@ -114,7 +114,7 @@ test.group('Ioc', function () {
   test('should be able to load a local modules via Ioc.use method', function () {
     const ioc = new Ioc()
     const packageFile = ioc.use('../../package')
-    assert.equal(packageFile.name, 'adonis-fold')
+    assert.equal(packageFile.name, '@adonisjs/fold')
   })
 
   test('should be able to define aliases for bindings', function () {

@@ -1,3 +1,16 @@
+<a name="4.0.0"></a>
+# [4.0.0](https://github.com/poppinss/adonis-fold/compare/v3.0.3...v4.0.0) (2017-06-21)
+
+
+### Features
+
+* first commit for 4.0 dawn ([9e728a0](https://github.com/poppinss/adonis-fold/commit/9e728a0))
+* **ioc:** add suport for escaped bindings ([8ee7554](https://github.com/poppinss/adonis-fold/commit/8ee7554))
+* **registrar:** register and boot providers in multiple steps ([9732d75](https://github.com/poppinss/adonis-fold/commit/9732d75))
+* **resolver:** add resolver to resolve dependencies ([bab45fc](https://github.com/poppinss/adonis-fold/commit/bab45fc))
+
+
+
 <a name="3.0.3"></a>
 ## 3.0.3 (2016-08-26)
 
