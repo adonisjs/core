@@ -1,3 +1,41 @@
+<a name="4.0.0"></a>
+# 4.0.0 (2017-06-21)
+
+
+### Bug Fixes
+
+* changes after using scoped packages ([2456d12](https://github.com/adonisjs/adonis-framework/commit/2456d12))
+* **bin:** fix test commands to work across node versions ([21a1703](https://github.com/adonisjs/adonis-framework/commit/21a1703))
+* **request:** return false when request.match receives empty array ([92de641](https://github.com/adonisjs/adonis-framework/commit/92de641))
+* **route:** use ctx to pull view instance ([223a3a5](https://github.com/adonisjs/adonis-framework/commit/223a3a5))
+
+
+### Features
+
+* initiate re-write ([a8bafb5](https://github.com/adonisjs/adonis-framework/commit/a8bafb5))
+* **config:** add merge method ([e691c9e](https://github.com/adonisjs/adonis-framework/commit/e691c9e))
+* **context:** add context object for request lifecycle ([b100775](https://github.com/adonisjs/adonis-framework/commit/b100775))
+* **encryption:** add encryption provider ([3ace66e](https://github.com/adonisjs/adonis-framework/commit/3ace66e))
+* **env:** add env provider ([d20f105](https://github.com/adonisjs/adonis-framework/commit/d20f105))
+* **exception:** add support for exception handlers ([87157e3](https://github.com/adonisjs/adonis-framework/commit/87157e3))
+* **exception:** add support for exceptions to handle themselves ([e775931](https://github.com/adonisjs/adonis-framework/commit/e775931))
+* **exception:** implement default exception handler ([7d37620](https://github.com/adonisjs/adonis-framework/commit/7d37620))
+* **hash:** add hash provider ([9533bfb](https://github.com/adonisjs/adonis-framework/commit/9533bfb))
+* **logger:** add logger manager & register provider ([899151c](https://github.com/adonisjs/adonis-framework/commit/899151c))
+* **logger:** add logger provider ([fba5f9f](https://github.com/adonisjs/adonis-framework/commit/fba5f9f))
+* **macroable:** add support for singleton getters ([3880479](https://github.com/adonisjs/adonis-framework/commit/3880479))
+* **route:** add prependMiddleware method to route ([fff7c78](https://github.com/adonisjs/adonis-framework/commit/fff7c78))
+* **route:** resolve dynamic subdomains and pass via ctx ([212a8e7](https://github.com/adonisjs/adonis-framework/commit/212a8e7))
+* **static:** add static resources middleware ([82f41f5](https://github.com/adonisjs/adonis-framework/commit/82f41f5))
+* **views:** add views provider ([3275416](https://github.com/adonisjs/adonis-framework/commit/3275416))
+
+
+### Performance Improvements
+
+* **route:** do not process static and matched urls ([ea857b8](https://github.com/adonisjs/adonis-framework/commit/ea857b8))
+
+
+
 <a name="3.0.13"></a>
 ## [3.0.13](https://github.com/adonisjs/adonis-framework/compare/v3.0.12...v3.0.13) (2017-04-25)
 
