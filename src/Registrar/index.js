@@ -1,83 +1,200 @@
 'use strict'
 
-/**
-  * adonis-fold
-  * Copyright(c) 2015-2015 Harminder Virk
-  * MIT Licensed
-*/
-
-const parallel = require('co-parallel')
-const co = require('co')
-const Ioc = require('../Ioc')
 const _ = require('lodash')
 const requireStack = require('require-stack')
-
-let Registrar = exports = module.exports = {}
-
-/**
- * map over all the providers and return an array
- * of unique providers
- *
- * @param   {Array} arrayOfProviders
- *
- * @return  {Array}                  [description]
- *
- * @private
- */
-Registrar._mapProviders = function (arrayOfProviders) {
-  return _.chain(arrayOfProviders)
-  .unique()
-  .map(function (provider) {
-    provider = provider.trim()
-    const Module = requireStack(provider)
-    return new Module()
-  }).value()
-}
+const emitter = new (require('events'))()
+const CE = require('../../src/Exceptions')
+const ServiceProvider = require('../../src/ServiceProvider')
 
 /**
- * calls register method on all the given providers
+ * Registrar class is used to register and boot providers. This
+ * should be done once and at the time of booting the app.
  *
- * @param  {Array} providers
- *
- * @return {Array}
+ * @module Adonis
+ * @submodule fold
+ * @class Registrar
  */
-Registrar._callRegister = function (providers) {
-  return _(providers)
-  .filter((provider) => typeof (provider.register) === 'function')
-  .map((provider) => provider.register())
-  .value()
+class Registrar {
+  constructor (Ioc) {
+    this.Ioc = Ioc
+    this._providers = []
+  }
+
+  /**
+   * Listen for registrar specific events
+   *
+   * @method on
+   *
+   * @param {string} name
+   * @param {function} callback
+   */
+  on (name, callback) {
+    emitter.on(name, callback)
+  }
+
+  /**
+   * Listen for registrar specific events
+   * just for one time
+   *
+   * @method once
+   *
+   * @param {string} name
+   * @param {function} callback
+   */
+  once (name, callback) {
+    emitter.once(name, callback)
+  }
+
+  /**
+   * Remove a listener
+   *
+   * @method removeListener
+   *
+   * @param {string} name
+   * @param {function} callback
+   */
+  removeListener (name, callback) {
+    emitter.removeListener(name, callback)
+  }
+
+  /**
+   * Event fires when all providers have been
+   * registered
+   *
+   * @event providers:registered
+   */
+  get PROVIDERS_REGISTERED () {
+    return 'providers:registered'
+  }
+
+  /**
+   * Event fires when all providers have been
+   * booted.
+   *
+   * @event providers:booted
+   */
+  get PROVIDERS_BOOTED () {
+    return 'providers:booted'
+  }
+
+  /**
+   * Loop over providers array and returns an instance
+   * of each provider class. It will also require
+   * the files in the process.
+   *
+   * @private
+   *
+   * @method _getProvidersInstance
+   *
+   * @param {Array} arrayOfProviders
+   *
+   * @return {Array}
+   */
+  _getProvidersInstance (arrayOfProviders) {
+    return _(arrayOfProviders)
+    .uniq()
+    .map((provider) => {
+      const Module = requireStack(provider.trim())
+      if (Module.prototype instanceof ServiceProvider === false) {
+        throw CE.RuntimeException.invalidServiceProvider(Module.name)
+      }
+      return new Module(this.Ioc)
+    })
+    .value()
+  }
+
+  /**
+   * Registers the providers by calling register method on
+   * them. Providers that does not contain the register
+   * method will be skipped.
+   *
+   * @private
+   *
+   * @method _registerProviders
+   *
+   * @param {Array} providers
+   */
+  _registerProviders (providers) {
+    _(providers)
+    .filter((provider) => typeof (provider.register) === 'function')
+    .each((provider) => provider.register())
+  }
+
+  /**
+   * Boots the providers by calling boot method on them.
+   * Providers that does have the boot method will be
+   * skipped.
+   *
+   * @private
+   *
+   * @method _bootProviders
+   *
+   * @param {Array} providers
+   *
+   * @return {Promise}
+   */
+  _bootProviders (providers) {
+    return _(providers)
+    .filter((provider) => typeof (provider.boot) === 'function')
+    .map((provider) => provider.boot())
+    .value()
+  }
+
+  /**
+   * Setting providers that will later be registered
+   * and booted.
+   *
+   * @method providers
+   *
+   * @param  {Array} arrayOfProviders
+   *
+   * @chainable
+   */
+  providers (arrayOfProviders) {
+    if (arrayOfProviders instanceof Array === false) {
+      throw CE.InvalidArgumentException.invalidParameters('register expects an array of providers to be registered')
+    }
+    this._providers = this._getProvidersInstance(arrayOfProviders)
+    return this
+  }
+
+  /**
+   * Register providers earlier defined via the
+   * `providers` method.
+   *
+   * @method register
+   *
+   * @return {void}
+   */
+  register () {
+    this._registerProviders(this._providers)
+    emitter.emit(this.PROVIDERS_REGISTERED)
+  }
+
+  /**
+   * Boot providers earlier defined via the
+   * `providers` method.
+   *
+   * @method boot
+   *
+   * @return {void}
+   */
+  async boot () {
+    await Promise.all(this._bootProviders(this._providers))
+    emitter.emit(this.PROVIDERS_BOOTED)
+  }
+
+  /**
+   * Register and boot providers together
+   *
+   * @method registerAndBoot
+   *
+   * @return {void}
+   */
+  async registerAndBoot () {
+    this.register()
+    await this.boot()
+  }
 }
 
-/**
- * call boot method on provider if defined
- *
- * @param  {Array} providers
- *
- * @return {Array}
- */
-Registrar._callBoot = function (providers) {
-  return _(providers)
-  .filter((provider) => typeof (provider.boot) === 'function')
-  .map((provider) => provider.boot())
-  .value()
-}
-
-/**
- * registers an array of providers by
- * called their register method.
- *
- * @param  {Array} arrayOfProviders
- *
- * @return {void}
- *
- * @public
- */
-Registrar.register = function (arrayOfProviders) {
-  const providers = Registrar._mapProviders(arrayOfProviders)
-  return co(function * () {
-    yield parallel(Registrar._callRegister(providers))
-    Ioc.emit('providers:registered')
-    yield parallel(Registrar._callBoot(providers))
-    Ioc.emit('providers:booted')
-  })
-}
+module.exports = Registrar

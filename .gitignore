@@ -2,3 +2,5 @@ coverage
 node_modules
 .DS_Store
 npm-debug.log
+out
+.nyc_output

@@ -1,16 +1,20 @@
 'use strict'
 
-/**
+/*
  * adonis-fold
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
 */
 
-const Ioc = require('./src/Ioc')
+const ioc = new (require('./src/Ioc'))()
 const ServiceProvider = require('./src/ServiceProvider')
-const Registrar = require('./src/Registrar')
+const registrar = new (require('./src/Registrar'))(ioc)
+const resolver = new (require('./src/Resolver/Manager'))(ioc)
 
-global.use = Ioc.use
-global.make = Ioc.make
+global.use = ioc.use.bind(ioc)
+global.make = ioc.make.bind(ioc)
 
-module.exports = { Ioc, ServiceProvider, Registrar }
+module.exports = { ioc, ServiceProvider, registrar, resolver }

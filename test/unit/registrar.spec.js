@@ -1,62 +1,114 @@
 'use strict'
 
-/* global describe, it*/
-/**
- * adonis-fold
- * Copyright(c) 2015-2015 Harminder Virk
- * MIT Licensed
-*/
-
 const chai = require('chai')
-const expect = chai.expect
-const Registrar = require('../../').Registrar
-const Ioc = require('../../').Ioc
 const path = require('path')
+const test = require('japa')
+const assert = chai.assert
+const Registrar = require('../../src/Registrar')
+const Ioc = require('../../src/Ioc')
 
-describe('Registrar', function () {
-  it('should register an array of providers to ioc container', function (done) {
-    Registrar
-      .register([path.join(__dirname, './app/providers/FooProvider')])
-      .then(function () {
-        expect(Ioc.use('Providers/Foo').foo).to.equal('bar')
-        done()
-      }).catch(done)
+test.group('Registrar', function () {
+  test('throw an exception when an array of paths are not provided to the providers method', function () {
+    const ioc = new Ioc()
+    const registrar = new Registrar(ioc)
+    const fn = () => registrar.providers(path.join(__dirname, './app/providers/FooProvider'))
+    assert.throw(fn, 'E_INVALID_PARAMETER: register expects an array of providers to be registered')
   })
 
-  it('should only bind unique providers', function (done) {
-    Registrar
-      .register([path.join(__dirname, './app/providers/FooProvider'), path.join(__dirname, './app/providers/FooProvider')])
-      .then(function () {
-        expect(Ioc.use('Providers/Foo').foo).to.equal('bar')
-        done()
-      }).catch(done)
+  test('set providers via array of modules', function () {
+    const ioc = new Ioc()
+    const registrar = new Registrar(ioc)
+    registrar.providers([path.join(__dirname, './app/providers/FooProvider')]).register()
+    assert.property(ioc.getBindings(), 'App/Foo')
   })
 
-  it('should call boot method on provider when defined after register method', function (done) {
-    Registrar
-      .register([path.join(__dirname, './app/providers/FooProvider'), path.join(__dirname, './app/providers/BarProvider')])
-      .then(function () {
-        expect(Ioc.use('Providers/Bar').bar).deep.equal({foo: 'bar'})
-        expect(Ioc.use('Providers/Bar').boot).to.equal(true)
-        done()
-      }).catch(done)
+  test('should throw an exception if class is not extended by service provider', function () {
+    const ioc = new Ioc()
+    const registrar = new Registrar(ioc)
+    const fn = () => registrar.providers([path.join(__dirname, './app/providers/InvalidProvider')])
+    assert.throw(fn, 'E_INVALID_SERVICE_PROVIDER: InvalidProvider must extend base service provider class')
   })
 
-  it('should emit register and boot events when all providers are registered', function (done) {
+  test('should call the boot method only when all providers have been registered', function (done) {
+    const ioc = new Ioc()
+    const registrar = new Registrar(ioc)
+    registrar
+    .providers([
+      path.join(__dirname, './app/providers/FooProvider'),
+      path.join(__dirname, './app/providers/BarProvider')
+    ])
+    .registerAndBoot()
+    .then(() => {
+      assert.equal(ioc.use('App/Bar'), 'foo')
+      done()
+    })
+    .catch(done)
+  })
+
+  test('should emit registered event', function () {
+    const ioc = new Ioc()
+    const registrar = new Registrar(ioc)
     let providersRegistered = false
     let providersBooted = false
-    Ioc.on('providers:registered', function () {
+
+    registrar.on('providers:registered', () => {
       providersRegistered = true
     })
-    Ioc.on('providers:booted', function () {
+
+    registrar.on('providers:registered', () => {
       providersBooted = true
     })
-    Registrar
-      .register([path.join(__dirname, './app/providers/FooProvider'), path.join(__dirname, './app/providers/BarProvider')])
-      .then(function () {
-        expect(providersBooted).to.equal(true)
-        expect(providersRegistered).to.equal(true)
-        done()
-      }).catch(done)
+
+    registrar
+    .providers([
+      path.join(__dirname, './app/providers/FooProvider'),
+      path.join(__dirname, './app/providers/BarProvider')
+    ])
+    .register()
+
+    assert.equal(providersRegistered, true)
+    assert.equal(providersBooted, true)
+  })
+
+  test('should emit all lifecycle events', function (done) {
+    const ioc = new Ioc()
+    const registrar = new Registrar(ioc)
+    let providersRegistered = false
+    let providersBooted = false
+
+    registrar.on('providers:registered', () => {
+      providersRegistered = true
+    })
+
+    registrar.on('providers:registered', () => {
+      providersBooted = true
+    })
+
+    registrar
+    .providers([
+      path.join(__dirname, './app/providers/FooProvider'),
+      path.join(__dirname, './app/providers/BarProvider')
+    ])
+    .registerAndBoot()
+    .then(() => {
+      assert.equal(providersRegistered, true)
+      assert.equal(providersBooted, true)
+      done()
+    })
+    .catch(done)
+  })
+
+  test('do not call boot when it does not exists', function (done) {
+    const ioc = new Ioc()
+    const registrar = new Registrar(ioc)
+    registrar
+    .providers([
+      path.join(__dirname, './app/providers/NoBootProvider')
+    ])
+    .registerAndBoot()
+    .then(() => {
+      done()
+    })
+    .catch(done)
   })
 })

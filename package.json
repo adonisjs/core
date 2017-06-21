@@ -1,37 +1,49 @@
 {
-  "name": "adonis-fold",
-  "version": "3.0.3",
+  "name": "@adonisjs/fold",
+  "version": "4.0.0",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test/unit && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "istanbul cover _mocha test/unit --bail",
-    "lint": "standard src/**/*.js test/**/*.spec.js"
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "FORCE_COLOR=true node bin/index.js --local",
+    "test": "nyc npm run test:local",
+    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "before",
+      "use",
+      "make"
+    ],
+    "ignore": [
+      "**/out/"
+    ]
   },
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "chai": "^3.3.0",
-    "coveralls": "^2.11.4",
-    "cz-conventional-changelog": "^1.1.5",
-    "istanbul": "^0.3.22",
-    "mocha": "^3.0.1",
-    "mocha-lcov-reporter": "^1.0.0",
-    "standard": "^7.1.2"
+    "coveralls": "^2.13.1",
+    "cz-conventional-changelog": "^2.0.0",
+    "japa": "^1.0.3",
+    "japa-cli": "^1.0.1",
+    "nyc": "^11.0.2",
+    "semver": "^5.3.0",
+    "standard": "^10.0.2"
   },
   "dependencies": {
-    "cat-log": "^1.0.0",
-    "co": "^4.6.0",
-    "co-parallel": "^1.0.0",
-    "coveralls": "^2.11.12",
-    "dwell": "^1.0.0",
-    "eventemitter2": "^2.1.0",
-    "lodash": "^3.10.1",
-    "node-exceptions": "^1.0.3",
-    "require-stack": "^1.0.1"
+    "caller": "^1.0.1",
+    "debug": "^2.6.8",
+    "lodash": "^4.17.4",
+    "node-exceptions": "^2.0.2",
+    "require-stack": "^1.0.2"
   },
   "repository": {
     "type": "git",
@@ -53,5 +65,13 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "nyc": {
+    "include": [
+      "src"
+    ]
+  },
+  "bin": {
+    "fold": "index.js"
   }
 }
