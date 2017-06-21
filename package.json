@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/framework",
-  "version": "3.0.9",
+  "version": "4.0.0",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "git+https://github.com/poppinss/adonis-fold.git#dawn",
+    "@adonisjs/fold": "^4.0.0",
     "@adonisjs/sink": "^1.0.8",
     "cookie-signature": "^1.0.6",
     "coveralls": "^2.13.1",
