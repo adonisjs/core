@@ -3,12 +3,12 @@
 
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
-[![Downloads Stats][npm-downloads]][npm-url]
 [![Appveyor][appveyor-image]][appveyor-url]
+[![Coveralls][coveralls-image]][coveralls-url]
 
 Fold is a dependency manager for Node.js used by AdonisJs framework. Below is the list of features.
 
-<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="140px">
+<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="100px">
 
 ## Features
 
@@ -96,22 +96,16 @@ Checkout [LICENSE.txt](LICENSE.txt) for license information
 
 Harminder Virk (Aman) - [https://github.com/thetutlage](https://github.com/thetutlage)
 
-[appveyor-image]: https://ci.appveyor.com/api/projects/status/github/poppinss/adonis-fold?branch=dawn&svg=true&passingText=Passing%20On%20Windows
+[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/adonis-fold/master.svg?style=flat-square
+
 [appveyor-url]: https://ci.appveyor.com/project/thetutlage/adonis-fold
 
-[npm-image]: https://img.shields.io/npm/v/adonis-fold.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/adonis-fold
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/fold.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@adonisjs/fold
 
-[travis-image]: https://img.shields.io/travis/poppinss/adonis-fold/dawn.svg?style=flat-square
+[travis-image]: https://img.shields.io/travis/poppinss/adonis-fold/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/poppinss/adonis-fold
 
-[gitter-url]: https://gitter.im/adonisjs/adonis-framework
-[gitter-image]: https://img.shields.io/badge/gitter-join%20us-1DCE73.svg?style=flat-square
+[coveralls-image]: https://img.shields.io/coveralls/poppinss/adonis-fold/develop.svg?style=flat-square
 
-[trello-url]: https://trello.com/b/yzpqCgdl/adonis-for-humans
-[trello-image]: https://img.shields.io/badge/trello-roadmap-89609E.svg?style=flat-square
-
-[patreon-url]: https://www.patreon.com/adonisframework
-[patreon-image]: https://img.shields.io/badge/patreon-support%20AdonisJs-brightgreen.svg?style=flat-square
-
-[npm-downloads]: https://img.shields.io/npm/dm/adonis-fold.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/github/poppinss/adonis-fold
