@@ -56,6 +56,15 @@ test.group('Logger | File Driver', (group) => {
     assert.equal(fileDriver.logger.transports['adonis-app'].dirname, path.join(__dirname, 'tmp'))
   })
 
+  test('do not override filename when it is absolute path', (assert) => {
+    const config = new Config()
+    config.set('app.logger.file', {
+      filename: path.join(__dirname, 'my.log')
+    })
+    const fileDriver = new FileDriver(config, this.helpers)
+    assert.equal(fileDriver.config.filename, path.join(__dirname, 'my.log'))
+  })
+
   test('log info to the file', (assert, done) => {
     const fileDriver = new FileDriver(this.config, this.helpers)
     fileDriver.log(6, 'hello', () => {
