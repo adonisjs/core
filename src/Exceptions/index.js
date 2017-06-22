@@ -34,14 +34,14 @@ class InvalidArgumentException extends NE.InvalidArgumentException {
    * Throws exception by instantiating the class and setting error code
    * to `E_INVALID_PARAMETER`.
    *
-   * @method invalidParamter
+   * @method invalidParameter
    *
    * @param  {String}        message
    * @param  {Mixed}         [actualValue]
    *
    * @return {Object}
    */
-  static invalidParamter (message, actualValue = null) {
+  static invalidParameter (message, actualValue = null) {
     message = actualValue ? `${message} instead received {${toValueType(actualValue)}}` : message
     return new this(message, 500, 'E_INVALID_PARAMETER')
   }

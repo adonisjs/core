@@ -59,7 +59,7 @@ class Server {
    */
   _registerMiddleware (tag, middleware, errorMessage) {
     if (!Array.isArray(middleware)) {
-      throw CE.InvalidArgumentException.invalidParamter(errorMessage, middleware)
+      throw CE.InvalidArgumentException.invalidParameter(errorMessage, middleware)
     }
 
     const existingMiddleware = this.middleware.tag(tag).get() || []
@@ -401,7 +401,7 @@ class Server {
    */
   registerNamed (middleware) {
     if (!_.isPlainObject(middleware)) {
-      throw CE.InvalidArgumentException.invalidParamter('server.registerNamed accepts a key/value pair of middleware', middleware)
+      throw CE.InvalidArgumentException.invalidParameter('server.registerNamed accepts a key/value pair of middleware', middleware)
     }
 
     this._registerMiddleware('named', _.keys(middleware), '')

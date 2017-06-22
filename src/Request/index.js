@@ -266,7 +266,7 @@ class Request extends Macroable {
       return nodeReq.method(this.request)
     }
     const method = this.input('_method', this.intended())
-    return method && method.toUpperCase ? method.toUpperCase() : method
+    return method.toUpperCase()
   }
 
   /**

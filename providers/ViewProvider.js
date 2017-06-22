@@ -48,7 +48,14 @@ class ViewProvider extends ServiceProvider {
      */
     Context.getter('view', function () {
       const View = use('Adonis/Src/View')
-      return View.share({ request: this.request })
+      const requestLocals = {
+        request: this.request,
+        url: this.request.url(),
+        is: function (matchWith) {
+          return this.url().replace(/^\/|\/$/) === matchWith.replace(/^\/|\/$/)
+        }
+      }
+      return View.share(requestLocals)
     }, true)
   }
 }

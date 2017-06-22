@@ -43,18 +43,6 @@ class View {
   }
 
   /**
-   * Registers globals specific to AdonisJs
-   *
-   * @method _registerAdonisGlobals
-   *
-   * @return {void}
-   *
-   * @private
-   */
-  _registerAdonisGlobals () {
-  }
-
-  /**
    * Base presenter to be extended when creating
    * presenters for views.
    *
