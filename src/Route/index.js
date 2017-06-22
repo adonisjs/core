@@ -56,7 +56,7 @@ class Route {
    */
   _validateRoute (route) {
     if (typeof (route) !== 'string') {
-      throw CE.InvalidArgumentException.invalidParamter('Cannot instantiate route without a valid url string', route)
+      throw CE.InvalidArgumentException.invalidParameter('Cannot instantiate route without a valid url string', route)
     }
   }
 
@@ -75,7 +75,7 @@ class Route {
    */
   _validateHandler (handler) {
     if (['string', 'function'].indexOf(typeof (handler)) === -1) {
-      throw CE.InvalidArgumentException.invalidParamter('Cannot instantiate route without route handler', handler)
+      throw CE.InvalidArgumentException.invalidParameter('Cannot instantiate route without route handler', handler)
     }
   }
 
@@ -93,7 +93,7 @@ class Route {
    */
   _validateVerbs (verbs) {
     if (!Array.isArray(verbs)) {
-      throw CE.InvalidArgumentException.invalidParamter('New route expects HTTP verbs to be an array', verbs)
+      throw CE.InvalidArgumentException.invalidParameter('New route expects HTTP verbs to be an array', verbs)
     }
   }
 
