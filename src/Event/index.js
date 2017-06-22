@@ -1,6 +1,6 @@
 'use strict'
 
-/**
+/*
  * adonis-framework
  *
  * (c) Harminder Virk <virk@adonisjs.com>
@@ -9,291 +9,306 @@
  * file that was distributed with this source code.
 */
 
-const EventEmitter2 = require('eventemitter2').EventEmitter2
-const Ioc = require('adonis-fold').Ioc
-const Resolver = require('adonis-binding-resolver')
-const resolver = new Resolver(Ioc)
 const _ = require('lodash')
-const util = require('../../lib/util')
-const co = require('co')
+const { resolver } = require('@adonisjs/fold')
+const Resetable = require('resetable')
+const EventEmitter = require('eventemitter2').EventEmitter2
 const CE = require('../Exceptions')
 
 class Event {
-
-  constructor (Config, Helpers) {
-    const options = Config.get('event')
-    this.listenersPath = 'Listeners'
-    this.helpers = Helpers
-    this.namedListeners = {}
-    this.listenerLimit = null
-    this.emitter = new EventEmitter2(options)
+  constructor (Config) {
+    this.emitter = new EventEmitter(Config.merge('app.events', {
+      wildcard: true,
+      delimiter: '::',
+      newListener: false
+    }))
+    this._namespacedListeners = {}
+    this._many = new Resetable(null)
   }
 
   /**
-   * here we resolve the handler from the IoC container
-   * or the actual callback if a closure was passed.
+   * Resolves a listener via Ioc Container
    *
-   * @param  {String|Function}        handler
-   * @return {Object|Function}
+   * @method _resolveListener
    *
-   * @private
-   */
-  _resolveHandler (handler) {
-    const formattedHandler = typeof (handler) === 'string' ? this.helpers.makeNameSpace(this.listenersPath, handler) : handler
-    return resolver.resolveBinding(formattedHandler)
-  }
-
-  /**
-   * here we bind the instance to the method, only
-   * if it exists.
+   * @param  {String|Function}         listener
    *
-   * @param  {Object}      instance
-   * @param  {Function}      method
    * @return {Function}
    *
    * @private
    */
-  _bindInstance (instance, method) {
-    return function () {
-      instance.emitter = this
-      instance.emitter.eventName = instance.emitter.event instanceof Array
-                                    ? instance.emitter.event.join(instance.emitter.delimiter)
-                                    : instance.emitter.event
-      method.apply(instance, arguments)
+  _resolveListener (listener) {
+    const { method } = resolver.forDir('listeners').resolveFunc(listener)
+    if (typeof (listener) === 'string') {
+      this._namespacedListeners[listener] = method
     }
+    return method
   }
 
   /**
-   * here we wrap the generator method using co.wrap
-   * and make sure to pass the instance to the
-   * method.
+   * Returns a list of listeners registered
+   * for an event
    *
-   * @param  {Object}       instance
-   * @param  {Function}       method
-   * @return {Function}
+   * @method getListeners
    *
-   * @private
-   */
-  _wrapGenerator (instance, method) {
-    return co.wrap(function * () {
-      instance.emitter = this
-      yield method.apply(instance, arguments)
-    })
-  }
-
-  /**
-   * here we make the handler method with correct context and
-   * execution type. It makes it possible to use generator
-   * methods and other methods as event handler.
+   * @param  {String}  event
    *
-   * @param  {Object|Function}     handler
-   * @return {Function}
-   *
-   * @private
-   */
-  _makeHandler (handler) {
-    let parentContext = {}
-    /**
-     * if handler is resolved out of IoC container, it will
-     * be an object with the parent context and the method.
-     */
-    if (typeof (handler) !== 'function' && handler.instance) {
-      parentContext = handler.instance
-      handler = handler.instance[handler.method]
-    }
-
-    /**
-     * if handler to the event is a generator, then we need to
-     * wrap it inside co with correct context
-     */
-    if (util.isGenerator(handler)) {
-      return this._wrapGenerator(parentContext, handler)
-    }
-
-    /**
-     * otherwise we bind the parentContext to the method
-     */
-    return this._bindInstance(parentContext, handler)
-  }
-
-  /**
-   * returns an array of listeners for a specific event
-   *
-   * @param  {String}     event
    * @return {Array}
-   *
-   * @public
    */
   getListeners (event) {
     return this.emitter.listeners(event)
   }
 
   /**
-   * it should tell whether there are any listeners
-   * for a given event or not.
+   * Returns a boolean indicating whether an
+   * event has listeners or not
+   *
+   * @method hasListeners
    *
    * @param  {String}     event
-   * @return {Boolean}
    *
-   * @public
+   * @return {Boolean}
    */
   hasListeners (event) {
-    return !!this.getListeners(event).length
+    return this.listenersCount(event) > 0
   }
 
   /**
-   * returns the status for wildcard
+   * Returns an array of listeners binded for any
+   * event.
    *
+   * @method listenersAny
    *
-   * @return {Boolean}
-   *
-   * @public
+   * @return {Array}
    */
-  wildcard () {
-    return this.emitter.wildcard
+  getListenersAny () {
+    return this.emitter.listenersAny()
   }
 
   /**
-   * removes a named handler for a given event from the
-   * emitter
+   * Returns a count of total listeners registered
+   * for an event
+   *
+   * @method listenersCount
    *
    * @param  {String}       event
-   * @param  {String}       name
    *
-   * @public
+   * @return {Number}
    */
-  removeListener (event, name) {
-    const handler = this.namedListeners[name]
-    if (!handler) {
-      throw CE.InvalidArgumentException.missingEvent(event, name)
-    }
-    this.emitter.removeListener(event, handler)
+  listenersCount (event) {
+    return this.getListeners(event).length
   }
 
   /**
-   * removes all listeners for a given or all events
+   * Bind a listener for an event
    *
-   * @param  {String}        [event]
+   * @method when
+   * @alias on
    *
-   * @public
+   * @param  {String} event
+   * @param  {Array|String|Function} listeners
+   *
+   * @return {void}
    */
-  removeListeners (event) {
-    event ? this.emitter.removeAllListeners(event) : this.emitter.removeAllListeners()
+  when (event, listeners) {
+    this.on(event, listeners)
   }
 
   /**
-   * emits a given event and passes all the data
-   * to the handler
+   * Emits a event
    *
-   * @param {...Spread} data
+   * @method emit
+   * @alias fire
    *
-   * @public
+   * @param  {String}    event
+   * @param  {Spread} args
+   *
+   * @return {void}
    */
-  emit () {
-    const args = _.toArray(arguments)
-    this.emitter.emit.apply(this.emitter, args)
+  emit (event, ...args) {
+    this.emitter.emit(event, ...args)
   }
 
   /**
+   * Emit an event
+   *
+   * @method fire
    * @alias emit
+   *
+   * @param  {String}    event
+   * @param  {Spread} args
+   *
+   * @return {void}
    */
-  fire () {
-    this.emit.apply(this, arguments)
+  fire (event, ...args) {
+    this.emit(event, ...args)
   }
 
   /**
-   * binds an handler to any event
+   * Bind a listener only for x number of times
    *
-   * @param  {Function|Sring} handler
+   * @method times
    *
-   * @public
+   * @param  {Number} number
+   *
+   * @chainable
    */
-  any (handler) {
-    resolver.validateBinding(handler)
-    handler = this._resolveHandler(handler)
-    handler = this._makeHandler(handler)
-    this.emitter.onAny(handler)
-  }
-
-  /**
-   * defines a limit for a listener to be executed
-   *
-   * @param  {Number} limit
-   * @return {Object}
-   *
-   * @public
-   */
-  times (limit) {
-    this.listenerLimit = limit
+  times (number) {
+    if (typeof (number) !== 'number') {
+      throw CE.InvalidArgumentException.invalidParameter('Event.times expects a valid number', number)
+    }
+    this._many.set(number)
     return this
   }
 
   /**
-   * adds a new event listen for a specific event
+   * Bind a listener for an event
+   *
+   * @method on
+   * @alias when
    *
    * @param  {String} event
-   * @param  {Function|String} handler
+   * @param  {Array|String|Function} listeners
    *
-   * @public
+   * @return {void}
    */
-  on (event, name, handler) {
-    if (!handler) {
-      handler = name
-      name = null
-    }
-    resolver.validateBinding(handler)
-    handler = this._resolveHandler(handler)
-    handler = this._makeHandler(handler)
-    if (name) {
-      this.namedListeners[name] = handler
-    }
-
-    /**
-     * if there is a limit define, go with the many
-     * method on the emitter
-     */
-    if (this.listenerLimit) {
-      this.emitter.many(event, this.listenerLimit, handler)
-      this.listenerLimit = null
-      return
-    }
-
-    /**
-     * otherwise register normally
-     */
-    this.emitter.on(event, handler)
+  on (event, listeners) {
+    listeners = _.isArray(listeners) ? listeners : [listeners]
+    const times = this._many.pull()
+    _.each(listeners, (listener) => {
+      if (times > 1) {
+        this.emitter.many(event, times, this._resolveListener(listener))
+      } else {
+        this.emitter.on(event, this._resolveListener(listener))
+      }
+    })
   }
 
   /**
-   * @alias on
+   * Bind listener for any event
+   *
+   * @method onAny
+   * @alias any
+   *
+   * @param  {String|Function|Array} listeners
+   *
+   * @return {void}
    */
-  when () {
-    this.on.apply(this, arguments)
+  onAny (listeners) {
+    listeners = _.isArray(listeners) ? listeners : [listeners]
+    _.each(listeners, (listener) => {
+      this.emitter.onAny(this._resolveListener(listener))
+    })
   }
 
   /**
-   * @alias on
+   * Bind listener for any event
+   *
+   * @method any
+   * @alias onAny
+   *
+   * @param  {String|Function|Array} listeners
+   *
+   * @return {void}
    */
-  listen () {
-    this.on.apply(this, arguments)
+  any (listeners) {
+    this.onAny(listeners)
   }
 
   /**
-   * adds a new event listen for a specific event
-   * to be ran only for one time.
+   * Bind a listener only for one time
+   *
+   * @method once
    *
    * @param  {String} event
-   * @param  {Function|String} handler
+   * @param  {Array|Function|String} listeners
    *
-   * @public
+   * @return {void}
    */
-  once (event, handler) {
-    resolver.validateBinding(handler)
-    handler = this._resolveHandler(handler)
-    handler = this._makeHandler(handler)
-    this.emitter.once(event, handler)
+  once (event, listeners) {
+    listeners = _.isArray(listeners) ? listeners : [listeners]
+    _.each(listeners, (listener) => {
+      this.emitter.once(event, this._resolveListener(listener))
+    })
   }
 
+  /**
+   * Remove listener for a given event.
+   *
+   * @method off
+   * @alias removeListener
+   *
+   * @param  {String} event
+   * @param  {Function|Array|String} listeners
+   *
+   * @return {void}
+   */
+  off (event, listeners) {
+    this.removeListener(event, listeners)
+  }
+
+  /**
+   * Removes listeners binded for any event
+   *
+   * @method offAny
+   *
+   * @param  {Function|String|Array} listeners
+   *
+   * @return {void}
+   */
+  offAny (listeners) {
+    listeners = _.isArray(listeners) ? listeners : [listeners]
+    _.each(listeners, (listener) => {
+      listener = typeof (listener) === 'string' ? this._namespacedListeners[listener] : listener
+      this.emitter.offAny(listener)
+    })
+  }
+
+  /**
+   * Removes listener for a given event
+   *
+   * @method removeListener
+   * @alias off
+   *
+   * @param  {String}       event
+   * @param  {Function|String|Array}       listeners
+   *
+   * @return {void}
+   */
+  removeListener (event, listeners) {
+    listeners = _.isArray(listeners) ? listeners : [listeners]
+    _.each(listeners, (listener) => {
+      listener = typeof (listener) === 'string' ? this._namespacedListeners[listener] : listener
+      this.emitter.off(event, listener)
+    })
+  }
+
+  /**
+   * Removes all listeners for a given event
+   *
+   * @method removeAllListeners
+   *
+   * @param  {String}           event
+   *
+   * @return {void}
+   */
+  removeAllListeners (event) {
+    this.emitter.removeAllListeners(event)
+  }
+
+  /**
+   * Update max listeners which is set to 10
+   *
+   * @method setMaxListeners
+   *
+   * @param  {Number}        number
+   */
+  setMaxListeners (number) {
+    if (typeof (number) !== 'number') {
+      throw CE.InvalidArgumentException.invalidParameter('Event.setMaxListeners expects a valid number', number)
+    }
+    this.emitter.setMaxListeners(number)
+  }
 }
 
 module.exports = Event

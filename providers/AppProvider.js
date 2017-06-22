@@ -230,6 +230,22 @@ class AppProvider extends ServiceProvider {
   }
 
   /**
+   * Registers the event provider under `Adonis/Src/Event`
+   * namespace.
+   *
+   * @method _registerEvent
+   *
+   * @return {void}
+   */
+  _registerEvent () {
+    this.app.singleton('Adonis/Src/Event', (app) => {
+      const Event = require('../src/Event')
+      return new Event(app.use('Adonis/Src/Config'))
+    })
+    this.app.alias('Adonis/Src/Event', 'Event')
+  }
+
+  /**
    * Register all the required providers
    *
    * @method register
@@ -250,6 +266,7 @@ class AppProvider extends ServiceProvider {
     this._registerExceptionHandler()
     this._registerEncryption()
     this._registerStaticMiddleware()
+    this._registerEvent()
   }
 
   /**

@@ -71,7 +71,7 @@ class RouteResource {
    */
   _validateResourceName (resource) {
     if (typeof (resource) !== 'string') {
-      throw CE.InvalidArgumentException.invalidParamter('Route.resource expects name to be a string', resource)
+      throw CE.InvalidArgumentException.invalidParameter('Route.resource expects name to be a string', resource)
     }
   }
 
@@ -90,7 +90,7 @@ class RouteResource {
    */
   _validateController (controller) {
     if (typeof (controller) !== 'string') {
-      throw CE.InvalidArgumentException.invalidParamter('Route.resource expects reference to a controller', controller)
+      throw CE.InvalidArgumentException.invalidParameter('Route.resource expects reference to a controller', controller)
     }
   }
 
