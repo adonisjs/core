@@ -1,3 +1,14 @@
+<a name="4.0.1"></a>
+## [4.0.1](https://github.com/adonisjs/adonis-framework/compare/v4.0.0...v4.0.1) (2017-06-22)
+
+
+### Features
+
+* **event:** add event provider ([b9d28e9](https://github.com/adonisjs/adonis-framework/commit/b9d28e9))
+* **view:** add view locals for http request ([f5d602d](https://github.com/adonisjs/adonis-framework/commit/f5d602d))
+
+
+
 <a name="4.0.0"></a>
 # 4.0.0 (2017-06-21)
 
