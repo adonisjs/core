@@ -173,11 +173,11 @@ class Exception {
   bind (name, binding) {
     const bindingInstance = resolver.forDir('exceptionHandlers').resolve(binding)
     if (bindingInstance.handle) {
-      this.handle(name, bindingInstance.handle)
+      this.handle(name, bindingInstance.handle.bind(bindingInstance))
     }
 
     if (bindingInstance.report) {
-      this.report(name, bindingInstance.report)
+      this.report(name, bindingInstance.report.bind(bindingInstance))
     }
 
     return this
