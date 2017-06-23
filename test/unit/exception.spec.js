@@ -70,4 +70,25 @@ test.group('Exception', (group) => {
     assert.property(Exception._reporters, 'UserNotFoundException')
     assert.isFunction(Exception._reporters.UserNotFoundException)
   })
+
+  test('class handle and report should have access to this', (assert) => {
+    let name = null
+
+    class FooBar {
+      handle () {
+        name = this.constructor.name
+      }
+      report () {}
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception._handlers.UserNotFoundException()
+    assert.equal(name, 'FooBar')
+  })
 })
