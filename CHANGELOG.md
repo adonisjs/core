@@ -1,3 +1,14 @@
+<a name="4.0.2"></a>
+## [4.0.2](https://github.com/adonisjs/adonis-framework/compare/v4.0.1...v4.0.2) (2017-06-23)
+
+
+### Bug Fixes
+
+* **exception:** exception bindings should have access to this ([5815931](https://github.com/adonisjs/adonis-framework/commit/5815931))
+* **exception:** return instance of exception handler from ioc binding ([e2f5bca](https://github.com/adonisjs/adonis-framework/commit/e2f5bca))
+
+
+
 <a name="4.0.1"></a>
 ## [4.0.1](https://github.com/adonisjs/adonis-framework/compare/v4.0.0...v4.0.1) (2017-06-22)
 
