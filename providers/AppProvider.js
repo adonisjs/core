@@ -210,7 +210,7 @@ class AppProvider extends ServiceProvider {
    */
   _registerExceptionHandler () {
     this.app.bind('Adonis/Exceptions/Handler', () => {
-      return require('../src/App/Handler')
+      return new (require('../src/App/Handler'))()
     })
   }
 
