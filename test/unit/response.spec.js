@@ -270,7 +270,7 @@ describe('Response', function () {
       response.route('profile', {id: 1})
     })
     const res = yield supertest(server).get('/').expect(302)
-    expect(res.headers.location).to.equal('virk.adonisjs.com/user/1')
+    expect(res.headers.location).to.equal('//virk.adonisjs.com/user/1')
   })
 
   it('should add vary field to response headers', function * () {

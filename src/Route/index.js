@@ -441,7 +441,7 @@ Route.url = function (pattern, params) {
    * route properties
    */
   if (namedRoute) {
-    const resolveRoute = namedRoute.domain ? `${namedRoute.domain}${namedRoute.route}` : namedRoute.route
+    const resolveRoute = namedRoute.domain ? `//${namedRoute.domain}${namedRoute.route}` : namedRoute.route
     return helpers.compileRouteToUrl(resolveRoute, params)
   }
   return helpers.compileRouteToUrl(pattern, params)
