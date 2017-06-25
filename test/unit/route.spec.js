@@ -1044,7 +1044,7 @@ describe('Route', function () {
         Route.get('/:post', 'SomeController.index').as('post')
       }).domain('amanvirk.me')
       const url = Route.url('post', {post: 'hello-world'})
-      expect(url).to.equal('amanvirk.me/hello-world')
+      expect(url).to.equal('//amanvirk.me/hello-world')
     })
 
     it('should make url for route registered as a resource', function () {
