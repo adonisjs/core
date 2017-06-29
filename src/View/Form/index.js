@@ -7,7 +7,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
-*/
+ */
 
 const _ = require('lodash')
 const CE = require('../../Exceptions')
@@ -264,6 +264,7 @@ class Form {
   input (type, name, value, attributes) {
     attributes = attributes || {}
     attributes.id = attributes.id || name
+    value = this.env.filters.escape(value)
 
     if (!value && this.env.globals.old && !attributes.avoidOld) {
       value = this.env.globals.old(name)
