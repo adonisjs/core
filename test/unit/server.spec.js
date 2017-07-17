@@ -621,4 +621,18 @@ test.group('Server | Calls', (group) => {
     await supertest(app).get('/').expect(500)
     assert.equal(reportedMessage, 'Something went bad')
   })
+
+  test('disable implicit end of response', async (assert) => {
+    Route.get('/', async function ({ response }) {
+      response.implicitEnd = false
+      setTimeout(() => {
+        response.send('done')
+      }, 100)
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    const { text } = await supertest(app).get('/').expect(200)
+    assert.equal(text, 'done')
+  })
 })

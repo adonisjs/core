@@ -69,16 +69,13 @@ class Response extends Macroable {
     }
 
     /**
-     * Flag to know whether a file was sent as the response. In this
-     * case the response will be closed immediately once stream is
-     * finished
-     *
-     * @attribute _sentFile
+     * Implicitly end the response. If you set it
+     * to false, calling `response.end` will
+     * end the response.
      *
      * @type {Boolean}
-     * @private
      */
-    this._sentFile = false
+    this.implicitEnd = true
 
     this.Config = Config
   }
@@ -217,7 +214,7 @@ class Response extends Macroable {
    * @return {void}
    */
   download (filePath, options = {}) {
-    this._sentFile = true
+    this.implicitEnd = false
     nodeRes.download(this.request, this.response, filePath, options)
   }
 
@@ -235,7 +232,7 @@ class Response extends Macroable {
    * @return {void}
    */
   attachment (filePath, name, disposition, options = {}) {
-    this._sentFile = true
+    this.implicitEnd = false
     nodeRes.attachment(this.request, this.response, filePath, name, disposition, options)
   }
 
@@ -308,6 +305,11 @@ class Response extends Macroable {
    * @return {void}
    */
   send (body) {
+    if (!this.implicitEnd) {
+      nodeRes.send(this.request, this.response, body)
+      return
+    }
+
     this._lazyBody = {
       method: 'send',
       content: body,
@@ -326,6 +328,11 @@ class Response extends Macroable {
    * @return {void}
    */
   json (body) {
+    if (!this.implicitEnd) {
+      nodeRes.json(this.request, this.response, body)
+      return
+    }
+
     this._lazyBody = {
       method: 'json',
       content: body,
@@ -346,6 +353,12 @@ class Response extends Macroable {
    */
   jsonp (body, callbackFn) {
     callbackFn = callbackFn || nodeReq.get(this.request).callback || 'callback'
+
+    if (!this.implicitEnd) {
+      nodeRes.jsonp(this.request, this.response, body, callbackFn)
+      return
+    }
+
     this._lazyBody = {
       method: 'jsonp',
       content: body,
@@ -362,7 +375,7 @@ class Response extends Macroable {
    * @return {void}
    */
   end () {
-    if (!this._sentFile) {
+    if (this.implicitEnd) {
       const method = this._lazyBody.method || 'send'
       const args = [this.request, this.response, this._lazyBody.content].concat(this._lazyBody.args)
       nodeRes[method].apply(nodeRes, args)
@@ -427,6 +440,10 @@ Response._getters = {}
  */
 nodeRes.descriptiveMethods.forEach((method) => {
   Response.prototype[method] = function (content) {
+    if (!this.implicitEnd) {
+      nodeRes[method](this.request, this.response, content)
+      return
+    }
     this._lazyBody = { method, content, args: [] }
   }
 })
