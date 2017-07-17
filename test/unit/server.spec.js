@@ -97,7 +97,7 @@ test.group('Server | Calls', (group) => {
     }, true)
 
     Context.getter('response', function () {
-      return new Response(this.req, this.res)
+      return new Response(this.req, this.res, new Config())
     }, true)
     setupResolver()
   })
