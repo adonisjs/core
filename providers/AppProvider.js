@@ -287,7 +287,7 @@ class AppProvider extends ServiceProvider {
     }, true)
 
     Context.getter('response', function () {
-      return new Response(this.req, this.res)
+      return new Response(this.req, this.res, use('Adonis/Src/Config'))
     }, true)
   }
 }

@@ -11,7 +11,10 @@
 
 const nodeRes = require('node-res')
 const nodeReq = require('node-req')
+const nodeCookie = require('node-cookie')
 const Macroable = require('macroable')
+
+const SECRET = 'app.secret'
 
 /**
  * @module Adonis
@@ -29,7 +32,7 @@ const Macroable = require('macroable')
  * @class Response
  */
 class Response extends Macroable {
-  constructor (request, response) {
+  constructor (request, response, Config) {
     super()
     /**
      * Refrence to native HTTP request object
@@ -76,6 +79,8 @@ class Response extends Macroable {
      * @private
      */
     this._sentFile = false
+
+    this.Config = Config
   }
 
   /**
@@ -362,6 +367,36 @@ class Response extends Macroable {
       const args = [this.request, this.response, this._lazyBody.content].concat(this._lazyBody.args)
       nodeRes[method].apply(nodeRes, args)
     }
+  }
+
+  /**
+   * Send cookie with the http response
+   *
+   * @method cookie
+   *
+   * @param  {String} key
+   * @param  {Mixed} value
+   * @param  {Object} [options = {}]
+   *
+   * @return {void}
+   */
+  cookie (key, value, options = {}) {
+    nodeCookie.create(this.response, key, value, options, this.Config.get(SECRET), true)
+  }
+
+  /**
+   * Set plain cookie HTTP response
+   *
+   * @method plainCookie
+   *
+   * @param  {String}    key
+   * @param  {Mixed}    value
+   * @param  {Object}    [options = {}]
+   *
+   * @return {void}
+   */
+  plainCookie (key, value, options) {
+    nodeCookie.create(this.response, key, value, options)
   }
 }
 
