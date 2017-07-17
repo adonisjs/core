@@ -398,6 +398,19 @@ class Response extends Macroable {
   plainCookie (key, value, options) {
     nodeCookie.create(this.response, key, value, options)
   }
+
+  /**
+   * Remove existing cookie using it's key
+   *
+   * @method clearCookie
+   *
+   * @param  {String}    key
+   *
+   * @return {void}
+   */
+  clearCookie (key) {
+    nodeCookie.clear(this.response, key)
+  }
 }
 
 /**
