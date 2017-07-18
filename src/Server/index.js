@@ -231,7 +231,7 @@ class Server {
    * @private
    */
   _endResponse (response) {
-    if (response.isPending) {
+    if (response.isPending && response.implicitEnd) {
       response.end()
     }
   }
