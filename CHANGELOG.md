@@ -1,12 +1,17 @@
-<a name="4.0.3"></a>
-## [4.0.3](https://github.com/adonisjs/adonis-framework/compare/v4.0.2...v4.0.3) (2017-07-17)
+<a name="4.0.4"></a>
+## [4.0.4](https://github.com/adonisjs/adonis-framework/compare/v4.0.3...v4.0.4) (2017-07-18)
 
 
 ### Features
 
-* **response:** add support for clear existing cookie ([d0174f4](https://github.com/adonisjs/adonis-framework/commit/d0174f4))
-* **response:** add support to disable implicit end ([998061d](https://github.com/adonisjs/adonis-framework/commit/998061d))
-* **response:** add support to set cookies ([d7377f0](https://github.com/
+* **response:** add support for clear existing cookie ([14de180](https://github.com/adonisjs/adonis-framework/commit/14de180))
+* **response:** add support to disable implicit end ([7c117e4](https://github.com/adonisjs/adonis-framework/commit/7c117e4))
+* **response:** add support to set cookies ([650b071](https://github.com/adonisjs/adonis-framework/commit/650b071))
+
+
+
+<a name="4.0.3"></a>
+## [4.0.3](https://github.com/adonisjs/adonis-framework/compare/v4.0.2...v4.0.3) (2017-07-17)
 
 
 <a name="4.0.2"></a>
