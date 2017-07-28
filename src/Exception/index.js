@@ -26,42 +26,7 @@ class Exception {
   clear () {
     this._handlers = {}
     this._reporters = {}
-  }
-
-  /**
-   * Returns a boolean telling if a handler
-   * exists for a given exception.
-   *
-   * NOTE: This does not check for wildcard handlers.
-   * Calling `getHandler` may return handler if
-   * wildcard exists.
-   *
-   * @method hasReporter
-   *
-   * @param  {String}    name
-   *
-   * @return {Boolean}
-   */
-  hasHandler (name) {
-    return this._handlers[name]
-  }
-
-  /**
-   * Returns a boolean telling if a reporter
-   * exists for a given exception.
-   *
-   * NOTE: This does not check for wildcard reporters.
-   * Calling `getReporter` may return reporter if
-   * wildcard exists.
-   *
-   * @method hasReporter
-   *
-   * @param  {String}    name
-   *
-   * @return {Boolean}
-   */
-  hasReporter (name) {
-    return this._reporters[name]
+    this._bindings = {}
   }
 
   /**
@@ -71,6 +36,7 @@ class Exception {
    * @method getHandler
    *
    * @param  {String}   name
+   * @param  {Boolean} [ignoreWildcard = false] Ignore wildcard handler
    *
    * @return {Function|Undefined}
    *
@@ -79,8 +45,44 @@ class Exception {
    * Exception.getHandler('UserNotFoundException')
    * ```
    */
-  getHandler (name) {
-    return this._handlers[name] || this._handlers['*']
+  getHandler (name, ignoreWildcard = false) {
+    const binding = this._bindings[name]
+    let handler
+
+    /**
+     * Give priority to binding when it exists,
+     * then look for inline handler and finally
+     * fallback to wildcard if required
+     */
+    if (binding) {
+      const bindingInstance = resolver.forDir('exceptionHandlers').resolve(binding)
+      if (typeof (bindingInstance.handle) === 'function') {
+        handler = bindingInstance.handle.bind(bindingInstance)
+      }
+    } else {
+      handler = this._handlers[name]
+    }
+
+    /**
+     * If ignoreWildcard is false and there is no
+     * handler, return the wildcard handler
+     */
+    if (!handler && !ignoreWildcard) {
+      return this.getWildcardHandler()
+    }
+
+    return handler
+  }
+
+  /**
+   * Returns the wildcard handler for the exception
+   *
+   * @method getWildcardHandler
+   *
+   * @return {Function|Undefined}
+   */
+  getWildcardHandler () {
+    return this._handlers['*']
   }
 
   /**
@@ -98,8 +100,44 @@ class Exception {
    * Exception.getReporter('UserNotFoundException')
    * ```
    */
-  getReporter (name) {
-    return this._reporters[name] || this._reporters['*']
+  getReporter (name, ignoreWildcard = false) {
+    const binding = this._bindings[name]
+    let reporter
+
+    /**
+     * Give priority to binding when it exists,
+     * then look for inline reporter and finally
+     * fallback to wildcard if required
+     */
+    if (binding) {
+      const bindingInstance = resolver.forDir('exceptionHandlers').resolve(binding)
+      if (typeof (bindingInstance.report) === 'function') {
+        reporter = bindingInstance.report.bind(bindingInstance)
+      }
+    } else {
+      reporter = this._reporters[name]
+    }
+
+    /**
+     * If ignoreWildcard is false and there is no
+     * reporter, return the wildcard reporter
+     */
+    if (!reporter && !ignoreWildcard) {
+      return this.getWildcardReporter()
+    }
+
+    return reporter
+  }
+
+  /**
+   * Returns the wildcard reporter for the exception
+   *
+   * @method getWildcardReporter
+   *
+   * @return {Function|Undefined}
+   */
+  getWildcardReporter () {
+    return this._reporters['*']
   }
 
   /**
@@ -171,15 +209,7 @@ class Exception {
    * ```
    */
   bind (name, binding) {
-    const bindingInstance = resolver.forDir('exceptionHandlers').resolve(binding)
-    if (bindingInstance.handle) {
-      this.handle(name, bindingInstance.handle.bind(bindingInstance))
-    }
-
-    if (bindingInstance.report) {
-      this.report(name, bindingInstance.report.bind(bindingInstance))
-    }
-
+    this._bindings[name] = binding
     return this
   }
 }
