@@ -48,8 +48,8 @@ test.group('Exception', (group) => {
     })
 
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    assert.property(Exception._handlers, 'UserNotFoundException')
-    assert.isFunction(Exception._handlers.UserNotFoundException)
+    assert.property(Exception._bindings, 'UserNotFoundException')
+    assert.isFunction(Exception.getHandler('UserNotFoundException'))
   })
 
   test('fetch handler and reporter from exception class', (assert) => {
@@ -65,10 +65,9 @@ test.group('Exception', (group) => {
     })
 
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    assert.property(Exception._handlers, 'UserNotFoundException')
-    assert.isFunction(Exception._handlers.UserNotFoundException)
-    assert.property(Exception._reporters, 'UserNotFoundException')
-    assert.isFunction(Exception._reporters.UserNotFoundException)
+    assert.property(Exception._bindings, 'UserNotFoundException')
+    assert.isFunction(Exception.getHandler('UserNotFoundException'))
+    assert.isFunction(Exception.getReporter('UserNotFoundException'))
   })
 
   test('class handle and report should have access to this', (assert) => {
@@ -88,7 +87,154 @@ test.group('Exception', (group) => {
     })
 
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    Exception._handlers.UserNotFoundException()
+    Exception.getHandler('UserNotFoundException')()
     assert.equal(name, 'FooBar')
+  })
+
+  test('newup exception class on each exception', (assert) => {
+    let accessCounts = 0
+    class FooBar {
+      handle () {}
+    }
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      accessCounts++
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.getReporter('UserNotFoundException')
+    Exception.getReporter('UserNotFoundException')
+    assert.equal(accessCounts, 2)
+  })
+
+  test('give priority to exception binding', (assert) => {
+    class FooBar {
+      handle () {}
+      report () {}
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.handle('UserNotFoundException', function inlineHandler () {})
+    assert.notEqual(Exception.getHandler('UserNotFoundException').toString(), 'function inlineHandler() {}')
+  })
+
+  test('return null when binding exists but method is missing', (assert) => {
+    class FooBar {
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.handle('UserNotFoundException', function inlineHandler () {})
+    assert.isUndefined(Exception.getHandler('UserNotFoundException'))
+  })
+
+  test('return wildcard handle when nothing exists', (assert) => {
+    class FooBar {
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.handle('UserNotFoundException', function inlineHandler () {})
+    Exception.handle('*', function wildcardHandler () {})
+    assert.equal(Exception.getHandler('UserNotFoundException').toString(), 'function wildcardHandler() {}')
+  })
+
+  test('do not return wildcard when ignoreWildCard is set to true', (assert) => {
+    class FooBar {
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.handle('UserNotFoundException', function inlineHandler () {})
+    Exception.handle('*', function wildcardHandler () {})
+    assert.isUndefined(Exception.getHandler('UserNotFoundException', true))
+  })
+
+  test('give priority to exception binding when resolving reporter', (assert) => {
+    class FooBar {
+      handle () {}
+      report () {}
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.report('UserNotFoundException', function inlineReporter () {})
+    assert.notEqual(Exception.getReporter('UserNotFoundException').toString(), 'function inlineReporter() {}')
+  })
+
+  test('return undefined when report method is not defined on binding', (assert) => {
+    class FooBar {
+      handle () {}
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.report('UserNotFoundException', function inlineReporter () {})
+    assert.isUndefined(Exception.getReporter('UserNotFoundException'))
+  })
+
+  test('return wildcard reporter when nothing exists', (assert) => {
+    class FooBar {
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.report('UserNotFoundException', function inlineReporter () {})
+    Exception.report('*', function wildcardReporter () {})
+    assert.equal(Exception.getReporter('UserNotFoundException').toString(), 'function wildcardReporter() {}')
+  })
+
+  test('return undefined when ignoreWildCard is set to true', (assert) => {
+    class FooBar {
+    }
+
+    const foobar = new FooBar()
+
+    ioc.fake('Foo/Bar', function () {
+      return foobar
+    })
+
+    Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
+    Exception.report('UserNotFoundException', function inlineReporter () {})
+    Exception.report('*', function wildcardReporter () {})
+    assert.isUndefined(Exception.getReporter('UserNotFoundException', true))
   })
 })

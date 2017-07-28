@@ -1,3 +1,13 @@
+<a name="4.0.5"></a>
+## [4.0.5](https://github.com/adonisjs/adonis-framework/compare/v4.0.4...v4.0.5) (2017-07-28)
+
+
+### Features
+
+* **route:** add list method to list routes ([6c96de6](https://github.com/adonisjs/adonis-framework/commit/6c96de6))
+
+
+
 <a name="4.0.4"></a>
 ## [4.0.4](https://github.com/adonisjs/adonis-framework/compare/v4.0.3...v4.0.4) (2017-07-18)
 

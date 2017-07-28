@@ -635,4 +635,57 @@ test.group('Server | Calls', (group) => {
     const { text } = await supertest(app).get('/').expect(200)
     assert.equal(text, 'done')
   })
+
+  test('disable implicit end of response when calling jsonp', async (assert) => {
+    Route.get('/', async function ({ response }) {
+      response.implicitEnd = false
+      setTimeout(() => {
+        response.jsonp({ username: 'virk' })
+      }, 100)
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    const { text } = await supertest(app).get('/').expect(200)
+    assert.equal(text, `/**/ typeof callback === 'function' && callback(${JSON.stringify({ username: 'virk' })});`)
+  })
+
+  test('disable implicit end of response when calling json', async (assert) => {
+    Route.get('/', async function ({ response }) {
+      response.implicitEnd = false
+      setTimeout(() => {
+        response.json({ username: 'virk' })
+      }, 100)
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    const { body } = await supertest(app).get('/').expect(200)
+    assert.deepEqual(body, { username: 'virk' })
+  })
+
+  test('send json response', async (assert) => {
+    Route.get('/', async function ({ response }) {
+      response.json({ username: 'virk' })
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    const { body } = await supertest(app).get('/').expect(200)
+    assert.deepEqual(body, { username: 'virk' })
+  })
+
+  test('disable implicit end with descriptiveMethods', async (assert) => {
+    Route.get('/', async function ({ response }) {
+      response.implicitEnd = false
+      setTimeout(() => {
+        response.ok('done')
+      }, 100)
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    const { text } = await supertest(app).get('/').expect(200)
+    assert.deepEqual(text, 'done')
+  })
 })

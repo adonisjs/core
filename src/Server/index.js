@@ -254,8 +254,9 @@ class Server {
      * exception handler and `hasHandler` only returns true
      * when there is an explicit handler for that exception.
      */
-    if (this.Exception.hasHandler(error.name)) {
-      return this.Exception.getHandler(error.name)
+    const handler = this.Exception.getHandler(error.name, true)
+    if (handler) {
+      return handler
     }
 
     /**
@@ -270,7 +271,7 @@ class Server {
      * Finally we look for a wildcard handler or fallback
      * to custom method.
      */
-    return this.Exception.getHandler(error.name) || function (err, { response }) {
+    return this.Exception.getWildcardHandler() || function (err, { response }) {
       response.status(error.status).send(`${err.name}: ${err.message}\n${err.stack}`)
     }
   }
@@ -293,8 +294,9 @@ class Server {
      * exception reporter and `hasReporter` only returns true
      * when there is an explicit reporter for that exception.
      */
-    if (this.Exception.hasReporter(error.name)) {
-      return this.Exception.getReporter(error.name)
+    const reporter = this.Exception.getReporter(error.name, true)
+    if (reporter) {
+      return reporter
     }
 
     /**
@@ -309,7 +311,7 @@ class Server {
      * Finally we look for a wildcard reporter or return a
      * fallback function
      */
-    return this.Exception.getReporter(error.name) || function () {}
+    return this.Exception.getWildcardReporter() || function () {}
   }
 
   /**
