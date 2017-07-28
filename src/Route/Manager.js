@@ -333,6 +333,17 @@ class RouteManager {
   resource (resource, controller) {
     return new RouteResource(resource, controller, RouteStore._breakpoint.name)
   }
+
+  /**
+   * Returns an array of all the registered route
+   *
+   * @method list
+   *
+   * @return {Array}
+   */
+  list () {
+    return RouteStore.list()
+  }
 }
 
 module.exports = new RouteManager()
