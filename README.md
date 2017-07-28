@@ -7,7 +7,7 @@ This repo contains the core modules for the AdonisJs framework. You must checkou
 [![Appveyor][appveyor-image]][appveyor-url]
 [![Coveralls][coveralls-image]][coveralls-url]
 
-<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1496763925/Readme-Logo_z2zzhb.svg" width="200px" align="right" hspace="30px" vspace="140px">
+<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="140px">
 
 ## What's in the box?
 
@@ -82,8 +82,8 @@ Now since the `add` method has a bug, it will return `6` instead of `4`. But the
 
 [appveyor-url]: https://ci.appveyor.com/project/thetutlage/adonis-framework
 
-[npm-image]: https://img.shields.io/npm/v/adonis-framework.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/adonis-framework
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/framework.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@adonisjs/framework
 
 [travis-image]: https://img.shields.io/travis/adonisjs/adonis-framework/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/adonisjs/adonis-framework
