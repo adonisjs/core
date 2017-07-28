@@ -290,4 +290,30 @@ test.group('Response', () => {
     const { headers } = await supertest(server).get('/').expect(200)
     assert.equal(headers['set-cookie'][0], 'cart_total=20')
   })
+
+  test('send vary header', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      const response = new Response(req, res, config)
+      response.vary('Origin')
+      response.send('')
+      response.end()
+    })
+
+    const { headers } = await supertest(server).get('/').expect(200)
+    assert.equal(headers.vary, 'Origin')
+  })
+
+  test('clear existing cookie by setting expiry in past', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      const response = new Response(req, res, config)
+      response.clearCookie('cart')
+      response.send('')
+      response.end()
+    })
+
+    const { headers } = await supertest(server).get('/').expect(200)
+    assert.equal(headers['set-cookie'][0], 'cart=; Expires=Thu, 01 Jan 1970 00:00:00 GMT')
+  })
 })
