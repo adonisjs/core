@@ -598,4 +598,18 @@ test.group('Route | Manager', (group) => {
       'admin.users.destroy'
     ])
   })
+
+  test('return list of routes', (assert) => {
+    RouteManager.resource('users', 'UsersController')
+    const routeNames = RouteManager.list().map((route) => route._name)
+    assert.deepEqual(routeNames, [
+      'users.index',
+      'users.create',
+      'users.store',
+      'users.show',
+      'users.edit',
+      'users.update',
+      'users.destroy'
+    ])
+  })
 })
