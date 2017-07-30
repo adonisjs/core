@@ -1,3 +1,8 @@
+<a name="4.0.1"></a>
+## [4.0.1](https://github.com/poppinss/adonis-fold/compare/v4.0.0...v4.0.1) (2017-07-30)
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/poppinss/adonis-fold/compare/v3.0.3...v4.0.0) (2017-06-21)
 
