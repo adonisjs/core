@@ -54,6 +54,13 @@ test.group('Resolver', (group) => {
     assert.equal(resolver.translate('FooController'), 'App/Controllers/FooController')
   })
 
+  test('return untouched namespace when starts with autoload namespace', (assert) => {
+    const resolver = new Resolver(this.ioc, {
+      httpControllers: 'Controllers'
+    }, 'App', 'httpControllers')
+    assert.equal(resolver.translate('App/Controllers/FooController'), 'App/Controllers/FooController')
+  })
+
   test('throw exception when directory is not pre-registered', (assert) => {
     const resolver = new Resolver(this.ioc, {
       httpControllers: 'Controllers'
