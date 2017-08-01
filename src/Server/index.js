@@ -70,7 +70,7 @@ class Server {
      * and remove them from the middleware list.
      */
     if (_.size(intersections)) {
-      this.Logger.warn(
+      this.Logger.warning(
         `Duplicate ${tag} middleware {${intersections.join(',')}} will be discarded and existing one's will be used.`
       )
       _.remove(middleware, (item) => _.includes(intersections, item))
