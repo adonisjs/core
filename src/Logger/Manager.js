@@ -22,11 +22,30 @@ const CE = require('../Exceptions')
  */
 const proxyHandler = {
   get (target, name) {
-    if (target[name]) {
+    /**
+     * if node is inspecting then stick to target properties
+     */
+    if (typeof (name) === 'symbol' || name === 'inspect') {
       return target[name]
     }
+
+    /**
+     * if value exists on target, return that
+     */
+    if (typeof (target[name]) !== 'undefined') {
+      return target[name]
+    }
+
+    /**
+     * Fallback to driver instance
+     */
     const driverInstance = target.driver(target._defaultDriver)
-    return driverInstance[name].bind(driverInstance)
+
+    if (typeof (driverInstance[name]) === 'function') {
+      return driverInstance[name].bind(driverInstance)
+    }
+
+    return driverInstance[name]
   }
 }
 
