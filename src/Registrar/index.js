@@ -1,5 +1,14 @@
 'use strict'
 
+/*
+ * adonis-fold
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+*/
+
 const _ = require('lodash')
 const requireStack = require('require-stack')
 const emitter = new (require('events'))()
@@ -10,8 +19,6 @@ const ServiceProvider = require('../../src/ServiceProvider')
  * Registrar class is used to register and boot providers. This
  * should be done once and at the time of booting the app.
  *
- * @module Adonis
- * @submodule fold
  * @class Registrar
  */
 class Registrar {

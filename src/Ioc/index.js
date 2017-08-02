@@ -1,5 +1,14 @@
 'use strict'
 
+/*
+ * adonis-fold
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+*/
+
 const path = require('path')
 const caller = require('caller')
 const _ = require('lodash')
@@ -25,8 +34,6 @@ const isClass = (fn) => {
  * so that you won't have to manage singleton instances and start using it
  * as `Ioc.bind`, `Ioc.make` etc directly.
  *
- * @module Adonis
- * @submodule fold
  * @class Ioc
  */
 class Ioc {

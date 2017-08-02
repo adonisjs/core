@@ -12,11 +12,6 @@
 const GE = require('@adonisjs/generic-exceptions')
 
 /**
- * @module Adonis
- * @submodule fold
- */
-
-/**
  * This class will resolve a namespace or a pattern
  * from the IoC container. Think of it as a friend
  * to the IoC container for resolving namespaces
