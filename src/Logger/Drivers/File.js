@@ -19,8 +19,9 @@ const Winston = require('winston')
  */
 
 /**
- * Winston console transport driver for {{#crossLink "Logger"}}{{/crossLink}}
- * All the logs will be written to the filename defined inside config.
+ * Winston console transport driver for @ref('Logger')
+ * All the logs will be written to the filename
+ * defined inside config.
  *
  * @class WinstonFile
  * @constructor
@@ -30,7 +31,7 @@ class WinstonFile {
    * Returns an array of dependencies to be injected
    * by IoC container.
    *
-   * @method inject
+   * @attribute inject
    * @static
    *
    * @return {Array}

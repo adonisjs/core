@@ -14,19 +14,18 @@ const Route = require('./index')
 const RouteGroup = require('./Group')
 const RouteStore = require('./Store')
 const RouteResource = require('./Resource')
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * Route Manager is the public interface used to define
  * routes, groups and resources.
  *
- * @class RouteManager
- * @static
+ * @namespace Adonis/Src/Route
+ * @alias Route
+ * @singleton
+ * @group Http
  *
- * @uses RouteGroup
- * @uses RouteResource
- * @uses Route
- * @uses RouteStore
+ * @class RouteManager
  */
 class RouteManager {
   /**
@@ -43,7 +42,7 @@ class RouteManager {
    */
   _validateGroupClosure (callback) {
     if (typeof (callback) !== 'function') {
-      throw CE.InvalidArgumentException.invalidParamter('Route.group expects a callback', callback)
+      throw GE.InvalidArgumentException.invalidParamter('Route.group expects a callback', callback)
     }
   }
 
@@ -59,7 +58,7 @@ class RouteManager {
   _validateNestedGroups () {
     if (RouteStore.hasBreakpoint()) {
       RouteStore.releaseBreakpoint()
-      throw CE.RuntimeException.nestedGroup()
+      throw GE.RuntimeException.invoke('Nested route groups are not allowed', 500, 'E_NESTED_ROUTE_GROUPS')
     }
   }
 
@@ -73,7 +72,7 @@ class RouteManager {
    * @param  {Function|String} handler
    * @param  {Array}           verbs
    *
-   * @return {Object}          Instance of {{#crossLink "Route"}}{{/crossLink}}
+   * @return {Route}
    *
    * @example
    * ```js
@@ -95,7 +94,7 @@ class RouteManager {
    * @param  {String} route
    * @param  {Function|String} handler
    *
-   * @return {Object}          Instance of {{#crossLink "Route"}}{{/crossLink}}
+   * @return {Route}
    *
    * @example
    * ```js
@@ -114,7 +113,7 @@ class RouteManager {
    * @param  {String} route
    * @param  {Function|String} handler
    *
-   * @return {Object}          Instance of {{#crossLink "Route"}}{{/crossLink}}
+   * @return {Route}
    *
    * @example
    * ```js
@@ -133,7 +132,7 @@ class RouteManager {
    * @param  {String} route
    * @param  {Function|String} handler
    *
-   * @return {Object}          Instance of {{#crossLink "Route"}}{{/crossLink}}
+   * @return {Route}
    *
    * @example
    * ```js
@@ -152,7 +151,7 @@ class RouteManager {
    * @param  {String} route
    * @param  {Function|String} handler
    *
-   * @return {Object}          Instance of {{#crossLink "Route"}}{{/crossLink}}
+   * @return {Route}
    *
    * @example
    * ```js
@@ -171,7 +170,7 @@ class RouteManager {
    * @param  {String} route
    * @param  {Function|String} handler
    *
-   * @return {Object}          Instance of {{#crossLink "Route"}}{{/crossLink}}
+   * @return {Route}
    *
    * @example
    * ```js
@@ -192,7 +191,7 @@ class RouteManager {
    * @param  {String} route
    * @param  {Function|String} handler
    *
-   * @return {Object}          Instance of {{#crossLink "Route"}}{{/crossLink}}
+   * @return {Route}
    *
    * @example
    * ```js

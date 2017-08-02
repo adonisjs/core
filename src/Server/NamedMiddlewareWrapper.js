@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
 */
 const haye = require('haye')
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * @class Server.NamedMiddlewareWrapper
@@ -30,7 +30,9 @@ class NamedMiddlewareWrapper {
      * define them inside `start/kernel.js` file.
      */
     if (!namedHash[name]) {
-      throw CE.RuntimeException.missingNamedMiddleware(name)
+      const message = `Cannot find any named middleware for {${name}}. Make sure you have registered it inside start/kernel.js file.`
+
+      throw GE.RuntimeException.invoke(message, 500, 'E_MISSING_NAMED_MIDDLEWARE')
     }
 
     this.namespace = namedHash[name]

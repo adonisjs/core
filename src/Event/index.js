@@ -13,8 +13,22 @@ const _ = require('lodash')
 const { resolver } = require('@adonisjs/fold')
 const Resetable = require('resetable')
 const EventEmitter = require('eventemitter2').EventEmitter2
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
+/**
+ * Event class is used to fire events and bind
+ * listeners for them.
+ *
+ * This class makes use of eventemitter2 module
+ *
+ * @namespace Adonis/Src/Event
+ * @alias Event
+ * @singleton
+ * @group Core
+ *
+ * @class Event
+ * @singleton
+ */
 class Event {
   constructor (Config) {
     this.emitter = new EventEmitter(Config.merge('app.events', {
@@ -54,6 +68,11 @@ class Event {
    * @param  {String}  event
    *
    * @return {Array}
+   *
+   * @example
+   * ```js
+   * Event.getListeners('http::start')
+   * ```
    */
   getListeners (event) {
     return this.emitter.listeners(event)
@@ -68,6 +87,11 @@ class Event {
    * @param  {String}     event
    *
    * @return {Boolean}
+   *
+   * @example
+   * ```js
+   * Event.hasListeners('http::start')
+   * ```
    */
   hasListeners (event) {
     return this.listenersCount(event) > 0
@@ -80,6 +104,11 @@ class Event {
    * @method listenersAny
    *
    * @return {Array}
+   *
+   * @example
+   * ```js
+   * Event.getListenersAny()
+   * ```
    */
   getListenersAny () {
     return this.emitter.listenersAny()
@@ -94,6 +123,11 @@ class Event {
    * @param  {String}       event
    *
    * @return {Number}
+   *
+   * @example
+   * ```js
+   * Event.listenersCount('http::start')
+   * ```
    */
   listenersCount (event) {
     return this.getListeners(event).length
@@ -109,21 +143,39 @@ class Event {
    * @param  {Array|String|Function} listeners
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * // Closure
+   * Event.when('http::start', () => {
+   * })
+   *
+   * // IoC container binding
+   * Event.when('http::start', 'Http.onStart')
+   *
+   * // Multiple listeners
+   * Event.when('http::start', ['Http.onStart', 'Http.registerViewGlobals'])
+   * ```
    */
   when (event, listeners) {
     this.on(event, listeners)
   }
 
   /**
-   * Emits a event
+   * Emits an event
    *
    * @method emit
    * @alias fire
    *
    * @param  {String}    event
-   * @param  {Spread} args
+   * @param  {...Spread}    args
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * Event.emit('http::start', server)
+   * ```
    */
   emit (event, ...args) {
     this.emitter.emit(event, ...args)
@@ -136,7 +188,7 @@ class Event {
    * @alias emit
    *
    * @param  {String}    event
-   * @param  {Spread} args
+   * @param  {...Spread}    args
    *
    * @return {void}
    */
@@ -152,10 +204,18 @@ class Event {
    * @param  {Number} number
    *
    * @chainable
+   *
+   * @example
+   * ```js
+   * Event
+   *   .times(3)
+   *   .when('user::registers', () => {
+   *   })
+   * ```
    */
   times (number) {
     if (typeof (number) !== 'number') {
-      throw CE.InvalidArgumentException.invalidParameter('Event.times expects a valid number', number)
+      throw GE.InvalidArgumentException.invalidParameter('Event.times expects a valid number', number)
     }
     this._many.set(number)
     return this
@@ -168,9 +228,15 @@ class Event {
    * @alias when
    *
    * @param  {String} event
-   * @param  {Array|String|Function} listeners
+   * @param  {Array|String|Function} listeners - A single or multiple listeners
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * Event.on('http::start', function () {
+   * })
+   * ```
    */
   on (event, listeners) {
     listeners = _.isArray(listeners) ? listeners : [listeners]
@@ -193,6 +259,12 @@ class Event {
    * @param  {String|Function|Array} listeners
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * Event.onAny(function (event, data) {
+   * })
+   * ```
    */
   onAny (listeners) {
     listeners = _.isArray(listeners) ? listeners : [listeners]
@@ -224,6 +296,12 @@ class Event {
    * @param  {Array|Function|String} listeners
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * Event.once('user::registerred', function (user) {
+   * })
+   * ```
    */
   once (event, listeners) {
     listeners = _.isArray(listeners) ? listeners : [listeners]
@@ -242,6 +320,14 @@ class Event {
    * @param  {Function|Array|String} listeners
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * Event.off('user::registerred', 'User.registered')
+   *
+   * // remove multiple listeners
+   * Event.off('user::registerred', ['User.registered', 'Send.email'])
+   * ```
    */
   off (event, listeners) {
     this.removeListener(event, listeners)
@@ -255,6 +341,11 @@ class Event {
    * @param  {Function|String|Array} listeners
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * Event.offAny('Http.onStart')
+   * ```
    */
   offAny (listeners) {
     listeners = _.isArray(listeners) ? listeners : [listeners]
@@ -291,21 +382,32 @@ class Event {
    * @param  {String}           event
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * Event.remvoeAllListeners('http::start')
+   * ```
    */
   removeAllListeners (event) {
     this.emitter.removeAllListeners(event)
   }
 
   /**
-   * Update max listeners which is set to 10
+   * Update max listeners size which is set to 10
+   * by default.
    *
    * @method setMaxListeners
    *
    * @param  {Number}        number
+   *
+   * @example
+   * ```js
+   * Event.setMaxListeners(20)
+   * ```
    */
   setMaxListeners (number) {
     if (typeof (number) !== 'number') {
-      throw CE.InvalidArgumentException.invalidParameter('Event.setMaxListeners expects a valid number', number)
+      throw GE.InvalidArgumentException.invalidParameter('Event.setMaxListeners expects a valid number', number)
     }
     this.emitter.setMaxListeners(number)
   }

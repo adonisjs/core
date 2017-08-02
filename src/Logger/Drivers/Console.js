@@ -13,14 +13,9 @@ const _ = require('lodash')
 const Winston = require('winston')
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
- * Winston console transport driver for {{#crossLink "Logger"}}{{/crossLink}}
- * All the logs will be written to `stdout` and `stderr` based upon the log
- * level.
+ * Winston console transport driver for @ref('Logger').
+ * All the logs will be written to `stdout` or
+ * `stderr` based upon the log level.
  *
  * @class WinstonConsole
  * @constructor
@@ -30,7 +25,7 @@ class WinstonConsole {
    * Returns an array of dependencies to be injected
    * by IoC container.
    *
-   * @method inject
+   * @attribute inject
    * @static
    *
    * @return {Array}

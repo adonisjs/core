@@ -10,21 +10,17 @@
 */
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * Route Group class is used to group routes with
  * common behavior. For example prefixing a bunch
  * of routes or applying middleware to a bunch
  * of routes.
  *
  * An instance of group is obtained by calling the
- * `Route.group` method on {{#crossLink "RouteManager"}}{{/crossLink}}
+ * `Route.group` method on @ref('RouteManager')
  * class.
  *
  * @class RouteGroup
+ * @group Http
  * @constructor
  *
  * @example
@@ -40,7 +36,7 @@ class RouteGroup {
 
   /**
    * Add middleware to a group of routes.
-   * Also see {{#crossLink "Route/middleware"}} Route middleware {{/crossLink}}
+   * Also see @ref('Route/middleware').
    *
    * @method middleware
    *
@@ -61,7 +57,7 @@ class RouteGroup {
 
   /**
    * Add formats to a group of routes.
-   * Also see {{#crossLink "Route/formats"}} Route formats {{/crossLink}}
+   * Also see @ref('Route/formats')
    *
    * @method formats
    *
@@ -84,7 +80,7 @@ class RouteGroup {
 
   /**
    * Prefix group of routes.
-   * Also see {{#crossLink "Route/prefix"}} Route prefix {{/crossLink}}
+   * Also see @ref('Route/prefix')
    *
    * @method prefix
    *
@@ -106,7 +102,7 @@ class RouteGroup {
 
   /**
    * Add domain to a group of routes.
-   * Also see {{#crossLink "Route/domain"}} Route domain {{/crossLink}}
+   * Also see @ref('Route/domain')
    *
    * @method domain
    *

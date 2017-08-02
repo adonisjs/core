@@ -10,14 +10,15 @@
 */
 
 const Encryptor = require('simple-encryptor')
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * This class is used to encrypt/decrypt values using a secure
- * key and also `base64Encode` and `decode` strings.
+ * key and also base64 `encode` and `decode` strings.
  *
  * @namespace Adonis/Src/Encryption
  * @alias Encryption
+ * @group Core
  * @singleton
  *
  * @class Encryption
@@ -31,7 +32,7 @@ class Encryption {
      * Throw exception when app key doesn't exists.
      */
     if (!appKey) {
-      throw CE.RuntimeException.missingAppKey('Encryption')
+      throw GE.RuntimeException.missingAppKey('Encryption')
     }
 
     this.encryptor = Encryptor(appKey)
@@ -57,7 +58,7 @@ class Encryption {
   }
 
   /**
-   * Decrypt previosuly encoded string
+   * Decrypt encoded string
    *
    * @method decrypt
    *

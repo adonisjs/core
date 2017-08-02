@@ -39,7 +39,7 @@ class ViewProvider extends ServiceProvider {
    * @return {void}
    */
   boot () {
-    const Context = this.app.use('Adonis/Src/Context')
+    const Context = this.app.use('Adonis/Src/HttpContext')
 
     /**
      * Registers an isolated instance of view on the

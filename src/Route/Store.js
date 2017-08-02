@@ -17,10 +17,11 @@ const _ = require('lodash')
  * used by an part of the application to store
  * routes.
  *
- * For example: {{#crossLink "RouteResource"}}{{/crossLink}} makes
+ * For example: @ref('RouteResource') makes
  * use of it to store multiple routes.
  *
  * @class RouteStore
+ * @group Http
  * @static
  */
 class RouteStore {

@@ -11,12 +11,7 @@
 
 const _ = require('lodash')
 const pathToRegexp = require('path-to-regexp')
-const CE = require('../Exceptions')
-
-/**
- * @module Adonis
- * @submodule framework
- */
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * This class defines a single route. It supports dynamic
@@ -24,11 +19,13 @@ const CE = require('../Exceptions')
  * and **named routes**.
  *
  * Generally you will get the instance of the by calling
- * one of the route method on the {{#crossLink "RouteManager"}}{{/crossLink}}
+ * one of the route method on the @ref('RouteManager')
  * class.
+ *
  * Example: `Route.get`, `Route.post`.
  *
  * @class Route
+ * @group Http
  * @constructor
  *
  * @example
@@ -56,7 +53,7 @@ class Route {
    */
   _validateRoute (route) {
     if (typeof (route) !== 'string') {
-      throw CE.InvalidArgumentException.invalidParameter('Cannot instantiate route without a valid url string', route)
+      throw GE.InvalidArgumentException.invalidParameter('Cannot instantiate route without a valid url string', route)
     }
   }
 
@@ -75,7 +72,7 @@ class Route {
    */
   _validateHandler (handler) {
     if (['string', 'function'].indexOf(typeof (handler)) === -1) {
-      throw CE.InvalidArgumentException.invalidParameter('Cannot instantiate route without route handler', handler)
+      throw GE.InvalidArgumentException.invalidParameter('Cannot instantiate route without route handler', handler)
     }
   }
 
@@ -93,7 +90,7 @@ class Route {
    */
   _validateVerbs (verbs) {
     if (!Array.isArray(verbs)) {
-      throw CE.InvalidArgumentException.invalidParameter('New route expects HTTP verbs to be an array', verbs)
+      throw GE.InvalidArgumentException.invalidParameter('New route expects HTTP verbs to be an array', verbs)
     }
   }
 

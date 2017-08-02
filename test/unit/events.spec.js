@@ -158,13 +158,13 @@ test.group('Events', (group) => {
   test('throw exception when times does not receives a number', (assert) => {
     const event = new Event(new Config())
     const fn = () => event.times('foo')
-    assert.throw(fn, 'E_INVALID_PARAMETER: Event.times expects a valid number instead received {string:foo}')
+    assert.throw(fn, 'E_INVALID_PARAMETER: Event.times expects a valid number instead received string')
   })
 
   test('throw exception when setMaxListeners does not receives a number', (assert) => {
     const event = new Event(new Config())
     const fn = () => event.setMaxListeners('foo')
-    assert.throw(fn, 'E_INVALID_PARAMETER: Event.setMaxListeners expects a valid number instead received {string:foo}')
+    assert.throw(fn, 'E_INVALID_PARAMETER: Event.setMaxListeners expects a valid number instead received string')
   })
 
   test('set max listeners', (assert) => {

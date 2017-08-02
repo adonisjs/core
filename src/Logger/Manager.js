@@ -12,7 +12,7 @@
 const { ioc } = require('@adonisjs/fold')
 const Drivers = require('./Drivers')
 const Logger = require('./index')
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * Proxy handler to proxy logger instance
@@ -22,11 +22,30 @@ const CE = require('../Exceptions')
  */
 const proxyHandler = {
   get (target, name) {
-    if (target[name]) {
+    /**
+     * if node is inspecting then stick to target properties
+     */
+    if (typeof (name) === 'symbol' || name === 'inspect') {
       return target[name]
     }
+
+    /**
+     * if value exists on target, return that
+     */
+    if (typeof (target[name]) !== 'undefined') {
+      return target[name]
+    }
+
+    /**
+     * Fallback to driver instance
+     */
     const driverInstance = target.driver(target._defaultDriver)
-    return driverInstance[name].bind(driverInstance)
+
+    if (typeof (driverInstance[name]) === 'function') {
+      return driverInstance[name].bind(driverInstance)
+    }
+
+    return driverInstance[name]
   }
 }
 
@@ -39,6 +58,7 @@ const proxyHandler = {
  * @namespace Adonis/Src/Logger
  * @alias Logger
  * @singleton
+ * @group Core
  *
  * @class LoggerManager
  */
@@ -85,7 +105,7 @@ class LoggerManager {
       return new Logger(this.constructor._drivers[name])
     }
 
-    throw CE.RuntimeException.invalidLoggerDriver(name)
+    throw GE.RuntimeException.invoke(`Logger driver ${name} does not exists.`, 500, 'E_INVALID_LOGGER_DRIVER')
   }
 
   /**

@@ -10,14 +10,9 @@
 */
 
 const _ = require('lodash')
+const GE = require('@adonisjs/generic-exceptions')
 const Route = require('./index')
 const RouteStore = require('./Store')
-const CE = require('../Exceptions')
-
-/**
- * @module Adonis
- * @submodule framework
- */
 
 /**
  * Route Resource class is used to define resourceful
@@ -25,10 +20,8 @@ const CE = require('../Exceptions')
  * calling `Route.resource()` method.
  *
  * @class RouteResource
+ * @group Http
  * @constructor
- *
- * @uses Route
- * @uses RouteStore
  */
 class RouteResource {
   constructor (resource, controller, namePrefix = null) {
@@ -71,7 +64,7 @@ class RouteResource {
    */
   _validateResourceName (resource) {
     if (typeof (resource) !== 'string') {
-      throw CE.InvalidArgumentException.invalidParameter('Route.resource expects name to be a string', resource)
+      throw GE.InvalidArgumentException.invalidParameter('Route.resource expects name to be a string', resource)
     }
   }
 
@@ -90,7 +83,7 @@ class RouteResource {
    */
   _validateController (controller) {
     if (typeof (controller) !== 'string') {
-      throw CE.InvalidArgumentException.invalidParameter('Route.resource expects reference to a controller', controller)
+      throw GE.InvalidArgumentException.invalidParameter('Route.resource expects reference to a controller', controller)
     }
   }
 

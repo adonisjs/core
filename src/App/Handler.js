@@ -9,17 +9,29 @@
  * file that was distributed with this source code.
 */
 
+/**
+ * Default exception handler to handle all exceptions
+ * thrown during HTTP request lifecycle. Once you
+ * create a custom exception handler then class
+ * won't be used to handle exceptions.
+ *
+ * @namespace Adonis/Exceptions/Handler
+ * @group Http
+ *
+ * @class Handler
+ */
 class Handler {
   /**
    * Returns error formatted by youch
    *
    * @method _getYouchError
+   * @async
    *
-   * @param  {Object}       error
-   * @param  {Object}       req
-   * @param  {Boolean}      isJSON
+   * @param  {Object}       error  - The error object
+   * @param  {Object}       req    - Current request object
+   * @param  {Boolean}      isJSON - Does response has to be in JSON
    *
-   * @return {Promise}
+   * @return {Html|Object}
    *
    * @private
    */
@@ -33,12 +45,14 @@ class Handler {
   }
 
   /**
-   * Returns plain error returned in production
+   * Returns plain error to be used when running
+   * server in production. Since production
+   * server should not show error stack.
    *
    * @method _getPlainError
    *
-   * @param  {Object}       error
-   * @param  {Boolean}      isJSON
+   * @param  {Object}       error  - The error object
+   * @param  {Boolean}      isJSON - Does response has to be in JSON
    *
    * @return {Object}
    *
@@ -58,10 +72,11 @@ class Handler {
    * exceptions
    *
    * @method handle
+   * @async
    *
-   * @param  {Object} error
-   * @param  {Object} options.request
-   * @param  {Object} options.response
+   * @param  {Object} error              - The error object
+   * @param  {Object} options.request    - Current request object
+   * @param  {Object} options.response   - Current response object
    *
    * @return {void}
    */

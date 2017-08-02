@@ -127,7 +127,7 @@ class AppProvider extends ServiceProvider {
    */
   _registerServer () {
     this.app.singleton('Adonis/Src/Server', (app) => {
-      const Context = app.use('Adonis/Src/Context')
+      const Context = app.use('Adonis/Src/HttpContext')
       const Route = app.use('Adonis/Src/Route')
       const Exception = app.use('Adonis/Src/Exception')
       const Logger = app.use('Adonis/Src/Logger')
@@ -163,10 +163,10 @@ class AppProvider extends ServiceProvider {
    * @private
    */
   _registerContext () {
-    this.app.bind('Adonis/Src/Context', () => {
+    this.app.bind('Adonis/Src/HttpContext', () => {
       return require('../src/Context')
     })
-    this.app.alias('Adonis/Src/Context', 'Context')
+    this.app.alias('Adonis/Src/HttpContext', 'HttpContext')
   }
 
   /**
@@ -278,7 +278,7 @@ class AppProvider extends ServiceProvider {
    * @return {void}
    */
   boot () {
-    const Context = this.app.use('Adonis/Src/Context')
+    const Context = this.app.use('Adonis/Src/HttpContext')
     const Request = this.app.use('Adonis/Src/Request')
     const Response = this.app.use('Adonis/Src/Response')
 
