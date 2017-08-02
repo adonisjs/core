@@ -142,9 +142,20 @@ class Resolver {
         .invalidParameter(`Resolver.translate expects binding to be a valid string`, binding)
     }
 
+    /**
+     * If explicit provider return right away
+     */
     if (binding.startsWith('@provider:')) {
       return this._normalize(binding.replace('@provider:', ''))
     }
+
+    /**
+     * If complete namespace return right away
+     */
+    if (binding.startsWith(`${this._appNamespace}/`)) {
+      return this._normalize(binding)
+    }
+
     return this._forDirectory ? this._normalize(this._makeAppNamespace(binding)) : this._normalize(binding)
   }
 

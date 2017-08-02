@@ -97,6 +97,11 @@ test.group('Resolver', (group) => {
     assert.equal(resolver.translate('App/Controllers/FooController/App/Controllers'), 'App/Controllers/FooController/App/Controllers')
   })
 
+  test('identify complete namespace but for a different directory', (assert) => {
+    const resolver = new Resolver(this.ioc, { httpControllers: 'Controllers' }, 'App', 'httpControllers')
+    assert.equal(resolver.translate('App/Models/Foo'), 'App/Models/Foo')
+  })
+
   test('force binding to be proivder', (assert) => {
     const resolver = new Resolver(this.ioc, { httpControllers: 'Controllers' }, 'App', 'httpControllers')
     assert.equal(resolver.translate('@provider:Adonis/FooController'), 'Adonis/FooController')
