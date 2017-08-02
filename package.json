@@ -34,8 +34,8 @@
     "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
-    "nyc": "^11.0.2",
-    "semver": "^5.3.0",
+    "nyc": "^11.1.0",
+    "semver": "^5.4.1",
     "standard": "^10.0.2"
   },
   "dependencies": {
