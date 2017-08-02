@@ -17,17 +17,13 @@ const Macroable = require('macroable')
 const SECRET = 'app.secret'
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * A facade over Node.js HTTP `res` object, making it
  * easier and simpler to make HTTP response. You can
  * access the original **response** object as
  * `response.response`
  *
  * @namespace Adonis/Src/Response
+ * @group Http
  *
  * @class Response
  */

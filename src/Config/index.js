@@ -14,19 +14,12 @@ const requireAll = require('require-all')
 const debug = require('debug')('adonis:framework')
 
 /**
- * The Adonis framework is the core module containing all the required
- * classes to run an HTTP server based application.
- *
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * Manages configuration by recursively reading all
  * `.js` files from the `config` folder.
  *
  * @namespace Adonis/Src/Config
  * @alias Config
+ * @group Core
  * @singleton
  *
  * @class Config
@@ -46,6 +39,8 @@ class Config {
    * system on the fly.
    *
    * @method syncWithFileSystem
+   *
+   * @return {void}
    */
   syncWithFileSystem () {
     try {
@@ -98,11 +93,10 @@ class Config {
    * when it does not exists. This method uses
    * lodash `_.mergeWith` method.
    *
-   * @since 4.0.0
    * @method merge
    *
-   * @param  {String} key
-   * @param  {Object} defaultValues
+   * @param  {String}   key
+   * @param  {Object}   defaultValues
    * @param  {Function} [customizer]
    *
    * @return {Object}
@@ -116,7 +110,7 @@ class Config {
    * ```
    */
   merge (key, defaultValues, customizer) {
-    const value = _.get(this._config, key, {})
+    const value = this.get(key, {})
     return _.mergeWith(defaultValues, value, customizer)
   }
 
@@ -131,10 +125,10 @@ class Config {
    * @method set
    *
    * @param  {String} key
-   * @param  {Mixed} value
+   * @param  {Mixed}  value
    *
    * @example
-   * ```
+   * ```js
    * Config.set('database.mysql.host', '127.0.0.1')
    *
    * // later get the value

@@ -13,24 +13,27 @@ const edge = require('edge.js')
 const BasePresenter = edge.BasePresenter
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * View engine to be used for rendering views. It makes
  * use of Edge as the templating engine. Learn more
  * about edge [here](http://edge.adonisjs.com/)
  *
  * During HTTP request/response lifecycle, you should
- * make use of `response.view()` to render views.
+ * make use of `view` instance to render views.
  *
- * **Namespace**: `Adonis/Src/View` <br />
- * **Singleton**: Yes <br />
- * **Alias**: View
+ * @namespace Adonis/Src/View
+ * @singleton
+ * @alias View
+ * @group Http
  *
  * @class View
  * @constructor
+ *
+ * @example
+ * ```js
+ * Route.get('/', { view } => {
+ *   return view.render('home')
+ * })
+ * ```
  */
 class View {
   constructor (Helpers, cacheViews = false) {

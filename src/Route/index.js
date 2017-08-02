@@ -14,21 +14,18 @@ const pathToRegexp = require('path-to-regexp')
 const CE = require('../Exceptions')
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * This class defines a single route. It supports dynamic
  * **url segments**, **formats**, **middleware**
  * and **named routes**.
  *
  * Generally you will get the instance of the by calling
- * one of the route method on the {{#crossLink "RouteManager"}}{{/crossLink}}
+ * one of the route method on the @ref('RouteManager')
  * class.
+ *
  * Example: `Route.get`, `Route.post`.
  *
  * @class Route
+ * @group Http
  * @constructor
  *
  * @example

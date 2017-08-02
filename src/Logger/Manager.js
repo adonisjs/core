@@ -58,6 +58,7 @@ const proxyHandler = {
  * @namespace Adonis/Src/Logger
  * @alias Logger
  * @singleton
+ * @group Core
  *
  * @class LoggerManager
  */

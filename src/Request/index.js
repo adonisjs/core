@@ -36,17 +36,13 @@ const TRUST_PROXY = 'app.http.trustProxy'
 const SECRET = 'app.secret'
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * A facade over Node.js HTTP `req` object, making it
  * easier and simpler to access request information.
  * You can access the original **req** object as
  * `request.request`
  *
  * @namespace Adonis/Src/Request
+ * @group Http
  *
  * @class Request
  * @constructor

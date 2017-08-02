@@ -14,10 +14,11 @@ const CE = require('../Exceptions')
 
 /**
  * This class is used to encrypt/decrypt values using a secure
- * key and also `base64Encode` and `decode` strings.
+ * key and also base64 `encode` and `decode` strings.
  *
  * @namespace Adonis/Src/Encryption
  * @alias Encryption
+ * @group Core
  * @singleton
  *
  * @class Encryption
@@ -57,7 +58,7 @@ class Encryption {
   }
 
   /**
-   * Decrypt previosuly encoded string
+   * Decrypt encoded string
    *
    * @method decrypt
    *

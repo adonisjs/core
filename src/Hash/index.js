@@ -12,15 +12,11 @@
 const bcrypt = require('bcryptjs')
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * Hash plain values using [bcryptjs](https://www.npmjs.com/package/bcryptjs).
- * It is considered to be used when saving user passwords to the database,.
+ * It is considered to be used when saving user passwords to the database.
  *
  * @namespace Adonis/Src/Hash
+ * @group Core
  * @alias Hash
  * @singleton Yes
  *
@@ -32,11 +28,12 @@ class Hash {
    * Hash plain value using bcrypt.
    *
    * @method make
+   * @async
    *
    * @param  {String} value
    * @param  {Number} [rounds = 10]
    *
-   * @return {Promise}
+   * @return {String}
    *
    * @example
    * ```js
@@ -56,17 +53,18 @@ class Hash {
 
   /**
    * Verify an existing hash with the plain value. Though this
-   * method returns a promise, it never throws an exception
+   * method returns a promise, it never rejects the promise
    * and this is just for the sake of simplicity, since
    * bcrypt errors are not something that you can act
    * upon.
    *
    * @method verify
+   * @async
    *
    * @param  {String} value
    * @param  {String} hash
    *
-   * @return {Promise}
+   * @return {Boolean}
    *
    * @example
    * ```

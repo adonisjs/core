@@ -18,6 +18,12 @@ let staticServer = null
  * requests are handled by this middleware and response is
  * made when there is a resource inside the `public`
  * directory.
+ *
+ * @namespace Adonis/Src/Static
+ * @alias Static
+ * @group Http
+ *
+ * @class Static
  */
 class Static {
   /**

@@ -15,20 +15,13 @@ const RouteStore = require('./Store')
 const CE = require('../Exceptions')
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * Route Resource class is used to define resourceful
  * routes. You can create a resource instance by
  * calling `Route.resource()` method.
  *
  * @class RouteResource
+ * @group Http
  * @constructor
- *
- * @uses Route
- * @uses RouteStore
  */
 class RouteResource {
   constructor (resource, controller, namePrefix = null) {

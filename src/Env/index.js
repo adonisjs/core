@@ -15,11 +15,6 @@ const dotenv = require('dotenv')
 const debug = require('debug')('adonis:framework')
 
 /**
- * @module Adonis
- * @submodule framework
- */
-
-/**
  * Manages the application environment variables by
  * reading the `.env` file from the project root.
  *
@@ -31,6 +26,7 @@ const debug = require('debug')('adonis:framework')
  * environment variable.
  *
  * @namespace Adonis/Src/Env
+ * @group Core
  * @alias Env
  * @singleton
  *
@@ -60,7 +56,7 @@ class Env {
 
   /**
    * Returns the path from where the `.env`
-   * file will be loaded.
+   * file should be loaded.
    *
    * @method getEnvPath
    *
@@ -101,6 +97,8 @@ class Env {
    *
    * @param  {String} key
    * @param  {Mixed} value
+   *
+   * @return {void}
    *
    * @example
    * ```js

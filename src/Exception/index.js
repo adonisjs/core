@@ -11,6 +11,23 @@
 
 const { resolver } = require('@adonisjs/fold')
 
+/**
+ * The exception class is used to bind listeners
+ * for specific exceptions or add a wildcard to
+ * handle all exceptions.
+ *
+ * This module is used by the HTTP server to pull
+ * exception handlers and call them to handle
+ * the error.
+ *
+ * @namespace Adonis/Src/Exception
+ * @group Http
+ * @alias Exception
+ * @singleton
+ *
+ * @class Exception
+ * @constructor
+ */
 class Exception {
   constructor () {
     this.clear()
@@ -31,12 +48,12 @@ class Exception {
 
   /**
    * Returns the handler for a given exception. Will fallback
-   * to wildcard handler when defined
+   * to wildcard handler when defined.
    *
    * @method getHandler
    *
-   * @param  {String}   name
-   * @param  {Boolean} [ignoreWildcard = false] Ignore wildcard handler
+   * @param  {String}   name - Exception name
+   * @param  {Boolean} [ignoreWildcard = false] Do not return wildcard handler
    *
    * @return {Function|Undefined}
    *
@@ -75,11 +92,16 @@ class Exception {
   }
 
   /**
-   * Returns the wildcard handler for the exception
+   * Returns the wildcard handler for the exceptions
    *
    * @method getWildcardHandler
    *
    * @return {Function|Undefined}
+   *
+   * @example
+   * ```
+   * Exception.getWildcardHandler()
+   * ```
    */
   getWildcardHandler () {
     return this._handlers['*']
@@ -91,7 +113,8 @@ class Exception {
    *
    * @method getReporter
    *
-   * @param  {String}   name
+   * @param  {String}   name - The exception name
+   * @param  {Boolean} [ignoreWildcard = false] Do not return wildcard handler
    *
    * @return {Function|Undefined}
    *
@@ -130,18 +153,23 @@ class Exception {
   }
 
   /**
-   * Returns the wildcard reporter for the exception
+   * Returns the wildcard reporter for exceptions.
    *
    * @method getWildcardReporter
    *
    * @return {Function|Undefined}
+   *
+   * @example
+   * ```js
+   * Exception.getWildcardReporter()
+   * ```
    */
   getWildcardReporter () {
     return this._reporters['*']
   }
 
   /**
-   * Bind handler for a given exception
+   * Bind handler for a single exception
    *
    * @method handle
    *
@@ -173,7 +201,7 @@ class Exception {
    *
    * @example
    * ```js
-   * Exception.report('UserNotFoundException', (error, request) => {
+   * Exception.report('UserNotFoundException', (error, { request }) => {
    *
    * })
    * ```
@@ -203,7 +231,7 @@ class Exception {
    *   async handle (error, { request, response }) {
    *   }
    *
-   *  async report (error, request) {
+   *  async report (error, { request }) {
    *  }
    * }
    * ```

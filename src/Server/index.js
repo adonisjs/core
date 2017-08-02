@@ -20,6 +20,16 @@ const NamedMiddlewareWrapper = require('./NamedMiddlewareWrapper')
 const CE = require('../Exceptions')
 
 /**
+ * The HTTP server class to start a new server and bind
+ * the entire app around it.
+ *
+ * This class utilizes the Node.js core HTTP server.
+ *
+ * @namespace Adonis/Src/Server
+ * @alias Server
+ * @singleton
+ * @group Http
+ *
  * @class Server
  */
 class Server {
@@ -364,6 +374,14 @@ class Server {
    * @chainable
    *
    * @throws {InvalidArgumentException} If middleware is not an array
+   *
+   * @example
+   * ```js
+   * Server.registerGlobal([
+   *   'Adonis/Middleware/BodyParser',
+   *   'Adonis/Middleware/Session'
+   * ])
+   * ```
    */
   registerGlobal (middleware) {
     this._registerMiddleware('global', middleware, 'server.registerGlobal accepts an array of middleware')
@@ -383,6 +401,11 @@ class Server {
    * @chainable
    *
    * @throws {InvalidArgumentException} If middleware is not an array
+   *
+   * @example
+   * ```js
+   * Server.use(['Adonis/Middleware/Static'])
+   * ```
    */
   use (middleware) {
     this._registerMiddleware('server', middleware, 'server.use accepts an array of middleware')
@@ -400,6 +423,23 @@ class Server {
    * @chainable
    *
    * @throws {InvalidArgumentException} If middleware is not an object with key/value pair.
+   *
+   * @example
+   * ```js
+   * Server.registerNamed({
+   *   auth: 'Adonis/Middleware/Auth'
+   * })
+   *
+   * // use it on route later
+   * Route
+   *   .get('/profile', 'UserController.profile')
+   *   .middleware('auth')
+   *
+   * // Also pass params
+   * Route
+   *   .get('/profile', 'UserController.profile')
+   *   .middleware('auth:basic')
+   * ```
    */
   registerNamed (middleware) {
     if (!_.isPlainObject(middleware)) {
@@ -436,6 +476,12 @@ class Server {
    * @param  {Object}    httpInstance
    *
    * @return {void}
+   *
+   * @example
+   * ```js
+   * const https = require('https')
+   * Server.setInstance(https)
+   * ```
    */
   setInstance (httpInstance) {
     this._httpInstance = httpInstance
@@ -519,14 +565,15 @@ class Server {
    *
    * @method listen
    *
-   * @param  {String} [host = localhost]
-   * @param  {Number} [port = 3333]
+   * @param  {String}   [host = localhost]
+   * @param  {Number}   [port = 3333]
+   * @param  {Function} [callback]
    *
    * @return {Object}
    */
-  listen (host = 'localhost', port = 3333) {
+  listen (host = 'localhost', port = 3333, callback) {
     this.Logger.info('serving app on http://%s:%s', host, port)
-    return this.getInstance().listen(port, host)
+    return this.getInstance().listen(port, host, callback)
   }
 }
 
