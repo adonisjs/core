@@ -5,7 +5,7 @@ const caller = require('caller')
 const _ = require('lodash')
 const requireStack = require('require-stack')
 const debug = require('debug')('adonis:fold')
-const CE = require('../../src/Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 const toString = Function.prototype.toString
 const isClass = (fn) => {
@@ -435,7 +435,7 @@ class Ioc {
    */
   bind (namespace, closure) {
     if (typeof (closure) !== 'function') {
-      throw CE.InvalidArgumentException.invalidParameters('Ioc.bind expects 2nd parameter to be a closure')
+      throw GE.InvalidArgumentException.invalidParameter('Ioc.bind expects 2nd parameter to be a closure', closure)
     }
 
     debug('binding %s namespace to ioc container', namespace)
@@ -473,7 +473,9 @@ class Ioc {
    */
   singleton (namespace, closure) {
     if (typeof (closure) !== 'function') {
-      throw CE.InvalidArgumentException.invalidParameters('Ioc.singleton expects 2nd parameter to be a closure')
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter('Ioc.singleton expects 2nd parameter to be a closure', closure)
     }
 
     debug('binding %s namespace as singleton to ioc container', namespace)
@@ -521,7 +523,8 @@ class Ioc {
    */
   manager (namespace, bindingInterface) {
     if (typeof (bindingInterface.extend) !== 'function') {
-      throw CE.InvalidArgumentException.invalidIocManager(namespace)
+      const message = `Make sure ${namespace} does have a extend method. Report this issue to the provider author`
+      throw GE.InvalidArgumentException.invoke(message, 500, 'E_INVALID_IOC_MANAGER')
     }
 
     debug('exposing %s namespace to be extended by outside world', namespace)
@@ -551,11 +554,12 @@ class Ioc {
    */
   extend (namespace, key, closure, ...options) {
     if (!this._hasManager(namespace)) {
-      throw CE.InvalidArgumentException.cannotBeExtended(namespace)
+      const message = `${namespace} cannot be extended, since their is no public interface to extend`
+      throw GE.InvalidArgumentException.invoke(message, 500, 'E_CANNOT_EXTEND_BINDING')
     }
 
     if (typeof (closure) !== 'function') {
-      throw CE.InvalidArgumentException.invalidParameters('Ioc.extend expects 3rd parameter to be a closure')
+      throw GE.InvalidArgumentException.invalidParameter('Ioc.extend expects 3rd parameter to be a closure', closure)
     }
 
     const resolvedValue = closure(this)
@@ -586,7 +590,7 @@ class Ioc {
    */
   fake (namespace, closure) {
     if (typeof (closure) !== 'function') {
-      throw CE.InvalidArgumentException.invalidParameters('Ioc.fake expects 2nd parameter to be a closure')
+      throw GE.InvalidArgumentException.invalidParameter('Ioc.fake expects 2nd parameter to be a closure', closure)
     }
 
     debug('creating fake for %s namespace', namespace)
@@ -740,14 +744,15 @@ class Ioc {
   makeFunc (pattern) {
     const [namespace, method, ...rest] = pattern.split(/\b\./g)
     if (!namespace || !method || rest.length) {
-      throw CE.InvalidArgumentException.invalidMakeString(pattern)
+      const message = `Ioc.makeFunc expects a string in module.method format instead received ${pattern}`
+      throw GE.InvalidArgumentException.invoke(message, 500, 'E_INVALID_MAKE_STRING')
     }
 
     const normalizedNamespace = namespace.replace(/\\./g, '.')
     const instance = this.make(normalizedNamespace)
 
     if (!instance[method]) {
-      throw CE.RuntimeException.missingMethod(normalizedNamespace, method)
+      throw GE.RuntimeException.invoke(`Method ${method} missing on ${normalizedNamespace}`, 500, 'E_UNDEFINED_METHOD')
     }
     return { instance, method: instance[method].bind(instance) }
   }

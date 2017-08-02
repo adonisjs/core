@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
 */
 
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * @module Adonis
@@ -59,7 +59,9 @@ class Resolver {
    */
   _validateDirectories (directories) {
     if (!directories || typeof (directories) !== 'object') {
-      throw CE.InvalidArgumentException.invalidParameters('Cannot initiate resolver without registering directories')
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter('Cannot initiate resolver without registering directories', directories)
     }
   }
 
@@ -76,7 +78,9 @@ class Resolver {
    */
   _validateNamespace (appNamespace) {
     if (!appNamespace) {
-      throw CE.InvalidArgumentException.invalidParameters('Cannot initiate resolver without registering appNamespace')
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter('Cannot initiate resolver without registering appNamespace', appNamespace)
     }
   }
 
@@ -95,7 +99,9 @@ class Resolver {
    */
   _makeAppNamespace (binding) {
     if (!this._directories[this._forDirectory]) {
-      throw new Error(`Cannot translate binding, since ${this._forDirectory} is not registered under directories`)
+      throw GE
+        .RuntimeException
+        .invoke(`Cannot translate binding, since ${this._forDirectory} is not registered under directories`)
     }
     const basePath = `${this._appNamespace}/${this._directories[this._forDirectory]}`
     return `${basePath}/${binding.replace(basePath, '')}`
@@ -136,7 +142,9 @@ class Resolver {
    */
   translate (binding) {
     if (typeof (binding) !== 'string') {
-      throw new Error(`Cannot translate ${typeof (binding)}, binding should always be a valid string.`)
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter(`Resolver.translate expects binding to be a valid string`, binding)
     }
 
     if (binding.startsWith('@provider:')) {

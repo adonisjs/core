@@ -39,10 +39,10 @@
     "standard": "^10.0.2"
   },
   "dependencies": {
+    "@adonisjs/generic-exceptions": "^1.0.0",
     "caller": "^1.0.1",
     "debug": "^2.6.8",
     "lodash": "^4.17.4",
-    "node-exceptions": "^2.0.2",
     "require-stack": "^1.0.2"
   },
   "repository": {

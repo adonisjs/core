@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const requireStack = require('require-stack')
 const emitter = new (require('events'))()
-const CE = require('../../src/Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 const ServiceProvider = require('../../src/ServiceProvider')
 
 /**
@@ -96,7 +96,8 @@ class Registrar {
     .map((provider) => {
       const Module = requireStack(provider.trim())
       if (Module.prototype instanceof ServiceProvider === false) {
-        throw CE.RuntimeException.invalidServiceProvider(Module.name)
+        const message = `${Module.name} must extend base service provider class`
+        throw GE.RuntimeException.invoke(message, 500, 'E_INVALID_SERVICE_PROVIDER')
       }
       return new Module(this.Ioc)
     })
@@ -152,7 +153,9 @@ class Registrar {
    */
   providers (arrayOfProviders) {
     if (arrayOfProviders instanceof Array === false) {
-      throw CE.InvalidArgumentException.invalidParameters('register expects an array of providers to be registered')
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter('register expects an array of providers to be registered', arrayOfProviders)
     }
     this._providers = this._getProvidersInstance(arrayOfProviders)
     return this
