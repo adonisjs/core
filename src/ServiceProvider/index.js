@@ -6,8 +6,6 @@
  * methods which are called by the Registrar class as
  * part of lifecycle hooks.
  *
- * @module Adonis
- * @submodule fold
  * @class ServiceProvider
  */
 class ServiceProvider {

@@ -97,6 +97,11 @@ test.group('Resolver', (group) => {
     assert.equal(resolver.translate('App/Controllers/FooController/App/Controllers'), 'App/Controllers/FooController/App/Controllers')
   })
 
+  test('identify complete namespace but for a different directory', (assert) => {
+    const resolver = new Resolver(this.ioc, { httpControllers: 'Controllers' }, 'App', 'httpControllers')
+    assert.equal(resolver.translate('App/Models/Foo'), 'App/Models/Foo')
+  })
+
   test('force binding to be proivder', (assert) => {
     const resolver = new Resolver(this.ioc, { httpControllers: 'Controllers' }, 'App', 'httpControllers')
     assert.equal(resolver.translate('@provider:Adonis/FooController'), 'Adonis/FooController')
@@ -175,7 +180,7 @@ test.group('Resolver', (group) => {
   test('throw exception when binding is not a string, neither a callback', (assert) => {
     const resolver = new Resolver(this.ioc, { httpControllers: 'Controllers' }, 'App')
     const fn = () => resolver.resolveFunc({})
-    assert.throw(fn, 'Cannot translate object, binding should always be a valid string.')
+    assert.throw(fn, 'E_INVALID_PARAMETER: Resolver.translate expects binding to be a valid string instead received object')
   })
 })
 

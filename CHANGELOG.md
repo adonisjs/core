@@ -1,3 +1,18 @@
+<a name="4.0.2"></a>
+## [4.0.2](https://github.com/poppinss/adonis-fold/compare/v4.0.1...v4.0.2) (2017-08-02)
+
+
+### Bug Fixes
+
+* **resolver:** translate full namespace correctly ([9f727f3](https://github.com/poppinss/adonis-fold/commit/9f727f3))
+
+
+### Features
+
+* **exceptions:** use generic-exceptions package ([20f9d08](https://github.com/poppinss/adonis-fold/commit/20f9d08))
+
+
+
 <a name="4.0.1"></a>
 ## [4.0.1](https://github.com/poppinss/adonis-fold/compare/v4.0.0...v4.0.1) (2017-07-30)
 
