@@ -1,3 +1,19 @@
+<a name="4.0.6"></a>
+## [4.0.6](https://github.com/adonisjs/adonis-framework/compare/v4.0.5...v4.0.6) (2017-08-02)
+
+
+### Bug Fixes
+
+* **logger:** improve proxy get method ([257e0d0](https://github.com/adonisjs/adonis-framework/commit/257e0d0))
+* **server:** use logger.warning over logger.warn ([279f61c](https://github.com/adonisjs/adonis-framework/commit/279f61c))
+
+
+### Features
+
+* **exceptions:** use generic-exceptions ([1f63cbd](https://github.com/adonisjs/adonis-framework/commit/1f63cbd))
+
+
+
 <a name="4.0.5"></a>
 ## [4.0.5](https://github.com/adonisjs/adonis-framework/compare/v4.0.4...v4.0.5) (2017-07-28)
 
