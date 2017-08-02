@@ -24,7 +24,7 @@ test.group('Route | Register', () => {
 
   test('throw exception when url is not string', (assert) => {
     const route = () => new Route(22)
-    assert.throw(route, 'E_INVALID_PARAMETER: Cannot instantiate route without a valid url string instead received {number:22}')
+    assert.throw(route, 'E_INVALID_PARAMETER: Cannot instantiate route without a valid url string instead received number')
   })
 
   test('throw exception when route handler is not defined', (assert) => {
@@ -34,7 +34,7 @@ test.group('Route | Register', () => {
 
   test('throw exception when route handler is not a function or string', (assert) => {
     const route = () => new Route('/', true)
-    assert.throw(route, 'E_INVALID_PARAMETER: Cannot instantiate route without route handler instead received {boolean:true}')
+    assert.throw(route, 'E_INVALID_PARAMETER: Cannot instantiate route without route handler instead received boolean')
   })
 
   test('define a simple route', (assert) => {
@@ -285,7 +285,7 @@ test.group('Route | Resource', (group) => {
 
   test('throw exception when resource name is not string', (assert) => {
     const resource = () => new RouteResource(22)
-    assert.throw(resource, 'E_INVALID_PARAMETER: Route.resource expects name to be a string instead received {number:22}')
+    assert.throw(resource, 'E_INVALID_PARAMETER: Route.resource expects name to be a string instead received number')
   })
 
   test('throw exception when resource controller is not string', (assert) => {

@@ -14,10 +14,10 @@ const _ = require('lodash')
 const Middleware = require('co-compose')
 const { resolver } = require('@adonisjs/fold')
 const debug = require('debug')('adonis:framework')
+const GE = require('@adonisjs/generic-exceptions')
 
 const MiddlewareWrapper = require('./MiddlewareWrapper')
 const NamedMiddlewareWrapper = require('./NamedMiddlewareWrapper')
-const CE = require('../Exceptions')
 
 /**
  * The HTTP server class to start a new server and bind
@@ -69,7 +69,7 @@ class Server {
    */
   _registerMiddleware (tag, middleware, errorMessage) {
     if (!Array.isArray(middleware)) {
-      throw CE.InvalidArgumentException.invalidParameter(errorMessage, middleware)
+      throw GE.InvalidArgumentException.invalidParameter(errorMessage, middleware)
     }
 
     const existingMiddleware = this.middleware.tag(tag).get() || []
@@ -443,7 +443,9 @@ class Server {
    */
   registerNamed (middleware) {
     if (!_.isPlainObject(middleware)) {
-      throw CE.InvalidArgumentException.invalidParameter('server.registerNamed accepts a key/value pair of middleware', middleware)
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter('server.registerNamed accepts a key/value pair of middleware', middleware)
     }
 
     this._registerMiddleware('named', _.keys(middleware), '')
@@ -534,7 +536,7 @@ class Server {
          * Throw 404 exception when route is not found
          */
         if (!route) {
-          throw new CE.HttpException(`Route not found ${request.url()}`, 404)
+          throw new GE.HttpException(`Route not found ${request.url()}`, 404)
         }
 
         /**

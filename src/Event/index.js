@@ -13,7 +13,7 @@ const _ = require('lodash')
 const { resolver } = require('@adonisjs/fold')
 const Resetable = require('resetable')
 const EventEmitter = require('eventemitter2').EventEmitter2
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * Event class is used to fire events and bind
@@ -215,7 +215,7 @@ class Event {
    */
   times (number) {
     if (typeof (number) !== 'number') {
-      throw CE.InvalidArgumentException.invalidParameter('Event.times expects a valid number', number)
+      throw GE.InvalidArgumentException.invalidParameter('Event.times expects a valid number', number)
     }
     this._many.set(number)
     return this
@@ -407,7 +407,7 @@ class Event {
    */
   setMaxListeners (number) {
     if (typeof (number) !== 'number') {
-      throw CE.InvalidArgumentException.invalidParameter('Event.setMaxListeners expects a valid number', number)
+      throw GE.InvalidArgumentException.invalidParameter('Event.setMaxListeners expects a valid number', number)
     }
     this.emitter.setMaxListeners(number)
   }

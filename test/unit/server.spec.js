@@ -42,7 +42,7 @@ test.group('Server | Middleware', (group) => {
   test('throw exception when middleware is not an array', (assert) => {
     const server = new Server()
     const fn = () => server.registerGlobal('foo')
-    assert.throw(fn, 'server.registerGlobal accepts an array of middleware instead received {string:foo}')
+    assert.throw(fn, 'server.registerGlobal accepts an array of middleware instead received string')
   })
 
   test('log warning when duplicate middleware are registered', (assert) => {
@@ -80,7 +80,7 @@ test.group('Server | Middleware', (group) => {
   test('throw exception when named middleware payload is not an object', (assert) => {
     const server = new Server()
     const fn = () => server.registerNamed(['foo'])
-    assert.throw(fn, `server.registerNamed accepts a key/value pair of middleware instead received {array:foo}`)
+    assert.throw(fn, `server.registerNamed accepts a key/value pair of middleware instead received array`)
   })
 
   test('register server level middleware', (assert) => {

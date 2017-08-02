@@ -12,7 +12,7 @@
 const { ioc } = require('@adonisjs/fold')
 const Drivers = require('./Drivers')
 const Logger = require('./index')
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * Proxy handler to proxy logger instance
@@ -105,7 +105,7 @@ class LoggerManager {
       return new Logger(this.constructor._drivers[name])
     }
 
-    throw CE.RuntimeException.invalidLoggerDriver(name)
+    throw GE.RuntimeException.invoke(`Logger driver ${name} does not exists.`, 500, 'E_INVALID_LOGGER_DRIVER')
   }
 
   /**

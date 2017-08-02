@@ -14,7 +14,7 @@ const Route = require('./index')
 const RouteGroup = require('./Group')
 const RouteStore = require('./Store')
 const RouteResource = require('./Resource')
-const CE = require('../Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
 /**
  * Route Manager is the public interface used to define
@@ -42,7 +42,7 @@ class RouteManager {
    */
   _validateGroupClosure (callback) {
     if (typeof (callback) !== 'function') {
-      throw CE.InvalidArgumentException.invalidParamter('Route.group expects a callback', callback)
+      throw GE.InvalidArgumentException.invalidParamter('Route.group expects a callback', callback)
     }
   }
 
@@ -58,7 +58,7 @@ class RouteManager {
   _validateNestedGroups () {
     if (RouteStore.hasBreakpoint()) {
       RouteStore.releaseBreakpoint()
-      throw CE.RuntimeException.nestedGroup()
+      throw GE.RuntimeException.invoke('Nested route groups are not allowed', 500, 'E_NESTED_ROUTE_GROUPS')
     }
   }
 
