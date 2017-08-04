@@ -30,7 +30,7 @@ const BasePresenter = edge.BasePresenter
  *
  * @example
  * ```js
- * Route.get('/', { view } => {
+ * Route.get('/', ({ view }) => {
  *   return view.render('home')
  * })
  * ```
