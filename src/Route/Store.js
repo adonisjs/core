@@ -129,6 +129,29 @@ class RouteStore {
   }
 
   /**
+   * Find a route with name or it's url
+   *
+   * @method find
+   *
+   * @param  {String} nameOrRoute
+   * @param  {String} domain
+   *
+   * @return {Object|Null}
+   */
+  find (routeNameOrHandler, domain) {
+    return _.find(this._routes, (route) => {
+      const isName = () => route._name === routeNameOrHandler
+      const isRoute = () => route._route === routeNameOrHandler
+      const isHandler = () => route._handler === routeNameOrHandler
+      const isDomain = domain && route._domain && route._domain.test(domain)
+
+      return domain
+      ? (isName() && isDomain) || (isHandler() && isDomain) || (isRoute() && isDomain)
+      : isName() || isRoute() || isHandler()
+    })
+  }
+
+  /**
    * Returns a list of stored routes.
    *
    * @method list

@@ -612,4 +612,50 @@ test.group('Route | Manager', (group) => {
       'users.destroy'
     ])
   })
+
+  test('make url for a registered route', (assert) => {
+    RouteManager.get('users/:id', function () {})
+    const url = RouteManager.url('/users/:id', { id: 1 })
+    assert.equal(url, '/users/1')
+  })
+
+  test('make url for route name', (assert) => {
+    RouteManager.get('users/:id', function () {}).as('profile')
+    const url = RouteManager.url('profile', { id: 2 })
+    assert.equal(url, '/users/2')
+  })
+
+  test('make url for route with domain', (assert) => {
+    RouteManager.get('users/:id', function () {}).as('profile')
+    RouteManager.get('author/:id', function () {}).domain('blog.example.com').as('profile')
+
+    const url = RouteManager.url('profile', { id: 2 }, 'blog.example.com')
+    assert.equal(url, '/author/2')
+  })
+
+  test('make url for route with dynamic domain', (assert) => {
+    RouteManager.get('users/:id', function () {}).as('profile')
+    RouteManager.get('author/:id', function () {}).domain('*.example.com').as('profile')
+
+    const url = RouteManager.url('profile', { id: 2 }, 'virk.example.com')
+    assert.equal(url, '/author/2')
+  })
+
+  test('make url controller action', (assert) => {
+    RouteManager.get('users/:id', 'UsersController.show')
+    const url = RouteManager.url('UsersController.show', { id: 1 })
+    assert.equal(url, '/users/1')
+  })
+
+  test('make url with domain for controller action', (assert) => {
+    RouteManager.get('users/:id', 'UsersController.show')
+    RouteManager.get('author/:id', 'UsersController.show').domain('blog.example.com')
+    const url = RouteManager.url('UsersController.show', { id: 1 }, 'blog.example.com')
+    assert.equal(url, '/author/1')
+  })
+
+  test('return null when unable to resolve route', (assert) => {
+    const url = RouteManager.url('UsersController.show', { id: 1 }, 'blog.example.com')
+    assert.isNull(url)
+  })
 })
