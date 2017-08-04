@@ -104,7 +104,7 @@ class Exception {
    * ```
    */
   getWildcardHandler () {
-    return this._handlers['*']
+    return this.getHandler('*', true)
   }
 
   /**
@@ -165,7 +165,7 @@ class Exception {
    * ```
    */
   getWildcardReporter () {
-    return this._reporters['*']
+    return this.getReporter('*')
   }
 
   /**
