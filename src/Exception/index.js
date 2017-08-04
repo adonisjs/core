@@ -165,7 +165,7 @@ class Exception {
    * ```
    */
   getWildcardReporter () {
-    return this.getReporter('*')
+    return this.getReporter('*', true)
   }
 
   /**

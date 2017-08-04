@@ -133,6 +133,10 @@ class View {
   presenter (...params) {
     return this.engine.presenter(...params)
   }
+
+  tag (...params) {
+    this.engine.tag(...params)
+  }
 }
 
 module.exports = View

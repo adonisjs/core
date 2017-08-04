@@ -40,6 +40,20 @@ class ViewProvider extends ServiceProvider {
    */
   boot () {
     const Context = this.app.use('Adonis/Src/HttpContext')
+    const View = this.app.use('Adonis/Src/View')
+    const Config = this.app.use('Adonis/Src/Config')
+    const Route = this.app.use('Adonis/Src/Route')
+    const Helpers = this.app.use('Adonis/Src/Helpers')
+
+    /**
+     * Registering wildely available globals
+     */
+    require('../src/View/globals')(View, Route, Config)
+
+    /**
+     * Registering view tags
+     */
+    require('../src/View/Tags')(View, Helpers)
 
     /**
      * Registers an isolated instance of view on the
@@ -47,9 +61,11 @@ class ViewProvider extends ServiceProvider {
      * the request object.
      */
     Context.getter('view', function () {
-      const View = use('Adonis/Src/View')
       const requestLocals = {
         request: this.request,
+        auth: {
+          user: (this.auth && this.auth.user) ? this.auth.user : null
+        },
         url: this.request.url(),
         is: function (matchWith) {
           return this.url().replace(/^\/|\/$/) === matchWith.replace(/^\/|\/$/)
