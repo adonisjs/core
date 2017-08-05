@@ -182,6 +182,7 @@ test.group('Response', () => {
     const server = http.createServer((req, res) => {
       const response = new Response(req, res, new Config())
       response.redirect('http://adonisjs.com')
+      response.end()
     })
 
     await supertest(server).get('/').expect('Location', 'http://adonisjs.com').expect(302)
