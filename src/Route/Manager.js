@@ -10,6 +10,7 @@
 */
 
 const _ = require('lodash')
+const pathToRegexp = require('path-to-regexp')
 const Route = require('./index')
 const RouteGroup = require('./Group')
 const RouteStore = require('./Store')
@@ -342,6 +343,25 @@ class RouteManager {
    */
   list () {
     return RouteStore.list()
+  }
+
+  /**
+   * Make url for a route.
+   *
+   * @method url
+   *
+   * @param  {String} urlOrName    - Url, route name or controller action
+   * @param  {Object} [data = {}]  - Data object
+   * @param  {String} [domain]     - Optional domain
+   *
+   * @return {String|Null}
+   */
+  url (routeNameOrHandler, data, domain) {
+    const route = RouteStore.find(routeNameOrHandler, domain)
+    if (!route) {
+      return null
+    }
+    return pathToRegexp.compile(route._route)(data || {})
   }
 }
 

@@ -30,7 +30,7 @@ const BasePresenter = edge.BasePresenter
  *
  * @example
  * ```js
- * Route.get('/', { view } => {
+ * Route.get('/', ({ view }) => {
  *   return view.render('home')
  * })
  * ```
@@ -132,6 +132,10 @@ class View {
    */
   presenter (...params) {
     return this.engine.presenter(...params)
+  }
+
+  tag (...params) {
+    this.engine.tag(...params)
   }
 }
 

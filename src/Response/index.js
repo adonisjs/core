@@ -258,7 +258,16 @@ class Response extends Macroable {
    * @return {void}
    */
   redirect (url, status) {
-    nodeRes.redirect(this.request, this.response, url, status)
+    if (!this.implicitEnd) {
+      nodeRes.redirect(this.request, this.response, url, status)
+      return
+    }
+
+    this._lazyBody = {
+      method: 'redirect',
+      content: url,
+      args: [status]
+    }
   }
 
   /**
