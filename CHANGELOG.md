@@ -1,3 +1,21 @@
+<a name="4.0.7"></a>
+## [4.0.7](https://github.com/adonisjs/adonis-framework/compare/v4.0.6...v4.0.7) (2017-08-05)
+
+
+### Bug Fixes
+
+* **exception:** fix resolving wildcard handler & reporter ([a0e692a](https://github.com/adonisjs/adonis-framework/commit/a0e692a))
+* **response:** make redirect lazy too ([cf53eef](https://github.com/adonisjs/adonis-framework/commit/cf53eef))
+* **view-example:** fix docblock example ([#615](https://github.com/adonisjs/adonis-framework/issues/615)) ([ff56c59](https://github.com/adonisjs/adonis-framework/commit/ff56c59))
+
+
+### Features
+
+* **route:** add method to make urls ([41972f1](https://github.com/adonisjs/adonis-framework/commit/41972f1))
+* **view:** add view tags and globals ([d4821e0](https://github.com/adonisjs/adonis-framework/commit/d4821e0))
+
+
+
 <a name="4.0.6"></a>
 ## [4.0.6](https://github.com/adonisjs/adonis-framework/compare/v4.0.5...v4.0.6) (2017-08-02)
 
