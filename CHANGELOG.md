@@ -1,3 +1,18 @@
+<a name="4.0.8"></a>
+## [4.0.8](https://github.com/adonisjs/adonis-framework/compare/v4.0.7...v4.0.8) (2017-08-08)
+
+
+### Bug Fixes
+
+* **provider:** reference auth inside view as locals ([5653e65](https://github.com/adonisjs/adonis-framework/commit/5653e65))
+
+
+### Features
+
+* **response:** add support to redirect back ([a237e4c](https://github.com/adonisjs/adonis-framework/commit/a237e4c))
+
+
+
 <a name="4.0.7"></a>
 ## [4.0.7](https://github.com/adonisjs/adonis-framework/compare/v4.0.6...v4.0.7) (2017-08-05)
 
