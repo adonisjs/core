@@ -10,6 +10,7 @@
 */
 
 const { resolver } = require('@adonisjs/fold')
+const debug = require('debug')('adonis:framework')
 
 /**
  * The exception class is used to bind listeners
@@ -88,6 +89,9 @@ class Exception {
       return this.getWildcardHandler()
     }
 
+    if (handler) {
+      debug('found custom handler for %s', name)
+    }
     return handler
   }
 
@@ -104,6 +108,7 @@ class Exception {
    * ```
    */
   getWildcardHandler () {
+    debug('returning wildcard handler')
     return this.getHandler('*', true)
   }
 
@@ -149,6 +154,9 @@ class Exception {
       return this.getWildcardReporter()
     }
 
+    if (reporter) {
+      debug('found custom reporter for %s', name)
+    }
     return reporter
   }
 
@@ -165,6 +173,7 @@ class Exception {
    * ```
    */
   getWildcardReporter () {
+    debug('returning wildcard reporter')
     return this.getReporter('*', true)
   }
 
