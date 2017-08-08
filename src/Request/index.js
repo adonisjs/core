@@ -300,7 +300,7 @@ class Request extends Macroable {
    * @return {Mixed} Actual value or the default value, falling back to `null`
    */
   header (key, defaultValue) {
-    return _.get(this.headers(), key, defaultValue)
+    return nodeReq.header(this.request, key) || defaultValue
   }
 
   /**
