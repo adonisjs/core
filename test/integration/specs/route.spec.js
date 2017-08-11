@@ -31,6 +31,10 @@ class UserController {
 }
 
 test.group('Route', (group) => {
+  group.after(() => {
+    delete process.env.ENV_SILENT
+  })
+
   group.beforeEach(() => {
     ioc.restore()
     RouteStore.clear()

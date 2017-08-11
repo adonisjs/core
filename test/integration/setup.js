@@ -10,6 +10,7 @@ const providers = [
 ]
 
 module.exports = function () {
+  process.env.ENV_SILENT = true
   ioc.bind('Adonis/Src/Helpers', function () {
     return new Helpers(path.join(__dirname, './'))
   })
