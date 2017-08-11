@@ -13,6 +13,9 @@ const nodeRes = require('node-res')
 const nodeReq = require('node-req')
 const nodeCookie = require('node-cookie')
 const Macroable = require('macroable')
+const parseurl = require('parseurl')
+
+const RouteManager = require('../Route/Manager')
 
 const SECRET = 'app.secret'
 
@@ -253,13 +256,23 @@ class Response extends Macroable {
    * @method redirect
    *
    * @param  {String} url
+   * @param  {Boolean} [sendParams = false]
    * @param  {Number} [status = 302]
    *
    * @return {void}
    */
-  redirect (url, status) {
+  redirect (url, sendParams = false, status = 302) {
     if (url === 'back') {
       url = nodeReq.header(this.request, 'referrer') || '/'
+    }
+
+    /**
+     * Send query params of the current URL back when
+     * redirect to a new url
+     */
+    if (sendParams) {
+      const { query } = parseurl(this.request)
+      url = `${url}?${query}`
     }
 
     if (!this.implicitEnd) {
@@ -272,6 +285,24 @@ class Response extends Macroable {
       content: url,
       args: [status]
     }
+  }
+
+  /**
+   * Redirect to a specific route
+   *
+   * @method route
+   *
+   * @param  {String} routeNameOrHandler
+   * @param  {Object} [data = {}]
+   * @param  {String} [domain]
+   * @param  {Boolean} [sendParams = false]
+   * @param  {Number} [status = 302]
+   *
+   * @return {void}
+   */
+  route (routeNameOrHandler, data, domain, sendParams = false, status = 302) {
+    const url = RouteManager.url(routeNameOrHandler, data, domain) || routeNameOrHandler
+    return this.redirect(url, sendParams, status)
   }
 
   /**

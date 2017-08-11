@@ -282,6 +282,11 @@ class AppProvider extends ServiceProvider {
     const Request = this.app.use('Adonis/Src/Request')
     const Response = this.app.use('Adonis/Src/Response')
 
+    /**
+     * Gets the provider load the env file.
+     */
+    this.app.use('Adonis/Src/Env')
+
     Context.getter('request', function () {
       return new Request(this.req, this.res, use('Adonis/Src/Config'))
     }, true)

@@ -659,3 +659,70 @@ test.group('Route | Manager', (group) => {
     assert.isNull(url)
   })
 })
+
+test.group('Route | Extend', (group) => {
+  group.beforeEach(() => {
+    RouteStore.clear()
+  })
+
+  test('add macro to route', (assert) => {
+    RouteManager.Route.macro('bind', function (key, model) {
+      this._bindings = this._bindings || []
+      this._bindings.push({ key, model })
+      return this
+    })
+
+    const route = RouteManager.get('/', () => {}).bind('id', 'App/Model/User')
+    assert.deepEqual(route._bindings, [{ key: 'id', model: 'App/Model/User' }])
+  })
+
+  test('add macro to route group', (assert) => {
+    RouteManager.Route.macro('bind', function (key, model) {
+      this._bindings = this._bindings || []
+      this._bindings.push({ key, model })
+      return this
+    })
+
+    RouteManager.RouteGroup.macro('bind', function (key, model) {
+      this._routes.forEach((route) => route.bind(key, model))
+      return this
+    })
+
+    let route = null
+    RouteManager.group(() => {
+      route = RouteManager.get('/', () => {})
+    }).bind('id', 'App/Model/User')
+    assert.deepEqual(route._bindings, [{ key: 'id', model: 'App/Model/User' }])
+  })
+
+  test('add macro to route resource', (assert) => {
+    RouteManager.Route.macro('bind', function (key, model) {
+      this._bindings = this._bindings || []
+      this._bindings.push({ key, model })
+      return this
+    })
+
+    RouteManager.RouteResource.macro('bind', function (key, model) {
+      this._routes.forEach((route) => {
+        route.routeInstance.bind(key, model)
+      })
+      return this
+    })
+
+    RouteManager
+      .resource('users', 'UsersController')
+      .bind('id', 'App/Model/User')
+
+    const route = RouteStore.list()[0]
+    assert.deepEqual(route._bindings, [{ key: 'id', model: 'App/Model/User' }])
+  })
+
+  test('extend brisk route', (assert) => {
+    const fn = function () {}
+    RouteManager.BriskRoute.macro('redirect', function (toUrl) {
+      return this.setHandler(fn)
+    })
+    const route = RouteManager.on('here').redirect('there')
+    assert.equal(route._handler, fn)
+  })
+})

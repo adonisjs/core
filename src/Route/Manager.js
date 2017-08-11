@@ -15,6 +15,7 @@ const Route = require('./index')
 const RouteGroup = require('./Group')
 const RouteStore = require('./Store')
 const RouteResource = require('./Resource')
+const BriskRoute = require('./Brisk')
 const GE = require('@adonisjs/generic-exceptions')
 
 /**
@@ -61,6 +62,42 @@ class RouteManager {
       RouteStore.releaseBreakpoint()
       throw GE.RuntimeException.invoke('Nested route groups are not allowed', 500, 'E_NESTED_ROUTE_GROUPS')
     }
+  }
+
+  /**
+   * Reference to @ref('Route') class
+   *
+   * @attribute Route
+   */
+  get Route () {
+    return Route
+  }
+
+  /**
+   * Reference to @ref('RouteGroup') class
+   *
+   * @attribute RouteGroup
+   */
+  get RouteGroup () {
+    return RouteGroup
+  }
+
+  /**
+   * Reference to @ref('RouteResource') class
+   *
+   * @attribute RouteResource
+   */
+  get RouteResource () {
+    return RouteResource
+  }
+
+  /**
+   * Reference to @ref('BriskRoute') class
+   *
+   * @attribute BriskRoute
+   */
+  get BriskRoute () {
+    return BriskRoute
   }
 
   /**
@@ -220,13 +257,7 @@ class RouteManager {
    * ```
    */
   on (route) {
-    return {
-      render: (template) => {
-        return this.route(route, ({ view }) => {
-          return view.render(template)
-        }, ['HEAD', 'GET'])
-      }
-    }
+    return new BriskRoute(route)
   }
 
   /**

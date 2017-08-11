@@ -12,6 +12,7 @@
 const _ = require('lodash')
 const pathToRegexp = require('path-to-regexp')
 const GE = require('@adonisjs/generic-exceptions')
+const Macroable = require('macroable')
 
 /**
  * This class defines a single route. It supports dynamic
@@ -33,8 +34,9 @@ const GE = require('@adonisjs/generic-exceptions')
  * const route = new Route('users', 'HomeController.index', ['GET'])
  * ```
  */
-class Route {
+class Route extends Macroable {
   constructor (route, handler, verbs = ['HEAD', 'GET']) {
+    super()
     this._instantiate(route, verbs, handler)
     this._makeRoutePattern()
   }
@@ -401,5 +403,14 @@ class Route {
     }
   }
 }
+
+/**
+ * Defining _macros and _getters property
+ * for Macroable class
+ *
+ * @type {Object}
+ */
+Route._macros = {}
+Route._getters = {}
 
 module.exports = Route

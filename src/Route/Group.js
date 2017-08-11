@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
 */
 
+const Macroable = require('macroable')
+
 /**
  * Route Group class is used to group routes with
  * common behavior. For example prefixing a bunch
@@ -28,8 +30,9 @@
  * const group = new RouteGroup([arrayOfRoutes], optionalName)
  * ```
  */
-class RouteGroup {
+class RouteGroup extends Macroable {
   constructor (routes, name = null) {
+    super()
     this._routes = routes
     this._name = name
   }
@@ -122,5 +125,14 @@ class RouteGroup {
     return this
   }
 }
+
+/**
+ * Defining _macros and _getters property
+ * for Macroable class
+ *
+ * @type {Object}
+ */
+RouteGroup._macros = {}
+RouteGroup._getters = {}
 
 module.exports = RouteGroup
