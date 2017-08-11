@@ -716,4 +716,13 @@ test.group('Route | Extend', (group) => {
     const route = RouteStore.list()[0]
     assert.deepEqual(route._bindings, [{ key: 'id', model: 'App/Model/User' }])
   })
+
+  test('extend brisk route', (assert) => {
+    const fn = function () {}
+    RouteManager.BriskRoute.macro('redirect', function (toUrl) {
+      return this.setHandler(fn)
+    })
+    const route = RouteManager.on('here').redirect('there')
+    assert.equal(route._handler, fn)
+  })
 })

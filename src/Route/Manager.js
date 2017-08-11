@@ -15,6 +15,7 @@ const Route = require('./index')
 const RouteGroup = require('./Group')
 const RouteStore = require('./Store')
 const RouteResource = require('./Resource')
+const BriskRoute = require('./Brisk')
 const GE = require('@adonisjs/generic-exceptions')
 
 /**
@@ -88,6 +89,15 @@ class RouteManager {
    */
   get RouteResource () {
     return RouteResource
+  }
+
+  /**
+   * Reference to @ref('BriskRoute') class
+   *
+   * @attribute BriskRoute
+   */
+  get BriskRoute () {
+    return BriskRoute
   }
 
   /**
@@ -247,13 +257,7 @@ class RouteManager {
    * ```
    */
   on (route) {
-    return {
-      render: (template) => {
-        return this.route(route, ({ view }) => {
-          return view.render(template)
-        }, ['HEAD', 'GET'])
-      }
-    }
+    return new BriskRoute(route)
   }
 
   /**
