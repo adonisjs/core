@@ -1,3 +1,21 @@
+<a name="4.0.9"></a>
+## [4.0.9](https://github.com/adonisjs/adonis-framework/compare/v4.0.8...v4.0.9) (2017-08-11)
+
+
+### Bug Fixes
+
+* **env:** load .env file on providers boot ([9282a83](https://github.com/adonisjs/adonis-framework/commit/9282a83))
+
+
+### Features
+
+* **response:** enhance redirect method & add route redirects ([e7bf506](https://github.com/adonisjs/adonis-framework/commit/e7bf506))
+* **route:** route.render accepts data with view now ([b9812b9](https://github.com/adonisjs/adonis-framework/commit/b9812b9))
+* **Route:** add brisk route for quick routes ([dbc1618](https://github.com/adonisjs/adonis-framework/commit/dbc1618))
+* **Route:** make routes macroable ([16e35bb](https://github.com/adonisjs/adonis-framework/commit/16e35bb))
+
+
+
 <a name="4.0.8"></a>
 ## [4.0.8](https://github.com/adonisjs/adonis-framework/compare/v4.0.7...v4.0.8) (2017-08-08)
 
