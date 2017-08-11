@@ -19,9 +19,15 @@ const { Config } = require('@adonisjs/sink')
 const supertest = require('supertest')
 
 const Response = require('../../src/Response')
+const RouteStore = require('../../src/Route/Store')
+const RouteManager = require('../../src/Route/Manager')
 const SECRET = 'averylongsecretkey'
 
-test.group('Response', () => {
+test.group('Response', (group) => {
+  group.beforeEach(() => {
+    RouteStore.clear()
+  })
+
   test('send raw string as response', async (assert) => {
     const server = http.createServer((req, res) => {
       const response = new Response(req, res, new Config())
@@ -316,5 +322,60 @@ test.group('Response', () => {
 
     const { headers } = await supertest(server).get('/').expect(200)
     assert.equal(headers['set-cookie'][0], 'cart=; Expires=Thu, 01 Jan 1970 00:00:00 GMT')
+  })
+
+  test('redirect to a registered route', async (assert) => {
+    RouteManager.get('users', function () {}).as('listUsers')
+
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.route('listUsers')
+      response.end()
+    })
+
+    await supertest(server).get('/').expect('Location', '/users').expect(302)
+  })
+
+  test('redirect to a registered route by passing controller method', async (assert) => {
+    RouteManager.get('users', 'UserController.index')
+
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.route('UserController.index')
+      response.end()
+    })
+
+    await supertest(server).get('/').expect('Location', '/users').expect(302)
+  })
+
+  test('redirect to the string when unable to resolve route', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.route('UserController.index')
+      response.end()
+    })
+    await supertest(server).get('/').expect('Location', 'UserController.index').expect(302)
+  })
+
+  test('redirect to dynamic route', async (assert) => {
+    RouteManager.get('users/:id', 'UserController.show')
+
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.route('UserController.show', { id: 2 })
+      response.end()
+    })
+
+    await supertest(server).get('/').expect('Location', '/users/2').expect(302)
+  })
+
+  test('redirect with params', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.redirect('users', true)
+      response.end()
+    })
+
+    await supertest(server).get('/?name=virk&age=22').expect('Location', 'users?name=virk&age=22').expect(302)
   })
 })
