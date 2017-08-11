@@ -220,4 +220,10 @@ test.group('Route', (group) => {
     assert.equal((await supertest(appUrl).put('/users/1').expect(200)).text, 'updated via middleware')
     assert.equal((await supertest(appUrl).delete('/users/1').expect(200)).text, 'destroyed via middleware')
   })
+
+  test('render view with data via brisk route', async (assert) => {
+    const Route = use('Route')
+    Route.on('/').render('user', { name: 'virk' })
+    assert.equal((await supertest(appUrl).get('/').expect(200)).text.trim(), 'Hello virk')
+  })
 })

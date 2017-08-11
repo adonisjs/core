@@ -50,12 +50,13 @@ class BriskRoute extends Macroable {
    * @method render
    *
    * @param  {String} template
+   * @param  {Object} data
    *
    * @return {Route}
    */
-  render (template) {
+  render (template, data = {}) {
     return this.setHandler(({ view }) => {
-      return view.render(template)
+      return view.render(template, data)
     }, ['GET', 'HEAD'])
   }
 }
