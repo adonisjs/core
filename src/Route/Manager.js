@@ -64,6 +64,33 @@ class RouteManager {
   }
 
   /**
+   * Reference to @ref('Route') class
+   *
+   * @attribute Route
+   */
+  get Route () {
+    return Route
+  }
+
+  /**
+   * Reference to @ref('RouteGroup') class
+   *
+   * @attribute RouteGroup
+   */
+  get RouteGroup () {
+    return RouteGroup
+  }
+
+  /**
+   * Reference to @ref('RouteResource') class
+   *
+   * @attribute RouteResource
+   */
+  get RouteResource () {
+    return RouteResource
+  }
+
+  /**
    * Create a new route and push it to the
    * routes store.
    *

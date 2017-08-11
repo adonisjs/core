@@ -10,6 +10,7 @@
 */
 
 const _ = require('lodash')
+const Macroable = require('macroable')
 const GE = require('@adonisjs/generic-exceptions')
 const Route = require('./index')
 const RouteStore = require('./Store')
@@ -23,8 +24,9 @@ const RouteStore = require('./Store')
  * @group Http
  * @constructor
  */
-class RouteResource {
+class RouteResource extends Macroable {
   constructor (resource, controller, namePrefix = null) {
+    super()
     this._validateResourceName(resource)
     this._validateController(controller)
     this._resourceUrl = this._makeResourceUrl(resource)
@@ -310,5 +312,14 @@ class RouteResource {
     })
   }
 }
+
+/**
+ * Defining _macros and _getters property
+ * for Macroable class
+ *
+ * @type {Object}
+ */
+RouteResource._macros = {}
+RouteResource._getters = {}
 
 module.exports = RouteResource
