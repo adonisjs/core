@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/framework",
-  "version": "4.0.9",
+  "version": "4.0.10",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {

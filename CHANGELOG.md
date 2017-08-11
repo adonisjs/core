@@ -1,3 +1,13 @@
+<a name="4.0.10"></a>
+## [4.0.10](https://github.com/adonisjs/adonis-framework/compare/v4.0.9...v4.0.10) (2017-08-11)
+
+
+### Bug Fixes
+
+* **view:** fix inlineSvg tag by escaping backslash ([5223064](https://github.com/adonisjs/adonis-framework/commit/5223064))
+
+
+
 <a name="4.0.9"></a>
 ## [4.0.9](https://github.com/adonisjs/adonis-framework/compare/v4.0.8...v4.0.9) (2017-08-11)
 

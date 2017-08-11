@@ -99,6 +99,7 @@ module.exports = function (BaseTag) {
      * @return {void}
      */
     compile (compiler, lexer, buffer, { body, childs, lineno }) {
+      body = body.replace(/\\/g, '/')
       const { value } = this._compileStatement(lexer, body, lineno)
       const svgFile = this._normalizePath(this._getAbsPath(value))
 
