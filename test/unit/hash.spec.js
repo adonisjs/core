@@ -11,6 +11,7 @@
 
 const test = require('japa')
 const Hash = require('../../src/Hash')
+const HashMock = require('../../src/Hash/Mock')
 
 test.group('Hash', () => {
   test('hash value', async (assert) => {
@@ -34,5 +35,20 @@ test.group('Hash', () => {
     const hashed = await Hash.make('foo')
     const verified = await Hash.verify(undefined, hashed)
     assert.isFalse(verified)
+  })
+
+  test('return string as it is from mock', async (assert) => {
+    const hashed = await HashMock.make('foo')
+    assert.equal(hashed, 'foo')
+  })
+
+  test('return false when strings aren\'t equal', async (assert) => {
+    const verified = await HashMock.verify('foo', 'bar')
+    assert.isFalse(verified)
+  })
+
+  test('return true when strings are equal', async (assert) => {
+    const verified = await HashMock.verify('foo', 'foo')
+    assert.isTrue(verified)
   })
 })
