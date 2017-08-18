@@ -246,6 +246,21 @@ class AppProvider extends ServiceProvider {
   }
 
   /**
+   * Registers a hash trait to be used while running
+   * tests, which simply binds the hash mock
+   * to the ioc container.
+   *
+   * @method _registerHashTrait
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _registerHashTrait () {
+    this.app.bind('Adonis/Traits/Hash', () => require('../src/Traits/Hash'))
+  }
+
+  /**
    * Register all the required providers
    *
    * @method register
@@ -267,6 +282,7 @@ class AppProvider extends ServiceProvider {
     this._registerEncryption()
     this._registerStaticMiddleware()
     this._registerEvent()
+    this._registerHashTrait()
   }
 
   /**
