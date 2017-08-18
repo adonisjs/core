@@ -35,15 +35,8 @@ const debug = require('debug')('adonis:framework')
  */
 class Env {
   constructor (appRoot) {
-    const envLocation = this.getEnvPath()
-
-    const options = {
-      path: path.isAbsolute(envLocation) ? envLocation : path.join(appRoot, envLocation),
-      encoding: process.env.ENV_ENCODING || 'utf8'
-    }
-
-    debug('loading .env file from %s', options.path)
-    const env = dotenv.config(options)
+    this.appRoot = appRoot
+    const env = this.load(this.getEnvPath())
 
     /**
      * Throwing the exception when ENV_SILENT is not set to true
@@ -52,6 +45,25 @@ class Env {
     if (env.error && process.env.ENV_SILENT !== 'true') {
       throw env.error
     }
+  }
+
+  /**
+   * Load env file from a given location.
+   *
+   * @method load
+   *
+   * @param  {String} filePath
+   * @param  {String} [encoding = 'utf8']
+   *
+   * @return {void}
+   */
+  load (filePath, encoding = 'utf8') {
+    const options = {
+      path: path.isAbsolute(filePath) ? filePath : path.join(this.appRoot, filePath),
+      encoding
+    }
+    debug('loading environment file from %s', options.path)
+    return dotenv.config(options)
   }
 
   /**
