@@ -1,3 +1,14 @@
+<a name="4.0.11"></a>
+## [4.0.11](https://github.com/adonisjs/adonis-framework/compare/v4.0.10...v4.0.11) (2017-08-18)
+
+
+### Features
+
+* **hash:** add mock class for testing ([6974b1f](https://github.com/adonisjs/adonis-framework/commit/6974b1f))
+* **traits:** expose hash mock via traits ([93af338](https://github.com/adonisjs/adonis-framework/commit/93af338))
+
+
+
 <a name="4.0.10"></a>
 ## [4.0.10](https://github.com/adonisjs/adonis-framework/compare/v4.0.9...v4.0.10) (2017-08-11)
 
