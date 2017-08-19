@@ -449,7 +449,7 @@ class Server {
     }
 
     this._registerMiddleware('named', _.keys(middleware), '')
-    this._namedHash = middleware
+    _.merge(this._namedHash, middleware)
     return this
   }
 
