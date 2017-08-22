@@ -38,7 +38,7 @@ const BasePresenter = edge.BasePresenter
 class View {
   constructor (Helpers, cacheViews = false) {
     edge.configure({
-      cache: cacheViews
+      cache: String(cacheViews) === 'true'
     })
     edge.registerViews(Helpers.viewsPath())
     edge.registerPresenters(Helpers.resourcesPath('presenters'))

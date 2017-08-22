@@ -1,3 +1,15 @@
+<a name="4.0.13"></a>
+## [4.0.13](https://github.com/adonisjs/adonis-framework/compare/v4.0.12...v4.0.13) (2017-08-22)
+
+
+### Bug Fixes
+
+* **request:** this.all return proper object ([b65b91c](https://github.com/adonisjs/adonis-framework/commit/b65b91c))
+* **response:** read jsonpCallback from config file ([8ba479e](https://github.com/adonisjs/adonis-framework/commit/8ba479e))
+* **view:** parse true string for caching views ([00ff73f](https://github.com/adonisjs/adonis-framework/commit/00ff73f))
+
+
+
 <a name="4.0.12"></a>
 ## [4.0.12](https://github.com/adonisjs/adonis-framework/compare/v4.0.11...v4.0.12) (2017-08-22)
 

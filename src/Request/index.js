@@ -163,7 +163,7 @@ class Request extends Macroable {
    * ```
    */
   all () {
-    if (!this._all) {
+    if (!this._all || !_.size(this._all)) {
       this._all = _.merge({}, this.get(), this.post())
     }
     return this._all
