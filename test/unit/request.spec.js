@@ -660,8 +660,8 @@ test.group('Request', () => {
       res.end()
     })
 
-    const res = await supertest(server).get('/user?_method=post').expect(200)
-    assert.equal(res.body.method, 'POST')
+    const res = await supertest(server).post('/user?_method=put').expect(200)
+    assert.equal(res.body.method, 'PUT')
   })
 
   test('return original method even when spoofed HTTP method exists', async (assert) => {
@@ -673,8 +673,8 @@ test.group('Request', () => {
       res.end()
     })
 
-    const res = await supertest(server).get('/user?_method=post').expect(200)
-    assert.equal(res.body.method, 'GET')
+    const res = await supertest(server).post('/user?_method=PUT').expect(200)
+    assert.equal(res.body.method, 'POST')
   })
 
   test('group and return an array of values', async (assert) => {

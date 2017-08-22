@@ -278,7 +278,7 @@ class Request extends Macroable {
    * @return {String} Request method always in uppercase
    */
   method () {
-    if (!this.Config.get('app.http.allowMethodSpoofing')) {
+    if (!this.Config.get('app.http.allowMethodSpoofing') || this.intended() !== 'POST') {
       return nodeReq.method(this.request)
     }
     const method = this.input('_method', this.intended())
