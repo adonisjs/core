@@ -18,6 +18,7 @@ const parseurl = require('parseurl')
 const RouteManager = require('../Route/Manager')
 
 const SECRET = 'app.secret'
+const JSONPCALLBACK = 'app.http.jsonpCallback'
 
 /**
  * A facade over Node.js HTTP `res` object, making it
@@ -392,7 +393,7 @@ class Response extends Macroable {
    * @return {void}
    */
   jsonp (body, callbackFn) {
-    callbackFn = callbackFn || nodeReq.get(this.request).callback || 'callback'
+    callbackFn = callbackFn || nodeReq.get(this.request).callback || this.Config.get(JSONPCALLBACK)
 
     if (!this.implicitEnd) {
       nodeRes.jsonp(this.request, this.response, body, callbackFn)
