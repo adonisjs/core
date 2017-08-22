@@ -660,8 +660,8 @@ test.group('Request', () => {
       res.end()
     })
 
-    const res = await supertest(server).get('/user?_method=post').expect(200)
-    assert.equal(res.body.method, 'POST')
+    const res = await supertest(server).post('/user?_method=put').expect(200)
+    assert.equal(res.body.method, 'PUT')
   })
 
   test('return original method even when spoofed HTTP method exists', async (assert) => {
@@ -673,8 +673,8 @@ test.group('Request', () => {
       res.end()
     })
 
-    const res = await supertest(server).get('/user?_method=post').expect(200)
-    assert.equal(res.body.method, 'GET')
+    const res = await supertest(server).post('/user?_method=PUT').expect(200)
+    assert.equal(res.body.method, 'POST')
   })
 
   test('group and return an array of values', async (assert) => {
@@ -789,5 +789,22 @@ test.group('Request', () => {
       { username: null, email: null },
       { username: null, email: 'nikk@gmail.com' }
     ])
+  })
+
+  test('do not mutate get and post', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const request = new Request(req, res, config)
+      request._body = { username: 'virk' }
+      const all = request.all()
+      all.age = 24
+      all.username = 'nikk'
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.write(JSON.stringify({ get: request.get(), post: request.post() }))
+      res.end()
+    })
+
+    const res = await supertest(server).post('/?age=22').send('username', 'virk').expect(200)
+    assert.deepEqual(res.body.get, { age: '22' })
+    assert.deepEqual(res.body.post, { username: 'virk' })
   })
 })

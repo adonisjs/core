@@ -1,3 +1,15 @@
+<a name="4.0.12"></a>
+## [4.0.12](https://github.com/adonisjs/adonis-framework/compare/v4.0.11...v4.0.12) (2017-08-22)
+
+
+### Bug Fixes
+
+* **request:** method spoofing make sure request is POST ([1008ec7](https://github.com/adonisjs/adonis-framework/commit/1008ec7))
+* **request:** return the same object when calling request.all ([6878d65](https://github.com/adonisjs/adonis-framework/commit/6878d65))
+* **server:** multiple registerNamed are allowed ([a105185](https://github.com/adonisjs/adonis-framework/commit/a105185))
+
+
+
 <a name="4.0.11"></a>
 ## [4.0.11](https://github.com/adonisjs/adonis-framework/compare/v4.0.10...v4.0.11) (2017-08-18)
 

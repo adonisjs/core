@@ -74,6 +74,20 @@ class Request extends Macroable {
      * @type {Object}
      */
     this.Config = Config
+
+    /**
+     * A merged object of get and post
+     *
+     * @type {Object}
+     */
+    this._all = null
+
+    /**
+     * The qs object
+     *
+     * @type {Object}
+     */
+    this._qs = null
   }
 
   /**
@@ -107,7 +121,10 @@ class Request extends Macroable {
    * ```
    */
   get () {
-    return nodeReq.get(this.request)
+    if (!this._qs) {
+      this._qs = nodeReq.get(this.request)
+    }
+    return this._qs
   }
 
   /**
@@ -146,7 +163,10 @@ class Request extends Macroable {
    * ```
    */
   all () {
-    return _.merge(this.get(), this.post())
+    if (!this._all) {
+      this._all = _.merge({}, this.get(), this.post())
+    }
+    return this._all
   }
 
   /**
@@ -258,7 +278,7 @@ class Request extends Macroable {
    * @return {String} Request method always in uppercase
    */
   method () {
-    if (!this.Config.get('app.http.allowMethodSpoofing')) {
+    if (!this.Config.get('app.http.allowMethodSpoofing') || this.intended() !== 'POST') {
       return nodeReq.method(this.request)
     }
     const method = this.input('_method', this.intended())

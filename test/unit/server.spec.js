@@ -65,6 +65,16 @@ test.group('Server | Middleware', (group) => {
     assert.deepEqual(server.middleware._store.named, ['auth'])
   })
 
+  test('register multiple named middleware', (assert) => {
+    const server = new Server()
+    server
+      .registerNamed({ auth: 'App/Middleware/Auth' })
+      .registerNamed({ addonValidator: 'App/Middleware/Validator' })
+
+    assert.deepEqual(server.middleware._store.named, ['auth', 'addonValidator'])
+    assert.deepEqual(server._namedHash, { auth: 'App/Middleware/Auth', addonValidator: 'App/Middleware/Validator' })
+  })
+
   test('log warning when duplicate named middleware are registered', (assert) => {
     const logger = new Logger()
     const server = new Server({}, {}, logger)
@@ -281,7 +291,7 @@ test.group('Server | Calls', (group) => {
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.include(res.text.split('\n')[2], 'server.spec.js:277')
+    assert.include(res.text.split('\n')[2], 'server.spec.js:287')
   })
 
   test('do not execute anything once server level middleware ends the response', async (assert) => {
