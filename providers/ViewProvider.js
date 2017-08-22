@@ -63,7 +63,7 @@ class ViewProvider extends ServiceProvider {
     Context.getter('view', function () {
       const requestLocals = {
         request: this.request,
-        auth: this.auth || {},
+        auth: this.auth ? (this.auth.current || this.auth.authenticatorInstance) : {},
         url: this.request.url(),
         is: function (matchWith) {
           return this.url().replace(/^\/|\/$/) === matchWith.replace(/^\/|\/$/)
