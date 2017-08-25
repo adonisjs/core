@@ -12,6 +12,7 @@
 const _ = require('lodash')
 const path = require('path')
 const dotenv = require('dotenv')
+const fs = require('fs')
 const debug = require('debug')('adonis:framework')
 
 /**
@@ -36,7 +37,7 @@ const debug = require('debug')('adonis:framework')
 class Env {
   constructor (appRoot) {
     this.appRoot = appRoot
-    const env = this.load(this.getEnvPath())
+    const env = this.load(this.getEnvPath(), false) // do not overwrite at first place
 
     /**
      * Throwing the exception when ENV_SILENT is not set to true
@@ -52,16 +53,29 @@ class Env {
    *
    * @method load
    *
-   * @param  {String} filePath
-   * @param  {String} [encoding = 'utf8']
+   * @param  {String}  filePath
+   * @param  {Boolean} [overwrite = 'true']
+   * @param  {String}  [encoding = 'utf8']
    *
    * @return {void}
    */
-  load (filePath, encoding = 'utf8') {
+  load (filePath, overwrite = true, encoding = 'utf8') {
     const options = {
       path: path.isAbsolute(filePath) ? filePath : path.join(this.appRoot, filePath),
       encoding
     }
+
+    /**
+     * Dotenv doesn't overwrite existing env variables, so we
+     * need to do it manaully by parsing the file.
+     */
+    if (overwrite) {
+      debug('merging environment file from %s', options.path)
+      const envConfig = dotenv.parse(fs.readFileSync(options.path, options.encoding))
+      _.each(envConfig, (value, key) => (process.env[key] = value))
+      return
+    }
+
     debug('loading environment file from %s', options.path)
     return dotenv.config(options)
   }
