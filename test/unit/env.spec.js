@@ -48,26 +48,26 @@ test.group('Env', (group) => {
 
   test('get value for a given key', (assert) => {
     process.env.ENV_PATH = './user/.env'
-
-    /* eslint-disable no-new */
     const env = new Env(this.helpers._appRoot)
     assert.equal(env.get('HELLO'), 'WORLD')
   })
 
   test('get default value when actual value is missing', (assert) => {
     process.env.ENV_PATH = './user/.env'
-
-    /* eslint-disable no-new */
     const env = new Env(this.helpers._appRoot)
     assert.equal(env.get('FOO', 'BAR'), 'BAR')
   })
 
   test('set value for a given key', (assert) => {
     process.env.ENV_PATH = './user/.env'
-
-    /* eslint-disable no-new */
     const env = new Env(this.helpers._appRoot)
     env.set('FOO', 'BAZ')
     assert.equal(env.get('FOO', 'BAR'), 'BAZ')
+  })
+
+  test('load new config file and overwrite existing file', (assert) => {
+    const env = new Env(this.helpers._appRoot)
+    env.load('./user/.env.override')
+    assert.equal(process.env.HELLO, 'UNIVERSE')
   })
 })
