@@ -1,3 +1,13 @@
+<a name="4.0.15"></a>
+## [4.0.15](https://github.com/adonisjs/adonis-framework/compare/v4.0.14...v4.0.15) (2017-08-25)
+
+
+### Bug Fixes
+
+* **env:** load method should allow overwriting vars ([3ded1bd](https://github.com/adonisjs/adonis-framework/commit/3ded1bd))
+
+
+
 <a name="4.0.14"></a>
 ## [4.0.14](https://github.com/adonisjs/adonis-framework/compare/v4.0.13...v4.0.14) (2017-08-22)
 
