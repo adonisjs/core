@@ -262,7 +262,7 @@ test.group('Response', (group) => {
   test('encrypt cookie when secret is defined', async (assert) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
-      config.set('app.secret', SECRET)
+      config.set('app.appKey', SECRET)
       const response = new Response(req, res, config)
       response.cookie('cart_total', '20')
       response.send('')
@@ -287,7 +287,7 @@ test.group('Response', (group) => {
   test('send plain cookie even if secret is defined', async (assert) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
-      config.set('app.secret', SECRET)
+      config.set('app.appKey', SECRET)
       const response = new Response(req, res, config)
       response.plainCookie('cart_total', '20')
       response.send('')

@@ -23,7 +23,7 @@ const SECRET = 'averylongsecretkey'
  * for testing.
  */
 const config = new Config()
-config.set('app.secret', SECRET)
+config.set('app.appKey', SECRET)
 config.set('app.http.subdomainOffset', 2)
 config.set('app.http.allowMethodSpoofing', true)
 
