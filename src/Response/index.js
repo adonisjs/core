@@ -17,7 +17,7 @@ const parseurl = require('parseurl')
 
 const RouteManager = require('../Route/Manager')
 
-const SECRET = 'app.secret'
+const SECRET = 'app.appKey'
 const JSONPCALLBACK = 'app.http.jsonpCallback'
 
 /**

@@ -33,7 +33,7 @@ const Macroable = require('macroable')
 
 const SUBDOMAIN_OFFSET = 'app.http.subdomainOffset'
 const TRUST_PROXY = 'app.http.trustProxy'
-const SECRET = 'app.secret'
+const SECRET = 'app.appKey'
 
 /**
  * A facade over Node.js HTTP `req` object, making it

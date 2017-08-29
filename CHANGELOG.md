@@ -1,3 +1,13 @@
+<a name="4.0.16"></a>
+## [4.0.16](https://github.com/adonisjs/adonis-framework/compare/v4.0.15...v4.0.16) (2017-08-29)
+
+
+### Bug Fixes
+
+* **req,res:** reference `app.appKey` over `.secret` ([ef22649](https://github.com/adonisjs/adonis-framework/commit/ef22649))
+
+
+
 <a name="4.0.15"></a>
 ## [4.0.15](https://github.com/adonisjs/adonis-framework/compare/v4.0.14...v4.0.15) (2017-08-25)
 
