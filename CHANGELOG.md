@@ -1,3 +1,13 @@
+<a name="4.0.17"></a>
+## [4.0.17](https://github.com/adonisjs/adonis-framework/compare/v4.0.16...v4.0.17) (2017-09-02)
+
+
+### Bug Fixes
+
+* **request:** re-compute all when body is set ([f324123](https://github.com/adonisjs/adonis-framework/commit/f324123))
+
+
+
 <a name="4.0.16"></a>
 ## [4.0.16](https://github.com/adonisjs/adonis-framework/compare/v4.0.15...v4.0.16) (2017-08-29)
 

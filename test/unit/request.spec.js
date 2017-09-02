@@ -549,7 +549,7 @@ test.group('Request', () => {
   test('return request body and query string', async (assert) => {
     const server = http.createServer((req, res) => {
       const request = new Request(req, res, config)
-      request._body = { username: 'virk' }
+      request.body = { username: 'virk' }
       const all = request.all()
       res.writeHead(200, { 'content-type': 'application/json' })
       res.write(JSON.stringify({ all }))
@@ -681,7 +681,7 @@ test.group('Request', () => {
     const server = http.createServer((req, res) => {
       const request = new Request(req, res, config)
 
-      request._body = {
+      request.body = {
         username: ['virk', 'aman', 'nikk'],
         email: ['virk@gmail.com', 'aman@gmail.com', 'nikk@gmail.com']
       }
@@ -704,7 +704,7 @@ test.group('Request', () => {
     const server = http.createServer((req, res) => {
       const request = new Request(req, res, config)
 
-      request._body = {
+      request.body = {
         username: ['virk', 'aman', 'nikk']
       }
 
@@ -726,7 +726,7 @@ test.group('Request', () => {
     const server = http.createServer((req, res) => {
       const request = new Request(req, res, config)
 
-      request._body = {
+      request.body = {
         username: ['virk', 'aman', 'nikk'],
         email: ['virk@gmail.com', 'aman@gmail.com']
       }
@@ -749,7 +749,7 @@ test.group('Request', () => {
     const server = http.createServer((req, res) => {
       const request = new Request(req, res, config)
 
-      request._body = {
+      request.body = {
         username: ['virk', 'aman', 'nikk'],
         email: ['virk@gmail.com', '', 'nikk@gmail.com']
       }
@@ -772,7 +772,7 @@ test.group('Request', () => {
     const server = http.createServer((req, res) => {
       const request = new Request(req, res, config)
 
-      request._body = {
+      request.body = {
         username: 'virk',
         email: ['virk@gmail.com', '', 'nikk@gmail.com']
       }
