@@ -80,7 +80,21 @@ class Request extends Macroable {
      *
      * @type {Object}
      */
-    this._all = null
+    this._all = this.get()
+
+    /**
+     * Reference to request body
+     *
+     * @type {Object}
+     */
+    this._body = null
+
+    /**
+     * Reference to raw body
+     *
+     * @type {Object}
+     */
+    this._raw = null
 
     /**
      * The qs object
@@ -88,6 +102,32 @@ class Request extends Macroable {
      * @type {Object}
      */
     this._qs = null
+  }
+
+  /**
+   * Request body
+   *
+   * @method body
+   *
+   * @return {Object}
+   */
+  get body () {
+    return this._body || {}
+  }
+
+  /**
+   * Mutate request body, this method will
+   * mutate the `all` object as well
+   *
+   * @method body
+   *
+   * @param  {Object} body
+   *
+   * @return {void}
+   */
+  set body (body) {
+    this._body = body
+    this._all = _.merge({}, this.get(), body)
   }
 
   /**
@@ -146,7 +186,7 @@ class Request extends Macroable {
    * ```
    */
   post () {
-    return this._body || {}
+    return this.body
   }
 
   /**
@@ -163,10 +203,18 @@ class Request extends Macroable {
    * ```
    */
   all () {
-    if (!this._all || !_.size(this._all)) {
-      this._all = _.merge({}, this.get(), this.post())
-    }
     return this._all
+  }
+
+  /**
+   * Returns request raw body
+   *
+   * @method raw
+   *
+   * @return {Object}
+   */
+  raw () {
+    return this._raw
   }
 
   /**
