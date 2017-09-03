@@ -698,4 +698,54 @@ test.group('Server | Calls', (group) => {
     const { text } = await supertest(app).get('/').expect(200)
     assert.deepEqual(text, 'done')
   })
+
+  test('server level middleware end response by ending the response explicitly', async (assert) => {
+    const executions = []
+
+    Route.get('/', async function () {
+      executions.push('route')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal([async function (ctx, next) {
+      executions.push('global')
+      await next()
+    }])
+
+    server.use([async function ({ response }) {
+      executions.push('server')
+      response.end()
+    }])
+
+    const app = http.createServer(server.handle.bind(server))
+
+    await supertest(app).get('/').expect(204)
+    assert.lengthOf(executions, 1)
+    assert.deepEqual(executions, ['server'])
+  })
+
+  test('server level middleware end response by setting status code as 204', async (assert) => {
+    const executions = []
+
+    Route.get('/', async function () {
+      executions.push('route')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.registerGlobal([async function (ctx, next) {
+      executions.push('global')
+      await next()
+    }])
+
+    server.use([async function ({ response }) {
+      executions.push('server')
+      response.status(204).send('')
+    }])
+
+    const app = http.createServer(server.handle.bind(server))
+
+    await supertest(app).get('/').expect(204)
+    assert.lengthOf(executions, 1)
+    assert.deepEqual(executions, ['server'])
+  })
 })

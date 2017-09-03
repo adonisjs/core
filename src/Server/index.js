@@ -524,7 +524,16 @@ class Server {
          * If any server level middleware ends the response, there is no
          * need of executing the route or global middleware.
          */
-        if (response.lazyBody.content && response.lazyBody.method && response.isPending) {
+        if (!response.isPending) {
+          debug('step:1.2 server level middleware ended the response explicitly by calling end')
+          return
+        }
+
+        /**
+         * If server level middleware sets the response content
+         * or statusCode to 204, end the request right away
+         */
+        if ((response.lazyBody.content || response.response.statusCode === 204) && response.lazyBody.method) {
           debug('step:1.2 server level middleware ended the response')
           response.end()
           return
