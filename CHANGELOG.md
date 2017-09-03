@@ -1,3 +1,13 @@
+<a name="4.0.18"></a>
+## [4.0.18](https://github.com/adonisjs/adonis-framework/compare/v4.0.17...v4.0.18) (2017-09-03)
+
+
+### Bug Fixes
+
+* **server:** handle response end use cases of server middleware ([c04eedb](https://github.com/adonisjs/adonis-framework/commit/c04eedb))
+
+
+
 <a name="4.0.17"></a>
 ## [4.0.17](https://github.com/adonisjs/adonis-framework/compare/v4.0.16...v4.0.17) (2017-09-02)
 
