@@ -1,3 +1,13 @@
+<a name="4.0.3"></a>
+## [4.0.3](https://github.com/poppinss/adonis-fold/compare/v4.0.2...v4.0.3) (2017-09-06)
+
+
+### Features
+
+* **ioc:** add singletonFake method to register fakes ([bd5376d](https://github.com/poppinss/adonis-fold/commit/bd5376d))
+
+
+
 <a name="4.0.2"></a>
 ## [4.0.2](https://github.com/poppinss/adonis-fold/compare/v4.0.1...v4.0.2) (2017-08-02)
 

@@ -194,9 +194,12 @@ class Ioc {
    * @return {Mixed}
    */
   _resolveFake (namespace) {
-    const fakeClosure = this._fakes.get(namespace)
+    const fake = this._fakes.get(namespace)
     debug('resolving %s namespace as a fake', namespace)
-    return fakeClosure(this)
+    if (fake.singleton) {
+      return (fake.cachedValue = fake.cachedValue || fake.closure(this))
+    }
+    return fake.closure(this)
   }
 
   /**
@@ -601,7 +604,37 @@ class Ioc {
     }
 
     debug('creating fake for %s namespace', namespace)
-    this._fakes.set(namespace, closure)
+    this._fakes.set(namespace, { closure, singleton: false, cachedValue: null })
+  }
+
+  /**
+   * Registers a single fake for a namespace, quite helpful
+   * when writing tests.
+   *
+   * @method singletonFake
+   *
+   * @param  {String} namespace
+   * @param  {Function} closure
+   *
+   * @throws {InvalidArgumentException} If closure is not a function
+   *
+   * @example
+   * ```
+   * Ioc.singletonFake('Adonis/Src/Lucid', function () {
+   *   return new FakeModel()
+   * })
+   *
+   * // Restore after testing
+   * Ioc.restore('Adonis/Src/Lucid')
+   * ```
+   */
+  singletonFake (namespace, closure) {
+    if (typeof (closure) !== 'function') {
+      throw GE.InvalidArgumentException.invalidParameter('Ioc.singletonFake expects 2nd parameter to be a closure', closure)
+    }
+
+    debug('creating singleton fake for %s namespace', namespace)
+    this._fakes.set(namespace, { closure, singleton: true, cachedValue: null })
   }
 
   /**
