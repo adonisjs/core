@@ -247,7 +247,14 @@ test.group('Ioc', function () {
     const ioc = new Ioc()
     const fakeFn = function () {}
     ioc.fake('App/Foo', fakeFn)
-    assert.deepEqual(ioc.getFakes().get('App/Foo'), fakeFn)
+    assert.deepEqual(ioc.getFakes().get('App/Foo'), { closure: fakeFn, singleton: false, cachedValue: null })
+  })
+
+  test('should register the singleton fake', function () {
+    const ioc = new Ioc()
+    const fakeFn = function () {}
+    ioc.singletonFake('App/Foo', fakeFn)
+    assert.deepEqual(ioc.getFakes().get('App/Foo'), { closure: fakeFn, singleton: true, cachedValue: null })
   })
 
   test('should resolve fake over the actual binding when registered', function () {
@@ -259,6 +266,21 @@ test.group('Ioc', function () {
       return 'fake foo'
     })
     assert.equal(ioc.use('App/Foo'), 'fake foo')
+  })
+
+  test('should resolve same value when fake is singleton', function () {
+    const ioc = new Ioc()
+    class Foo {}
+
+    ioc.bind('App/Foo', function () {
+      return 'foo'
+    })
+
+    ioc.singletonFake('App/Foo', function () {
+      return new Foo()
+    })
+
+    assert.isTrue(ioc.use('App/Foo') === ioc.use('App/Foo'))
   })
 
   test('should resolve fake over the actual binding when using make method', function () {
