@@ -258,6 +258,7 @@ class AppProvider extends ServiceProvider {
    */
   _registerHashTrait () {
     this.app.bind('Adonis/Traits/Hash', () => require('../src/Traits/Hash'))
+    this.app.alias('Adonis/Traits/Hash', 'Hash/Fake')
   }
 
   /**
