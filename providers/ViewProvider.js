@@ -27,7 +27,8 @@ class ViewProvider extends ServiceProvider {
 
       const View = require('../src/View')
       return new View(Helpers, Config.get('app.views.cache'))
-    })
+    })    
+    this.app.alias('Adonis/Src/View', 'View')
   }
 
   /**
