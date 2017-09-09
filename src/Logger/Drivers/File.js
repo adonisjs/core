@@ -37,25 +37,35 @@ class WinstonFile {
    * @return {Array}
    */
   static get inject () {
-    return ['Adonis/Src/Config', 'Adonis/Src/Helpers']
+    return ['Adonis/Src/Helpers']
   }
 
-  constructor (Config, Helpers) {
-    /**
-     * Merging user config with defaults.
-     */
-    this.config = Config.merge('app.logger.file', {
+  constructor (Helpers) {
+    this.Helpers = Helpers
+  }
+
+  /**
+   * Set config. This method is called by Logger
+   * manager by set config based upon the
+   * transport in use.
+   *
+   * @method setConfig
+   *
+   * @param  {Object}  config
+   */
+  setConfig (config) {
+    this.config = Object.assign({}, {
       name: 'adonis-app',
       filename: 'adonis.log',
       level: 'info'
-    })
+    }, config)
 
     /**
      * If filename is not absolute, save it inside the tmp path
      * of adonis-app.
      */
     if (!path.isAbsolute(this.config.filename)) {
-      this.config.filename = Helpers.tmpPath(this.config.filename)
+      this.config.filename = this.Helpers.tmpPath(this.config.filename)
     }
 
     /**

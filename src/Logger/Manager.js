@@ -39,13 +39,13 @@ const proxyHandler = {
     /**
      * Fallback to driver instance
      */
-    const driverInstance = target.driver(target._defaultDriver)
+    const loggerInstance = target.transport()
 
-    if (typeof (driverInstance[name]) === 'function') {
-      return driverInstance[name].bind(driverInstance)
+    if (typeof (loggerInstance[name]) === 'function') {
+      return loggerInstance[name].bind(loggerInstance)
     }
 
-    return driverInstance[name]
+    return loggerInstance[name]
   }
 }
 
@@ -64,8 +64,9 @@ const proxyHandler = {
  */
 class LoggerManager {
   constructor (Config) {
-    this._defaultDriver = Config.get('app.logger.driver', 'console')
+    this.Config = Config
     this._loggerInstances = {}
+
     return new Proxy(this, proxyHandler)
   }
 
@@ -90,30 +91,32 @@ class LoggerManager {
    *
    * @method _getInstanceFor
    *
-   * @param  {String}        name
+   * @param  {Object}        transportConfig
    *
-   * @return {Object}
+   * @return {Logger}
    *
    * @private
    */
-  _getInstanceFor (name) {
-    if (Drivers[name]) {
-      return new Logger(ioc.make(Drivers[name]))
+  _getInstanceFor (transportConfig) {
+    const driver = transportConfig.driver
+    const Driver = Drivers[driver] || this.constructor._drivers[driver]
+
+    if (!Driver) {
+      throw GE.RuntimeException.invoke(`Logger driver ${driver} does not exists.`, 500, 'E_INVALID_LOGGER_DRIVER')
     }
 
-    if (this.constructor._drivers[name]) {
-      return new Logger(this.constructor._drivers[name])
-    }
+    const driverInstance = ioc.make(Driver)
+    driverInstance.setConfig(transportConfig)
 
-    throw GE.RuntimeException.invoke(`Logger driver ${name} does not exists.`, 500, 'E_INVALID_LOGGER_DRIVER')
+    return new Logger(driverInstance)
   }
 
   /**
-   * Returns logger instance for a specific driver. Also
+   * Returns logger instance for a specific transport. Also
    * drivers pool will be created to re-use the existing
    * instances
    *
-   * @method driver
+   * @method transport
    *
    * @param  {String} name
    *
@@ -121,10 +124,42 @@ class LoggerManager {
    *
    * @throws {RuntimeException} If driver does not exists
    */
-  driver (name) {
-    if (!this._loggerInstances[name]) {
-      this._loggerInstances[name] = this._getInstanceFor(name)
+  transport (name) {
+    name = name || this.Config.get('app.logger.transport')
+
+    /**
+     * Throw exception when logger.transport is not defined
+     */
+    if (!name) {
+      throw GE.RuntimeException.missingConfig('logger.transport', 'config/app.js')
     }
+
+    /**
+     * Return existing instance if exists
+     */
+    if (this._loggerInstances[name]) {
+      return this._loggerInstances[name]
+    }
+
+    const transportConfig = this.Config.get(`app.logger.${name}`)
+
+    /**
+     * Throw exception if there is no config defined for the
+     * given logger name
+     */
+    if (!transportConfig) {
+      throw GE.RuntimeException.missingConfig(`logger.${name}`, 'config/app.js')
+    }
+
+    /**
+     * Throw exception when no driver is defined
+     * on the transport config
+     */
+    if (!transportConfig.driver) {
+      throw GE.RuntimeException.incompleteConfig(`logger.${name}`, ['driver'], 'config/app.js')
+    }
+
+    this._loggerInstances[name] = this._getInstanceFor(transportConfig)
     return this._loggerInstances[name]
   }
 }
