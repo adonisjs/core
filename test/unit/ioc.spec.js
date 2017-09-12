@@ -188,7 +188,8 @@ test.group('Ioc', function () {
 
   test('should throw an exception when trying to extend a binding which does not have a manager', function () {
     const ioc = new Ioc()
-    const fn = () => ioc.extend('App/Foo')
+    ioc.extend('App/Foo')
+    const fn = () => ioc.executeExtendCalls()
     assert.throw(fn, 'E_CANNOT_EXTEND_BINDING: App/Foo cannot be extended, since their is no public interface to extend')
   })
 
@@ -197,7 +198,8 @@ test.group('Ioc', function () {
     ioc.manager('App/Foo', class Foo {
       static extend () {}
     })
-    const fn = () => ioc.extend('App/Foo', 'redis')
+    ioc.extend('App/Foo', 'redis')
+    const fn = () => ioc.executeExtendCalls()
     assert.throw(fn, 'E_INVALID_PARAMETER: Ioc.extend expects 3rd parameter to be a closure')
   })
 
@@ -216,6 +218,7 @@ test.group('Ioc', function () {
       return 'I am redis'
     })
 
+    ioc.executeExtendCalls()
     assert.deepEqual(extendedValues, {redis: 'I am redis'})
   })
 
@@ -234,6 +237,7 @@ test.group('Ioc', function () {
       return 'I am redis'
     }, 'boom')
 
+    ioc.executeExtendCalls()
     assert.deepEqual(extendedValues, {options: 'boom'})
   })
 

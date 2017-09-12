@@ -85,6 +85,15 @@ class Ioc {
      * @type {Map}
      */
     this._fakes = new Map()
+
+    /**
+     * Reference to all extend calls. Extend calls
+     * are executed right after all providers
+     * have been booted
+     *
+     * @type {Object}
+     */
+    this._extendCalls = []
   }
 
   /**
@@ -562,19 +571,35 @@ class Ioc {
    * })
    * ```
    */
-  extend (namespace, key, closure, ...options) {
-    if (!this._hasManager(namespace)) {
-      const message = `${namespace} cannot be extended, since their is no public interface to extend`
-      throw GE.InvalidArgumentException.invoke(message, 500, 'E_CANNOT_EXTEND_BINDING')
-    }
+  extend (...args) {
+    this._extendCalls.push(args)
+  }
 
-    if (typeof (closure) !== 'function') {
-      throw GE.InvalidArgumentException.invalidParameter('Ioc.extend expects 3rd parameter to be a closure', closure)
-    }
+  /**
+   * Executes all extend calls in sequence. Successfully
+   * executed extend calls will be removed from the
+   * array, so that they are not executed again.
+   *
+   * @method executeExtendCalls
+   *
+   * @return {void}
+   */
+  executeExtendCalls () {
+    _.remove(this._extendCalls, ([ namespace, key, closure, ...options ]) => {
+      if (!this._hasManager(namespace)) {
+        const message = `${namespace} cannot be extended, since their is no public interface to extend`
+        throw GE.InvalidArgumentException.invoke(message, 500, 'E_CANNOT_EXTEND_BINDING')
+      }
 
-    const resolvedValue = closure(this)
-    debug('extending %s namespace %j', namespace, { key, options: [...options] })
-    this._managers[namespace].extend(key, resolvedValue, ...options)
+      if (typeof (closure) !== 'function') {
+        throw GE.InvalidArgumentException.invalidParameter('Ioc.extend expects 3rd parameter to be a closure', closure)
+      }
+
+      const resolvedValue = closure(this)
+      debug('extending %s namespace %j', namespace, { key, options: [...options] })
+      this._managers[namespace].extend(key, resolvedValue, ...options)
+      return true
+    })
   }
 
   /**
