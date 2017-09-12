@@ -191,6 +191,7 @@ class Registrar {
    */
   async boot () {
     await Promise.all(this._bootProviders(this._providers))
+    this.Ioc.executeExtendCalls()
     emitter.emit(this.PROVIDERS_BOOTED)
   }
 
