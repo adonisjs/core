@@ -10,7 +10,7 @@
 */
 
 const _ = require('lodash')
-const { resolver } = require('@adonisjs/fold')
+const { resolver, ioc } = require('@adonisjs/fold')
 const Resetable = require('resetable')
 const EventEmitter = require('eventemitter2').EventEmitter2
 const GE = require('@adonisjs/generic-exceptions')
@@ -410,6 +410,19 @@ class Event {
       throw GE.InvalidArgumentException.invalidParameter('Event.setMaxListeners expects a valid number', number)
     }
     this.emitter.setMaxListeners(number)
+  }
+
+  /**
+   * Binding a fake to the Ioc container for the event. It
+   * can be used to run assertions on events, instead of
+   * firing actual events
+   *
+   * @method fake
+   *
+   * @return {void}
+   */
+  fake () {
+    ioc.singletonFake('Adonis/Src/Event', () => new (require('./Fake'))())
   }
 }
 
