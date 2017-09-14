@@ -368,7 +368,8 @@ test.group('Events Fake', (group) => {
     ioc.use('Adonis/Src/Event').restore()
 
     try {
-      ioc.use('Adonis/Src/Event')
+      const event = ioc.use('Adonis/Src/Event')
+      assert.instanceOf(event, Event)
     } catch ({ message }) {
       assert.equal(message, `Cannot find module 'Adonis/Src/Event'`)
     }
