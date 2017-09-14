@@ -635,7 +635,7 @@ test.group('Route | Manager', (group) => {
 
   test('make url for route with dynamic domain', (assert) => {
     RouteManager.get('users/:id', function () {}).as('profile')
-    RouteManager.get('author/:id', function () {}).domain('*.example.com').as('profile')
+    RouteManager.get('author/:id', function () {}).domain('(.*).example.com').as('profile')
 
     const url = RouteManager.url('profile', { id: 2 }, 'virk.example.com')
     assert.equal(url, '/author/2')
