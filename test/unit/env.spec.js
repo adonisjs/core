@@ -44,18 +44,21 @@ test.group('Env', (group) => {
     /* eslint-disable no-new */
     new Env(this.helpers._appRoot)
     assert.equal(process.env.HELLO, 'WORLD')
+    delete process.env.ENV_PATH
   })
 
   test('get value for a given key', (assert) => {
     process.env.ENV_PATH = './user/.env'
     const env = new Env(this.helpers._appRoot)
     assert.equal(env.get('HELLO'), 'WORLD')
+    delete process.env.ENV_PATH
   })
 
   test('get default value when actual value is missing', (assert) => {
     process.env.ENV_PATH = './user/.env'
     const env = new Env(this.helpers._appRoot)
     assert.equal(env.get('FOO', 'BAR'), 'BAR')
+    delete process.env.ENV_PATH
   })
 
   test('set value for a given key', (assert) => {
@@ -63,11 +66,26 @@ test.group('Env', (group) => {
     const env = new Env(this.helpers._appRoot)
     env.set('FOO', 'BAZ')
     assert.equal(env.get('FOO', 'BAR'), 'BAZ')
+    delete process.env.ENV_PATH
   })
 
   test('load new config file and overwrite existing file', (assert) => {
+    process.env.ENV_PATH = './user/.env'
     const env = new Env(this.helpers._appRoot)
     env.load('./user/.env.override')
     assert.equal(process.env.HELLO, 'UNIVERSE')
+    delete process.env.ENV_PATH
+  })
+
+  test('load .env.testing file when NODE_ENV is set to testing by default', (assert) => {
+    process.env.NODE_ENV = 'testing'
+    const files = []
+
+    const _load = Env.prototype.load
+    Env.prototype.load = (file) => (files.push(file))
+    new Env(this.helpers._appRoot)
+    assert.deepEqual(files, ['.env', '.env.testing'])
+    Env.prototype.load = _load
+    delete process.env.NODE_ENV
   })
 })
