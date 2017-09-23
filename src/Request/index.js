@@ -41,7 +41,7 @@ const SECRET = 'app.appKey'
  * You can access the original **req** object as
  * `request.request`
  *
- * @namespace Adonis/Src/Request
+ * @binding Adonis/Src/Request
  * @group Http
  *
  * @class Request

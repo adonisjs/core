@@ -26,7 +26,7 @@ const JSONPCALLBACK = 'app.http.jsonpCallback'
  * access the original **response** object as
  * `response.response`
  *
- * @namespace Adonis/Src/Response
+ * @binding Adonis/Src/Response
  * @group Http
  *
  * @class Response

@@ -21,7 +21,7 @@ const GE = require('@adonisjs/generic-exceptions')
  *
  * This class makes use of eventemitter2 module
  *
- * @namespace Adonis/Src/Event
+ * @binding Adonis/Src/Event
  * @alias Event
  * @singleton
  * @group Core

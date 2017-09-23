@@ -15,7 +15,7 @@
  * create a custom exception handler then class
  * won't be used to handle exceptions.
  *
- * @namespace Adonis/Exceptions/Handler
+ * @binding Adonis/Exceptions/Handler
  * @group Http
  *
  * @class Handler

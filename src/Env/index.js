@@ -26,7 +26,7 @@ const debug = require('debug')('adonis:framework')
  * Can define different location by setting `ENV_PATH`
  * environment variable.
  *
- * @namespace Adonis/Src/Env
+ * @binding Adonis/Src/Env
  * @group Core
  * @alias Env
  * @singleton

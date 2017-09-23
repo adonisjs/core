@@ -16,7 +16,7 @@ const GE = require('@adonisjs/generic-exceptions')
  * This class is used to encrypt/decrypt values using a secure
  * key and also base64 `encode` and `decode` strings.
  *
- * @namespace Adonis/Src/Encryption
+ * @binding Adonis/Src/Encryption
  * @alias Encryption
  * @group Core
  * @singleton

@@ -22,7 +22,7 @@ const GE = require('@adonisjs/generic-exceptions')
  * Route Manager is the public interface used to define
  * routes, groups and resources.
  *
- * @namespace Adonis/Src/Route
+ * @binding Adonis/Src/Route
  * @alias Route
  * @singleton
  * @group Http
