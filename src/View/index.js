@@ -20,7 +20,7 @@ const BasePresenter = edge.BasePresenter
  * During HTTP request/response lifecycle, you should
  * make use of `view` instance to render views.
  *
- * @namespace Adonis/Src/View
+ * @binding Adonis/Src/View
  * @singleton
  * @alias View
  * @group Http

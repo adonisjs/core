@@ -16,7 +16,7 @@ const Macroable = require('macroable')
  * and middleware. Also different part of applications
  * can bind getters to this class.
  *
- * @namespace Adonis/Src/HttpContext
+ * @binding Adonis/Src/HttpContext
  * @alias HttpContext
  * @group Http
  *

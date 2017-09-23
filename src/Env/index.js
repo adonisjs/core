@@ -26,7 +26,7 @@ const debug = require('debug')('adonis:framework')
  * Can define different location by setting `ENV_PATH`
  * environment variable.
  *
- * @namespace Adonis/Src/Env
+ * @binding Adonis/Src/Env
  * @group Core
  * @alias Env
  * @singleton
@@ -37,6 +37,7 @@ const debug = require('debug')('adonis:framework')
 class Env {
   constructor (appRoot) {
     this.appRoot = appRoot
+    const bootedAsTesting = process.env.NODE_ENV === 'testing'
     const env = this.load(this.getEnvPath(), false) // do not overwrite at first place
 
     /**
@@ -45,6 +46,14 @@ class Env {
      */
     if (env.error && process.env.ENV_SILENT !== 'true') {
       throw env.error
+    }
+
+    /**
+     * Load the `.env.testing` file if app was booted
+     * under testing mode
+     */
+    if (bootedAsTesting) {
+      this.load('.env.testing')
     }
   }
 

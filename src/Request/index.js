@@ -41,7 +41,7 @@ const SECRET = 'app.appKey'
  * You can access the original **req** object as
  * `request.request`
  *
- * @namespace Adonis/Src/Request
+ * @binding Adonis/Src/Request
  * @group Http
  *
  * @class Request
@@ -51,7 +51,7 @@ class Request extends Macroable {
   constructor (request, response, Config) {
     super()
     /**
-     * Refrence to native HTTP request object
+     * Reference to native HTTP request object
      *
      * @attribute request
      * @type {Object}
@@ -59,7 +59,7 @@ class Request extends Macroable {
     this.request = request
 
     /**
-     * Refrence to native HTTP response object
+     * Reference to native HTTP response object
      *
      * @attribute response
      * @type {Object}
@@ -67,7 +67,7 @@ class Request extends Macroable {
     this.response = response
 
     /**
-     * Refrence to config provider to read
+     * Reference to config provider to read
      * http specific settings.
      *
      * @attribute Config

@@ -35,7 +35,6 @@ const sysLog = {
 
 test.group('Logger | File Driver', (group) => {
   group.beforeEach(() => {
-    this.config = new Config()
     this.helpers = new Helpers(path.join(__dirname))
   })
 
@@ -51,22 +50,27 @@ test.group('Logger | File Driver', (group) => {
   })
 
   test('initiate logger with correct settings', (assert) => {
-    const fileDriver = new FileDriver(this.config, this.helpers)
+    const fileDriver = new FileDriver(this.helpers)
+    fileDriver.setConfig({})
+
     assert.deepEqual(fileDriver.logger.levels, sysLog)
     assert.equal(fileDriver.logger.transports['adonis-app'].dirname, path.join(__dirname, 'tmp'))
   })
 
   test('do not override filename when it is absolute path', (assert) => {
-    const config = new Config()
-    config.set('app.logger.file', {
+    const fileDriver = new FileDriver(this.helpers)
+
+    fileDriver.setConfig({
       filename: path.join(__dirname, 'my.log')
     })
-    const fileDriver = new FileDriver(config, this.helpers)
+
     assert.equal(fileDriver.config.filename, path.join(__dirname, 'my.log'))
   })
 
   test('log info to the file', (assert, done) => {
-    const fileDriver = new FileDriver(this.config, this.helpers)
+    const fileDriver = new FileDriver(this.helpers)
+    fileDriver.setConfig({})
+
     fileDriver.log(6, 'hello', () => {
       fs.readFile(fileDriver.config.filename, (error, contents) => {
         if (error) {
@@ -81,31 +85,36 @@ test.group('Logger | File Driver', (group) => {
   }).timeout(3000)
 
   test('return active log level', (assert) => {
-    const fileDriver = new FileDriver(this.config, this.helpers)
+    const fileDriver = new FileDriver(this.helpers)
+    fileDriver.setConfig({})
+
     assert.equal(fileDriver.level, 'info')
   })
 
   test('update log level', (assert) => {
-    const fileDriver = new FileDriver(this.config, this.helpers)
+    const fileDriver = new FileDriver(this.helpers)
+    fileDriver.setConfig({})
+
     fileDriver.level = 'debug'
     assert.equal(fileDriver.level, 'debug')
   })
 })
 
-test.group('Logger | Console Driver', (group) => {
-  group.beforeEach(() => {
-    this.config = new Config()
-  })
-
+test.group('Logger | Console Driver', () => {
   test('initiate logger with correct settings', (assert) => {
-    const fileDriver = new ConsoleDriver(this.config)
-    assert.deepEqual(fileDriver.logger.levels, sysLog)
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
+    assert.deepEqual(consoleDriver.logger.levels, sysLog)
   })
 
   test('log info to the console', (assert, done) => {
-    const fileDriver = new ConsoleDriver(this.config)
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
     const inspect = stdout.inspect()
-    fileDriver.log(6, 'hello', () => {
+
+    consoleDriver.log(6, 'hello', () => {
       inspect.restore()
       assert.include(inspect.output[0], 'hello')
       done()
@@ -113,24 +122,27 @@ test.group('Logger | Console Driver', (group) => {
   }).timeout(3000)
 
   test('return active log level', (assert) => {
-    const fileDriver = new ConsoleDriver(this.config)
-    assert.equal(fileDriver.level, 'info')
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
+    assert.equal(consoleDriver.level, 'info')
   })
 
   test('update log level', (assert) => {
-    const fileDriver = new ConsoleDriver(this.config)
-    fileDriver.level = 'debug'
-    assert.equal(fileDriver.level, 'debug')
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
+    consoleDriver.level = 'debug'
+    assert.equal(consoleDriver.level, 'debug')
   })
 })
 
 test.group('Logger | Instance', (group) => {
-  group.beforeEach(() => {
-    this.config = new Config()
-  })
-
   test('log info using defined driver', (assert, done) => {
-    const logger = new Logger(new ConsoleDriver(this.config))
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
+    const logger = new Logger(consoleDriver)
     const inspect = stdout.inspect()
     logger.info('hello', () => {
       inspect.restore()
@@ -140,7 +152,10 @@ test.group('Logger | Instance', (group) => {
   })
 
   test('log warning using defined driver', (assert) => {
-    const logger = new Logger(new ConsoleDriver(this.config))
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
+    const logger = new Logger(consoleDriver)
     const inspect = stdout.inspect()
     logger.warning('hello')
     inspect.restore()
@@ -148,7 +163,10 @@ test.group('Logger | Instance', (group) => {
   })
 
   test('do not log level before the level defined on the driver', (assert, done) => {
-    const logger = new Logger(new ConsoleDriver(this.config))
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
+    const logger = new Logger(consoleDriver)
     const inspect = stderr.inspect()
     logger.debug('hello', () => {
       inspect.restore()
@@ -158,9 +176,13 @@ test.group('Logger | Instance', (group) => {
   })
 
   test('update log level', (assert, done) => {
-    const logger = new Logger(new ConsoleDriver(this.config))
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
+    const logger = new Logger(consoleDriver)
     logger.level = 'debug'
     const inspect = stderr.inspect()
+
     logger.debug('hello', () => {
       inspect.restore()
       assert.include(inspect.output[0], 'debug')
@@ -169,7 +191,10 @@ test.group('Logger | Instance', (group) => {
   })
 
   test('get current log level', (assert) => {
-    const logger = new Logger(new ConsoleDriver(this.config))
+    const consoleDriver = new ConsoleDriver()
+    consoleDriver.setConfig({})
+
+    const logger = new Logger(consoleDriver)
     assert.equal(logger.level, 'info')
   })
 })
@@ -186,37 +211,111 @@ test.group('Logger | Manager', (group) => {
     assert.deepEqual(LoggerManager._drivers, { myDriver })
   })
 
-  test('throw error when trying to access invalid logger driver', (assert) => {
+  test('throw error when trying to access invalid logger transport', (assert) => {
     const logger = new LoggerManager(new Config())
-    const fn = () => logger.driver('foo')
-    assert.throw(fn, 'E_INVALID_LOGGER_DRIVER: Logger driver foo does not exists')
+    const fn = () => logger.transport('foo')
+    assert.throw(fn, 'E_MISSING_CONFIG: logger.foo is not defined inside config/app.js file')
   })
 
   test('return logger instance with selected driver', (assert) => {
-    const logger = new LoggerManager(new Config())
-    assert.instanceOf(logger.driver('file'), Logger)
-    assert.instanceOf(logger.driver('file').driver, FileDriver)
+    const config = new Config()
+    config.set('app.logger.file', {
+      driver: 'file'
+    })
+
+    const logger = new LoggerManager(config)
+    assert.instanceOf(logger.transport('file'), Logger)
+    assert.instanceOf(logger.transport('file').driver, FileDriver)
   })
 
   test('return logger instance with extended driver', (assert) => {
-    const myDriver = {}
+    const myDriver = {
+      setConfig () {}
+    }
     LoggerManager.extend('myDriver', myDriver)
-    const logger = new LoggerManager(new Config())
-    assert.instanceOf(logger.driver('myDriver'), Logger)
-    assert.deepEqual(logger.driver('myDriver').driver, myDriver)
+
+    const config = new Config()
+    config.set('app.logger.myDriver', {
+      driver: 'myDriver'
+    })
+
+    const logger = new LoggerManager(config)
+    assert.instanceOf(logger.transport('myDriver'), Logger)
+    assert.deepEqual(logger.transport('myDriver').driver, myDriver)
   })
 
   test('create singleton logger instances', (assert) => {
-    const logger = new LoggerManager(new Config())
-    logger.driver('file')
+    const config = new Config()
+    config.set('app.logger.file', {
+      driver: 'file'
+    })
+
+    const logger = new LoggerManager(config)
+    logger.transport('file')
     assert.lengthOf(Object.keys(logger._loggerInstances), 1)
-    logger.driver('file')
+    logger.transport('file')
     assert.lengthOf(Object.keys(logger._loggerInstances), 1)
   })
 
+  test('create different instance when transport is different', (assert) => {
+    const config = new Config()
+    config.set('app.logger.file', {
+      driver: 'file'
+    })
+
+    config.set('app.logger.anotherFile', {
+      driver: 'file'
+    })
+
+    const logger = new LoggerManager(config)
+    logger.transport('file')
+    assert.lengthOf(Object.keys(logger._loggerInstances), 1)
+    logger.transport('anotherFile')
+    assert.lengthOf(Object.keys(logger._loggerInstances), 2)
+  })
+
   test('proxy logger instance methods', (assert, done) => {
-    const logger = new LoggerManager(new Config())
+    const config = new Config()
+    config.set('app.logger', {
+      transport: 'console',
+      console: {
+        driver: 'console'
+      }
+    })
+
+    const logger = new LoggerManager(config)
     const inspect = stdout.inspect()
+
+    logger.info('hello', () => {
+      inspect.restore()
+      assert.include(inspect.output[0], 'hello')
+      done()
+    })
+  })
+
+  test('throw exception when driver is invalid', (assert) => {
+    const config = new Config()
+    config.set('app.logger', {
+      transport: 'console',
+
+      console: {
+        driver: 'foo'
+      }
+    })
+
+    const logger = new LoggerManager(config)
+    const fn = () => logger.debug('')
+    assert.throw(fn, 'E_INVALID_LOGGER_DRIVER: Logger driver foo does not exists')
+  })
+
+  test('use console transport when no transport is defined', (assert, done) => {
+    const config = new Config()
+    config.set('app.logger', {
+    })
+
+    const logger = new LoggerManager(config)
+    const inspect = stdout.inspect()
+
     logger.info('hello', () => {
       inspect.restore()
       assert.include(inspect.output[0], 'hello')

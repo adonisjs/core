@@ -25,7 +25,7 @@ const NamedMiddlewareWrapper = require('./NamedMiddlewareWrapper')
  *
  * This class utilizes the Node.js core HTTP server.
  *
- * @namespace Adonis/Src/Server
+ * @binding Adonis/Src/Server
  * @alias Server
  * @singleton
  * @group Http

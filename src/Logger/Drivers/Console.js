@@ -21,29 +21,16 @@ const Winston = require('winston')
  * @constructor
  */
 class WinstonConsole {
-  /**
-   * Returns an array of dependencies to be injected
-   * by IoC container.
-   *
-   * @attribute inject
-   * @static
-   *
-   * @return {Array}
-   */
-  static get inject () {
-    return ['Adonis/Src/Config']
-  }
-
-  constructor (Config) {
+  setConfig (config) {
     /**
      * Merging user config with defaults.
      */
-    this.config = Config.merge('app.logger.console', {
+    this.config = Object.assign({}, {
       name: 'adonis-app',
       level: 'info',
       colorize: true,
       timestamp: new Date().toLocaleTimeString()
-    })
+    }, config)
 
     /**
      * Creating new instance of winston with file transport

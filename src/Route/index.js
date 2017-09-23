@@ -120,7 +120,9 @@ class Route extends Macroable {
     this._handler = handler
     this._name = route
     this._domain = null
+    this._keys = []
     this._middleware = []
+    this._domainKeys = []
   }
 
   /**
@@ -134,7 +136,7 @@ class Route extends Macroable {
    * @private
    */
   _makeRoutePattern () {
-    this._regexp = pathToRegexp(this._route, [])
+    this._regexp = pathToRegexp(this._route, this._keys)
   }
 
   /**
@@ -159,7 +161,7 @@ class Route extends Macroable {
       return null
     }
 
-    return _.transform(this._domain.keys, (result, key, index) => {
+    return _.transform(this._domainKeys, (result, key, index) => {
       let value = domainTokens[index + 1] || null
       result[key.name] = value
       return result
@@ -185,7 +187,7 @@ class Route extends Macroable {
    */
   domain (domain) {
     domain = `${domain.replace(/^\/|\/$/g, '')}`
-    this._domain = pathToRegexp(domain, [])
+    this._domain = pathToRegexp(domain, this._domainKeys)
     return this
   }
 
@@ -311,7 +313,7 @@ class Route extends Macroable {
    */
   prefix (prefix) {
     prefix = `/${prefix.replace(/^\/|\/$/g, '')}`
-    this._route = `${prefix}${this._route}`
+    this._route = this._route === '/' ? prefix : `${prefix}${this._route}`
     this._makeRoutePattern()
     return this
   }
@@ -375,7 +377,7 @@ class Route extends Macroable {
       return null
     }
 
-    const params = _.transform(this._regexp.keys, (result, key, index) => {
+    const params = _.transform(this._keys, (result, key, index) => {
       let value = tokens[index + 1] || null
       value = key.repeat && value ? value.split('/') : value
       result[key.name] = value

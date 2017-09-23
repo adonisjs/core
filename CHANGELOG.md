@@ -1,3 +1,22 @@
+<a name="4.0.19"></a>
+## [4.0.19](https://github.com/adonisjs/adonis-framework/compare/v4.0.18...v4.0.19) (2017-09-23)
+
+
+### Bug Fixes
+
+* **event:** fix breaking test for event fake ([58ba005](https://github.com/adonisjs/adonis-framework/commit/58ba005))
+* **logger:** supress breaking changes ([6995a40](https://github.com/adonisjs/adonis-framework/commit/6995a40))
+* **ViewProvider:** create by default the View alias ([#636](https://github.com/adonisjs/adonis-framework/issues/636)) ([3c36453](https://github.com/adonisjs/adonis-framework/commit/3c36453))
+
+
+### Features
+
+* **env:** load .env.testing when in testing mode ([c1dde5f](https://github.com/adonisjs/adonis-framework/commit/c1dde5f))
+* **event:** add event fake for testing ([ad07db7](https://github.com/adonisjs/adonis-framework/commit/ad07db7))
+* **logger:** add option to re-use drivers ([1b72f83](https://github.com/adonisjs/adonis-framework/commit/1b72f83))
+
+
+
 <a name="4.0.18"></a>
 ## [4.0.18](https://github.com/adonisjs/adonis-framework/compare/v4.0.17...v4.0.18) (2017-09-03)
 

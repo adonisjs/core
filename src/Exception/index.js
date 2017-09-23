@@ -21,7 +21,7 @@ const debug = require('debug')('adonis:framework')
  * exception handlers and call them to handle
  * the error.
  *
- * @namespace Adonis/Src/Exception
+ * @binding Adonis/Src/Exception
  * @group Http
  * @alias Exception
  * @singleton

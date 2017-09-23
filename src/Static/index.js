@@ -19,7 +19,7 @@ let staticServer = null
  * made when there is a resource inside the `public`
  * directory.
  *
- * @namespace Adonis/Src/Static
+ * @binding Adonis/Src/Static
  * @alias Static
  * @group Http
  *

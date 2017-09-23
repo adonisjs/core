@@ -36,6 +36,7 @@ const logLevels = {
  * @class Logger
  * @group Core
  * @constructor
+ * @binding Adonis/Src/Logger
  *
  * @example
  * ```js
