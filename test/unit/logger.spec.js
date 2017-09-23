@@ -307,4 +307,19 @@ test.group('Logger | Manager', (group) => {
     const fn = () => logger.debug('')
     assert.throw(fn, 'E_INVALID_LOGGER_DRIVER: Logger driver foo does not exists')
   })
+
+  test('use console transport when no transport is defined', (assert, done) => {
+    const config = new Config()
+    config.set('app.logger', {
+    })
+
+    const logger = new LoggerManager(config)
+    const inspect = stdout.inspect()
+
+    logger.info('hello', () => {
+      inspect.restore()
+      assert.include(inspect.output[0], 'hello')
+      done()
+    })
+  })
 })

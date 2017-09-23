@@ -131,7 +131,9 @@ class LoggerManager {
      * Throw exception when logger.transport is not defined
      */
     if (!name) {
-      throw GE.RuntimeException.missingConfig('logger.transport', 'config/app.js')
+      console.warn('Your logger configuration is old. Make sure to update it as per https://github.com/adonisjs/adonis-slim-app/blob/develop/config/app.js#L150')
+      name = 'console'
+      // throw GE.RuntimeException.missingConfig('logger.transport', 'config/app.js')
     }
 
     /**
@@ -141,7 +143,19 @@ class LoggerManager {
       return this._loggerInstances[name]
     }
 
-    const transportConfig = this.Config.get(`app.logger.${name}`)
+    let transportConfig = this.Config.get(`app.logger.${name}`)
+
+    /**
+     * Create a fake config for the console driver. This is required
+     * for meanwhile, since this change and breaking.
+     *
+     * Also when removing this, uncomment the above exception block
+     */
+    if (!transportConfig && name === 'console') {
+      transportConfig = {
+        driver: 'console'
+      }
+    }
 
     /**
      * Throw exception if there is no config defined for the
