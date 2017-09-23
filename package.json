@@ -46,7 +46,7 @@
     "bcryptjs": "^2.4.3",
     "co-compose": "^3.0.0",
     "dotenv": "^4.0.0",
-    "edge.js": "^1.0.2",
+    "edge.js": "^1.1.0",
     "eventemitter2": "^4.1.2",
     "haye": "^1.0.1",
     "lodash": "^4.17.4",
@@ -59,7 +59,7 @@
     "path-to-regexp": "^2.0.0",
     "require-all": "^2.2.0",
     "resetable": "^1.0.2",
-    "serve-static": "^1.12.4",
+    "serve-static": "^1.12.6",
     "useragent": "^2.2.1",
     "winston": "^2.3.1",
     "youch": "^2.0.5"
