@@ -1,3 +1,13 @@
+<a name="4.0.20"></a>
+## [4.0.20](https://github.com/adonisjs/adonis-framework/compare/v4.0.19...v4.0.20) (2017-09-24)
+
+
+### Bug Fixes
+
+* **route:** wildcard bug after regexp upgrade ([c7ebb4d](https://github.com/adonisjs/adonis-framework/commit/c7ebb4d))
+
+
+
 <a name="4.0.19"></a>
 ## [4.0.19](https://github.com/adonisjs/adonis-framework/compare/v4.0.18...v4.0.19) (2017-09-23)
 

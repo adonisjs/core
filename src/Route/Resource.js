@@ -242,7 +242,7 @@ class RouteResource extends Macroable {
    *
    * @method middleware
    *
-   * @param  {...Spread} middleware
+   * @param  {Array|Map} middleware
    *
    * @chainable
    *
@@ -252,36 +252,39 @@ class RouteResource extends Macroable {
    *   .resource()
    *   .middleware(['auth'])
    *
-   * // or
-   *
+   * // or use ES6 maps
    * Route
-   *   .resource()
-   *   .middleware((route) => {
-   *     if (['store', 'update', 'delete'].indexOf(route.name) > -1) {
-   *       return ['auth']
-   *     }
-   *
-   *     return []
-   *   })
+   *   .resource('user', 'UserController')
+   *   .middleware(new Map([
+   *     ['auth', ['user.store', 'user.update', 'user.delete']]
+   *   ]))
    * ```
    */
-  middleware (...middleware) {
-    /**
-     * If first argument is a function, we consider it as
-     * the closure to define dynamic middleware based
-     * upon some logic.
-     *
-     * The closure will be executed for each route and return
-     * value must be an array and used as the middleware for
-     * the route.
-     */
-    const middlewareClosure = middleware[0]
+  middleware (middleware) {
+    const middlewareMap = middleware instanceof Map ? {} : {
+      '*': _.castArray(middleware)
+    }
 
+    /**
+     * if middleware are defined as ES6 map, then we need
+     * to sort them as objects with key/value pair of
+     * single route names and an array of middleware
+     */
+    if (middleware instanceof Map === true) {
+      for (const [routeNames, middlewareList] of middleware) {
+        _.castArray(routeNames).forEach((name) => {
+          middlewareMap[name] = (middlewareMap[name] || []).concat(_.castArray(middlewareList))
+        })
+      }
+    }
+
+    /**
+     * Finally apply the middleware to the routes
+     */
     _.each(this._routes, (route) => {
-      if (typeof (middlewareClosure) === 'function') {
-        route.routeInstance.middleware(middlewareClosure(route.routeInstance.toJSON()))
-      } else {
-        route.routeInstance.middleware(_.flatten(middleware))
+      const middlewareHash = _.flatten(middlewareMap['*'] || middlewareMap[route.routeInstance._name] || [])
+      if (_.size(middlewareHash)) {
+        route.routeInstance.middleware(middlewareHash)
       }
     })
 
