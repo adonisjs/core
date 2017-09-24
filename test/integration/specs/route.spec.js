@@ -205,12 +205,12 @@ test.group('Route', (group) => {
 
     Route
       .resource('users', 'UserController')
-      .middleware(() => {
-        return async function ({ response }, next) {
+      .middleware([
+        async ({ response }, next) => {
           await next()
           response._lazyBody.content = response._lazyBody.content + ' via middleware'
         }
-      })
+      ])
 
     assert.equal((await supertest(appUrl).get('/users').expect(200)).text, 'all via middleware')
     assert.equal((await supertest(appUrl).get('/users/create').expect(200)).text, 'form via middleware')

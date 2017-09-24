@@ -460,18 +460,89 @@ test.group('Route | Resource', (group) => {
     })
   })
 
-  test('define different middleware on different routes', (assert) => {
+  test('define resource middleware via ES6 map', (assert) => {
+    assert.plan(7)
     const resource = new RouteResource('users', 'UsersController')
-    resource.middleware(function (route) {
-      if (['create', 'edit', 'update', 'delete'].indexOf(route.name) > -1) {
-        return ['auth']
-      }
-      return []
-    })
+    resource.middleware(new Map([
+      [['users.create', 'users.edit', 'users.update', 'users.destroy'], ['auth']]
+    ]))
 
     RouteStore.list().forEach((route) => {
-      if (['create', 'edit', 'update', 'delete'].indexOf(route.name) > -1) {
+      if (['users.create', 'users.edit', 'users.update', 'users.destroy'].indexOf(route._name) > -1) {
         assert.deepEqual(route._middleware, ['auth'])
+      } else {
+        assert.deepEqual(route._middleware, [])
+      }
+    })
+  })
+
+  test('define resource middleware via ES6 map where middleware is a string', (assert) => {
+    assert.plan(7)
+    const resource = new RouteResource('users', 'UsersController')
+    resource.middleware(new Map([
+      [['users.create', 'users.edit', 'users.update', 'users.destroy'], 'auth']
+    ]))
+
+    RouteStore.list().forEach((route) => {
+      if (['users.create', 'users.edit', 'users.update', 'users.destroy'].indexOf(route._name) > -1) {
+        assert.deepEqual(route._middleware, ['auth'])
+      } else {
+        assert.deepEqual(route._middleware, [])
+      }
+    })
+  })
+
+  test('define resource middleware via ES6 map where name is a string', (assert) => {
+    assert.plan(7)
+    const resource = new RouteResource('users', 'UsersController')
+    resource.middleware(new Map([
+      ['users.destroy', ['auth']]
+    ]))
+
+    RouteStore.list().forEach((route) => {
+      if (['users.destroy'].indexOf(route._name) > -1) {
+        assert.deepEqual(route._middleware, ['auth'])
+      } else {
+        assert.deepEqual(route._middleware, [])
+      }
+    })
+  })
+
+  test('define resource middleware via ES6 map where middleware and name are strings', (assert) => {
+    assert.plan(7)
+    const resource = new RouteResource('users', 'UsersController')
+    resource.middleware(new Map([
+      ['users.create', 'auth']
+    ]))
+
+    RouteStore.list().forEach((route) => {
+      if (['users.create'].indexOf(route._name) > -1) {
+        assert.deepEqual(route._middleware, ['auth'])
+      } else {
+        assert.deepEqual(route._middleware, [])
+      }
+    })
+  })
+
+  test('define resource middleware via ES6 maps containing different middleware inside each row', (assert) => {
+    assert.plan(7)
+    const resource = new RouteResource('users', 'UsersController')
+
+    resource.middleware(new Map([
+      [['users.destroy'], ['auth', 'acl:superAdmin']],
+      [['users.create', 'users.update'], ['auth', 'acl:admin']],
+      [['users.index', 'users.show'], ['auth']]
+    ]))
+
+    RouteStore.list().forEach((route) => {
+      if (['users.destroy'].indexOf(route._name) > -1) {
+        assert.deepEqual(route._middleware, ['auth', 'acl:superAdmin'])
+      } else if (['users.create', 'users.update'].indexOf(route._name) > -1) {
+        assert.deepEqual(route._middleware, ['auth', 'acl:admin'])
+      } else if (['users.index', 'users.show'].indexOf(route._name) > -1) {
+        assert.deepEqual(route._middleware, ['auth'])
+      } else {
+        assert.deepEqual(route._middleware, [])
       }
     })
   })
