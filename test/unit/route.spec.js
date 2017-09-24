@@ -134,6 +134,11 @@ test.group('Route | Register', () => {
     assert.equal(route._regexp.exec('/users.json')[1], '.json')
     assert.equal(route._regexp.exec('/users.html')[1], '.html')
   })
+
+  test('register proper regex when route is a *', (assert) => {
+    const route = new Route('*', function () {})
+    assert.equal(route._route, '/(.*)')
+  })
 })
 
 test.group('Route | Resolve', () => {

@@ -115,7 +115,7 @@ class Route extends Macroable {
     this._validateHandler(handler)
 
     route = `/${route.replace(/^\/|\/$/g, '')}`
-    this._route = route
+    this._route = route === '/*' ? '/(.*)' : route
     this._verbs = verbs
     this._handler = handler
     this._name = route

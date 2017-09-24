@@ -226,4 +226,16 @@ test.group('Route', (group) => {
     Route.on('/').render('user', { name: 'virk' })
     assert.equal((await supertest(appUrl).get('/').expect(200)).text.trim(), 'Hello virk')
   })
+
+  test('respond to all routes via *', async (assert) => {
+    const Route = use('Route')
+    Route.any('(.*)', ({ request }) => request.url())
+    assert.equal((await supertest(appUrl).get('/users').expect(200)).text, '/users')
+    assert.equal((await supertest(appUrl).get('/users/create').expect(200)).text, '/users/create')
+    assert.equal((await supertest(appUrl).post('/users').expect(200)).text, '/users')
+    assert.equal((await supertest(appUrl).get('/users/1').expect(200)).text, '/users/1')
+    assert.equal((await supertest(appUrl).get('/users/1/edit').expect(200)).text, '/users/1/edit')
+    assert.equal((await supertest(appUrl).put('/users/1').expect(200)).text, '/users/1')
+    assert.equal((await supertest(appUrl).delete('/users/1').expect(200)).text, '/users/1')
+  })
 })
