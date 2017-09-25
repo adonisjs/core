@@ -136,6 +136,7 @@ class Route extends Macroable {
    * @private
    */
   _makeRoutePattern () {
+    this._keys = []
     this._regexp = pathToRegexp(this._route, this._keys)
   }
 

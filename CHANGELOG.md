@@ -1,3 +1,13 @@
+<a name="4.0.21"></a>
+## [4.0.21](https://github.com/adonisjs/adonis-framework/compare/v4.0.20...v4.0.21) (2017-09-25)
+
+
+### Bug Fixes
+
+* **route:** clean keys before making route regex ([959ed4c](https://github.com/adonisjs/adonis-framework/commit/959ed4c))
+
+
+
 <a name="4.0.20"></a>
 ## [4.0.20](https://github.com/adonisjs/adonis-framework/compare/v4.0.19...v4.0.20) (2017-09-24)
 
