@@ -57,6 +57,16 @@ class Env {
     }
   }
 
+  _interpolate (env, envConfig) {
+    const matches = env.match(/\$([a-zA-Z0-9_]+)|\${([a-zA-Z0-9_]+)}/g) || []
+    _.each(matches, (match) => {
+      const key = match.replace(/\$|{|}/g, '')
+      const variable = envConfig[key] || process.env[key] || ''
+      env = env.replace(match, this._interpolate(variable))
+    })
+    return env
+  }
+
   /**
    * Load env file from a given location.
    *
@@ -74,19 +84,29 @@ class Env {
       encoding
     }
 
-    /**
-     * Dotenv doesn't overwrite existing env variables, so we
-     * need to do it manaully by parsing the file.
-     */
-    if (overwrite) {
-      debug('merging environment file from %s', options.path)
+    try {
       const envConfig = dotenv.parse(fs.readFileSync(options.path, options.encoding))
-      _.each(envConfig, (value, key) => (process.env[key] = value))
-      return
-    }
 
-    debug('loading environment file from %s', options.path)
-    return dotenv.config(options)
+      /**
+       * Dotenv doesn't overwrite existing env variables, so we
+       * need to do it manaully by parsing the file.
+       */
+      debug('%s environment file from %s', overwrite ? 'merging' : 'loading', options.path)
+
+      /**
+       * Loop over values and set them on environment only
+       * when actual value is not defined or overwrite
+       * is set to true
+       */
+      _.each(envConfig, (value, key) => {
+        if (process.env[key] === undefined || overwrite) {
+          process.env[key] = this._interpolate(value, envConfig)
+        }
+      })
+      return { parsed: envConfig }
+    } catch (error) {
+      return { error }
+    }
   }
 
   /**

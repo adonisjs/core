@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/framework",
-  "version": "4.0.21",
+  "version": "4.0.22",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
@@ -31,7 +31,7 @@
     "coveralls": "^2.13.1",
     "cz-conventional-changelog": "^2.0.0",
     "fs-extra": "^4.0.2",
-    "japa": "^1.0.4",
+    "japa": "^1.0.5",
     "japa-cli": "^1.0.1",
     "nyc": "^11.2.1",
     "pify": "^3.0.0",

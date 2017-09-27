@@ -88,4 +88,22 @@ test.group('Env', (group) => {
     Env.prototype.load = _load
     delete process.env.NODE_ENV
   })
+
+  test('expand variables inside .env file', (assert) => {
+    process.env.ENV_PATH = './user/.env.expand'
+    const env = new Env(this.helpers._appRoot)
+    assert.equal(env.get('URL'), 'http://127.0.0.1:3333')
+    delete process.env.ENV_PATH
+  })
+
+  test('expand variables when overwrite is true', (assert) => {
+    process.env.ENV_PATH = './user/.env.expand'
+    process.env.URL = 'http://foo'
+    const env = new Env(this.helpers._appRoot)
+    assert.equal(env.get('URL'), 'http://foo')
+
+    env.load(path.join(__dirname, './user/.env.expand'), true)
+    assert.equal(env.get('URL'), 'http://127.0.0.1:3333')
+    delete process.env.ENV_PATH
+  })
 })
