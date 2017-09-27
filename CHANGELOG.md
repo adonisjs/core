@@ -1,3 +1,13 @@
+<a name="4.0.22"></a>
+## [4.0.22](https://github.com/adonisjs/adonis-framework/compare/v4.0.21...v4.0.22) (2017-09-27)
+
+
+### Features
+
+* **env:** add option to expand values ([66d18d7](https://github.com/adonisjs/adonis-framework/commit/66d18d7))
+
+
+
 <a name="4.0.21"></a>
 ## [4.0.21](https://github.com/adonisjs/adonis-framework/compare/v4.0.20...v4.0.21) (2017-09-25)
 
