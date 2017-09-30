@@ -260,57 +260,39 @@ test.group('Events Fake', (group) => {
     ioc.restore()
   })
 
-  test('fake should bind fake implementation to the ioc container', (assert) => {
+  test('instantiate faker object', (assert) => {
     const event = new Event(new Config())
     event.fake()
-    assert.instanceOf(ioc.use('Adonis/Src/Event'), EventFake)
+    assert.instanceOf(event._fake, EventFake)
   })
 
   test('catch emit calls', (assert) => {
-    const event = new EventFake(new Config())
+    const event = new Event(new Config())
+    event.fake()
+
     event.emit('mail', { username: 'virk' })
     assert.deepEqual(event.recent(), { event: 'mail', data: [{ username: 'virk' }] })
   })
 
   test('catch fire calls', (assert) => {
-    const event = new EventFake(new Config())
+    const event = new Event(new Config())
+    event.fake()
+
     event.fire('mail', { username: 'virk' })
     assert.deepEqual(event.recent(), { event: 'mail', data: [{ username: 'virk' }] })
   })
 
-  test('ignore any undefined calls on event class', (assert) => {
-    const event = new EventFake(new Config())
-    event.on('')
-  })
-
-  test('return empty array from getListeners', (assert) => {
-    const event = new EventFake(new Config())
-    assert.deepEqual(event.getListeners(), [])
-  })
-
-  test('return empty array from getListenersAny', (assert) => {
-    const event = new EventFake(new Config())
-    assert.deepEqual(event.getListenersAny(), [])
-  })
-
-  test('return 0 from listenersCount', (assert) => {
-    const event = new EventFake(new Config())
-    assert.equal(event.listenersCount(), 0)
-  })
-
-  test('return false from hasListeners', (assert) => {
-    const event = new EventFake(new Config())
-    assert.isFalse(event.hasListeners())
-  })
-
   test('return this from times', (assert) => {
-    const event = new EventFake(new Config())
-    assert.equal(event.times(), event)
+    const event = new Event(new Config())
+    event.fake()
+
+    assert.equal(event.times(), event._fake)
   })
 
   test('add trap for an event', (assert) => {
     assert.plan(2)
-    const event = new EventFake(new Config())
+    const event = new Event(new Config())
+    event.fake()
 
     event.trap('mail', function (data) {
       assert.deepEqual(data, { username: 'virk' })
@@ -321,27 +303,36 @@ test.group('Events Fake', (group) => {
   })
 
   test('clear method should clear everything', (assert) => {
-    const event = new EventFake(new Config())
+    const event = new Event(new Config())
+    event.fake()
 
     event.trap('mail', function (data) {
       assert.deepEqual(data, { username: 'virk' })
     })
+
     event.clear()
+
     assert.deepEqual(event._emits, [])
     assert.deepEqual(event._traps, {})
   })
 
   test('pull last event from the store', (assert) => {
-    const event = new EventFake(new Config())
+    const event = new Event(new Config())
+    event.fake()
+
     event.fire('mail', { username: 'virk' })
+
     assert.deepEqual(event.pullRecent(), { event: 'mail', data: [{ username: 'virk' }] })
     assert.deepEqual(event._emits, [])
   })
 
   test('pull many events together', (assert) => {
-    const event = new EventFake(new Config())
+    const event = new Event(new Config())
+    event.fake()
+
     event.fire('mail', { username: 'virk' })
     event.fire('job', { username: 'virk' })
+
     assert.deepEqual(event.pullMany(2), [
       { event: 'job', data: [{ username: 'virk' }] },
       { event: 'mail', data: [{ username: 'virk' }] }
@@ -350,9 +341,12 @@ test.group('Events Fake', (group) => {
   })
 
   test('get all events when pull many count is greater than total events', (assert) => {
-    const event = new EventFake(new Config())
+    const event = new Event(new Config())
+    event.fake()
+
     event.fire('mail', { username: 'virk' })
     event.fire('job', { username: 'virk' })
+
     assert.deepEqual(event.pullMany(10), [
       { event: 'job', data: [{ username: 'virk' }] },
       { event: 'mail', data: [{ username: 'virk' }] }
@@ -364,14 +358,17 @@ test.group('Events Fake', (group) => {
     assert.plan(2)
     const event = new Event(new Config())
     event.fake()
-    assert.instanceOf(ioc.use('Adonis/Src/Event'), EventFake)
-    ioc.use('Adonis/Src/Event').restore()
+    assert.instanceOf(event._fake, EventFake)
+    event.restore()
+    assert.isNull(event._fake)
+  })
 
-    try {
-      const event = ioc.use('Adonis/Src/Event')
-      assert.instanceOf(event, Event)
-    } catch ({ message }) {
-      assert.equal(message, `Cannot find module 'Adonis/Src/Event'`)
-    }
+  test('call emit on fake when fake is in place', (assert) => {
+    const event = new Event(new Config())
+    event.fake()
+    event.on('foo', () => {
+      throw new Error('Wasn\'t expecting to be called')
+    })
+    event.emit('foo')
   })
 })

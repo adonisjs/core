@@ -9,29 +9,8 @@
  * file that was distributed with this source code.
 */
 
-const { ioc } = require('@adonisjs/fold')
 const _ = require('lodash')
 const GE = require('@adonisjs/generic-exceptions')
-
-const proxyHandler = {
-  get (target, name) {
-    /**
-     * if node is inspecting then stick to target properties
-     */
-    if (typeof (name) === 'symbol' || name === 'inspect') {
-      return target[name]
-    }
-
-    /**
-     * if value exists on target, return that
-     */
-    if (typeof (target[name]) !== 'undefined') {
-      return target[name]
-    }
-
-    return function noop () {}
-  }
-}
 
 /**
  * Event fake is used to bind a fake implementation
@@ -44,7 +23,6 @@ class EventFake {
   constructor () {
     this._emits = []
     this._traps = {}
-    return new Proxy(this, proxyHandler)
   }
 
   /**
@@ -56,50 +34,6 @@ class EventFake {
    */
   times () {
     return this
-  }
-
-  /**
-   * Fake for getListeners
-   *
-   * @method getListeners
-   *
-   * @return {Array}
-   */
-  getListeners () {
-    return []
-  }
-
-  /**
-   * Fake for hasListeners
-   *
-   * @method hasListeners
-   *
-   * @return {Boolean}
-   */
-  hasListeners () {
-    return false
-  }
-
-  /**
-   * Fake for getListenersAny
-   *
-   * @method getListenersAny
-   *
-   * @return {Array}
-   */
-  getListenersAny () {
-    return []
-  }
-
-  /**
-   * Fake for listenersCount
-   *
-   * @method listenersCount
-   *
-   * @return {Number} 0 is returned everytime
-   */
-  listenersCount () {
-    return 0
   }
 
   /**
@@ -204,17 +138,6 @@ class EventFake {
   clear () {
     this._emits = []
     this._traps = {}
-  }
-
-  /**
-   * Restore the event fake
-   *
-   * @method restore
-   *
-   * @return {void}
-   */
-  restore () {
-    ioc.restore('Adonis/Src/Event')
   }
 }
 

@@ -10,10 +10,31 @@
 */
 
 const _ = require('lodash')
-const { resolver, ioc } = require('@adonisjs/fold')
+const { resolver } = require('@adonisjs/fold')
 const Resetable = require('resetable')
 const EventEmitter = require('eventemitter2').EventEmitter2
 const GE = require('@adonisjs/generic-exceptions')
+
+const proxyHandler = {
+  get (target, name) {
+    /**
+     * if node is inspecting then stick to target properties
+     */
+    if (typeof (name) === 'symbol' || name === 'inspect') {
+      return target[name]
+    }
+
+    /**
+     * If a faker object exists, give preference to it over
+     * the actual methods
+     */
+    if (target._fake && target._fake[name] !== undefined) {
+      return typeof (target._fake[name]) === 'function' ? target._fake[name].bind(target._fake) : target._fake[name]
+    }
+
+    return target[name]
+  }
+}
 
 /**
  * Event class is used to fire events and bind
@@ -36,8 +57,12 @@ class Event {
       delimiter: '::',
       newListener: false
     }))
+
+    this._fake = null
     this._namespacedListeners = {}
     this._many = new Resetable(null)
+
+    return new Proxy(this, proxyHandler)
   }
 
   /**
@@ -413,16 +438,26 @@ class Event {
   }
 
   /**
-   * Binding a fake to the Ioc container for the event. It
-   * can be used to run assertions on events, instead of
-   * firing actual events
+   * Instantiate faker object, to stop emitting
+   * real events
    *
    * @method fake
    *
    * @return {void}
    */
   fake () {
-    ioc.singletonFake('Adonis/Src/Event', () => new (require('./Fake'))())
+    this._fake = new (require('./Fake'))()
+  }
+
+  /**
+   * Restore faker object
+   *
+   * @method restore
+   *
+   * @return {void}
+   */
+  restore () {
+    this._fake = null
   }
 }
 
