@@ -59,6 +59,15 @@ class Request extends Macroable {
     this.request = request
 
     /**
+     * Reference to route params. This will be set by server
+     * automatically once the route has been resolved.
+     *
+     * @attribute params
+     * @type {Object}
+     */
+    this.params = {}
+
+    /**
      * Reference to native HTTP response object
      *
      * @attribute response
@@ -757,6 +766,11 @@ class Request extends Macroable {
    */
   stale () {
     return nodeReq.stale(this.request, this.response)
+  }
+
+  format () {
+    const { format } = this.params
+    return format ? (typeof (format) === 'string' ? format.replace(/^\./, '') : format) : null
   }
 }
 

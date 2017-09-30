@@ -556,6 +556,7 @@ class Server {
          */
         ctx.params = route.params
         ctx.subdomains = route.subdomains
+        request.params = route.params
         debug('step:2 route found for %s url', request.url())
 
         const finalHandler = this._wrapRouteHandler(route.route._handler)
