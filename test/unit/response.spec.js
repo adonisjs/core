@@ -378,4 +378,152 @@ test.group('Response', (group) => {
 
     await supertest(server).get('/?name=virk&age=22').expect('Location', 'users?name=virk&age=22').expect(302)
   })
+
+  test('throw abort exception when abortIf expression is truthy', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortIf(true, 500, 'Aborted')
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(500)
+
+    assert.equal(response.error.text, 'Aborted')
+  })
+
+  test('throw abort exception with default body and status', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortIf(true)
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(400)
+
+    assert.equal(response.error.text, 'Request aborted')
+  })
+
+  test('evaluate expression when expression is a function', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortIf(function () { return true })
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(400)
+
+    assert.equal(response.error.text, 'Request aborted')
+  })
+
+  test('do not throw exception when expression is not truthy', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortIf(function () { return false })
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(204)
+  })
+
+  test('throw abort exception when abortUnless expression is falsy', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortUnless(false, 500, 'Aborted')
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(500)
+
+    assert.equal(response.error.text, 'Aborted')
+  })
+
+  test('throw abort exception with default body and status', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortUnless(false)
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(400)
+
+    assert.equal(response.error.text, 'Request aborted')
+  })
+
+  test('evaluate expression when expression is a function', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortUnless(function () { return false })
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(400)
+
+    assert.equal(response.error.text, 'Request aborted')
+  })
+
+  test('do not throw exception when expression is not falsy', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortUnless(function () { return true })
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(204)
+  })
 })
