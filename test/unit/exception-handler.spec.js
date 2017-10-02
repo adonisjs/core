@@ -23,7 +23,7 @@ test.group('Handler', () => {
     const server = http.createServer((req, res) => {
       process.env.NODE_ENV = 'development'
       const request = new Request(req, res, new Config())
-      const response = new Response(req, res)
+      const response = new Response(req, res, new Config())
       const handler = new Handler()
       const error = new Error('Something bad')
       error.status = 500
@@ -41,7 +41,7 @@ test.group('Handler', () => {
     const server = http.createServer((req, res) => {
       process.env.NODE_ENV = 'development'
       const request = new Request(req, res, new Config())
-      const response = new Response(req, res)
+      const response = new Response(req, res, new Config())
       const handler = new Handler()
       const error = new Error('Something bad')
       error.status = 500
@@ -60,7 +60,7 @@ test.group('Handler', () => {
     const server = http.createServer((req, res) => {
       process.env.NODE_ENV = 'production'
       const request = new Request(req, res, new Config())
-      const response = new Response(req, res)
+      const response = new Response(req, res, new Config())
       const handler = new Handler()
       const error = new Error('Something bad')
       error.status = 500
@@ -78,7 +78,7 @@ test.group('Handler', () => {
     const server = http.createServer((req, res) => {
       process.env.NODE_ENV = 'production'
       const request = new Request(req, res, new Config())
-      const response = new Response(req, res)
+      const response = new Response(req, res, new Config())
       const handler = new Handler()
       const error = new Error('Something bad')
       error.status = 500

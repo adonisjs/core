@@ -388,20 +388,26 @@ class Response extends Macroable {
    *
    * @method send
    *
-   * @param  {Mixed} body
+   * @param  {*} body
+   * @param  {Object} options
+   * @param  {Boolean} options.ignoreETag
    *
    * @return {void}
    */
-  send (body) {
+  send (body, options) {
+    const clonedOptions = Object.assign({
+      ignoreEtag: !this.Config.get('app.http.etag', true)
+    }, options)
+
     if (!this.implicitEnd) {
-      nodeRes.send(this.request, this.response, body)
+      nodeRes.send(this.request, this.response, body, clonedOptions)
       return
     }
 
     this._lazyBody = {
       method: 'send',
       content: body,
-      args: []
+      args: [clonedOptions]
     }
   }
 
@@ -412,19 +418,25 @@ class Response extends Macroable {
    * @method json
    *
    * @param  {Object} body
+   * @param  {Object} options
+   * @param  {Boolean} options.ignoreETag
    *
    * @return {void}
    */
-  json (body) {
+  json (body, options) {
+    const clonedOptions = Object.assign({
+      ignoreEtag: !this.Config.get('app.http.etag', true)
+    }, options)
+
     if (!this.implicitEnd) {
-      nodeRes.json(this.request, this.response, body)
+      nodeRes.json(this.request, this.response, body, clonedOptions)
       return
     }
 
     this._lazyBody = {
       method: 'json',
       content: body,
-      args: []
+      args: [clonedOptions]
     }
   }
 
@@ -436,21 +448,27 @@ class Response extends Macroable {
    *
    * @param  {Object} body
    * @param  {String} [callbackFn = 'callback'] - Callback name.
+   * @param  {Object} options
+   * @param  {Boolean} options.ignoreETag
    *
    * @return {void}
    */
-  jsonp (body, callbackFn) {
+  jsonp (body, callbackFn, options) {
+    const clonedOptions = Object.assign({
+      ignoreEtag: !this.Config.get('app.http.etag', true)
+    }, options)
+
     callbackFn = callbackFn || nodeReq.get(this.request).callback || this.Config.get(JSONPCALLBACK)
 
     if (!this.implicitEnd) {
-      nodeRes.jsonp(this.request, this.response, body, callbackFn)
+      nodeRes.jsonp(this.request, this.response, body, callbackFn, clonedOptions)
       return
     }
 
     this._lazyBody = {
       method: 'jsonp',
       content: body,
-      args: [callbackFn]
+      args: [callbackFn, clonedOptions]
     }
   }
 

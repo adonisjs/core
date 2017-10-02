@@ -526,4 +526,76 @@ test.group('Response', (group) => {
       .get('/?name=virk&age=22')
       .expect(204)
   })
+
+  test('do not set etag when set as false', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.send('hello world', { ignoreEtag: true })
+      response.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.notProperty(res.headers, 'etag')
+  })
+
+  test('pull etag from config file', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      config.set('app.http.etag', false)
+      const response = new Response(req, res, config)
+      response.send('hello world')
+      response.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.notProperty(res.headers, 'etag')
+  })
+
+  test('fallback etag to true', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      const response = new Response(req, res, config)
+      response.send('hello world')
+      response.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.property(res.headers, 'etag')
+  })
+
+  test('do not set etag when set as false in explicit mode', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.implicitEnd = false
+      response.send('hello world', { ignoreEtag: true })
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.notProperty(res.headers, 'etag')
+  })
+
+  test('pull etag from config file in explicit mode', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      config.set('app.http.etag', false)
+      const response = new Response(req, res, config)
+      response.implicitEnd = false
+      response.send('hello world')
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.notProperty(res.headers, 'etag')
+  })
+
+  test('fallback etag to true in explicit mode', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      const response = new Response(req, res, config)
+      response.implicitEnd = false
+      response.send('hello world')
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.property(res.headers, 'etag')
+  })
 })
