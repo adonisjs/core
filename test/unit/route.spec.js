@@ -551,6 +551,24 @@ test.group('Route | Resource', (group) => {
       }
     })
   })
+
+  test('define resource middleware via ES6 maps containing wildcard middleware and middlewares for routes', (assert) => {
+    assert.plan(7)
+    const resource = new RouteResource('users', 'UsersController')
+
+    resource.middleware(new Map([
+      ['*', ['auth']],
+      ['users.store', ['addonValidator:User']]
+    ]))
+
+    RouteStore.list().forEach((route) => {
+      if (['users.store'].indexOf(route._name) > -1) {
+        assert.deepEqual(route._middleware, ['auth', 'addonValidator:User'])
+      } else {
+        assert.deepEqual(route._middleware, ['auth'])
+      }
+    })
+  })
 })
 
 test.group('Route | Manager', (group) => {
