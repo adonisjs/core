@@ -21,6 +21,7 @@ const FileDriver = require('../../src/Logger/Drivers').file
 const ConsoleDriver = require('../../src/Logger/Drivers').console
 const Logger = require('../../src/Logger')
 const LoggerManager = require('../../src/Logger/Manager')
+const LoggerFacade = require('../../src/Logger/Facade')
 
 const sysLog = {
   emerg: 0,
@@ -211,10 +212,21 @@ test.group('Logger | Manager', (group) => {
     assert.deepEqual(LoggerManager._drivers, { myDriver })
   })
 
-  test('throw error when trying to access invalid logger transport', (assert) => {
-    const logger = new LoggerManager(new Config())
-    const fn = () => logger.transport('foo')
-    assert.throw(fn, 'E_MISSING_CONFIG: logger.foo is not defined inside config/app.js file')
+  test('throw error when trying to access invalid driver', (assert) => {
+    const fn = () => LoggerManager.driver('foo')
+    assert.throw(fn, 'E_INVALID_LOGGER_DRIVER: Logger driver foo does not exists')
+  })
+
+  test('return driver instance for a given driver', (assert) => {
+    const consoleDriver = LoggerManager.driver('console')
+    assert.instanceOf(consoleDriver, ConsoleDriver)
+  })
+})
+
+test.group('Logger | Facade', (group) => {
+  group.before(() => {
+    ioc.fake('Adonis/Src/Config', () => new Config())
+    ioc.fake('Adonis/Src/Helpers', () => new Helpers(path.join(__dirname)))
   })
 
   test('return logger instance with selected driver', (assert) => {
@@ -223,7 +235,7 @@ test.group('Logger | Manager', (group) => {
       driver: 'file'
     })
 
-    const logger = new LoggerManager(config)
+    const logger = new LoggerFacade(config)
     assert.instanceOf(logger.transport('file'), Logger)
     assert.instanceOf(logger.transport('file').driver, FileDriver)
   })
@@ -232,16 +244,16 @@ test.group('Logger | Manager', (group) => {
     const myDriver = {
       setConfig () {}
     }
-    LoggerManager.extend('myDriver', myDriver)
+    LoggerManager.extend('mydriver', myDriver)
 
     const config = new Config()
-    config.set('app.logger.myDriver', {
-      driver: 'myDriver'
+    config.set('app.logger.mydriver', {
+      driver: 'mydriver'
     })
 
-    const logger = new LoggerManager(config)
-    assert.instanceOf(logger.transport('myDriver'), Logger)
-    assert.deepEqual(logger.transport('myDriver').driver, myDriver)
+    const logger = new LoggerFacade(config)
+    assert.instanceOf(logger.transport('mydriver'), Logger)
+    assert.deepEqual(logger.transport('mydriver').driver, myDriver)
   })
 
   test('create singleton logger instances', (assert) => {
@@ -250,7 +262,7 @@ test.group('Logger | Manager', (group) => {
       driver: 'file'
     })
 
-    const logger = new LoggerManager(config)
+    const logger = new LoggerFacade(config)
     logger.transport('file')
     assert.lengthOf(Object.keys(logger._loggerInstances), 1)
     logger.transport('file')
@@ -267,7 +279,7 @@ test.group('Logger | Manager', (group) => {
       driver: 'file'
     })
 
-    const logger = new LoggerManager(config)
+    const logger = new LoggerFacade(config)
     logger.transport('file')
     assert.lengthOf(Object.keys(logger._loggerInstances), 1)
     logger.transport('anotherFile')
@@ -283,7 +295,7 @@ test.group('Logger | Manager', (group) => {
       }
     })
 
-    const logger = new LoggerManager(config)
+    const logger = new LoggerFacade(config)
     const inspect = stdout.inspect()
 
     logger.info('hello', () => {
@@ -303,7 +315,7 @@ test.group('Logger | Manager', (group) => {
       }
     })
 
-    const logger = new LoggerManager(config)
+    const logger = new LoggerFacade(config)
     const fn = () => logger.debug('')
     assert.throw(fn, 'E_INVALID_LOGGER_DRIVER: Logger driver foo does not exists')
   })
@@ -313,7 +325,7 @@ test.group('Logger | Manager', (group) => {
     config.set('app.logger', {
     })
 
-    const logger = new LoggerManager(config)
+    const logger = new LoggerFacade(config)
     const inspect = stdout.inspect()
 
     logger.info('hello', () => {

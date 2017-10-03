@@ -378,4 +378,224 @@ test.group('Response', (group) => {
 
     await supertest(server).get('/?name=virk&age=22').expect('Location', 'users?name=virk&age=22').expect(302)
   })
+
+  test('throw abort exception when abortIf expression is truthy', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortIf(true, 500, 'Aborted')
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(500)
+
+    assert.equal(response.error.text, 'Aborted')
+  })
+
+  test('throw abort exception with default body and status', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortIf(true)
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(400)
+
+    assert.equal(response.error.text, 'Request aborted')
+  })
+
+  test('evaluate expression when expression is a function', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortIf(function () { return true })
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(400)
+
+    assert.equal(response.error.text, 'Request aborted')
+  })
+
+  test('do not throw exception when expression is not truthy', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortIf(function () { return false })
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(204)
+  })
+
+  test('throw abort exception when abortUnless expression is falsy', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortUnless(false, 500, 'Aborted')
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(500)
+
+    assert.equal(response.error.text, 'Aborted')
+  })
+
+  test('throw abort exception with default body and status', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortUnless(false)
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(400)
+
+    assert.equal(response.error.text, 'Request aborted')
+  })
+
+  test('evaluate expression when expression is a function', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortUnless(function () { return false })
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    const response = await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(400)
+
+    assert.equal(response.error.text, 'Request aborted')
+  })
+
+  test('do not throw exception when expression is not falsy', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      try {
+        response.abortUnless(function () { return true })
+      } catch (error) {
+        response.status(error.status)
+        response.send(error.body)
+      }
+      response.end()
+    })
+
+    await supertest(server)
+      .get('/?name=virk&age=22')
+      .expect(204)
+  })
+
+  test('do not set etag when set as false', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.send('hello world', { ignoreEtag: true })
+      response.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.notProperty(res.headers, 'etag')
+  })
+
+  test('pull etag from config file', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      config.set('app.http.etag', false)
+      const response = new Response(req, res, config)
+      response.send('hello world')
+      response.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.notProperty(res.headers, 'etag')
+  })
+
+  test('fallback etag to true', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      const response = new Response(req, res, config)
+      response.send('hello world')
+      response.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.property(res.headers, 'etag')
+  })
+
+  test('do not set etag when set as false in explicit mode', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(req, res, new Config())
+      response.implicitEnd = false
+      response.send('hello world', { ignoreEtag: true })
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.notProperty(res.headers, 'etag')
+  })
+
+  test('pull etag from config file in explicit mode', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      config.set('app.http.etag', false)
+      const response = new Response(req, res, config)
+      response.implicitEnd = false
+      response.send('hello world')
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.notProperty(res.headers, 'etag')
+  })
+
+  test('fallback etag to true in explicit mode', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      const response = new Response(req, res, config)
+      response.implicitEnd = false
+      response.send('hello world')
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.property(res.headers, 'etag')
+  })
 })

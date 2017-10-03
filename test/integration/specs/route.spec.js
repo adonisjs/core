@@ -238,4 +238,12 @@ test.group('Route', (group) => {
     assert.equal((await supertest(appUrl).put('/users/1').expect(200)).text, '/users/1')
     assert.equal((await supertest(appUrl).delete('/users/1').expect(200)).text, '/users/1')
   })
+
+  test('get route format via request.format', async (assert) => {
+    const Route = use('Route')
+    Route.get('users', ({ request }) => request.format()).formats(['json', 'xml'])
+    assert.equal((await supertest(appUrl).get('/users.json').expect(200)).text, 'json')
+    assert.equal((await supertest(appUrl).get('/users.xml').expect(200)).text, 'xml')
+    assert.equal((await supertest(appUrl).get('/users').expect(204)).text, '')
+  })
 })

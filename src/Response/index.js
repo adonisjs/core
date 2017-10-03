@@ -14,8 +14,55 @@ const nodeReq = require('node-req')
 const nodeCookie = require('node-cookie')
 const Macroable = require('macroable')
 const parseurl = require('parseurl')
-
+const GE = require('@adonisjs/generic-exceptions')
 const RouteManager = require('../Route/Manager')
+
+/**
+ * Abort exception is raised when `response.abortIf` or
+ * `response.abortUnless` called.
+ *
+ * @class AbortException
+ * @constructor
+ */
+class AbortException extends GE.HttpException {
+  /**
+   * Return error object with body and status
+   *
+   * @method invoke
+   *
+   * @param  {String} [body = 'Request aborted']
+   * @param  {Number} [status = 400]
+   *
+   * @return {AbortException}
+   */
+  static invoke (body, status) {
+    const error = new this('Request aborted', status || 400)
+    error.body = body || 'Request aborted'
+    return error
+  }
+
+  /**
+   * Handling the exception itself.
+   *
+   * @method handle
+   *
+   * @param  {Object} error
+   * @param  {Object} options.response
+   * @param  {Object} options.session
+   *
+   * @return {void}
+   */
+  async handle (error, { response, session }) {
+    /**
+     * Commit session when in use
+     */
+    if (session && typeof (session.commit) === 'function') {
+      await session.commit()
+    }
+
+    response.status(error.status).send(error.body)
+  }
+}
 
 const SECRET = 'app.appKey'
 const JSONPCALLBACK = 'app.http.jsonpCallback'
@@ -341,20 +388,26 @@ class Response extends Macroable {
    *
    * @method send
    *
-   * @param  {Mixed} body
+   * @param  {*} body
+   * @param  {Object} options
+   * @param  {Boolean} options.ignoreETag
    *
    * @return {void}
    */
-  send (body) {
+  send (body, options) {
+    const clonedOptions = Object.assign({
+      ignoreEtag: !this.Config.get('app.http.etag', true)
+    }, options)
+
     if (!this.implicitEnd) {
-      nodeRes.send(this.request, this.response, body)
+      nodeRes.send(this.request, this.response, body, clonedOptions)
       return
     }
 
     this._lazyBody = {
       method: 'send',
       content: body,
-      args: []
+      args: [clonedOptions]
     }
   }
 
@@ -365,19 +418,25 @@ class Response extends Macroable {
    * @method json
    *
    * @param  {Object} body
+   * @param  {Object} options
+   * @param  {Boolean} options.ignoreETag
    *
    * @return {void}
    */
-  json (body) {
+  json (body, options) {
+    const clonedOptions = Object.assign({
+      ignoreEtag: !this.Config.get('app.http.etag', true)
+    }, options)
+
     if (!this.implicitEnd) {
-      nodeRes.json(this.request, this.response, body)
+      nodeRes.json(this.request, this.response, body, clonedOptions)
       return
     }
 
     this._lazyBody = {
       method: 'json',
       content: body,
-      args: []
+      args: [clonedOptions]
     }
   }
 
@@ -389,21 +448,27 @@ class Response extends Macroable {
    *
    * @param  {Object} body
    * @param  {String} [callbackFn = 'callback'] - Callback name.
+   * @param  {Object} options
+   * @param  {Boolean} options.ignoreETag
    *
    * @return {void}
    */
-  jsonp (body, callbackFn) {
+  jsonp (body, callbackFn, options) {
+    const clonedOptions = Object.assign({
+      ignoreEtag: !this.Config.get('app.http.etag', true)
+    }, options)
+
     callbackFn = callbackFn || nodeReq.get(this.request).callback || this.Config.get(JSONPCALLBACK)
 
     if (!this.implicitEnd) {
-      nodeRes.jsonp(this.request, this.response, body, callbackFn)
+      nodeRes.jsonp(this.request, this.response, body, callbackFn, clonedOptions)
       return
     }
 
     this._lazyBody = {
       method: 'jsonp',
       content: body,
-      args: [callbackFn]
+      args: [callbackFn, clonedOptions]
     }
   }
 
@@ -464,6 +529,50 @@ class Response extends Macroable {
    */
   clearCookie (key) {
     nodeCookie.clear(this.response, key)
+  }
+
+  /**
+   * Aborts the request (when expression is truthy) by throwing an exception.
+   * Since AdonisJs allows exceptions to handle themselves, it simply makes
+   * an response when handling itself.
+   *
+   * @method abortIf
+   *
+   * @param  {Mixed} expression
+   * @param  {Number} status
+   * @param  {Mixed} body
+   *
+   * @return {void}
+   *
+   * @throws {AbortException} If expression is thruthy
+   */
+  abortIf (expression, status, body) {
+    const value = typeof (expression) === 'function' ? expression() : expression
+    if (value) {
+      throw AbortException.invoke(body, status)
+    }
+  }
+
+  /**
+   * Aborts the request (when expression is falsy) by throwing an exception.
+   * Since AdonisJs allows exceptions to handle themselves, it simply makes
+   * an response when handling itself.
+   *
+   * @method abortUnless
+   *
+   * @param  {Mixed} expression
+   * @param  {Number} status
+   * @param  {Mixed} body
+   *
+   * @return {void}
+   *
+   * @throws {AbortException} If expression is falsy
+   */
+  abortUnless (expression, status, body) {
+    const value = typeof (expression) === 'function' ? expression() : expression
+    if (!value) {
+      throw AbortException.invoke(body, status)
+    }
   }
 }
 
