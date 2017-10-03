@@ -1,3 +1,20 @@
+<a name="4.0.23"></a>
+## [4.0.23](https://github.com/adonisjs/adonis-framework/compare/v4.0.22...v4.0.23) (2017-10-03)
+
+
+### Bug Fixes
+
+* **event:** use in-memory fake over binding to ioc ([624d6a1](https://github.com/adonisjs/adonis-framework/commit/624d6a1))
+* **request:** add missing .format method ([0d302c4](https://github.com/adonisjs/adonis-framework/commit/0d302c4)), closes [#662](https://github.com/adonisjs/adonis-framework/issues/662)
+
+
+### Features
+
+* **response:** add abortIf and abortUnless methods ([12fa34c](https://github.com/adonisjs/adonis-framework/commit/12fa34c))
+* **response:** allow option to disable etag for response ([0ab1d3d](https://github.com/adonisjs/adonis-framework/commit/0ab1d3d)), closes [#641](https://github.com/adonisjs/adonis-framework/issues/641)
+
+
+
 <a name="4.0.22"></a>
 ## [4.0.22](https://github.com/adonisjs/adonis-framework/compare/v4.0.21...v4.0.22) (2017-09-27)
 
