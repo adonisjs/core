@@ -278,11 +278,15 @@ class RouteResource extends Macroable {
       }
     }
 
+    const wildcardMiddleware = _.flatten(middlewareMap['*'] || [])
+
     /**
      * Finally apply the middleware to the routes
      */
     _.each(this._routes, (route) => {
-      const middlewareHash = _.flatten(middlewareMap['*'] || middlewareMap[route.routeInstance._name] || [])
+      const routeMiddleware = middlewareMap[route.routeInstance._name] || []
+      const middlewareHash = wildcardMiddleware.concat(_.flatten(routeMiddleware))
+
       if (_.size(middlewareHash)) {
         route.routeInstance.middleware(middlewareHash)
       }
