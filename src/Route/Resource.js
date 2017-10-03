@@ -256,7 +256,7 @@ class RouteResource extends Macroable {
    * Route
    *   .resource('user', 'UserController')
    *   .middleware(new Map([
-   *     ['auth', ['user.store', 'user.update', 'user.delete']]
+   *     [['user.store', 'user.update', 'user.delete'], 'auth']
    *   ]))
    * ```
    */
