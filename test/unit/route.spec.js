@@ -557,13 +557,16 @@ test.group('Route | Resource', (group) => {
     const resource = new RouteResource('users', 'UsersController')
 
     resource.middleware(new Map([
+      ['users.destroy', ['role:admin']],
       ['*', ['auth']],
-      ['users.store', ['addonValidator:User']]
+      [['users.store', 'users.destroy'], ['addonValidator:User']]
     ]))
 
     RouteStore.list().forEach((route) => {
       if (['users.store'].indexOf(route._name) > -1) {
         assert.deepEqual(route._middleware, ['auth', 'addonValidator:User'])
+      } else if (['users.destroy'].indexOf(route._name) > -1) {
+        assert.deepEqual(route._middleware, ['role:admin', 'auth', 'addonValidator:User'])
       } else {
         assert.deepEqual(route._middleware, ['auth'])
       }
