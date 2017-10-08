@@ -126,7 +126,7 @@ test.group('Exception', (group) => {
     assert.notEqual(Exception.getHandler('UserNotFoundException').toString(), 'function inlineHandler() {}')
   })
 
-  test('return null when binding exists but method is missing', (assert) => {
+  test('return inline handler when binding exists but method is missing', (assert) => {
     class FooBar {
     }
 
@@ -136,9 +136,10 @@ test.group('Exception', (group) => {
       return foobar
     })
 
+    const fn = function inlineHandler () {}
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    Exception.handle('UserNotFoundException', function inlineHandler () {})
-    assert.isUndefined(Exception.getHandler('UserNotFoundException'))
+    Exception.handle('UserNotFoundException', fn)
+    assert.deepEqual(Exception.getHandler('UserNotFoundException'), fn)
   })
 
   test('return wildcard handle when nothing exists', (assert) => {
@@ -151,10 +152,10 @@ test.group('Exception', (group) => {
       return foobar
     })
 
+    const fn = function wildcardHandler () {}
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    Exception.handle('UserNotFoundException', function inlineHandler () {})
-    Exception.handle('*', function wildcardHandler () {})
-    assert.equal(Exception.getHandler('UserNotFoundException').toString(), 'function wildcardHandler() {}')
+    Exception.handle('*', fn)
+    assert.deepEqual(Exception.getHandler('UserNotFoundException'), fn)
   })
 
   test('do not return wildcard when ignoreWildCard is set to true', (assert) => {
@@ -168,7 +169,6 @@ test.group('Exception', (group) => {
     })
 
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    Exception.handle('UserNotFoundException', function inlineHandler () {})
     Exception.handle('*', function wildcardHandler () {})
     assert.isUndefined(Exception.getHandler('UserNotFoundException', true))
   })
@@ -190,7 +190,7 @@ test.group('Exception', (group) => {
     assert.notEqual(Exception.getReporter('UserNotFoundException').toString(), 'function inlineReporter() {}')
   })
 
-  test('return undefined when report method is not defined on binding', (assert) => {
+  test('return inline reporter when report method is not defined on binding', (assert) => {
     class FooBar {
       handle () {}
     }
@@ -201,9 +201,10 @@ test.group('Exception', (group) => {
       return foobar
     })
 
+    const fn = function inlineReporter () {}
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    Exception.report('UserNotFoundException', function inlineReporter () {})
-    assert.isUndefined(Exception.getReporter('UserNotFoundException'))
+    Exception.report('UserNotFoundException', fn)
+    assert.deepEqual(Exception.getReporter('UserNotFoundException'), fn)
   })
 
   test('return wildcard reporter when nothing exists', (assert) => {
@@ -216,10 +217,10 @@ test.group('Exception', (group) => {
       return foobar
     })
 
+    const fn = function wildcardReporter () {}
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    Exception.report('UserNotFoundException', function inlineReporter () {})
-    Exception.report('*', function wildcardReporter () {})
-    assert.equal(Exception.getReporter('UserNotFoundException').toString(), 'function wildcardReporter() {}')
+    Exception.report('*', fn)
+    assert.deepEqual(Exception.getReporter('UserNotFoundException'), fn)
   })
 
   test('return undefined when ignoreWildCard is set to true', (assert) => {
@@ -233,7 +234,6 @@ test.group('Exception', (group) => {
     })
 
     Exception.bind('UserNotFoundException', '@provider:Foo/Bar')
-    Exception.report('UserNotFoundException', function inlineReporter () {})
     Exception.report('*', function wildcardReporter () {})
     assert.isUndefined(Exception.getReporter('UserNotFoundException', true))
   })
