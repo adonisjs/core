@@ -1,3 +1,13 @@
+<a name="4.0.24"></a>
+## [4.0.24](https://github.com/adonisjs/adonis-framework/compare/v4.0.23...v4.0.24) (2017-10-08)
+
+
+### Bug Fixes
+
+* **exception:** fallback to inline handler when binding method is missing ([d6a9d89](https://github.com/adonisjs/adonis-framework/commit/d6a9d89))
+
+
+
 <a name="4.0.23"></a>
 ## [4.0.23](https://github.com/adonisjs/adonis-framework/compare/v4.0.22...v4.0.23) (2017-10-03)
 
