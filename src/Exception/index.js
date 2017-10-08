@@ -77,9 +77,13 @@ class Exception {
       if (typeof (bindingInstance.handle) === 'function') {
         handler = bindingInstance.handle.bind(bindingInstance)
       }
-    } else {
-      handler = this._handlers[name]
     }
+
+    /**
+     * If handler was not resolved from the binding
+     * then look for it inside handlers object.
+     */
+    handler = handler || this._handlers[name]
 
     /**
      * If ignoreWildcard is false and there is no
@@ -142,9 +146,13 @@ class Exception {
       if (typeof (bindingInstance.report) === 'function') {
         reporter = bindingInstance.report.bind(bindingInstance)
       }
-    } else {
-      reporter = this._reporters[name]
     }
+
+    /**
+     * If reporter was not resolved from the binding
+     * then look for inside reporters object.
+     */
+    reporter = reporter || this._reporters[name]
 
     /**
      * If ignoreWildcard is false and there is no
