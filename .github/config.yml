@@ -1,0 +1,7 @@
+# Comment to be posted to on PRs that don't update documentation
+updateDocsComment: >
+  Thanks for creating and submitting the PR. We will appreciate, if you can also open a parallel PR for the docs https://github.com/adonisjs/docs
+
+updateDocsWhiteList:
+  - bug
+  - chore
