@@ -256,39 +256,43 @@ class RouteResource extends Macroable {
    * Route
    *   .resource('user', 'UserController')
    *   .middleware(new Map([
-   *     ['auth', ['user.store', 'user.update', 'user.delete']]
+   *     [['user.store', 'user.update', 'user.delete'], 'auth']
    *   ]))
    * ```
    */
   middleware (middleware) {
-    const middlewareMap = middleware instanceof Map ? {} : {
-      '*': _.castArray(middleware)
-    }
+    const middlewareMap = middleware instanceof Map ? middleware : new Map([
+      [['*'], _.castArray(middleware)]
+    ])
 
-    /**
-     * if middleware are defined as ES6 map, then we need
-     * to sort them as objects with key/value pair of
-     * single route names and an array of middleware
-     */
-    if (middleware instanceof Map === true) {
-      for (const [routeNames, middlewareList] of middleware) {
-        _.castArray(routeNames).forEach((name) => {
-          middlewareMap[name] = (middlewareMap[name] || []).concat(_.castArray(middlewareList))
+    const routesByName = this._getRoutesDict()
+    const routeNames = Object.keys(routesByName)
+
+    // go through list of the routes
+    // and replace '*' with the names of resource routes
+    const expandRoutesList = (list, name) => list.concat(name === '*' ? routeNames : name)
+
+    for (const [routeNamesList, middlewareList] of middlewareMap) {
+      _.castArray(routeNamesList)
+        .reduce(expandRoutesList, [])
+        .forEach((routeName) => {
+          routesByName[routeName].middleware(_.castArray(middlewareList))
         })
-      }
     }
-
-    /**
-     * Finally apply the middleware to the routes
-     */
-    _.each(this._routes, (route) => {
-      const middlewareHash = _.flatten(middlewareMap['*'] || middlewareMap[route.routeInstance._name] || [])
-      if (_.size(middlewareHash)) {
-        route.routeInstance.middleware(middlewareHash)
-      }
-    })
 
     return this
+  }
+
+  /**
+   * Return dictionary of _routes
+   *
+   * @private
+   */
+  _getRoutesDict () {
+    return this._routes.reduce(
+      (map, { routeInstance }) => Object.assign({}, map, { [routeInstance._name]: routeInstance }),
+      {}
+    )
   }
 
   /**
