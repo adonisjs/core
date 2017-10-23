@@ -10,12 +10,8 @@
 */
 
 const InlineSvgFactory = require('./InlineSvg')
-const LoggedInFactory = require('./LoggedIn')
 
 module.exports = function (View, Helpers) {
   const InlineSvg = InlineSvgFactory(View.engine.BaseTag)
-  const LoggedIn = LoggedInFactory(View.engine.BaseTag)
-
   View.tag(new InlineSvg(Helpers.publicPath()))
-  View.tag(new LoggedIn())
 }
