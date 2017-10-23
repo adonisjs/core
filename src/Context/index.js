@@ -55,6 +55,37 @@ class Context extends Macroable {
      * @type {Object}
      */
     this.res = res
+
+    this.constructor._readyFns
+      .filter((fn) => typeof (fn) === 'function')
+      .forEach((fn) => fn(this))
+  }
+
+  /**
+   * Hydrate the context constructor
+   *
+   * @method hydrate
+   *
+   * @return {void}
+   */
+  static hydrate () {
+    super.hydrate()
+    this._readyFns = []
+  }
+
+  /**
+   * Define onReady callbacks to be executed
+   * once the request context is instantiated
+   *
+   * @method onReady
+   *
+   * @param  {Function} fn
+   *
+   * @chainable
+   */
+  static onReady (fn) {
+    this._readyFns.push(fn)
+    return this
   }
 }
 
@@ -66,5 +97,6 @@ class Context extends Macroable {
  */
 Context._macros = {}
 Context._getters = {}
+Context._readyFns = []
 
 module.exports = Context

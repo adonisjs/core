@@ -325,6 +325,22 @@ class AppProvider extends ServiceProvider {
     Context.getter('response', function () {
       return new Response(this.req, this.res, use('Adonis/Src/Config'))
     }, true)
+
+    /**
+     * Childs of context can be access when a new instance is
+     * ready
+     */
+    Context.onReady(function (ctx) {
+      if (ctx.view && typeof (ctx.view.share) === 'function') {
+        ctx.view.share({
+          request: ctx.request,
+          url: ctx.request.url(),
+          is: function (matchWith) {
+            return this.url.replace(/^\/|\/$/) === matchWith.replace(/^\/|\/$/)
+          }
+        })
+      }
+    })
   }
 }
 
