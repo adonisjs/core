@@ -1,3 +1,19 @@
+<a name="4.0.25"></a>
+## [4.0.25](https://github.com/adonisjs/adonis-framework/compare/v4.0.24...v4.0.25) (2017-10-29)
+
+
+### Bug Fixes
+
+* **resource:** apply routes in order ([348f38f](https://github.com/adonisjs/adonis-framework/commit/348f38f))
+
+
+### Features
+
+* **context:** add onReady event to context ([55edfbb](https://github.com/adonisjs/adonis-framework/commit/55edfbb))
+* **loggedin:** remove loggedin tag and add inside auth repo ([60fccef](https://github.com/adonisjs/adonis-framework/commit/60fccef))
+
+
+
 <a name="4.0.24"></a>
 ## [4.0.24](https://github.com/adonisjs/adonis-framework/compare/v4.0.23...v4.0.24) (2017-10-08)
 
