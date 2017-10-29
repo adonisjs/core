@@ -1,3 +1,13 @@
+<a name="4.0.5"></a>
+## [4.0.5](https://github.com/poppinss/adonis-fold/compare/v4.0.3...v4.0.5) (2017-10-29)
+
+
+### Bug Fixes
+
+* **ioc:** fix execution cycle of extend calls ([bc2c084](https://github.com/poppinss/adonis-fold/commit/bc2c084))
+
+
+
 <a name="4.0.4"></a>
 ## [4.0.4](https://github.com/poppinss/adonis-fold/compare/v4.0.3...v4.0.4) (2017-09-12)
 
