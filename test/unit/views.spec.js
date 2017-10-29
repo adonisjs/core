@@ -204,46 +204,4 @@ test.group('Views tags', () => {
     const template = `@inlineSvg('logo')`
     assert.equal(view.renderString(template).trim(), '<svg id="logo"></svg>')
   })
-
-  test('skip code inside loggedIn block when auth is not defined', (assert) => {
-    const view = new View(this.helpers)
-    Tags(view, this.helpers)
-
-    const template = `
-    @loggedIn
-    <h2> You are logged in </h2>
-    @endloggedIn
-    `
-    assert.equal(view.renderString(template).trim(), '')
-  })
-
-  test('render code inside loggedIn block when auth user is defined', (assert) => {
-    const view = new View(this.helpers)
-    Tags(view, this.helpers)
-
-    const template = `
-    @loggedIn
-    <h2> You are logged in </h2>
-    @endloggedIn
-    `
-
-    const data = { auth: { user: 'virk' } }
-    assert.equal(view.renderString(template, data).trim(), '<h2> You are logged in </h2>')
-  })
-
-  test('render code inside else block when not auth is not defined', (assert) => {
-    const view = new View(this.helpers)
-    Tags(view, this.helpers)
-
-    const template = `
-    @loggedIn
-      <h2> You are logged in </h2>
-    @else
-      <h2> You are not logged in </h2>
-    @endloggedIn
-    `
-
-    const data = { auth: { user: null } }
-    assert.equal(view.renderString(template, data).trim(), '<h2> You are not logged in </h2>')
-  })
 })

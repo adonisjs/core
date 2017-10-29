@@ -134,6 +134,15 @@ class View {
     return this.engine.presenter(...params)
   }
 
+  /**
+   * Add a new tag to the view
+   *
+   * @method tag
+   *
+   * @param  {...Spread} params params
+   *
+   * @return {void}
+   */
   tag (...params) {
     this.engine.tag(...params)
   }

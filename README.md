@@ -2,6 +2,14 @@
 
 This repo contains the core modules for the AdonisJs framework. You must checkout the source code or the API docs on official website to learn more.
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/rTvE6EheD9CDoneVGzBYdXgB/adonisjs/adonis-framework'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/rTvE6EheD9CDoneVGzBYdXgB/adonisjs/adonis-framework.svg' />
+</a>
+
+<br />
+<hr />
+<br />
+
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Appveyor][appveyor-image]][appveyor-url]

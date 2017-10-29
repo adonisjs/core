@@ -187,6 +187,7 @@ class Route extends Macroable {
    * ```
    */
   domain (domain) {
+    this._domainKeys = []
     domain = `${domain.replace(/^\/|\/$/g, '')}`
     this._domain = pathToRegexp(domain, this._domainKeys)
     return this
