@@ -484,7 +484,7 @@ class Response extends Macroable {
     if (this.implicitEnd) {
       const method = this._lazyBody.method || 'send'
       const args = [this.request, this.response, this._lazyBody.content].concat(this._lazyBody.args)
-      nodeRes[method].apply(nodeRes, args)
+      nodeRes[method](...args)
     }
   }
 
