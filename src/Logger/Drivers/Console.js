@@ -28,7 +28,7 @@ class WinstonConsole {
     this.config = Object.assign({}, {
       name: 'adonis-app',
       level: 'info',
-      colorize: true,
+      colorize: 'all',
       timestamp: new Date().toLocaleTimeString()
     }, config)
 

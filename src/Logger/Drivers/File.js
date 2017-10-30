@@ -57,6 +57,7 @@ class WinstonFile {
     this.config = Object.assign({}, {
       name: 'adonis-app',
       filename: 'adonis.log',
+      colorize: 'all',
       level: 'info'
     }, config)
 
