@@ -48,7 +48,7 @@ class Config {
     try {
       this._config = requireAll({
         dirname: this._configPath,
-        filters: /(.*)\.js$/
+        filter: /(.*)\.js$/
       })
       debug('loaded all config files from %s', this._configPath)
     } catch (error) {
