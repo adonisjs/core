@@ -1,3 +1,8 @@
+<a name="4.0.27"></a>
+## [4.0.27](https://github.com/adonisjs/adonis-framework/compare/v4.0.26...v4.0.27) (2017-11-08)
+
+
+
 <a name="4.0.26"></a>
 ## [4.0.26](https://github.com/adonisjs/adonis-framework/compare/v4.0.25...v4.0.26) (2017-10-30)
 
