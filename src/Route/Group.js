@@ -56,6 +56,7 @@ class RouteGroup extends Macroable {
    */
   middleware (...middleware) {
     this._routes.forEach((route) => route.prependMiddleware(...middleware))
+    return this
   }
 
   /**
