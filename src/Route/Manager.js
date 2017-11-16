@@ -394,20 +394,19 @@ class RouteManager {
     data = data || {}
     if (!route) return null
 
-    const tokens = route._keys
-    let query_params = {}
-    let route_params = route._keys.map(k => k.name)
+    let queryParams = {}
+    let routeParams = route._keys.map(k => k.name)
 
     for (let key of Object.keys(data)) {
-      if (!route_params.includes(key)) {
-        query_params[key] = data[key]
+      if (!routeParams.includes(key)) {
+        queryParams[key] = data[key]
       }
     }
 
-    const compiled_route = pathToRegexp.compile(route._route)(data)
-    let parsed_route = url.parse(compiled_route, true)
-    parsed_route.search = querystring.stringify(Object.assign(parsed_route.query, query_params))
-    return parsed_route.format()
+    const compiledRoute = pathToRegexp.compile(route._route)(data)
+    let parsedRoute = url.parse(compiledRoute, true)
+    parsedRoute.search = querystring.stringify(Object.assign(parsedRoute.query, queryParams))
+    return parsedRoute.format()
   }
 }
 
