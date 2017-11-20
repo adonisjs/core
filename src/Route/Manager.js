@@ -243,7 +243,7 @@ class RouteManager {
   /**
    * Create a route with `GET` and `HEAD`
    * verb, which renders a view by
-   * chaining the `render` methid.
+   * chaining the `render` method.
    *
    * @method on
    *
