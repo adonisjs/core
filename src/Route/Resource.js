@@ -154,6 +154,21 @@ class RouteResource extends Macroable {
   }
 
   /**
+   * Return dictionary of _routes
+   *
+   * @method _getRoutesDict
+   *
+   * @private
+   */
+  _getRoutesDict () {
+    return this
+      ._routes
+      .reduce((map, { routeInstance }) => {
+        return Object.assign({}, map, { [routeInstance._name]: routeInstance })
+      }, {})
+  }
+
+  /**
    * Remove all routes from the resourceful list except the
    * one defined here.
    *
@@ -276,23 +291,14 @@ class RouteResource extends Macroable {
       _.castArray(routeNamesList)
         .reduce(expandRoutesList, [])
         .forEach((routeName) => {
+          if (!routesByName[routeName]) {
+            throw new Error(`${routeName} route is not registered with this resource`)
+          }
           routesByName[routeName].middleware(_.castArray(middlewareList))
         })
     }
 
     return this
-  }
-
-  /**
-   * Return dictionary of _routes
-   *
-   * @private
-   */
-  _getRoutesDict () {
-    return this._routes.reduce(
-      (map, { routeInstance }) => Object.assign({}, map, { [routeInstance._name]: routeInstance }),
-      {}
-    )
   }
 
   /**
