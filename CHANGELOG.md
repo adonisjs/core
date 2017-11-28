@@ -1,3 +1,13 @@
+<a name="4.0.28"></a>
+## [4.0.28](https://github.com/adonisjs/adonis-framework/compare/v4.0.27...v4.0.28) (2017-11-28)
+
+
+### Bug Fixes
+
+* **route:** group middleware return this for chainable api ([a6ec02c](https://github.com/adonisjs/adonis-framework/commit/a6ec02c))
+
+
+
 <a name="4.0.27"></a>
 ## [4.0.27](https://github.com/adonisjs/adonis-framework/compare/v4.0.26...v4.0.27) (2017-11-08)
 
