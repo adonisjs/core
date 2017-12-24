@@ -755,6 +755,18 @@ test.group('Route | Manager', (group) => {
     const url = RouteManager.url('UsersController.show', { id: 1 }, 'blog.example.com')
     assert.isNull(url)
   })
+
+  test.failing('add group routes in the correct order', (assert) => {
+    RouteManager.group(function () {
+      RouteManager.get('/product/category/:id', function () {})
+      RouteManager.get('/product/:id', function () {})
+    })
+    .prefix('api')
+    .formats(['json'])
+
+    const { route } = RouteManager.match('/api/product/category', 'GET')
+    assert.equal(route._route, '/api/product/category/:id:format(.json)?')
+  })
 })
 
 test.group('Route | Extend', (group) => {
