@@ -15,7 +15,11 @@ const configPath = path.join(__dirname, './config')
 
 const Config = require('../../src/Config')
 
-test.group('Config', () => {
+test.group('Config', (group) => {
+  group.afterEach(() => {
+    require('clear-require')(path.join(configPath, 'database.js'))
+  })
+
   test('ignore any files apart from .js files inside the config directory', (assert) => {
     const config = new Config(configPath)
     assert.notProperty(config._config, '.gitkeep')
@@ -97,5 +101,37 @@ test.group('Config', () => {
   test('ignore error when config directory does not exists', (assert) => {
     /* eslint no-new: "off" */
     new Config(path.join(__dirname, '../foo/config'))
+  })
+
+  test('replace placeholder values with actual values during merge', (assert) => {
+    const config = new Config(configPath)
+    const database = config.merge('database', {})
+    assert.deepEqual(database.mysqlProduction, database.mysql)
+  })
+
+  test('replace placeholder inside nested value', (assert) => {
+    const config = new Config(configPath)
+    const database = config.merge('database.mysqlStaging', {
+      client: 'mysql'
+    })
+    assert.deepEqual(database, {
+      client: 'mysql',
+      connection: {
+        host: 'localhost',
+        password: '',
+        user: ''
+      }
+    })
+  })
+
+  test('pass extracted value to customizer when defined', (assert) => {
+    assert.plan(1)
+    const config = new Config(configPath)
+
+    config.merge('database', {}, function (newValue, existingValue, key) {
+      if (key === 'mysqlProduction') {
+        assert.deepEqual(config.get('database.mysql'), existingValue)
+      }
+    })
   })
 })

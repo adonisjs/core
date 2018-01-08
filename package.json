@@ -27,6 +27,7 @@
   "devDependencies": {
     "@adonisjs/fold": "^4.0.5",
     "@adonisjs/sink": "^1.0.13",
+    "clear-require": "^2.0.0",
     "cookie-signature": "^1.0.6",
     "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",

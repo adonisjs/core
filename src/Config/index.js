@@ -35,6 +35,36 @@ class Config {
   }
 
   /**
+   * Returns whether the value of the key is a self referenced
+   * identifier
+   *
+   * @method _isSelfReference
+   *
+   * @param  {String}         value
+   *
+   * @return {Boolean}
+   *
+   * @private
+   */
+  _isSelfReference (value) {
+    return typeof (value) === 'string' && value.startsWith('self::')
+  }
+
+  /**
+   * Returns the actual key by dropping the self::
+   * keyword
+   *
+   * @method _getKeyFromRefrence
+   *
+   * @return {String}
+   *
+   * @private
+   */
+  _getKeyFromRefrence (value) {
+    return value.replace(/^self::/, '')
+  }
+
+  /**
    * Syncs the in-memory config store with the
    * file system. Ideally you should keep your
    * config static and never update the file
@@ -83,8 +113,8 @@ class Config {
    */
   get (key, defaultValue) {
     const value = _.get(this._config, key, defaultValue)
-    if (typeof (value) === 'string' && value.startsWith('self::')) {
-      return this.get(value.replace('self::', ''))
+    if (this._isSelfReference(value)) {
+      return this.get(this._getKeyFromRefrence(value))
     }
     return value
   }
@@ -113,7 +143,19 @@ class Config {
    */
   merge (key, defaultValues, customizer) {
     const value = this.get(key, {})
-    return _.mergeWith(defaultValues, value, customizer)
+    return _.mergeWith(defaultValues, value, (newValues, existingValues, ...args) => {
+      let resolvedValue
+
+      if (this._isSelfReference(existingValues)) {
+        resolvedValue = this.get(this._getKeyFromRefrence(existingValues))
+      }
+
+      if (typeof (customizer) === 'function') {
+        return customizer(newValues, resolvedValue, ...args)
+      }
+
+      return resolvedValue
+    })
   }
 
   /**
