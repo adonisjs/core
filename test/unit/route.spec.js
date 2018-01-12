@@ -727,7 +727,7 @@ test.group('Route | Manager', (group) => {
     RouteManager.get('author/:id', function () {}).domain('blog.example.com').as('profile')
 
     const url = RouteManager.url('profile', { id: 2 }, 'blog.example.com')
-    assert.equal(url, '/author/2')
+    assert.equal(url, 'http://blog.example.com/author/2')
   })
 
   test('make url for route with dynamic domain', (assert) => {
@@ -735,7 +735,7 @@ test.group('Route | Manager', (group) => {
     RouteManager.get('author/:id', function () {}).domain('(.*).example.com').as('profile')
 
     const url = RouteManager.url('profile', { id: 2 }, 'virk.example.com')
-    assert.equal(url, '/author/2')
+    assert.equal(url, 'http://virk.example.com/author/2')
   })
 
   test('make url controller action', (assert) => {
@@ -748,12 +748,34 @@ test.group('Route | Manager', (group) => {
     RouteManager.get('users/:id', 'UsersController.show')
     RouteManager.get('author/:id', 'UsersController.show').domain('blog.example.com')
     const url = RouteManager.url('UsersController.show', { id: 1 }, 'blog.example.com')
-    assert.equal(url, '/author/1')
+    assert.equal(url, 'http://blog.example.com/author/1')
+  })
+
+  test('define protocol for the url', (assert) => {
+    RouteManager.get('users/:id', 'UsersController.show')
+    RouteManager.get('author/:id', 'UsersController.show').domain('blog.example.com')
+    const url = RouteManager.url('UsersController.show', { id: 1 }, {
+      domain: 'blog.example.com',
+      protocol: 'https'
+    })
+    assert.equal(url, 'https://blog.example.com/author/1')
   })
 
   test('return null when unable to resolve route', (assert) => {
     const url = RouteManager.url('UsersController.show', { id: 1 }, 'blog.example.com')
     assert.isNull(url)
+  })
+
+  test.failing('add group routes in the correct order', (assert) => {
+    RouteManager.group(function () {
+      RouteManager.get('/product/category/:id', function () {})
+      RouteManager.get('/product/:id', function () {})
+    })
+    .prefix('api')
+    .formats(['json'])
+
+    const { route } = RouteManager.match('/api/product/category', 'GET')
+    assert.equal(route._route, '/api/product/category/:id:format(.json)?')
   })
 })
 

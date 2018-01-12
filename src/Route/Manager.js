@@ -18,6 +18,15 @@ const RouteResource = require('./Resource')
 const BriskRoute = require('./Brisk')
 const GE = require('@adonisjs/generic-exceptions')
 
+const domainDepreciationMessage = function (domain) {
+  return [
+    'Passing domain as 3rd parameter has been depreciated. You must pass an options object with a domain property',
+    '',
+    '## Do following instead',
+    `Route.url(url, data, { domain: '${domain}' })`
+  ]
+}
+
 /**
  * Route Manager is the public interface used to define
  * routes, groups and resources.
@@ -383,16 +392,39 @@ class RouteManager {
    *
    * @param  {String} urlOrName    - Url, route name or controller action
    * @param  {Object} [data = {}]  - Data object
-   * @param  {String} [domain]     - Optional domain
+   * @param  {String} [options]    - Other Options
    *
    * @return {String|Null}
    */
-  url (routeNameOrHandler, data, domain) {
-    const route = RouteStore.find(routeNameOrHandler, domain)
+  url (routeNameOrHandler, data, options) {
+    let normalizedOptions = options || {}
+
+    /**
+     * Passing string as 3rd param is depreciated, one must use
+     * options object.
+     */
+    if (typeof (options) === 'string') {
+      normalizedOptions = { domain: options }
+      console.warn(domainDepreciationMessage(options).join('\n'))
+    }
+
+    const route = RouteStore.find(routeNameOrHandler, normalizedOptions.domain)
     if (!route) {
       return null
     }
-    return pathToRegexp.compile(route._route)(data || {})
+
+    const compiledRoute = pathToRegexp.compile(route._route)(data || {})
+
+    /**
+     * When domain exists, build a complete url over creating
+     * a relative URL.
+     */
+    if (normalizedOptions.domain) {
+      const protocol = _.get(normalizedOptions, 'protocol', 'http')
+      return `${protocol}://${normalizedOptions.domain}${compiledRoute}`
+    }
+
+    return compiledRoute
   }
 }
 

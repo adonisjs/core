@@ -1,3 +1,18 @@
+<a name="4.0.29"></a>
+## [4.0.29](https://github.com/adonisjs/adonis-framework/compare/v4.0.28...v4.0.29) (2018-01-12)
+
+
+### Bug Fixes
+
+* **Config:** config.merge resolve self referenced values ([08ad264](https://github.com/adonisjs/adonis-framework/commit/08ad264))
+* **package:** update eventemitter2 to version 5.0.0 ([#738](https://github.com/adonisjs/adonis-framework/issues/738)) ([14265de](https://github.com/adonisjs/adonis-framework/commit/14265de))
+* **Route:** Route.url should entertain domains ([a814afe](https://github.com/adonisjs/adonis-framework/commit/a814afe)), closes [#713](https://github.com/adonisjs/adonis-framework/issues/713)
+
+
+### Features
+
+* **logger:** expose levels on the logger instance ([77a3ace](https://github.com/adonisjs/adonis-framework/commit/77a3ace))
+
 <a name="4.0.28"></a>
 ## [4.0.28](https://github.com/adonisjs/adonis-framework/compare/v4.0.27...v4.0.28) (2017-11-28)
 
