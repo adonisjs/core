@@ -13,6 +13,13 @@ const _ = require('lodash')
 const requireAll = require('require-all')
 const debug = require('debug')('adonis:framework')
 
+const selfRefDepreciationMessage = function (key) {
+  return [
+    `Self referencing config has been depreciated. We recommend to you manually define the value for ${key}`,
+    'Learn more at https://adonisjs.svbtle.com/depreciating-self-reference-inside-config-files'
+  ]
+}
+
 /**
  * Manages configuration by recursively reading all
  * `.js` files from the `config` folder.
@@ -49,7 +56,7 @@ class Config {
   _isSelfReference (value) {
     const isSelfReference = typeof (value) === 'string' && value.startsWith('self::')
     if (isSelfReference) {
-      console.warn(`Self referencing config has been depreciated. We recommend to you manually define the value for ${this._getKeyFromRefrence(value)}`)
+      console.warn(selfRefDepreciationMessage(this._getKeyFromRefrence(value)).join('\n'))
       return true
     }
     return false

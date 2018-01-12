@@ -22,8 +22,9 @@ const domainDepreciationMessage = function (domain) {
   return [
     'Passing domain as 3rd parameter has been depreciated. You must pass an options object with a domain property',
     '',
-    '## Do following instead',
-    `Route.url(url, data, { domain: '${domain}' })`
+    'Example',
+    `Route.url(url, data, { domain: '${domain}' })`,
+    'Learn more at https://adonisjs.svbtle.com/changing-route-url-behavior'
   ]
 }
 
