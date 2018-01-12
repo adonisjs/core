@@ -1,3 +1,14 @@
+<a name="4.0.30"></a>
+## [4.0.30](https://github.com/adonisjs/adonis-framework/compare/v4.0.29...v4.0.30) (2018-01-12)
+
+
+### Bug Fixes
+
+* **Config:** fix flaky behavior of self referencing values ([02ecc1b](https://github.com/adonisjs/adonis-framework/commit/02ecc1b)), closes [#756](https://github.com/adonisjs/adonis-framework/issues/756)
+* **route:** group middleware return this for chainable api ([c231368](https://github.com/adonisjs/adonis-framework/commit/c231368))
+
+
+
 <a name="4.0.29"></a>
 ## [4.0.29](https://github.com/adonisjs/adonis-framework/compare/v4.0.28...v4.0.29) (2018-01-12)
 
