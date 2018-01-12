@@ -47,7 +47,12 @@ class Config {
    * @private
    */
   _isSelfReference (value) {
-    return typeof (value) === 'string' && value.startsWith('self::')
+    const isSelfReference = typeof (value) === 'string' && value.startsWith('self::')
+    if (isSelfReference) {
+      console.warn(`Self referencing config has been depreciated. We recommend to you manually define the value for ${this._getKeyFromRefrence(value)}`)
+      return true
+    }
+    return false
   }
 
   /**
@@ -62,6 +67,43 @@ class Config {
    */
   _getKeyFromRefrence (value) {
     return value.replace(/^self::/, '')
+  }
+
+  /**
+   * Returns whether value is a plain object or not
+   *
+   * @method _isPlainObject
+   *
+   * @param  {Mixed}       value
+   *
+   * @return {Boolean}
+   *
+   * @private
+   */
+  _isPlainObject (value) {
+    return value && !Array.isArray(value) && typeof (value) === 'object'
+  }
+
+  /**
+   * Resolve nested values recursively
+   *
+   * @method _resolveValues
+   *
+   * @param  {Object}       values
+   *
+   * @return {Object}
+   *
+   * @private
+   */
+  _resolveValues (values) {
+    return _.reduce(values, (result, value, key) => {
+      if (this._isPlainObject(value)) {
+        result[key] = this._resolveValues(value)
+      } else {
+        result[key] = this._isSelfReference(value) ? this.get(this._getKeyFromRefrence(value)) : value
+      }
+      return result
+    }, {})
   }
 
   /**
@@ -113,10 +155,10 @@ class Config {
    */
   get (key, defaultValue) {
     const value = _.get(this._config, key, defaultValue)
-    if (this._isSelfReference(value)) {
-      return this.get(this._getKeyFromRefrence(value))
+    if (this._isPlainObject(value)) {
+      return this._resolveValues(value)
     }
-    return value
+    return this._isSelfReference(value) ? this.get(this._getKeyFromRefrence(value)) : value
   }
 
   /**
@@ -143,19 +185,7 @@ class Config {
    */
   merge (key, defaultValues, customizer) {
     const value = this.get(key, {})
-    return _.mergeWith(defaultValues, value, (newValues, existingValues, ...args) => {
-      let resolvedValue
-
-      if (this._isSelfReference(existingValues)) {
-        resolvedValue = this.get(this._getKeyFromRefrence(existingValues))
-      }
-
-      if (typeof (customizer) === 'function') {
-        return customizer(newValues, resolvedValue, ...args)
-      }
-
-      return resolvedValue
-    })
+    return _.mergeWith(defaultValues, value, customizer)
   }
 
   /**

@@ -134,4 +134,16 @@ test.group('Config', (group) => {
       }
     })
   })
+
+  test('replace placeholder inside nested value when calling Config.get', (assert) => {
+    const config = new Config(configPath)
+    const database = config.get('database.mysqlStaging')
+    assert.deepEqual(database, {
+      connection: {
+        host: 'localhost',
+        password: '',
+        user: ''
+      }
+    })
+  })
 })
