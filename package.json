@@ -45,7 +45,7 @@
   "dependencies": {
     "@adonisjs/generic-exceptions": "^1.0.0",
     "bcryptjs": "^2.4.3",
-    "co-compose": "^3.0.0",
+    "co-compose": "^4.0.0",
     "dotenv": "^4.0.0",
     "edge.js": "^1.1.3",
     "eventemitter2": "^5.0.0",
