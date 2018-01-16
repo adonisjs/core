@@ -27,16 +27,20 @@ const Exception = require('../../src/Exception')
 const config = new Config()
 
 test.group('Server | Middleware', (group) => {
+  group.before(() => {
+    setupResolver()
+  })
+
   test('register global middleware', (assert) => {
     const server = new Server()
     server.registerGlobal(['foo', 'bar'])
-    assert.deepEqual(server.middleware._store.global, ['foo', 'bar'])
+    assert.deepEqual(server._middleware.global, ['foo', 'bar'])
   })
 
   test('append middleware when registerGlobal called multiple times', (assert) => {
     const server = new Server()
     server.registerGlobal(['foo', 'bar']).registerGlobal(['baz'])
-    assert.deepEqual(server.middleware._store.global, ['foo', 'bar', 'baz'])
+    assert.deepEqual(server._middleware.global, ['foo', 'bar', 'baz'])
   })
 
   test('throw exception when middleware is not an array', (assert) => {
@@ -50,9 +54,9 @@ test.group('Server | Middleware', (group) => {
     const server = new Server({}, {}, logger, config)
     server.registerGlobal(['foo']).registerGlobal(['foo'])
     assert.isTrue(
-      logger.has('warn', 'Duplicate global middleware {foo} will be discarded and existing one\'s will be used.')
+      logger.has('warn', 'Detected existing global middleware {foo}, the current one will be ignored')
     )
-    assert.deepEqual(server.middleware._store.global, ['foo'])
+    assert.deepEqual(server._middleware.global, ['foo'])
   })
 
   test('register named middleware', (assert) => {
@@ -61,8 +65,7 @@ test.group('Server | Middleware', (group) => {
       auth: 'App/Middleware/Auth'
     }
     server.registerNamed(named)
-    assert.deepEqual(server._namedHash, named)
-    assert.deepEqual(server.middleware._store.named, ['auth'])
+    assert.deepEqual(server._middleware.named, named)
   })
 
   test('register multiple named middleware', (assert) => {
@@ -71,20 +74,7 @@ test.group('Server | Middleware', (group) => {
       .registerNamed({ auth: 'App/Middleware/Auth' })
       .registerNamed({ addonValidator: 'App/Middleware/Validator' })
 
-    assert.deepEqual(server.middleware._store.named, ['auth', 'addonValidator'])
-    assert.deepEqual(server._namedHash, { auth: 'App/Middleware/Auth', addonValidator: 'App/Middleware/Validator' })
-  })
-
-  test('log warning when duplicate named middleware are registered', (assert) => {
-    const logger = new Logger()
-    const server = new Server({}, {}, logger)
-    const named = {
-      auth: 'App/Middleware/Auth'
-    }
-
-    server.registerNamed(named).registerNamed(named)
-    assert.isTrue(logger.has('warn', 'Duplicate named middleware {auth} will be discarded and existing one\'s will be used.'))
-    assert.deepEqual(server.middleware._store.named, ['auth'])
+    assert.deepEqual(server._middleware.named, { auth: 'App/Middleware/Auth', addonValidator: 'App/Middleware/Validator' })
   })
 
   test('throw exception when named middleware payload is not an object', (assert) => {
@@ -96,7 +86,216 @@ test.group('Server | Middleware', (group) => {
   test('register server level middleware', (assert) => {
     const server = new Server()
     server.use(['foo'])
-    assert.deepEqual(server.middleware._store.server, ['foo'])
+    assert.deepEqual(server._middleware.server, ['foo'])
+  })
+
+  test('concat server level middleware when called use for multiple times', (assert) => {
+    const server = new Server()
+    server.use(['foo']).use(['bar'])
+    assert.deepEqual(server._middleware.server, ['foo', 'bar'])
+  })
+
+  test('log warning when duplicate server middleware are registered', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+    server.use(['foo']).use(['foo'])
+    assert.isTrue(
+      logger.has('warn', 'Detected existing server middleware {foo}, the current one will be ignored')
+    )
+    assert.deepEqual(server._middleware.server, ['foo'])
+  })
+
+  test('compile global middleware', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+
+    const fn1 = function () {}
+    const fn2 = function () {}
+
+    server.registerGlobal([fn1, fn2])
+    const middleware = server._compileMiddleware('global')
+    assert.deepEqual(middleware, [{ namespace: fn1, params: [] }, { namespace: fn2, params: [] }])
+  })
+
+  test('compile global middleware with strings and functions', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+
+    const fn1 = function () {}
+
+    server.registerGlobal([fn1, 'App/Middleware/Foo'])
+    const middleware = server._compileMiddleware('global')
+    assert.deepEqual(middleware, [
+      { namespace: fn1, params: [] },
+      { namespace: 'App/Middleware/Foo.handle', params: [] }
+    ])
+  })
+
+  test('compile named middleware', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+
+    const namedMiddleware = ['auth']
+    server.registerNamed({ auth: function () {} })
+
+    const middleware = server._compileNamedMiddleware(namedMiddleware)
+    assert.deepEqual(middleware, [
+      { namespace: server._middleware.named.auth, params: [] }
+    ])
+  })
+
+  test('define raw function as named middleware', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+
+    const namedMiddleware = [function () {}]
+
+    const middleware = server._compileNamedMiddleware(namedMiddleware)
+    assert.deepEqual(middleware, [
+      { namespace: namedMiddleware[0], params: [] }
+    ])
+  })
+
+  test('parse params defined on named middleware', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+
+    const namedMiddleware = ['auth:jwt']
+
+    server.registerNamed({ auth: function () {} })
+
+    const middleware = server._compileNamedMiddleware(namedMiddleware, {})
+    assert.deepEqual(middleware, [
+      { namespace: server._middleware.named.auth, params: ['jwt'] }
+    ])
+  })
+
+  test('throw exception when named middleware is not registered', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+
+    const namedMiddleware = ['auth:jwt']
+    const middleware = () => server._compileNamedMiddleware(namedMiddleware)
+    assert.throw(middleware, 'E_MISSING_NAMED_MIDDLEWARE: Cannot find any named middleware for {auth}. Make sure you have registered it inside start/kernel.js file.')
+  })
+
+  test('throw exception when middleware is not a string or function', (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+    const namedMiddleware = [{}]
+    const middleware = () => server._compileNamedMiddleware(namedMiddleware, {})
+    assert.throw(middleware, 'E_INVALID_MIDDLEWARE_TYPE: Middleware must be a function or reference to an IoC container string.')
+  })
+
+  test('compose server middleware and execute them', async (assert) => {
+    assert.plan(1)
+
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+
+    server.use([function () {
+      assert.isTrue(true)
+    }])
+
+    await server._executeServerMiddleware()
+  })
+
+  test('pass ctx to middleware', async (assert) => {
+    assert.plan(1)
+
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+    const ctx = {
+      req: {}
+    }
+
+    server.use([function (__ctx__) {
+      assert.deepEqual(__ctx__, ctx)
+    }])
+
+    await server._executeServerMiddleware(ctx)
+  })
+
+  test('execute middleware in sequence', async (assert) => {
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+    const stack = []
+    const ctx = {
+      req: {}
+    }
+
+    const fn1 = function (__ctx__, next) {
+      __ctx__.first = true
+      stack.push('first')
+      return next()
+    }
+
+    const fn2 = function (__ctx__, next) {
+      __ctx__.second = true
+      stack.push('second')
+      return next()
+    }
+
+    server.use([fn1, fn2])
+    await server._executeServerMiddleware(ctx)
+    assert.deepEqual(stack, ['first', 'second'])
+    assert.isTrue(ctx.first)
+    assert.isTrue(ctx.second)
+  })
+
+  test('compose global middleware and execute them', async (assert) => {
+    assert.plan(1)
+
+    const logger = new Logger()
+    const server = new Server({}, {}, logger, config)
+
+    server.registerGlobal([function () {
+      assert.isTrue(true)
+    }])
+
+    await server._executeRouteHandler([])
+  })
+
+  test('compose global middleware with route middleware and execute them', async (assert) => {
+    const logger = new Logger()
+    const stack = []
+    const server = new Server({}, {}, logger, config)
+
+    server.registerGlobal([function (ctx, next) {
+      stack.push('global')
+      return next()
+    }])
+
+    server.registerNamed({
+      auth: function (ctx, next) {
+        stack.push('named')
+        return next()
+      }
+    })
+
+    await server._executeRouteHandler(['auth'], {}, { namespace: function () {}, params: [] })
+    assert.deepEqual(stack, ['global', 'named'])
+  })
+
+  test('pass params to route middleware', async (assert) => {
+    const logger = new Logger()
+    const stack = []
+    const server = new Server({}, {}, logger, config)
+
+    server.registerGlobal([function (ctx, next) {
+      stack.push('global')
+      return next()
+    }])
+
+    server.registerNamed({
+      auth: function (ctx, next, params) {
+        stack.push(params)
+        return next()
+      }
+    })
+
+    await server._executeRouteHandler(['auth:jwt'], {}, { namespace: function () {}, params: [] })
+    assert.deepEqual(stack, ['global', ['jwt']])
   })
 })
 
@@ -291,7 +490,7 @@ test.group('Server | Calls', (group) => {
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.include(res.text.split('\n')[2], 'server.spec.js:287')
+    assert.include(res.text.split('\n')[2], 'server.spec.js:486')
   })
 
   test('do not execute anything once server level middleware ends the response', async (assert) => {
@@ -747,5 +946,16 @@ test.group('Server | Calls', (group) => {
     await supertest(app).get('/').expect(204)
     assert.lengthOf(executions, 1)
     assert.deepEqual(executions, ['server'])
+  })
+
+  test('catch errors thrown by sync route closures', async (assert) => {
+    Route.get('/', function () {
+      throw new Error('foo')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+    const app = http.createServer(server.handle.bind(server))
+    const { text } = await supertest(app).get('/').expect(500)
+    assert.include(text, 'Error: foo')
   })
 })
