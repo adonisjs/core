@@ -32,7 +32,7 @@
     "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
     "fs-extra": "^5.0.0",
-    "japa": "^1.0.5",
+    "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
     "nyc": "^11.4.1",
     "pify": "^3.0.0",
@@ -48,14 +48,14 @@
     "co-compose": "^4.0.0",
     "dotenv": "^4.0.0",
     "edge.js": "^1.1.3",
-    "eventemitter2": "^5.0.0",
+    "eventemitter2": "^5.0.1",
     "haye": "^2.0.1",
     "lodash": "^4.17.4",
     "macroable": "^1.0.0",
     "node-cookie": "^2.0.2",
-    "node-exceptions": "^2.0.2",
+    "node-exceptions": "^3.0.0",
     "node-req": "^2.0.1",
-    "node-res": "^4.0.4",
+    "node-res": "^4.1.0",
     "parseurl": "^1.3.2",
     "path-to-regexp": "^2.1.0",
     "require-all": "^2.2.0",
@@ -63,7 +63,7 @@
     "serve-static": "^1.13.1",
     "useragent": "^2.2.1",
     "winston": "^2.4.0",
-    "youch": "^2.0.5"
+    "youch": "^2.0.7"
   },
   "nyc": {
     "include": [

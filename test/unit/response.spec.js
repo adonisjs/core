@@ -530,7 +530,7 @@ test.group('Response', (group) => {
   test('do not set etag when set as false', async (assert) => {
     const server = http.createServer((req, res) => {
       const response = new Response(req, res, new Config())
-      response.send('hello world', { ignoreEtag: true })
+      response.send('hello world', false)
       response.end()
     })
 
@@ -567,7 +567,7 @@ test.group('Response', (group) => {
     const server = http.createServer((req, res) => {
       const response = new Response(req, res, new Config())
       response.implicitEnd = false
-      response.send('hello world', { ignoreEtag: true })
+      response.send('hello world', false)
     })
 
     const res = await supertest(server).get('/').expect(200)

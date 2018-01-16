@@ -256,6 +256,10 @@ class Server {
     const middleware = this._compileMiddleware('server')
     debug('executing %d server middleware', middleware.length)
 
+    if (!middleware.length) {
+      return Promise.resolve()
+    }
+
     return new Middleware()
     .register(middleware)
     .runner()
@@ -360,8 +364,7 @@ class Server {
    */
   _safelySetResponse (response, content, method = 'send') {
     if (!this._madeSoftResponse(response) && content !== undefined) {
-      response.lazyBody.content = content
-      response.lazyBody.method = 'send'
+      response.send(content)
     }
   }
 

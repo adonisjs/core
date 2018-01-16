@@ -374,11 +374,11 @@ class Response extends Macroable {
    * @method type
    *
    * @param  {String} type
-   * @param  {String} [charset = 'utf-8']
+   * @param  {String} [charset]
    *
    * @chainable
    */
-  type (type, charset = 'utf-8') {
+  type (type, charset) {
     nodeRes.type(this.response, type, charset)
     return this
   }
@@ -389,25 +389,20 @@ class Response extends Macroable {
    * @method send
    *
    * @param  {*} body
-   * @param  {Object} options
-   * @param  {Boolean} options.ignoreETag
+   * @param  {Boolean} generateEtag
    *
    * @return {void}
    */
-  send (body, options) {
-    const clonedOptions = Object.assign({
-      ignoreEtag: !this.Config.get('app.http.etag', true)
-    }, options)
-
+  send (body, generateEtag = this.Config.get('app.http.etag')) {
     if (!this.implicitEnd) {
-      nodeRes.send(this.request, this.response, body, clonedOptions)
+      nodeRes.send(this.request, this.response, body, generateEtag)
       return
     }
 
     this._lazyBody = {
       method: 'send',
       content: body,
-      args: [clonedOptions]
+      args: [generateEtag]
     }
   }
 
@@ -418,25 +413,20 @@ class Response extends Macroable {
    * @method json
    *
    * @param  {Object} body
-   * @param  {Object} options
-   * @param  {Boolean} options.ignoreETag
+   * @param  {Boolean} generateEtag
    *
    * @return {void}
    */
-  json (body, options) {
-    const clonedOptions = Object.assign({
-      ignoreEtag: !this.Config.get('app.http.etag', true)
-    }, options)
-
+  json (body, generateEtag = this.Config.get('app.http.etag')) {
     if (!this.implicitEnd) {
-      nodeRes.json(this.request, this.response, body, clonedOptions)
+      nodeRes.json(this.request, this.response, body, generateEtag)
       return
     }
 
     this._lazyBody = {
       method: 'json',
       content: body,
-      args: [clonedOptions]
+      args: [generateEtag]
     }
   }
 
@@ -448,27 +438,22 @@ class Response extends Macroable {
    *
    * @param  {Object} body
    * @param  {String} [callbackFn = 'callback'] - Callback name.
-   * @param  {Object} options
-   * @param  {Boolean} options.ignoreETag
+   * @param  {Boolean} generateEtag
    *
    * @return {void}
    */
-  jsonp (body, callbackFn, options) {
-    const clonedOptions = Object.assign({
-      ignoreEtag: !this.Config.get('app.http.etag', true)
-    }, options)
-
+  jsonp (body, callbackFn, generateEtag = this.Config.get('app.http.etag')) {
     callbackFn = callbackFn || nodeReq.get(this.request).callback || this.Config.get(JSONPCALLBACK)
 
     if (!this.implicitEnd) {
-      nodeRes.jsonp(this.request, this.response, body, callbackFn, clonedOptions)
+      nodeRes.jsonp(this.request, this.response, body, callbackFn, generateEtag)
       return
     }
 
     this._lazyBody = {
       method: 'jsonp',
       content: body,
-      args: [callbackFn, clonedOptions]
+      args: [callbackFn, generateEtag]
     }
   }
 
