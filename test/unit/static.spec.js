@@ -22,6 +22,7 @@ const Response = require('../../src/Response')
 const Context = require('../../src/Context')
 const Static = require('../../src/Static')
 const Exception = require('../../src/Exception')
+const BaseExceptionHandler = require('../../src/Exception/BaseHandler')
 
 test.group('Static', (group) => {
   group.before(() => {
@@ -48,6 +49,7 @@ test.group('Static', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(BaseExceptionHandler)
 
     ioc.fake('Adonis/Middleware/Static', function () {
       return Static(new Helpers(__dirname), new Config())

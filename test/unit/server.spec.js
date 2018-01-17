@@ -23,8 +23,17 @@ const Request = require('../../src/Request')
 const Response = require('../../src/Response')
 const Context = require('../../src/Context')
 const Exception = require('../../src/Exception')
+const BaseExceptionHandler = require('../../src/Exception/BaseHandler')
 
 const config = new Config()
+
+class FakeExceptionHandler {
+  handle (error, { response }) {
+    response.status(error.status).send(`${error.name}: ${error.message}\n${error.stack}`)
+  }
+
+  report () {}
+}
 
 test.group('Server | Middleware', (group) => {
   group.before(() => {
@@ -361,6 +370,7 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -412,10 +422,13 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     server.registerGlobal([async function (next) {
       executions.push(true)
       await next()
     }])
+
     const app = http.createServer(server.handle.bind(server))
 
     await supertest(app).get('/foo').expect(404)
@@ -427,6 +440,8 @@ test.group('Server | Calls', (group) => {
     const executions = []
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     server.registerGlobal([async function (ctx, next) {
       executions.push('global')
       await next()
@@ -487,10 +502,12 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.include(res.text.split('\n')[2], 'server.spec.js:486')
+    assert.include(res.text.split('\n')[2], 'server.spec.js:501')
   })
 
   test('do not execute anything once server level middleware ends the response', async (assert) => {
@@ -606,6 +623,7 @@ test.group('Server | Calls', (group) => {
     Route.get('/', 'HomeController.render')
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -623,6 +641,8 @@ test.group('Server | Calls', (group) => {
     Route.get('/', 'HomeController.render')
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -676,6 +696,7 @@ test.group('Server | Calls', (group) => {
   test('throw exception when named middleware is missing', async (assert) => {
     Route.get('/', async function () {}).middleware('app')
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
 
     const app = http.createServer(server.handle.bind(server))
 
@@ -718,16 +739,17 @@ test.group('Server | Calls', (group) => {
     assert.deepEqual(res.text, 'hello world')
   })
 
-  test('pass exception to exception handler', async (assert) => {
+  test('pass exception to custom exception handler', async (assert) => {
     Route.get('/', async function () {
       throw new Error('error')
     })
 
-    this.exception.handle('*', (error, { response }) => {
+    this.exception.handle('Error', (error, { response }) => {
       response.status(error.status).send('Hijacked')
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(BaseExceptionHandler)
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -739,7 +761,7 @@ test.group('Server | Calls', (group) => {
       throw new Error('error')
     })
 
-    this.exception.handle('*', (error, { response }) => {
+    this.exception.handle('Error', (error, { response }) => {
       return new Promise((resolve) => {
         setTimeout(() => {
           response.status(error.status).send('Hijacked')
@@ -749,6 +771,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(BaseExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
@@ -761,12 +785,13 @@ test.group('Server | Calls', (group) => {
     })
 
     const reportedError = {}
-    this.exception.report('*', (error, { request }) => {
+    this.exception.report('Error', (error, { request }) => {
       reportedError.name = error.name
       reportedError.url = request.url()
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(BaseExceptionHandler)
     const app = http.createServer(server.handle.bind(server))
 
     await supertest(app).get('/').expect(500)
@@ -779,12 +804,13 @@ test.group('Server | Calls', (group) => {
     })
 
     const reportedError = {}
-    this.exception.report('*', async (error, { request }) => {
+    this.exception.report('Error', async (error, { request }) => {
       reportedError.name = error.name
       reportedError.url = request.url()
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(BaseExceptionHandler)
     const app = http.createServer(server.handle.bind(server))
 
     await supertest(app).get('/').expect(500)
@@ -803,6 +829,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(BaseExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
     const { body } = await supertest(app).get('/').expect(500)
     assert.deepEqual(body, { name: 'HttpException', message: 'Something went bad' })
@@ -826,6 +854,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(BaseExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
     await supertest(app).get('/').expect(500)
     assert.equal(reportedMessage, 'Something went bad')
@@ -840,6 +870,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
     const { text } = await supertest(app).get('/').expect(200)
     assert.equal(text, 'done')
@@ -854,6 +886,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
     const { text } = await supertest(app).get('/').expect(200)
     assert.equal(text, `/**/ typeof callback === 'function' && callback(${JSON.stringify({ username: 'virk' })});`)
@@ -868,6 +902,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
     const { body } = await supertest(app).get('/').expect(200)
     assert.deepEqual(body, { username: 'virk' })
@@ -879,6 +915,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
     const { body } = await supertest(app).get('/').expect(200)
     assert.deepEqual(body, { username: 'virk' })
@@ -893,6 +931,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
     const { text } = await supertest(app).get('/').expect(200)
     assert.deepEqual(text, 'done')
@@ -906,6 +946,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     server.registerGlobal([async function (ctx, next) {
       executions.push('global')
       await next()
@@ -931,6 +973,8 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(FakeExceptionHandler)
+
     server.registerGlobal([async function (ctx, next) {
       executions.push('global')
       await next()
@@ -954,8 +998,72 @@ test.group('Server | Calls', (group) => {
     })
 
     const server = new Server(Context, Route, this.logger, this.exception)
+    server.setExceptionHandler(BaseExceptionHandler)
+
     const app = http.createServer(server.handle.bind(server))
     const { text } = await supertest(app).get('/').expect(500)
     assert.include(text, 'Error: foo')
+  })
+
+  test('catch errors thrown within exception handler', async (assert) => {
+    Route.get('/', function () {
+      throw new Error('foo')
+    })
+
+    const server = new Server(Context, Route, this.logger, this.exception)
+
+    this.exception.handle('Error', function () {
+      throw new Error('Blowed up')
+    })
+
+    server.setExceptionHandler(BaseExceptionHandler)
+
+    const app = http.createServer(server.handle.bind(server))
+    const { text } = await supertest(app).get('/').expect(500)
+    assert.include(text, 'Error: Blowed up')
+  })
+
+  test('return error when exception handler doesnt have a handle method', async (assert) => {
+    const server = new Server(Context, Route, this.logger, this.exception)
+    class CustomHandler {}
+    const fn = () => server.setExceptionHandler(CustomHandler)
+    assert.throw(fn, /E_RUNTIME_ERROR: Http exception handler must have handle and report methods on it/)
+  })
+
+  test('return error when exception handler doesnt have a report method', async (assert) => {
+    const server = new Server(Context, Route, this.logger, this.exception)
+    class CustomHandler {
+      handle () {}
+    }
+    const fn = () => server.setExceptionHandler(CustomHandler)
+    assert.throw(fn, /E_RUNTIME_ERROR: Http exception handler must have handle and report methods on it/)
+  })
+
+  test('setting http instance after starting the server must throw exception', (assert, done) => {
+    const server = new Server(Context, Route, this.logger, this.exception)
+    server.listen()
+    const fn = () => server.setInstance()
+    assert.throw(
+      fn,
+      /E_CANNOT_SWAP_SERVER: Attempt to hot swap http instance failed. Make sure to call Server.setInstance before starting the http server/
+    )
+    server.close(function () {
+      done()
+    })
+  })
+
+  test('set a custom http server', async (assert) => {
+    const server = new Server(Context, Route, this.logger, this.exception)
+
+    const httpServer = http.createServer(function (req, res) {
+      res.end('Custom instance response')
+    })
+
+    server.setInstance(httpServer)
+    server.listen()
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'Custom instance response')
+    server.close()
   })
 })

@@ -88,6 +88,12 @@ class Server {
       server: [],
       named: {}
     }
+
+    /**
+     * Exception handler class to respond
+     * to an exception.
+     */
+    this._ExceptionHandler = null
   }
 
   /**
@@ -401,8 +407,7 @@ class Server {
   }
 
   /**
-   * Finds if response has already been made, then ends the response
-   * by calling `response.end()`
+   * Finds if response has already been made, then ends the response.
    *
    * @method _evaluateResponse
    *
@@ -420,88 +425,8 @@ class Server {
   }
 
   /**
-   * Returns the exception handler to be used for handling
-   * the exception.
-   *
-   * @method _getExceptionHandler
-   *
-   * @param  {Object}             error
-   *
-   * @return {Function}
-   *
-   * @private
-   */
-  _getExceptionHandler (error) {
-    /**
-     * First we need to give priority to the manually binded
-     * exception handler and `hasHandler` only returns true
-     * when there is an explicit handler for that exception.
-     */
-    const handler = this.Exception.getHandler(error.name, true)
-    if (handler) {
-      return handler
-    }
-
-    /**
-     * Next we look for handle method on the exception itself. Yes
-     * exceptions can handle themselves.
-     */
-    if (error.handle) {
-      return function (...args) { return error.handle(...args) }
-    }
-
-    /**
-     * Finally we look for a wildcard handler or fallback
-     * to custom method.
-     */
-    return this.Exception.getWildcardHandler() || function (err, { response }) {
-      response.status(error.status).send(`${err.name}: ${err.message}\n${err.stack}`)
-    }
-  }
-
-  /**
-   * Returns exception reporter to be used for reporting
-   * the error
-   *
-   * @method _getExceptionReporter
-   *
-   * @param  {Object}              error
-   *
-   * @return {Function}
-   *
-   * @private
-   */
-  _getExceptionReporter (error) {
-    /**
-     * First we need to give priority to the manually binded
-     * exception reporter and `hasReporter` only returns true
-     * when there is an explicit reporter for that exception.
-     */
-    const reporter = this.Exception.getReporter(error.name, true)
-    if (reporter) {
-      return reporter
-    }
-
-    /**
-     * Next we look for report method on the exception itself. Yes
-     * exceptions can report themselves.
-     */
-    if (error.report) {
-      return function (...args) { return error.report(...args) }
-    }
-
-    /**
-     * Finally we look for a wildcard reporter or return a
-     * fallback function
-     */
-    return this.Exception.getWildcardReporter() || function () {}
-  }
-
-  /**
-   * Handles the exceptions thrown during the http request
-   * life-cycle. It will look for a listener to handle
-   * the error, otherwise ends the response by sending
-   * the error message
+   * Handles the exception by invoking `handle` method
+   * on the registered exception handler.
    *
    * @method _handleException
    *
@@ -512,24 +437,18 @@ class Server {
    *
    * @private
    */
-  _handleException (error, ctx) {
-    error.message = error.message || 'Internal server error'
+  async _handleException (error, ctx) {
     error.status = error.status || 500
-    const exceptionHandler = this._getExceptionHandler(error)
-    const exceptionReporter = this._getExceptionReporter(error)
 
-    exceptionReporter(error, { request: ctx.request, auth: ctx.auth })
+    try {
+      const handler = new this._ExceptionHandler()
+      handler.report(error, { request: ctx.request, auth: ctx.auth })
+      await handler.handle(error, ctx)
+    } catch (error) {
+      ctx.response.status(500).send(`${error.name}: ${error.message}\n${error.stack}`)
+    }
 
-    Promise
-      .resolve(exceptionHandler(error, ctx))
-      .then(() => {
-        this._endResponse(ctx.response)
-      })
-      .catch((hardError) => {
-        // was not expecting this at all
-        ctx.response.status(500).send(hardError)
-        ctx.response.end()
-      })
+    this._endResponse(ctx.response)
   }
 
   /**
@@ -659,9 +578,25 @@ class Server {
    */
   setInstance (httpInstance) {
     if (this._httpInstance) {
-      throw GE.RuntimeException.invoke('Attempt to hot swap http instance failed. Make sure to call Server.setInstance before starting the http server')
+      throw GE.RuntimeException.invoke('Attempt to hot swap http instance failed. Make sure to call Server.setInstance before starting the http server', 500, 'E_CANNOT_SWAP_SERVER')
     }
     this._httpInstance = httpInstance
+  }
+
+  /**
+   * Sets the exception handler to be used for handling exceptions
+   *
+   * @method setExceptionHandler
+   *
+   * @param  {Class}            handler
+   *
+   * @return {void}
+   */
+  setExceptionHandler (handler) {
+    if (typeof (handler.prototype.handle) !== 'function' || typeof (handler.prototype.report) !== 'function') {
+      throw GE.RuntimeException.invoke('Http exception handler must have handle and report methods on it')
+    }
+    this._ExceptionHandler = handler
   }
 
   /**
@@ -693,6 +628,12 @@ class Server {
 
     this._executeServerMiddleware(ctx)
     .then(() => {
+      /**
+       * We need to find out whether any of the server middleware has
+       * ended the response or not.
+       *
+       * If they did, then simply do not execute the route.
+       */
       this._evaluateResponse(response)
       if (!response.isPending) {
         debug('ending request within server middleware chain')
@@ -729,6 +670,19 @@ class Server {
   listen (host = 'localhost', port = 3333, callback) {
     this.Logger.info('serving app on http://%s:%s', host, port)
     return this.getInstance().listen(port, host, callback)
+  }
+
+  /**
+   * Closes the HTTP server
+   *
+   * @method close
+   *
+   * @param  {Function} callback
+   *
+   * @return {void}
+   */
+  close (callback) {
+    this.getInstance().close(callback)
   }
 }
 

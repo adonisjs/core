@@ -31,8 +31,16 @@ class UserController {
 }
 
 test.group('Route', (group) => {
+  group.before(() => {
+    const Server = use('Server')
+    Server.setExceptionHandler(ioc.use('Adonis/Exceptions/BaseExceptionHandler'))
+    Server.listen(process.env.HOST, process.env.PORT)
+  })
+
   group.after(() => {
     delete process.env.ENV_SILENT
+    const Server = use('Server')
+    Server.close()
   })
 
   group.beforeEach(() => {
