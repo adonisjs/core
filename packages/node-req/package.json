@@ -22,6 +22,7 @@
   "license": "MIT",
   "devDependencies": {
     "coveralls": "^3.0.0",
+    "cz-conventional-changelog": "^2.1.0",
     "formidable": "^1.1.1",
     "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
@@ -54,5 +55,10 @@
   "bugs": {
     "url": "https://github.com/poppinss/node-req/issues"
   },
-  "homepage": "https://github.com/poppinss/node-req#readme"
+  "homepage": "https://github.com/poppinss/node-req#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
