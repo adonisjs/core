@@ -50,12 +50,6 @@ test.group('Config', (group) => {
     assert.equal(database, undefined)
   })
 
-  test('return resolved value when defined as reference', (assert) => {
-    const config = new Config(configPath)
-    const database = config.get('database.mysqlProduction')
-    assert.equal(database.client, 'mysql')
-  })
-
   test('set value for a given key', (assert) => {
     const config = new Config(configPath)
     config.set('database.mysql.connection.database', 'blog')
@@ -101,49 +95,5 @@ test.group('Config', (group) => {
   test('ignore error when config directory does not exists', (assert) => {
     /* eslint no-new: "off" */
     new Config(path.join(__dirname, '../foo/config'))
-  })
-
-  test('replace placeholder values with actual values during merge', (assert) => {
-    const config = new Config(configPath)
-    const database = config.merge('database', {})
-    assert.deepEqual(database.mysqlProduction, database.mysql)
-  })
-
-  test('replace placeholder inside nested value', (assert) => {
-    const config = new Config(configPath)
-    const database = config.merge('database.mysqlStaging', {
-      client: 'mysql'
-    })
-    assert.deepEqual(database, {
-      client: 'mysql',
-      connection: {
-        host: 'localhost',
-        password: '',
-        user: ''
-      }
-    })
-  })
-
-  test('pass extracted value to customizer when defined', (assert) => {
-    assert.plan(1)
-    const config = new Config(configPath)
-
-    config.merge('database', {}, function (newValue, existingValue, key) {
-      if (key === 'mysqlProduction') {
-        assert.deepEqual(config.get('database.mysql'), existingValue)
-      }
-    })
-  })
-
-  test('replace placeholder inside nested value when calling Config.get', (assert) => {
-    const config = new Config(configPath)
-    const database = config.get('database.mysqlStaging')
-    assert.deepEqual(database, {
-      connection: {
-        host: 'localhost',
-        password: '',
-        user: ''
-      }
-    })
   })
 })

@@ -13,13 +13,6 @@ const _ = require('lodash')
 const requireAll = require('require-all')
 const debug = require('debug')('adonis:framework')
 
-const selfRefDepreciationMessage = function (key) {
-  return [
-    `Self referencing config has been depreciated. We recommend to you manually define the value for ${key}`,
-    'Learn more at https://adonisjs.svbtle.com/depreciating-self-reference-inside-config-files'
-  ]
-}
-
 /**
  * Manages configuration by recursively reading all
  * `.js` files from the `config` folder.
@@ -39,78 +32,6 @@ class Config {
     this._configPath = configPath
     this._config = {}
     this.syncWithFileSystem()
-  }
-
-  /**
-   * Returns whether the value of the key is a self referenced
-   * identifier
-   *
-   * @method _isSelfReference
-   *
-   * @param  {String}         value
-   *
-   * @return {Boolean}
-   *
-   * @private
-   */
-  _isSelfReference (value) {
-    const isSelfReference = typeof (value) === 'string' && value.startsWith('self::')
-    if (isSelfReference) {
-      console.warn(selfRefDepreciationMessage(this._getKeyFromRefrence(value)).join('\n'))
-      return true
-    }
-    return false
-  }
-
-  /**
-   * Returns the actual key by dropping the self::
-   * keyword
-   *
-   * @method _getKeyFromRefrence
-   *
-   * @return {String}
-   *
-   * @private
-   */
-  _getKeyFromRefrence (value) {
-    return value.replace(/^self::/, '')
-  }
-
-  /**
-   * Returns whether value is a plain object or not
-   *
-   * @method _isPlainObject
-   *
-   * @param  {Mixed}       value
-   *
-   * @return {Boolean}
-   *
-   * @private
-   */
-  _isPlainObject (value) {
-    return value && !Array.isArray(value) && typeof (value) === 'object'
-  }
-
-  /**
-   * Resolve nested values recursively
-   *
-   * @method _resolveValues
-   *
-   * @param  {Object}       values
-   *
-   * @return {Object}
-   *
-   * @private
-   */
-  _resolveValues (values) {
-    return _.reduce(values, (result, value, key) => {
-      if (this._isPlainObject(value)) {
-        result[key] = this._resolveValues(value)
-      } else {
-        result[key] = this._isSelfReference(value) ? this.get(this._getKeyFromRefrence(value)) : value
-      }
-      return result
-    }, {})
   }
 
   /**
@@ -161,11 +82,7 @@ class Config {
    * ```
    */
   get (key, defaultValue) {
-    const value = _.get(this._config, key, defaultValue)
-    if (this._isPlainObject(value)) {
-      return this._resolveValues(value)
-    }
-    return this._isSelfReference(value) ? this.get(this._getKeyFromRefrence(value)) : value
+    return _.get(this._config, key, defaultValue)
   }
 
   /**
