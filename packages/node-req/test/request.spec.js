@@ -14,7 +14,7 @@ const http = require('http')
 const pem = require('pem')
 const https = require('https')
 const test = require('japa')
-const Request = require('../')
+const Request = require('..')
 
 test.group('Http Request', () => {
   test('should parse http request to return all query string parameters', async (assert) => {

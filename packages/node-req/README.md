@@ -1,6 +1,6 @@
 # Node Req
 
-> Read data of the Node.js HTTP request with no side-effects.
+> A facade over Node.js HTTP `req` object with no side-effects.
 
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
@@ -12,8 +12,6 @@
 </a>
 
 `node-req` is an i/o module for parsing and returning values out of HTTP request object using helper methods.
-
-It is not express, neither connect. It is just an i/o module for parsing request object.
 
 ## See also
 
@@ -37,92 +35,104 @@ http.createServer(function (req, res) {
 
 Yes, that's all, `node-req` makes no assumption on how to add routes or handle HTTP requests. All it does it parse request object and return values out of it.
 
-## What's different from express?
+## API
 
-`express` is super cool, but it is a framework that has a lot more to offer than just parsing requests, where `node-req` is just a parser and will be an option based on your use case.
+* [get(req, [options])](#module_Request..get) ⇒ <code>Object</code>
+* [method(req)](#module_Request..method) ⇒ <code>String</code>
+* [headers(req)](#module_Request..headers) ⇒ <code>Object</code>
+* [header(req, key)](#module_Request..header) ⇒ <code>String</code>
+* [fresh(req, res)](#module_Request..fresh) ⇒ <code>Boolean</code>
+* [stale(req, res)](#module_Request..stale) ⇒ <code>Boolean</code>
+* [ip(req, [trust])](#module_Request..ip) ⇒ <code>String</code>
+* [ips(req, [trust])](#module_Request..ips) ⇒ <code>Array</code>
+* [protocol(req, [trust])](#module_Request..protocol) ⇒ <code>String</code>
+* [secure(req)](#module_Request..secure) ⇒ <code>Boolean</code>
+* [subdomains(req, [trust], [offset])](#module_Request..subdomains) ⇒ <code>Array</code>
+* [ajax(req)](#module_Request..ajax) ⇒ <code>Boolean</code>
+* [pjax(req)](#module_Request..pjax) ⇒ <code>Boolean</code>
+* [hostname(req, [trust])](#module_Request..hostname) ⇒ <code>String</code>
+* [url(req)](#module_Request..url) ⇒ <code>String</code>
+* [originalUrl(req)](#module_Request..originalUrl) ⇒ <code>String</code>
+* [is(req, keys)](#module_Request..is) ⇒ <code>String</code>
+* [accepts(req, keys)](#module_Request..accepts) ⇒ <code>String</code>
+* [types(req)](#module_Request..types) ⇒ <code>Array</code>
+* [language(req, accepted)](#module_Request..language) ⇒ <code>String</code>
+* [languages(req)](#module_Request..languages) ⇒ <code>Array</code>
+* [encoding(req, accepted)](#module_Request..encoding) ⇒ <code>String</code>
+* [encodings(req)](#module_Request..encodings) ⇒ <code>Array</code>
+* [charset(req, accepted)](#module_Request..charset) ⇒ <code>String</code>
+* [charsets(req)](#module_Request..charsets) ⇒ <code>Array</code>
+* [hasBody(req)](#module_Request..hasBody) ⇒ <code>Boolean</code>
 
-## Methods
+<a name="module_Request..get"></a>
 
-### get
-Parses query string from url an returns
-an object.
+### get(req, [options]) ⇒ <code>Object</code>
+Parses query string from url an returns an object.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| options | Object | No | Options are passed to https://www.npmjs.com/package/qs |
+| Param | Type | Description |
+| --- | --- | --- |
+| req | <code>http.IncomingMessage</code> |  |
+| [options] | <code>Object</code> | Options are passed to https://www.npmjs.com/package/qs |
 
-**Returns**
-Object
-
-**Example**
+**Example**  
 ```js
 const queryString = nodeReq.get(req)
 ```
+<a name="module_Request..method"></a>
 
-----
-### method
+### method(req) ⇒ <code>String</code>
 Returns the exact copy of `request.method`. Defined
 [here](https://nodejs.org/api/http.html#http_message_method)
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```js
 const method = nodeReq.method(req)
 ```
+<a name="module_Request..headers"></a>
 
-----
-### headers
+### headers(req) ⇒ <code>Object</code>
 Returns an object of headers for a given
 request.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Object
-
-**Example**
+**Example**  
 ```js
 const headers = nodeReq.headers(req)
 ```
+<a name="module_Request..header"></a>
 
-----
-### header
+### header(req, key) ⇒ <code>String</code>
 Returns header value for a given key. Also
 it will handle the inconsistencies between
 `referer` and `referrer` header.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| key | String | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| key | <code>String</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```js
 const authHeader = nodeReq.header(req, 'Authorization')
 ```
+<a name="module_Request..fresh"></a>
 
-----
-### fresh
+### fresh(req, res) ⇒ <code>Boolean</code>
 Returns the freshness of a response inside the client
 cache. If client cache has the latest response, this
 method will return `true`, otherwise it will return
@@ -131,45 +141,40 @@ method will return `true`, otherwise it will return
 Also when HTTP header `Cache-Control: no-cache` is present
 this method will return false everytime.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| response | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| res | <code>http.ServerResponse</code> | 
 
-**Returns**
-Boolean
-
-**Example**
+**Example**  
 ```js
 if (nodeReq.fresh(req, res)) {
    res.writeHead(304)
 }
 ```
+<a name="module_Request..stale"></a>
 
-----
-### stale
-This method is the opposite of the {{#crossLink "Request/fresh"}}{{/crossLink}} method
+### stale(req, res) ⇒ <code>Boolean</code>
+This method is the opposite of the `nodeReq.fresh`
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| res | <code>http.ServerResponse</code> | 
 
-**Returns**
-Boolean
-
-**Example**
+**Example**  
 ```js
 if (!nodeReq.stale(req, res)) {
    res.writeHead(304)
 }
 ```
+<a name="module_Request..ip"></a>
 
-----
-### ip
+### ip(req, [trust]) ⇒ <code>String</code>
 Returns the most trusted ip address for the HTTP
 request. It will handle the use cases where your
 server is behind a proxy.
@@ -177,90 +182,78 @@ server is behind a proxy.
 Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
 for the available options for `trust`.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| trust | Mixed | No | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| [trust] | <code>Mixed</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```js
 nodeReq.ip(req, '127.0.0.1')
 nodeReq.ip(req, ['::1/128', 'fe80::/10'])
 ```
+<a name="module_Request..ips"></a>
 
-----
-### ips
+### ips(req, [trust]) ⇒ <code>Array</code>
 Returns list of all remote addresses ordered with
 most trusted on the top of the list.
 
 Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
 for the available options for `trust`.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| trust | Mixed | No | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| [trust] | <code>Mixed</code> | 
 
-**Returns**
-Array
-
-**Example**
+**Example**  
 ```
 nodeReq.ips(req, '127.0.0.1')
 nodeReq.ips(req, ['::1/128', 'fe80::/10'])
 ```
+<a name="module_Request..protocol"></a>
 
-----
-### protocol
+### protocol(req, [trust]) ⇒ <code>String</code>
 Returns request protocol based upon encrypted
 connection or X-Forwaded-Proto header.
 
 Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
 for the available options for `trust`.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| trust | Mixed | No | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| [trust] | <code>Mixed</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```
 const protocol = nodeReq.protocol(req)
 ```
+<a name="module_Request..secure"></a>
 
-----
-### secure
+### secure(req) ⇒ <code>Boolean</code>
 Looks for request protocol to check for
 https existence or returns false.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Boolean
-
-**Example**
+**Example**  
 ```
 const isHttps = nodeReq.secure(req)
 ```
+<a name="module_Request..subdomains"></a>
 
-----
-### subdomains
+### subdomains(req, [trust], [offset]) ⇒ <code>Array</code>
 Returns the request subdomains as an array. Also
 it will make sure to exclude `www` from the
 subdomains list.
@@ -268,37 +261,31 @@ subdomains list.
 Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
 for the available options for `trust`.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| trust | Mixed | No | &nbsp; |
-| offset  | Number | No | subdomain offset |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| req | <code>http.IncomingMessage</code> |  |  |
+| [trust] | <code>Mixed</code> |  |  |
+| [offset] | <code>Number</code> | <code>2</code> | subdomain offset |
 
-**Returns**
-Array
-
-**Example**
+**Example**  
 ```js
 const subdomains = nodeReq.subdomains(req)
 ```
+<a name="module_Request..ajax"></a>
 
-----
-### ajax
+### ajax(req) ⇒ <code>Boolean</code>
 Determines whether request is an ajax request
 or not, based on X-Requested-With header.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Boolean
-
-**Example**
+**Example**  
 ```js
 if (nodeReq.ajax(req)) {
    res.writeHead(200, {"Content-type": "application/json"})
@@ -306,22 +293,19 @@ if (nodeReq.ajax(req)) {
    res.writeHead(200, {"Content-type": "text/html"})
 }
 ```
+<a name="module_Request..pjax"></a>
 
-----
-### pjax
+### pjax(req) ⇒ <code>Boolean</code>
 Tells whether request has X-Pjax
 header or not.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Boolean
-
-**Example**
+**Example**  
 ```js
 if (nodeReq.pjax(req)) {
    // return partial content
@@ -329,82 +313,70 @@ if (nodeReq.pjax(req)) {
    // full page refresh
 }
 ```
+<a name="module_Request..hostname"></a>
 
-----
-### hostname
+### hostname(req, [trust]) ⇒ <code>String</code>
 Returns the hostname of HTTP request.
 
 Make sure to check [proxy-addr](https://www.npmjs.com/package/proxy-addr)
 for the available options for `trust`.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| trust | Mixed | No | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| [trust] | <code>Mixed</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```js
 const hostname = nodeReq.hostname(request)
 ```
+<a name="module_Request..url"></a>
 
-----
-### url
+### url(req) ⇒ <code>String</code>
 Returns request url after removing the query
 string.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```js
 const url = nodeReq.url(request)
 ```
+<a name="module_Request..originalUrl"></a>
 
-----
-### originalUrl
+### originalUrl(req) ⇒ <code>String</code>
 Returns the untouched url.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```js
 const url = nodeReq.originalUrl(request)
 ```
+<a name="module_Request..is"></a>
 
-----
-### is
+### is(req, keys) ⇒ <code>String</code>
 Tells whether request accept content of a given
 type or not (based on **Content-type**) header.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| keys | Mixed | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| keys | <code>Mixed</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```js
 // req.headers.content-type = 'application/json'
 
@@ -414,24 +386,21 @@ nodeReq.is(req, ['application/*']) // application/json
 
 nodeReq.is(req, ['html']) // '<empty string>'
 ```
+<a name="module_Request..accepts"></a>
 
-----
-### accepts
+### accepts(req, keys) ⇒ <code>String</code>
 Return the best possible response accepted by the
 client. This is based on the `Accept` header.
 [Learn more about it](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept)
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| keys | Mixed | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| keys | <code>Mixed</code> | 
 
-**Returns**
-String
-
-**Example**
+**Example**  
 ```js
 const type = nodeReq.accepts(req, ['json', 'html'])
 
@@ -451,134 +420,113 @@ switch(type) {
    res.write('hello, world!')
 }
 ```
+<a name="module_Request..types"></a>
 
-----
-### types
+### types(req) ⇒ <code>Array</code>
 This method is similar to {{#crossLink "Request/accepts"}}{{/crossLink}},
 instead it will return an array of types from most to least preferred
 one.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Array
+<a name="module_Request..language"></a>
 
-----
-### language
+### language(req, accepted) ⇒ <code>String</code>
 Returns one of the most preferrable language.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| accepted | Array | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| accepted | <code>Array</code> | 
 
-**Returns**
-String
+<a name="module_Request..languages"></a>
 
-----
-### languages
+### languages(req) ⇒ <code>Array</code>
 Returns list of all accepted languages from most
 to least preferred one.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Array
+<a name="module_Request..encoding"></a>
 
-----
-### encoding
+### encoding(req, accepted) ⇒ <code>String</code>
 Returns the best maching encoding
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| accepted | Array | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| accepted | <code>Array</code> | 
 
-**Returns**
-String
+<a name="module_Request..encodings"></a>
 
-----
-### encodings
+### encodings(req) ⇒ <code>Array</code>
 Returns list of all encodings from most
 to least preferred one.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Array
+<a name="module_Request..charset"></a>
 
-----
-### charset
+### charset(req, accepted) ⇒ <code>String</code>
 Returns the best maching charset based upon
 `Accept-Charset` header.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
-| accepted | Array | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
+| accepted | <code>Array</code> | 
 
-**Returns**
-String
+<a name="module_Request..charsets"></a>
 
-----
-### charsets
+### charsets(req) ⇒ <code>Array</code>
 Returns a list of all charsets from most
 to least preferred one based upon
 `Accept-Charset` header.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Array
+<a name="module_Request..hasBody"></a>
 
-----
-### hasBody
+### hasBody(req) ⇒ <code>Boolean</code>
 Tells whether request has body or
 not to be read by any body parser.
 
-**Params**
+**Kind**: inner method of [<code>Request</code>](#module_Request)  
 
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| request | Object | Yes | &nbsp; |
+| Param | Type |
+| --- | --- |
+| req | <code>http.IncomingMessage</code> | 
 
-**Returns**
-Boolean
-
-**Example**
+**Example**  
 ```js
 if (nodeReq.hasBody(request)) {
    // use body parser
 }
 ```
 
-----
-
-
 [appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/node-req/master.svg?style=flat-square
-
 [appveyor-url]: https://ci.appveyor.com/project/thetutlage/node-req
 
 [npm-image]: https://img.shields.io/npm/v/node-req.svg?style=flat-square
@@ -588,5 +536,4 @@ if (nodeReq.hasBody(request)) {
 [travis-url]: https://travis-ci.org/poppinss/node-req
 
 [coveralls-image]: https://img.shields.io/coveralls/poppinss/node-req/develop.svg?style=flat-square
-
-[coveralls-url]: https://coveralls.io/github/poppinss/node-req
+[coveralls-url]: https://coveralls.io/github/poppinss/node-req 

@@ -3,6 +3,9 @@
   "version": "2.0.1",
   "description": "I/O parser for nodejs http request",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "lint": "standard",
     "pretest": "npm run lint",
@@ -23,7 +26,6 @@
   "devDependencies": {
     "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
-    "formidable": "^1.1.1",
     "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
     "nyc": "^11.4.1",
@@ -34,7 +36,7 @@
   },
   "nyc": {
     "include": [
-      "src"
+      "index.js"
     ]
   },
   "dependencies": {
