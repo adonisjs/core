@@ -38,7 +38,7 @@ class Static {
    * @return {void}
    */
   async handle ({ request, response }, next) {
-    if (['GET', 'HEAD'].indexOf(request.method()) <= -1) {
+    if (['GET', 'HEAD'].indexOf(request.method()) === -1) {
       return next()
     }
 
