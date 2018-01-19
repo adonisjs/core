@@ -51,6 +51,7 @@ class Logger {
       debug: 7
     }
   }
+
   /**
    * The active log level for the logger driver.
    *

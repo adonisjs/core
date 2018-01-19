@@ -330,7 +330,7 @@ test.group('Logger | Facade', (group) => {
     assert.throw(fn, 'E_MISSING_CONFIG: logger.transport is not defined inside config/app.js file')
   })
 
-  test('access loglevel from facade', (assert) => {
+  test('access loglevels from facade', (assert) => {
     const config = new Config()
     config.set('app.logger', {
       transport: 'file',
@@ -349,6 +349,26 @@ test.group('Logger | Facade', (group) => {
       info: 6,
       notice: 5,
       warning: 4
+    })
+  })
+
+  test('update log level from facade', (assert, done) => {
+    const config = new Config()
+    config.set('app.logger', {
+      transport: 'console',
+      console: {
+        driver: 'console'
+      }
+    })
+
+    const logger = new LoggerFacade(config)
+    const inspect = stderr.inspect()
+
+    logger.level = 'debug'
+    logger.debug('foo', function () {
+      inspect.restore()
+      assert.include(inspect.output[0], 'foo')
+      done()
     })
   })
 })
