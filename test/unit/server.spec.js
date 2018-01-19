@@ -43,13 +43,35 @@ test.group('Server | Middleware', (group) => {
   test('register global middleware', (assert) => {
     const server = new Server()
     server.registerGlobal(['foo', 'bar'])
-    assert.deepEqual(server._middleware.global, ['foo', 'bar'])
+    assert.deepEqual(server._middleware.global, [
+      {
+        namespace: 'foo.handle',
+        params: []
+      },
+      {
+        namespace: 'bar.handle',
+        params: []
+      }
+    ])
   })
 
   test('append middleware when registerGlobal called multiple times', (assert) => {
     const server = new Server()
     server.registerGlobal(['foo', 'bar']).registerGlobal(['baz'])
-    assert.deepEqual(server._middleware.global, ['foo', 'bar', 'baz'])
+    assert.deepEqual(server._middleware.global, [
+      {
+        namespace: 'foo.handle',
+        params: []
+      },
+      {
+        namespace: 'bar.handle',
+        params: []
+      },
+      {
+        namespace: 'baz.handle',
+        params: []
+      }
+    ])
   })
 
   test('throw exception when middleware is not an array', (assert) => {
@@ -65,7 +87,12 @@ test.group('Server | Middleware', (group) => {
     assert.isTrue(
       logger.has('warn', 'Detected existing global middleware {foo}, the current one will be ignored')
     )
-    assert.deepEqual(server._middleware.global, ['foo'])
+    assert.deepEqual(server._middleware.global, [
+      {
+        namespace: 'foo.handle',
+        params: []
+      }
+    ])
   })
 
   test('register named middleware', (assert) => {
@@ -74,7 +101,12 @@ test.group('Server | Middleware', (group) => {
       auth: 'App/Middleware/Auth'
     }
     server.registerNamed(named)
-    assert.deepEqual(server._middleware.named, named)
+    assert.deepEqual(server._middleware.named, {
+      auth: {
+        namespace: 'App/Middleware/Auth.handle',
+        params: []
+      }
+    })
   })
 
   test('register multiple named middleware', (assert) => {
@@ -83,7 +115,16 @@ test.group('Server | Middleware', (group) => {
       .registerNamed({ auth: 'App/Middleware/Auth' })
       .registerNamed({ addonValidator: 'App/Middleware/Validator' })
 
-    assert.deepEqual(server._middleware.named, { auth: 'App/Middleware/Auth', addonValidator: 'App/Middleware/Validator' })
+    assert.deepEqual(server._middleware.named, {
+      auth: {
+        namespace: 'App/Middleware/Auth.handle',
+        params: []
+      },
+      addonValidator: {
+        namespace: 'App/Middleware/Validator.handle',
+        params: []
+      }
+    })
   })
 
   test('throw exception when named middleware payload is not an object', (assert) => {
@@ -95,13 +136,25 @@ test.group('Server | Middleware', (group) => {
   test('register server level middleware', (assert) => {
     const server = new Server()
     server.use(['foo'])
-    assert.deepEqual(server._middleware.server, ['foo'])
+    assert.deepEqual(server._middleware.server, [{
+      namespace: 'foo.handle',
+      params: []
+    }])
   })
 
   test('concat server level middleware when called use for multiple times', (assert) => {
     const server = new Server()
     server.use(['foo']).use(['bar'])
-    assert.deepEqual(server._middleware.server, ['foo', 'bar'])
+    assert.deepEqual(server._middleware.server, [
+      {
+        namespace: 'foo.handle',
+        params: []
+      },
+      {
+        namespace: 'bar.handle',
+        params: []
+      }
+    ])
   })
 
   test('log warning when duplicate server middleware are registered', (assert) => {
@@ -111,33 +164,10 @@ test.group('Server | Middleware', (group) => {
     assert.isTrue(
       logger.has('warn', 'Detected existing server middleware {foo}, the current one will be ignored')
     )
-    assert.deepEqual(server._middleware.server, ['foo'])
-  })
-
-  test('compile global middleware', (assert) => {
-    const logger = new Logger()
-    const server = new Server({}, {}, logger, config)
-
-    const fn1 = function () {}
-    const fn2 = function () {}
-
-    server.registerGlobal([fn1, fn2])
-    const middleware = server._compileMiddleware('global')
-    assert.deepEqual(middleware, [{ namespace: fn1, params: [] }, { namespace: fn2, params: [] }])
-  })
-
-  test('compile global middleware with strings and functions', (assert) => {
-    const logger = new Logger()
-    const server = new Server({}, {}, logger, config)
-
-    const fn1 = function () {}
-
-    server.registerGlobal([fn1, 'App/Middleware/Foo'])
-    const middleware = server._compileMiddleware('global')
-    assert.deepEqual(middleware, [
-      { namespace: fn1, params: [] },
-      { namespace: 'App/Middleware/Foo.handle', params: [] }
-    ])
+    assert.deepEqual(server._middleware.server, [{
+      namespace: 'foo.handle',
+      params: []
+    }])
   })
 
   test('compile named middleware', (assert) => {
@@ -148,9 +178,7 @@ test.group('Server | Middleware', (group) => {
     server.registerNamed({ auth: function () {} })
 
     const middleware = server._compileNamedMiddleware(namedMiddleware)
-    assert.deepEqual(middleware, [
-      { namespace: server._middleware.named.auth, params: [] }
-    ])
+    assert.deepEqual(middleware, [server._middleware.named.auth])
   })
 
   test('define raw function as named middleware', (assert) => {
@@ -175,7 +203,7 @@ test.group('Server | Middleware', (group) => {
 
     const middleware = server._compileNamedMiddleware(namedMiddleware, {})
     assert.deepEqual(middleware, [
-      { namespace: server._middleware.named.auth, params: ['jwt'] }
+      { namespace: server._middleware.named.auth.namespace, params: ['jwt'] }
     ])
   })
 
@@ -509,7 +537,7 @@ test.group('Server | Calls', (group) => {
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.include(res.text.split('\n')[2], 'server.spec.js:503')
+    assert.include(res.text.split('\n')[2], 'server.spec.js:531')
   })
 
   test('do not execute anything once server level middleware ends the response', async (assert) => {
