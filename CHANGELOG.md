@@ -1,3 +1,14 @@
+<a name="4.0.31"></a>
+## [4.0.31](https://github.com/adonisjs/adonis-framework/compare/v4.0.30...v4.0.31) (2018-01-19)
+
+
+### Bug Fixes
+
+* **logger:** logger.level should update the driver level ([2d8f9f3](https://github.com/adonisjs/adonis-framework/commit/2d8f9f3)), closes [#760](https://github.com/adonisjs/adonis-framework/issues/760)
+* **package:** lock packages ([67db34b](https://github.com/adonisjs/adonis-framework/commit/67db34b))
+
+
+
 <a name="4.0.30"></a>
 ## [4.0.30](https://github.com/adonisjs/adonis-framework/compare/v4.0.29...v4.0.30) (2018-01-12)
 
