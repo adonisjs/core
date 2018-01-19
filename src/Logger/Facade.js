@@ -43,6 +43,12 @@ const proxyHandler = {
       return tranportInstance[name].bind(tranportInstance)
     }
     return tranportInstance[name]
+  },
+
+  set (target, name, value) {
+    const tranportInstance = target.transport()
+    tranportInstance.level = value
+    return true
   }
 }
 
@@ -81,9 +87,7 @@ class LoggerFacade {
      * Throw exception when logger.transport is not defined
      */
     if (!name) {
-      throw GE
-        .RuntimeException
-        .missingConfig('logger.transport', 'config/app.js')
+      throw GE.RuntimeException.missingConfig('logger.transport', 'config/app.js')
     }
 
     /**
