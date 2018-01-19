@@ -110,6 +110,7 @@ class Exception {
    * ```
    */
   handle (name, callback) {
+    debug('binding handler for %s', name)
     this._handlers[name] = callback
     return this
   }
@@ -132,6 +133,7 @@ class Exception {
    * ```
    */
   report (name, callback) {
+    debug('binding reporter for %s', name)
     this._reporters[name] = callback
     return this
   }

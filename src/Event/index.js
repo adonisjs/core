@@ -264,10 +264,10 @@ class Event {
    * ```
    */
   on (event, listeners) {
-    listeners = _.isArray(listeners) ? listeners : [listeners]
     const times = this._many.pull()
-    _.each(listeners, (listener) => {
-      if (times > 1) {
+
+    _.each(_.castArray(listeners), (listener) => {
+      if (times > 0) {
         this.emitter.many(event, times, this._resolveListener(listener))
       } else {
         this.emitter.on(event, this._resolveListener(listener))
@@ -292,8 +292,7 @@ class Event {
    * ```
    */
   onAny (listeners) {
-    listeners = _.isArray(listeners) ? listeners : [listeners]
-    _.each(listeners, (listener) => {
+    _.each(_.castArray(listeners), (listener) => {
       this.emitter.onAny(this._resolveListener(listener))
     })
   }
@@ -329,8 +328,7 @@ class Event {
    * ```
    */
   once (event, listeners) {
-    listeners = _.isArray(listeners) ? listeners : [listeners]
-    _.each(listeners, (listener) => {
+    _.each(_.castArray(listeners), (listener) => {
       this.emitter.once(event, this._resolveListener(listener))
     })
   }
@@ -373,8 +371,7 @@ class Event {
    * ```
    */
   offAny (listeners) {
-    listeners = _.isArray(listeners) ? listeners : [listeners]
-    _.each(listeners, (listener) => {
+    _.each(_.castArray(listeners), (listener) => {
       listener = typeof (listener) === 'string' ? this._namespacedListeners[listener] : listener
       this.emitter.offAny(listener)
     })
@@ -392,8 +389,7 @@ class Event {
    * @return {void}
    */
   removeListener (event, listeners) {
-    listeners = _.isArray(listeners) ? listeners : [listeners]
-    _.each(listeners, (listener) => {
+    _.each(_.castArray(listeners), (listener) => {
       listener = typeof (listener) === 'string' ? this._namespacedListeners[listener] : listener
       this.emitter.off(event, listener)
     })
