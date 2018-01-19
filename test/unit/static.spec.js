@@ -31,7 +31,7 @@ test.group('Static', (group) => {
     }, true)
 
     Context.getter('response', function () {
-      return new Response(this.req, this.res, new Config())
+      return new Response(this.request, new Config())
     }, true)
     setupResolver()
   })

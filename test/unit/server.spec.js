@@ -315,7 +315,9 @@ test.group('Server | Calls', (group) => {
     }, true)
 
     Context.getter('response', function () {
-      return new Response(this.req, this.res, new Config())
+      const config = new Config()
+      config.set('app.http.jsonpCallback', 'callback')
+      return new Response(this.request, config)
     }, true)
     setupResolver()
   })
@@ -507,7 +509,7 @@ test.group('Server | Calls', (group) => {
     const app = http.createServer(server.handle.bind(server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.include(res.text.split('\n')[2], 'server.spec.js:501')
+    assert.include(res.text.split('\n')[2], 'server.spec.js:503')
   })
 
   test('do not execute anything once server level middleware ends the response', async (assert) => {

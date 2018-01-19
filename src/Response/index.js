@@ -10,12 +10,14 @@
 */
 
 const nodeRes = require('node-res')
+const methods = require('node-res/methods')
 const nodeReq = require('node-req')
 const nodeCookie = require('node-cookie')
 const Macroable = require('macroable')
 const parseurl = require('parseurl')
 const GE = require('@adonisjs/generic-exceptions')
 const RouteManager = require('../Route/Manager')
+const _ = require('lodash')
 
 /**
  * Abort exception is raised when `response.abortIf` or
@@ -79,15 +81,23 @@ const JSONPCALLBACK = 'app.http.jsonpCallback'
  * @class Response
  */
 class Response extends Macroable {
-  constructor (request, response, Config) {
+  constructor (adonisRequest, Config) {
     super()
+
+    /**
+     * Reference to adonisjs request
+     *
+     * @type {Request}
+     */
+    this.adonisRequest = adonisRequest
+
     /**
      * Reference to native HTTP request object
      *
      * @attribute request
      * @type {Object}
      */
-    this.request = request
+    this.request = adonisRequest.request
 
     /**
      * Reference to native HTTP response object
@@ -95,7 +105,7 @@ class Response extends Macroable {
      * @attribute response
      * @type {Object}
      */
-    this.response = response
+    this.response = adonisRequest.response
 
     /**
      * Here we store the body of the response and wait
@@ -172,6 +182,97 @@ class Response extends Macroable {
    */
   get isPending () {
     return (!this.headersSent && !this.finished)
+  }
+
+  /**
+   * Returns a boolean indicating whether etag should be generated
+   * for a request or not.
+   *
+   * @method _generateEtag
+   *
+   * @param  {Boolean}      setToTrue
+   * @param  {Boolean}     hasBody
+   *
+   * @return {Boolean}
+   *
+   * @private
+   */
+  _generateEtag (setToTrue, hasBody) {
+    const statusCode = this.response.statusCode
+    return setToTrue && hasBody && this.request.method === 'GET' && ((statusCode >= 200 && statusCode < 300) || statusCode === 304)
+  }
+
+  /**
+   * Writes response to the res object
+   *
+   * @method _writeResponse
+   *
+   * @param  {String}       method
+   * @param  {Mixed}       content
+   * @param  {Array}       args
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _writeResponse (method, content, args) {
+    if (['send', 'json', 'jsonp'].indexOf(method) === -1) {
+      return nodeRes[method](...[this.request, this.response, content].concat(args))
+    }
+
+    /**
+     * Finding whether or not to generate the etag for the response
+     */
+    const generateEtag = method === 'jsonp' ? args[1] : args[0]
+
+    /**
+     * Chunk to send over the wire
+     */
+    let chunk = method === 'jsonp' ? nodeRes.prepareJsonp(this.response, content, args[0]) : nodeRes.prepare(this.response, content)
+
+    /**
+     * For HEAD requests, response body should be null
+     */
+    if (this.request.method === 'HEAD') {
+      chunk = null
+    }
+
+    /**
+     * When chunk exists and user wants etags, then we should generate one
+     */
+    if (this._generateEtag(generateEtag, !!chunk)) {
+      nodeRes.etag(this.response, chunk)
+
+      if (this.adonisRequest.fresh()) {
+        this.status(304)
+        chunk = null
+      }
+    }
+
+    nodeRes.end(this.response, chunk)
+  }
+
+  /**
+   * Sets the response body. If implicitEnd is set to `false`,
+   * then it will end the response right away, otherwise
+   * will store it to be sent later.
+   *
+   * @method _invoke
+   *
+   * @param  {String} method
+   * @param  {Mixed} content
+   * @param  {Array} args
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _invoke (method, content, args) {
+    if (!this.implicitEnd) {
+      this._writeResponse(method, content, args)
+      return
+    }
+    this._lazyBody = { method, content, args }
   }
 
   /**
@@ -323,16 +424,7 @@ class Response extends Macroable {
       url = `${url}?${query}`
     }
 
-    if (!this.implicitEnd) {
-      nodeRes.redirect(this.request, this.response, url, status)
-      return
-    }
-
-    this._lazyBody = {
-      method: 'redirect',
-      content: url,
-      args: [status]
-    }
+    this._invoke('redirect', url, [status])
   }
 
   /**
@@ -394,16 +486,7 @@ class Response extends Macroable {
    * @return {void}
    */
   send (body, generateEtag = this.Config.get('app.http.etag')) {
-    if (!this.implicitEnd) {
-      nodeRes.send(this.request, this.response, body, generateEtag)
-      return
-    }
-
-    this._lazyBody = {
-      method: 'send',
-      content: body,
-      args: [generateEtag]
-    }
+    this._invoke('send', body, [generateEtag])
   }
 
   /**
@@ -418,16 +501,7 @@ class Response extends Macroable {
    * @return {void}
    */
   json (body, generateEtag = this.Config.get('app.http.etag')) {
-    if (!this.implicitEnd) {
-      nodeRes.json(this.request, this.response, body, generateEtag)
-      return
-    }
-
-    this._lazyBody = {
-      method: 'json',
-      content: body,
-      args: [generateEtag]
-    }
+    this._invoke('json', body, [generateEtag])
   }
 
   /**
@@ -444,17 +518,7 @@ class Response extends Macroable {
    */
   jsonp (body, callbackFn, generateEtag = this.Config.get('app.http.etag')) {
     callbackFn = callbackFn || nodeReq.get(this.request).callback || this.Config.get(JSONPCALLBACK)
-
-    if (!this.implicitEnd) {
-      nodeRes.jsonp(this.request, this.response, body, callbackFn, generateEtag)
-      return
-    }
-
-    this._lazyBody = {
-      method: 'jsonp',
-      content: body,
-      args: [callbackFn, generateEtag]
-    }
+    this._invoke('jsonp', body, [callbackFn, generateEtag])
   }
 
   /**
@@ -467,9 +531,7 @@ class Response extends Macroable {
    */
   end () {
     if (this.implicitEnd) {
-      const method = this._lazyBody.method || 'send'
-      const args = [this.request, this.response, this._lazyBody.content].concat(this._lazyBody.args)
-      nodeRes[method](...args)
+      this._writeResponse(this._lazyBody.method || 'send', this._lazyBody.content, this._lazyBody.args)
     }
   }
 
@@ -573,13 +635,10 @@ Response._getters = {}
 /**
  * Setting descriptive methods on the response prototype.
  */
-nodeRes.descriptiveMethods.forEach((method) => {
-  Response.prototype[method] = function (content) {
-    if (!this.implicitEnd) {
-      nodeRes[method](this.request, this.response, content)
-      return
-    }
-    this._lazyBody = { method, content, args: [] }
+_.each(methods, (statusCode, method) => {
+  Response.prototype[method] = function (content, generateEtag = this.Config.get('app.http.etag')) {
+    this.status(statusCode)
+    this._invoke('send', content, [generateEtag])
   }
 })
 
