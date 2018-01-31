@@ -25,9 +25,7 @@ const GE = require('@adonisjs/generic-exceptions')
  * @constructor
  */
 class Encryption {
-  constructor (Config) {
-    const appKey = Config.get('app.appKey')
-
+  constructor (appKey) {
     /**
      * Throw exception when app key doesn't exists.
      */

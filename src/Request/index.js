@@ -85,11 +85,11 @@ class Request extends Macroable {
     this.Config = Config
 
     /**
-     * A merged object of get and post
+     * The qs object
      *
      * @type {Object}
      */
-    this._all = this.get()
+    this._qs = nodeReq.get(this.request)
 
     /**
      * Reference to request body
@@ -106,11 +106,11 @@ class Request extends Macroable {
     this._raw = null
 
     /**
-     * The qs object
+     * A merged object of get and post
      *
      * @type {Object}
      */
-    this._qs = null
+    this._all = _.merge({}, this.get())
   }
 
   /**
@@ -170,9 +170,6 @@ class Request extends Macroable {
    * ```
    */
   get () {
-    if (!this._qs) {
-      this._qs = nodeReq.get(this.request)
-    }
     return this._qs
   }
 
@@ -336,7 +333,7 @@ class Request extends Macroable {
    */
   method () {
     if (!this.Config.get('app.http.allowMethodSpoofing') || this.intended() !== 'POST') {
-      return nodeReq.method(this.request)
+      return this.intended()
     }
     const method = this.input('_method', this.intended())
     return method.toUpperCase()
@@ -765,9 +762,16 @@ class Request extends Macroable {
    * @return {Boolean}
    */
   stale () {
-    return nodeReq.stale(this.request, this.response)
+    return !this.fresh()
   }
 
+  /**
+   * Returns the request format from the URL params
+   *
+   * @method format
+   *
+   * @return {String}
+   */
   format () {
     const { format } = this.params
     return format ? (typeof (format) === 'string' ? format.replace(/^\./, '') : format) : null

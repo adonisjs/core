@@ -1,6 +1,6 @@
 'use strict'
 
-/*
+/**
  * adonis-framework
  *
  * (c) Harminder Virk <virk@adonisjs.com>
@@ -9,18 +9,9 @@
  * file that was distributed with this source code.
 */
 
-/**
- * Default exception handler to handle all exceptions
- * thrown during HTTP request lifecycle. Once you
- * create a custom exception handler then class
- * won't be used to handle exceptions.
- *
- * @binding Adonis/Exceptions/Handler
- * @group Http
- *
- * @class Handler
- */
-class Handler {
+const ExceptionStore = require('./index')
+
+class BaseExceptionHandler {
   /**
    * Returns error formatted by youch
    *
@@ -68,19 +59,20 @@ class Handler {
   }
 
   /**
-   * The handle method called by Adonis server to handle
-   * exceptions
+   * The default handler to report exception when no one handles
+   * a given exception
    *
-   * @method handle
-   * @async
+   * @method _defaultHandler
    *
-   * @param  {Object} error              - The error object
-   * @param  {Object} options.request    - Current request object
-   * @param  {Object} options.response   - Current response object
+   * @param  {Object}        error
+   * @param  {Object}        options.request
+   * @param  {Object}        options.response
    *
    * @return {void}
+   *
+   * @private
    */
-  async handle (error, { request, response }) {
+  async _defaultHandler (error, { request, response }) {
     const isJSON = request.accepts(['html', 'json']) === 'json'
 
     if (process.env.NODE_ENV === 'development') {
@@ -91,6 +83,51 @@ class Handler {
 
     response.status(error.status).send(this._getPlainError(error, isJSON))
   }
+
+  /**
+   * Handles the exception by sending a response
+   *
+   * @method handle
+   *
+   * @param  {Object} error
+   * @param  {Object} ctx
+   *
+   * @return {Mixed}
+   */
+  handle (error, ctx) {
+    if (typeof (error.handle) === 'function') {
+      return error.handle(error, ctx)
+    }
+
+    const customHandler = ExceptionStore.getHandler(error.name)
+    if (customHandler && typeof (customHandler.method) === 'function') {
+      return customHandler.method(error, ctx)
+    }
+
+    return this._defaultHandler(error, ctx)
+  }
+
+  /**
+   * Reports the error by invoking report on the exception
+   * or pulls a custom defined reporter
+   *
+   * @method report
+   *
+   * @param  {Object} error
+   * @param  {Object} ctx
+   *
+   * @return {void}
+   */
+  report (error, ctx) {
+    if (typeof (error.report) === 'function') {
+      return error.report(error, ctx)
+    }
+
+    const customReporter = ExceptionStore.getReporter(error.name)
+    if (customReporter && typeof (customReporter.method) === 'function') {
+      return customReporter.method(error, ctx)
+    }
+  }
 }
 
-module.exports = Handler
+module.exports = BaseExceptionHandler

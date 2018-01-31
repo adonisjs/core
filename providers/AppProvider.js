@@ -222,9 +222,10 @@ class AppProvider extends ServiceProvider {
    * @private
    */
   _registerExceptionHandler () {
-    this.app.bind('Adonis/Exceptions/Handler', () => {
-      return new (require('../src/App/Handler'))()
+    this.app.bind('Adonis/Exceptions/BaseExceptionHandler', () => {
+      return require('../src/Exception/BaseHandler')
     })
+    this.app.alias('Adonis/Exceptions/BaseExceptionHandler', 'BaseExceptionHandler')
   }
 
   /**
@@ -237,7 +238,8 @@ class AppProvider extends ServiceProvider {
   _registerEncryption () {
     this.app.singleton('Adonis/Src/Encryption', (app) => {
       const Encryption = require('../src/Encryption')
-      return new Encryption(app.use('Adonis/Src/Config'))
+      const appKey = app.use('Adonis/Src/Config').get('app.appKey')
+      return new Encryption(appKey)
     })
     this.app.alias('Adonis/Src/Encryption', 'Encryption')
   }
@@ -323,7 +325,7 @@ class AppProvider extends ServiceProvider {
     }, true)
 
     Context.getter('response', function () {
-      return new Response(this.req, this.res, use('Adonis/Src/Config'))
+      return new Response(this.request, use('Adonis/Src/Config'))
     }, true)
 
     /**

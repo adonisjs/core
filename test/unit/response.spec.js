@@ -13,12 +13,14 @@ const path = require('path')
 const test = require('japa')
 const http = require('http')
 const sig = require('cookie-signature')
+const etag = require('etag')
 const querystring = require('querystring')
 const simpleEncryptor = require('simple-encryptor')
 const { Config } = require('@adonisjs/sink')
 const supertest = require('supertest')
 
 const Response = require('../../src/Response')
+const Request = require('../../src/Request')
 const RouteStore = require('../../src/Route/Store')
 const RouteManager = require('../../src/Route/Manager')
 const SECRET = 'averylongsecretkey'
@@ -30,7 +32,7 @@ test.group('Response', (group) => {
 
   test('send raw string as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.send('hello world')
       response.end()
     })
@@ -41,7 +43,7 @@ test.group('Response', (group) => {
 
   test('send json object as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.send({name: 'virk'})
       response.end()
     })
@@ -52,7 +54,7 @@ test.group('Response', (group) => {
 
   test('send number as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.send(22)
       response.end()
     })
@@ -63,7 +65,7 @@ test.group('Response', (group) => {
 
   test('send boolean as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.send(true)
       response.end()
     })
@@ -74,7 +76,7 @@ test.group('Response', (group) => {
 
   test('send html as response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.send('<h2> Hello world </h2>')
       response.end()
     })
@@ -85,7 +87,7 @@ test.group('Response', (group) => {
 
   test('set http response status', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.status(304).send('hello')
       response.end()
     })
@@ -94,7 +96,7 @@ test.group('Response', (group) => {
 
   test('set http request header', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.header('Link', ['<http://localhost/>', '<http://localhost:3000/>'])
       response.end()
     })
@@ -103,7 +105,7 @@ test.group('Response', (group) => {
 
   test('only set the header when does not exists', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.safeHeader('Content-Type', 'application/json')
       response.safeHeader('Content-Type', 'text/plain')
       response.send('')
@@ -114,7 +116,7 @@ test.group('Response', (group) => {
 
   test('remove response header', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.header('Link', ['<http://localhost/>', '<http://localhost:3000/>'])
       response.removeHeader('link')
       response.end()
@@ -125,7 +127,7 @@ test.group('Response', (group) => {
 
   test('get value for existing header', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.header('Link', ['<http://localhost/>', '<http://localhost:3000/>'])
       response.send(response.getHeader('link'))
       response.end()
@@ -136,7 +138,7 @@ test.group('Response', (group) => {
 
   test('download file', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.download(path.join(__dirname, '../../package.json'))
     })
     const res = await supertest(server).get('/').expect(200)
@@ -146,7 +148,7 @@ test.group('Response', (group) => {
 
   test('send 404 when file does not exists', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.download(path.join(__dirname, '../../logo.svg'))
     })
     await supertest(server).get('/').expect(404)
@@ -154,7 +156,7 @@ test.group('Response', (group) => {
 
   test('force download the file by setting content-disposition', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.attachment(path.join(__dirname, '../../package.json'))
     })
 
@@ -165,7 +167,7 @@ test.group('Response', (group) => {
 
   test('force download the file with different file name', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.attachment(path.join(__dirname, '../../package.json'), 'adonis.json')
     })
 
@@ -176,7 +178,7 @@ test.group('Response', (group) => {
 
   test('set the location http header', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.location('http://adonisjs.com')
       response.end()
     })
@@ -186,7 +188,7 @@ test.group('Response', (group) => {
 
   test('redirect the request', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.redirect('http://adonisjs.com')
       response.end()
     })
@@ -196,7 +198,7 @@ test.group('Response', (group) => {
 
   test('set content-type based on type', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.type('html').send({username: 'virk'})
       response.end()
     })
@@ -206,7 +208,7 @@ test.group('Response', (group) => {
 
   test('send content as json with content-type explicitly set to text/javascript', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.jsonp({username: 'virk'})
       response.end()
     })
@@ -216,7 +218,7 @@ test.group('Response', (group) => {
 
   test('use the request query param callback for jsonp response', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.jsonp({username: 'virk'})
       response.end()
     })
@@ -227,7 +229,7 @@ test.group('Response', (group) => {
 
   test('use the explicit callbackFn over request query param', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.jsonp({username: 'virk'}, 'eval')
       response.end()
     })
@@ -238,7 +240,7 @@ test.group('Response', (group) => {
 
   test('set 401 as the status via unauthorized method', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.unauthorized('Login First')
       response.end()
     })
@@ -249,7 +251,7 @@ test.group('Response', (group) => {
 
   test('save cookie to the browser', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.cookie('cart_total', '20')
       response.send('')
       response.end()
@@ -263,7 +265,7 @@ test.group('Response', (group) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
       config.set('app.appKey', SECRET)
-      const response = new Response(req, res, config)
+      const response = new Response(new Request(req, res), config)
       response.cookie('cart_total', '20')
       response.send('')
       response.end()
@@ -288,7 +290,7 @@ test.group('Response', (group) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
       config.set('app.appKey', SECRET)
-      const response = new Response(req, res, config)
+      const response = new Response(new Request(req, res), config)
       response.plainCookie('cart_total', '20')
       response.send('')
       response.end()
@@ -301,7 +303,7 @@ test.group('Response', (group) => {
   test('send vary header', async (assert) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
-      const response = new Response(req, res, config)
+      const response = new Response(new Request(req, res), config)
       response.vary('Origin')
       response.send('')
       response.end()
@@ -314,7 +316,7 @@ test.group('Response', (group) => {
   test('clear existing cookie by setting expiry in past', async (assert) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
-      const response = new Response(req, res, config)
+      const response = new Response(new Request(req, res), config)
       response.clearCookie('cart')
       response.send('')
       response.end()
@@ -328,7 +330,7 @@ test.group('Response', (group) => {
     RouteManager.get('users', function () {}).as('listUsers')
 
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.route('listUsers')
       response.end()
     })
@@ -340,7 +342,7 @@ test.group('Response', (group) => {
     RouteManager.get('users', 'UserController.index')
 
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.route('UserController.index')
       response.end()
     })
@@ -350,7 +352,7 @@ test.group('Response', (group) => {
 
   test('redirect to the string when unable to resolve route', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.route('UserController.index')
       response.end()
     })
@@ -361,7 +363,7 @@ test.group('Response', (group) => {
     RouteManager.get('users/:id', 'UserController.show')
 
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.route('UserController.show', { id: 2 })
       response.end()
     })
@@ -371,7 +373,7 @@ test.group('Response', (group) => {
 
   test('redirect with params', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.redirect('users', true)
       response.end()
     })
@@ -381,7 +383,7 @@ test.group('Response', (group) => {
 
   test('throw abort exception when abortIf expression is truthy', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       try {
         response.abortIf(true, 500, 'Aborted')
       } catch (error) {
@@ -400,7 +402,7 @@ test.group('Response', (group) => {
 
   test('throw abort exception with default body and status', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       try {
         response.abortIf(true)
       } catch (error) {
@@ -419,7 +421,7 @@ test.group('Response', (group) => {
 
   test('evaluate expression when expression is a function', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       try {
         response.abortIf(function () { return true })
       } catch (error) {
@@ -438,7 +440,7 @@ test.group('Response', (group) => {
 
   test('do not throw exception when expression is not truthy', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       try {
         response.abortIf(function () { return false })
       } catch (error) {
@@ -455,7 +457,7 @@ test.group('Response', (group) => {
 
   test('throw abort exception when abortUnless expression is falsy', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       try {
         response.abortUnless(false, 500, 'Aborted')
       } catch (error) {
@@ -474,7 +476,7 @@ test.group('Response', (group) => {
 
   test('throw abort exception with default body and status', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       try {
         response.abortUnless(false)
       } catch (error) {
@@ -493,7 +495,7 @@ test.group('Response', (group) => {
 
   test('evaluate expression when expression is a function', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       try {
         response.abortUnless(function () { return false })
       } catch (error) {
@@ -512,7 +514,7 @@ test.group('Response', (group) => {
 
   test('do not throw exception when expression is not falsy', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       try {
         response.abortUnless(function () { return true })
       } catch (error) {
@@ -529,8 +531,8 @@ test.group('Response', (group) => {
 
   test('do not set etag when set as false', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
-      response.send('hello world', { ignoreEtag: true })
+      const response = new Response(new Request(req, res), new Config())
+      response.send('hello world', false)
       response.end()
     })
 
@@ -542,7 +544,7 @@ test.group('Response', (group) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
       config.set('app.http.etag', false)
-      const response = new Response(req, res, config)
+      const response = new Response(new Request(req, res), config)
       response.send('hello world')
       response.end()
     })
@@ -554,7 +556,8 @@ test.group('Response', (group) => {
   test('fallback etag to true', async (assert) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
-      const response = new Response(req, res, config)
+      config.set('app.http.etag', true)
+      const response = new Response(new Request(req, res), config)
       response.send('hello world')
       response.end()
     })
@@ -565,9 +568,9 @@ test.group('Response', (group) => {
 
   test('do not set etag when set as false in explicit mode', async (assert) => {
     const server = http.createServer((req, res) => {
-      const response = new Response(req, res, new Config())
+      const response = new Response(new Request(req, res), new Config())
       response.implicitEnd = false
-      response.send('hello world', { ignoreEtag: true })
+      response.send('hello world', false)
     })
 
     const res = await supertest(server).get('/').expect(200)
@@ -578,7 +581,7 @@ test.group('Response', (group) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
       config.set('app.http.etag', false)
-      const response = new Response(req, res, config)
+      const response = new Response(new Request(req, res), config)
       response.implicitEnd = false
       response.send('hello world')
     })
@@ -590,12 +593,121 @@ test.group('Response', (group) => {
   test('fallback etag to true in explicit mode', async (assert) => {
     const server = http.createServer((req, res) => {
       const config = new Config()
-      const response = new Response(req, res, config)
+      config.set('app.http.etag', true)
+      const response = new Response(new Request(req, res), config)
       response.implicitEnd = false
       response.send('hello world')
     })
 
     const res = await supertest(server).get('/').expect(200)
     assert.property(res.headers, 'etag')
+  })
+
+  test('send 204 when response body is null', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(new Request(req, res), new Config())
+      response.send(null)
+      response.end()
+    })
+
+    await supertest(server).get('/').expect(204)
+  })
+
+  test('send empty response for HEAD request', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(new Request(req, res), new Config())
+      response.send({ username: 'virk' })
+      response.end()
+    })
+
+    const { body } = await supertest(server).head('/')
+    assert.deepEqual(body, {})
+  })
+
+  test('set response body empty when request is fresh', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const resourceEtag = etag('hello world')
+      req.headers['if-none-match'] = resourceEtag
+
+      const config = new Config()
+      config.set('app.http.etag', true)
+
+      const response = new Response(new Request(req, res), config)
+      response.send('hello world')
+      response.end()
+    })
+
+    await supertest(server).get('/').expect(304)
+  })
+
+  test('return exact response when etag is disabled', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const resourceEtag = etag('hello world')
+      req.headers['if-none-match'] = resourceEtag
+
+      const response = new Response(new Request(req, res), new Config())
+      response.send('hello world')
+      response.end()
+    })
+
+    await supertest(server).get('/').expect(200)
+  })
+
+  test('do not generate etag for intentional 400 status code', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const config = new Config()
+      config.set('app.http.etag', true)
+
+      const response = new Response(new Request(req, res), config)
+      response.notFound('Not found')
+      response.end()
+    })
+
+    const { headers } = await supertest(server).get('/').expect(404)
+    assert.notProperty(headers, 'etag')
+  })
+
+  test('generate etag when using description methods', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(new Request(req, res), new Config())
+      response.ok('Received', true)
+      response.end()
+    })
+
+    const { headers } = await supertest(server).get('/').expect(200)
+    assert.property(headers, 'etag')
+  })
+
+  test('do not generate etag for POST request', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(new Request(req, res), new Config())
+      response.ok('Received', true)
+      response.end()
+    })
+
+    const { headers } = await supertest(server).post('/').expect(200)
+    assert.notProperty(headers, 'etag')
+  })
+
+  test('do not generate etag for PUT request', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(new Request(req, res), new Config())
+      response.ok('Received', true)
+      response.end()
+    })
+
+    const { headers } = await supertest(server).put('/').expect(200)
+    assert.notProperty(headers, 'etag')
+  })
+
+  test('generate etag using json method', async (assert) => {
+    const server = http.createServer((req, res) => {
+      const response = new Response(new Request(req, res), new Config())
+      response.json({ username: 'virk' }, true)
+      response.end()
+    })
+
+    const { headers } = await supertest(server).get('/').expect('content-type', 'application/json; charset=utf-8').expect(200)
+    assert.property(headers, 'etag')
   })
 })

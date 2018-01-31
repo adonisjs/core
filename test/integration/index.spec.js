@@ -18,7 +18,5 @@ process.env.PORT = '3333'
 setup()
 .then(() => {
   requireAll(path.join(__dirname, './specs'))
-  const Server = use('Server')
-  Server.listen(process.env.HOST, process.env.PORT)
 })
 .catch(console.log)

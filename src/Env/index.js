@@ -57,6 +57,18 @@ class Env {
     }
   }
 
+  /**
+   * Replacing dynamic values inside .env file
+   *
+   * @method _interpolate
+   *
+   * @param  {String}     env
+   * @param  {Object}     envConfig
+   *
+   * @return {String}
+   *
+   * @private
+   */
   _interpolate (env, envConfig) {
     const matches = env.match(/\$([a-zA-Z0-9_]+)|\${([a-zA-Z0-9_]+)}/g) || []
     _.each(matches, (match) => {

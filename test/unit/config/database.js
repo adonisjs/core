@@ -10,9 +10,5 @@ module.exports = {
   sqlite: {
     client: 'sqlite'
   },
-  mysqlProduction: 'self::database.mysql',
-  mysqlStaging: {
-    connection: 'self::database.mysql.connection'
-  },
   connection: false
 }
