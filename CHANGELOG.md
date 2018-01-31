@@ -1,3 +1,33 @@
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/adonisjs/adonis-framework/compare/v4.0.30...v5.0.0) (2018-01-31)
+
+
+### Bug Fixes
+
+* **exception:** cleanup logic around exception handling ([b10e6f7](https://github.com/adonisjs/adonis-framework/commit/b10e6f7)), closes [#718](https://github.com/adonisjs/adonis-framework/issues/718)
+* **logger:** logger.level should update the driver level ([2d8f9f3](https://github.com/adonisjs/adonis-framework/commit/2d8f9f3)), closes [#760](https://github.com/adonisjs/adonis-framework/issues/760)
+* **logger:** logger.level should update the driver level ([9fd6b49](https://github.com/adonisjs/adonis-framework/commit/9fd6b49)), closes [#760](https://github.com/adonisjs/adonis-framework/issues/760)
+* **package:** lock packages ([67db34b](https://github.com/adonisjs/adonis-framework/commit/67db34b))
+* **package:** update dotenv to version 5.0.0 ([#781](https://github.com/adonisjs/adonis-framework/issues/781)) ([8b58ee8](https://github.com/adonisjs/adonis-framework/commit/8b58ee8))
+* **Server:** call .send when ending response from controller ([11cf1ec](https://github.com/adonisjs/adonis-framework/commit/11cf1ec))
+
+
+### Features
+
+* **config:** remove self reference config support ([9239267](https://github.com/adonisjs/adonis-framework/commit/9239267))
+
+
+### Performance Improvements
+
+* **Server:** parse middleware when registering them ([5423b70](https://github.com/adonisjs/adonis-framework/commit/5423b70))
+
+
+### BREAKING CHANGES
+
+* **exception:** `Exception.bind` or `Exception.handle('*')` will stop working
+
+
+
 <a name="4.0.31"></a>
 ## [4.0.31](https://github.com/adonisjs/adonis-framework/compare/v4.0.30...v4.0.31) (2018-01-19)
 
