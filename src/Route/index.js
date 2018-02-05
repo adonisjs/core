@@ -115,14 +115,22 @@ class Route extends Macroable {
     this._validateHandler(handler)
 
     route = `/${route.replace(/^\/|\/$/g, '')}`
+
+    /**
+     * Private properties
+     */
     this._route = route === '/*' ? '/(.*)' : route
-    this._verbs = verbs
-    this._handler = handler
-    this._name = route
-    this._domain = null
     this._keys = []
-    this._middleware = []
-    this._domainKeys = []
+
+    /**
+     * Public properties
+     */
+    this.verbs = verbs
+    this.handler = handler
+    this.name = route
+    this.forDomain = null
+    this.middlewareList = []
+    this.domainKeys = []
   }
 
   /**
@@ -153,16 +161,16 @@ class Route extends Macroable {
    * @private
    */
   _getSubDomains (host) {
-    if (!this._domain) {
+    if (!this.forDomain) {
       return null
     }
 
-    const domainTokens = this._domain.exec(host)
+    const domainTokens = this.forDomain.exec(host)
     if (!domainTokens) {
       return null
     }
 
-    return _.transform(this._domainKeys, (result, key, index) => {
+    return _.transform(this.domainKeys, (result, key, index) => {
       let value = domainTokens[index + 1] || null
       result[key.name] = value
       return result
@@ -187,9 +195,9 @@ class Route extends Macroable {
    * ```
    */
   domain (domain) {
-    this._domainKeys = []
+    this.domainKeys = []
     domain = `${domain.replace(/^\/|\/$/g, '')}`
-    this._domain = pathToRegexp(domain, this._domainKeys)
+    this.forDomain = pathToRegexp(domain, this.domainKeys)
     return this
   }
 
@@ -238,7 +246,7 @@ class Route extends Macroable {
    * ```
    */
   as (name) {
-    this._name = name
+    this.name = name
     return this
   }
 
@@ -275,7 +283,7 @@ class Route extends Macroable {
    * ```
    */
   middleware (...middleware) {
-    this._middleware = this._middleware.concat(_.flatten(middleware))
+    this.middlewareList = this.middlewareList.concat(_.flatten(middleware))
     return this
   }
 
@@ -291,7 +299,7 @@ class Route extends Macroable {
    * @chainable
    */
   prependMiddleware (...middleware) {
-    this._middleware = _.flatten(middleware).concat(this._middleware)
+    this.middlewareList = _.flatten(middleware).concat(this.middlewareList)
     return this
   }
 
@@ -350,7 +358,7 @@ class Route extends Macroable {
     /**
      * Return null when verb mis-matches
      */
-    if (this._verbs.indexOf(verb) === -1) {
+    if (this.verbs.indexOf(verb) === -1) {
       return null
     }
 
@@ -358,7 +366,7 @@ class Route extends Macroable {
      * Check for matching subdomains
      */
     const subdomains = this._getSubDomains(host)
-    if (this._domain && !subdomains) {
+    if (this.forDomain && !subdomains) {
       return null
     }
 
@@ -399,11 +407,11 @@ class Route extends Macroable {
   toJSON () {
     return {
       route: this._route,
-      verbs: this._verbs,
-      handler: this._handler,
-      middleware: this._middleware,
-      name: this._name,
-      domain: this._domain
+      verbs: this.verbs,
+      handler: this.handler,
+      middleware: this.middlewareList,
+      name: this.name,
+      domain: this.forDomain
     }
   }
 }

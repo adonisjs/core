@@ -40,23 +40,23 @@ test.group('Route | Register', () => {
   test('define a simple route', (assert) => {
     const route = new Route('/', function () {})
     assert.equal(route._route, '/')
-    assert.deepEqual(route._verbs, ['HEAD', 'GET'])
-    assert.deepEqual(route._name, '/')
-    assert.deepEqual(route._middleware, [])
+    assert.deepEqual(route.verbs, ['HEAD', 'GET'])
+    assert.deepEqual(route.name, '/')
+    assert.deepEqual(route.middlewareList, [])
   })
 
   test('define route middleware', (assert) => {
     const route = new Route('/', function () {})
     const middlewareFn = function () {}
     route.middleware(middlewareFn)
-    assert.deepEqual(route._middleware, [middlewareFn])
+    assert.deepEqual(route.middlewareList, [middlewareFn])
   })
 
   test('define route middleware as an array', (assert) => {
     const route = new Route('/', function () {})
     const middlewareFn = function () {}
     route.middleware([middlewareFn])
-    assert.deepEqual(route._middleware, [middlewareFn])
+    assert.deepEqual(route.middlewareList, [middlewareFn])
   })
 
   test('add middleware multiple times', (assert) => {
@@ -65,7 +65,7 @@ test.group('Route | Register', () => {
     route
       .middleware([middlewareFn])
       .middleware([middlewareFn])
-    assert.deepEqual(route._middleware, [middlewareFn, middlewareFn])
+    assert.deepEqual(route.middlewareList, [middlewareFn, middlewareFn])
   })
 
   test('prepend middleware', (assert) => {
@@ -75,13 +75,13 @@ test.group('Route | Register', () => {
     route
       .middleware([middlewareFn])
       .prependMiddleware([middlewareFn1])
-    assert.deepEqual(route._middleware, [middlewareFn1, middlewareFn])
+    assert.deepEqual(route.middlewareList, [middlewareFn1, middlewareFn])
   })
 
   test('give name to a route', (assert) => {
     const route = new Route('/', function () {})
     route.as('foo')
-    assert.equal(route._name, 'foo')
+    assert.equal(route.name, 'foo')
   })
 
   test('give formats to the route', (assert) => {
@@ -118,13 +118,13 @@ test.group('Route | Register', () => {
   test('define domain', (assert) => {
     const route = new Route('/users', function () {})
     route.domain('blog.adonisjs.com')
-    assert.ok(route._domain.test('blog.adonisjs.com'))
+    assert.ok(route.forDomain.test('blog.adonisjs.com'))
   })
 
   test('define dynamic domain', (assert) => {
     const route = new Route('/posts', function () {})
     route.domain(':user.adonisjs.com')
-    assert.ok(route._domain.test('virk.adonisjs.com'))
+    assert.ok(route.forDomain.test('virk.adonisjs.com'))
   })
 
   test('add forward slash if missing', (assert) => {
@@ -252,7 +252,7 @@ test.group('Route | Group', () => {
     const route = new Route('/', function () {})
     const group = new RouteGroup([route])
     group.middleware(['foo'])
-    assert.deepEqual(route._middleware, ['foo'])
+    assert.deepEqual(route.middlewareList, ['foo'])
   })
 
   test('add formats to route via group', (assert) => {
@@ -278,8 +278,8 @@ test.group('Route | Group', () => {
     const postsRoute = new Route('/posts', function () {})
     const group = new RouteGroup([route, postsRoute])
     group.domain('blog.adonisjs.com')
-    assert.ok(route._domain.test('blog.adonisjs.com'))
-    assert.ok(postsRoute._domain.test('blog.adonisjs.com'))
+    assert.ok(route.forDomain.test('blog.adonisjs.com'))
+    assert.ok(postsRoute.forDomain.test('blog.adonisjs.com'))
   })
 })
 
@@ -385,7 +385,7 @@ test.group('Route | Resource', (group) => {
 
   test('prefix route names when a prefix name is provided', (assert) => {
     const resource = new RouteResource('users', 'UsersController', 'admin')
-    const routeNames = RouteStore.list().map((route) => route._name)
+    const routeNames = RouteStore.list().map((route) => route.name)
     assert.lengthOf(resource._routes, 7)
     assert.deepEqual(routeNames, [
       'admin.users.index',
@@ -401,7 +401,16 @@ test.group('Route | Resource', (group) => {
   test('limit routes to certain names', (assert) => {
     const resource = new RouteResource('users', 'UsersController')
     resource.only(['create', 'show'])
-    const routeNames = RouteStore.list().map((route) => route._name)
+    const routeNames = RouteStore.list().map((route) => route.name)
+    assert.lengthOf(routeNames, 2)
+    assert.lengthOf(resource._routes, 2)
+    assert.deepEqual(routeNames, ['users.create', 'users.show'])
+  })
+
+  test('limit routes using complete names', (assert) => {
+    const resource = new RouteResource('users', 'UsersController')
+    resource.only(['users.create', 'users.show'])
+    const routeNames = RouteStore.list().map((route) => route.name)
     assert.lengthOf(routeNames, 2)
     assert.lengthOf(resource._routes, 2)
     assert.deepEqual(routeNames, ['users.create', 'users.show'])
@@ -410,7 +419,7 @@ test.group('Route | Resource', (group) => {
   test('limit prefixed named routes to certain names', (assert) => {
     const resource = new RouteResource('users', 'UsersController', 'admin')
     resource.only(['create', 'show'])
-    const routeNames = RouteStore.list().map((route) => route._name)
+    const routeNames = RouteStore.list().map((route) => route.name)
     assert.lengthOf(routeNames, 2)
     assert.lengthOf(resource._routes, 2)
     assert.deepEqual(routeNames, ['admin.users.create', 'admin.users.show'])
@@ -419,7 +428,7 @@ test.group('Route | Resource', (group) => {
   test('limit resource to apiOnly routes', (assert) => {
     const resource = new RouteResource('users', 'UsersController')
     resource.apiOnly()
-    const routeNames = RouteStore.list().map((route) => route._name)
+    const routeNames = RouteStore.list().map((route) => route.name)
     assert.lengthOf(routeNames, 5)
     assert.lengthOf(resource._routes, 5)
     assert.deepEqual(routeNames, ['users.index', 'users.store', 'users.show', 'users.update', 'users.destroy'])
@@ -428,7 +437,16 @@ test.group('Route | Resource', (group) => {
   test('remove routes for given names', (assert) => {
     const resource = new RouteResource('users', 'UsersController')
     resource.except(['create', 'show'])
-    const routeNames = RouteStore.list().map((route) => route._name)
+    const routeNames = RouteStore.list().map((route) => route.name)
+    assert.lengthOf(routeNames, 5)
+    assert.lengthOf(resource._routes, 5)
+    assert.deepEqual(routeNames, ['users.index', 'users.store', 'users.edit', 'users.update', 'users.destroy'])
+  })
+
+  test('remove routes by passing complete names', (assert) => {
+    const resource = new RouteResource('users', 'UsersController')
+    resource.except(['users.create', 'users.show'])
+    const routeNames = RouteStore.list().map((route) => route.name)
     assert.lengthOf(routeNames, 5)
     assert.lengthOf(resource._routes, 5)
     assert.deepEqual(routeNames, ['users.index', 'users.store', 'users.edit', 'users.update', 'users.destroy'])
@@ -437,7 +455,7 @@ test.group('Route | Resource', (group) => {
   test('remove prefixed named routes for given names', (assert) => {
     const resource = new RouteResource('users', 'UsersController', 'admin')
     resource.except(['create', 'show'])
-    const routeNames = RouteStore.list().map((route) => route._name)
+    const routeNames = RouteStore.list().map((route) => route.name)
     assert.lengthOf(routeNames, 5)
     assert.lengthOf(resource._routes, 5)
     assert.deepEqual(routeNames, [
@@ -453,7 +471,7 @@ test.group('Route | Resource', (group) => {
     const resource = new RouteResource('users', 'UsersController')
     resource.middleware(['foo'])
     RouteStore.list().forEach((route) => {
-      assert.deepEqual(route._middleware, ['foo'])
+      assert.deepEqual(route.middlewareList, ['foo'])
     })
   })
 
@@ -461,7 +479,7 @@ test.group('Route | Resource', (group) => {
     const resource = new RouteResource('users', 'UsersController')
     resource.middleware(['foo']).middleware(['bar']).middleware('baz')
     RouteStore.list().forEach((route) => {
-      assert.deepEqual(route._middleware, ['foo', 'bar', 'baz'])
+      assert.deepEqual(route.middlewareList, ['foo', 'bar', 'baz'])
     })
   })
 
@@ -473,10 +491,10 @@ test.group('Route | Resource', (group) => {
     ]))
 
     RouteStore.list().forEach((route) => {
-      if (['users.create', 'users.edit', 'users.update', 'users.destroy'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['auth'])
+      if (['users.create', 'users.edit', 'users.update', 'users.destroy'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['auth'])
       } else {
-        assert.deepEqual(route._middleware, [])
+        assert.deepEqual(route.middlewareList, [])
       }
     })
   })
@@ -489,10 +507,10 @@ test.group('Route | Resource', (group) => {
     ]))
 
     RouteStore.list().forEach((route) => {
-      if (['users.create', 'users.edit', 'users.update', 'users.destroy'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['auth'])
+      if (['users.create', 'users.edit', 'users.update', 'users.destroy'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['auth'])
       } else {
-        assert.deepEqual(route._middleware, [])
+        assert.deepEqual(route.middlewareList, [])
       }
     })
   })
@@ -505,10 +523,10 @@ test.group('Route | Resource', (group) => {
     ]))
 
     RouteStore.list().forEach((route) => {
-      if (['users.destroy'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['auth'])
+      if (['users.destroy'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['auth'])
       } else {
-        assert.deepEqual(route._middleware, [])
+        assert.deepEqual(route.middlewareList, [])
       }
     })
   })
@@ -521,10 +539,10 @@ test.group('Route | Resource', (group) => {
     ]))
 
     RouteStore.list().forEach((route) => {
-      if (['users.create'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['auth'])
+      if (['users.create'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['auth'])
       } else {
-        assert.deepEqual(route._middleware, [])
+        assert.deepEqual(route.middlewareList, [])
       }
     })
   })
@@ -540,14 +558,14 @@ test.group('Route | Resource', (group) => {
     ]))
 
     RouteStore.list().forEach((route) => {
-      if (['users.destroy'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['auth', 'acl:superAdmin'])
-      } else if (['users.create', 'users.update'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['auth', 'acl:admin'])
-      } else if (['users.index', 'users.show'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['auth'])
+      if (['users.destroy'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['auth', 'acl:superAdmin'])
+      } else if (['users.create', 'users.update'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['auth', 'acl:admin'])
+      } else if (['users.index', 'users.show'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['auth'])
       } else {
-        assert.deepEqual(route._middleware, [])
+        assert.deepEqual(route.middlewareList, [])
       }
     })
   })
@@ -563,12 +581,12 @@ test.group('Route | Resource', (group) => {
     ]))
 
     RouteStore.list().forEach((route) => {
-      if (['users.store'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['auth', 'addonValidator:User'])
-      } else if (['users.destroy'].indexOf(route._name) > -1) {
-        assert.deepEqual(route._middleware, ['role:admin', 'auth', 'addonValidator:User'])
+      if (['users.store'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['auth', 'addonValidator:User'])
+      } else if (['users.destroy'].indexOf(route.name) > -1) {
+        assert.deepEqual(route.middlewareList, ['role:admin', 'auth', 'addonValidator:User'])
       } else {
-        assert.deepEqual(route._middleware, ['auth'])
+        assert.deepEqual(route.middlewareList, ['auth'])
       }
     })
   })
@@ -583,56 +601,56 @@ test.group('Route | Manager', (group) => {
     const route = RouteManager.get('/', function () {})
     assert.instanceOf(route, Route)
     assert.lengthOf(RouteStore.list(), 1)
-    assert.deepEqual(route._verbs, ['HEAD', 'GET'])
+    assert.deepEqual(route.verbs, ['HEAD', 'GET'])
   })
 
   test('create a route with post verb', (assert) => {
     const route = RouteManager.post('/', function () {})
     assert.instanceOf(route, Route)
     assert.lengthOf(RouteStore.list(), 1)
-    assert.deepEqual(route._verbs, ['POST'])
+    assert.deepEqual(route.verbs, ['POST'])
   })
 
   test('create a route with put verb', (assert) => {
     const route = RouteManager.put('/', function () {})
     assert.instanceOf(route, Route)
     assert.lengthOf(RouteStore.list(), 1)
-    assert.deepEqual(route._verbs, ['PUT'])
+    assert.deepEqual(route.verbs, ['PUT'])
   })
 
   test('create a route with patch verb', (assert) => {
     const route = RouteManager.patch('/', function () {})
     assert.instanceOf(route, Route)
     assert.lengthOf(RouteStore.list(), 1)
-    assert.deepEqual(route._verbs, ['PATCH'])
+    assert.deepEqual(route.verbs, ['PATCH'])
   })
 
   test('create a route with delete verb', (assert) => {
     const route = RouteManager.delete('/', function () {})
     assert.instanceOf(route, Route)
     assert.lengthOf(RouteStore.list(), 1)
-    assert.deepEqual(route._verbs, ['DELETE'])
+    assert.deepEqual(route.verbs, ['DELETE'])
   })
 
   test('create a route for all verbs', (assert) => {
     const route = RouteManager.any('/', function () {})
     assert.instanceOf(route, Route)
     assert.lengthOf(RouteStore.list(), 1)
-    assert.deepEqual(route._verbs, ['HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+    assert.deepEqual(route.verbs, ['HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
   })
 
   test('create route with inbuilt handler to render a view', (assert) => {
     const route = RouteManager.on('/').render('welcome')
     assert.instanceOf(route, Route)
     assert.lengthOf(RouteStore.list(), 1)
-    assert.isFunction(route._handler)
+    assert.isFunction(route.handler)
   })
 
   test('define middleware on route renderer', (assert) => {
     const route = RouteManager.on('/').render('welcome').middleware('foo')
     assert.instanceOf(route, Route)
     assert.lengthOf(RouteStore.list(), 1)
-    assert.deepEqual(route._middleware, ['foo'])
+    assert.deepEqual(route.middlewareList, ['foo'])
   })
 
   test('resolve a pre-define route', (assert) => {
@@ -662,8 +680,8 @@ test.group('Route | Manager', (group) => {
     RouteManager.group(function () {
       RouteManager.get('/', function () {}).middleware('bar')
     }).middleware('foo')
-    assert.equal(RouteStore.list()[0]._middleware[0], 'foo')
-    assert.equal(RouteStore.list()[0]._middleware[1], 'bar')
+    assert.equal(RouteStore.list()[0].middlewareList[0], 'foo')
+    assert.equal(RouteStore.list()[0].middlewareList[1], 'bar')
   })
 
   test('throw exception when nested groups are created', (assert) => {
@@ -684,7 +702,7 @@ test.group('Route | Manager', (group) => {
       RouteManager.resource('users', 'UsersController')
     })
     assert.lengthOf(RouteStore.list(), 7)
-    const routeNames = RouteStore.list().map((route) => route._name)
+    const routeNames = RouteStore.list().map((route) => route.name)
     assert.deepEqual(routeNames, [
       'admin.users.index',
       'admin.users.create',
@@ -698,7 +716,7 @@ test.group('Route | Manager', (group) => {
 
   test('return list of routes', (assert) => {
     RouteManager.resource('users', 'UsersController')
-    const routeNames = RouteManager.list().map((route) => route._name)
+    const routeNames = RouteManager.list().map((route) => route.name)
     assert.deepEqual(routeNames, [
       'users.index',
       'users.create',
@@ -842,6 +860,6 @@ test.group('Route | Extend', (group) => {
       return this.setHandler(fn)
     })
     const route = RouteManager.on('here').redirect('there')
-    assert.equal(route._handler, fn)
+    assert.equal(route.handler, fn)
   })
 })

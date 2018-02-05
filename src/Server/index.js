@@ -641,9 +641,9 @@ class Server {
       }
 
       const route = this._getRoute(ctx)
-      return this._executeRouteHandler(route.route._middleware, ctx, {
+      return this._executeRouteHandler(route.route.middlewareList, ctx, {
         namespace: this._routeHandler.bind(this),
-        params: [route.route._handler]
+        params: [route.route.handler]
       })
     })
     .then(() => {

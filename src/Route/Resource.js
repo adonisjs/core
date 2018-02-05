@@ -12,6 +12,7 @@
 const _ = require('lodash')
 const Macroable = require('macroable')
 const GE = require('@adonisjs/generic-exceptions')
+
 const Route = require('./index')
 const RouteStore = require('./Store')
 
@@ -25,10 +26,11 @@ const RouteStore = require('./Store')
  * @constructor
  */
 class RouteResource extends Macroable {
-  constructor (resource, controller, namePrefix = null) {
+  constructor (resource, controller, groupPrefix = null) {
     super()
     this._validateResourceName(resource)
     this._validateController(controller)
+
     this._resourceUrl = this._makeResourceUrl(resource)
     this._controller = controller
 
@@ -39,15 +41,8 @@ class RouteResource extends Macroable {
      *
      * @type {String}
      */
-    this._namePrefix = namePrefix ? `${namePrefix}.${resource}` : resource
+    this.prefix = groupPrefix ? `${groupPrefix}.${resource}` : resource
 
-    /**
-     * Keeping a local copy of routes, so that filter through
-     * it and remove the actual routes from the routes store.
-     * The filteration is done via `except` and `only` methods.
-     *
-     * @type {Array}
-     */
     this._routes = []
     this._addBasicRoutes()
   }
@@ -119,19 +114,18 @@ class RouteResource extends Macroable {
    *
    * @method _addRoute
    *
-   * @param  {String}  name
+   * @param  {String}  action
    * @param  {String}  route
    * @param  {Array}   verbs
    *
    * @private
    */
-  _addRoute (name, route, verbs = ['HEAD', 'GET']) {
-    const routeInstance = new Route(route, `${this._controller}.${name}`, verbs)
-
-    routeInstance.as(`${this._namePrefix}.${name}`)
+  _addRoute (action, route, verbs = ['HEAD', 'GET']) {
+    const routeInstance = new Route(route, `${this._controller}.${action}`, verbs)
+    routeInstance.as(`${this.prefix}.${action}`)
 
     RouteStore.add(routeInstance)
-    this._routes.push({name, routeInstance})
+    this._routes.push({ action, routeInstance })
   }
 
   /**
@@ -154,18 +148,20 @@ class RouteResource extends Macroable {
   }
 
   /**
-   * Return dictionary of _routes
+   * Matches the route against an array of names. It will
+   * match the route action and it's original name
    *
-   * @method _getRoutesDict
+   * @method _matchName
+   *
+   * @param  {Route}   route
+   * @param  {Array}   names
+   *
+   * @return {Boolean}
    *
    * @private
    */
-  _getRoutesDict () {
-    return this
-      ._routes
-      .reduce((map, { routeInstance }) => {
-        return Object.assign({}, map, { [routeInstance._name]: routeInstance })
-      }, {})
+  _matchName (route, names) {
+    return names.indexOf(route.action) > -1 || names.indexOf(route.routeInstance.name) > -1
   }
 
   /**
@@ -187,7 +183,7 @@ class RouteResource extends Macroable {
    */
   only (names) {
     _.remove(this._routes, (route) => {
-      if (names.indexOf(route.name) === -1) {
+      if (!this._matchName(route, names)) {
         RouteStore.remove(route.routeInstance)
         return true
       }
@@ -213,7 +209,7 @@ class RouteResource extends Macroable {
    */
   except (names) {
     _.remove(this._routes, (route) => {
-      if (names.indexOf(route.name) > -1) {
+      if (this._matchName(route, names)) {
         RouteStore.remove(route.routeInstance)
         return true
       }
@@ -280,22 +276,17 @@ class RouteResource extends Macroable {
       [['*'], _.castArray(middleware)]
     ])
 
-    const routesByName = this._getRoutesDict()
-    const routeNames = Object.keys(routesByName)
+    for (let [routeNamesList, middlewareList] of middlewareMap) {
+      routeNamesList = _.castArray(routeNamesList)
+      middlewareList = _.castArray(middlewareList)
 
-    // go through list of the routes
-    // and replace '*' with the names of resource routes
-    const expandRoutesList = (list, name) => list.concat(name === '*' ? routeNames : name)
-
-    for (const [routeNamesList, middlewareList] of middlewareMap) {
-      _.castArray(routeNamesList)
-        .reduce(expandRoutesList, [])
-        .forEach((routeName) => {
-          if (!routesByName[routeName]) {
-            throw new Error(`${routeName} route is not registered with this resource`)
-          }
-          routesByName[routeName].middleware(_.castArray(middlewareList))
-        })
+      _.each(this._routes, (route) => {
+        if (routeNamesList[0] === '*') {
+          route.routeInstance.middleware(middlewareList)
+        } else if (this._matchName(route, routeNamesList)) {
+          route.routeInstance.middleware(middlewareList)
+        }
+      })
     }
 
     return this
