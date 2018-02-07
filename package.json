@@ -50,7 +50,7 @@
     "edge.js": "^1.1.4",
     "eventemitter2": "^5.0.1",
     "haye": "^2.0.1",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.5",
     "macroable": "^1.0.0",
     "node-cookie": "^2.1.0",
     "node-exceptions": "^3.0.0",
