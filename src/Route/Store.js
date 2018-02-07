@@ -140,10 +140,10 @@ class RouteStore {
    */
   find (routeNameOrHandler, domain) {
     return _.find(this._routes, (route) => {
-      const isName = () => route._name === routeNameOrHandler
+      const isName = () => route.name === routeNameOrHandler
       const isRoute = () => route._route === routeNameOrHandler
-      const isHandler = () => route._handler === routeNameOrHandler
-      const isDomain = domain && route._domain && route._domain.test(domain)
+      const isHandler = () => route.handler === routeNameOrHandler
+      const isDomain = domain && route.forDomain && route.forDomain.test(domain)
 
       return domain
       ? (isName() && isDomain) || (isHandler() && isDomain) || (isRoute() && isDomain)

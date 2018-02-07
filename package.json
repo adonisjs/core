@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/framework",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "edge.js": "^1.1.4",
     "eventemitter2": "^5.0.1",
     "haye": "^2.0.1",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.5",
     "macroable": "^1.0.0",
     "node-cookie": "^2.1.0",
     "node-exceptions": "^3.0.0",
