@@ -485,4 +485,18 @@ test.group('Ioc', function () {
     assert.deepEqual(ioc.makeFunc('Foo\\.Baz.handle').instance, obj)
     assert.isFunction(ioc.makeFunc('Foo\\.Baz.handle').method)
   })
+
+  test('get path to the namespace file for a given directory', (assert) => {
+    const ioc = new Ioc()
+    ioc.autoload(path.join(__dirname, './app'), 'App')
+    const hookPath = ioc.getPath('App/Hook')
+    assert.equal(hookPath, path.join(__dirname, './app/Hook'))
+  })
+
+  test('throw exception when namespace is not part of autoloads', (assert) => {
+    const ioc = new Ioc()
+    ioc.autoload(path.join(__dirname, './app'), 'App')
+    const hookPath = () => ioc.getPath('Foo/Hook')
+    assert.throw(hookPath, 'E_CANNOT_GET_NAMESPACE_PATH: Cannot get path, since Foo/Hook is not a valid autoloaded namespace')
+  })
 })

@@ -80,6 +80,25 @@ class Resolver {
   }
 
   /**
+   * Returns the directory name from the pre registered directories
+   *
+   * @method _getDirectory
+   *
+   * @return {String}
+   *
+   * @private
+   */
+  _getDirectory () {
+    if (!this._directories[this._forDirectory]) {
+      throw GE
+        .RuntimeException
+        .invoke(`Cannot translate binding, since ${this._forDirectory} is not registered under directories`)
+    }
+
+    return this._directories[this._forDirectory]
+  }
+
+  /**
    * Makes the correct namespace for a binding. Based upon
    * the app namespace and the directory for which the
    * namespace should be created.
@@ -93,12 +112,7 @@ class Resolver {
    * @private
    */
   _makeAppNamespace (binding) {
-    if (!this._directories[this._forDirectory]) {
-      throw GE
-        .RuntimeException
-        .invoke(`Cannot translate binding, since ${this._forDirectory} is not registered under directories`)
-    }
-    const basePath = `${this._appNamespace}/${this._directories[this._forDirectory]}`
+    const basePath = `${this._appNamespace}/${this._getDirectory()}`
     return `${basePath}/${binding.replace(basePath, '')}`
   }
 
@@ -157,6 +171,22 @@ class Resolver {
     }
 
     return this._forDirectory ? this._normalize(this._makeAppNamespace(binding)) : this._normalize(binding)
+  }
+
+  /**
+   * Returns path for a given namespace. This method only works
+   * for autoloaded files and not providers.
+   *
+   * Also existence of a the file on the given path is not guaranteed.
+   *
+   * @method getPath
+   *
+   * @param  {String} binding
+   *
+   * @return {String}
+   */
+  getPath (binding) {
+    return this.Ioc.getPath(this.translate(binding))
   }
 
   /**
