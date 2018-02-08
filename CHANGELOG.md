@@ -1,3 +1,13 @@
+<a name="5.0.4"></a>
+## [5.0.4](https://github.com/adonisjs/adonis-framework/compare/v5.0.3...v5.0.4) (2018-02-08)
+
+
+### Bug Fixes
+
+* **server:** allow named middleware to be used multiple times ([b1d04ef](https://github.com/adonisjs/adonis-framework/commit/b1d04ef))
+
+
+
 <a name="5.0.3"></a>
 ## [5.0.3](https://github.com/adonisjs/adonis-framework/compare/v5.0.2...v5.0.3) (2018-02-08)
 
