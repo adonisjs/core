@@ -13,7 +13,6 @@ const haye = require('haye')
 const http = require('http')
 const _ = require('lodash')
 const { resolver, ioc } = require('@adonisjs/fold')
-const path = require('path')
 const debug = require('debug')('adonis:framework')
 const GE = require('@adonisjs/generic-exceptions')
 const Middleware = require('co-compose')
@@ -124,9 +123,7 @@ class Server {
    * @private
    */
   _getExceptionHandlerNamespace () {
-    const appRoot = this.Helpers.appRoot()
-    const exceptionsDir = this.Helpers.directories['exceptions']
-    const exceptionHandlerFile = path.join(appRoot, exceptionsDir, 'Handler.js')
+    const exceptionHandlerFile = resolver.forDir('exceptions').getPath('Handler.js')
 
     try {
       fs.accessSync(exceptionHandlerFile, fs.constants.R_OK)

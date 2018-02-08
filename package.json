@@ -25,8 +25,8 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "^4.0.5",
-    "@adonisjs/sink": "^1.0.14",
+    "@adonisjs/fold": "^4.0.6",
+    "@adonisjs/sink": "^1.0.15",
     "clear-require": "^2.0.0",
     "cookie-signature": "^1.1.0",
     "coveralls": "^3.0.0",
