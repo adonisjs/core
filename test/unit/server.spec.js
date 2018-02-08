@@ -314,7 +314,7 @@ test.group('Server | Calls', (group) => {
 
   group.beforeEach(() => {
     this.exception = Exception
-    this.server = new Server(Context, Route, new Logger(), this.exception, new Helpers(path.join(__dirname, 'app')))
+    this.server = new Server(Context, Route, new Logger(), this.exception, new Helpers(__dirname))
     this.server.bindExceptionHandler()
 
     ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => {

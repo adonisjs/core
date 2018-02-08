@@ -126,7 +126,7 @@ class Server {
   _getExceptionHandlerNamespace () {
     const appRoot = this.Helpers.appRoot()
     const exceptionsDir = this.Helpers.directories['exceptions']
-    const exceptionHandlerFile = path.join(appRoot, exceptionsDir, 'Handler.js')
+    const exceptionHandlerFile = path.join(appRoot, 'app', exceptionsDir, 'Handler.js')
 
     try {
       fs.accessSync(exceptionHandlerFile, fs.constants.R_OK)
