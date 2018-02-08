@@ -12,10 +12,12 @@
 const haye = require('haye')
 const http = require('http')
 const _ = require('lodash')
-const { resolver } = require('@adonisjs/fold')
+const { resolver, ioc } = require('@adonisjs/fold')
+const path = require('path')
 const debug = require('debug')('adonis:framework')
 const GE = require('@adonisjs/generic-exceptions')
 const Middleware = require('co-compose')
+const fs = require('fs')
 
 /**
  * Error message when named middleware is not defined
@@ -72,13 +74,15 @@ const duplicateMiddlewareWarning = (type, middleware) => {
  * @class Server
  */
 class Server {
-  constructor (Context, Route, Logger, Exception) {
+  constructor (Context, Route, Logger, Exception, Helpers) {
     this.Context = Context
     this.Route = Route
     this.Logger = Logger
     this.Exception = Exception
+    this.Helpers = Helpers
 
     this._httpInstance = null
+    this._exceptionHandlerNamespace = null
 
     /**
      * Middleware store
@@ -88,12 +92,6 @@ class Server {
       server: [],
       named: {}
     }
-
-    /**
-     * Exception handler class to respond
-     * to an exception.
-     */
-    this._ExceptionHandler = null
   }
 
   /**
@@ -113,6 +111,28 @@ class Server {
   _ensureRightMiddlewareType (middleware) {
     if (typeof (middleware) !== 'string' && typeof (middleware) !== 'function') {
       throw GE.RuntimeException.invoke(invalidMiddlewareType(), 500, 'E_INVALID_MIDDLEWARE_TYPE')
+    }
+  }
+
+  /**
+   * Returns the exception handler to handle the HTTP exceptions
+   *
+   * @method _getExceptionHandlerNamespace
+   *
+   * @return {Class}
+   *
+   * @private
+   */
+  _getExceptionHandlerNamespace () {
+    const appRoot = this.Helpers.appRoot()
+    const exceptionsDir = this.Helpers.directories['exceptions']
+    const exceptionHandlerFile = path.join(appRoot, exceptionsDir, 'Handler.js')
+
+    try {
+      fs.accessSync(exceptionHandlerFile, fs.constants.R_OK)
+      return resolver.forDir('exceptions').translate('Handler')
+    } catch (error) {
+      return 'Adonis/Exceptions/BaseExceptionHandler'
     }
   }
 
@@ -429,7 +449,14 @@ class Server {
     error.status = error.status || 500
 
     try {
-      const handler = new this._ExceptionHandler()
+      const handler = ioc.make(ioc.use(this._exceptionHandlerNamespace))
+
+      if (typeof (handler.handle) !== 'function' || typeof (handler.report) !== 'function') {
+        throw GE
+          .RuntimeException
+          .invoke(`${this._exceptionHandlerNamespace} class must have handle and report methods on it`)
+      }
+
       handler.report(error, { request: ctx.request, auth: ctx.auth })
       await handler.handle(error, ctx)
     } catch (error) {
@@ -584,22 +611,6 @@ class Server {
   }
 
   /**
-   * Sets the exception handler to be used for handling exceptions
-   *
-   * @method setExceptionHandler
-   *
-   * @param  {Class}            handler
-   *
-   * @return {void}
-   */
-  setExceptionHandler (handler) {
-    if (typeof (handler.prototype.handle) !== 'function' || typeof (handler.prototype.report) !== 'function') {
-      throw GE.RuntimeException.invoke('Http exception handler must have handle and report methods on it')
-    }
-    this._ExceptionHandler = handler
-  }
-
-  /**
    * Handle method executed for each HTTP request and handles
    * the request lifecycle by performing following operations.
    *
@@ -657,6 +668,23 @@ class Server {
   }
 
   /**
+   * Binds the exception handler to be used for handling HTTP
+   * exceptions. If `namespace` is not provided, the server
+   * will choose the conventional namespace
+   *
+   * @method bindExceptionHandler
+   *
+   * @param  {String}             [namespace]
+   *
+   * @chainable
+   */
+  bindExceptionHandler (namespace) {
+    this._exceptionHandlerNamespace = namespace || this._getExceptionHandlerNamespace()
+    debug('using %s binding to handle exceptions', this._exceptionHandlerNamespace)
+    return this
+  }
+
+  /**
    * Listen on given host and port.
    *
    * @method listen
@@ -668,6 +696,10 @@ class Server {
    * @return {Object}
    */
   listen (host = 'localhost', port = 3333, callback) {
+    if (!this._exceptionHandlerNamespace) {
+      this.bindExceptionHandler()
+    }
+
     this.Logger.info('serving app on http://%s:%s', host, port)
     return this.getInstance().listen(port, host, callback)
   }

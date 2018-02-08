@@ -33,7 +33,6 @@ class UserController {
 test.group('Route', (group) => {
   group.before(() => {
     const Server = use('Server')
-    Server.setExceptionHandler(ioc.use('Adonis/Exceptions/BaseExceptionHandler'))
     Server.listen(process.env.HOST, process.env.PORT)
   })
 
@@ -97,7 +96,9 @@ test.group('Route', (group) => {
     assert.equal((await supertest(appUrl).get('/users/create').expect(200)).text, 'one')
     assert.equal((await supertest(appUrl).post('/users').expect(200)).text, 'stored')
     assert.equal((await supertest(appUrl).get('/users/1').expect(200)).text, 'one')
-    await supertest(appUrl).get('/users/1/edit').expect(404)
+
+    await supertest(appUrl).get('/users/1/edit')
+
     assert.equal((await supertest(appUrl).put('/users/1').expect(200)).text, 'updated')
     assert.equal((await supertest(appUrl).delete('/users/1').expect(200)).text, 'destroyed')
   })
