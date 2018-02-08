@@ -11,7 +11,7 @@
 
 const test = require('japa')
 const http = require('http')
-const { setupResolver, Config, Logger, Helpers } = require('@adonisjs/sink')
+const { setupResolver, Config, Logger } = require('@adonisjs/sink')
 const { ioc } = require('@adonisjs/fold')
 const supertest = require('supertest')
 const NE = require('node-exceptions')
@@ -30,10 +30,11 @@ const BaseExceptionHandler = require('../../src/Exception/BaseHandler')
 test.group('Server | Middleware', (group) => {
   group.before(() => {
     setupResolver()
+    ioc.autoload(path.join(__dirname, 'app'), 'App')
   })
 
   group.beforeEach(() => {
-    this.server = new Server(Context, Route, new Logger(), this.exception, new Helpers(__dirname))
+    this.server = new Server(Context, Route, new Logger(), this.exception)
     this.server.bindExceptionHandler()
   })
 
@@ -310,11 +311,12 @@ test.group('Server | Calls', (group) => {
     }, true)
 
     setupResolver()
+    ioc.autoload(path.join(__dirname, 'app'), 'App')
   })
 
   group.beforeEach(() => {
     this.exception = Exception
-    this.server = new Server(Context, Route, new Logger(), this.exception, new Helpers(path.join(__dirname, 'app')))
+    this.server = new Server(Context, Route, new Logger(), this.exception)
     this.server.bindExceptionHandler()
 
     ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => {
@@ -592,7 +594,7 @@ test.group('Server | Calls', (group) => {
     const app = http.createServer(this.server.handle.bind(this.server))
 
     const res = await supertest(app).get('/').expect(500)
-    assert.equal(res.text.split('\n')[0], `Error: Cannot find module 'App/Controllers/Http/HomeController'`)
+    assert.equal(res.text.split('\n')[0], `Error: Cannot find module '${path.join(__dirname, 'app', 'Controllers', 'Http', 'HomeController')}'`)
   })
 
   test('throw exception when controller method does not exists', async (assert) => {

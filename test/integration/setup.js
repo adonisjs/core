@@ -14,7 +14,10 @@ module.exports = function () {
   ioc.bind('Adonis/Src/Helpers', function () {
     return new Helpers(path.join(__dirname, './'))
   })
+
   setupResolver()
+  ioc.autoload(path.join(__dirname), 'App')
+
   return new Promise((resolve, reject) => {
     registrar
       .providers(providers)

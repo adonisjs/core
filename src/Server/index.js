@@ -13,7 +13,6 @@ const haye = require('haye')
 const http = require('http')
 const _ = require('lodash')
 const { resolver, ioc } = require('@adonisjs/fold')
-const path = require('path')
 const debug = require('debug')('adonis:framework')
 const GE = require('@adonisjs/generic-exceptions')
 const Middleware = require('co-compose')
@@ -74,12 +73,11 @@ const duplicateMiddlewareWarning = (type, middleware) => {
  * @class Server
  */
 class Server {
-  constructor (Context, Route, Logger, Exception, Helpers) {
+  constructor (Context, Route, Logger, Exception) {
     this.Context = Context
     this.Route = Route
     this.Logger = Logger
     this.Exception = Exception
-    this.Helpers = Helpers
 
     this._httpInstance = null
     this._exceptionHandlerNamespace = null
@@ -124,9 +122,7 @@ class Server {
    * @private
    */
   _getExceptionHandlerNamespace () {
-    const appRoot = this.Helpers.appRoot()
-    const exceptionsDir = this.Helpers.directories['exceptions']
-    const exceptionHandlerFile = path.join(appRoot, exceptionsDir, 'Handler.js')
+    const exceptionHandlerFile = resolver.forDir('exceptions').getPath('Handler.js')
 
     try {
       fs.accessSync(exceptionHandlerFile, fs.constants.R_OK)
