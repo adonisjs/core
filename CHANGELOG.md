@@ -1,3 +1,13 @@
+<a name="4.0.7"></a>
+## [4.0.7](https://github.com/poppinss/adonis-fold/compare/v4.0.6...v4.0.7) (2018-02-08)
+
+
+### Bug Fixes
+
+* **ioc.getPath:** normalize autoloaded paths ([a0a77bc](https://github.com/poppinss/adonis-fold/commit/a0a77bc))
+
+
+
 <a name="4.0.6"></a>
 ## [4.0.6](https://github.com/poppinss/adonis-fold/compare/v4.0.5...v4.0.6) (2018-02-08)
 
