@@ -16,5 +16,6 @@ const resolver = new (require('./src/Resolver/Manager'))(ioc)
 
 global.use = ioc.use.bind(ioc)
 global.make = ioc.make.bind(ioc)
+global.iocResolver = resolver
 
 module.exports = { ioc, ServiceProvider, registrar, resolver }
