@@ -1,3 +1,15 @@
+<a name="4.0.6"></a>
+## [4.0.6](https://github.com/poppinss/adonis-fold/compare/v4.0.5...v4.0.6) (2018-02-08)
+
+
+### Features
+
+* **ioc:** add getPath method to ioc class ([9b37695](https://github.com/poppinss/adonis-fold/commit/9b37695))
+* **resolver:** exposing resolver to globals via iocResolver ([9cc5959](https://github.com/poppinss/adonis-fold/commit/9cc5959))
+* **resolver:** resolver.getPath returns abs path to binding file ([2188ea0](https://github.com/poppinss/adonis-fold/commit/2188ea0))
+
+
+
 <a name="4.0.5"></a>
 ## [4.0.5](https://github.com/poppinss/adonis-fold/compare/v4.0.3...v4.0.5) (2017-10-29)
 
