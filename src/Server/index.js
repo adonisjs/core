@@ -246,8 +246,10 @@ class Server {
         throw GE.RuntimeException.invoke(missingNamedMiddleware(name), 500, 'E_MISSING_NAMED_MIDDLEWARE')
       }
 
-      packet.params = args
-      return packet
+      return {
+        namespace: packet.namespace,
+        params: args
+      }
     })
   }
 

@@ -978,4 +978,33 @@ test.group('Server | Calls', (group) => {
 
     assert.equal(handler, 'App/Exceptions/Handler')
   })
+
+  test('use same named middleware twice with different params', async (assert) => {
+    class AppMiddleware {
+      async handle (ctx, next, [id]) {
+        ctx.ids = ctx.ids || []
+        ctx.ids.push(id)
+        await next()
+      }
+    }
+
+    ioc.fake('Middleware/AppMiddleware', function () {
+      return new AppMiddleware()
+    })
+
+    Route.get('/', async function ({ ids }) {
+      return ids
+    })
+    .middleware('app:1')
+    .middleware('app:2')
+
+    this.server.registerNamed({
+      'app': 'Middleware/AppMiddleware'
+    })
+
+    const app = http.createServer(this.server.handle.bind(this.server))
+
+    const res = await supertest(app).get('/').expect(200)
+    assert.deepEqual(res.body, ['1', '2'])
+  })
 })
