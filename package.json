@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/fold",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
   "directories": {

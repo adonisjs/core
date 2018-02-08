@@ -247,7 +247,7 @@ class Ioc {
   _getAutoloadedPath (namespace) {
     const autoloadedNamespace = this._getAutoloadedNamespace(namespace)
     debug('resolving %s namespace from %s path', namespace, this._autoloads[autoloadedNamespace])
-    return namespace.replace(autoloadedNamespace, this._autoloads[autoloadedNamespace])
+    return path.normalize(namespace.replace(autoloadedNamespace, this._autoloads[autoloadedNamespace]))
   }
 
   /**
