@@ -11,7 +11,7 @@
 
 const test = require('japa')
 const http = require('http')
-const { setupResolver, Config, Logger, Helpers } = require('@adonisjs/sink')
+const { setupResolver, Config, Logger } = require('@adonisjs/sink')
 const { ioc } = require('@adonisjs/fold')
 const supertest = require('supertest')
 const NE = require('node-exceptions')
@@ -34,7 +34,7 @@ test.group('Server | Middleware', (group) => {
   })
 
   group.beforeEach(() => {
-    this.server = new Server(Context, Route, new Logger(), this.exception, new Helpers(__dirname))
+    this.server = new Server(Context, Route, new Logger(), this.exception)
     this.server.bindExceptionHandler()
   })
 
@@ -316,7 +316,7 @@ test.group('Server | Calls', (group) => {
 
   group.beforeEach(() => {
     this.exception = Exception
-    this.server = new Server(Context, Route, new Logger(), this.exception, new Helpers(path.join(__dirname, 'app')))
+    this.server = new Server(Context, Route, new Logger(), this.exception)
     this.server.bindExceptionHandler()
 
     ioc.fake('Adonis/Exceptions/BaseExceptionHandler', () => {

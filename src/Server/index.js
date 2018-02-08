@@ -73,12 +73,11 @@ const duplicateMiddlewareWarning = (type, middleware) => {
  * @class Server
  */
 class Server {
-  constructor (Context, Route, Logger, Exception, Helpers) {
+  constructor (Context, Route, Logger, Exception) {
     this.Context = Context
     this.Route = Route
     this.Logger = Logger
     this.Exception = Exception
-    this.Helpers = Helpers
 
     this._httpInstance = null
     this._exceptionHandlerNamespace = null
