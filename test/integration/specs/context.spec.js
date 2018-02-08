@@ -18,7 +18,6 @@ const appUrl = `http://${process.env.HOST}:${process.env.PORT}`
 test.group('Context - Share', (group) => {
   group.before(() => {
     const Server = use('Server')
-    Server.setExceptionHandler(ioc.use('Adonis/Exceptions/BaseExceptionHandler'))
     Server.listen(process.env.HOST, process.env.PORT)
   })
 

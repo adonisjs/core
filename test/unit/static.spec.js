@@ -14,6 +14,7 @@ const http = require('http')
 const { setupResolver, Config, Logger, Helpers } = require('@adonisjs/sink')
 const { ioc } = require('@adonisjs/fold')
 const supertest = require('supertest')
+const path = require('path')
 
 const Server = require('../../src/Server')
 const Route = require('../../src/Route/Manager')
@@ -22,7 +23,6 @@ const Response = require('../../src/Response')
 const Context = require('../../src/Context')
 const Static = require('../../src/Static')
 const Exception = require('../../src/Exception')
-const BaseExceptionHandler = require('../../src/Exception/BaseHandler')
 
 test.group('Static', (group) => {
   group.before(() => {
@@ -38,7 +38,11 @@ test.group('Static', (group) => {
 
   group.beforeEach(() => {
     this.exception = Exception
-    this.logger = new Logger()
+    this.server = new Server(Context, Route, new Logger(), this.exception, new Helpers(path.join(__dirname, 'app')))
+    this.server.bindExceptionHandler()
+  })
+
+  group.afterEach(() => {
     ioc.restore()
     this.exception.clear()
   })
@@ -48,16 +52,15 @@ test.group('Static', (group) => {
       response.send('foo')
     })
 
-    const server = new Server(Context, Route, this.logger, this.exception)
-    server.setExceptionHandler(BaseExceptionHandler)
+    this.server.bindExceptionHandler()
 
     ioc.fake('Adonis/Middleware/Static', function () {
       return Static(new Helpers(__dirname), new Config())
     })
 
-    server.use(['Adonis/Middleware/Static'])
+    this.server.use(['Adonis/Middleware/Static'])
 
-    const app = http.createServer(server.handle.bind(server))
+    const app = http.createServer(this.server.handle.bind(this.server))
 
     await supertest(app).get('/foo.css').expect(404)
   })
@@ -67,14 +70,12 @@ test.group('Static', (group) => {
       response.send('foo')
     })
 
-    const server = new Server(Context, Route, this.logger, this.exception)
-
     ioc.fake('Adonis/Middleware/Static', function () {
       return Static(new Helpers(__dirname), new Config())
     })
 
-    server.use(['Adonis/Middleware/Static'])
-    const app = http.createServer(server.handle.bind(server))
+    this.server.use(['Adonis/Middleware/Static'])
+    const app = http.createServer(this.server.handle.bind(this.server))
     const { text } = await supertest(app).get('/style.css').expect(200)
     assert.equal(text.trim(), `body { background: #000; }`)
   })
@@ -84,14 +85,12 @@ test.group('Static', (group) => {
       response.send('style')
     })
 
-    const server = new Server(Context, Route, this.logger, this.exception)
-
     ioc.fake('Adonis/Middleware/Static', function () {
       return Static(new Helpers(__dirname), new Config())
     })
 
-    server.use(['Adonis/Middleware/Static'])
-    const app = http.createServer(server.handle.bind(server))
+    this.server.use(['Adonis/Middleware/Static'])
+    const app = http.createServer(this.server.handle.bind(this.server))
     const { text } = await supertest(app).post('/style.css').expect(200)
     assert.equal(text.trim(), 'style')
   })
