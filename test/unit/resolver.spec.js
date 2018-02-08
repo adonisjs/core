@@ -9,6 +9,7 @@ const ResolverManager = require('../../src/Resolver/Manager')
 test.group('Resolver', (group) => {
   group.beforeEach(() => {
     this.ioc = new Ioc()
+    this.ioc.alias(path.join(__dirname), 'App')
   })
 
   test('throw exception when directories are not defined', (assert) => {
@@ -245,5 +246,23 @@ test.group('Resolver Manager', () => {
     assert.equal(output.isClosure, false)
     assert.equal(output.instance.constructor.name, 'User')
     assert.isFunction(output.method)
+  })
+
+  test('get path to the namespace file', (assert) => {
+    const resolver = new Resolver(this.ioc, {}, 'App')
+    assert.equal(resolver.getPath('Exceptions/Handler'), path.join(__dirname, 'Exceptions/Handler'))
+  })
+
+  test('get path to the namespace file for a given directory', (assert) => {
+    const resolver = new Resolver(this.ioc, {
+      exceptions: 'Exceptions'
+    }, 'App', 'exceptions')
+    assert.equal(resolver.getPath('Handler'), path.join(__dirname, 'Exceptions/Handler'))
+  })
+
+  test('throw exception when @provider is appended', (assert) => {
+    const resolver = new Resolver(this.ioc, {}, 'App')
+    const fn = () => resolver.getPath('@provider:Adonis/Src/Foo')
+    assert.throw(fn, /E_RUNTIME_ERROR: Cannot get path for a binding added via provider/)
   })
 })
