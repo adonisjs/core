@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
 */
 
-const path = require('path')
 const GE = require('@adonisjs/generic-exceptions')
 
 /**
@@ -187,15 +186,7 @@ class Resolver {
    * @return {String}
    */
   getPath (binding) {
-    if (binding.startsWith('@provider:')) {
-      throw GE
-        .RuntimeException
-        .invoke('Cannot get path for a binding added via provider', 'E_CANNOT_MAKE_BINDING_PATH')
-    }
-
-    binding = this.translate(binding).replace(new RegExp(`^${this._appNamespace}/`), '')
-    const basePath = this.Ioc._aliases[this._appNamespace]
-    return path.join(basePath, binding)
+    return this.Ioc.getPath(this.translate(binding))
   }
 
   /**

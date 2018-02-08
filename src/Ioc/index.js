@@ -234,6 +234,23 @@ class Ioc {
   }
 
   /**
+   * Returns path of an autoloaded namespace
+   *
+   * @method _getAutoloadedPath
+   *
+   * @param  {String}           namespace
+   *
+   * @return {String}
+   *
+   * @private
+   */
+  _getAutoloadedPath (namespace) {
+    const autoloadedNamespace = this._getAutoloadedNamespace(namespace)
+    debug('resolving %s namespace from %s path', namespace, this._autoloads[autoloadedNamespace])
+    return namespace.replace(autoloadedNamespace, this._autoloads[autoloadedNamespace])
+  }
+
+  /**
    * Requires a file by resolving the autoloaded namespace. It
    * is important to call _isAutoloadedPath before calling
    * this method, to avoid exceptions been thrown.
@@ -245,10 +262,7 @@ class Ioc {
    * @return {Mixed}
    */
   _resolveAutoloadedPath (namespace) {
-    const autoloadedNamespace = this._getAutoloadedNamespace(namespace)
-    debug('resolving %s namespace from %s path', namespace, this._autoloads[autoloadedNamespace])
-
-    const result = requireStack(namespace.replace(autoloadedNamespace, this._autoloads[autoloadedNamespace]))
+    const result = requireStack(this._getAutoloadedPath(namespace))
     if (!result) {
       return result
     }
@@ -780,6 +794,27 @@ class Ioc {
     }
 
     return this._require(namespace)
+  }
+
+  /**
+   * Returns absolute path to a namespace
+   *
+   * @method getPath
+   *
+   * @param  {String} namespace
+   *
+   * @return {String}
+   *
+   * @throws {Exception} If namespace is not part of autoloaded directories.
+   */
+  getPath (namespace) {
+    if (this._isAutoloadedPath(namespace)) {
+      return this._getAutoloadedPath(namespace)
+    }
+
+    throw GE
+      .RuntimeException
+      .invoke(`Cannot get path, since ${namespace} is not a valid autoloaded namespace`, 500, 'E_CANNOT_GET_NAMESPACE_PATH')
   }
 
   /**
