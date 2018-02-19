@@ -38,7 +38,7 @@
     "pify": "^3.0.0",
     "semver": "^5.5.0",
     "simple-encryptor": "^1.1.1",
-    "standard": "^10.0.3",
+    "standard": "^11.0.0",
     "supertest": "^3.0.0",
     "test-console": "^1.1.0"
   },
