@@ -789,8 +789,8 @@ test.group('Route | Manager', (group) => {
       RouteManager.get('/product/category/:id', function () {})
       RouteManager.get('/product/:id', function () {})
     })
-    .prefix('api')
-    .formats(['json'])
+      .prefix('api')
+      .formats(['json'])
 
     const { route } = RouteManager.match('/api/product/category', 'GET')
     assert.equal(route._route, '/api/product/category/:id:format(.json)?')

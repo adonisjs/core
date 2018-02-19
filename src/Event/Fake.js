@@ -112,8 +112,8 @@ class EventFake {
    */
   pullMany (count) {
     const pulledEmits = _.size(this._emits) < count
-    ? this._emits.splice(0)
-    : this._emits.splice(_.size(this._emits) - count)
+      ? this._emits.splice(0)
+      : this._emits.splice(_.size(this._emits) - count)
     return _.reverse(pulledEmits)
   }
 

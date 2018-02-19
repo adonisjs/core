@@ -16,7 +16,7 @@ process.env.HOST = 'localhost'
 process.env.PORT = '3333'
 
 setup()
-.then(() => {
-  requireAll(path.join(__dirname, './specs'))
-})
-.catch(console.log)
+  .then(() => {
+    requireAll(path.join(__dirname, './specs'))
+  })
+  .catch(console.log)

@@ -995,8 +995,8 @@ test.group('Server | Calls', (group) => {
     Route.get('/', async function ({ ids }) {
       return ids
     })
-    .middleware('app:1')
-    .middleware('app:2')
+      .middleware('app:1')
+      .middleware('app:2')
 
     this.server.registerNamed({
       'app': 'Middleware/AppMiddleware'
