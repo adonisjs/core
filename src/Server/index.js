@@ -273,11 +273,11 @@ class Server {
     }
 
     return new Middleware()
-    .register(this._middleware.server)
-    .runner()
-    .params([ctx])
-    .resolve(this._resolveMiddleware.bind(this))
-    .run()
+      .register(this._middleware.server)
+      .runner()
+      .params([ctx])
+      .resolve(this._resolveMiddleware.bind(this))
+      .run()
   }
 
   /**
@@ -299,12 +299,12 @@ class Server {
     debug('executing %d global and route middleware', middleware.length)
 
     return new Middleware()
-    .register(middleware)
-    .runner()
-    .params([ctx])
-    .concat([routeHandler])
-    .resolve(this._resolveMiddleware.bind(this))
-    .run()
+      .register(middleware)
+      .runner()
+      .params([ctx])
+      .concat([routeHandler])
+      .resolve(this._resolveMiddleware.bind(this))
+      .run()
   }
 
   /**
@@ -636,33 +636,33 @@ class Server {
     debug('new request on %s url', request.url())
 
     this._executeServerMiddleware(ctx)
-    .then(() => {
+      .then(() => {
       /**
        * We need to find out whether any of the server middleware has
        * ended the response or not.
        *
        * If they did, then simply do not execute the route.
        */
-      this._evaluateResponse(response)
-      if (!response.isPending) {
-        debug('ending request within server middleware chain')
-        return
-      }
+        this._evaluateResponse(response)
+        if (!response.isPending) {
+          debug('ending request within server middleware chain')
+          return
+        }
 
-      const route = this._getRoute(ctx)
-      return this._executeRouteHandler(route.route.middlewareList, ctx, {
-        namespace: this._routeHandler.bind(this),
-        params: [route.route.handler]
+        const route = this._getRoute(ctx)
+        return this._executeRouteHandler(route.route.middlewareList, ctx, {
+          namespace: this._routeHandler.bind(this),
+          params: [route.route.handler]
+        })
       })
-    })
-    .then(() => {
-      debug('ending response for %s url', request.url())
-      this._endResponse(response)
-    })
-    .catch((error) => {
-      debug('received error on %s url', request.url())
-      this._handleException(error, ctx)
-    })
+      .then(() => {
+        debug('ending response for %s url', request.url())
+        this._endResponse(response)
+      })
+      .catch((error) => {
+        debug('received error on %s url', request.url())
+        this._handleException(error, ctx)
+      })
   }
 
   /**

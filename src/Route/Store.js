@@ -146,8 +146,8 @@ class RouteStore {
       const isDomain = domain && route.forDomain && route.forDomain.test(domain)
 
       return domain
-      ? (isName() && isDomain) || (isHandler() && isDomain) || (isRoute() && isDomain)
-      : isName() || isRoute() || isHandler()
+        ? (isName() && isDomain) || (isHandler() && isDomain) || (isRoute() && isDomain)
+        : isName() || isRoute() || isHandler()
     })
   }
 
