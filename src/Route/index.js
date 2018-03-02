@@ -288,6 +288,32 @@ class Route extends Macroable {
   }
 
   /**
+   * Add a folder namespace to the route. Generally
+   * used by the Route group to namespace a bunch of
+   * routes that are all inside the same folder.
+   *
+   * @method namespace
+   *
+   * @param  {String} namespace
+   *
+   * @chainable
+   *
+   * @example
+   * ```
+   * Route
+   *   .get(...)
+   *   .namespace('Admin')
+   * ```
+   */
+  namespace (namespace) {
+    if (typeof (this.handler) !== 'string') return this
+
+    namespace = `${namespace.replace(/^\/|\/$/g, '')}/`
+    this.handler = `${namespace}${this.handler}`
+    return this
+  }
+
+  /**
    * Add middleware to the front of the route. The method is
    * same as `middleware` instead just prepends instead of
    * append.
