@@ -421,7 +421,7 @@ class Response extends Macroable {
      */
     if (sendParams) {
       const { query } = parseurl(this.request)
-      url = `${url}?${query}`
+      url = query ? `${url}?${query}` : url
     }
 
     this._invoke('redirect', url, [status])
