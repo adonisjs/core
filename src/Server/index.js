@@ -9,55 +9,12 @@
  * file that was distributed with this source code.
 */
 
-const haye = require('haye')
 const http = require('http')
-const _ = require('lodash')
 const { resolver, ioc } = require('@adonisjs/fold')
 const debug = require('debug')('adonis:framework')
 const GE = require('@adonisjs/generic-exceptions')
-const Middleware = require('co-compose')
 const fs = require('fs')
-
-/**
- * Error message when named middleware is not defined
- * but used
- *
- * @method
- *
- * @param  {String} name
- *
- * @return {String}
- */
-const missingNamedMiddleware = (name) => {
-  return `Cannot find any named middleware for {${name}}. Make sure you have registered it inside start/kernel.js file.`
-}
-
-/**
- * Error message when middleware is not a function or
- * string
- *
- * @method
- *
- * @return {String}
- */
-const invalidMiddlewareType = () => {
-  return 'Middleware must be a function or reference to an IoC container string.'
-}
-
-/**
- * Warning to log when duplicate middleware registeration has been
- * found
- *
- * @method
- *
- * @param  {String} type
- * @param  {String} middleware
- *
- * @return {String}
- */
-const duplicateMiddlewareWarning = (type, middleware) => {
-  return `Detected existing ${type} middleware {${middleware}}, the current one will be ignored`
-}
+const MiddlewareBase = require('@adonisjs/middleware-base')
 
 /**
  * The HTTP server class to start a new server and bind
@@ -81,35 +38,7 @@ class Server {
 
     this._httpInstance = null
     this._exceptionHandlerNamespace = null
-
-    /**
-     * Middleware store
-     */
-    this._middleware = {
-      global: [],
-      server: [],
-      named: {}
-    }
-  }
-
-  /**
-   * Throws an exception when middleware is not a function or a raw
-   * string.
-   *
-   * @method _ensureRightMiddlewareType
-   *
-   * @param  {String|Function}                   middleware
-   *
-   * @return {void}
-   *
-   * @throws {RuntimeException} If middleware is not a string or a function
-   *
-   * @private
-   */
-  _ensureRightMiddlewareType (middleware) {
-    if (typeof (middleware) !== 'string' && typeof (middleware) !== 'function') {
-      throw GE.RuntimeException.invoke(invalidMiddlewareType(), 500, 'E_INVALID_MIDDLEWARE_TYPE')
-    }
+    this._middleware = new MiddlewareBase('handle', this.Logger.warning.bind(this.Logger))
   }
 
   /**
@@ -133,127 +62,6 @@ class Server {
   }
 
   /**
-   * Takes middleware as a function or string and returns an object, that
-   * can be used at runtime to resolve and run middleware
-   *
-   * @method _middlewareIdentifierToPacket
-   *
-   * @param  {String|Function}                      item
-   *
-   * @return {Object}
-   *
-   * @private
-   */
-  _middlewareIdentifierToPacket (item) {
-    return {
-      namespace: typeof (item) === 'function' ? item : `${item}.handle`,
-      params: []
-    }
-  }
-
-  /**
-   * Registers an array of middleware for `server` or `global`
-   * type.
-   *
-   * @method _registerMiddleware
-   *
-   * @param  {String}            type
-   * @param  {Array}             middleware
-   * @param  {String}            errorMessage
-   *
-   * @return {void}
-   *
-   * @private
-   */
-  _registerMiddleware (type, middleware, errorMessage) {
-    if (!Array.isArray(middleware)) {
-      throw GE.InvalidArgumentException.invalidParameter(errorMessage, middleware)
-    }
-
-    const store = this._middleware[type]
-
-    middleware.forEach((item) => {
-      /**
-       * Throw exception if middleware is not a string or a function
-       */
-      this._ensureRightMiddlewareType(item)
-
-      /**
-       * Converting middleware identifier { function, string } to an object, which can be
-       * used directly to execute middleware.
-       */
-      const packet = this._middlewareIdentifierToPacket(item)
-
-      /**
-       * Show warning for duplicate middleware
-       */
-      if (store.find((i) => i.namespace === packet.namespace)) {
-        this.Logger.warning(duplicateMiddlewareWarning(type, item))
-        return
-      }
-
-      store.push(packet)
-    })
-  }
-
-  /**
-   * Invoked at runtime under the middleware chain. This method will
-   * resolve the middleware namespace from the IoC container
-   * and invokes it.
-   *
-   * @method _resolveMiddleware
-   *
-   * @param  {String|Function} middleware
-   * @param  {Array}           options
-   *
-   * @return {Promise}
-   *
-   * @private
-   */
-  _resolveMiddleware (middleware, options) {
-    const handlerInstance = resolver.resolveFunc(middleware.namespace)
-    const args = options.concat([middleware.params])
-    return handlerInstance.method(...args)
-  }
-
-  /**
-   * Compiles an array of named middleware by getting their namespace from
-   * the named hash.
-   *
-   * @method _compileNamedMiddleware
-   *
-   * @param  {Array}                namedMiddleware
-   *
-   * @return {Array}
-   *
-   * @private
-   */
-  _compileNamedMiddleware (namedMiddleware) {
-    return namedMiddleware.map((middleware) => {
-      this._ensureRightMiddlewareType(middleware)
-
-      if (typeof (middleware) === 'function') {
-        return {
-          namespace: middleware,
-          params: []
-        }
-      }
-
-      const [{ name, args }] = haye.fromPipe(middleware).toArray()
-      const packet = this._middleware.named[name]
-
-      if (!packet) {
-        throw GE.RuntimeException.invoke(missingNamedMiddleware(name), 500, 'E_MISSING_NAMED_MIDDLEWARE')
-      }
-
-      return {
-        namespace: packet.namespace,
-        params: args
-      }
-    })
-  }
-
-  /**
    * Returns a middleware iterrable by composing server
    * middleware.
    *
@@ -266,17 +74,9 @@ class Server {
    * @private
    */
   _executeServerMiddleware (ctx) {
-    debug('executing %d server middleware', this._middleware.server)
-
-    if (!this._middleware.server.length) {
-      return Promise.resolve()
-    }
-
-    return new Middleware()
-      .register(this._middleware.server)
-      .runner()
+    return this._middleware
+      .composeServer()
       .params([ctx])
-      .resolve(this._resolveMiddleware.bind(this))
       .run()
   }
 
@@ -295,15 +95,10 @@ class Server {
    * @private
    */
   _executeRouteHandler (routeMiddleware, ctx, routeHandler) {
-    const middleware = this._middleware.global.concat(this._compileNamedMiddleware(routeMiddleware))
-    debug('executing %d global and route middleware', middleware.length)
-
-    return new Middleware()
-      .register(middleware)
-      .runner()
+    return this._middleware
+      .composeGlobalAndNamed(routeMiddleware)
       .params([ctx])
       .concat([routeHandler])
-      .resolve(this._resolveMiddleware.bind(this))
       .run()
   }
 
@@ -489,7 +284,7 @@ class Server {
    * ```
    */
   registerGlobal (middleware) {
-    this._registerMiddleware('global', middleware, 'server.registerGlobal accepts an array of middleware')
+    this._middleware.registerGlobal(middleware)
     return this
   }
 
@@ -513,7 +308,7 @@ class Server {
    * ```
    */
   use (middleware) {
-    this._registerMiddleware('server', middleware, 'server.use accepts an array of middleware')
+    this._middleware.use(middleware)
     return this
   }
 
@@ -547,25 +342,7 @@ class Server {
    * ```
    */
   registerNamed (middleware) {
-    if (!_.isPlainObject(middleware)) {
-      throw GE
-        .InvalidArgumentException
-        .invalidParameter('server.registerNamed accepts a key/value pair of middleware', middleware)
-    }
-
-    _.each(middleware, (item, name) => {
-      /**
-       * Throw exception if middleware is not a string or a function
-       */
-      this._ensureRightMiddlewareType(item)
-
-      /**
-       * Converting middleware identifier { function, string } to an object, which can be
-       * used directly to execute middleware.
-       */
-      this._middleware.named[name] = this._middlewareIdentifierToPacket(item)
-    })
-
+    this._middleware.registerNamed(middleware)
     return this
   }
 

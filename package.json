@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@adonisjs/generic-exceptions": "^2.0.0",
+    "@adonisjs/middleware-base": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "co-compose": "^4.0.0",
     "dotenv": "^5.0.0",
