@@ -60,6 +60,28 @@ class RouteGroup extends Macroable {
   }
 
   /**
+   * Namespace group of routes.
+   * Also see @ref('Route/namespace')
+   *
+   * @method namespace
+   *
+   * @param  {String} namespace
+   *
+   * @chainable
+   *
+   * @example
+   * ```js
+   * Route
+   *   .group()
+   *   .namespace('Admin')
+   * ```
+   */
+  namespace (namespace) {
+    this._routes.forEach((route) => route.namespace(namespace))
+    return this
+  }
+
+  /**
    * Add formats to a group of routes.
    * Also see @ref('Route/formats')
    *

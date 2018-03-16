@@ -115,6 +115,25 @@ test.group('Route | Register', () => {
     assert.equal(route._regexp.exec('/api/v1/users')[0], '/api/v1/users')
   })
 
+  test('namespace route', (assert) => {
+    const route = new Route('/users', 'UserController')
+    route.namespace('Admin')
+    assert.equal(route.handler, 'Admin/UserController')
+  })
+
+  test('namespace route when there is extra backward slash', (assert) => {
+    const route = new Route('/users', 'UserController')
+    route.namespace('/Admin/')
+    assert.equal(route.handler, 'Admin/UserController')
+  })
+
+  test('namespace is not applied to functions', (assert) => {
+    const handler = function () {}
+    const route = new Route('/users', handler)
+    route.namespace('Admin')
+    assert.equal(route.handler, handler)
+  })
+
   test('define domain', (assert) => {
     const route = new Route('/users', function () {})
     route.domain('blog.adonisjs.com')
@@ -271,6 +290,15 @@ test.group('Route | Group', () => {
     group.prefix('api')
     assert.ok(route._regexp.test('/api'))
     assert.ok(userRoute._regexp.test('/api/user'))
+  })
+
+  test('namespace route via group', (assert) => {
+    const route = new Route('/', 'IndexController')
+    const userRoute = new Route('/user', 'UserController')
+    const group = new RouteGroup([route, userRoute])
+    group.namespace('Admin')
+    assert.equal(route.handler, 'Admin/IndexController')
+    assert.equal(userRoute.handler, 'Admin/UserController')
   })
 
   test('define domain via group', (assert) => {
