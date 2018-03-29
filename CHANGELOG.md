@@ -1,3 +1,13 @@
+<a name="5.0.6"></a>
+## [5.0.6](https://github.com/adonisjs/adonis-framework/compare/v5.0.4...v5.0.6) (2018-03-29)
+
+
+### Features
+
+* **Encryption:** allows custom encryption instances via getInstance method ([60859f5](https://github.com/adonisjs/adonis-framework/commit/60859f5))
+* **route:** add namespace function ([556a213](https://github.com/adonisjs/adonis-framework/commit/556a213))
+
+
 <a name="5.0.5"></a>
 ## [5.0.5](https://github.com/adonisjs/adonis-framework/compare/v5.0.4...v5.0.5) (2018-03-15)
 
