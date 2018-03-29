@@ -103,4 +103,10 @@ test.group('Encryption', () => {
     const buff = Buffer.from('hello world')
     assert.equal(encryption.base64Decode(buff), 'hello world')
   })
+
+  test('pull custom encrypter with different options', (assert) => {
+    const encryption = new Encryption(getAppKey())
+    const newEncrypter = encryption.getInstance({ hmac: false })
+    assert.notDeepEqual(encryption, newEncrypter)
+  })
 })

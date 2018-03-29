@@ -25,7 +25,7 @@ const GE = require('@adonisjs/generic-exceptions')
  * @constructor
  */
 class Encryption {
-  constructor (appKey) {
+  constructor (appKey, options) {
     /**
      * Throw exception when app key doesn't exists.
      */
@@ -33,7 +33,22 @@ class Encryption {
       throw GE.RuntimeException.missingAppKey('Encryption')
     }
 
-    this.encryptor = Encryptor(appKey)
+    this.appKey = appKey
+    console.log(Object.assign({ key: appKey }, options))
+    this.encryptor = Encryptor(Object.assign({ key: appKey }, options))
+  }
+
+  /**
+   * Returns a new instance of encrypter with different options
+   *
+   * @method getInstance
+   *
+   * @param  {Object}    options
+   *
+   * @return {Encryption}
+   */
+  getInstance (options) {
+    return new this.constructor(this.appKey, options)
   }
 
   /**
