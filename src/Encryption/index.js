@@ -34,7 +34,6 @@ class Encryption {
     }
 
     this.appKey = appKey
-    console.log(Object.assign({ key: appKey }, options))
     this.encryptor = Encryptor(Object.assign({ key: appKey }, options))
   }
 
