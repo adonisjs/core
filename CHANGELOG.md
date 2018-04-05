@@ -1,3 +1,13 @@
+<a name="4.0.8"></a>
+## [4.0.8](https://github.com/poppinss/adonis-fold/compare/v4.0.7...v4.0.8) (2018-04-05)
+
+
+### Bug Fixes
+
+* **registrar:** execute extend calls after register ([f8b1a7e](https://github.com/poppinss/adonis-fold/commit/f8b1a7e))
+
+
+
 <a name="4.0.7"></a>
 ## [4.0.7](https://github.com/poppinss/adonis-fold/compare/v4.0.6...v4.0.7) (2018-02-08)
 
