@@ -34,7 +34,7 @@ module.exports = function (View, Route, Config) {
    */
   View.global('css', function (url, skipPrefix = false) {
     console.warn('The \'css\' view global is deprecated. Use \'style\' instead')
-    return this.$globals.style(url, skipPrefix)
+    return this.$globals.style(url, skipPrefix).bind(this)
   })
 
   /**
