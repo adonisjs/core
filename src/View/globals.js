@@ -18,7 +18,10 @@ module.exports = function (View, Route, Config) {
   /**
    * Make url for the assets file
    */
-  View.global('assetsUrl', (url) => url && /^\/|^http(s)?/.test(url) ? url : `/${url}`)
+  View.global('assetsUrl', function (url) {
+    const baseUrl = Config ? Config.get('app.http.baseUrl', '') : ''
+    return url && /^\/|^http(s)?/.test(url) ? url : `${baseUrl}/${url}`
+  })
 
   /**
    * Make link tag for css
