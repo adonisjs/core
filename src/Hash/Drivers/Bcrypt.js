@@ -9,30 +9,20 @@
  * file that was distributed with this source code.
 */
 
+const bcrypt = require('bcryptjs')
+
 /**
- * Hash plain values using the provided hash algorithm.
- * It is considered to be used when saving user passwords to the database.
+ * Hash plain values using [bcryptjs](https://www.npmjs.com/package/bcryptjs).
  *
  * @group Core
  * @singleton Yes
  *
- * @class Hash
- * @constructor
+ * @class Bcrypt
+ * @static
  */
-class Hash {
-  constructor (driver) {
-    /**
-     * The driver in use for logging
-     *
-     * @type {Object}
-     *
-     * @attribute driver
-     */
-    this.driver = driver
-  }
-
+class Bcrypt {
   /**
-   * Hash plain value using the given driver.
+   * Hash plain value using bcrypt.
    *
    * @method make
    * @async
@@ -41,17 +31,21 @@ class Hash {
    * @param  {Object} config
    *
    * @return {String}
-   *
-   * @example
-   * ```js
-   * const hashed = await Hash.make('my-secret-password')
-   * ```
    */
-  make (value, config) {
-    return this.driver.make(value, config)
+  make (value, config = {}) {
+    const round = config.round || 10
+
+    return new Promise(function (resolve, reject) {
+      bcrypt.hash(value, round, function (error, hash) {
+        if (error) {
+          return reject(error)
+        }
+        resolve(hash)
+      })
+    })
   }
 
-  /**
+    /**
    * Verify an existing hash with the plain value. Though this
    * method returns a promise, it never rejects the promise
    * and this is just for the sake of simplicity, since
@@ -65,17 +59,17 @@ class Hash {
    * @param  {String} hash
    *
    * @return {Boolean}
-   *
-   * @example
-   * ```
-   * const verified = await Hash.verify('password', 'existing-hash')
-   * if (verified) {
-   * }
-   * ```
    */
   verify (value, hash) {
-    return this.driver.verify(value, hash)
+    return new Promise(function (resolve, reject) {
+      bcrypt.compare(value, hash, function (error, response) {
+        if (error) {
+          return resolve(false)
+        }
+        resolve(response)
+      })
+    })
   }
 }
 
-module.exports = Hash
+module.exports = Bcrypt

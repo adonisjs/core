@@ -9,30 +9,20 @@
  * file that was distributed with this source code.
 */
 
+const argon2 = require('argon2')
+
 /**
- * Hash plain values using the provided hash algorithm.
- * It is considered to be used when saving user passwords to the database.
+ * Hash plain values using [argon2](https://github.com/P-H-C/phc-winner-argon2).
  *
  * @group Core
  * @singleton Yes
  *
- * @class Hash
- * @constructor
+ * @class Argon
+ * @static
  */
-class Hash {
-  constructor (driver) {
-    /**
-     * The driver in use for logging
-     *
-     * @type {Object}
-     *
-     * @attribute driver
-     */
-    this.driver = driver
-  }
-
+class Argon {
   /**
-   * Hash plain value using the given driver.
+   * Hash plain value using argon2.
    *
    * @method make
    * @async
@@ -41,14 +31,9 @@ class Hash {
    * @param  {Object} config
    *
    * @return {String}
-   *
-   * @example
-   * ```js
-   * const hashed = await Hash.make('my-secret-password')
-   * ```
    */
-  make (value, config) {
-    return this.driver.make(value, config)
+  make (value, config = {}) {
+    return argon2.hash(value, config)
   }
 
   /**
@@ -65,17 +50,18 @@ class Hash {
    * @param  {String} hash
    *
    * @return {Boolean}
-   *
-   * @example
-   * ```
-   * const verified = await Hash.verify('password', 'existing-hash')
-   * if (verified) {
-   * }
-   * ```
    */
-  verify (value, hash) {
-    return this.driver.verify(value, hash)
+  async verify (value, hash) {
+    if (value === undefined) {
+      return false
+    }
+
+    if (await argon2.verify(hash, value)) {
+      return true
+    }
+
+    return false
   }
 }
 
-module.exports = Hash
+module.exports = Argon
