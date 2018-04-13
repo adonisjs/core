@@ -76,7 +76,7 @@ class HashFacade {
    * @return {Hash}
    */
   driver (name) {
-    name = name || this.Config.get('hash.driver')
+    name = name || this.Config.get('hash.driver') || 'bcrypt'
 
     /**
      * Throw exception when hash.driver is not defined
@@ -92,15 +92,7 @@ class HashFacade {
       return this._hasherInstances[name]
     }
 
-    const hasherConfig = this.Config.get(`hash.${name}`)
-
-    /**
-     * Throw exception if there is no config defined for the
-     * given hasher name
-     */
-    if (!hasherConfig) {
-      throw GE.RuntimeException.missingConfig(`hash.${name}`, 'config/hash.js')
-    }
+    const hasherConfig = this.Config.get(`hash.${name}`) || {}
 
     const driverInstance = HashManager.driver(name, hasherConfig)
     this._hasherInstances[name] = new Hash(driverInstance)

@@ -222,13 +222,13 @@ test.group('Hash | Facade', (group) => {
     assert.isDefined(hashed)
   })
 
-  test('throw exception when no driver is defined', async (assert) => {
+  test('use bcrypt when no driver is defined', async (assert) => {
     const config = new Config()
     config.set('hash', {
     })
 
     const hasher = new HashFacade(config)
-    const fn = () => hasher.make('foo')
-    assert.throw(await fn, 'E_MISSING_CONFIG: driver is not defined inside config/hash.js file')
+    const hashed = await hasher.make('foo')
+    assert.isDefined(hashed)
   })
 })
