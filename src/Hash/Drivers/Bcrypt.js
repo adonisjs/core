@@ -45,7 +45,7 @@ class Bcrypt {
     })
   }
 
-    /**
+  /**
    * Verify an existing hash with the plain value. Though this
    * method returns a promise, it never rejects the promise
    * and this is just for the sake of simplicity, since
