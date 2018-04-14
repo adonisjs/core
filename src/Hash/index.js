@@ -13,7 +13,7 @@
  * Hash plain values using the provided hash algorithm.
  * It is considered to be used when saving user passwords to the database.
  *
- * @group Core
+ * @group Hash
  * @singleton Yes
  *
  * @class Hash

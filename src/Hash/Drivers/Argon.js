@@ -14,11 +14,9 @@ const argon2 = require('argon2')
 /**
  * Hash plain values using [argon2](https://github.com/P-H-C/phc-winner-argon2).
  *
- * @group Core
- * @singleton Yes
+ * @group Hash
  *
  * @class Argon
- * @static
  */
 class Argon {
   /**

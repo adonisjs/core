@@ -14,11 +14,9 @@ const bcrypt = require('bcryptjs')
 /**
  * Hash plain values using [bcryptjs](https://www.npmjs.com/package/bcryptjs).
  *
- * @group Core
- * @singleton Yes
+ * @group Hash
  *
  * @class Bcrypt
- * @static
  */
 class Bcrypt {
   /**

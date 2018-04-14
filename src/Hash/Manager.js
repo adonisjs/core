@@ -18,13 +18,11 @@ const Drivers = require('./Drivers')
  * It is considered to be used when saving user passwords to the database.
  *
  * @manager
- * @group Core
- * @alias Hash
- * @binding Adonis/Src/Hash
+ * @group Hash
  * @singleton Yes
  *
  * @class HashManager
- * @constructor
+ * @static
  */
 class HashManager {
   constructor () {

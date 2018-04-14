@@ -51,7 +51,7 @@ const proxyHandler = {
  * HashFacade is exposed by IoC container and it proxy
  * methods over @ref('Hash') class.
  *
- * @group Core
+ * @group Hash
  * @binding Adonis/Src/Hash
  * @alias Hash
  *
