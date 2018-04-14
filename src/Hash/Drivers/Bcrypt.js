@@ -31,7 +31,13 @@ class Bcrypt {
    * @return {String}
    */
   make (value, config) {
-    const round = config.round || config || 10
+    let round
+
+    if (config === undefined) {
+      round = 10
+    } else {
+      round = config.round || config
+    }
 
     return new Promise(function (resolve, reject) {
       bcrypt.hash(value, round, function (error, hash) {
