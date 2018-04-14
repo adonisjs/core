@@ -32,8 +32,8 @@ class Bcrypt {
    *
    * @return {String}
    */
-  make (value, config = {}) {
-    const round = config.round || 10
+  make (value, config) {
+    const round = config.round || config || 10
 
     return new Promise(function (resolve, reject) {
       bcrypt.hash(value, round, function (error, hash) {
