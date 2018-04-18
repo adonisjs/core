@@ -13,7 +13,11 @@ module.exports = function (View, Route, Config) {
   /**
    * Return url for the route
    */
-  View.global('route', (...args) => Route.url(...args))
+  View.global('route', function (...args) {
+    const url = Route.url(...args)
+    const baseUrl = Config ? Config.get('app.http.baseUrl', '') : ''
+    return url && /^http(s)?/.test(url) ? url : `${baseUrl}${url}`
+  })
 
   /**
    * Make url for the assets file
