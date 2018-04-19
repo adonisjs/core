@@ -30,9 +30,18 @@ module.exports = function (View, Route, Config) {
   /**
    * Make link tag for css
    */
-  View.global('css', function (url, skipPrefix = false) {
+  View.global('style', function (url, skipPrefix = false) {
     url = !url.endsWith('.css') && !skipPrefix ? `${url}.css` : url
     return this.safe(`<link rel="stylesheet" href="${this.$globals.assetsUrl(url)}" />`)
+  })
+
+  /**
+   * Make link tag for css
+   * @deprecated
+   */
+  View.global('css', function (url, skipPrefix = false) {
+    console.warn('The \'css\' view global is deprecated. Use \'style\' instead')
+    return this.$globals.style.bind(this, url, skipPrefix)()
   })
 
   /**

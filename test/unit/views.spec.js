@@ -128,7 +128,7 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), 'https://style.css')
   })
 
-  test('make link tag', (assert) => {
+  test('make link tag (using deprecated css method)', (assert) => {
     const view = new View(this.helpers)
     globals(view, RouteManager)
     RouteManager.route('users/:id', function () {}).as('profile')
@@ -136,7 +136,7 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
   })
 
-  test('make link tag when there is no .css extension', (assert) => {
+  test('make link tag (using deprecated css method) when there is no .css extension', (assert) => {
     const view = new View(this.helpers)
     globals(view, RouteManager)
     RouteManager.route('users/:id', function () {}).as('profile')
@@ -144,11 +144,35 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
   })
 
-  test('do not add .css when there skipPrefix is true', (assert) => {
+  test('(using deprecated css method)do not add .css when there skipPrefix is true', (assert) => {
     const view = new View(this.helpers)
     globals(view, RouteManager)
     RouteManager.route('users/:id', function () {}).as('profile')
     const template = `{{ css('style', true) }}`
+    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style" />')
+  })
+
+  test('make link tag', (assert) => {
+    const view = new View(this.helpers)
+    globals(view, RouteManager)
+    RouteManager.route('users/:id', function () {}).as('profile')
+    const template = `{{ style('style.css') }}`
+    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
+  })
+
+  test('make link tag when there is no .css extension', (assert) => {
+    const view = new View(this.helpers)
+    globals(view, RouteManager)
+    RouteManager.route('users/:id', function () {}).as('profile')
+    const template = `{{ style('style') }}`
+    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
+  })
+
+  test('do not add .css when there skipPrefix is true', (assert) => {
+    const view = new View(this.helpers)
+    globals(view, RouteManager)
+    RouteManager.route('users/:id', function () {}).as('profile')
+    const template = `{{ style('style', true) }}`
     assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style" />')
   })
 
