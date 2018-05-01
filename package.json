@@ -31,7 +31,7 @@
     "cookie-signature": "^1.1.0",
     "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^6.0.0",
     "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
     "nyc": "^11.6.0",
