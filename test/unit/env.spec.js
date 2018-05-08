@@ -51,6 +51,7 @@ test.group('Env', (group) => {
     process.env.ENV_PATH = './user/.env'
     const env = new Env(this.helpers._appRoot)
     assert.equal(env.get('HELLO'), 'WORLD')
+    assert.equal(env.getOrFail('HELLO'), 'WORLD')
     delete process.env.ENV_PATH
   })
 
@@ -104,6 +105,17 @@ test.group('Env', (group) => {
 
     env.load(path.join(__dirname, './user/.env.expand'), true)
     assert.equal(env.get('URL'), 'http://127.0.0.1:3333')
+    delete process.env.ENV_PATH
+  })
+
+  test('throw error when value for a given key is missing', (assert) => {
+    process.env.ENV_PATH = './user/.env'
+    const env = new Env(this.helpers._appRoot)
+
+    assert.throws(() => {
+      env.getOrFail('THIS_ENV_DOES_NOT_EXIST')
+    }, Error)
+
     delete process.env.ENV_PATH
   })
 })
