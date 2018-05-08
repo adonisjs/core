@@ -109,6 +109,7 @@ test.group('Env', (group) => {
   })
 
   test('throw error when value for a given key is missing', (assert) => {
+    delete process.env.THIS_ENV_DOES_NOT_EXIST
     process.env.ENV_PATH = './user/.env'
     const env = new Env(this.helpers._appRoot)
 
