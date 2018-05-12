@@ -176,7 +176,7 @@ class Env {
     const val = _.get(process.env, key)
 
     if (_.isUndefined(val)) {
-      throw GE.RuntimeException.incompleteConfig(`process.env.${key}`, '.env')
+      throw GE.RuntimeException.missingEnvKey(key)
     }
 
     return val
