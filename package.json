@@ -43,7 +43,7 @@
     "test-console": "^1.1.0"
   },
   "dependencies": {
-    "@adonisjs/generic-exceptions": "^2.0.0",
+    "@adonisjs/generic-exceptions": "^2.0.1",
     "@adonisjs/middleware-base": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "co-compose": "^4.0.0",
