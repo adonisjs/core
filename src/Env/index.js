@@ -13,6 +13,7 @@ const _ = require('lodash')
 const path = require('path')
 const dotenv = require('dotenv')
 const fs = require('fs')
+const GE = require('@adonisjs/generic-exceptions')
 const debug = require('debug')('adonis:framework')
 
 /**
@@ -154,6 +155,31 @@ class Env {
    */
   get (key, defaultValue = null) {
     return _.get(process.env, key, defaultValue)
+  }
+
+  /**
+   * Get value for a given key from the `process.env`
+   * object or throw an error if the key does not exist.
+   *
+   * @method getOrFail
+   *
+   * @param  {String} key
+   *
+   * @return {Mixed}
+   *
+   * @example
+   * ```js
+   * Env.getOrFail('MAIL_PASSWORD')
+   * ```
+   */
+  getOrFail (key) {
+    const val = _.get(process.env, key)
+
+    if (_.isUndefined(val)) {
+      throw GE.RuntimeException.missingEnvKey(key)
+    }
+
+    return val
   }
 
   /**
