@@ -13,7 +13,7 @@ const test = require('japa')
 const path = require('path')
 const fs = require('fs-extra')
 const pify = require('pify')
-const { Helpers } = require('@adonisjs/sink')
+const { Helpers, Config } = require('@adonisjs/sink')
 const View = require('../../src/View')
 const globals = require('../../src/View/globals')
 const Tags = require('../../src/View/Tags')
@@ -92,12 +92,32 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), '/users/1')
   })
 
+  test('make url for a route with base url', (assert) => {
+    const view = new View(this.helpers)
+    const config = new Config()
+    config.set('app.http.baseUrl', 'http://localhost')
+    globals(view, RouteManager, config)
+    RouteManager.route('users/:id', function () { }).as('profile')
+    const template = `{{ route('profile', { id: 1 }) }}`
+    assert.equal(view.renderString(template).trim(), 'http://localhost/users/1')
+  })
+
   test('get path to assets', (assert) => {
     const view = new View(this.helpers)
     globals(view, RouteManager)
     RouteManager.route('users/:id', function () {}).as('profile')
     const template = `{{ assetsUrl('style.css') }}`
     assert.equal(view.renderString(template).trim(), '/style.css')
+  })
+
+  test('get path to assets with baseUrl', (assert) => {
+    const view = new View(this.helpers)
+    const config = new Config()
+    config.set('app.http.baseUrl', 'http://localhost')
+    globals(view, RouteManager, config)
+    RouteManager.route('users/:id', function () {}).as('profile')
+    const template = `{{ assetsUrl('style.css') }}`
+    assert.equal(view.renderString(template).trim(), 'http://localhost/style.css')
   })
 
   test('do not prefix when http or https', (assert) => {
@@ -108,7 +128,7 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), 'https://style.css')
   })
 
-  test('make link tag', (assert) => {
+  test('make link tag (using deprecated css method)', (assert) => {
     const view = new View(this.helpers)
     globals(view, RouteManager)
     RouteManager.route('users/:id', function () {}).as('profile')
@@ -116,7 +136,7 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
   })
 
-  test('make link tag when there is no .css extension', (assert) => {
+  test('make link tag (using deprecated css method) when there is no .css extension', (assert) => {
     const view = new View(this.helpers)
     globals(view, RouteManager)
     RouteManager.route('users/:id', function () {}).as('profile')
@@ -124,11 +144,35 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
   })
 
-  test('do not add .css when there skipPrefix is true', (assert) => {
+  test('(using deprecated css method)do not add .css when there skipPrefix is true', (assert) => {
     const view = new View(this.helpers)
     globals(view, RouteManager)
     RouteManager.route('users/:id', function () {}).as('profile')
     const template = `{{ css('style', true) }}`
+    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style" />')
+  })
+
+  test('make link tag', (assert) => {
+    const view = new View(this.helpers)
+    globals(view, RouteManager)
+    RouteManager.route('users/:id', function () {}).as('profile')
+    const template = `{{ style('style.css') }}`
+    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
+  })
+
+  test('make link tag when there is no .css extension', (assert) => {
+    const view = new View(this.helpers)
+    globals(view, RouteManager)
+    RouteManager.route('users/:id', function () {}).as('profile')
+    const template = `{{ style('style') }}`
+    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
+  })
+
+  test('do not add .css when there skipPrefix is true', (assert) => {
+    const view = new View(this.helpers)
+    globals(view, RouteManager)
+    RouteManager.route('users/:id', function () {}).as('profile')
+    const template = `{{ style('style', true) }}`
     assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style" />')
   })
 

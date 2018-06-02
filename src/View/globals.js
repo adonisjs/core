@@ -13,19 +13,35 @@ module.exports = function (View, Route, Config) {
   /**
    * Return url for the route
    */
-  View.global('route', (...args) => Route.url(...args))
+  View.global('route', function (...args) {
+    const url = Route.url(...args)
+    const baseUrl = Config ? Config.get('app.http.baseUrl', '') : ''
+    return url && /^http(s)?/.test(url) ? url : `${baseUrl}${url}`
+  })
 
   /**
    * Make url for the assets file
    */
-  View.global('assetsUrl', (url) => url && /^\/|^http(s)?/.test(url) ? url : `/${url}`)
+  View.global('assetsUrl', function (url) {
+    const baseUrl = Config ? Config.get('app.http.baseUrl', '') : ''
+    return url && /^\/|^http(s)?/.test(url) ? url : `${baseUrl}/${url}`
+  })
 
   /**
    * Make link tag for css
    */
-  View.global('css', function (url, skipPrefix = false) {
+  View.global('style', function (url, skipPrefix = false) {
     url = !url.endsWith('.css') && !skipPrefix ? `${url}.css` : url
     return this.safe(`<link rel="stylesheet" href="${this.$globals.assetsUrl(url)}" />`)
+  })
+
+  /**
+   * Make link tag for css
+   * @deprecated
+   */
+  View.global('css', function (url, skipPrefix = false) {
+    console.warn('The \'css\' view global is deprecated. Use \'style\' instead')
+    return this.$globals.style.bind(this, url, skipPrefix)()
   })
 
   /**
