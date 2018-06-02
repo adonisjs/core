@@ -1,7 +1,7 @@
 environment:
   matrix:
   - nodejs_version: 'Stable'
-  - nodejs_version: '7'
+  - nodejs_version: '8'
 
 init:
   git config --global core.autocrlf true
