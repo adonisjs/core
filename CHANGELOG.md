@@ -1,3 +1,14 @@
+<a name="5.0.7"></a>
+## [5.0.7](https://github.com/adonisjs/adonis-framework/compare/v5.0.6...v5.0.7) (2018-06-02)
+
+
+### Features
+
+* **view:** globals to use http.baseUrl ([b81b68e](https://github.com/adonisjs/adonis-framework/commit/b81b68e))
+* **view:** rename css global to style ([e9e6763](https://github.com/adonisjs/adonis-framework/commit/e9e6763))
+
+
+
 <a name="5.0.6"></a>
 ## [5.0.6](https://github.com/adonisjs/adonis-framework/compare/v5.0.4...v5.0.6) (2018-03-29)
 
