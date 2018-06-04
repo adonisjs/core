@@ -323,7 +323,7 @@ test.group('Response', (group) => {
     })
 
     const { headers } = await supertest(server).get('/').expect(200)
-    assert.equal(headers['set-cookie'][0], 'cart=; Expires=Thu, 01 Jan 1970 00:00:00 GMT')
+    assert.equal(headers['set-cookie'][0], 'cart=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT')
   })
 
   test('redirect to a registered route', async (assert) => {
