@@ -9,30 +9,18 @@
  * file that was distributed with this source code.
 */
 
+const bcrypt = require('bcryptjs')
+
 /**
- * Hash plain values using the provided hash algorithm.
- * It is considered to be used when saving user passwords to the database.
+ * Hash plain values using [bcryptjs](https://www.npmjs.com/package/bcryptjs).
  *
  * @group Hash
- * @singleton Yes
  *
- * @class Hash
- * @constructor
+ * @class Bcrypt
  */
-class Hash {
-  constructor (driver) {
-    /**
-     * The driver in use for logging
-     *
-     * @type {Object}
-     *
-     * @attribute driver
-     */
-    this.driver = driver
-  }
-
+class Bcrypt {
   /**
-   * Hash plain value using the given driver.
+   * Hash plain value using bcrypt.
    *
    * @method make
    * @async
@@ -41,14 +29,24 @@ class Hash {
    * @param  {Object} config
    *
    * @return {String}
-   *
-   * @example
-   * ```js
-   * const hashed = await Hash.make('my-secret-password')
-   * ```
    */
   make (value, config) {
-    return this.driver.make(value, config)
+    let round
+
+    if (config === undefined) {
+      round = 10
+    } else {
+      round = config.round || config
+    }
+
+    return new Promise(function (resolve, reject) {
+      bcrypt.hash(value, round, function (error, hash) {
+        if (error) {
+          return reject(error)
+        }
+        resolve(hash)
+      })
+    })
   }
 
   /**
@@ -65,17 +63,17 @@ class Hash {
    * @param  {String} hash
    *
    * @return {Boolean}
-   *
-   * @example
-   * ```
-   * const verified = await Hash.verify('password', 'existing-hash')
-   * if (verified) {
-   * }
-   * ```
    */
   verify (value, hash) {
-    return this.driver.verify(value, hash)
+    return new Promise(function (resolve, reject) {
+      bcrypt.compare(value, hash, function (error, response) {
+        if (error) {
+          return resolve(false)
+        }
+        resolve(response)
+      })
+    })
   }
 }
 
-module.exports = Hash
+module.exports = Bcrypt
