@@ -9,8 +9,6 @@
  * file that was distributed with this source code.
 */
 
-const argon2 = require('argon2')
-
 /**
  * Hash plain values using [argon2](https://github.com/P-H-C/phc-winner-argon2).
  *
@@ -19,6 +17,9 @@ const argon2 = require('argon2')
  * @class Argon
  */
 class Argon {
+  constructor () {
+    this.argon2 = require('argon2')
+  }
   /**
    * Hash plain value using argon2.
    *
@@ -31,7 +32,7 @@ class Argon {
    * @return {String}
    */
   make (value, config = {}) {
-    return argon2.hash(value, config)
+    return this.argon2.hash(value, config)
   }
 
   /**
@@ -54,7 +55,7 @@ class Argon {
       return false
     }
 
-    if (await argon2.verify(hash, value)) {
+    if (await this.argon2.verify(hash, value)) {
       return true
     }
 
