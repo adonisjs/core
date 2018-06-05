@@ -161,10 +161,24 @@ class AppProvider extends ServiceProvider {
    * @private
    */
   _registerHash () {
-    this.app.singleton('Adonis/Src/Hash', () => {
-      return require('../src/Hash')
+    this.app.singleton('Adonis/Src/Hash', (app) => {
+      const HashFacade = require('../src/Hash/Facade')
+      return new HashFacade(app.use('Adonis/Src/Config'))
     })
     this.app.alias('Adonis/Src/Hash', 'Hash')
+  }
+
+  /**
+   * Register hash manager under `Adonis/Src/Hash` namespace
+   *
+   * @method _registerHashManager
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _registerHashManager () {
+    this.app.manager('Adonis/Src/Hash', require('../src/Hash/Manager'))
   }
 
   /**
@@ -295,6 +309,7 @@ class AppProvider extends ServiceProvider {
     this._registerLoggerManager()
     this._registerServer()
     this._registerHash()
+    this._registerHashManager()
     this._registerException()
     this._registerExceptionHandler()
     this._registerEncryption()
