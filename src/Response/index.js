@@ -572,10 +572,12 @@ class Response extends Macroable {
    *
    * @param  {String}    key
    *
+   * @param  {Object}    [options = {}]
+   *
    * @return {void}
    */
-  clearCookie (key) {
-    nodeCookie.clear(this.response, key)
+  clearCookie (key, options = { path: '/' }) {
+    nodeCookie.clear(this.response, key, options)
   }
 
   /**
