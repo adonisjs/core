@@ -66,6 +66,7 @@ class HashManager {
     }
 
     const driverInstance = ioc.make(Driver)
+    driverInstance.setConfig(config)
     return driverInstance
   }
 }

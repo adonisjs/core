@@ -163,8 +163,10 @@ test.group('Hash | Facade', (group) => {
 
   test('return hasher instance with extended driver', (assert) => {
     const myDriver = {
-      make () {}
+      make () {},
+      setConfig () {}
     }
+
     HashManager.extend('mydriver', myDriver)
 
     const config = new Config()

@@ -19,7 +19,20 @@
 class Argon {
   constructor () {
     this.argon2 = require('argon2')
+    this.config = {}
   }
+
+  /**
+   * Consumes argon config
+   *
+   * @method setConfig
+   *
+   * @param  {Object}  config
+   */
+  setConfig (config) {
+    this.config = config
+  }
+
   /**
    * Hash plain value using argon2.
    *
@@ -32,7 +45,7 @@ class Argon {
    * @return {String}
    */
   make (value, config = {}) {
-    return this.argon2.hash(value, config)
+    return this.argon2.hash(value, Object.assign({}, this.config, config))
   }
 
   /**

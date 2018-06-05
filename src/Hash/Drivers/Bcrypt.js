@@ -19,6 +19,21 @@ const bcrypt = require('bcryptjs')
  * @class Bcrypt
  */
 class Bcrypt {
+  constructor () {
+    this.config = {}
+  }
+
+  /**
+   * Consumes bcrypt config
+   *
+   * @method setConfig
+   *
+   * @param  {Object}  config
+   */
+  setConfig (config) {
+    this.config = config
+  }
+
   /**
    * Hash plain value using bcrypt.
    *
@@ -30,17 +45,21 @@ class Bcrypt {
    *
    * @return {String}
    */
-  make (value, config) {
-    let round
+  make (value, config = {}) {
+    let rounds = null
 
-    if (config === undefined) {
-      round = 10
+    /**
+     * In order to be back compatible, we have to accept strings and numbers
+     * as config rounds.
+     */
+    if (typeof (config) === 'string' || typeof (config) === 'number') {
+      rounds = Number(config)
     } else {
-      round = config.round || config
+      rounds = config.rounds || this.config.rounds || 10
     }
 
     return new Promise(function (resolve, reject) {
-      bcrypt.hash(value, round, function (error, hash) {
+      bcrypt.hash(value, rounds, function (error, hash) {
         if (error) {
           return reject(error)
         }
