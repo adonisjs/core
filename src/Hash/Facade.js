@@ -76,13 +76,13 @@ class HashFacade {
    * @return {Hash}
    */
   driver (name) {
-    name = name || this.Config.get('hashing.driver') || 'bcrypt'
+    name = name || this.Config.get('hash.driver') || 'bcrypt'
 
     /**
      * Throw exception when hash.driver is not defined
      */
     if (!name) {
-      throw GE.RuntimeException.missingConfig('driver', 'config/hashing.js')
+      throw GE.RuntimeException.missingConfig('driver', 'config/hash.js')
     }
 
     /**
