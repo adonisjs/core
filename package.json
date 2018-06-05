@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/framework",
-  "version": "5.0.7",
+  "version": "5.0.8",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@adonisjs/fold": "^4.0.8",
     "@adonisjs/sink": "^1.0.16",
+    "argon2": "^0.19.3",
     "clear-require": "^2.0.0",
     "cookie-signature": "^1.1.0",
     "coveralls": "^3.0.1",
@@ -47,7 +48,7 @@
     "@adonisjs/middleware-base": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "co-compose": "^4.0.0",
-    "dotenv": "^5.0.1",
+    "dotenv": "^6.0.0",
     "edge.js": "^1.1.4",
     "eventemitter2": "^5.0.1",
     "haye": "^2.0.1",

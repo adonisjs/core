@@ -9,29 +9,36 @@
  * file that was distributed with this source code.
 */
 
-const bcrypt = require('bcryptjs')
-
 /**
- * Hash plain values using [bcryptjs](https://www.npmjs.com/package/bcryptjs).
+ * Hash plain values using the provided hash algorithm.
  * It is considered to be used when saving user passwords to the database.
  *
- * @binding Adonis/Src/Hash
- * @group Core
- * @alias Hash
+ * @group Hash
  * @singleton Yes
  *
  * @class Hash
- * @static
+ * @constructor
  */
 class Hash {
+  constructor (driver) {
+    /**
+     * The driver in use for logging
+     *
+     * @type {Object}
+     *
+     * @attribute driver
+     */
+    this.driver = driver
+  }
+
   /**
-   * Hash plain value using bcrypt.
+   * Hash plain value using the given driver.
    *
    * @method make
    * @async
    *
    * @param  {String} value
-   * @param  {Number} [rounds = 10]
+   * @param  {Object} config
    *
    * @return {String}
    *
@@ -40,15 +47,8 @@ class Hash {
    * const hashed = await Hash.make('my-secret-password')
    * ```
    */
-  make (value, rounds = 10) {
-    return new Promise(function (resolve, reject) {
-      bcrypt.hash(value, rounds, function (error, hash) {
-        if (error) {
-          return reject(error)
-        }
-        resolve(hash)
-      })
-    })
+  make (value, config) {
+    return this.driver.make(value, config)
   }
 
   /**
@@ -74,15 +74,8 @@ class Hash {
    * ```
    */
   verify (value, hash) {
-    return new Promise(function (resolve, reject) {
-      bcrypt.compare(value, hash, function (error, response) {
-        if (error) {
-          return resolve(false)
-        }
-        resolve(response)
-      })
-    })
+    return this.driver.verify(value, hash)
   }
 }
 
-module.exports = new Hash()
+module.exports = Hash
