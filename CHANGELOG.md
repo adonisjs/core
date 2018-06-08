@@ -1,3 +1,25 @@
+<a name="5.0.8"></a>
+## [5.0.8](https://github.com/adonisjs/adonis-framework/compare/v5.0.7...v5.0.8) (2018-06-05)
+
+
+### Bug Fixes
+
+* **hash:** correct how round is retrieved in bcrypt driver ([7617147](https://github.com/adonisjs/adonis-framework/commit/7617147))
+* **hash:** read values from config/hash consistently ([0f8e8cf](https://github.com/adonisjs/adonis-framework/commit/0f8e8cf))
+
+
+### Features
+
+* **clearCookie:** accept options as 3rd argument  ([c82b2ab](https://github.com/adonisjs/adonis-framework/commit/c82b2ab)), closes [#115](https://github.com/adonisjs/adonis-framework/issues/115)
+* **hash:** add argon package to devDeps ([ee39a17](https://github.com/adonisjs/adonis-framework/commit/ee39a17))
+* **hash:** change to driver system + add argon driver ([f2d6b68](https://github.com/adonisjs/adonis-framework/commit/f2d6b68))
+* **hash:** pass config to hash drivers via setConfig method ([bb222a0](https://github.com/adonisjs/adonis-framework/commit/bb222a0))
+* **hash:** remove breaking change for bcrypt driver ([363d17b](https://github.com/adonisjs/adonis-framework/commit/363d17b))
+* **hash:** rename config file to be hashing.js ([8afdd21](https://github.com/adonisjs/adonis-framework/commit/8afdd21))
+* **hash:** use bcrypt by default ([8f581e5](https://github.com/adonisjs/adonis-framework/commit/8f581e5))
+
+
+
 <a name="5.0.7"></a>
 ## [5.0.7](https://github.com/adonisjs/adonis-framework/compare/v5.0.6...v5.0.7) (2018-06-02)
 
