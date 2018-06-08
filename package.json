@@ -21,8 +21,8 @@
       "typescript"
     ],
     "ignore": [
-      "src/Schema/index.js",
-      "src/Schema/chain.js"
+      "src/Route/index.js",
+      "src/Route/Manager.js"
     ]
   },
   "keywords": [
