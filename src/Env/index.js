@@ -75,7 +75,7 @@ class Env {
     _.each(matches, (match) => {
       const key = match.replace(/\$|{|}/g, '')
       const variable = envConfig[key] || process.env[key] || ''
-      env = env.replace(match, this._interpolate(variable))
+      env = env.replace(match, this._interpolate(variable, envConfig))
     })
     return env
   }
