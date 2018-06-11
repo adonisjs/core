@@ -35,8 +35,6 @@ import Macroable = require('macroable')
  */
 class Route extends Macroable {
 
-  static get: (url: string, some: any) => Route
-  static any: (url: string, some: any) => Route
   static _macros: object
   static _getters: object
 
