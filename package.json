@@ -64,7 +64,7 @@
     "resetable": "^1.0.3",
     "serve-static": "^1.13.2",
     "useragent": "^2.3.0",
-    "winston": "^2.4.2",
+    "winston": "^3.0.0",
     "youch": "^2.0.7"
   },
   "nyc": {
