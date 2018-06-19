@@ -4,6 +4,7 @@
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
+    "mrm": "mrm --dir=node_modules/@adonisjs/mrm-preset",
     "lint": "standard",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
@@ -26,6 +27,7 @@
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/fold": "^4.0.8",
+    "@adonisjs/mrm-preset": "^1.0.0",
     "@adonisjs/sink": "^1.0.16",
     "argon2": "^0.19.3",
     "clear-require": "^2.0.0",
@@ -35,6 +37,7 @@
     "fs-extra": "^6.0.1",
     "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
+    "mrm": "^1.1.1",
     "nyc": "^12.0.2",
     "pify": "^3.0.0",
     "semver": "^5.5.0",
