@@ -1,0 +1,6 @@
+{
+  "extends": [
+    "adonis-ts-arche/_tslint"
+  ],
+  "rules": {}
+}

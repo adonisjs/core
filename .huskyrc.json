@@ -1,0 +1,6 @@
+{
+  "hooks": {
+    "pre-commit": "builder run build && pkg-ok && git add .",
+    "pre-push": "builder run test"
+  }
+}

@@ -5,18 +5,14 @@
   "main": "index.js",
   "scripts": {
     "mrm": "mrm --dir=node_modules/@adonisjs/mrm-preset",
-    "lint": "standard",
+    "test": "builder run npm:test",
+    "lint": "builder run npm:lint",
+    "build": "builder run npm:build",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "nyc npm run test:local",
     "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
-  },
-  "standard": {
-    "global": [
-      "use"
-    ]
   },
   "keywords": [
     "adonis-framework",
@@ -29,20 +25,26 @@
     "@adonisjs/fold": "^4.0.8",
     "@adonisjs/mrm-preset": "^1.0.0",
     "@adonisjs/sink": "^1.0.16",
+    "@types/debug": "0.0.30",
+    "@types/lodash": "^4.14.110",
+    "@types/node": "^10.5.0",
+    "adonis-ts-arche": "^1.0.7",
     "argon2": "^0.19.3",
+    "builder": "^4.0.0",
     "clear-require": "^2.0.0",
     "cookie-signature": "^1.1.0",
     "coveralls": "^3.0.1",
     "cz-conventional-changelog": "^2.1.0",
     "fs-extra": "^6.0.1",
+    "husky": "^1.0.0-rc.9",
     "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
     "mrm": "^1.1.1",
     "nyc": "^12.0.2",
     "pify": "^3.0.0",
+    "pkg-ok": "^2.2.0",
     "semver": "^5.5.0",
-    "simple-encryptor": "^1.3.0",
-    "standard": "^11.0.1",
+    "simple-encryptor": "^1.4.0",
     "supertest": "^3.1.0",
     "test-console": "^1.1.0"
   },
@@ -67,7 +69,7 @@
     "resetable": "^1.0.3",
     "serve-static": "^1.13.2",
     "useragent": "^2.3.0",
-    "winston": "^2.4.2",
+    "winston": "^2.4.3",
     "youch": "^2.0.8"
   },
   "nyc": {
