@@ -142,6 +142,47 @@ test.group('Ioc', function () {
     assert.equal(ioc.getAutoloads()['App'], path.join(__dirname, './app'))
   })
 
+  test('should be able to call a closure when loading has been successful using with', (assert) => {
+    assert.plan(1)
+    const ioc = new Ioc()
+    const fooFn = function () {
+      return 'foo'
+    }
+    ioc.bind('App/Foo', fooFn)
+
+    ioc.with('App/Foo', (Foo) => {
+      assert.equal(Foo, 'foo')
+    })
+  })
+
+  test('should be able to call a closure when loading has been successful using with', (assert) => {
+    assert.plan(2)
+    const ioc = new Ioc()
+    const fooFn = function () {
+      return 'foo'
+    }
+    const barFn = function () {
+      return 'bar'
+    }
+    ioc.bind('App/Foo', fooFn)
+    ioc.bind('App/Bar', barFn)
+
+    ioc.with(['App/Foo', 'App/Bar'], (Foo, Bar) => {
+      assert.equal(Foo, 'foo')
+      assert.equal(Bar, 'bar')
+    })
+  })
+
+  test('should fail silently when loading has been unsuccessful using with', (assert) => {
+    assert.plan(1)
+    const ioc = new Ioc()
+    ioc.with(['App/Foo'], (Foo) => {
+      assert.equal(true, false)
+    })
+
+    assert.equal(true, true)
+  })
+
   test('should be able to resolve a file from the autoloaded directory', function () {
     const ioc = new Ioc()
     const actualUserClass = require('./app/User')

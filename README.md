@@ -40,6 +40,10 @@ ioc.bind('App/Foo', function () {
 
 const foo = ioc.use('App/Foo')
 // return Foo class instance
+
+ioc.with('App/Foo', (Foo) => {
+  // Only if App/Foo exists
+})
 ```
 
 Simple enough! But we do not see the real power of the Ioc container, since we can instantiate the class manually too. Right? NO

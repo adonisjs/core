@@ -743,6 +743,28 @@ class Ioc {
   }
 
   /**
+   * Attempts to resolve given namespaces and forward
+   * them to the given callback.
+   *
+   * @method with
+   *
+   * @param  {string|string[]}  namespaces
+   * @param  {Function}         next
+   * @return {void}
+   */
+  with (namespaces, next) {
+    namespaces = _.isArray(namespaces)
+      ? namespaces
+      : [namespaces]
+
+    try {
+      const resolved = namespaces.map(namespace => this.use(namespace))
+
+      next(...resolved)
+    } catch (e) {}
+  }
+
+  /**
    * Works as same as the `use` method, but instead returns
    * an instance of the class when resolved value is a
    * ES6 class and not a registered binding. Bindings
