@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report an identified bug
+about: Report identified bugs
 ---
 
 <!-- CLICK "Preview" FOR INSTRUCTIONS IN A MORE READABLE FORMAT -->
