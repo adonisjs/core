@@ -772,7 +772,7 @@ test.group('Route | Manager', (group) => {
     RouteManager.get('users/:id', function () {}).as('profile')
     RouteManager.get('author/:id', function () {}).domain('blog.example.com').as('profile')
 
-    const url = RouteManager.url('profile', { id: 2 }, 'blog.example.com')
+    const url = RouteManager.url('profile', { id: 2 }, { domain: 'blog.example.com' })
     assert.equal(url, 'http://blog.example.com/author/2')
   })
 
@@ -780,7 +780,7 @@ test.group('Route | Manager', (group) => {
     RouteManager.get('users/:id', function () {}).as('profile')
     RouteManager.get('author/:id', function () {}).domain('(.*).example.com').as('profile')
 
-    const url = RouteManager.url('profile', { id: 2 }, 'virk.example.com')
+    const url = RouteManager.url('profile', { id: 2 }, { domain: 'virk.example.com' })
     assert.equal(url, 'http://virk.example.com/author/2')
   })
 
@@ -793,7 +793,7 @@ test.group('Route | Manager', (group) => {
   test('make url with domain for controller action', (assert) => {
     RouteManager.get('users/:id', 'UsersController.show')
     RouteManager.get('author/:id', 'UsersController.show').domain('blog.example.com')
-    const url = RouteManager.url('UsersController.show', { id: 1 }, 'blog.example.com')
+    const url = RouteManager.url('UsersController.show', { id: 1 }, { domain: 'blog.example.com' })
     assert.equal(url, 'http://blog.example.com/author/1')
   })
 
