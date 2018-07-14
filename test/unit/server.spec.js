@@ -687,7 +687,6 @@ test.group('Server | Calls', (group) => {
     })
 
     this.server.setInstance(httpServer)
-    this.server.listen()
 
     const { text } = await supertest(httpServer).get('/').expect(200)
     assert.equal(text, 'Custom instance response')

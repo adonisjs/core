@@ -10,7 +10,7 @@
 */
 
 const _ = require('lodash')
-const Winston = require('winston')
+const winston = require('winston')
 
 /**
  * Winston console transport driver for @ref('Logger').
@@ -28,21 +28,16 @@ class WinstonConsole {
     this.config = Object.assign({}, {
       name: 'adonis-app',
       level: 'info',
-      colorize: 'all',
       timestamp: new Date().toLocaleTimeString()
     }, config)
 
     /**
      * Creating new instance of winston with file transport
      */
-    this.logger = new Winston.Logger({
-      transports: [new Winston.transports.Console(this.config)]
+    this.logger = winston.createLogger({
+      levels: this.levels,
+      transports: [new winston.transports.Console(this.config)]
     })
-
-    /**
-     * Updating winston levels with syslog standard levels.
-     */
-    this.logger.setLevels(this.levels)
   }
 
   /**
@@ -73,7 +68,7 @@ class WinstonConsole {
    * @return {String}
    */
   get level () {
-    return this.logger.transports[this.config.name].level
+    return this.logger.transports[0].level
   }
 
   /**
@@ -84,7 +79,7 @@ class WinstonConsole {
    * @return {void}
    */
   set level (level) {
-    this.logger.transports[this.config.name].level = level
+    this.logger.transports[0].level = level
   }
 
   /**

@@ -11,7 +11,7 @@
 
 const _ = require('lodash')
 const path = require('path')
-const Winston = require('winston')
+const winston = require('winston')
 
 /**
  * @module Adonis
@@ -57,7 +57,6 @@ class WinstonFile {
     this.config = Object.assign({}, {
       name: 'adonis-app',
       filename: 'adonis.log',
-      colorize: 'all',
       level: 'info'
     }, config)
 
@@ -72,14 +71,10 @@ class WinstonFile {
     /**
      * Creating new instance of winston with file transport
      */
-    this.logger = new Winston.Logger({
-      transports: [new Winston.transports.File(this.config)]
+    this.logger = winston.createLogger({
+      levels: this.levels,
+      transports: [new winston.transports.File(this.config)]
     })
-
-    /**
-     * Updating winston levels with syslog standard levels.
-     */
-    this.logger.setLevels(this.levels)
   }
 
   /**
@@ -110,7 +105,7 @@ class WinstonFile {
    * @return {String}
    */
   get level () {
-    return this.logger.transports[this.config.name].level
+    return this.logger.transports[0].level
   }
 
   /**
@@ -121,7 +116,7 @@ class WinstonFile {
    * @return {void}
    */
   set level (level) {
-    this.logger.transports[this.config.name].level = level
+    this.logger.transports[0].level = level
   }
 
   /**
