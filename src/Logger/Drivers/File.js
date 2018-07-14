@@ -60,6 +60,11 @@ class WinstonFile {
       level: 'info'
     }, config)
 
+    const format = this.config.format || winston.format.combine(
+      winston.format.json()
+    )
+    delete this.config.format
+
     /**
      * If filename is not absolute, save it inside the tmp path
      * of adonis-app.
@@ -73,6 +78,7 @@ class WinstonFile {
      */
     this.logger = winston.createLogger({
       levels: this.levels,
+      format: format,
       transports: [new winston.transports.File(this.config)]
     })
   }

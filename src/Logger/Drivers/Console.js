@@ -31,10 +31,19 @@ class WinstonConsole {
       timestamp: new Date().toLocaleTimeString()
     }, config)
 
+    const format = this.config.format || winston.format.combine(
+      winston.format.colorize(),
+      winston.format.splat(),
+      winston.format.simple()
+    )
+
+    delete this.config.format
+
     /**
      * Creating new instance of winston with file transport
      */
     this.logger = winston.createLogger({
+      format: format,
       levels: this.levels,
       transports: [new winston.transports.Console(this.config)]
     })

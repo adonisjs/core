@@ -59,6 +59,10 @@ class LoggerManager {
     name = name.toLowerCase()
     const Driver = Drivers[name] || this._drivers[name]
 
+    if (config && config.format && typeof (config.format) === 'string') {
+      config.format = null
+    }
+
     /**
      * If driver doesn't exists, let the end user know
      * about it
