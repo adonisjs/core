@@ -128,30 +128,6 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), 'https://style.css')
   })
 
-  test('make link tag (using deprecated css method)', (assert) => {
-    const view = new View(this.helpers)
-    globals(view, RouteManager)
-    RouteManager.route('users/:id', function () {}).as('profile')
-    const template = `{{ css('style.css') }}`
-    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
-  })
-
-  test('make link tag (using deprecated css method) when there is no .css extension', (assert) => {
-    const view = new View(this.helpers)
-    globals(view, RouteManager)
-    RouteManager.route('users/:id', function () {}).as('profile')
-    const template = `{{ css('style') }}`
-    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style.css" />')
-  })
-
-  test('(using deprecated css method)do not add .css when there skipPrefix is true', (assert) => {
-    const view = new View(this.helpers)
-    globals(view, RouteManager)
-    RouteManager.route('users/:id', function () {}).as('profile')
-    const template = `{{ css('style', true) }}`
-    assert.equal(view.renderString(template).trim(), '<link rel="stylesheet" href="/style" />')
-  })
-
   test('make link tag', (assert) => {
     const view = new View(this.helpers)
     globals(view, RouteManager)

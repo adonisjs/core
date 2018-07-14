@@ -36,15 +36,6 @@ module.exports = function (View, Route, Config) {
   })
 
   /**
-   * Make link tag for css
-   * @deprecated
-   */
-  View.global('css', function (url, skipPrefix = false) {
-    console.warn('The \'css\' view global is deprecated. Use \'style\' instead')
-    return this.$globals.style.bind(this, url, skipPrefix)()
-  })
-
-  /**
    * Make script tag for javascript
    */
   View.global('script', function (url, skipPrefix = false) {
