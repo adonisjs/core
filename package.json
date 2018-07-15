@@ -7,13 +7,15 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "standard",
+    "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "nyc npm run test:local",
-    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "test": "nyc japa",
+    "test:win": "node ./node_modules/japa-cli/index.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "commit": "git-cz",
+    "lint": "standard"
   },
   "standard": {
     "globals": [
@@ -30,11 +32,15 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
+    "@adonisjs/mrm-preset": "^1.0.9",
+    "commitizen": "^2.10.1",
     "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
     "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
+    "mrm": "^1.2.1",
     "nyc": "^12.0.2",
+    "pkg-ok": "^2.2.0",
     "semver": "^5.5.0",
     "standard": "^11.0.1"
   },
@@ -63,12 +69,16 @@
   "homepage": "https://github.com/poppinss/adonis-fold#readme",
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "cz-conventional-changelog"
     }
   },
   "nyc": {
     "include": [
       "src"
+    ],
+    "exclude": [
+      "test",
+      "japaFile.js"
     ]
   },
   "bin": {
