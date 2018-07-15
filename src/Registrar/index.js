@@ -99,16 +99,16 @@ class Registrar {
    */
   _getProvidersInstance (arrayOfProviders) {
     return _(arrayOfProviders)
-    .uniq()
-    .map((provider) => {
-      const Module = requireStack(provider.trim())
-      if (Module.prototype instanceof ServiceProvider === false) {
-        const message = `${Module.name} must extend base service provider class`
-        throw GE.RuntimeException.invoke(message, 500, 'E_INVALID_SERVICE_PROVIDER')
-      }
-      return new Module(this.Ioc)
-    })
-    .value()
+      .uniq()
+      .map((provider) => {
+        const Module = requireStack(provider.trim())
+        if (Module.prototype instanceof ServiceProvider === false) {
+          const message = `${Module.name} must extend base service provider class`
+          throw GE.RuntimeException.invoke(message, 500, 'E_INVALID_SERVICE_PROVIDER')
+        }
+        return new Module(this.Ioc)
+      })
+      .value()
   }
 
   /**
@@ -124,8 +124,8 @@ class Registrar {
    */
   _registerProviders (providers) {
     _(providers)
-    .filter((provider) => typeof (provider.register) === 'function')
-    .each((provider) => provider.register())
+      .filter((provider) => typeof (provider.register) === 'function')
+      .each((provider) => provider.register())
   }
 
   /**
@@ -143,9 +143,9 @@ class Registrar {
    */
   _bootProviders (providers) {
     return _(providers)
-    .filter((provider) => typeof (provider.boot) === 'function')
-    .map((provider) => provider.boot())
-    .value()
+      .filter((provider) => typeof (provider.boot) === 'function')
+      .map((provider) => provider.boot())
+      .value()
   }
 
   /**

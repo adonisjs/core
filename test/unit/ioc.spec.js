@@ -313,19 +313,25 @@ test.group('Ioc', function () {
     assert.equal(ioc.use('App/Foo'), 'fake foo')
   })
 
-  test('should resolve same value when fake is singleton', function () {
+  test('should resolve same value when fake is singleton', function (assert, done) {
     const ioc = new Ioc()
-    class Foo {}
 
     ioc.bind('App/Foo', function () {
       return 'foo'
     })
 
     ioc.singletonFake('App/Foo', function () {
-      return new Foo()
+      return {
+        time: new Date().getTime()
+      }
     })
 
-    assert.isTrue(ioc.use('App/Foo') === ioc.use('App/Foo'))
+    const time = ioc.use('App/Foo')
+    setTimeout(() => {
+      done(() => {
+        assert.equal(time, ioc.use('App/Foo'))
+      })
+    }, 1000)
   })
 
   test('should resolve fake over the actual binding when using make method', function () {

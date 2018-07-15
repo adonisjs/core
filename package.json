@@ -30,19 +30,19 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "coveralls": "^3.0.0",
+    "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
     "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
-    "nyc": "^11.4.1",
+    "nyc": "^12.0.2",
     "semver": "^5.5.0",
-    "standard": "^10.0.3"
+    "standard": "^11.0.1"
   },
   "dependencies": {
-    "@adonisjs/generic-exceptions": "^2.0.0",
+    "@adonisjs/generic-exceptions": "^2.0.1",
     "caller": "^1.0.1",
     "debug": "^3.1.0",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.10",
     "require-stack": "^1.0.2"
   },
   "repository": {
