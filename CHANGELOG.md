@@ -1,3 +1,13 @@
+<a name="4.0.9"></a>
+## [4.0.9](https://github.com/poppinss/adonis-fold/compare/v4.0.8...v4.0.9) (2018-07-15)
+
+
+### Features
+
+* **ioc:** add with method ([#12](https://github.com/poppinss/adonis-fold/issues/12)) ([b13c643](https://github.com/poppinss/adonis-fold/commit/b13c643))
+
+
+
 <a name="4.0.8"></a>
 ## [4.0.8](https://github.com/poppinss/adonis-fold/compare/v4.0.7...v4.0.8) (2018-04-05)
 
