@@ -3,6 +3,10 @@
   "version": "4.0.9",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
+  "files": [
+    "src",
+    "index.js"
+  ],
   "directories": {
     "test": "test"
   },
