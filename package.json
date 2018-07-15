@@ -9,7 +9,7 @@
     "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
     "test": "nyc japa",
-    "test:win": "./node_modules/japa-cli/index.js",
+    "test:win": "node ./node_modules/japa-cli/index.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "commit": "git-cz",
     "lint": "standard"
@@ -27,8 +27,8 @@
   "author": "adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "^4.0.8",
-    "@adonisjs/mrm-preset": "^1.0.8",
+    "@adonisjs/fold": "^4.0.9",
+    "@adonisjs/mrm-preset": "^1.0.9",
     "@adonisjs/sink": "^1.0.16",
     "argon2": "^0.19.3",
     "clear-require": "^2.0.0",
