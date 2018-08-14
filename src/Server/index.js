@@ -143,7 +143,7 @@ class Server {
     const route = this.Route.match(ctx.request.url(), ctx.request.method(), ctx.request.hostname())
 
     if (!route) {
-      throw new GE.HttpException(`Route not found ${ctx.request.method()} ${ctx.request.url()}`, 404)
+      throw new GE.HttpException(`Route not found ${ctx.request.method()} ${ctx.request.url()}`, 404, 'E_ROUTE_NOT_FOUND')
     }
 
     debug('route found for %s url', ctx.request.url())
