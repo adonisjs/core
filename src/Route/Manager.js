@@ -316,7 +316,7 @@ class RouteManager {
    * @param  {String}   [name = null]
    * @param  {Function} callback
    *
-   * @return {Object}          Instance of {{#crossLink "RouteGroup"}}{{/crossLink}}
+   * @return {RouteGroup}          Instance of {{#crossLink "RouteGroup"}}{{/crossLink}}
    *
    * @example
    * ```js
@@ -359,7 +359,7 @@ class RouteManager {
    * @param  {String} resource
    * @param  {String} controller
    *
-   * @return {Object}          Instance of {{#crossLink "RouteResource"}}{{/crossLink}}
+   * @return {RouteResource}          Instance of {{#crossLink "RouteResource"}}{{/crossLink}}
    */
   resource (resource, controller) {
     return new RouteResource(resource, controller, RouteStore._breakpoint.name)
