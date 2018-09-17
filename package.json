@@ -44,7 +44,6 @@
     "pify": "^3.0.0",
     "pkg-ok": "^2.2.0",
     "semver": "^5.5.0",
-    "simple-encryptor": "^1.4.0",
     "standard": "^11.0.1",
     "supertest": "^3.1.0",
     "test-console": "^1.1.0"
@@ -70,6 +69,7 @@
     "require-all": "^3.0.0",
     "resetable": "^1.0.3",
     "serve-static": "^1.13.2",
+    "simple-encryptor": "^2.0.0",
     "useragent": "^2.3.0",
     "winston": "^3.0.0",
     "youch": "^2.0.8"
