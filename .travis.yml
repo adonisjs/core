@@ -5,6 +5,8 @@ node_js:
 sudo: false
 install:
   - npm install
+after_script:
+  - npm run coverage
 notifications:
   slack:
     secure: >-
