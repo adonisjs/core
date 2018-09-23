@@ -6,7 +6,6 @@
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
-    "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
     "test": "nyc japa",
     "test:win": "node ./node_modules/japa-cli/index.js",
