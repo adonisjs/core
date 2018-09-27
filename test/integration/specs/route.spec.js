@@ -58,7 +58,7 @@ test.group('Route', (group) => {
 
   test('route without forward slash should work fine', async (assert) => {
     const Route = use('Route')
-    const users = [{username: 'virk'}, {username: 'nikk'}]
+    const users = [{ username: 'virk' }, { username: 'nikk' }]
     Route.get('user', async function () {
       return users
     })

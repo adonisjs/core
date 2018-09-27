@@ -22,16 +22,7 @@ module.exports = function () {
     registrar
       .providers(providers)
       .registerAndBoot()
-      .then(() => {
-        const Config = use('Config')
-        Config.set('app.logger', {
-          transport: 'console',
-          console: {
-            driver: 'console'
-          }
-        })
-        resolve()
-      })
+      .then(resolve)
       .catch(reject)
   })
 }

@@ -37,7 +37,7 @@ test.group('Encryption', () => {
 
   test('encrypt object using valid key', (assert) => {
     const encryption = new Encryption(getAppKey())
-    assert.isDefined(encryption.encrypt({name: 'virk'}))
+    assert.isDefined(encryption.encrypt({ name: 'virk' }))
   })
 
   test('encrypt boolean using valid key', (assert) => {
@@ -63,8 +63,8 @@ test.group('Encryption', () => {
 
   test('decrypt object using valid key', (assert) => {
     const encryption = new Encryption(getAppKey())
-    const encryptedValue = encryption.encrypt({name: 'virk'})
-    assert.deepEqual(encryption.decrypt(encryptedValue), {name: 'virk'})
+    const encryptedValue = encryption.encrypt({ name: 'virk' })
+    assert.deepEqual(encryption.decrypt(encryptedValue), { name: 'virk' })
   })
 
   test('decrypt boolean using valid key', (assert) => {

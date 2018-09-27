@@ -173,24 +173,24 @@ test.group('Route | Resolve', () => {
 
   test('resolve route with route params', (assert) => {
     const route = new Route('/make/:drink', function () {})
-    assert.deepEqual(route.resolve('/make/coffee', 'GET'), { url: '/make/coffee', params: {drink: 'coffee'}, subdomains: {} })
+    assert.deepEqual(route.resolve('/make/coffee', 'GET'), { url: '/make/coffee', params: { drink: 'coffee' }, subdomains: {} })
   })
 
   test('resolve route with route optional params', (assert) => {
     const route = new Route('/make/:drink?', function () {})
-    assert.deepEqual(route.resolve('/make/coffee', 'GET'), { url: '/make/coffee', params: {drink: 'coffee'}, subdomains: {} })
+    assert.deepEqual(route.resolve('/make/coffee', 'GET'), { url: '/make/coffee', params: { drink: 'coffee' }, subdomains: {} })
   })
 
   test('resolve route when optional param is missing', (assert) => {
     const route = new Route('/make/:drink?', function () {})
-    assert.deepEqual(route.resolve('/make', 'GET'), { url: '/make', params: {drink: null}, subdomains: {} })
+    assert.deepEqual(route.resolve('/make', 'GET'), { url: '/make', params: { drink: null }, subdomains: {} })
   })
 
   test('resolve route with zero or more dynamic params', (assert) => {
     const route = new Route('/coffee/:ingredients*', function () {})
     assert.deepEqual(
       route.resolve('/coffee/sugar/milk', 'GET'),
-      { url: '/coffee/sugar/milk', params: {ingredients: ['sugar', 'milk']}, subdomains: {} }
+      { url: '/coffee/sugar/milk', params: { ingredients: ['sugar', 'milk'] }, subdomains: {} }
     )
   })
 
@@ -198,7 +198,7 @@ test.group('Route | Resolve', () => {
     const route = new Route('/coffee/:ingredients+', function () {})
     assert.deepEqual(
       route.resolve('/coffee/sugar/milk', 'GET'),
-      { url: '/coffee/sugar/milk', params: {ingredients: ['sugar', 'milk']}, subdomains: {} }
+      { url: '/coffee/sugar/milk', params: { ingredients: ['sugar', 'milk'] }, subdomains: {} }
     )
   })
 

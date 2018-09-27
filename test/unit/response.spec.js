@@ -44,12 +44,12 @@ test.group('Response', (group) => {
   test('send json object as response', async (assert) => {
     const server = http.createServer((req, res) => {
       const response = new Response(new Request(req, res), new Config())
-      response.send({name: 'virk'})
+      response.send({ name: 'virk' })
       response.end()
     })
 
     const res = await supertest(server).get('/').expect('Content-Type', /json/).expect(200)
-    assert.deepEqual(res.body, {name: 'virk'})
+    assert.deepEqual(res.body, { name: 'virk' })
   })
 
   test('send number as response', async (assert) => {
@@ -199,7 +199,7 @@ test.group('Response', (group) => {
   test('set content-type based on type', async (assert) => {
     const server = http.createServer((req, res) => {
       const response = new Response(new Request(req, res), new Config())
-      response.type('html').send({username: 'virk'})
+      response.type('html').send({ username: 'virk' })
       response.end()
     })
 
@@ -209,7 +209,7 @@ test.group('Response', (group) => {
   test('send content as json with content-type explicitly set to text/javascript', async (assert) => {
     const server = http.createServer((req, res) => {
       const response = new Response(new Request(req, res), new Config())
-      response.jsonp({username: 'virk'})
+      response.jsonp({ username: 'virk' })
       response.end()
     })
 
@@ -219,7 +219,7 @@ test.group('Response', (group) => {
   test('use the request query param callback for jsonp response', async (assert) => {
     const server = http.createServer((req, res) => {
       const response = new Response(new Request(req, res), new Config())
-      response.jsonp({username: 'virk'})
+      response.jsonp({ username: 'virk' })
       response.end()
     })
 
@@ -230,7 +230,7 @@ test.group('Response', (group) => {
   test('use the explicit callbackFn over request query param', async (assert) => {
     const server = http.createServer((req, res) => {
       const response = new Response(new Request(req, res), new Config())
-      response.jsonp({username: 'virk'}, 'eval')
+      response.jsonp({ username: 'virk' }, 'eval')
       response.end()
     })
 

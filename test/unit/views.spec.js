@@ -64,7 +64,7 @@ test.group('View', (group) => {
 
   test('share locals', (assert) => {
     const view = new View(this.helpers, true)
-    assert.equal(view.share({age: 22}).renderString('{{ age }}').trim(), '22')
+    assert.equal(view.share({ age: 22 }).renderString('{{ age }}').trim(), '22')
   })
 
   test('render a view', async (assert) => {
