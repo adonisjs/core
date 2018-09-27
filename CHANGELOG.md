@@ -1,3 +1,19 @@
+<a name="5.0.9"></a>
+## [5.0.9](https://github.com/adonisjs/adonis-framework/compare/v5.0.8...v5.0.9) (2018-09-27)
+
+
+### Bug Fixes
+
+* **env:** ensure envConfig is used to interpolate env file ([#883](https://github.com/adonisjs/adonis-framework/issues/883)) ([58e05f7](https://github.com/adonisjs/adonis-framework/commit/58e05f7))
+* **package:** simple-encryptor shouldn't be a dev deps ([304cb00](https://github.com/adonisjs/adonis-framework/commit/304cb00))
+
+
+### Features
+
+* **server:** add code to 404 exception ([#927](https://github.com/adonisjs/adonis-framework/issues/927)) ([515b463](https://github.com/adonisjs/adonis-framework/commit/515b463))
+
+
+
 <a name="5.0.8"></a>
 ## [5.0.8](https://github.com/adonisjs/adonis-framework/compare/v5.0.7...v5.0.8) (2018-06-05)
 
