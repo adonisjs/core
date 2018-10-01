@@ -1,14 +1,13 @@
 {
   "name": "@adonisjs/framework",
-  "version": "5.0.9",
+  "version": "5.0.10",
   "description": "Adonis framework makes it easy for you to write webapps with less code",
   "main": "index.js",
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "npm run test:win",
-    "test:win": "node japaFile.js",
+    "test": "nyc node japaFile.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "commit": "git-cz",
     "lint": "standard"
@@ -27,11 +26,11 @@
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/fold": "^4.0.9",
-    "@adonisjs/mrm-preset": "^1.0.11",
+    "@adonisjs/mrm-preset": "^1.0.13",
     "@adonisjs/sink": "^1.0.17",
     "argon2": "^0.19.3",
     "clear-require": "^2.0.0",
-    "commitizen": "^2.10.1",
+    "commitizen": "^3.0.1",
     "cookie-signature": "^1.1.0",
     "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
@@ -70,7 +69,7 @@
     "simple-encryptor": "^2.0.0",
     "useragent": "^2.3.0",
     "winston": "^3.1.0",
-    "youch": "^2.0.9"
+    "youch": "^2.0.10"
   },
   "nyc": {
     "include": [
@@ -78,8 +77,7 @@
       "lib"
     ],
     "exclude": [
-      "test",
-      "japaFile.js"
+      "test"
     ]
   },
   "config": {

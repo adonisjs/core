@@ -9,7 +9,7 @@ install:
 test_script:
   - node --version
   - npm --version
-  - 'npm run test:win'
+  - npm run test
 build: 'off'
 clone_depth: 1
 matrix:
