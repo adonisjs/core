@@ -29,6 +29,12 @@ class BaseExceptionHandler {
   _getYouchError (error, req, isJSON) {
     const Youch = require('youch')
     const youch = new Youch(error, req)
+
+    youch.addLink(({ message }) => {
+      const url = `https://forum.adonisjs.com/search?q=${message}`
+      return `<a href="${url}" target="_blank" title="Search on the official forum">Search on the official forum</a>`
+    })
+
     if (isJSON) {
       return youch.toJSON()
     }
