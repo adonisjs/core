@@ -12,7 +12,7 @@ This repo contains the core modules for the AdonisJs framework. You must checkou
 [![Coveralls][coveralls-image]][coveralls-url]
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework?ref=badge_shield)
 
-<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="140px">
+<img src="https://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="140px">
 
 ## What's in the box?
 
