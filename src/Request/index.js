@@ -123,6 +123,17 @@ class Request extends Macroable {
     this._original = {}
 
     /**
+     * Tracking whether initial qs and body has been
+     * set or not
+     *
+     * @type {Object}
+     */
+    this._originalCalls = {
+      qs: false,
+      body: false
+    }
+
+    /**
      * Set qs by parsing the request. `this._all` will be computed out of it
      */
     this.qs = nodeReq.get(this.request)
@@ -151,12 +162,11 @@ class Request extends Macroable {
    */
   set body (body) {
     debug('updated request body')
-    const hasBody = !!this._body
-
     this._body = body
     this._all = _.merge({}, this.get(), body)
 
-    if (!hasBody) {
+    if (!this._originalCalls.body) {
+      this._originalCalls.body = true
       this._updateRequestOriginal()
     }
   }
@@ -184,12 +194,12 @@ class Request extends Macroable {
    */
   set qs (qs) {
     debug('updated request query string')
-    const hasQs = !!this._qs
 
     this._qs = qs
     this._all = _.merge({}, this.post(), qs)
 
-    if (!hasQs) {
+    if (!this._originalCalls.qs) {
+      this._originalCalls.qs = true
       this._updateRequestOriginal()
     }
   }
@@ -223,7 +233,7 @@ class Request extends Macroable {
      * body is mutable, however a reference to original is
      * must
      */
-    if (this._qs && this._body) {
+    if (this._originalCalls.qs && this._originalCalls.body) {
       debug('freezing request original data')
       Object.freeze(this._original)
     }
