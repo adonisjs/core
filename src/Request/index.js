@@ -89,7 +89,7 @@ class Request extends Macroable {
      *
      * @type {Object}
      */
-    this._qs = nodeReq.get(this.request)
+    this._qs = null
 
     /**
      * Reference to request body
@@ -106,11 +106,25 @@ class Request extends Macroable {
     this._raw = null
 
     /**
-     * A merged object of get and post
+     * A merged object of get and post. This will re-computed everytime we will
+     * update the `qs` or `body` properties on this class.
      *
      * @type {Object}
      */
-    this._all = _.merge({}, this.get())
+    this._all = null
+
+    /**
+     * A reference to the original request object. The object will be freezed for further
+     * modifications once computed
+     *
+     * @type {Object}
+     */
+    this._original = {}
+
+    /**
+     * Set qs by parsing the request. `this._all` will be computed out of it
+     */
+    this.qs = nodeReq.get(this.request)
   }
 
   /**
@@ -137,6 +151,32 @@ class Request extends Macroable {
   set body (body) {
     this._body = body
     this._all = _.merge({}, this.get(), body)
+  }
+
+  /**
+   * Returns the query string as an object
+   *
+   * @method qs
+   *
+   * @return {Objec}
+   */
+  get qs () {
+    return this._qs || {}
+  }
+
+  /**
+   * Update the query string. This will re-compute the
+   * _all
+   *
+   * @method qs
+   *
+   * @param  {Object} qs
+   *
+   * @return {void}
+   */
+  set qs (qs) {
+    this._qs = qs
+    this._all = _.merge({}, this.post(), qs)
   }
 
   /**
@@ -170,7 +210,7 @@ class Request extends Macroable {
    * ```
    */
   get () {
-    return this._qs
+    return this.qs
   }
 
   /**
