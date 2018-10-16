@@ -30,6 +30,7 @@ const nodeCookie = require('node-cookie')
 const pathToRegexp = require('path-to-regexp')
 const useragent = require('useragent')
 const Macroable = require('macroable')
+const debug = require('debug')('adonis:request')
 
 const SUBDOMAIN_OFFSET = 'app.http.subdomainOffset'
 const TRUST_PROXY = 'app.http.trustProxy'
@@ -89,7 +90,7 @@ class Request extends Macroable {
      *
      * @type {Object}
      */
-    this._qs = nodeReq.get(this.request)
+    this._qs = null
 
     /**
      * Reference to request body
@@ -106,11 +107,25 @@ class Request extends Macroable {
     this._raw = null
 
     /**
-     * A merged object of get and post
+     * A merged object of get and post. This will re-computed everytime we will
+     * update the `qs` or `body` properties on this class.
      *
      * @type {Object}
      */
-    this._all = _.merge({}, this.get())
+    this._all = null
+
+    /**
+     * A reference to the original request object. The object will be freezed for further
+     * modifications once computed
+     *
+     * @type {Object}
+     */
+    this._original = {}
+
+    /**
+     * Set qs by parsing the request. `this._all` will be computed out of it
+     */
+    this.qs = nodeReq.get(this.request)
   }
 
   /**
@@ -135,8 +150,83 @@ class Request extends Macroable {
    * @return {void}
    */
   set body (body) {
+    debug('updated request body')
+    const hasBody = !!this._body
+
     this._body = body
     this._all = _.merge({}, this.get(), body)
+
+    if (!hasBody) {
+      this._updateRequestOriginal()
+    }
+  }
+
+  /**
+   * Returns the query string as an object
+   *
+   * @method qs
+   *
+   * @return {Objec}
+   */
+  get qs () {
+    return this._qs || {}
+  }
+
+  /**
+   * Update the query string. This will re-compute the
+   * _all
+   *
+   * @method qs
+   *
+   * @param  {Object} qs
+   *
+   * @return {void}
+   */
+  set qs (qs) {
+    debug('updated request query string')
+    const hasQs = !!this._qs
+
+    this._qs = qs
+    this._all = _.merge({}, this.post(), qs)
+
+    if (!hasQs) {
+      this._updateRequestOriginal()
+    }
+  }
+
+  /**
+   * Updates the request original payload by tracking the
+   * amount of mutations made to it. Once `qs` and `body`
+   * is set for the first time, after that original
+   * object will be freexed
+   *
+   * @method _updateRequestOriginal
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _updateRequestOriginal () {
+    if (Object.isFrozen(this._original)) {
+      return
+    }
+
+    /**
+     * Update original value
+     */
+    debug('updated request original data')
+    this._original = _.merge({}, this._all)
+
+    /**
+     * Once qs and body is stable, we will freeze the original
+     * object. This is important, since the original request
+     * body is mutable, however a reference to original is
+     * must
+     */
+    if (this._qs && this._body) {
+      debug('freezing request original data')
+      Object.freeze(this._original)
+    }
   }
 
   /**
@@ -170,7 +260,7 @@ class Request extends Macroable {
    * ```
    */
   get () {
-    return this._qs
+    return this.qs
   }
 
   /**
@@ -193,6 +283,19 @@ class Request extends Macroable {
    */
   post () {
     return this.body
+  }
+
+  /**
+   * Similar to `request.all`, but later mutations are avoided. Use this
+   * method, when you want to read the values submitted in the original
+   * HTTP request.
+   *
+   * @method original
+   *
+   * @return {Object}
+   */
+  original () {
+    return this._original
   }
 
   /**

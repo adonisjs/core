@@ -807,4 +807,36 @@ test.group('Request', () => {
     assert.deepEqual(res.body.get, { age: '22' })
     assert.deepEqual(res.body.post, { username: 'virk' })
   })
+
+  test('keep a copy of request original data on each request', async (assert) => {
+    assert.plan(1)
+
+    const server = http.createServer((req, res) => {
+      const request = new Request(req, res, config)
+      request.body = { username: 'virk' }
+      assert.deepEqual(request.all(), request.original())
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end()
+    })
+
+    await supertest(server).post('/').send('username', 'virk').expect(200)
+  })
+
+  test('seal request original after body is set once', async (assert) => {
+    assert.plan(3)
+
+    const server = http.createServer((req, res) => {
+      const request = new Request(req, res, config)
+      request.body = { username: 'virk' }
+      request.body = { username: 'nikk' }
+      assert.deepEqual(request.all(), { username: 'nikk' })
+      assert.deepEqual(request.original(), { username: 'virk' })
+      assert.isTrue(Object.isFrozen(request.original()))
+
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end()
+    })
+
+    await supertest(server).post('/').expect(200)
+  })
 })

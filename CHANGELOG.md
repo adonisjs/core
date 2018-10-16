@@ -1,3 +1,18 @@
+<a name="5.0.11"></a>
+## [5.0.11](https://github.com/adonisjs/adonis-framework/compare/v5.0.10...v5.0.11) (2018-10-16)
+
+
+### Bug Fixes
+
+* **request:** re-compute request.all when qs updates ([61a4a36](https://github.com/adonisjs/adonis-framework/commit/61a4a36))
+
+
+### Features
+
+* **request:** add request.original to access the original request data ([2d12926](https://github.com/adonisjs/adonis-framework/commit/2d12926))
+
+
+
 <a name="5.0.10"></a>
 ## [5.0.10](https://github.com/adonisjs/adonis-framework/compare/v5.0.9...v5.0.10) (2018-10-01)
 
