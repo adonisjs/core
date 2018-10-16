@@ -1,3 +1,13 @@
+<a name="5.0.12"></a>
+## [5.0.12](https://github.com/adonisjs/adonis-framework/compare/v5.0.11...v5.0.12) (2018-10-16)
+
+
+### Bug Fixes
+
+* **request:** compute request.original properly ([08b379e](https://github.com/adonisjs/adonis-framework/commit/08b379e))
+
+
+
 <a name="5.0.11"></a>
 ## [5.0.11](https://github.com/adonisjs/adonis-framework/compare/v5.0.10...v5.0.11) (2018-10-16)
 
