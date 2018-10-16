@@ -30,6 +30,7 @@ const nodeCookie = require('node-cookie')
 const pathToRegexp = require('path-to-regexp')
 const useragent = require('useragent')
 const Macroable = require('macroable')
+const debug = require('debug')('adonis:request')
 
 const SUBDOMAIN_OFFSET = 'app.http.subdomainOffset'
 const TRUST_PROXY = 'app.http.trustProxy'
@@ -149,8 +150,15 @@ class Request extends Macroable {
    * @return {void}
    */
   set body (body) {
+    debug('updated request body')
+    const hasBody = !!this._body
+
     this._body = body
     this._all = _.merge({}, this.get(), body)
+
+    if (!hasBody) {
+      this._updateRequestOriginal()
+    }
   }
 
   /**
@@ -175,8 +183,50 @@ class Request extends Macroable {
    * @return {void}
    */
   set qs (qs) {
+    debug('updated request query string')
+    const hasQs = !!this._qs
+
     this._qs = qs
     this._all = _.merge({}, this.post(), qs)
+
+    if (!hasQs) {
+      this._updateRequestOriginal()
+    }
+  }
+
+  /**
+   * Updates the request original payload by tracking the
+   * amount of mutations made to it. Once `qs` and `body`
+   * is set for the first time, after that original
+   * object will be freexed
+   *
+   * @method _updateRequestOriginal
+   *
+   * @return {void}
+   *
+   * @private
+   */
+  _updateRequestOriginal () {
+    if (Object.isFrozen(this._original)) {
+      return
+    }
+
+    /**
+     * Update original value
+     */
+    debug('updated request original data')
+    this._original = _.merge({}, this._all)
+
+    /**
+     * Once qs and body is stable, we will freeze the original
+     * object. This is important, since the original request
+     * body is mutable, however a reference to original is
+     * must
+     */
+    if (this._qs && this._body) {
+      debug('freezing request original data')
+      Object.freeze(this._original)
+    }
   }
 
   /**
@@ -233,6 +283,19 @@ class Request extends Macroable {
    */
   post () {
     return this.body
+  }
+
+  /**
+   * Similar to `request.all`, but later mutations are avoided. Use this
+   * method, when you want to read the values submitted in the original
+   * HTTP request.
+   *
+   * @method original
+   *
+   * @return {Object}
+   */
+  original () {
+    return this._original
   }
 
   /**
