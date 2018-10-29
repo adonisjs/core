@@ -245,6 +245,7 @@ Middleware.compose = function (middlewareList, request, response) {
       const values = [request, response, next].concat(middleware.parameters)
       next = middleware.method.apply(middleware.instance, values)
     })
-    return yield * next
+    if (typeof next !== 'undefined')
+      yield * next
   }
 }
