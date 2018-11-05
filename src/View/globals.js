@@ -16,11 +16,13 @@ module.exports = function (View, Route, Config) {
    * Return url for the route
    */
   View.global('route', function (...args) {
+    let url
+
     try {
-      const url = Route.url(...args)
+      url = Route.url(...args)
     } catch (error) {
       if (error.message) {
-        throw GE.InvalidArgumentException.invalidParamter(`"route" view global expects ${error.message}`, callback)
+        throw GE.InvalidArgumentException(`"route" view global error: ${error.message}`, callback)
       }
 
       throw error
