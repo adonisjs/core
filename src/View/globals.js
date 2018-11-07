@@ -22,7 +22,7 @@ module.exports = function (View, Route, Config) {
       url = Route.url(...args)
     } catch (error) {
       if (error.message) {
-        throw GE.InvalidArgumentException(`"route" view global error: ${error.message}`, callback)
+        throw GE.InvalidArgumentException(`"route" view global error: ${error.message}`)
       }
 
       throw error
