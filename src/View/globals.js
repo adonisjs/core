@@ -21,11 +21,7 @@ module.exports = function (View, Route, Config) {
     try {
       url = Route.url(...args)
     } catch (error) {
-      if (error.message) {
-        throw GE.InvalidArgumentException(`"route" view global error: ${error.message}`)
-      }
-
-      throw error
+      throw GE.InvalidArgumentException(`"route" view global error: ${error.message}`)
     }
 
     const baseUrl = Config ? Config.get('app.http.baseUrl', '') : ''
