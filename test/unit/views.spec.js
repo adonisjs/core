@@ -92,6 +92,20 @@ test.group('Views globals', (group) => {
     assert.equal(view.renderString(template).trim(), '/users/1')
   })
 
+  test('throw exception when a route param is not passed', (assert) => {
+    assert.plan(1)
+
+    const view = new View(this.helpers)
+    globals(view, RouteManager)
+    RouteManager.route('users/:id', function () {}).as('profile')
+
+    try {
+      view.renderString(`{{ route('profile') }}`)
+    } catch ({ message }) {
+      assert.isTrue(message.startsWith('"route" view global error:'))
+    }
+  })
+
   test('make url for a route with base url', (assert) => {
     const view = new View(this.helpers)
     const config = new Config()

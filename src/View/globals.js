@@ -9,12 +9,21 @@
  * file that was distributed with this source code.
 */
 
+const GE = require('@adonisjs/generic-exceptions')
+
 module.exports = function (View, Route, Config) {
   /**
    * Return url for the route
    */
   View.global('route', function (...args) {
-    const url = Route.url(...args)
+    let url
+
+    try {
+      url = Route.url(...args)
+    } catch (error) {
+      throw new GE.InvalidArgumentException(`"route" view global error: ${error.message}`)
+    }
+
     const baseUrl = Config ? Config.get('app.http.baseUrl', '') : ''
     return url && /^http(s)?/.test(url) ? url : `${baseUrl}${url}`
   })
