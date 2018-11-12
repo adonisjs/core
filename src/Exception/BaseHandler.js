@@ -29,6 +29,11 @@ class BaseExceptionHandler {
   _getYouchError (error, req, isJSON) {
     const Youch = require('youch')
     const youch = new Youch(error, req)
+
+    youch.addLink(() => {
+      return `<a href="https://discordapp.com/invite/vDcEjq6" target="_blank" title="Join the official Discord server"><i class="fab fa-discord"></i></a>`
+    })
+
     if (isJSON) {
       return youch.toJSON()
     }
