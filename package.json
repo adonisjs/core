@@ -3,58 +3,42 @@
   "version": "4.0.9",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "index.js",
-  "files": [
-    "src",
-    "index.js"
-  ],
+  "files": [],
   "directories": {
     "test": "test"
   },
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
-    "posttest": "npm run coverage",
-    "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "nyc japa",
-    "test:win": "node ./node_modules/japa-cli/index.js",
+    "test": "nyc node japaFile.js",
+    "prepublishOnly": "npm run build",
+    "lint": "tslint --project tsconfig.json",
+    "clean": "del build",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "commit": "git-cz",
-    "lint": "standard"
+    "commit": "git-cz"
   },
-  "standard": {
-    "globals": [
-      "describe",
-      "it",
-      "before",
-      "use",
-      "make"
-    ],
-    "ignore": [
-      "**/out/"
-    ]
-  },
-  "author": "adonisjs",
+  "author": "virk",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/mrm-preset": "^1.0.9",
-    "commitizen": "^2.10.1",
+    "@adonisjs/mrm-preset": "^1.0.14",
+    "@types/node": "^10.12.9",
+    "commitizen": "^3.0.4",
     "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
-    "japa": "^1.0.6",
-    "japa-cli": "^1.0.1",
+    "del-cli": "^1.1.0",
+    "japa": "^2.0.6",
     "mrm": "^1.2.1",
-    "nyc": "^12.0.2",
-    "pkg-ok": "^2.2.0",
-    "semver": "^5.5.0",
-    "standard": "^11.0.1"
+    "nyc": "^13.1.0",
+    "pkg-ok": "^2.3.1",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.1.6",
+    "yorkie": "^2.0.0"
   },
-  "dependencies": {
-    "@adonisjs/generic-exceptions": "^2.0.1",
-    "caller": "^1.0.1",
-    "debug": "^3.1.0",
-    "lodash": "^4.17.10",
-    "require-stack": "^1.0.2"
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/poppinss/adonis-fold.git"
@@ -81,11 +65,13 @@
       "src"
     ],
     "exclude": [
-      "test",
-      "japaFile.js"
+      "test"
+    ],
+    "extension": [
+      ".ts"
     ]
   },
-  "bin": {
-    "fold": "index.js"
+  "gitHooks": {
+    "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js"
   }
 }

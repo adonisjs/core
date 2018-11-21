@@ -1,7 +1,7 @@
 environment:
   matrix:
     - nodejs_version: Stable
-    - nodejs_version: 8.0.0
+    - nodejs_version: 10.0.0
 init: git config --global core.autocrlf true
 install:
   - ps: 'Install-Product node $env:nodejs_version'
@@ -9,7 +9,7 @@ install:
 test_script:
   - node --version
   - npm --version
-  - 'npm run test:win'
+  - npm run test
 build: 'off'
 clone_depth: 1
 matrix:

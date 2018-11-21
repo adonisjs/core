@@ -1,6 +1,6 @@
 {
   "core": true,
-  "ts": false,
+  "ts": true,
   "license": "MIT",
   "services": [
     "travis",
@@ -8,5 +8,5 @@
     "coveralls"
   ],
   "appveyorUsername": "thetutlage",
-  "minNodeVersion": "8.0.0"
+  "minNodeVersion": "10.0.0"
 }
