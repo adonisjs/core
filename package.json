@@ -2,7 +2,7 @@
   "name": "@adonisjs/fold",
   "version": "4.0.9",
   "description": "Dependency manager and ioc container for your next NodeJs application",
-  "main": "index.js",
+  "main": "build/src/Ioc",
   "files": [],
   "directories": {
     "test": "test"
@@ -24,10 +24,12 @@
   "devDependencies": {
     "@adonisjs/mrm-preset": "^1.0.14",
     "@types/node": "^10.12.9",
+    "benchmark": "^2.1.4",
     "commitizen": "^3.0.4",
     "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
     "del-cli": "^1.1.0",
+    "fs-extra": "^7.0.1",
     "japa": "^2.0.6",
     "mrm": "^1.2.1",
     "nyc": "^13.1.0",
