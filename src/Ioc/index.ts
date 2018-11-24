@@ -101,6 +101,16 @@ export class Ioc implements IIoC {
   }
 
   /**
+   * Raises error with a message when callback is not
+   * a function.
+   */
+  private _ensureCallback (callback, message) {
+    if (typeof (callback) !== 'function') {
+      throw new Error(message)
+    }
+  }
+
+  /**
    * Makes the require path from the autoloaded alias. This path then is given to
    * Node.js `require` function.
    */
@@ -306,6 +316,7 @@ export class Ioc implements IIoC {
    * ```
    */
   public bind (namespace: string, callback: IBindCallback): void {
+    this._ensureCallback(callback, 'ioc.bind expect 2nd argument to be a function')
     this.tracer.emit('bind', { namespace, singleton: false })
     this._bindings[namespace] = { callback, singleton: false }
   }
@@ -323,6 +334,7 @@ export class Ioc implements IIoC {
    * ```
    */
   public singleton (namespace: string, callback: IBindCallback): void {
+    this._ensureCallback(callback, 'ioc.singleton expect 2nd argument to be a function')
     this.tracer.emit('bind', { namespace, singleton: true })
     this._bindings[namespace] = { callback, singleton: true }
   }
@@ -414,6 +426,7 @@ export class Ioc implements IIoC {
    * ```
    */
   public fake (namespace: string, callback: IBindCallback): void {
+    this._ensureCallback(callback, 'ioc.fake expect 2nd argument to be a function')
     this.tracer.emit('fake', { namespace })
     this._fakes.set(namespace, { callback, singleton: true })
   }
@@ -611,9 +624,10 @@ export class Ioc implements IIoC {
    * }
    * ```
    */
-  public with (namespaces: string[], cb: (...args: any[]) => void): void {
+  public with (namespaces: string[], callback: (...args: any[]) => void): void {
+    this._ensureCallback(callback, 'ioc.with expect 2nd argument to be a function')
     if (namespaces.every((namespace) => this.hasBinding(namespace, true))) {
-      cb(...namespaces.map((namespace) => this.use(namespace)))
+      callback(...namespaces.map((namespace) => this.use(namespace)))
     }
   }
 }

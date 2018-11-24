@@ -20,6 +20,12 @@ test.group('Ioc', (group) => {
     await remove(APP)
   })
 
+  test('raise error when argument is not a function', (assert) => {
+    const ioc = new Ioc()
+    const fn = () => (ioc as any).bind('App/Foo', 'hello')
+    assert.throw(fn, 'ioc.bind expect 2nd argument to be a function')
+  })
+
   test('bind value to the container', (assert) => {
     const ioc = new Ioc()
     ioc.bind('App/Foo', () => {
