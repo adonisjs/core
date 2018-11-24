@@ -593,4 +593,27 @@ export class Ioc implements IIoC {
   public restore (name: string): void {
     this._fakes.delete(name)
   }
+
+  /**
+   * Execute a callback by resolving bindings from the container and only
+   * executed when all bindings exists in the container.
+   *
+   * This is a clean way to use bindings, when you are not that user application
+   * is using them or not.
+   *
+   * ```js
+   * boot () {
+   *  this.app.with(['Adonis/Src/Auth'], (Auth) => {
+   *    Auth.extend('mongo', 'serializer', function () {
+   *      return new MongoSerializer()
+   *    })
+   *  })
+   * }
+   * ```
+   */
+  public with (namespaces: string[], cb: (...args: any[]) => void): void {
+    if (namespaces.every((namespace) => this.hasBinding(namespace, true))) {
+      cb(...namespaces.map((namespace) => this.use(namespace)))
+    }
+  }
 }

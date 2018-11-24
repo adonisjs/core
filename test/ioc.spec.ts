@@ -462,6 +462,35 @@ test.group('Ioc', (group) => {
     ioc.autoload(APP, 'App')
     assert.deepEqual((ioc.make('App/Bar') as any).name, 'bar')
   })
+
+  test('execute the callback when all bindings exists', async (assert) => {
+    assert.plan(2)
+
+    const ioc = new Ioc(false, false)
+    ioc.bind('App/Foo', () => {
+      return 'foo'
+    })
+
+    ioc.bind('App/Bar', () => {
+      return 'bar'
+    })
+
+    ioc.with(['App/Foo', 'App/Bar'], (foo, bar) => {
+      assert.equal(foo, 'foo')
+      assert.equal(bar, 'bar')
+    })
+  })
+
+  test('do not execute the callback if any bindings is missing', async () => {
+    const ioc = new Ioc(false, false)
+    ioc.bind('App/Foo', () => {
+      return 'foo'
+    })
+
+    ioc.with(['App/Foo', 'App/Bar'], () => {
+      throw new Error('Never expected to be called')
+    })
+  })
 })
 
 test.group('Ioc | Proxy', () => {

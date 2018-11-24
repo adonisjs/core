@@ -32,6 +32,7 @@ export interface IIoC {
   isAutoloadNamespace (namespace: string): boolean
   getAutoloadBaseNamespace (namespace: string): string | undefined
   restore (name: string): void
+  with (namespaces: string[], cb: (...args: any[]) => void): void
 }
 
 /**
