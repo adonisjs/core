@@ -445,11 +445,22 @@ test.group('Ioc', (group) => {
     const ioc = new Ioc()
     ioc.autoload(join(APP), 'Admin')
     assert.deepEqual(ioc.make<any>('Admin/Foo').name, 'foo')
+    ioc.clearAutoloadCache(undefined, true)
   })
 
   test('do not make modules that fallsback to node require', async (assert) => {
     const ioc = new Ioc()
     assert.deepEqual(ioc.make('japa'), test)
+  })
+
+  test('work fine with es6 export default', async (assert) => {
+    await outputFile(join(APP, 'Bar.ts'), `export default class Bar {
+      public name = 'bar'
+    }`)
+
+    const ioc = new Ioc(false, true)
+    ioc.autoload(APP, 'App')
+    assert.deepEqual((ioc.make('App/Bar') as any).name, 'bar')
   })
 })
 

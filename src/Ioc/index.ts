@@ -69,7 +69,7 @@ export class Ioc implements IIoC {
    */
   private _useProxies = process.env.ADONIS_IOC_PROXY === 'true'
 
-  constructor (private _emitEvents = false) {
+  constructor (private _emitEvents = false, private _es6Imports = false) {
   }
 
   /**
@@ -126,9 +126,19 @@ export class Ioc implements IIoC {
      */
     if (!cacheEntry) {
       const absPath = this._makeRequirePath(baseNamespace, namespace)
+      const importValue = require(absPath)
+
+      /**
+       * Use `default` when parent app uses `ES6 imports` and
+       * default export exists on the return value
+       */
+      const value = importValue.default && this._es6Imports
+        ? importValue.default
+        : importValue
+
       this._autoloadsCache[namespace] = {
         diskPath: absPath,
-        cachedValue: require(absPath),
+        cachedValue: value,
       }
     }
 
