@@ -13,6 +13,11 @@
 
 import * as Emitter from 'events'
 
+/**
+ * Tracer is used to emit event from the IoC container
+ * at different steps. Read the guides to understand
+ * how tracer works
+ */
 export class Tracer extends Emitter {
   private _namespaces: string[] = []
 
@@ -27,6 +32,10 @@ export class Tracer extends Emitter {
   }
 }
 
+/**
+ * Fake tracer that noops every operation. This is done
+ * to keep code using tracer free of if/else
+ */
 class NoopTracer {
   public in () {}
   public out () {}

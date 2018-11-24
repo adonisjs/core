@@ -45,7 +45,7 @@ export class Ioc implements IIoC {
    * Autoloaded cache to improve the `require` speed, which is
    * dog slow.
    */
-  private _autoloadsCache: { [namespace: string]: IAutoloadCacheItem } = {}
+  private _autoloadsCache: Map<string, IAutoloadCacheItem> = new Map()
 
   /**
    * Copy of aliases
@@ -69,7 +69,7 @@ export class Ioc implements IIoC {
    */
   private _useProxies = process.env.ADONIS_IOC_PROXY === 'true'
 
-  constructor (private _emitEvents = false, private _es6Imports = false) {
+  constructor (private _emitEvents = false, public es6Imports = false) {
   }
 
   /**
@@ -118,7 +118,7 @@ export class Ioc implements IIoC {
   private _autoload (namespace: string) {
     const baseNamespace = this.getAutoloadBaseNamespace(namespace)!
 
-    const cacheEntry = this._autoloadsCache[namespace]
+    const cacheEntry = this._autoloadsCache.get(namespace)
     this.tracer.in(namespace, !!cacheEntry)
 
     /**
@@ -132,18 +132,18 @@ export class Ioc implements IIoC {
        * Use `default` when parent app uses `ES6 imports` and
        * default export exists on the return value
        */
-      const value = importValue.default && this._es6Imports
+      const value = importValue.default && this.es6Imports
         ? importValue.default
         : importValue
 
-      this._autoloadsCache[namespace] = {
+      this._autoloadsCache.set(namespace, {
         diskPath: absPath,
         cachedValue: value,
-      }
+      })
     }
 
     this.tracer.out()
-    return this._autoloadsCache[namespace].cachedValue
+    return this._autoloadsCache.get(namespace)!.cachedValue
   }
 
   /**
@@ -257,7 +257,7 @@ export class Ioc implements IIoC {
    * exists in the cache, then this method will be a noop.
    */
   private _removeAutoloadFromCache (namespace: string, clearRequireCache: boolean) {
-    const item = this._autoloadsCache[namespace]
+    const item = this._autoloadsCache.get(namespace)
     if (!item) {
       return
     }
@@ -265,7 +265,7 @@ export class Ioc implements IIoC {
     /**
      * Remove it from the object
      */
-    delete this._autoloadsCache[namespace]
+    this._autoloadsCache.delete(namespace)
 
     /**
      * Clear the require cache if instructed for same
@@ -389,7 +389,7 @@ export class Ioc implements IIoC {
    */
   public clearAutoloadCache (namespace?: string, clearRequireCache = false): void {
     if (!namespace) {
-      Object.keys(this._autoloadsCache).forEach((key) => {
+      Array.from(this._autoloadsCache.keys()).forEach((key) => {
         this._removeAutoloadFromCache(key, clearRequireCache)
       })
       return
@@ -590,7 +590,7 @@ export class Ioc implements IIoC {
   /**
    * Restore the fake
    */
-  public restore (name) {
+  public restore (name: string): void {
     this._fakes.delete(name)
   }
 }
