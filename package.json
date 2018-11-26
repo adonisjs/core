@@ -2,8 +2,12 @@
   "name": "@adonisjs/fold",
   "version": "4.0.9",
   "description": "Dependency manager and ioc container for your next NodeJs application",
-  "main": "build/src/Ioc",
-  "files": [],
+  "main": "build/index.js",
+  "files": [
+    "build/src",
+    "build/index.js",
+    "build/index.d.ts"
+  ],
   "directories": {
     "test": "test"
   },
