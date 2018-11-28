@@ -27,10 +27,10 @@
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/mrm-preset": "^1.0.14",
-    "@types/node": "^10.12.9",
+    "@types/node": "^10.12.10",
     "benchmark": "^2.1.4",
     "clear-module": "^3.0.0",
-    "commitizen": "^3.0.4",
+    "commitizen": "^3.0.5",
     "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
     "del-cli": "^1.1.0",
