@@ -16,6 +16,8 @@
  */
 export interface IIoC {
   es6Imports: boolean,
+  autoloads: { [namespace: string]: string },
+  autoloadedAliases: string[],
   bind (name: string, callback: IBindCallback): void
   singleton (name: string, callback: IBindCallback): void
   alias (namespace: string, alias: string): void

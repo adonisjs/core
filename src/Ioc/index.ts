@@ -33,13 +33,13 @@ export class Ioc implements IIoC {
   /**
    * Autoloaded directories under a namespace
    */
-  private _autoloads: { [namespace: string]: string } = {}
+  public autoloads: { [namespace: string]: string } = {}
 
   /**
    * An array of autoloaded aliases, stored along side with
    * `_autoloads` for a quick lookup on keys
    */
-  private _autoloadedAliases: string[] = []
+  public autoloadedAliases: string[] = []
 
   /**
    * Autoloaded cache to improve the `require` speed, which is
@@ -115,7 +115,7 @@ export class Ioc implements IIoC {
    * Node.js `require` function.
    */
   private _makeRequirePath (baseNamespace: string, namespace: string): string {
-    const diskPath = namespace.replace(baseNamespace, this._autoloads[baseNamespace])
+    const diskPath = namespace.replace(baseNamespace, this.autoloads[baseNamespace])
     return require.resolve(normalize(diskPath))
   }
 
@@ -389,8 +389,8 @@ export class Ioc implements IIoC {
      * Store namespaces in an array for faster lookup
      * during resolve phase
      */
-    this._autoloadedAliases.push(namespace)
-    this._autoloads[namespace] = directoryPath
+    this.autoloadedAliases.push(namespace)
+    this.autoloads[namespace] = directoryPath
   }
 
   /**
@@ -597,7 +597,7 @@ export class Ioc implements IIoC {
    * ```
    */
   public getAutoloadBaseNamespace (namespace: string): string | undefined {
-    return this._autoloadedAliases.find((alias) => namespace.startsWith(`${alias}/`))
+    return this.autoloadedAliases.find((alias) => namespace.startsWith(`${alias}/`))
   }
 
   /**
