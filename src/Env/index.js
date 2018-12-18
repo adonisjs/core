@@ -89,7 +89,7 @@ class Env {
    * @param  {Boolean} [overwrite = 'true']
    * @param  {String}  [encoding = 'utf8']
    *
-   * @return {void}
+   * @return {Object}
    */
   load (filePath, overwrite = true, encoding = 'utf8') {
     const options = {
