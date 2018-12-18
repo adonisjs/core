@@ -11,6 +11,8 @@
 
 const _ = require('lodash')
 const pathToRegexp = require('path-to-regexp')
+const querystring = require('querystring')
+const url = require('url')
 const Route = require('./index')
 const RouteGroup = require('./Group')
 const RouteStore = require('./Store')
@@ -389,12 +391,22 @@ class RouteManager {
    */
   url (routeNameOrHandler, data, options) {
     options = options || {}
+    data = data || {}
     const route = RouteStore.find(routeNameOrHandler, options.domain)
     if (!route) {
       return null
     }
 
-    const compiledRoute = pathToRegexp.compile(route._route)(data || {})
+    /**
+     * When query string exists.
+     */
+    const queryParams = data.qs || data.query || {}
+
+    let compiledRoute = pathToRegexp.compile(route._route)(data)
+
+    let parsedRoute = url.parse(compiledRoute, true)
+    parsedRoute.search = querystring.stringify(Object.assign(parsedRoute.query, queryParams))
+    compiledRoute = parsedRoute.format()
 
     /**
      * When domain exists, build a complete url over creating

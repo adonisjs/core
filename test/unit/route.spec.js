@@ -797,6 +797,12 @@ test.group('Route | Manager', (group) => {
     assert.equal(url, 'http://blog.example.com/author/1')
   })
 
+  test('make url with query string', (assert) => {
+    RouteManager.get('users/:id', 'UsersController.show')
+    const url = RouteManager.url('UsersController.show', { id: 1, query: { foo: 'bar' } })
+    assert.equal(url, '/users/1?foo=bar')
+  })
+
   test('define protocol for the url', (assert) => {
     RouteManager.get('users/:id', 'UsersController.show')
     RouteManager.get('author/:id', 'UsersController.show').domain('blog.example.com')
