@@ -10,7 +10,7 @@ This repo contains the core modules for the AdonisJs framework. You must checkou
 [![Build Status][travis-image]][travis-url]
 [![Appveyor][appveyor-image]][appveyor-url]
 [![Coveralls][coveralls-image]][coveralls-url]
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework?ref=badge_shield)
+[![FOSSA Status][fossa-image]][fossa-url]
 
 <img src="https://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="140px">
 
@@ -96,6 +96,9 @@ Now since the `add` method has a bug, it will return `6` instead of `4`. But the
 [coveralls-image]: https://img.shields.io/coveralls/adonisjs/adonis-framework/develop.svg?style=flat-square
 
 [coveralls-url]: https://coveralls.io/github/adonisjs/adonis-framework
+
+[fossa-image]: https://app.fossa.io/api/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework.svg?type=shield
+[fossa-url]: https://app.fossa.io/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework?ref=badge_shield 
 
 
 ## License
