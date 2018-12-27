@@ -102,7 +102,7 @@ Now since the `add` method has a bug, it will return `6` instead of `4`. But the
 [fossa-url]: https://app.fossa.io/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework?ref=badge_shield 
 
 [pr-welcoming-image]: https://img.shields.io/badge/PRs%20-welcome-brightgreen.svg
-[pr-welcoming-url]: https://github.com/adonisjs/adonis-framework/blob/develop/CONTRIBUTING.md
+[pr-welcoming-url]: https://adonisjs.com/docs/contribution-guide
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fadonisjs%2Fadonis-framework?ref=badge_large)
