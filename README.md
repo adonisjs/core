@@ -32,7 +32,7 @@ This repo contains following providers.
 
 ## Node/OS Target
 
-This repo/branch is supposed to run fine on all major OS platforms and targets `Node.js >=7.0`
+This repo/branch is supposed to run fine on all major OS platforms and targets `Node.js >= 8.0.0`
 
 ## Development
 
