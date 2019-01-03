@@ -1,66 +1,66 @@
 {
   "name": "node-req",
   "version": "2.1.1",
-  "description": "I/O parser for nodejs http request",
-  "main": "index.js",
-  "files": [
-    "index.js"
-  ],
+  "description": "Facade over Node.js HTTP req object",
+  "main": "build/index.js",
   "scripts": {
-    "lint": "standard",
+    "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
-    "posttest": "npm run coverage",
-    "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "./node_modules/.bin/nyc npm run test:local",
-    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
-  },
-  "keywords": [
-    "node-req",
-    "req",
-    "node-http-request",
-    "http-request"
-  ],
-  "author": "amanvirk",
-  "license": "MIT",
-  "devDependencies": {
-    "coveralls": "^3.0.2",
-    "cz-conventional-changelog": "^2.1.0",
-    "japa": "^1.0.6",
-    "japa-cli": "^1.0.1",
-    "nyc": "^12.0.2",
-    "pem": "^1.12.5",
-    "semver": "^5.5.1",
-    "standard": "^11.0.1",
-    "supertest": "^3.1.0"
-  },
-  "nyc": {
-    "include": [
-      "index.js"
-    ]
-  },
-  "dependencies": {
-    "accepts": "^1.3.5",
-    "fresh": "^0.5.2",
-    "parseurl": "^1.3.2",
-    "proxy-addr": "^2.0.4",
-    "qs": "^6.5.2",
-    "type-is": "^1.6.16"
-  },
-  "directories": {
-    "test": "test"
+    "test": "nyc node japaFile.js",
+    "prepublishOnly": "npm run build",
+    "lint": "tslint --project tsconfig.json",
+    "clean": "del build",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "commit": "git-cz"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/poppinss/node-req.git"
   },
+  "keywords": [
+    "node-req",
+    "http",
+    "req"
+  ],
+  "author": "virk",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/poppinss/node-req/issues"
   },
   "homepage": "https://github.com/poppinss/node-req#readme",
+  "devDependencies": {
+    "@adonisjs/mrm-preset": "^1.0.14",
+    "@types/node": "^10.12.18",
+    "commitizen": "^3.0.5",
+    "coveralls": "^3.0.2",
+    "cz-conventional-changelog": "^2.1.0",
+    "del-cli": "^1.1.0",
+    "japa": "^2.0.7",
+    "mrm": "^1.2.1",
+    "nyc": "^13.1.0",
+    "pkg-ok": "^2.3.1",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.12.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.2.2",
+    "yorkie": "^2.0.0"
+  },
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "cz-conventional-changelog"
     }
+  },
+  "gitHooks": {
+    "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js"
   }
 }
