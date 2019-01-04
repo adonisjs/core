@@ -37,6 +37,7 @@ Node req is a facade to be **used by any framework** to read the request values.
 ## Table of Contents
 * [Features](#features)
 * [Getting started](#getting-started)
+* [Difference from other frameworks](#difference-from-other-frameworks)
 * [API](#api)
 
 ## Features
@@ -45,6 +46,7 @@ Node req is a facade to be **used by any framework** to read the request values.
 - **Content negotiation** using `Accept` headers.
 - **Form method spoofing support**.
 - **Helper methods**.
+- **Thoroughly tested**.
 
 ## Getting started
 Install the package from npm as follows:
@@ -72,6 +74,10 @@ The `url` property on Node.js core `req` object returns the URL with query strin
 
 Whereas, with `node-req`, the `request.url()` method supports both by passing a parameter to include the query string.
 
+## Difference from other frameworks
+**You don't need it if you are using Express or Koa**, since their `req` object is already decorated with handful of convivent getters.
+
+In case you are building a framework or using a framework like [micro](https://github.com/zeit/micro), then this module can save lots of time.
+
 ## API
 The API docs are generated using Typedoc and can be found [here](https://node-req.netlify.com/classes/_request_.request.html).
-
