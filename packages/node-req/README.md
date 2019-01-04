@@ -37,6 +37,8 @@ Node req is a facade to be **used by any framework** to read the request values.
 ## Table of Contents
 * [Features](#features)
 * [Getting started](#getting-started)
+* [Typescript support](#typescript-support)
+* [Extending via Macros](#extending-via-macros)
 * [Difference from other frameworks](#difference-from-other-frameworks)
 * [API](#api)
 
