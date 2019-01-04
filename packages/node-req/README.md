@@ -34,6 +34,9 @@
 Node req is a facade to be **used by any framework** to read the request values. The [req](https://nodejs.org/api/http.html#http_class_http_incomingmessage) object of Node.js HTTP request is very bare bones and it can get cumbersome to consistently read information for a given request.
 
 ## Table of Contents
+* [Features](#features)
+* [Getting started](#getting-started)
+* [API](#api)
 
 ## Features
 - **Handles inconsistencies** between different header names like `referer` and `referrer`.
@@ -69,5 +72,5 @@ The `url` property on Node.js core `req` object returns the URL with query strin
 Whereas, with `node-req`, the `request.url()` method supports both by passing a parameter to include the query string.
 
 ## API
-The API docs are generated using Typedoc and can be found [here](node-req.netlify.com).
+The API docs are generated using Typedoc and can be found [here](https://node-req.netlify.com/classes/_request_.request.html).
 
