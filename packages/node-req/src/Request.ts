@@ -30,14 +30,49 @@ import { IRequest, IConfig } from './IRequest'
  * using `request.request` property.
  */
 export class Request extends Macroable implements IRequest {
+  /**
+   * Parses copy of the URL with query string as a string and not
+   * object. This is done to build URL's with query string without
+   * stringifying the object
+   */
   public parsedUrl: UrlWithStringQuery = parse(this.request.url!, false)
 
+  /**
+   * Request body set using `setBody` method
+   */
   private _body: any = {}
+
+  /**
+   * A merged copy of `request` body and `querystring`
+   */
   private _all: any = {}
+
+  /**
+   * Original merged copy of `request body` and `querystring`.
+   * Further mutation to this object are not allowed
+   */
   private _original: any = {}
+
+  /**
+   * Parsed query string
+   */
   private _qs: any = {}
+
+  /**
+   * Raw request body as text
+   */
   private _raw: string | null = null
+
+  /**
+   * Cached copy of `accepts` fn to do content
+   * negotiation.
+   */
   private _lazyAccepts: any = null
+
+  /**
+   * Cached copy of `trust` fn to read and trust
+   * proxy server headers
+   */
   private _trustFn = this._config.trustProxy || proxyaddr.compile('loopback')
 
   protected static _macros = {}
