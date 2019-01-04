@@ -1,32 +1,81 @@
-# node-req
+<h1 align="center">Node Req</h1>
+<div align="center">
+    <strong>Facade over <a href="https://nodejs.org/api/http.html#http_class_http_incomingmessage">req</a> object to consistently read request values.</strong>
+</div>
 
-[![travis-image]][travis-url]
-[![appveyor-image]][appveyor-url]
-[![coveralls-image]][coveralls-url]
-[![npm-image]][npm-url]
-![](https://img.shields.io/badge/Uses-Typescript-294E80.svg?style=flat-square&colorA=ddd)
+<br />
 
-## Change log
+<div align="center">
+  <!-- Stability -->
+  <a href="https://nodejs.org/api/documentation.html#documentation_stability_index">
+    <img src="https://img.shields.io/badge/stability-experimental-orange.svg?style=flat-square"
+      alt="API stability" />
+  </a>
+  <!-- NPM version -->
+  <a href="https://npmjs.org/package/choo">
+    <img src="https://img.shields.io/npm/v/choo.svg?style=flat-square"
+      alt="NPM version" />
+  </a>
+  <!-- Build Status -->
+  <a href="https://travis-ci.org/choojs/choo">
+    <img src="https://img.shields.io/travis/choojs/choo/master.svg?style=flat-square"
+      alt="Build Status" />
+  </a>
+  <!-- Test Coverage -->
+  <a href="https://codecov.io/github/choojs/choo">
+    <img src="https://img.shields.io/codecov/c/github/choojs/choo/master.svg?style=flat-square"
+      alt="Test Coverage" />
+  </a>
+  <!-- Downloads -->
+  <a href="https://npmjs.org/package/choo">
+    <img src="https://img.shields.io/npm/dt/choo.svg?style=flat-square"
+      alt="Download" />
+  </a>
+  <!-- Standard -->
+  <a href="https://standardjs.com">
+    <img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square"
+      alt="Standard" />
+  </a>
+</div>
 
-The change log can be found in the [CHANGELOG.md](CHANGELOG.md) file.
+<br />
+<br />
 
-## Contributing
+Node req is a facade to be **used by any framework** to read the request values. The [req](https://nodejs.org/api/http.html#http_class_http_incomingmessage) object of Node.js HTTP request is very bare bones and it can get cumbersome to consistently read information for a given request.
 
-Everyone is welcome to contribute. Please take a moment to review the [contributing guidelines](CONTRIBUTING.md).
+## Table of Contents
 
-## Authors & License
-[thetutlage](https://github.com/thetutlage) and [contributors](https://github.com/poppinss/node-req/graphs/contributors).
+## Features
+- **Handles inconsistencies** between different header names like `referer` and `referrer`.
+- **Proxy headers support** from reverse proxies like `nginx` or `apache`. 
+- **Content negotiation** using `Accept` headers.
+- **Form method spoofing support**.
+- **Helper methods**.
 
-MIT License, see the included [MIT](LICENSE.md) file.
+## Getting started
+Install the package from npm as follows:
 
-[travis-image]: https://img.shields.io/travis/poppinss/node-req/master.svg?style=flat-square&logo=travis
-[travis-url]: https://travis-ci.org/poppinss/node-req "travis"
+```sh
+npm i node-req
 
-[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/node-req/master.svg?style=flat-square&logo=appveyor
-[appveyor-url]: https://ci.appveyor.com/project/thetutlage/node-req "appveyor"
+# yarn
+yarn add node-req
+```
 
-[coveralls-image]: https://img.shields.io/coveralls/poppinss/node-req/master.svg?style=flat-square
-[coveralls-url]: https://coveralls.io/github/poppinss/node-req "coveralls"
+and then use it by importing it as follows:
 
-[npm-image]: https://img.shields.io/npm/v/node-req.svg?style=flat-square&logo=npm
-[npm-url]: https://npmjs.org/package/node-req "npm"
+```js
+const { Request } = require('node-req')
+const http = require('http')
+
+http.createServer(function (req, res) {
+  const request = new Request(req, res, {})
+  res.end(`Url without query string is ${request.url()}`)
+})
+```
+
+The `url` property on Node.js core `req` object returns the URL with query string and in order to drop query string, you will have to parse the URL manually.
+
+Whereas, with `node-req`, the `request.url()` method supports both by passing a parameter to include the query string.
+
+## API
