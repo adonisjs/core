@@ -37,6 +37,16 @@ Node req is a facade to be **used by any framework** to read the request values.
 ## Table of Contents
 * [Features](#features)
 * [Getting started](#getting-started)
+* [Working with bodyparser](#working-with-bodyparser)
+  * [request.post()](#requestpost)
+  * [request.all()](#requestall)
+  * [request.input(key, defaultValue?)](#requestinputkey-defaultvalue)
+  * [request.except(keys[])](#requestexceptkeys)
+  * [request.only(keys[])](#requestonlykeys)
+* [Updating request data](#updating-request-data)
+  * [updateBody(body: object)](#updatebodybody-object)
+  * [updateQs(data: object)](#updateqsdata-object)
+  * [Why update request body or query string?](#why-update-request-body-or-query-string)
 * [Typescript support](#typescript-support)
 * [Extending via Macros](#extending-via-macros)
 * [Difference from other frameworks](#difference-from-other-frameworks)
@@ -77,6 +87,123 @@ http.createServer(function (req, res) {
 The `url` property on Node.js core `req` object returns the URL with query string and in order to drop query string, you will have to parse the URL manually.
 
 Whereas, with `node-req`, the `request.url()` method supports both by passing a parameter to include the query string.
+
+## Working with bodyparser
+Body parser job is to read the request body (probably from a middleware) and then expose it somehow to the end user. This module offers a handful of methods to consume the bodyparser output and then share it via pre-built methods.
+
+```js
+http.createServer(function (req, res) {
+  const request = new Request(req, res, {})
+
+  const body = getRequestBodySomeHow(req)
+  request.setInitialBody(body)
+
+  console.log(request.all())
+})
+```
+
+Along with `request.all()`, you can use all of the following methods.
+
+#### request.post()
+Get the request body as it is.
+
+```js
+request.post()
+```
+
+#### request.all()
+Get merged copy of request body and query string.
+
+```js
+request.all()
+```
+
+#### request.input(key, defaultValue?)
+Returns the value for a key from `request.all()`. The `defaultValue` is used when original value is `undefined` or `null`.
+
+#### request.except(keys[])
+Returns an object of values except the given keys.
+
+```js
+request.except(['submit', 'csrf'])
+```
+
+#### request.only(keys[])
+Returns an object of values only for the given keys.
+
+```js
+request.only(['username', 'age'])
+```
+
+## Updating request data
+Everything inside request is not subject to mutations, apart from the request `body` or `query string` object.
+
+It is recommended to use inbuilt methods when trying to mutate these values, so that this module can keep a safe copy of original data.
+
+#### updateBody(body: object)
+Mutate the request body
+
+```js
+request.updateBody(newBodyObject)
+
+// reflects new body
+request.all()
+```
+
+#### updateQs(data: object)
+Mutate query string object
+
+```js
+request.updateQs(data)
+
+// reflects new query string
+request.all()
+request.get()
+```
+
+### Why update request body or query string?
+Updating request body or query string is the first step you will perform to ensure the user data is consistent and clean before your app can consume it.
+
+Now after the mutation, you do want to keep the copy of original data, so that if their are any errors, you can reflect the original data copy to the end user.
+
+For example: 
+
+1. The form accepts amount of an item in **Euros(€)**.
+2. Your server converts it to **cents** before validating the form values.
+3. If their are any errors during the validation, you want the form to show the amount back in **Euros(€)** and not **cents**.
+
+```ts
+http.createServer(function (req, res) {
+  const request = new Request(req, res, {})
+
+  /**
+   * Step 1: Original request body submitted by
+   * the user.
+   */
+  const body = getRequestBodySomeHow(req)
+  request.setInitialBody(body)
+
+  /**
+   * Step 2: Sanitize data
+   */
+  const body = request.all()
+  body.amount = toCents(body.amount)
+  request.updateBody(body)
+
+  /**
+   * Step 3: Validate data
+   */
+  validate(request.all())
+
+  /**
+   * Step 4: Assuming validation failed and reflect
+   * original data back in form
+   */
+  res.send({
+    original: request.original()
+  })
+})
+```
 
 ## Typescript support
 The module is written in Typescript, so expect intellisense to work out of the box. Also an interface is exported, which you can extend if extending the original `Request` class.
