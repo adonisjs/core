@@ -261,7 +261,7 @@ http.createServer(function (req, res) {
 ```
 
 ## Difference from other frameworks
-**You don't need it if you are using Express or Koa**, since their `req` object is already decorated with handful of convivent getters.
+**You don't need this module, if you are using Express or Koa**, since their `req` object is already decorated with handful of convivent getters.
 
 In case you are building a framework or using a framework like [micro](https://github.com/zeit/micro), then this module can save lots of time.
 
