@@ -9,7 +9,9 @@
 
 import { parse, UrlWithStringQuery } from 'url'
 import { ServerResponse, IncomingMessage, IncomingHttpHeaders } from 'http'
-import { get, omit, pick } from 'lodash'
+import * as omit from 'object.omit'
+import * as pick from 'object.pick'
+import * as getValue from 'get-value'
 import * as qs from 'qs'
 import * as proxyaddr from 'proxy-addr'
 import { isIP } from 'net'
@@ -207,7 +209,7 @@ export class Request extends Macroable implements IRequest {
    * ```
    */
   public input (key: string, defaultValue?: any): any {
-    return get(this._all, key, defaultValue)
+    return getValue(this._all, key, { default: defaultValue })
   }
 
   /**
@@ -379,7 +381,6 @@ export class Request extends Macroable implements IRequest {
   public protocol (): string {
     const protocol = this.parsedUrl.protocol!
 
-    /* istanbul ignore if */
     if (!this._trustFn(this.request.connection.remoteAddress, 0)) {
       return protocol
     }
