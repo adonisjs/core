@@ -1,8 +1,11 @@
 {
   "name": "node-req",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "Facade over Node.js HTTP req object",
-  "main": "build/index.js",
+  "main": "build/src/Request.js",
+  "files": [
+    "build/src"
+  ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
