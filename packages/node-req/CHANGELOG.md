@@ -1,3 +1,13 @@
+<a name="3.0.1"></a>
+## [3.0.1](https://github.com/poppinss/node-req/compare/3.0.0...3.0.1) (2019-01-05)
+
+
+### Bug Fixes
+
+* install missing dependencies ([a201e54](https://github.com/poppinss/node-req/commit/a201e54))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/poppinss/node-req/compare/v2.1.1...v3.0.0) (2019-01-05)
 
