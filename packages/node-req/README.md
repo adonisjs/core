@@ -1,4 +1,4 @@
-![](https://res.cloudinary.com/adonisjs/image/upload/q_100/v1546601487/node-req_z5tirr.png)
+![](https://res.cloudinary.com/adonisjs/image/upload/q_100/v1546949586/relay-node-req_wqvfyw.png)
 
 <div align="center">
     <strong>Facade over <a href="https://nodejs.org/api/http.html#http_class_http_incomingmessage">req</a> object to consistently read request values.</strong>
