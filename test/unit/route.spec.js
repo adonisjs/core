@@ -719,7 +719,7 @@ test.group('Route | Manager', (group) => {
     assert.throw(fn, 'E_NESTED_ROUTE_GROUPS: Nested route groups are not allowed')
   })
 
-  test('throw exception when name is already used', (assert) => {
+  test.failing('throw exception when name is already used', (assert) => {
     const fn = () => {
       RouteManager.get('/', function () {}).as('foo')
       RouteManager.get('/', function () {}).as('foo')
