@@ -38,6 +38,31 @@ class RouteGroup extends Macroable {
   }
 
   /**
+   * Give a name to a group of routes.
+   * This will prefix all routes name.
+   *
+   * @method as
+   *
+   * @chainable
+   *
+   * @example
+   * ```js
+   * Route
+   *   .group()
+   *   .as('admin')
+   * ```
+   */
+  as (name) {
+    this._routes.forEach((route) => {
+      if (route.name.length > 0) {
+        route.name = `${name}.${route.name}`
+      }
+    })
+
+    return this
+  }
+
+  /**
    * Add middleware to a group of routes.
    * Also see @ref('Route/middleware').
    *

@@ -267,6 +267,13 @@ test.group('Route | Group', () => {
     assert.deepEqual(group._routes, [route])
   })
 
+  test('prefix route\'s name via group', (assert) => {
+    const route = new Route('/', () => {}).as('test')
+    const group = new RouteGroup([route])
+    group.as('admin')
+    assert.equal(route.name, 'admin.test')
+  })
+
   test('add middleware to route via group', (assert) => {
     const route = new Route('/', function () {})
     const group = new RouteGroup([route])
