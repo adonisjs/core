@@ -222,7 +222,7 @@ and then use it as follows
 import { IRequest } from './my/interfaces'
 
 http.createServer(function (req, res) {
-  const request: IRequest = new Request(req, res, {}) as unknown
+  const request = new Request(req, res, {}) as unknown as IRequest
   request.myCustomMethod() // intellisense works
 })
 ```
