@@ -1,6 +1,6 @@
 {
   "name": "node-req",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Facade over Node.js HTTP req object",
   "main": "build/index.js",
   "files": [
