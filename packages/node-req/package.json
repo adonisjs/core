@@ -2,9 +2,11 @@
   "name": "node-req",
   "version": "3.0.2",
   "description": "Facade over Node.js HTTP req object",
-  "main": "build/src/Request.js",
+  "main": "build/index.js",
   "files": [
-    "build/src"
+    "build/src",
+    "build/index.js",
+    "build/index.d.ts"
   ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",

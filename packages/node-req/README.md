@@ -209,9 +209,9 @@ http.createServer(function (req, res) {
 The module is written in Typescript, so expect intellisense to work out of the box. Also an interface is exported, which you can extend if extending the original `Request` class.
 
 ```ts
-import { IRequest: BaseIRequest } from 'node-req/build/src/IRequest'
+import { RequestContract } from 'node-req'
 
-export interface IRequest extends BaseIRequest {
+export interface IRequest extends RequestContract {
   myCustomMethod (): string
 }
 ```
@@ -222,7 +222,7 @@ and then use it as follows
 import { IRequest } from './my/interfaces'
 
 http.createServer(function (req, res) {
-  const request: IRequest = new Request(req, res, {})
+  const request: IRequest = new Request(req, res, {}) as unknown
   request.myCustomMethod() // intellisense works
 })
 ```
