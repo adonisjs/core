@@ -1,3 +1,8 @@
+<a name="3.0.5"></a>
+## [3.0.5](https://github.com/poppinss/node-req/compare/3.0.4...3.0.5) (2019-01-19)
+
+
+
 <a name="3.0.4"></a>
 ## [3.0.4](https://github.com/poppinss/node-req/compare/3.0.3...3.0.4) (2019-01-19)
 
