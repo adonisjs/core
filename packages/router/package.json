@@ -52,5 +52,8 @@
   "gitHooks": {
     "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js",
     "pre-commit": "doctoc README.md --title='## Table of contents' && git add README.md"
+  },
+  "dependencies": {
+    "object.pick": "^1.3.0"
   }
 }

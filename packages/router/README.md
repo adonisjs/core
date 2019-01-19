@@ -1,14 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table of contents
-
-- [router](#router)
-  - [Change log](#change-log)
-  - [Contributing](#contributing)
-  - [Authors & License](#authors--license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # router
 
 [![travis-image]][travis-url]
@@ -16,6 +5,16 @@
 [![coveralls-image]][coveralls-url]
 [![npm-image]][npm-url]
 ![](https://img.shields.io/badge/Uses-Typescript-294E80.svg?style=flat-square&colorA=ddd)
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table of contents
+
+- [Change log](#change-log)
+- [Contributing](#contributing)
+- [Authors & License](#authors--license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Change log
 
