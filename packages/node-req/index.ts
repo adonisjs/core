@@ -1,3 +1,7 @@
+/**
+ * @module http
+ */
+
 /*
  * node-req
  *
