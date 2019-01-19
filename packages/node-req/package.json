@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/poppinss/node-req#readme",
   "devDependencies": {
-    "@adonisjs/mrm-preset": "^1.0.14",
+    "@adonisjs/mrm-preset": "^1.0.16",
     "@types/node": "^10.12.18",
     "commitizen": "^3.0.5",
     "coveralls": "^3.0.2",
@@ -45,12 +45,12 @@
     "mrm": "^1.2.1",
     "nyc": "^13.1.0",
     "pkg-ok": "^2.3.1",
-    "supertest": "^3.3.0",
+    "supertest": "^3.4.1",
     "ts-node": "^7.0.1",
-    "tslint": "^5.12.0",
+    "tslint": "^5.12.1",
     "tslint-eslint-rules": "^5.4.0",
     "typedoc": "^0.13.0",
-    "typescript": "^3.2.2",
+    "typescript": "^3.2.4",
     "yorkie": "^2.0.0"
   },
   "nyc": {
