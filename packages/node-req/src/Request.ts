@@ -20,7 +20,17 @@ import * as accepts from 'accepts'
 import * as fresh from 'fresh'
 import { Macroable } from 'macroable'
 
-import { IRequest, IConfig } from './IRequest'
+import { RequestContract } from './RequestContract'
+
+/**
+ * Config for the request class
+ */
+type Config = {
+  allowMethodSpoofing: boolean,
+  trustProxy: (address: string, distance: number) => boolean,
+  getIp: (request: RequestContract) => string,
+  subdomainOffset: number,
+}
 
 /**
  * HTTP Request class exposes the interface to consistently read values
@@ -31,7 +41,7 @@ import { IRequest, IConfig } from './IRequest'
  * You can access the original [IncomingMessage](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
  * using `request.request` property.
  */
-export class Request extends Macroable implements IRequest {
+export class Request extends Macroable implements RequestContract {
   /**
    * Parses copy of the URL with query string as a string and not
    * object. This is done to build URL's with query string without
@@ -83,7 +93,7 @@ export class Request extends Macroable implements IRequest {
   constructor (
     public request: IncomingMessage,
     public response: ServerResponse,
-    private _config: Partial<IConfig>,
+    private _config: Partial<Config>,
   ) {
     super()
     this._parseQueryString()

@@ -10,7 +10,7 @@
 import { UrlWithStringQuery } from 'url'
 import { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'http'
 
-export interface IRequest {
+export interface RequestContract {
   parsedUrl: UrlWithStringQuery
   request: IncomingMessage
   response: ServerResponse
@@ -52,11 +52,4 @@ export interface IRequest {
   hasBody (): boolean
   fresh (): boolean
   stale (): boolean
-}
-
-export type IConfig = {
-  allowMethodSpoofing: boolean,
-  trustProxy: (address: string, distance: number) => boolean,
-  getIp: (request: IRequest) => string,
-  subdomainOffset: number,
 }
