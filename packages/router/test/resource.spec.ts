@@ -10,7 +10,7 @@
 import * as test from 'japa'
 import { RouteResource } from '../src/Resource'
 
-test.group('Router', () => {
+test.group('Route Resource', () => {
   test('add base resource routes', (assert) => {
     const resource = new RouteResource('photos', 'PhotosController', {})
 
@@ -23,7 +23,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.index',
-        name: undefined,
+        name: 'photos.index',
       },
       {
         pattern: '/photos/create',
@@ -33,7 +33,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.create',
-        name: undefined,
+        name: 'photos.create',
       },
       {
         pattern: '/photos',
@@ -43,7 +43,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.store',
-        name: undefined,
+        name: 'photos.store',
       },
       {
         pattern: '/photos/:id',
@@ -53,7 +53,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.show',
-        name: undefined,
+        name: 'photos.show',
       },
       {
         pattern: '/photos/:id/edit',
@@ -63,7 +63,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.edit',
-        name: undefined,
+        name: 'photos.edit',
       },
       {
         pattern: '/photos/:id',
@@ -73,7 +73,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.update',
-        name: undefined,
+        name: 'photos.update',
       },
       {
         pattern: '/photos/:id',
@@ -83,7 +83,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.destroy',
-        name: undefined,
+        name: 'photos.destroy',
       },
     ])
   })
@@ -100,7 +100,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.index',
-        name: undefined,
+        name: 'magazines.ads.index',
       },
       {
         pattern: '/magazines/:magazine_id/ads/create',
@@ -110,7 +110,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.create',
-        name: undefined,
+        name: 'magazines.ads.create',
       },
       {
         pattern: '/magazines/:magazine_id/ads',
@@ -120,7 +120,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.store',
-        name: undefined,
+        name: 'magazines.ads.store',
       },
       {
         pattern: '/magazines/:magazine_id/ads/:id',
@@ -130,7 +130,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.show',
-        name: undefined,
+        name: 'magazines.ads.show',
       },
       {
         pattern: '/magazines/:magazine_id/ads/:id/edit',
@@ -140,7 +140,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.edit',
-        name: undefined,
+        name: 'magazines.ads.edit',
       },
       {
         pattern: '/magazines/:magazine_id/ads/:id',
@@ -150,7 +150,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.update',
-        name: undefined,
+        name: 'magazines.ads.update',
       },
       {
         pattern: '/magazines/:magazine_id/ads/:id',
@@ -160,7 +160,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.destroy',
-        name: undefined,
+        name: 'magazines.ads.destroy',
       },
     ])
   })
@@ -177,7 +177,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.index',
-        name: undefined,
+        name: 'magazines.ads.index',
       },
       {
         pattern: '/magazines/:magazine_id/ads/create',
@@ -187,7 +187,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.create',
-        name: undefined,
+        name: 'magazines.ads.create',
       },
       {
         pattern: '/magazines/:magazine_id/ads',
@@ -197,7 +197,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.store',
-        name: undefined,
+        name: 'magazines.ads.store',
       },
       {
         pattern: '/ads/:id',
@@ -207,7 +207,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.show',
-        name: undefined,
+        name: 'ads.show',
       },
       {
         pattern: '/ads/:id/edit',
@@ -217,7 +217,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.edit',
-        name: undefined,
+        name: 'ads.edit',
       },
       {
         pattern: '/ads/:id',
@@ -227,7 +227,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.update',
-        name: undefined,
+        name: 'ads.update',
       },
       {
         pattern: '/ads/:id',
@@ -237,7 +237,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.destroy',
-        name: undefined,
+        name: 'ads.destroy',
       },
     ])
   })

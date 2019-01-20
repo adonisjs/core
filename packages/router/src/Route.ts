@@ -90,6 +90,8 @@ export class Route {
   /**
    * Define prefix for the route. Calling this method for multiple times will
    * override the existing prefix.
+   *
+   * This method is mainly exposed for the [[RouteGroup]]
    */
   public prefix (prefix: string): this {
     this._prefix = prefix
@@ -105,29 +107,25 @@ export class Route {
   }
 
   /**
-   * Define an array of middleware to be executed on the route.
+   * Define an array of middleware to be executed on the route. If `prepend`
+   * is true, then middleware will be added to start of the existing
+   * middleware. The option is exposed for [[RouteGroup]]
    */
-  public middleware (middleware: any | any[]): this {
+  public middleware (middleware: any | any[], prepend = false): this {
     middleware = Array.isArray(middleware) ? middleware : [middleware]
-    this._middleware = this._middleware.concat(middleware)
-    return this
-  }
-
-  /**
-   * Prepend middleware to the list of route middleware
-   */
-  public prependMiddleware (middleware: any | any[]): this {
-    middleware = Array.isArray(middleware) ? middleware : [middleware]
-    this._middleware = middleware.concat(this._middleware)
+    this._middleware = prepend ? middleware.concat(this._middleware) : this._middleware.concat(middleware)
     return this
   }
 
   /**
    * Given memorizable name to the route. This is helpful, when you
    * want to lookup route defination by it's name.
+   *
+   * If `append` is true, then it will keep on appending to the existing
+   * name. This option is exposed for [[RouteGroup]]
    */
-  public as (name: string): this {
-    this._name = name
+  public as (name: string, append = false): this {
+    this._name = append ? `${name}.${this._name}` : name
     return this
   }
 

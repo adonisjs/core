@@ -22,33 +22,30 @@ import { Route } from './Route'
  * ```
  */
 export class RouteResource {
+  public routes: Route[] = []
+
   constructor (
     private _resource: string,
     private _controller: string,
     private _globalMatchers: Matchers,
     private _shallow = false,
-  ) {}
-
-  public get routes (): Route[] {
-    return this._buildRoutes()
+  ) {
+    this._buildRoutes()
   }
 
   /**
    * Add a new route for the given pattern, methods and controller action
    */
-  private _makeRoute (pattern, methods, action) {
-    return new Route(pattern, methods, `${this._controller}.${action}`, this._globalMatchers)
+  private _makeRoute (pattern, methods, action, baseName) {
+    const route = new Route(pattern, methods, `${this._controller}.${action}`, this._globalMatchers)
+    route.as(`${baseName}.${action}`)
+    this.routes.push(route)
   }
 
   /**
-   * Builds route for the resource. We build the routes everytime a call
-   * to `routes` getter is made, this helps in build the correct set
-   * of routes after applying all the filters.
-   *
-   * In normal use-cases the call to `routes` getter will be only done once, when
-   * the router attempts to register the routes with the store.
+   * Build routes for the given resource
    */
-  private _buildRoutes (): Route[] {
+  private _buildRoutes () {
     const resourceTokens = this._resource.split('.')
     const mainResource = resourceTokens.pop()
 
@@ -57,15 +54,14 @@ export class RouteResource {
       .join('/')}/${mainResource}`
 
     const memberBaseUrl = this._shallow ? mainResource : baseUrl
+    const baseName = this._shallow ? mainResource : this._resource
 
-     return [
-       this._makeRoute(baseUrl, ['GET'], 'index'),
-       this._makeRoute(`${baseUrl}/create`, ['GET'], 'create'),
-       this._makeRoute(baseUrl, ['POST'], 'store'),
-       this._makeRoute(`${memberBaseUrl}/:id`, ['GET'], 'show'),
-       this._makeRoute(`${memberBaseUrl}/:id/edit`, ['GET'], 'edit'),
-       this._makeRoute(`${memberBaseUrl}/:id`, ['PUT', 'PATCH'], 'update'),
-       this._makeRoute(`${memberBaseUrl}/:id`, ['DELETE'], 'destroy'),
-    ]
+    this._makeRoute(baseUrl, ['GET'], 'index', this._resource)
+    this._makeRoute(`${baseUrl}/create`, ['GET'], 'create', this._resource)
+    this._makeRoute(baseUrl, ['POST'], 'store', this._resource)
+    this._makeRoute(`${memberBaseUrl}/:id`, ['GET'], 'show', baseName)
+    this._makeRoute(`${memberBaseUrl}/:id/edit`, ['GET'], 'edit', baseName)
+    this._makeRoute(`${memberBaseUrl}/:id`, ['PUT', 'PATCH'], 'update', baseName)
+    this._makeRoute(`${memberBaseUrl}/:id`, ['DELETE'], 'destroy', baseName)
   }
 }

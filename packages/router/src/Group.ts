@@ -8,6 +8,7 @@
  */
 
 import { Route } from './Route'
+import { RouteResource } from './Resource'
 
 /**
  * Group class exposes the API to take action on a group
@@ -15,7 +16,22 @@ import { Route } from './Route'
  * the constructor.
  */
 export class RouteGroup {
-  constructor (public routes: Route[]) {
+  constructor (public routes: (Route | RouteResource)[]) {
+  }
+
+  /**
+   * Invokes a given method with params on the route instance or route
+   * resource instance
+   */
+  private _invoke (route: Route | RouteResource, method: string, params: any[]) {
+    if (route instanceof RouteResource) {
+      route.routes.forEach((child) => {
+        this._invoke(child, method, params)
+      })
+      return
+    }
+
+    route[method](...params)
   }
 
   /**
@@ -23,7 +39,7 @@ export class RouteGroup {
    */
   public where (param: string, matcher: RegExp | string): this {
     this.routes.forEach((route) => {
-      route.where(param, matcher)
+      this._invoke(route, 'where', [param, matcher])
     })
 
     return this
@@ -34,7 +50,7 @@ export class RouteGroup {
    */
   public prefix (prefix: string): this {
     this.routes.forEach((route) => {
-      route.prefix(prefix)
+      this._invoke(route, 'prefix', [prefix])
     })
 
     return this
@@ -45,7 +61,18 @@ export class RouteGroup {
    */
   public domain (domain: string): this {
     this.routes.forEach((route) => {
-      route.domain(domain)
+      this._invoke(route, 'domain', [domain])
+    })
+
+    return this
+  }
+
+  /**
+   * Prepend name to the routes name
+   */
+  public as (name: string): this {
+    this.routes.forEach((route) => {
+      this._invoke(route, 'as', [name, true])
     })
 
     return this
@@ -56,7 +83,7 @@ export class RouteGroup {
    */
   public middleware (middleware: any | any[]): this {
     this.routes.forEach((route) => {
-      route.prependMiddleware(middleware)
+      this._invoke(route, 'middleware', [middleware, true])
     })
 
     return this
