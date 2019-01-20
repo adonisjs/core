@@ -55,6 +55,7 @@
     "pre-commit": "doctoc README.md --title='## Table of contents' && git add README.md"
   },
   "dependencies": {
-    "object.pick": "^1.3.0"
+    "object.pick": "^1.3.0",
+    "pluralize": "^7.0.0"
   }
 }
