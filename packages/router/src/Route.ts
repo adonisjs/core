@@ -109,6 +109,15 @@ export class Route {
   }
 
   /**
+   * Prepend middleware to the list of route middleware
+   */
+  public prependMiddleware (middleware: any | any[]): this {
+    middleware = Array.isArray(middleware) ? middleware : [middleware]
+    this._middleware = middleware.concat(this._middleware)
+    return this
+  }
+
+  /**
    * Returns [[RouteDefination]] that can be passed to the [[Store]] for
    * registering the route
    */
