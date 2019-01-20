@@ -17,6 +17,7 @@ export type RouteNode = {
   middleware: any[],
   matchers: Matchers,
   meta: any,
+  name?: string,
 }
 
 export type RouteDefination = RouteNode & { methods: string[], domain?: string }

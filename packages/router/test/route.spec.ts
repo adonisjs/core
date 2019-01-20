@@ -22,6 +22,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: [],
     })
   })
@@ -38,6 +39,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: [],
     })
   })
@@ -52,6 +54,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: [],
     })
   })
@@ -68,6 +71,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: [],
     })
   })
@@ -86,6 +90,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: [],
     })
   })
@@ -105,6 +110,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: [],
     })
   })
@@ -125,6 +131,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: [],
     })
   })
@@ -141,6 +148,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'foo.com',
       handler,
+      name: undefined,
       middleware: [],
     })
   })
@@ -157,6 +165,7 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: ['auth', 'acl:admin'],
     })
   })
@@ -173,7 +182,25 @@ test.group('Route', () => {
       meta: {},
       domain: 'root',
       handler,
+      name: undefined,
       middleware: ['auth'],
+    })
+  })
+
+  test('give name to the route', (assert) => {
+    function handler () {}
+    const route = new Route('posts/:id', ['GET'], handler, {})
+    route.as('showPost')
+
+    assert.deepEqual(route.toJSON(), {
+      pattern: '/posts/:id',
+      methods: ['GET'],
+      matchers: {},
+      meta: {},
+      domain: 'root',
+      handler,
+      middleware: [],
+      name: 'showPost',
     })
   })
 })

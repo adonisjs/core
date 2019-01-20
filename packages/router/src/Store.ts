@@ -74,6 +74,7 @@ type MatchedRoute = {
  */
 export class Store {
   private _routes: RoutesTree = { tokens: [], domains: {} }
+  private _uniqueRouteNames = new Set()
 
   /**
    * Returns the domain node for a given domain. If domain node is missing,
@@ -128,8 +129,18 @@ export class Store {
        * routes with the same pattern.
        */
       if (methodRoutes.routes[route.pattern]) {
-        const error = new Error(`Route ${method}:${route.pattern} is already registered`) as NodeJS.ErrnoException
+        const error = new Error(`Duplicate route \`${method}:${route.pattern}\``) as NodeJS.ErrnoException
         error.code = 'E_DUPLICATE_ROUTE'
+        throw error
+      }
+
+      /**
+       * Raise error, if route has a name and is already in use. Route names have to be
+       * unique.
+       */
+      if (route.name && this._uniqueRouteNames.has(route.name)) {
+        const error = new Error(`Duplicate route name \`${route.name}\``) as NodeJS.ErrnoException
+        error.code = 'E_DUPLICATE_ROUTE_NAME'
         throw error
       }
 
@@ -149,7 +160,15 @@ export class Store {
         'meta',
         'matchers',
         'middleware',
+        'name',
       ])
+
+      /**
+       * Store reference to the route name (if exists)
+       */
+      if (route.name) {
+        this._uniqueRouteNames.add(route.name)
+      }
     })
 
     return this

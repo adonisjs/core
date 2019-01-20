@@ -116,7 +116,7 @@ test.group('Store | add', () => {
     store.add(route)
 
     const fn = () => store.add(route)
-    assert.throw(fn, 'Route GET:/ is already registered')
+    assert.throw(fn, 'Duplicate route `GET:/`')
   })
 
   test('work fine when pattern is same but method is different', (assert) => {
@@ -548,5 +548,32 @@ test.group('Store | match', () => {
     })
 
     assert.isNull(store.match('/hello', 'GET', 'root'))
+  })
+
+  test('raise error when route name is in use', (assert) => {
+    function handler () {}
+
+    const store = new Store()
+    store.add({
+      pattern: '/',
+      handler,
+      name: 'root',
+      matchers: {},
+      middleware: [],
+      meta: {},
+      methods: ['GET'],
+    })
+
+    const fn = () => store.add({
+      pattern: '/foo',
+      handler,
+      name: 'root',
+      matchers: {},
+      middleware: [],
+      meta: {},
+      methods: ['GET'],
+    })
+
+    assert.throw(fn, 'Duplicate route name `root`')
   })
 })

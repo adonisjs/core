@@ -27,6 +27,7 @@ test.group('Router', () => {
         methods: ['GET'],
         domain: 'root',
         middleware: [],
+        name: undefined,
         handler,
       },
     ])
@@ -50,6 +51,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: ['limitter', 'auth'],
         handler,
+        name: undefined,
       },
     ])
   })
@@ -70,6 +72,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler,
+        name: undefined,
       },
     ])
   })
@@ -90,6 +93,7 @@ test.group('Router', () => {
         domain: 'adonisjs.com',
         middleware: [],
         handler,
+        name: undefined,
       },
     ])
   })

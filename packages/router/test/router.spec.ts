@@ -29,6 +29,7 @@ test.group('Router', () => {
       domain: 'root',
       handler: 'HomeController.index',
       middleware: [],
+      name: undefined,
     })
 
     assert.deepEqual(postRoute.toJSON(), {
@@ -39,6 +40,7 @@ test.group('Router', () => {
       domain: 'root',
       handler: 'HomeController.store',
       middleware: [],
+      name: undefined,
     })
 
     assert.deepEqual(putRoute.toJSON(), {
@@ -49,6 +51,7 @@ test.group('Router', () => {
       domain: 'root',
       handler: 'HomeController.update',
       middleware: [],
+      name: undefined,
     })
 
     assert.deepEqual(patchRoute.toJSON(), {
@@ -59,6 +62,7 @@ test.group('Router', () => {
       domain: 'root',
       handler: 'HomeController.updatePatch',
       middleware: [],
+      name: undefined,
     })
 
     assert.deepEqual(destroyRoute.toJSON(), {
@@ -69,6 +73,7 @@ test.group('Router', () => {
       domain: 'root',
       handler: 'HomeController.destroy',
       middleware: [],
+      name: undefined,
     })
 
     assert.deepEqual(anyRoute.toJSON(), {
@@ -79,6 +84,7 @@ test.group('Router', () => {
       domain: 'root',
       handler: 'HomeController.handle',
       middleware: [],
+      name: undefined,
     })
   })
 })

@@ -23,6 +23,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.index',
+        name: undefined,
       },
       {
         pattern: '/photos/create',
@@ -32,6 +33,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.create',
+        name: undefined,
       },
       {
         pattern: '/photos',
@@ -41,6 +43,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.store',
+        name: undefined,
       },
       {
         pattern: '/photos/:id',
@@ -50,6 +53,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.show',
+        name: undefined,
       },
       {
         pattern: '/photos/:id/edit',
@@ -59,6 +63,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.edit',
+        name: undefined,
       },
       {
         pattern: '/photos/:id',
@@ -68,6 +73,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.update',
+        name: undefined,
       },
       {
         pattern: '/photos/:id',
@@ -77,6 +83,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.destroy',
+        name: undefined,
       },
     ])
   })
@@ -93,6 +100,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.index',
+        name: undefined,
       },
       {
         pattern: '/magazines/:magazine_id/ads/create',
@@ -102,6 +110,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.create',
+        name: undefined,
       },
       {
         pattern: '/magazines/:magazine_id/ads',
@@ -111,6 +120,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.store',
+        name: undefined,
       },
       {
         pattern: '/magazines/:magazine_id/ads/:id',
@@ -120,6 +130,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.show',
+        name: undefined,
       },
       {
         pattern: '/magazines/:magazine_id/ads/:id/edit',
@@ -129,6 +140,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.edit',
+        name: undefined,
       },
       {
         pattern: '/magazines/:magazine_id/ads/:id',
@@ -138,6 +150,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.update',
+        name: undefined,
       },
       {
         pattern: '/magazines/:magazine_id/ads/:id',
@@ -147,6 +160,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.destroy',
+        name: undefined,
       },
     ])
   })
@@ -163,6 +177,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.index',
+        name: undefined,
       },
       {
         pattern: '/magazines/:magazine_id/ads/create',
@@ -172,6 +187,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.create',
+        name: undefined,
       },
       {
         pattern: '/magazines/:magazine_id/ads',
@@ -181,6 +197,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.store',
+        name: undefined,
       },
       {
         pattern: '/ads/:id',
@@ -190,6 +207,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.show',
+        name: undefined,
       },
       {
         pattern: '/ads/:id/edit',
@@ -199,6 +217,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.edit',
+        name: undefined,
       },
       {
         pattern: '/ads/:id',
@@ -208,6 +227,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.update',
+        name: undefined,
       },
       {
         pattern: '/ads/:id',
@@ -217,6 +237,7 @@ test.group('Router', () => {
         domain: 'root',
         middleware: [],
         handler: 'AdsController.destroy',
+        name: undefined,
       },
     ])
   })

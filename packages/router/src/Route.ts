@@ -33,6 +33,11 @@ export class Route {
   private _domain: string = 'root'
 
   /**
+   * A unique name to lookup the route
+   */
+  private _name: string
+
+  /**
    * An object of matchers to be forwarded to the
    * store. The matchers list is populated by
    * calling `where` method
@@ -118,6 +123,15 @@ export class Route {
   }
 
   /**
+   * Given memorizable name to the route. This is helpful, when you
+   * want to lookup route defination by it's name.
+   */
+  public as (name: string): this {
+    this._name = name
+    return this
+  }
+
+  /**
    * Returns [[RouteDefination]] that can be passed to the [[Store]] for
    * registering the route
    */
@@ -128,6 +142,7 @@ export class Route {
       matchers: this._getMatchers(),
       handler: this._handler,
       meta: {},
+      name: this._name,
       methods: this._methods,
       middleware: this._middleware,
     }
