@@ -9,19 +9,7 @@
 
 import * as pick from 'object.pick'
 import * as matchit from '../matchit'
-
-/**
- * Internal copy of each route
- */
-type RouteNode = {
-  pattern: string,
-  handler: any,
-  middleware: any[],
-  matchers: {
-    [param: string]: string | RegExp,
-  },
-  meta: any,
-}
+import { RouteDefination, RouteNode } from './Contracts'
 
 /**
  * An object of routes for a given HTTP method
@@ -130,7 +118,7 @@ export class Store {
    * })
    * ```
    */
-  public add (route: RouteNode & { methods: string[], domain?: string }): this {
+  public add (route: RouteDefination): this {
     route.methods.forEach((method) => {
       const methodRoutes = this._getMethodRoutes(route.domain || 'root', method)
 
@@ -140,16 +128,20 @@ export class Store {
        * routes with the same pattern.
        */
       if (methodRoutes.routes[route.pattern]) {
-        throw new Error(`Route ${method}:${route.pattern} is already registered`)
+        const error = new Error(`Route ${method}:${route.pattern} is already registered`) as NodeJS.ErrnoException
+        error.code = 'E_DUPLICATE_ROUTE'
+        throw error
       }
 
       /**
-       * Generate tokens
+       * Generate tokens for the given route and push to the list
+       * of tokens
        */
       methodRoutes.tokens.push(matchit.parse(route.pattern, route.matchers))
 
       /**
-       * Store reference to the route
+       * Store reference to the route, so that we can return it to the user, when
+       * they call `match`.
        */
       methodRoutes.routes[route.pattern] = pick(route, [
         'pattern',
@@ -166,7 +158,7 @@ export class Store {
   /**
    * Matches the url, method and optionally domain to pull the matching
    * route. `null` is returned when unable to match the URL against
-   * registered routes
+   * registered routes.
    */
   public match (url: string, method: string, domain?: string): null | MatchedRoute {
     /**
@@ -174,7 +166,7 @@ export class Store {
      * the domain
      */
     const matchedDomain = matchit.match(domain || 'root', this._routes.tokens)
-    if (!matchedDomain) {
+    if (!matchedDomain.length) {
       return null
     }
 
@@ -193,7 +185,7 @@ export class Store {
      * matchedMethod
      */
     const matchedRoute = matchit.match(url, matchedMethod.tokens)
-    if (!matchedRoute) {
+    if (!matchedRoute.length) {
       return null
     }
 

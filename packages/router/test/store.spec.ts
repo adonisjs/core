@@ -501,4 +501,52 @@ test.group('Store | match', () => {
       },
     })
   })
+
+  test('return null when unable to match the route domain', (assert) => {
+    function handler () {}
+
+    const store = new Store()
+    store.add({
+      pattern: '/:id',
+      handler,
+      matchers: {},
+      middleware: [],
+      meta: {},
+      methods: ['GET'],
+    })
+
+    assert.isNull(store.match('/1', 'GET', 'blog.adonisjs.com'))
+  })
+
+  test('return null when unable to match the method', (assert) => {
+    function handler () {}
+
+    const store = new Store()
+    store.add({
+      pattern: '/:id',
+      handler,
+      matchers: {},
+      middleware: [],
+      meta: {},
+      methods: ['GET'],
+    })
+
+    assert.isNull(store.match('/1', 'POST', 'root'))
+  })
+
+  test('return null when unable to match the route url', (assert) => {
+    function handler () {}
+
+    const store = new Store()
+    store.add({
+      pattern: '/',
+      handler,
+      matchers: {},
+      middleware: [],
+      meta: {},
+      methods: ['GET'],
+    })
+
+    assert.isNull(store.match('/hello', 'GET', 'root'))
+  })
 })
