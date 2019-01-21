@@ -8,7 +8,7 @@
  */
 
 import * as pick from 'object.pick'
-import * as matchit from '../matchit'
+import * as matchit from 'matchit'
 import { RouteDefination, RouteNode } from './Contracts'
 
 /**
