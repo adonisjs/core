@@ -15,9 +15,7 @@ export type RouteNode = {
   pattern: string,
   handler: any,
   middleware: any[],
-  matchers: Matchers,
-  meta: any,
   name?: string,
 }
 
-export type RouteDefination = RouteNode & { methods: string[], domain?: string }
+export type RouteDefination = RouteNode & { methods: string[], domain?: string, matchers: Matchers }

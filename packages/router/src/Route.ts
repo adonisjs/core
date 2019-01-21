@@ -141,7 +141,6 @@ export class Route {
       pattern: this._getPattern(),
       matchers: this._getMatchers(),
       handler: this._handler,
-      meta: {},
       name: this._name,
       methods: this._methods,
       middleware: this._middleware,

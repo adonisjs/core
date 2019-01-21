@@ -225,4 +225,8 @@ export class Router {
 
     this.routes = []
   }
+
+  public find (url: string, method: string, domain?: string) {
+    return this._store.match(url, method, domain)
+  }
 }

@@ -21,7 +21,6 @@ test.group('Store | add', () => {
       handler: handler,
       matchers: {},
       middleware: [],
-      meta: {},
     })
 
     assert.deepEqual(store.tree, {
@@ -44,9 +43,7 @@ test.group('Store | add', () => {
               '/': {
                 pattern: '/',
                 handler,
-                matchers: {},
                 middleware: [],
-                meta: {},
               },
             },
           },
@@ -66,7 +63,6 @@ test.group('Store | add', () => {
       matchers: {},
       domain: 'foo.com',
       middleware: [],
-      meta: {},
     })
 
     assert.deepEqual(store.tree, {
@@ -89,9 +85,7 @@ test.group('Store | add', () => {
               '/': {
                 pattern: '/',
                 handler,
-                matchers: {},
                 middleware: [],
-                meta: {},
               },
             },
           },
@@ -109,7 +103,6 @@ test.group('Store | add', () => {
       matchers: {},
       domain: 'foo.com',
       middleware: [],
-      meta: {},
     }
 
     const store = new Store()
@@ -128,7 +121,6 @@ test.group('Store | add', () => {
       matchers: {},
       domain: 'foo.com',
       middleware: [],
-      meta: {},
     }
 
     const store = new Store()
@@ -155,9 +147,7 @@ test.group('Store | add', () => {
               '/': {
                 pattern: '/',
                 handler,
-                matchers: {},
                 middleware: [],
-                meta: {},
               },
             },
           },
@@ -172,9 +162,7 @@ test.group('Store | add', () => {
               '/': {
                 pattern: '/',
                 handler,
-                matchers: {},
                 middleware: [],
-                meta: {},
               },
             },
           },
@@ -192,7 +180,6 @@ test.group('Store | add', () => {
       matchers: {},
       domain: 'foo.com',
       middleware: [],
-      meta: {},
     }
 
     const store = new Store()
@@ -227,9 +214,7 @@ test.group('Store | add', () => {
               '/': {
                 pattern: '/',
                 handler,
-                matchers: {},
                 middleware: [],
-                meta: {},
               },
             },
           },
@@ -246,9 +231,7 @@ test.group('Store | add', () => {
               '/': {
                 pattern: '/',
                 handler,
-                matchers: {},
                 middleware: [],
-                meta: {},
               },
             },
           },
@@ -268,7 +251,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -276,9 +258,7 @@ test.group('Store | match', () => {
       route: {
         pattern: '/',
         handler,
-        matchers: {},
         middleware: [],
-        meta: {},
       },
       params: {},
       subdomains: {},
@@ -294,7 +274,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -302,9 +281,7 @@ test.group('Store | match', () => {
       route: {
         pattern: '/:username',
         handler,
-        matchers: {},
         middleware: [],
-        meta: {},
       },
       params: {
         username: 'virk',
@@ -322,7 +299,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -330,9 +306,7 @@ test.group('Store | match', () => {
       route: {
         pattern: '/:username?',
         handler,
-        matchers: {},
         middleware: [],
-        meta: {},
       },
       params: {
         username: 'virk',
@@ -344,9 +318,7 @@ test.group('Store | match', () => {
       route: {
         pattern: '/:username?',
         handler,
-        matchers: {},
         middleware: [],
-        meta: {},
       },
       params: {},
       subdomains: {},
@@ -362,7 +334,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -371,7 +342,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -379,9 +349,7 @@ test.group('Store | match', () => {
       route: {
         pattern: '/:username',
         handler,
-        matchers: {},
         middleware: [],
-        meta: {},
       },
       params: {
         username: 'virk',
@@ -401,7 +369,6 @@ test.group('Store | match', () => {
         username: new RegExp(/[a-z]+/),
       },
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -412,7 +379,6 @@ test.group('Store | match', () => {
         id: new RegExp(/[0-9]+/),
       },
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -420,11 +386,7 @@ test.group('Store | match', () => {
       route: {
         pattern: '/:id',
         handler,
-        matchers: {
-          id: new RegExp(/[0-9]+/),
-        },
         middleware: [],
-        meta: {},
       },
       params: {
         id: '1',
@@ -442,7 +404,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -452,7 +413,6 @@ test.group('Store | match', () => {
       matchers: {},
       middleware: [],
       domain: 'foo.com',
-      meta: {},
       methods: ['GET'],
     })
 
@@ -460,9 +420,7 @@ test.group('Store | match', () => {
       route: {
         pattern: '/:id',
         handler,
-        matchers: {},
         middleware: [],
-        meta: {},
       },
       params: {
         id: '1',
@@ -481,7 +439,6 @@ test.group('Store | match', () => {
       matchers: {},
       middleware: [],
       domain: ':subdomain.adonisjs.com',
-      meta: {},
       methods: ['GET'],
     })
 
@@ -489,9 +446,7 @@ test.group('Store | match', () => {
       route: {
         pattern: '/:id',
         handler,
-        matchers: {},
         middleware: [],
-        meta: {},
       },
       params: {
         id: '1',
@@ -511,7 +466,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -527,7 +481,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 
@@ -543,7 +496,6 @@ test.group('Store | match', () => {
       handler,
       matchers: {},
       middleware: [],
-      meta: {},
       methods: ['GET'],
     })
 

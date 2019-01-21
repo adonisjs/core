@@ -18,7 +18,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/photos',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -28,7 +27,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/photos/create',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -38,7 +36,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/photos',
         matchers: {},
-        meta: {},
         methods: ['POST'],
         domain: 'root',
         middleware: [],
@@ -48,7 +45,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -58,7 +54,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/photos/:id/edit',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -68,7 +63,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
         methods: ['PUT', 'PATCH'],
         domain: 'root',
         middleware: [],
@@ -78,7 +72,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
         methods: ['DELETE'],
         domain: 'root',
         middleware: [],
@@ -95,7 +88,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -105,7 +97,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads/create',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -115,7 +106,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads',
         matchers: {},
-        meta: {},
         methods: ['POST'],
         domain: 'root',
         middleware: [],
@@ -125,7 +115,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads/:id',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -135,7 +124,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads/:id/edit',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -145,7 +133,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads/:id',
         matchers: {},
-        meta: {},
         methods: ['PUT', 'PATCH'],
         domain: 'root',
         middleware: [],
@@ -155,7 +142,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads/:id',
         matchers: {},
-        meta: {},
         methods: ['DELETE'],
         domain: 'root',
         middleware: [],
@@ -172,7 +158,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -182,7 +167,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads/create',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -192,7 +176,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/magazines/:magazine_id/ads',
         matchers: {},
-        meta: {},
         methods: ['POST'],
         domain: 'root',
         middleware: [],
@@ -202,7 +185,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/ads/:id',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -212,7 +194,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/ads/:id/edit',
         matchers: {},
-        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -222,7 +203,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/ads/:id',
         matchers: {},
-        meta: {},
         methods: ['PUT', 'PATCH'],
         domain: 'root',
         middleware: [],
@@ -232,7 +212,6 @@ test.group('Route Resource', () => {
       {
         pattern: '/ads/:id',
         matchers: {},
-        meta: {},
         methods: ['DELETE'],
         domain: 'root',
         middleware: [],
