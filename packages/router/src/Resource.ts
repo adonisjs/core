@@ -64,4 +64,58 @@ export class RouteResource {
     this._makeRoute(`${memberBaseUrl}/:id`, ['PUT', 'PATCH'], 'update', baseName)
     this._makeRoute(`${memberBaseUrl}/:id`, ['DELETE'], 'destroy', baseName)
   }
+
+  /**
+   * Filter the routes based on their partial names
+   */
+  private _filter (names, inverse) {
+    return this.routes.filter((route) => {
+      const match = names.find((name) => route.name.endsWith(name))
+      return inverse ? !match : match
+    })
+  }
+
+  /**
+   * Register only given routes and remove others
+   */
+  public only (names: string[]): this {
+    this
+      ._filter(names, true)
+      .forEach((route) => (route.deleted = true))
+
+    return this
+  }
+
+  /**
+   * Register all routes, except the one's defined
+   */
+  public except (names: string[]): this {
+    this
+      ._filter(names, false)
+      .forEach((route) => (route.deleted = true))
+
+    return this
+  }
+
+  /**
+   * Register api only routes. The `create` and `edit` routes, which
+   * are meant to show forms will not be registered
+   */
+  public apiOnly (): this {
+    return this.except(['.create', '.edit'])
+  }
+
+  /**
+   * Add middleware to routes inside the resource
+   */
+  public middleware (middleware: { [name: string]: any | any[] }): this {
+    for (let name in middleware) {
+      const route = this.routes.find((route) => route.name.endsWith(name))
+      if (route) {
+        route.middleware(middleware[name])
+      }
+    }
+
+    return this
+  }
 }

@@ -220,4 +220,81 @@ test.group('Route Resource', () => {
       },
     ])
   })
+
+  test('mark non-api routes deleted', (assert) => {
+    const resource = new RouteResource('photos', 'PhotosController', {})
+    resource.apiOnly()
+
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.create')!.deleted)
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.edit')!.deleted)
+  })
+
+  test('mark all other routes as deleted except defined one\'s', (assert) => {
+    const resource = new RouteResource('photos', 'PhotosController', {})
+    resource.only(['index', 'show'])
+
+    assert.isFalse(resource.routes.find((route) => route.name === 'photos.index')!.deleted)
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.create')!.deleted)
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.store')!.deleted)
+    assert.isFalse(resource.routes.find((route) => route.name === 'photos.show')!.deleted)
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.edit')!.deleted)
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.update')!.deleted)
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.destroy')!.deleted)
+  })
+
+  test('mark all defined as delete', (assert) => {
+    const resource = new RouteResource('photos', 'PhotosController', {})
+    resource.except(['index', 'show'])
+
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.index')!.deleted)
+    assert.isFalse(resource.routes.find((route) => route.name === 'photos.create')!.deleted)
+    assert.isFalse(resource.routes.find((route) => route.name === 'photos.store')!.deleted)
+    assert.isTrue(resource.routes.find((route) => route.name === 'photos.show')!.deleted)
+    assert.isFalse(resource.routes.find((route) => route.name === 'photos.edit')!.deleted)
+    assert.isFalse(resource.routes.find((route) => route.name === 'photos.update')!.deleted)
+    assert.isFalse(resource.routes.find((route) => route.name === 'photos.destroy')!.deleted)
+  })
+
+  test('define middleware on routes', (assert) => {
+    const resource = new RouteResource('photos', 'PhotosController', {})
+    resource.middleware({
+      create: ['auth'],
+      store: ['auth', 'acl:admin'],
+    })
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.index')!['_middleware'],
+      [],
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.create')!['_middleware'],
+      ['auth'],
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.store')!['_middleware'],
+      ['auth', 'acl:admin'],
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.show')!['_middleware'],
+      [],
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.edit')!['_middleware'],
+      [],
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.update')!['_middleware'],
+      [],
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.destroy')!['_middleware'],
+      [],
+    )
+  })
 })

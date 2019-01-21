@@ -34,11 +34,6 @@ export class Route {
   private _domain: string = 'root'
 
   /**
-   * A unique name to lookup the route
-   */
-  private _name: string
-
-  /**
    * An object of matchers to be forwarded to the
    * store. The matchers list is populated by
    * calling `where` method
@@ -63,6 +58,11 @@ export class Route {
    * This flag must be set before [[Router.commit]] method
    */
   public deleted: boolean = false
+
+  /**
+   * A unique name to lookup the route
+   */
+  public name: string
 
   constructor (
     private _pattern: string,
@@ -135,7 +135,7 @@ export class Route {
    * name. This option is exposed for [[RouteGroup]]
    */
   public as (name: string, append = false): this {
-    this._name = append ? `${name}.${this._name}` : name
+    this.name = append ? `${name}.${this.name}` : name
     return this
   }
 
@@ -149,7 +149,7 @@ export class Route {
       pattern: this._getPattern(),
       matchers: this._getMatchers(),
       handler: this._handler,
-      name: this._name,
+      name: this.name,
       methods: this._methods,
       middleware: this._middleware,
     }

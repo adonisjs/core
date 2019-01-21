@@ -691,4 +691,53 @@ test.group('Router', () => {
       domains: {},
     })
   })
+
+  test('filter resource routes inside a named group', (assert) => {
+    const router = new Router()
+
+    router.group(() => {
+      router.resource('photos', 'PhotosController').only(['create'])
+    }).as('v1')
+
+    router.commit()
+
+    assert.deepEqual(router['_store'].tree, {
+      tokens: [[{
+        old: 'root',
+        type: 0,
+        val: 'root',
+        end: '',
+      }]],
+      domains: {
+        'root': {
+          'GET': {
+            tokens: [
+              [
+                {
+                  old: '/photos/create',
+                  type: 0,
+                  val: 'photos',
+                  end: '',
+                },
+                {
+                  old: '/photos/create',
+                  type: 0,
+                  val: 'create',
+                  end: '',
+                },
+              ],
+            ],
+            routes: {
+              '/photos/create': {
+                pattern: '/photos/create',
+                handler: 'PhotosController.create',
+                middleware: [],
+                name: 'v1.photos.create',
+              },
+            },
+          },
+        },
+      },
+    })
+  })
 })
