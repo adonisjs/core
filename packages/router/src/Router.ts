@@ -55,7 +55,17 @@ export class Router {
    */
   private _lookupStore: LookupNode[] = []
 
+  /**
+   * A boolean to tell the router that a group is in
+   * open state right now
+   */
   private _inGroup: boolean = false
+
+  /**
+   * Temporary array to hold routes and resources created inside
+   * a group. Once we pass them to the group, this array
+   * will be free.
+   */
   private _groupRoutes: (Route | RouteResource)[] = []
 
   /**
@@ -224,6 +234,7 @@ export class Router {
     })
 
     this.routes = []
+    this._matchers = {}
   }
 
   public find (url: string, method: string, domain?: string) {

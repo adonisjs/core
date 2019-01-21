@@ -56,6 +56,14 @@ export class Route {
    */
   private _middleware: any[] = []
 
+  /**
+   * A boolean to prevent route from getting registered within
+   * the [[Store]].
+   *
+   * This flag must be set before [[Router.commit]] method
+   */
+  public deleted: boolean = false
+
   constructor (
     private _pattern: string,
     private _methods: string[],

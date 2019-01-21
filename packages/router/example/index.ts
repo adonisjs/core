@@ -10,9 +10,13 @@
 import { Router } from '../src/Router'
 import { createServer } from 'http'
 
+process.title = 'Router example'
+
+console.log(process.memoryUsage())
 const router = new Router()
 
 router.resource('posts', 'PostController')
+
 router.shallowResource('posts.comments', 'CommentsController')
 router.resource('users', 'UserController')
 
@@ -21,8 +25,14 @@ router.post('login', 'AuthController.authenticate')
 
 router.get('register', 'AuthController.registerForm')
 router.post('register', 'AuthController.register')
+router.get('home', 'HomeController.index')
 
 router.commit()
+console.log(process.memoryUsage())
+
+setTimeout(() => {
+  console.log(process.memoryUsage())
+}, 1)
 
 createServer((req, res) => {
   const route = router.find(req.url!, req.method!)

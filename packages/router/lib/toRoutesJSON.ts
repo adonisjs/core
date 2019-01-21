@@ -28,7 +28,9 @@ export function toRoutesJSON (routes: (RouteGroup | RouteResource | Route)[]): R
       return list
     }
 
-    list.push(route.toJSON())
+    if (!route.deleted) {
+      list.push(route.toJSON())
+    }
     return list
   }, [])
 }

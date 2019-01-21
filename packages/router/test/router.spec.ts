@@ -676,4 +676,19 @@ test.group('Router', () => {
       },
     })
   })
+
+  test('do not commit route when deleted flag is set to true', (assert) => {
+    const router = new Router()
+
+    function handler () {}
+    const route = router.get('/', handler)
+    route.deleted = true
+
+    router.commit()
+
+    assert.deepEqual(router['_store'].tree, {
+      tokens: [],
+      domains: {},
+    })
+  })
 })
