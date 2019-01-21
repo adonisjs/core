@@ -73,19 +73,19 @@ type MatchedRoute = {
  * ```
  */
 export class Store {
-  private _routes: RoutesTree = { tokens: [], domains: {} }
+  public tree: RoutesTree = { tokens: [], domains: {} }
 
   /**
    * Returns the domain node for a given domain. If domain node is missing,
    * it will added to the routes object and tokens are also generated
    */
   private _getDomainNode (domain: string): DomainNode {
-    if (!this._routes.domains[domain]) {
-      this._routes.tokens.push(matchit.parse(domain))
-      this._routes.domains[domain] = {}
+    if (!this.tree.domains[domain]) {
+      this.tree.tokens.push(matchit.parse(domain))
+      this.tree.domains[domain] = {}
     }
 
-    return this._routes.domains[domain]
+    return this.tree.domains[domain]
   }
 
   /**
@@ -166,7 +166,7 @@ export class Store {
      * Start by matching the domain and return null, if unable to find
      * the domain
      */
-    const matchedDomain = matchit.match(domain || 'root', this._routes.tokens)
+    const matchedDomain = matchit.match(domain || 'root', this.tree.tokens)
     if (!matchedDomain.length) {
       return null
     }
@@ -176,7 +176,7 @@ export class Store {
      * method node is missing, means no routes ever got registered for that
      * method
      */
-    const matchedMethod = this._routes.domains[matchedDomain[0].old][method]
+    const matchedMethod = this.tree.domains[matchedDomain[0].old][method]
     if (!matchedMethod) {
       return null
     }
@@ -195,12 +195,5 @@ export class Store {
       params: matchit.exec(url, matchedRoute),
       subdomains: matchit.exec(domain || 'root', matchedDomain),
     }
-  }
-
-  /**
-   * Copy of registered routes. Not subjective to mutations
-   */
-  public toJSON (): RoutesTree {
-    return this._routes
   }
 }

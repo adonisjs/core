@@ -33,7 +33,7 @@ test.group('Route', () => {
     route.prefix('admin')
 
     assert.deepEqual(route.toJSON(), {
-      pattern: 'admin/',
+      pattern: '/admin',
       methods: ['GET'],
       matchers: {},
       meta: {},
@@ -47,6 +47,7 @@ test.group('Route', () => {
   test('handle leading slash in pattern', (assert) => {
     function handler () {}
     const route = new Route('/blog', ['GET'], handler, {})
+
     assert.deepEqual(route.toJSON(), {
       pattern: '/blog',
       methods: ['GET'],
@@ -65,7 +66,7 @@ test.group('Route', () => {
     route.prefix('admin')
 
     assert.deepEqual(route.toJSON(), {
-      pattern: 'admin/blog',
+      pattern: '/admin/blog',
       methods: ['GET'],
       matchers: {},
       meta: {},

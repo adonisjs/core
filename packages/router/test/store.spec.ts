@@ -24,7 +24,7 @@ test.group('Store | add', () => {
       meta: {},
     })
 
-    assert.deepEqual(store.toJSON(), {
+    assert.deepEqual(store.tree, {
       tokens: [[{
         old: 'root',
         type: 0,
@@ -69,7 +69,7 @@ test.group('Store | add', () => {
       meta: {},
     })
 
-    assert.deepEqual(store.toJSON(), {
+    assert.deepEqual(store.tree, {
       tokens: [[{
         old: 'foo.com',
         type: 0,
@@ -135,7 +135,7 @@ test.group('Store | add', () => {
     store.add(route)
     store.add(Object.assign({}, route, { methods: ['POST'] }))
 
-    assert.deepEqual(store.toJSON(), {
+    assert.deepEqual(store.tree, {
       tokens: [[{
         old: 'foo.com',
         type: 0,
@@ -199,7 +199,7 @@ test.group('Store | add', () => {
     store.add(route)
     store.add(Object.assign({}, route, { domain: 'root' }))
 
-    assert.deepEqual(store.toJSON(), {
+    assert.deepEqual(store.tree, {
       tokens: [
         [{
           old: 'foo.com',

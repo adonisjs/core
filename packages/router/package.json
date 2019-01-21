@@ -38,6 +38,7 @@
   },
   "nyc": {
     "exclude": [
+      "test-helpers",
       "test",
       "matchit"
     ],

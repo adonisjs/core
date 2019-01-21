@@ -90,7 +90,7 @@ test.group('Route Group', () => {
 
     assert.deepEqual(toRoutesJSON(group.routes), [
       {
-        pattern: 'api/v1/:id',
+        pattern: '/api/v1/:id',
         matchers: {},
         meta: {},
         methods: ['GET'],

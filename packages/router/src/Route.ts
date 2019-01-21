@@ -8,6 +8,7 @@
  */
 
 import { RouteDefination, Matchers } from './Contracts'
+import { dropSlash } from '../lib/dropSlash'
 
 /**
  * Route class is used to construct consistent [[RouteDefination]] using
@@ -67,16 +68,17 @@ export class Route {
    * matchers. The local copy is given preference over the global
    * one's
    */
-  private _getMatchers () {
+  private _getMatchers (): Matchers {
     return Object.assign({}, this._globalMatchers, this._matchers)
   }
 
   /**
    * Returns a normalized pattern string by prefixing the `prefix` (if defined).
    */
-  private _getPattern () {
-    const prefix = `${this._prefix.replace(/\/$/, '')}/`
-    return this._pattern === '/' ? prefix : `${prefix}${this._pattern.replace(/^\//, '')}`
+  private _getPattern (): string {
+    const pattern = dropSlash(this._pattern)
+    const prefix = this._prefix ? dropSlash(this._prefix) : ''
+    return this._prefix ? `${prefix}${pattern === '/' ? '' : pattern}` : pattern
   }
 
   /**

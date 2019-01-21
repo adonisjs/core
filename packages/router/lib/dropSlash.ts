@@ -7,4 +7,10 @@
  * file that was distributed with this source code.
  */
 
-export { toRoutesJSON } from '../lib/toRoutesJSON'
+export function dropSlash (input: string): string {
+  if (input === '/') {
+    return '/'
+  }
+
+  return `/${input.replace(/^\//, '').replace(/\/$/, '')}`
+}
