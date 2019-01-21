@@ -10,7 +10,7 @@
 import * as test from 'japa'
 import { Router } from '../src/Router'
 
-test.group('Router', () => {
+test.group('Router | add', () => {
   test('add routes', (assert) => {
     const router = new Router()
 
@@ -91,7 +91,9 @@ test.group('Router', () => {
     const fn = () => router.commit()
     assert.throw(fn, 'Duplicate route name `home`')
   })
+})
 
+test.group('Router | commit', () => {
   test('commit routes to the store', (assert) => {
     const router = new Router()
 
@@ -740,7 +742,9 @@ test.group('Router', () => {
       },
     })
   })
+})
 
+test.group('Router | find', () => {
   test('find route using URL', (assert) => {
     const router = new Router()
 
@@ -832,7 +836,9 @@ test.group('Router', () => {
       subdomains: {},
     })
   })
+})
 
+test.group('Router | urlFor', () => {
   test('make url using route controller.method', (assert) => {
     const router = new Router()
 
