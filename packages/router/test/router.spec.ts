@@ -832,4 +832,81 @@ test.group('Router', () => {
       subdomains: {},
     })
   })
+
+  test('make url using route controller.method', (assert) => {
+    const router = new Router()
+
+    router.resource('photos', 'PhotosController')
+    router.commit()
+
+    assert.equal(router.urlFor('PhotosController.index', {}), '/photos')
+    assert.equal(router.urlFor('PhotosController.show', { params: { id: '3' } }), '/photos/3')
+  })
+
+  test('make url using route name', (assert) => {
+    const router = new Router()
+
+    router.get('/posts/:id', 'PostController.show').as('showPost')
+    router.commit()
+
+    assert.equal(router.urlFor('showPost', { params: { id: '3' } }), '/posts/3')
+  })
+
+  test('raise error when required param is missing', (assert) => {
+    const router = new Router()
+
+    router.get('/posts/:id', 'PostController.show').as('showPost')
+    router.commit()
+
+    const fn = () => router.urlFor('showPost', { params: {} })
+    assert.throw(fn, '`id` param is required to make URL for `/posts/:id` route')
+  })
+
+  test('raise error when params object is missing', (assert) => {
+    const router = new Router()
+
+    router.get('/posts/:id', 'PostController.show').as('showPost')
+    router.commit()
+
+    const fn = () => router.urlFor('showPost', {})
+    assert.throw(fn, '`id` param is required to make URL for `/posts/:id` route')
+  })
+
+  test('append query string to the query', (assert) => {
+    const router = new Router()
+
+    router.get('/posts/:id', 'PostController.show').as('showPost')
+    router.commit()
+
+    const url = router.urlFor('showPost', { params: { id: 1 }, qs: { username: 'virk' } })
+    assert.equal(url, '/posts/1?username=virk')
+  })
+
+  test('prepend domain when explicit domain is defined', (assert) => {
+    const router = new Router()
+
+    router.get('/posts/:id', 'PostController.show').as('showPost').domain('adonisjs.com')
+    router.commit()
+
+    const url = router.urlFor('showPost', { params: { id: 1 } })
+    assert.equal(url, '//adonisjs.com/posts/1')
+  })
+
+  test('fetch only for given domain when defined', (assert) => {
+    const router = new Router()
+
+    router.get('/posts/:id', 'PostController.show')
+    router.get('/posts/:id', 'AdonisController.show').domain('adonisjs.com')
+    router.commit()
+
+    const url = router.urlFor('/posts/:id', { params: { id: 1 } }, 'adonisjs.com')
+    assert.equal(url, '//adonisjs.com/posts/1')
+  })
+
+  test('return null when unable to make URL', (assert) => {
+    const router = new Router()
+
+    const url = router.urlFor('/posts', {})
+    assert.isNull(url)
+  })
 })

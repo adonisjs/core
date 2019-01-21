@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { stringify } from 'querystring'
 import { Route } from './Route'
 import { RouteResource } from './Resource'
 import { RouteGroup } from './Group'
@@ -17,6 +18,7 @@ import { toRoutesJSON } from '../lib/toRoutesJSON'
 type LookupNode = {
   handler: any,
   pattern: string,
+  domain: string,
   name?: string,
 }
 
@@ -228,6 +230,7 @@ export class Router {
         handler: route.handler,
         name: route.name,
         pattern: route.pattern,
+        domain: route.domain || 'root',
       })
 
       this._store.add(route)
@@ -242,5 +245,70 @@ export class Router {
    */
   public find (url: string, method: string, domain?: string) {
     return this._store.match(url, method, domain)
+  }
+
+  /**
+   * Makes the URL for a pre-registered route. The `params` is required to
+   * substitute values for dynamic segments and `qs` is optional for
+   * adding query string.
+   *
+   * If the domain for the route is defined, then a protocol relative URL for that
+   * domain will be returned.
+   */
+  public urlFor (pattern: string, options: { params?: any, qs?: any }, domain?: string): null | string {
+    options = Object.assign({ params: {}, qs: {} }, options)
+
+    /**
+     * Find where route pattern or name or handler matches
+     */
+    const matchingRoute = this._lookupStore.find((route) => {
+      return [route.name, route.pattern, route.handler].indexOf(pattern) > -1 && (!domain || domain === route.domain)
+    })
+
+    /**
+     * Return null if unable to lookup route
+     */
+    if (!matchingRoute) {
+      return null
+    }
+
+    let url = matchingRoute.pattern
+
+    if (url.indexOf(':') > -1) {
+      /**
+       * Split pattern when route has dynamic segments
+       */
+      const tokens = url.split('/')
+
+      /**
+       * Lookup over the route tokens and replace them the params values
+       */
+      url = tokens.map((token) => {
+        if (!token.startsWith(':')) {
+          return token
+        }
+
+        const isOptional = token.endsWith('?')
+        const paramName = token.replace(/^:/, '').replace(/\?$/, '')
+        const param = options.params[paramName]
+
+        /**
+         * A required param is always required to make the complete URL
+         */
+        if (!param && !isOptional) {
+          throw new Error(`\`${paramName}\` param is required to make URL for \`${matchingRoute.pattern}\` route`)
+        }
+
+        return param
+      }).join('/')
+    }
+
+    /**
+     * Stringify query string and append to the URL (if exists)
+     */
+    const qs = stringify(options.qs)
+    url = qs ? `${url}?${qs}` : url
+
+    return matchingRoute.domain !== 'root' ? `//${matchingRoute.domain}${url}` : url
   }
 }
