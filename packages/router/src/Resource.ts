@@ -118,4 +118,15 @@ export class RouteResource {
 
     return this
   }
+
+  /**
+   * Define matcher for params inside the resource
+   */
+  public where (key: string, matcher: string | RegExp): this {
+    this.routes.forEach((route) => {
+      route.where(key, matcher)
+    })
+
+    return this
+  }
 }

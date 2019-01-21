@@ -297,4 +297,58 @@ test.group('Route Resource', () => {
       [],
     )
   })
+
+  test('define matcher for params', (assert) => {
+    const resource = new RouteResource('photos', 'PhotosController', {})
+    resource.where('id', '[a-z]')
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.index')!['_matchers'],
+      {
+        id: '[a-z]',
+      },
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.create')!['_matchers'],
+      {
+        id: '[a-z]',
+      },
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.store')!['_matchers'],
+      {
+        id: '[a-z]',
+      },
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.show')!['_matchers'],
+      {
+        id: '[a-z]',
+      },
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.edit')!['_matchers'],
+      {
+        id: '[a-z]',
+      },
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.update')!['_matchers'],
+      {
+        id: '[a-z]',
+      },
+    )
+
+    assert.deepEqual(
+      resource.routes.find((route) => route.name === 'photos.destroy')!['_matchers'],
+      {
+        id: '[a-z]',
+      },
+    )
+  })
 })
