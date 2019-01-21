@@ -237,6 +237,9 @@ export class Router {
     this._matchers = {}
   }
 
+  /**
+   * Find route for a given URL, method and optionally domain
+   */
   public find (url: string, method: string, domain?: string) {
     return this._store.match(url, method, domain)
   }

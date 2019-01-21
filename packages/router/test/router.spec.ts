@@ -740,4 +740,96 @@ test.group('Router', () => {
       },
     })
   })
+
+  test('find route using URL', (assert) => {
+    const router = new Router()
+
+    router.resource('photos', 'PhotosController')
+    router.commit()
+
+    assert.deepEqual(router.find('photos', 'GET')!, {
+      params: {},
+      route: {
+        middleware: [],
+        pattern: '/photos',
+        name: 'photos.index',
+        handler: 'PhotosController.index',
+      },
+      subdomains: {},
+    })
+
+    assert.deepEqual(router.find('photos/create', 'GET')!, {
+      params: {},
+      route: {
+        middleware: [],
+        pattern: '/photos/create',
+        name: 'photos.create',
+        handler: 'PhotosController.create',
+      },
+      subdomains: {},
+    })
+
+    assert.deepEqual(router.find('photos', 'POST')!, {
+      params: {},
+      route: {
+        middleware: [],
+        pattern: '/photos',
+        name: 'photos.store',
+        handler: 'PhotosController.store',
+      },
+      subdomains: {},
+    })
+
+    assert.deepEqual(router.find('photos/1', 'GET')!, {
+      params: {
+        id: '1',
+      },
+      route: {
+        middleware: [],
+        pattern: '/photos/:id',
+        name: 'photos.show',
+        handler: 'PhotosController.show',
+      },
+      subdomains: {},
+    })
+
+    assert.deepEqual(router.find('photos/1/edit', 'GET')!, {
+      params: {
+        id: '1',
+      },
+      route: {
+        middleware: [],
+        pattern: '/photos/:id/edit',
+        name: 'photos.edit',
+        handler: 'PhotosController.edit',
+      },
+      subdomains: {},
+    })
+
+    assert.deepEqual(router.find('photos/1', 'PUT')!, {
+      params: {
+        id: '1',
+      },
+      route: {
+        middleware: [],
+        pattern: '/photos/:id',
+        name: 'photos.update',
+        handler: 'PhotosController.update',
+      },
+      subdomains: {},
+    })
+
+    assert.deepEqual(router.find('photos/1', 'DELETE')!, {
+      params: {
+        id: '1',
+      },
+      route: {
+        middleware: [],
+        pattern: '/photos/:id',
+        name: 'photos.destroy',
+        handler: 'PhotosController.destroy',
+      },
+      subdomains: {},
+    })
+  })
 })
