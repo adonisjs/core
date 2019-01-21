@@ -87,4 +87,23 @@ test.group('Router', () => {
       name: undefined,
     })
   })
+
+  test('raise error when route name is duplicate', (assert) => {
+    const router = new Router()
+
+    router.get('/', function handler () {}).as('home')
+    router.get('home', function handler () {}).as('home')
+
+    const fn = () => router.commit()
+    assert.throw(fn, 'Duplicate route name `home`')
+  })
+
+  // test('commit routes to the store', (assert) => {
+  //   const router = new Router()
+
+  //   function handler () {}
+  //   router.get('/', handler)
+
+  //   router.commit()
+  // })
 })

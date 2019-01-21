@@ -549,31 +549,4 @@ test.group('Store | match', () => {
 
     assert.isNull(store.match('/hello', 'GET', 'root'))
   })
-
-  test('raise error when route name is in use', (assert) => {
-    function handler () {}
-
-    const store = new Store()
-    store.add({
-      pattern: '/',
-      handler,
-      name: 'root',
-      matchers: {},
-      middleware: [],
-      meta: {},
-      methods: ['GET'],
-    })
-
-    const fn = () => store.add({
-      pattern: '/foo',
-      handler,
-      name: 'root',
-      matchers: {},
-      middleware: [],
-      meta: {},
-      methods: ['GET'],
-    })
-
-    assert.throw(fn, 'Duplicate route name `root`')
-  })
 })
