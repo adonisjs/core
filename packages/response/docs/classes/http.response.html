@@ -1,0 +1,1627 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Response | node-res</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">node-res</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/http.html">http</a>
+				</li>
+				<li>
+					<a href="http.response.html">Response</a>
+				</li>
+			</ul>
+			<h1>Class Response</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The response is a wrapper over <a href="https://nodejs.org/api/http.html#http_class_http_serverresponse">ServerResponse</a>
+						streamlining the process of writing response body and automatically setting up appropriate headers.</p>
+					</div>
+					<p>The response class has support for <code>explicitEnd</code> mode, which is set to true by default.</p>
+					<p>When implicit end is set to true, the response class will not write content to the HTTP response
+						directly and instead waits for an explicit call to the <code>finish</code> method. This is done to
+					allow <code>return</code> statements from controllers.</p>
+					<p>This is how <code>explicitEnd</code> mode works in nutshell.</p>
+					<p><strong>When set to true</strong></p>
+					<ol>
+						<li>Calls to <code>send</code>, <code>json</code> and <code>jsonp</code> will be buffered until <code>finish</code> is called.</li>
+						<li><code>response.hasLazyBody</code> returns <code>true</code> after calling <code>send</code>, <code>json</code> or <code>jsonp</code>.</li>
+						<li>If <code>response.hasLazyBody</code> return <code>false</code>, then server will use the <code>return value</code> of the controller
+						and set it as body before calling <code>finish</code>.</li>
+					</ol>
+					<p><strong>When set to false</strong></p>
+					<ol>
+						<li>Calls to <code>send</code>, <code>json</code> and <code>jsonp</code> will write the response writeaway.</li>
+						<li>The <code>return value</code> of the controller will be discarded.</li>
+						<li>The call to <code>finish</code> method is a noop.</li>
+					</ol>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="tsd-signature-type">Macroable</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">Response</span>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/http.responsecontract.html" class="tsd-signature-type">ResponseContract</a></li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="http.response.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="http.response.html#_config" class="tsd-kind-icon">_config</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="http.response.html#explicitend" class="tsd-kind-icon">explicit<wbr>End</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="http.response.html#lazybody" class="tsd-kind-icon">lazy<wbr>Body</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="http.response.html#request" class="tsd-kind-icon">request</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="http.response.html#response" class="tsd-kind-icon">response</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-static"><a href="http.response.html#_getters" class="tsd-kind-icon">_getters</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-static"><a href="http.response.html#_macros" class="tsd-kind-icon">_macros</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="http.response.html#finished" class="tsd-kind-icon">finished</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="http.response.html#haslazybody" class="tsd-kind-icon">has<wbr>Lazy<wbr>Body</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="http.response.html#headerssent" class="tsd-kind-icon">headers<wbr>Sent</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="http.response.html#ispending" class="tsd-kind-icon">is<wbr>Pending</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="http.response.html#_castheadervalue" class="tsd-kind-icon">_cast<wbr>Header<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="http.response.html#_writebody" class="tsd-kind-icon">_write<wbr>Body</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#append" class="tsd-kind-icon">append</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#attachment" class="tsd-kind-icon">attachment</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#buildresponsebody" class="tsd-kind-icon">build<wbr>Response<wbr>Body</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#download" class="tsd-kind-icon">download</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#finish" class="tsd-kind-icon">finish</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#fresh" class="tsd-kind-icon">fresh</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#getheader" class="tsd-kind-icon">get<wbr>Header</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#header" class="tsd-kind-icon">header</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#json" class="tsd-kind-icon">json</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#jsonp" class="tsd-kind-icon">jsonp</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#location" class="tsd-kind-icon">location</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#redirect" class="tsd-kind-icon">redirect</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#removeheader" class="tsd-kind-icon">remove<wbr>Header</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#safeheader" class="tsd-kind-icon">safe<wbr>Header</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#send" class="tsd-kind-icon">send</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#setetag" class="tsd-kind-icon">set<wbr>Etag</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#status" class="tsd-kind-icon">status</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#stream" class="tsd-kind-icon">stream</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="http.response.html#vary" class="tsd-kind-icon">vary</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="http.response.html#getgetter" class="tsd-kind-icon">get<wbr>Getter</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="http.response.html#getmacro" class="tsd-kind-icon">get<wbr>Macro</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="http.response.html#getter" class="tsd-kind-icon">getter</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="http.response.html#hasgetter" class="tsd-kind-icon">has<wbr>Getter</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="http.response.html#hasmacro" class="tsd-kind-icon">has<wbr>Macro</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="http.response.html#hydrate" class="tsd-kind-icon">hydrate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="http.response.html#macro" class="tsd-kind-icon">macro</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Response<span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IncomingMessage</span>, response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ServerResponse</span>, config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Config</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="http.response.html" class="tsd-signature-type">Response</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L96">src/Response.ts:96</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>request: <span class="tsd-signature-type">IncomingMessage</span></h5>
+								</li>
+								<li>
+									<h5>response: <span class="tsd-signature-type">ServerResponse</span></h5>
+								</li>
+								<li>
+									<h5>config: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Config</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="http.response.html" class="tsd-signature-type">Response</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_config" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _config</h3>
+					<div class="tsd-signature tsd-kind-icon">_config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Config</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L93">src/Response.ts:93</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Reference for config</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="explicitend" class="tsd-anchor"></a>
+					<h3>explicit<wbr>End</h3>
+					<div class="tsd-signature tsd-kind-icon">explicit<wbr>End<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#explicitend">explicitEnd</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L79">src/Response.ts:79</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="lazybody" class="tsd-anchor"></a>
+					<h3>lazy<wbr>Body</h3>
+					<div class="tsd-signature tsd-kind-icon">lazy<wbr>Body<span class="tsd-signature-symbol">:</span> <a href="../modules/http.html#lazybody" class="tsd-signature-type">LazyBody</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#lazybody">lazyBody</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L88">src/Response.ts:88</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Lazy body is used to set the response body. However, do not
+								write it on the socket immediately unless <code>response.finish</code>
+							is called.</p>
+						</div>
+						<p>Only works with <code>explicitEnd=true</code>, which is set to <code>false</code> by default</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="request" class="tsd-anchor"></a>
+					<h3>request</h3>
+					<div class="tsd-signature tsd-kind-icon">request<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IncomingMessage</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#request">request</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L98">src/Response.ts:98</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="response" class="tsd-anchor"></a>
+					<h3>response</h3>
+					<div class="tsd-signature tsd-kind-icon">response<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ServerResponse</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#response">response</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L98">src/Response.ts:98</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-static">
+					<a name="_getters" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagProtected">Protected</span> _getters</h3>
+					<div class="tsd-signature tsd-kind-icon">_getters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<p>Overrides Macroable._getters</p>
+						<ul>
+							<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L96">src/Response.ts:96</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-static">
+					<a name="_macros" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> <span class="tsd-flag ts-flagProtected">Protected</span> _macros</h3>
+					<div class="tsd-signature tsd-kind-icon">_macros<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<p>Overrides Macroable._macros</p>
+						<ul>
+							<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L95">src/Response.ts:95</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+						</ul>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="finished" class="tsd-anchor"></a>
+					<h3>finished</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> finished<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L119">src/Response.ts:119</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a boolean telling if response is finished or not.
+										Any more attempts to update headers or body will result
+									in raised exceptions.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="haslazybody" class="tsd-anchor"></a>
+					<h3>has<wbr>Lazy<wbr>Body</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> hasLazyBody<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L110">src/Response.ts:110</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a boolean telling if lazy body is already set or not</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="headerssent" class="tsd-anchor"></a>
+					<h3>headers<wbr>Sent</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> headersSent<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L128">src/Response.ts:128</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a boolean telling if response headers has been sent or not.
+										Any more attempts to update headers will result in raised
+									exceptions.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="ispending" class="tsd-anchor"></a>
+					<h3>is<wbr>Pending</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> isPending<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L137">src/Response.ts:137</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a boolean telling if response headers and body is written
+										or not. When value is <code>true</code>, you can feel free to write headers
+									and body.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="_castheadervalue" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _cast<wbr>Header<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">_cast<wbr>Header<wbr>Value<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L144">src/Response.ts:144</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Normalizes header value to a string or an array of string</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="_writebody" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _write<wbr>Body</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">_write<wbr>Body<span class="tsd-signature-symbol">(</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, generateEtag<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, jsonpCallbackName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L154">src/Response.ts:154</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Writes the body with appropriate response headers. Etag header is set
+									when <code>generateEtag</code> is set to <code>true</code>.</p>
+								</div>
+								<p>Empty body results in <code>204</code>.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>content: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>generateEtag: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> jsonpCallbackName: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="append" class="tsd-anchor"></a>
+					<h3>append</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">append<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><a href="../modules/http.html#castableheader" class="tsd-signature-type">CastableHeader</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#append">append</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L272">src/Response.ts:272</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Append value to an existing header. To replace the value, we suggest using
+									<a href="http.response.html#header">header</a> method.</p>
+								</div>
+								<p>If <code>value</code> is not existy, then header won&#39;t be set.</p>
+								<pre><code class="language-js">response.append(<span class="hljs-string">'set-cookie'</span>, <span class="hljs-string">'username=virk'</span>)</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>value: <a href="../modules/http.html#castableheader" class="tsd-signature-type">CastableHeader</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="attachment" class="tsd-anchor"></a>
+					<h3>attachment</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">attachment<span class="tsd-signature-symbol">(</span>filePath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, disposition<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, generateEtag<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span>, raiseErrors<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#attachment">attachment</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L691">src/Response.ts:691</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Download the file by forcing the user to save the file vs displaying it
+									within the browser.</p>
+								</div>
+								<p>Internally calls <a href="http.response.html#download">download</a></p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>filePath: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> name: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> disposition: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> generateEtag: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> raiseErrors: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="buildresponsebody" class="tsd-anchor"></a>
+					<h3>build<wbr>Response<wbr>Body</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">build<wbr>Response<wbr>Body<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#buildresponsebody">buildResponseBody</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L409">src/Response.ts:409</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Builds the response body and returns it&#39;s appropriate type
+									to be set as the content-type header.</p>
+								</div>
+								<p>Ideally, you should use <a href="http.response.html#send">send</a> vs using this method. This method will
+									not set any headers and must be used when you want more control over the
+								response sending process.</p>
+								<p>Make sure to appropriately handle the case of <code>unknown</code> type, which is returned
+								when unable to parse the body type.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>body: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="download" class="tsd-anchor"></a>
+					<h3>download</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">download<span class="tsd-signature-symbol">(</span>filePath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, generateEtag<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span>, raiseErrors<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L611">src/Response.ts:611</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Download file by streaming it from the file path. This method will setup
+									appropriate <code>Content-type</code>, <code>Content-type</code> and <code>Last-modified</code> headers.</p>
+								</div>
+								<p>Unexpected stream errors are handled gracefully to avoid memory leaks.</p>
+								<p>If <code>raiseErrors=false</code>, then this method will self handle all the exceptions by
+									writing a generic HTTP response. To have more control over the error, it is
+									recommended to set <code>raiseErrors=true</code> and wrap this function inside a
+								<code>try/catch</code> statement.</p>
+								<pre><code class="language-js"><span class="hljs-comment">// Errors handled automatically with generic HTTP response</span>
+response.download(<span class="hljs-string">'somefile.jpg'</span>)
+
+<span class="hljs-comment">// Manually handle (note the await call)</span>
+<span class="hljs-keyword">try</span> {
+  <span class="hljs-keyword">await</span> response.download(<span class="hljs-string">'somefile.jpg'</span>)
+} <span class="hljs-keyword">catch</span> (error) {
+  response.status(error.code === <span class="hljs-string">'ENOENT'</span> ? <span class="hljs-number">404</span> : <span class="hljs-number">500</span>)
+  response.send(<span class="hljs-string">'Cannot process file'</span>)
+}</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>filePath: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> generateEtag: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;this._config.etag</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> raiseErrors: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="finish" class="tsd-anchor"></a>
+					<h3>finish</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">finish<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#finish">finish</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L736">src/Response.ts:736</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Finishes the response by writing the lazy body, when <code>explicitEnd = true</code>
+									and response is already pending.</p>
+								</div>
+								<p>Calling this method twice or when <code>explicitEnd = false</code> is noop.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="fresh" class="tsd-anchor"></a>
+					<h3>fresh</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">fresh<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L385">src/Response.ts:385</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns a boolean telling if the new response etag evaluates same
+										as the request header <code>if-none-match</code>. In case of <code>true</code>, the
+										server must return <code>304</code> response, telling the browser to
+									use the client cache.</p>
+								</div>
+								<p>You won&#39;t have to deal with this method directly, since AdonisJs will
+								handle this for you when <code>http.etag = true</code> inside <code>config/app.js</code> file.</p>
+								<p>However, this is how you can use it manually.</p>
+								<pre><code class="language-js"><span class="hljs-keyword">const</span> responseBody = view.render(<span class="hljs-string">'some-view'</span>)
+
+<span class="hljs-comment">// sets the HTTP etag header for response</span>
+response.setEtag(responseBody)
+
+<span class="hljs-keyword">if</span> (response.fresh()) {
+  response.sendStatus(<span class="hljs-number">304</span>)
+} <span class="hljs-keyword">else</span> {
+  response.send(responseBody)
+}</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getheader" class="tsd-anchor"></a>
+					<h3>get<wbr>Header</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Header<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#getheader">getHeader</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L239">src/Response.ts:239</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the existing value for a given HTTP response
+									header.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">string</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">number</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="header" class="tsd-anchor"></a>
+					<h3>header</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">header<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><a href="../modules/http.html#castableheader" class="tsd-signature-type">CastableHeader</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#header">header</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L254">src/Response.ts:254</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set header on the response. To <code>append</code> values to the existing header, we suggest
+									using <a href="http.response.html#append">append</a> method.</p>
+								</div>
+								<p>If <code>value</code> is non existy, then header won&#39;t be set.</p>
+								<pre><code class="language-js">response.header(<span class="hljs-string">'content-type'</span>, <span class="hljs-string">'application/json'</span>)</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>value: <a href="../modules/http.html#castableheader" class="tsd-signature-type">CastableHeader</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="json" class="tsd-anchor"></a>
+					<h3>json</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">json<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, generateEtag<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#json">json</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L474">src/Response.ts:474</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Alias of <a href="http.response.html#send">send</a></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>body: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> generateEtag: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="jsonp" class="tsd-anchor"></a>
+					<h3>jsonp</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">jsonp<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callbackName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, generateEtag<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L490">src/Response.ts:490</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Writes response as JSONP. The callback name is resolved as follows, with priority
+									from top to bottom.</p>
+								</div>
+								<ol>
+									<li>Explicitly defined as 2nd Param.</li>
+									<li>Fetch from request query string.</li>
+									<li>Use the config value <code>http.jsonpCallbackName</code> from <code>config/app.js</code>.</li>
+									<li>Fallback to <code>callback</code>.</li>
+								</ol>
+								<p>This method buffers the body if <code>explicitEnd = true</code>, which is the default
+								behavior and do not change, unless you know what you are doing.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>body: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> callbackName: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;this._config.jsonpCallbackName</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> generateEtag: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;this._config.etag</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="location" class="tsd-anchor"></a>
+					<h3>location</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#location">location</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L711">src/Response.ts:711</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the location header.</p>
+								</div>
+								<pre><code class="language-js">response.location(<span class="hljs-string">'/login'</span>)</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>url: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="redirect" class="tsd-anchor"></a>
+					<h3>redirect</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">redirect<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, sendQueryParams<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span>, statusCode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L720">src/Response.ts:720</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Redirect request to a different URL. Current request <code>query string</code> can be forwared
+									by setting 2nd param to <code>true</code>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>url: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> sendQueryParams: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> statusCode: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;302</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="removeheader" class="tsd-anchor"></a>
+					<h3>remove<wbr>Header</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Header<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#removeheader">removeHeader</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L309">src/Response.ts:309</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Removes the existing response header from being sent.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="safeheader" class="tsd-anchor"></a>
+					<h3>safe<wbr>Header</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">safe<wbr>Header<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><a href="../modules/http.html#castableheader" class="tsd-signature-type">CastableHeader</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#safeheader">safeHeader</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L299">src/Response.ts:299</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds HTTP response header, when it doesn&#39;t exists already.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>value: <a href="../modules/http.html#castableheader" class="tsd-signature-type">CastableHeader</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="send" class="tsd-anchor"></a>
+					<h3>send</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, generateEtag<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L459">src/Response.ts:459</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Send the body as response and optionally generate etag. The default value
+									is read from <code>config/app.js</code> file, using <code>http.etag</code> property.</p>
+								</div>
+								<p>This method buffers the body if <code>explicitEnd = true</code>, which is the default
+								behavior and do not change, unless you know what you are doing.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>body: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> generateEtag: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;this._config.etag</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setetag" class="tsd-anchor"></a>
+					<h3>set<wbr>Etag</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Etag<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, weak<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L355">src/Response.ts:355</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set etag by computing hash from the body. This class will set the etag automatically
+									when <code>etag = true</code> in the defined config object.</p>
+								</div>
+								<p>Use this function, when you want to compute etag manually for some other resons.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>body: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> weak: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="status" class="tsd-anchor"></a>
+					<h3>status</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">(</span>code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#status">status</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L317">src/Response.ts:317</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set HTTP status code</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>code: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="stream" class="tsd-anchor"></a>
+					<h3>stream</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">stream<span class="tsd-signature-symbol">(</span>body<span class="tsd-signature-symbol">: </span><a href="../modules/http.html#responsestream" class="tsd-signature-type">ResponseStream</a>, raiseErrors<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L530">src/Response.ts:530</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Pipe stream to the response. This method will gracefully destroy
+									the stream, avoiding memory leaks.</p>
+								</div>
+								<p>If <code>raiseErrors=false</code>, then this method will self handle all the exceptions by
+									writing a generic HTTP response. To have more control over the error, it is
+									recommended to set <code>raiseErrors=true</code> and wrap this function inside a
+								<code>try/catch</code> statement.</p>
+								<p>Streaming a file from the disk and showing 404 when file is missing.</p>
+								<pre><code class="language-js"><span class="hljs-comment">// Errors handled automatically with generic HTTP response</span>
+response.stream(fs.createReadStream(<span class="hljs-string">'file.txt'</span>))
+
+<span class="hljs-comment">// Manually handle (note the await call)</span>
+<span class="hljs-keyword">try</span> {
+  <span class="hljs-keyword">await</span> response.stream(fs.createReadStream(<span class="hljs-string">'file.txt'</span>))
+} <span class="hljs-keyword">catch</span> () {
+  response.status(<span class="hljs-number">404</span>).send(<span class="hljs-string">'File not found'</span>)
+}</code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>body: <a href="../modules/http.html#responsestream" class="tsd-signature-type">ResponseStream</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> raiseErrors: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, charset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#type">type</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L334">src/Response.ts:334</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set response type by looking up for the mime-type using
+									partial types like file extensions.</p>
+								</div>
+								<p>Make sure to read <a href="https://www.npmjs.com/package/mime-types">mime-types</a> docs
+								too.</p>
+								<pre><code class="language-js">response.type(<span class="hljs-string">'.json'</span>) <span class="hljs-comment">// Content-type: application/json</span></code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>type: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> charset: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="vary" class="tsd-anchor"></a>
+					<h3>vary</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">vary<span class="tsd-signature-symbol">(</span>field<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/http.responsecontract.html">ResponseContract</a>.<a href="../interfaces/http.responsecontract.html#vary">vary</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/RelayIN/node-res/blob/a95bab8/src/Response.ts#L344">src/Response.ts:344</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the Vary HTTP header</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>field: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="getgetter" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Getter</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Getter<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IMacroableFn</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Macroable.getGetter</p>
+								<ul>
+									<li>Defined in node_modules/macroable/build/index.d.ts:12</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">IMacroableFn</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="getmacro" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Macro</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Macro<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IMacroableFn</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Macroable.getMacro</p>
+								<ul>
+									<li>Defined in node_modules/macroable/build/index.d.ts:9</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">IMacroableFn</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="getter" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> getter</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">getter<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IMacroableFn</span>, singleton<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Macroable.getter</p>
+								<ul>
+									<li>Defined in node_modules/macroable/build/index.d.ts:11</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>callback: <span class="tsd-signature-type">IMacroableFn</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> singleton: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="hasgetter" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> has<wbr>Getter</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Getter<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Macroable.hasGetter</p>
+								<ul>
+									<li>Defined in node_modules/macroable/build/index.d.ts:13</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="hasmacro" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> has<wbr>Macro</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Macro<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Macroable.hasMacro</p>
+								<ul>
+									<li>Defined in node_modules/macroable/build/index.d.ts:10</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="hydrate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> hydrate</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">hydrate<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Macroable.hydrate</p>
+								<ul>
+									<li>Defined in node_modules/macroable/build/index.d.ts:14</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+					<a name="macro" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> macro</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">macro<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IMacroableFn</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Macroable.macro</p>
+								<ul>
+									<li>Defined in node_modules/macroable/build/index.d.ts:8</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>callback: <span class="tsd-signature-type">IMacroableFn</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/http.html">http</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+						<a href="http.response.html" class="tsd-kind-icon">Response</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="http.response.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="http.response.html#_config" class="tsd-kind-icon">_config</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="http.response.html#explicitend" class="tsd-kind-icon">explicit<wbr>End</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="http.response.html#lazybody" class="tsd-kind-icon">lazy<wbr>Body</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="http.response.html#request" class="tsd-kind-icon">request</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="http.response.html#response" class="tsd-kind-icon">response</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-static">
+								<a href="http.response.html#_getters" class="tsd-kind-icon">_getters</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected tsd-is-static">
+								<a href="http.response.html#_macros" class="tsd-kind-icon">_macros</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="http.response.html#finished" class="tsd-kind-icon">finished</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="http.response.html#haslazybody" class="tsd-kind-icon">has<wbr>Lazy<wbr>Body</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="http.response.html#headerssent" class="tsd-kind-icon">headers<wbr>Sent</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="http.response.html#ispending" class="tsd-kind-icon">is<wbr>Pending</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="http.response.html#_castheadervalue" class="tsd-kind-icon">_cast<wbr>Header<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="http.response.html#_writebody" class="tsd-kind-icon">_write<wbr>Body</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#append" class="tsd-kind-icon">append</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#attachment" class="tsd-kind-icon">attachment</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#buildresponsebody" class="tsd-kind-icon">build<wbr>Response<wbr>Body</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#download" class="tsd-kind-icon">download</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#finish" class="tsd-kind-icon">finish</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#fresh" class="tsd-kind-icon">fresh</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#getheader" class="tsd-kind-icon">get<wbr>Header</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#header" class="tsd-kind-icon">header</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#json" class="tsd-kind-icon">json</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#jsonp" class="tsd-kind-icon">jsonp</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#location" class="tsd-kind-icon">location</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#redirect" class="tsd-kind-icon">redirect</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#removeheader" class="tsd-kind-icon">remove<wbr>Header</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#safeheader" class="tsd-kind-icon">safe<wbr>Header</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#send" class="tsd-kind-icon">send</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#setetag" class="tsd-kind-icon">set<wbr>Etag</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#status" class="tsd-kind-icon">status</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#stream" class="tsd-kind-icon">stream</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#type" class="tsd-kind-icon">type</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="http.response.html#vary" class="tsd-kind-icon">vary</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="http.response.html#getgetter" class="tsd-kind-icon">get<wbr>Getter</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="http.response.html#getmacro" class="tsd-kind-icon">get<wbr>Macro</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="http.response.html#getter" class="tsd-kind-icon">getter</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="http.response.html#hasgetter" class="tsd-kind-icon">has<wbr>Getter</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="http.response.html#hasmacro" class="tsd-kind-icon">has<wbr>Macro</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="http.response.html#hydrate" class="tsd-kind-icon">hydrate</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
+								<a href="http.response.html#macro" class="tsd-kind-icon">macro</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/http.responsecontract.html" class="tsd-kind-icon">Response<wbr>Contract</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/http.html#castableheader" class="tsd-kind-icon">Castable<wbr>Header</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/http.html#lazybody" class="tsd-kind-icon">Lazy<wbr>Body</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/http.html#responsecontenttype" class="tsd-kind-icon">Response<wbr>Content<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
+						<a href="../modules/http.html#responsestream" class="tsd-kind-icon">Response<wbr>Stream</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{
+  "name": "@adonisjs/response",
+  "version": "1.0.0",
+  "description": "Nodejs http response builder",
+  "main": "build/index.js",
+  "files": [
+    "build/src",
+    "build/index.js",
+    "build/index.d.ts"
+  ],
+  "scripts": {
+    "pretest": "npm run lint",
+    "test": "nyc node japaFile.js",
+    "prepublishOnly": "npm run build",
+    "lint": "tslint --project tsconfig.json",
+    "clean": "del build",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "commit": "git-cz"
+  },
+  "author": "virk",
+  "license": "MIT",
+  "devDependencies": {
+    "fs-extra": "^7.0.1",
+    "supertest": "^3.4.1"
+  },
+  "dependencies": {
+    "content-disposition": "^0.5.3",
+    "destroy": "^1.0.4",
+    "etag": "^1.8.1",
+    "fresh": "^0.5.2",
+    "macroable": "^2.0.0",
+    "mime-types": "^2.1.21",
+    "on-finished": "^2.3.0",
+    "vary": "^1.1.2"
+  },
+  "keywords": [
+    "http",
+    "response",
+    "res"
+  ],
+  "homepage": "https://adonisjs.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adonisjs/adonis-framework/tree/master/packages/response"
+  },
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
