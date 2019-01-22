@@ -5,7 +5,9 @@
   "version": "independent",
   "command": {
     "publish": {
-      "conventionalCommits": true
+      "conventionalCommits": true,
+      "ignoreChanges": ["CHANGELOG.md"],
+      "allowBranch": "master",
     }
   }
 }
