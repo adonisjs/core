@@ -6,8 +6,7 @@
   "command": {
     "publish": {
       "conventionalCommits": true,
-      "ignoreChanges": ["CHANGELOG.md"],
-      "allowBranch": "master"
+      "ignoreChanges": ["CHANGELOG.md"]
     }
   }
 }
