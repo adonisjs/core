@@ -27,7 +27,7 @@
   "homepage": "https://adonisjs.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adonisjs/adonis-framework/tree/master/packages/request"
+    "url": "https://github.com/adonisjs/adonis-framework/tree/master/packages/router"
   },
   "license": "MIT",
   "devDependencies": {},
