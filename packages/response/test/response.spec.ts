@@ -10,7 +10,7 @@
 import * as test from 'japa'
 import * as supertest from 'supertest'
 import { join } from 'path'
-import { createReadStream, createWriteStream, stat, outputFile, remove } from 'fs-extra'
+import { createReadStream, createWriteStream, stat, outputFile, remove, ensureDir } from 'fs-extra'
 import { createServer } from 'http'
 import * as etag from 'etag'
 
@@ -23,7 +23,7 @@ const fakeConfig = (config?) => {
 const APP_ROOT = join(__dirname, 'app')
 
 test.group('Response', (group) => {
-  group.after(async () => {
+  group.afterEach(async () => {
     await remove(APP_ROOT)
   })
 
@@ -376,9 +376,6 @@ test.group('Response', (group) => {
   })
 
   test('stream response', async (assert) => {
-    /**
-     * Setup
-     */
     await outputFile(join(APP_ROOT, 'hello.txt'), 'hello world')
 
     const server = createServer((req, res) => {
@@ -389,11 +386,6 @@ test.group('Response', (group) => {
 
     const { text } = await supertest(server).get('/')
     assert.equal(text, 'hello world')
-
-    /**
-     * Cleanup
-     */
-    await remove(join(APP_ROOT, 'hello.txt'))
   })
 
   test('raise error when input is not a stream', async (assert) => {
@@ -417,6 +409,7 @@ test.group('Response', (group) => {
 
   test('raise error when input is not a readable stream', async (assert) => {
     assert.plan(1)
+    await ensureDir(APP_ROOT)
 
     const server = createServer(async (req, res) => {
       const config = fakeConfig()
@@ -435,9 +428,6 @@ test.group('Response', (group) => {
   })
 
   test('should not hit the maxListeners when making more than 10 calls', async () => {
-    /**
-     * Setup
-     */
     await outputFile(join(APP_ROOT, 'hello.txt'), 'hello world')
 
     const server = createServer((req, res) => {
@@ -448,8 +438,6 @@ test.group('Response', (group) => {
 
     const requests = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(() => supertest(server).get('/').expect(200))
     await Promise.all(requests)
-
-    await remove(join(APP_ROOT, 'hello.txt'))
   })
 
   test('should not hit the maxListeners when making more than 10 calls with errors', async () => {
@@ -494,7 +482,6 @@ test.group('Response', (group) => {
   })
 
   test('download file with correct content type', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -509,9 +496,6 @@ test.group('Response', (group) => {
       .expect('Content-length', '20')
 
     assert.equal(text, '<p> hello world </p>')
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('write errors as response when downloading folder', async (assert) => {
@@ -554,7 +538,6 @@ test.group('Response', (group) => {
   })
 
   test('do not stream file on HEAD calls', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -565,13 +548,9 @@ test.group('Response', (group) => {
 
     const { text } = await supertest(server).head('/').expect(200)
     assert.isUndefined(text)
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('do not stream file when cache is fresh', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -588,13 +567,9 @@ test.group('Response', (group) => {
       .expect(304)
 
     assert.equal(text, '')
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('set HTTP status to 304 when cache is fresh and request is HEAD', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -611,13 +586,9 @@ test.group('Response', (group) => {
       .expect(304)
 
     assert.isUndefined(text)
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('download file with correct content disposition', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -633,13 +604,9 @@ test.group('Response', (group) => {
       .expect('Content-Disposition', 'attachment; filename="hello.html"')
 
     assert.equal(text, '<p> hello world </p>')
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('download file with custom file name', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -655,13 +622,9 @@ test.group('Response', (group) => {
       .expect('Content-Disposition', 'attachment; filename="ooo.html"')
 
     assert.equal(text, '<p> hello world </p>')
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('download file with custom disposition', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -677,9 +640,6 @@ test.group('Response', (group) => {
       .expect('Content-Disposition', 'inline; filename="ooo.html"')
 
     assert.equal(text, '<p> hello world </p>')
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('redirect to given url', async (assert) => {
@@ -821,7 +781,6 @@ test.group('Response', (group) => {
   })
 
   test('send response as 200 when request method is HEAD and cache is not fresh', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -836,13 +795,9 @@ test.group('Response', (group) => {
       .expect(200)
 
     assert.isUndefined(text)
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('stream the file when request method is GET and cache is not fresh', async (assert) => {
-    // Setup
     await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
 
     const server = createServer((req, res) => {
@@ -857,9 +812,6 @@ test.group('Response', (group) => {
       .expect(200)
 
     assert.equal(text, '<p> hello world </p>')
-
-    // Cleanup
-    await remove(join(APP_ROOT, 'hello.html'))
   })
 
   test('set response type with custom charset', async (assert) => {
