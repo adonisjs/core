@@ -400,7 +400,7 @@ class RouteManager {
     /**
      * When query string exists.
      */
-    const queryParams = data.qs || data.query || {}
+    const queryParams = options.qs || options.query || {}
 
     let compiledRoute = pathToRegexp.compile(route._route)(data)
 
