@@ -8,7 +8,7 @@
  */
 
 import { RouteDefination, Matchers } from './Contracts'
-import { dropSlash } from '../lib/dropSlash'
+import { dropSlash } from '../lib'
 
 /**
  * Route class is used to construct consistent [[RouteDefination]] using

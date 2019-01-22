@@ -13,7 +13,7 @@ import { RouteResource } from './Resource'
 import { RouteGroup } from './Group'
 import { Matchers } from './Contracts'
 import { Store } from './Store'
-import { toRoutesJSON } from '../lib/toRoutesJSON'
+import { toRoutesJSON } from '../lib'
 
 type LookupNode = {
   handler: any,

@@ -7,4 +7,4 @@
  * file that was distributed with this source code.
  */
 
-export { toRoutesJSON } from '../lib/toRoutesJSON'
+export { toRoutesJSON } from '../lib'

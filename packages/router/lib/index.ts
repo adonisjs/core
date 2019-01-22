@@ -13,6 +13,18 @@ import { RouteGroup } from '../src/Group'
 import { RouteDefination } from '../src/Contracts'
 
 /**
+ * Makes input string consistent by having only the starting
+ * slash
+ */
+export function dropSlash (input: string): string {
+  if (input === '/') {
+    return '/'
+  }
+
+  return `/${input.replace(/^\//, '').replace(/\/$/, '')}`
+}
+
+/**
  * Converts and array of routes or route groups or route resource to a flat
  * list of [[RouteDefination]]
  */
