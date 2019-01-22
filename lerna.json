@@ -7,7 +7,7 @@
     "publish": {
       "conventionalCommits": true,
       "ignoreChanges": ["CHANGELOG.md"],
-      "allowBranch": "master",
+      "allowBranch": "master"
     }
   }
 }
