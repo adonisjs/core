@@ -28,6 +28,6 @@
   "scripts": {
     "postinstall": "lerna bootstrap",
     "test": "lerna run test",
-    "publish": "lerna run build & lerna publish"
+    "publish": "lerna run build && lerna publish"
   }
 }
