@@ -1,11 +1,14 @@
 {
-  "name": "router",
+  "name": "@adonisjs/router",
   "version": "1.0.0",
   "main": "index.js",
-  "keywords": [],
+  "keywords": [
+    "router",
+    "http-router"
+  ],
   "author": "virk",
   "license": "MIT",
-  "description": "",
+  "description": "AdonisJs official HTTP router",
   "scripts": {
     "pretest": "npm run lint",
     "test": "nyc node japaFile.js",
