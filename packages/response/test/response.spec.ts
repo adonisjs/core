@@ -479,7 +479,7 @@ test.group('Response', (group) => {
     })
 
     const { text } = await supertest(server).get('/')
-    assert.equal(text, 'ENOENT')
+    assert.oneOf(text, ['ENOENT', 'EPERM'])
   })
 
   test('send stream errors vs raising them', async (assert) => {
@@ -490,7 +490,7 @@ test.group('Response', (group) => {
     })
 
     const { text } = await supertest(server).get('/')
-    assert.equal(text, 'File not found')
+    assert.oneOf(text, ['File not found', 'Cannot process file'])
   })
 
   test('download file with correct content type', async (assert) => {
