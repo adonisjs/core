@@ -6,6 +6,7 @@
   "command": {
     "publish": {
       "conventionalCommits": true,
+      "message": "chore(release): publish",
       "ignoreChanges": ["CHANGELOG.md"]
     }
   }
