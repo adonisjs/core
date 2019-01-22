@@ -27,6 +27,6 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap",
-    "test": "FORCE_COLOR=true lerna run test"
+    "test": "lerna run test"
   }
 }
