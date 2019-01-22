@@ -1,9 +1,0 @@
-language: node_js
-node_js:
-  - node
-  - 10.0.0
-sudo: false
-install:
-  - npm install
-after_script:
-  - npm run coverage
