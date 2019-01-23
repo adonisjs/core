@@ -23,6 +23,7 @@ import * as typeIs from 'type-is'
 import * as accepts from 'accepts'
 import * as fresh from 'fresh'
 import { Macroable } from 'macroable'
+import { ConfigReader } from '@adonisjs/utils'
 
 import { RequestContract } from './RequestContract'
 
@@ -32,9 +33,19 @@ import { RequestContract } from './RequestContract'
 type Config = {
   allowMethodSpoofing: boolean,
   trustProxy: (address: string, distance: number) => boolean,
-  getIp: (request: RequestContract) => string,
+  getIp: ((request: RequestContract) => string) | null,
   subdomainOffset: number,
 }
+
+/**
+ * Config reader with default config
+ */
+const $ = new ConfigReader({
+  allowMethodSpoofing: false,
+  trustProxy: proxyaddr.compile('loopback'),
+  getIp: null,
+  subdomainOffset: 2,
+} as Config)
 
 /**
  * HTTP Request class exposes the interface to consistently read values
@@ -84,12 +95,6 @@ export class Request extends Macroable implements RequestContract {
    * negotiation.
    */
   private _lazyAccepts: any = null
-
-  /**
-   * Cached copy of `trust` fn to read and trust
-   * proxy server headers
-   */
-  private _trustFn = this._config.trustProxy || proxyaddr.compile('loopback')
 
   protected static _macros = {}
   protected static _getters = {}
@@ -279,7 +284,7 @@ export class Request extends Macroable implements RequestContract {
    * ```
    */
   public method (): string {
-    if (this._config.allowMethodSpoofing && this.intended() === 'POST') {
+    if ($.get(this._config, 'allowMethodSpoofing') && this.intended() === 'POST') {
       return this.input('_method', this.intended()).toUpperCase()
     }
 
@@ -342,12 +347,12 @@ export class Request extends Macroable implements RequestContract {
    * The value of trustProxy is passed directly to [proxy-addr](https://www.npmjs.com/package/proxy-addr)
    */
   public ip (): string {
-    const ipFn = this._config.getIp
+    const ipFn = $.get(this._config, 'getIp')
     if (typeof (ipFn) === 'function') {
       return ipFn(this)
     }
 
-    return proxyaddr(this.request, this._trustFn)
+    return proxyaddr(this.request, $.get(this._config, 'trustProxy'))
   }
 
   /**
@@ -369,7 +374,7 @@ export class Request extends Macroable implements RequestContract {
    * The value of trustProxy is passed directly to [proxy-addr](https://www.npmjs.com/package/proxy-addr)
    */
   public ips (): string[] {
-    return proxyaddr.all(this.request, this._trustFn)
+    return proxyaddr.all(this.request, $.get(this._config, 'trustProxy'))
   }
 
   /**
@@ -395,7 +400,7 @@ export class Request extends Macroable implements RequestContract {
   public protocol (): string {
     const protocol = this.parsedUrl.protocol!
 
-    if (!this._trustFn(this.request.connection.remoteAddress, 0)) {
+    if (!$.get(this._config, 'trustProxy')(this.request.connection.remoteAddress!, 0)) {
       return protocol
     }
 
@@ -436,7 +441,7 @@ export class Request extends Macroable implements RequestContract {
      * Use X-Fowarded-Host when we trust the proxy header and it
      * exists
      */
-    if (this._trustFn(this.request.connection.remoteAddress, 0)) {
+    if ($.get(this._config, 'trustProxy')(this.request.connection.remoteAddress!, 0)) {
       host = this.header('X-Forwarded-Host') || host
     }
 
@@ -469,7 +474,7 @@ export class Request extends Macroable implements RequestContract {
       return []
     }
 
-    const offset = this._config.subdomainOffset || 2
+    const offset = $.get(this._config, 'subdomainOffset')
     const subdomains = hostname.split('.').reverse().slice(offset)
 
     /**
