@@ -7,7 +7,7 @@
     "publish": {
       "conventionalCommits": true,
       "message": "chore(release): publish",
-      "ignoreChanges": ["CHANGELOG.md"]
+      "ignoreChanges": ["CHANGELOG.md", "package-lock.json"]
     }
   }
 }
