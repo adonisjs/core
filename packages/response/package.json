@@ -25,6 +25,7 @@
     "supertest": "^3.4.1"
   },
   "dependencies": {
+    "@adonisjs/utils": "^1.0.0",
     "content-disposition": "^0.5.3",
     "destroy": "^1.0.4",
     "etag": "^1.8.1",
