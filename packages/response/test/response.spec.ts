@@ -10,7 +10,8 @@
 import * as test from 'japa'
 import * as supertest from 'supertest'
 import { join } from 'path'
-import { createReadStream, createWriteStream, stat, outputFile, remove, ensureDir } from 'fs-extra'
+import { stat, outputFile, remove, ensureDir } from 'fs-extra'
+import { createWriteStream, createReadStream } from 'fs'
 import { createServer } from 'http'
 import * as etag from 'etag'
 
@@ -414,12 +415,14 @@ test.group('Response', (group) => {
     const server = createServer(async (req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
+      const writeStream = createWriteStream(join(APP_ROOT, 'hello.txt'))
 
       try {
         const stream = response.stream as any
-        await stream(createWriteStream(join(APP_ROOT, 'hello.txt')), true)
+        await stream(writeStream, true)
       } catch ({ message }) {
         assert.equal(message, 'response.stream accepts a readable stream only')
+        writeStream.close()
         res.end()
       }
     })
