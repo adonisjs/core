@@ -30,7 +30,11 @@ export class ConfigReader<T> {
   constructor (private _defaults: T) {
   }
 
-  public get<K extends keyof T> (mainConfig: Partial<T>, key: K) {
-    return typeof (mainConfig[key]) !== 'undefined' ? mainConfig[key] : this._defaults[key]
+  /**
+   * Returns the value for a given key from the main config or the
+   * defaults
+   */
+  public get<K extends keyof T> (mainConfig: Partial<T>, key: K): T[K] {
+    return typeof (mainConfig[key]) !== 'undefined' ? mainConfig[key]! : this._defaults[key]!
   }
 }
