@@ -1,0 +1,48 @@
+{
+  "name": "@adonisjs/core",
+  "version": "1.0.0",
+  "description": "AdonisJs core package to run HTTP server",
+  "main": "build/index.js",
+  "files": [
+    "build/src",
+    "build/index.js",
+    "build/index.d.ts"
+  ],
+  "scripts": {
+    "pretest": "npm run lint",
+    "test": "nyc node japaFile.js",
+    "lint": "tslint --project tsconfig.json",
+    "clean": "del build",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "keywords": [],
+  "author": "virk",
+  "homepage": "https://adonisjs.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adonisjs/adonis-framework/tree/master/packages/core"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@adonisjs/request": "^1.1.3",
+    "@adonisjs/response": "^1.1.3",
+    "@adonisjs/router": "^1.1.3",
+    "macroable": "^2.0.0"
+  },
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "supertest": "^3.4.2"
+  }
+}
