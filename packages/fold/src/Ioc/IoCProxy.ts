@@ -11,7 +11,7 @@
 * file that was distributed with this source code.
 */
 
-import { IIoC } from '../Contracts'
+import { IoC } from '../Contracts'
 
 /**
  * Checks for the existence of fake on the target
@@ -93,7 +93,7 @@ const classHandler = {
  * Proxies the objects to fallback to fake, when it exists.
  */
 export class IoCProxyObject {
-  constructor (public binding: string, public actual: any, public container: IIoC) {
+  constructor (public binding: string, public actual: any, public container: IoC) {
     return new Proxy(this, objectHandler)
   }
 }
@@ -101,7 +101,7 @@ export class IoCProxyObject {
 /**
  * Proxies the class constructor to fallback to fake, when it exists.
  */
-export function IocProxyClass (binding: string, actual: any, container: IIoC) {
+export function IocProxyClass (binding: string, actual: any, container: IoC) {
   function Wrapped () {}
   Wrapped.binding = binding
   Wrapped.actual = actual

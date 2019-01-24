@@ -14,7 +14,7 @@
 /**
  * IIOC container interface
  */
-export interface IIoC {
+export interface IoC {
   es6Imports: boolean,
   autoloads: { [namespace: string]: string },
   autoloadedAliases: string[],
@@ -40,8 +40,8 @@ export interface IIoC {
 /**
  * Service provider interface
  */
-export interface IServiceProvider {
-  app: IIoC
+export interface ServiceProvider {
+  app: IoC
   register? (): void
   boot? (): void
 }
@@ -49,7 +49,7 @@ export interface IServiceProvider {
 /**
  * Shape of binding stored inside the IoC container
  */
-export type IBinding = {
+export type Binding = {
   callback: IBindCallback,
   singleton: boolean,
   cachedValue?: unknown,
@@ -58,9 +58,9 @@ export type IBinding = {
 /**
  * Shape of autoloaded cache entry
  */
-export type IAutoloadCacheItem = {
+export type AutoloadCacheItem = {
   diskPath: string,
   cachedValue: any,
 }
 
-export type IBindCallback = (app: IIoC) => unknown
+export type IBindCallback = (app: IoC) => unknown

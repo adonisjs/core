@@ -1,6 +1,10 @@
 {
-  "extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
+  "extends": "../../_tsconfig.json",
   "compilerOptions": {
+    "outDir": "./build",
     "experimentalDecorators": true
-  }
+  },
+  "include": [
+    "**/*"
+  ]
 }

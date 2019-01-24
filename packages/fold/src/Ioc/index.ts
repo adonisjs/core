@@ -13,7 +13,7 @@
 
 import { normalize, resolve, dirname } from 'path'
 
-import { IIoC, IBindCallback, IBinding, IAutoloadCacheItem } from '../Contracts'
+import { IoC, IBindCallback, Binding, AutoloadCacheItem } from '../Contracts'
 import { IoCProxyObject, IocProxyClass } from './IoCProxy'
 import tracer from './Tracer'
 
@@ -27,7 +27,7 @@ const toString = Function.prototype.toString
  * in your application and provides all the neccessary tools to make
  * DI simpler.
  */
-export class Ioc implements IIoC {
+export class Ioc implements IoC {
   public tracer = tracer(this._emitEvents)
 
   /**
@@ -45,7 +45,7 @@ export class Ioc implements IIoC {
    * Autoloaded cache to improve the `require` speed, which is
    * dog slow.
    */
-  private _autoloadsCache: Map<string, IAutoloadCacheItem> = new Map()
+  private _autoloadsCache: Map<string, AutoloadCacheItem> = new Map()
 
   /**
    * Copy of aliases
@@ -55,13 +55,13 @@ export class Ioc implements IIoC {
   /**
    * Copy of actual bindings
    */
-  private _bindings: { [namespace: string]: IBinding } = {}
+  private _bindings: { [namespace: string]: Binding } = {}
 
   /**
    * Copy of fakes as a Map, since fakes are subjective to
    * mutations
    */
-  private _fakes: Map<string, IBinding> = new Map()
+  private _fakes: Map<string, Binding> = new Map()
 
   /**
    * Using proxies or not? Fakes only works when below one
