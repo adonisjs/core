@@ -1,0 +1,44 @@
+{
+  "name": "@adonisjs/manager",
+  "version": "1.0.0",
+  "description": "The build (Manager) pattern implementation",
+  "main": "build/index.js",
+  "files": [
+    "build/index.js",
+    "build/index.d.ts"
+  ],
+  "keywords": [
+    "adonisjs",
+    "manager",
+    "builder"
+  ],
+  "author": "virk",
+  "homepage": "https://adonisjs.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adonisjs/adonis-framework/tree/master/packages/manager"
+  },
+  "scripts": {
+    "pretest": "npm run lint",
+    "test": "nyc node japaFile.js",
+    "lint": "tslint --project tsconfig.json",
+    "clean": "del build",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile"
+  },
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-framework/issues"
+  },
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
