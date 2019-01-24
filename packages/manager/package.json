@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/manager",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The build (Manager) pattern implementation",
   "main": "build/index.js",
   "files": [
