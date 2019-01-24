@@ -7,21 +7,49 @@
 [![npm-image]][npm-url]
 ![](https://img.shields.io/badge/Uses-Typescript-294E80.svg?style=flat-square&colorA=ddd)
 
-Adonis fold is zero dependency library to enable Dependecy Injection in your apps using an IoC container.
+Adonis fold is zero dependency library to enable Dependency Injection in your apps using an IoC container.
 
-The library itself is pretty lean. However offers handful of tools to make DI easier and simpler.
+The library itself is pretty lean. However, offers handful of tools to make DI easier and simpler.
 
-Zero depedencies
-Support for fakes to ease testing
-Gazallion times faster than Node.js require
+- Zero depedencies.
+- Support for fakes to ease testing.
+- Gazallion times faster than Node.js require.
 
-## Features
+> Using IoC container for simple apps can become overkill. Use it when you are creating an eco-system of plugins and wants them to play together gracefully using a global dependency store.
 
-1. [IoC container]()
-2. [Injecting dependencies using namespaces]()
-3. [Support for fakes]()
-4. [Autoloading directories]()
+## Getting started
+The first step it to install the package from npm as follows.
 
+```sh
+npm i @adonisjs/fold
+
+# Using Yarn
+yarn add @adonisjs/fold
+```
+
+Next, is to use package by importing the container.
+
+```js
+const { Ioc } = require('@adonisjs/fold')
+const ioc = new Ioc()
+
+ioc.bind('unique/namespace', () => {
+  return 'value'
+})
+```
+
+The `bind` receives 2 arguments.
+
+1. The `namespace` is the unique name for the binding.
+2. The factory function is executed everytime the dependency is fetched from the container and return value is used.
+
+If you want the factory functions to be executed only once, then make use of the `singleton` instead of `bind`.
+
+```js
+ioc.singleton('unique/namespace', () => {
+  return 'value'
+})
+```
 
 ## What is Dependency Injection?
 Dependency Injection is a simple concept of injecting dependencies during the creation of an object vs being dependent on them globally.
@@ -173,14 +201,12 @@ Now anywhere inside your application, you can use the `Cache` object without wor
 const cache = container.use('App/Cache')
 ```
 
-## API
+## Usage with Typescript
 
 ## Change log
-
 The change log can be found in the [CHANGELOG.md](CHANGELOG.md) file.
 
 ## Contributing
-
 Everyone is welcome to contribute. Please go through the following guides, before getting started.
 
 1. [Contributing](https://adonisjs.com/contributing)
