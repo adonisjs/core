@@ -10,40 +10,47 @@
 import { IncomingMessage, ServerResponse } from 'http'
 import { Router } from '@adonisjs/router'
 import { Context } from '../Context'
+import { Middleware } from 'co-compose'
 
-type Handler = (ctx: Context) => void
+// type Handler = string | ((ctx: Context) => void)
 
 export class Server {
-  private _hooks: {
-    before: Handler[],
-    after: Handler[],
-  } = {
-    before: [],
-    after: [],
-  }
+  private _globalMiddleware = new Middleware()
+  // private _namedMiddleware: { [name: string]: Handler } = {}
+  // private _resolvedMiddleware: { [name: string]: Handler } = {}
 
   constructor (private _router: Router) {
   }
 
-  public onRequest (handler: Handler): this {
-    this._hooks.before.push(handler)
+  /**
+   * Define an array of global middleware.
+   */
+  public globalMiddleware (middleware: any[]): this {
+    this._globalMiddleware.register(middleware)
     return this
   }
 
-  public onResponse (handler: Handler): this {
-    this._hooks.after.push(handler)
-    return this
-  }
+  /**
+   * Define a set of named middleware. Named middleware are just aliases
+   * to the actual namespaces
+   */
+  // public namedMiddleware (middleware: { [name: string]: Handler }): this {
+  //   this._namedMiddleware = middleware
+  //   return this
+  // }
 
   public async handle (req: IncomingMessage, res: ServerResponse) {
     const ctx = new Context(req, res)
+    const url = ctx.request.url()
+    const method = ctx.request.method()
 
-    // const route = this._router.find(request.url(), request.method())
-    // if (route) {
-    //   await route.route.handler({ request, response })
-    //   return
-    // }
+    const route = this._router.find(url, method)
+    if (route) {
+      await this._globalMiddleware.runner().run([ctx])
+      await route.route.handler(ctx)
+      return
+    }
 
-    // response.status(404).send(`Cannot ${request.method()}:${request.url()}`)
+    ctx.response.status(404).send(`Cannot ${method}:${url}`)
   }
 }
