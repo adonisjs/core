@@ -24,6 +24,7 @@ test.group('Router | add', () => {
     assert.deepEqual(getRoute.toJSON(), {
       pattern: '/',
       methods: ['GET'],
+      meta: {},
       matchers: {},
       domain: 'root',
       handler: 'HomeController.index',
@@ -34,6 +35,7 @@ test.group('Router | add', () => {
     assert.deepEqual(postRoute.toJSON(), {
       pattern: '/',
       methods: ['POST'],
+      meta: {},
       matchers: {},
       domain: 'root',
       handler: 'HomeController.store',
@@ -44,6 +46,7 @@ test.group('Router | add', () => {
     assert.deepEqual(putRoute.toJSON(), {
       pattern: '/',
       methods: ['PUT'],
+      meta: {},
       matchers: {},
       domain: 'root',
       handler: 'HomeController.update',
@@ -54,6 +57,7 @@ test.group('Router | add', () => {
     assert.deepEqual(patchRoute.toJSON(), {
       pattern: '/',
       methods: ['PATCH'],
+      meta: {},
       matchers: {},
       domain: 'root',
       handler: 'HomeController.updatePatch',
@@ -64,6 +68,7 @@ test.group('Router | add', () => {
     assert.deepEqual(destroyRoute.toJSON(), {
       pattern: '/',
       methods: ['DELETE'],
+      meta: {},
       matchers: {},
       domain: 'root',
       handler: 'HomeController.destroy',
@@ -74,6 +79,7 @@ test.group('Router | add', () => {
     assert.deepEqual(anyRoute.toJSON(), {
       pattern: '/',
       methods: ['HEAD', 'OPTIONS', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+      meta: {},
       matchers: {},
       domain: 'root',
       handler: 'HomeController.handle',
@@ -121,6 +127,7 @@ test.group('Router | commit', () => {
               '/': {
                 pattern: '/',
                 handler,
+                meta: {},
                 middleware: [],
                 name: undefined,
               },
@@ -161,6 +168,7 @@ test.group('Router | commit', () => {
               '/api': {
                 pattern: '/api',
                 handler,
+                meta: {},
                 middleware: [],
                 name: undefined,
               },
@@ -278,24 +286,28 @@ test.group('Router | commit', () => {
               '/api/posts': {
                 pattern: '/api/posts',
                 handler: 'PostController.index',
+                meta: {},
                 middleware: [],
                 name: 'posts.index',
               },
               '/api/posts/create': {
                 pattern: '/api/posts/create',
                 handler: 'PostController.create',
+                meta: {},
                 middleware: [],
                 name: 'posts.create',
               },
               '/api/posts/:id': {
                 pattern: '/api/posts/:id',
                 handler: 'PostController.show',
+                meta: {},
                 middleware: [],
                 name: 'posts.show',
               },
               '/api/posts/:id/edit': {
                 pattern: '/api/posts/:id/edit',
                 handler: 'PostController.edit',
+                meta: {},
                 middleware: [],
                 name: 'posts.edit',
               },
@@ -322,6 +334,7 @@ test.group('Router | commit', () => {
               '/api/posts': {
                 pattern: '/api/posts',
                 handler: 'PostController.store',
+                meta: {},
                 middleware: [],
                 name: 'posts.store',
               },
@@ -355,6 +368,7 @@ test.group('Router | commit', () => {
               '/api/posts/:id': {
                 pattern: '/api/posts/:id',
                 handler: 'PostController.update',
+                meta: {},
                 middleware: [],
                 name: 'posts.update',
               },
@@ -388,6 +402,7 @@ test.group('Router | commit', () => {
               '/api/posts/:id': {
                 pattern: '/api/posts/:id',
                 handler: 'PostController.update',
+                meta: {},
                 middleware: [],
                 name: 'posts.update',
               },
@@ -421,6 +436,7 @@ test.group('Router | commit', () => {
               '/api/posts/:id': {
                 pattern: '/api/posts/:id',
                 handler: 'PostController.destroy',
+                meta: {},
                 middleware: [],
                 name: 'posts.destroy',
               },
@@ -537,24 +553,28 @@ test.group('Router | commit', () => {
               '/posts/:post_id/comments': {
                 pattern: '/posts/:post_id/comments',
                 handler: 'CommentsController.index',
+                meta: {},
                 middleware: [],
                 name: 'posts.comments.index',
               },
               '/posts/:post_id/comments/create': {
                 pattern: '/posts/:post_id/comments/create',
                 handler: 'CommentsController.create',
+                meta: {},
                 middleware: [],
                 name: 'posts.comments.create',
               },
               '/comments/:id': {
                 pattern: '/comments/:id',
                 handler: 'CommentsController.show',
+                meta: {},
                 middleware: [],
                 name: 'comments.show',
               },
               '/comments/:id/edit': {
                 pattern: '/comments/:id/edit',
                 handler: 'CommentsController.edit',
+                meta: {},
                 middleware: [],
                 name: 'comments.edit',
               },
@@ -588,6 +608,7 @@ test.group('Router | commit', () => {
               '/posts/:post_id/comments': {
                 pattern: '/posts/:post_id/comments',
                 handler: 'CommentsController.store',
+                meta: {},
                 middleware: [],
                 name: 'posts.comments.store',
               },
@@ -615,6 +636,7 @@ test.group('Router | commit', () => {
               '/comments/:id': {
                 pattern: '/comments/:id',
                 handler: 'CommentsController.update',
+                meta: {},
                 middleware: [],
                 name: 'comments.update',
               },
@@ -642,6 +664,7 @@ test.group('Router | commit', () => {
               '/comments/:id': {
                 pattern: '/comments/:id',
                 handler: 'CommentsController.update',
+                meta: {},
                 middleware: [],
                 name: 'comments.update',
               },
@@ -669,6 +692,7 @@ test.group('Router | commit', () => {
               '/comments/:id': {
                 pattern: '/comments/:id',
                 handler: 'CommentsController.destroy',
+                meta: {},
                 middleware: [],
                 name: 'comments.destroy',
               },
@@ -733,6 +757,7 @@ test.group('Router | commit', () => {
               '/photos/create': {
                 pattern: '/photos/create',
                 handler: 'PhotosController.create',
+                meta: {},
                 middleware: [],
                 name: 'v1.photos.create',
               },
@@ -754,6 +779,7 @@ test.group('Router | find', () => {
     assert.deepEqual(router.find('photos', 'GET')!, {
       params: {},
       route: {
+        meta: {},
         middleware: [],
         pattern: '/photos',
         name: 'photos.index',
@@ -765,6 +791,7 @@ test.group('Router | find', () => {
     assert.deepEqual(router.find('photos/create', 'GET')!, {
       params: {},
       route: {
+        meta: {},
         middleware: [],
         pattern: '/photos/create',
         name: 'photos.create',
@@ -776,6 +803,7 @@ test.group('Router | find', () => {
     assert.deepEqual(router.find('photos', 'POST')!, {
       params: {},
       route: {
+        meta: {},
         middleware: [],
         pattern: '/photos',
         name: 'photos.store',
@@ -789,6 +817,7 @@ test.group('Router | find', () => {
         id: '1',
       },
       route: {
+        meta: {},
         middleware: [],
         pattern: '/photos/:id',
         name: 'photos.show',
@@ -802,6 +831,7 @@ test.group('Router | find', () => {
         id: '1',
       },
       route: {
+        meta: {},
         middleware: [],
         pattern: '/photos/:id/edit',
         name: 'photos.edit',
@@ -815,6 +845,7 @@ test.group('Router | find', () => {
         id: '1',
       },
       route: {
+        meta: {},
         middleware: [],
         pattern: '/photos/:id',
         name: 'photos.update',
@@ -828,6 +859,7 @@ test.group('Router | find', () => {
         id: '1',
       },
       route: {
+        meta: {},
         middleware: [],
         pattern: '/photos/:id',
         name: 'photos.destroy',

@@ -15,6 +15,7 @@ export type RouteNode = {
   pattern: string,
   handler: any,
   middleware: any[],
+  meta: {},
   name?: string,
 }
 

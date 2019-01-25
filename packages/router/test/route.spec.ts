@@ -17,6 +17,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/',
+      meta: {},
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -33,6 +34,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/admin',
+      meta: {},
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -48,6 +50,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/blog',
+      meta: {},
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -64,6 +67,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/admin/blog',
+      meta: {},
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -80,6 +84,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
+      meta: {},
       methods: ['GET'],
       matchers: {
         id: '^[a-z]$+',
@@ -99,6 +104,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
+      meta: {},
       methods: ['GET'],
       matchers: {
         id: '^[a-z]$+',
@@ -119,6 +125,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
+      meta: {},
       methods: ['GET'],
       matchers: {
         id: '(.*)',
@@ -137,6 +144,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
+      meta: {},
       methods: ['GET'],
       matchers: {},
       domain: 'foo.com',
@@ -153,6 +161,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
+      meta: {},
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -169,6 +178,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
+      meta: {},
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -185,6 +195,7 @@ test.group('Route', () => {
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
+      meta: {},
       methods: ['GET'],
       matchers: {},
       domain: 'root',

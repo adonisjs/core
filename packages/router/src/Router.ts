@@ -14,6 +14,7 @@ import { RouteGroup } from './Group'
 import { Matchers } from './Contracts'
 import { Store } from './Store'
 import { toRoutesJSON } from '../lib'
+import { RouteNode } from './Contracts'
 
 type LookupNode = {
   handler: any,
@@ -69,6 +70,9 @@ export class Router {
    * will be free.
    */
   private _groupRoutes: (Route | RouteResource)[] = []
+
+  constructor (private _routeProcessor?: (route: RouteNode) => void) {
+  }
 
   /**
    * Add route for a given pattern and methods
@@ -220,6 +224,14 @@ export class Router {
        */
       if (route.name) {
         names.push(route.name)
+      }
+
+      /**
+       * If a pre-processor is defined then pass the [[RouteNode]]
+       * to it.
+       */
+      if (this._routeProcessor) {
+        this._routeProcessor(route)
       }
 
       /**

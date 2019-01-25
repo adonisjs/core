@@ -25,6 +25,7 @@ test.group('Route Group', () => {
         matchers: {
           id: '[a-z]',
         },
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -47,6 +48,7 @@ test.group('Route Group', () => {
       {
         pattern: '/:id',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: ['limitter', 'auth'],
@@ -69,6 +71,7 @@ test.group('Route Group', () => {
       {
         pattern: '/:id',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -89,6 +92,7 @@ test.group('Route Group', () => {
       {
         pattern: '/api/v1/:id',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -109,6 +113,7 @@ test.group('Route Group', () => {
       {
         pattern: '/:id',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'adonisjs.com',
         middleware: [],
@@ -126,6 +131,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -135,6 +141,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/create',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -144,6 +151,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos',
         matchers: {},
+        meta: {},
         methods: ['POST'],
         domain: 'root',
         middleware: [],
@@ -153,6 +161,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -162,6 +171,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id/edit',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -171,6 +181,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
+        meta: {},
         methods: ['PUT', 'PATCH'],
         domain: 'root',
         middleware: [],
@@ -180,6 +191,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
+        meta: {},
         methods: ['DELETE'],
         domain: 'root',
         middleware: [],
@@ -198,6 +210,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -207,6 +220,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/create',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -216,6 +230,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos',
         matchers: {},
+        meta: {},
         methods: ['POST'],
         domain: 'root',
         middleware: [],
@@ -225,6 +240,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -234,6 +250,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id/edit',
         matchers: {},
+        meta: {},
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -243,6 +260,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
+        meta: {},
         methods: ['PUT', 'PATCH'],
         domain: 'root',
         middleware: [],
@@ -252,6 +270,7 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
+        meta: {},
         methods: ['DELETE'],
         domain: 'root',
         middleware: [],

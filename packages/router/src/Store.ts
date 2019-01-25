@@ -146,6 +146,7 @@ export class Store {
       methodRoutes.routes[route.pattern] = pick(route, [
         'pattern',
         'handler',
+        'meta',
         'middleware',
         'name',
       ])

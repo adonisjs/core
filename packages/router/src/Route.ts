@@ -148,6 +148,7 @@ export class Route {
       domain: this._domain,
       pattern: this._getPattern(),
       matchers: this._getMatchers(),
+      meta: {},
       handler: this._handler,
       name: this.name,
       methods: this._methods,
