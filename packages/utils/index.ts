@@ -8,3 +8,4 @@
  */
 
 export { ConfigReader } from './src/ConfigReader'
+export { Exception } from './src/Exception'
