@@ -14,16 +14,16 @@
 /**
  * IIOC container interface
  */
-export interface IoC {
+export interface IoCContract {
   es6Imports: boolean,
   autoloads: { [namespace: string]: string },
   autoloadedAliases: string[],
-  bind (name: string, callback: IBindCallback): void
-  singleton (name: string, callback: IBindCallback): void
+  bind (name: string, callback: BindCallback): void
+  singleton (name: string, callback: BindCallback): void
   alias (namespace: string, alias: string): void
   autoload (directoryPath: string, namespace: string): void
   clearAutoloadCache (namespace?: string, clearRequireCache?: boolean): void
-  fake (name: string, callback: IBindCallback): void
+  fake (name: string, callback: BindCallback): void
   use<T> (name: string, relativeFrom?: string): T
   make<T> (name: string, relativeFrom?: string): T
   useFake<T> (name: string): T
@@ -37,30 +37,4 @@ export interface IoC {
   with (namespaces: string[], cb: (...args: any[]) => void): void
 }
 
-/**
- * Service provider interface
- */
-export interface ServiceProvider {
-  app: IoC
-  register? (): void
-  boot? (): void
-}
-
-/**
- * Shape of binding stored inside the IoC container
- */
-export type Binding = {
-  callback: IBindCallback,
-  singleton: boolean,
-  cachedValue?: unknown,
-}
-
-/**
- * Shape of autoloaded cache entry
- */
-export type AutoloadCacheItem = {
-  diskPath: string,
-  cachedValue: any,
-}
-
-export type IBindCallback = (app: IoC) => unknown
+export type BindCallback = (app: IoC) => unknown

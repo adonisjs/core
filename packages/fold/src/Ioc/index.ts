@@ -13,11 +13,28 @@
 
 import { normalize, resolve, dirname } from 'path'
 
-import { IoC, IBindCallback, Binding, AutoloadCacheItem } from '../Contracts'
+import { IoCContract, BindCallback } from '../Contracts'
 import { IoCProxyObject, IocProxyClass } from './IoCProxy'
 import tracer from './Tracer'
 
 const toString = Function.prototype.toString
+
+/**
+ * Shape of binding stored inside the IoC container
+ */
+export type Binding = {
+  callback: BindCallback,
+  singleton: boolean,
+  cachedValue?: unknown,
+}
+
+/**
+ * Shape of autoloaded cache entry
+ */
+export type AutoloadCacheItem = {
+  diskPath: string,
+  cachedValue: any,
+}
 
 /**
  * Ioc container to manage and compose dependencies of your application
@@ -27,7 +44,7 @@ const toString = Function.prototype.toString
  * in your application and provides all the neccessary tools to make
  * DI simpler.
  */
-export class Ioc implements IoC {
+export class Ioc implements IoCContract {
   public tracer = tracer(this._emitEvents)
 
   /**
@@ -67,7 +84,7 @@ export class Ioc implements IoC {
    * Using proxies or not? Fakes only works when below one
    * is set to true.
    */
-  private _useProxies = process.env.ADONIS_IOC_PROXY === 'true'
+  private _useProxies = false
 
   constructor (private _emitEvents = false, public es6Imports = false) {
   }
@@ -303,6 +320,15 @@ export class Ioc implements IoC {
   }
 
   /**
+   * Instruct IoC container to use proxies when returning
+   * bindings from `use` and `make` methods.
+   */
+  public useProxies (): this {
+    this._useProxies = true
+    return this
+  }
+
+  /**
    * Add a new binding with a namespace. Keeping the namespace unique
    * is the responsibility of the user. We do not restrict duplicate
    * namespaces, since it's perfectly acceptable to provide new
@@ -315,7 +341,7 @@ export class Ioc implements IoC {
    * })
    * ```
    */
-  public bind (namespace: string, callback: IBindCallback): void {
+  public bind (namespace: string, callback: BindCallback): void {
     this._ensureCallback(callback, 'ioc.bind expect 2nd argument to be a function')
     this.tracer.emit('bind', { namespace, singleton: false })
     this._bindings[namespace] = { callback, singleton: false }
@@ -333,7 +359,7 @@ export class Ioc implements IoC {
    * })
    * ```
    */
-  public singleton (namespace: string, callback: IBindCallback): void {
+  public singleton (namespace: string, callback: BindCallback): void {
     this._ensureCallback(callback, 'ioc.singleton expect 2nd argument to be a function')
     this.tracer.emit('bind', { namespace, singleton: true })
     this._bindings[namespace] = { callback, singleton: true }
@@ -425,7 +451,7 @@ export class Ioc implements IoC {
    * })
    * ```
    */
-  public fake (namespace: string, callback: IBindCallback): void {
+  public fake (namespace: string, callback: BindCallback): void {
     this._ensureCallback(callback, 'ioc.fake expect 2nd argument to be a function')
     this.tracer.emit('fake', { namespace })
     this._fakes.set(namespace, { callback, singleton: true })

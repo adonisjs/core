@@ -536,9 +536,6 @@ test.group('Ioc | Proxy', () => {
   })
 
   test('ensure proxy traps works fine with fakes', (assert) => {
-    // setup
-    process.env.ADONIS_IOC_PROXY = 'true'
-
     class Foo {
       public name = 'foo'
 
@@ -563,6 +560,7 @@ test.group('Ioc | Proxy', () => {
     ioc.bind('App/Foo', () => {
       return new Foo()
     })
+    ioc.useProxies()
 
     const value = ioc.use<any>('App/Foo')
 
@@ -717,15 +715,9 @@ test.group('Ioc | Proxy', () => {
      */
     const fn1 = () => Object.preventExtensions(value)
     assert.throw(fn1, 'Cannot prevent extensions during a fake')
-
-    // cleanup
-    delete process.env.ADONIS_IOC_PROXY
   })
 
   test('ensure proxy traps works fine when fake has been restored', (assert) => {
-    // setup
-    process.env.ADONIS_IOC_PROXY = 'true'
-
     class Foo {
       public name = 'foo'
 
@@ -743,6 +735,7 @@ test.group('Ioc | Proxy', () => {
     }
 
     const ioc = new Ioc()
+    ioc.useProxies()
     ioc.bind('App/Foo', () => {
       return new Foo()
     })
@@ -790,15 +783,9 @@ test.group('Ioc | Proxy', () => {
       Object.getOwnPropertyNames(Object.getPrototypeOf(value)),
       ['constructor', 'getName'],
     )
-
-    // cleanup
-    delete process.env.ADONIS_IOC_PROXY
   })
 
   test('proxy class constructor', (assert) => {
-    // setup
-    process.env.ADONIS_IOC_PROXY = 'true'
-
     interface FooConstructor {
       new (): Foo
     }
@@ -820,6 +807,7 @@ test.group('Ioc | Proxy', () => {
     }
 
     const ioc = new Ioc()
+    ioc.useProxies()
     ioc.bind('App/Foo', () => {
       return Foo
     })
@@ -831,15 +819,9 @@ test.group('Ioc | Proxy', () => {
       return FooFake
     })
     assert.instanceOf(new value(), FooFake)
-
-    // cleanup
-    delete process.env.ADONIS_IOC_PROXY
   })
 
   test('proxy return value from make', (assert) => {
-    // setup
-    process.env.ADONIS_IOC_PROXY = 'true'
-
     class Foo {
       public name = 'foo'
 
@@ -857,6 +839,7 @@ test.group('Ioc | Proxy', () => {
     }
 
     const ioc = new Ioc()
+    ioc.useProxies()
     ioc.bind('App/Foo', () => {
       return new Foo()
     })
@@ -869,15 +852,9 @@ test.group('Ioc | Proxy', () => {
     })
 
     assert.equal(value.name, 'foofake')
-
-    // cleanup
-    delete process.env.ADONIS_IOC_PROXY
   })
 
   test('proxy class constructor via ioc.make', (assert) => {
-    // setup
-    process.env.ADONIS_IOC_PROXY = 'true'
-
     interface FooConstructor {
       new (): Foo
     }
@@ -899,6 +876,7 @@ test.group('Ioc | Proxy', () => {
     }
 
     const ioc = new Ioc()
+    ioc.useProxies()
     ioc.bind('App/Foo', () => {
       return Foo
     })
@@ -910,16 +888,11 @@ test.group('Ioc | Proxy', () => {
       return FooFake
     })
     assert.instanceOf(new value(), FooFake)
-
-    // cleanup
-    delete process.env.ADONIS_IOC_PROXY
   })
 
   test('do not proxy literals when using ioc.make', (assert) => {
-    // setup
-    process.env.ADONIS_IOC_PROXY = 'true'
-
     const ioc = new Ioc()
+    ioc.useProxies()
     ioc.bind('App/Foo', () => {
       return 'foo'
     })
@@ -932,16 +905,11 @@ test.group('Ioc | Proxy', () => {
     })
 
     assert.equal(value, 'foo')
-
-    // cleanup
-    delete process.env.ADONIS_IOC_PROXY
   })
 
   test('do not proxy literals when using ioc.use', (assert) => {
-    // setup
-    process.env.ADONIS_IOC_PROXY = 'true'
-
     const ioc = new Ioc()
+    ioc.useProxies()
     ioc.bind('App/Foo', () => {
       return 'foo'
     })
@@ -954,8 +922,5 @@ test.group('Ioc | Proxy', () => {
     })
 
     assert.equal(value, 'foo')
-
-    // cleanup
-    delete process.env.ADONIS_IOC_PROXY
   })
 })

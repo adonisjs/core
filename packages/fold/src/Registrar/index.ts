@@ -11,12 +11,12 @@
 * file that was distributed with this source code.
 */
 
-import { ServiceProvider, IoC } from '../Contracts'
+import { IoCContract } from '../Contracts'
 
 export class Registrar {
   private _providersPaths: string[]
 
-  constructor (public ioc: IoC) {
+  constructor (public ioc: IoCContract) {
   }
 
   /**
@@ -25,12 +25,12 @@ export class Registrar {
    * imports, then default exports are handled
    * automatically.
    */
-  private _loadProvider (providerPath: string): ServiceProvider {
+  private _loadProvider (providerPath: string) {
     const provider = require(providerPath)
 
     return (this.ioc.es6Imports && provider.default
       ? new provider.default(this.ioc)
-      : new provider(this.ioc)) as ServiceProvider
+      : new provider(this.ioc))
   }
 
   /**
@@ -48,7 +48,7 @@ export class Registrar {
    * The provider instance will be returned, which can be used
    * to boot them as well.
    */
-  public register (): ServiceProvider[] {
+  public register () {
     return this._providersPaths.map((providerPath) => {
       const provider = this._loadProvider(providerPath)
 
@@ -65,7 +65,7 @@ export class Registrar {
    * Boot all the providers by calling the `boot` method.
    * Boot methods are called in series.
    */
-  public async boot (providers: ServiceProvider[]) {
+  public async boot (providers) {
     for (let provider of providers) {
       /* istanbul ignore else */
       if (typeof (provider.boot) === 'function') {
@@ -77,7 +77,7 @@ export class Registrar {
   /**
    * Register an boot providers together.
    */
-  public async registerAndBoot (): Promise<ServiceProvider[]> {
+  public async registerAndBoot () {
     const providers = this.register()
     await this.boot(providers)
     return providers
