@@ -14,7 +14,7 @@
 /**
  * IIOC container interface
  */
-export interface IoCContract {
+export interface IocContract {
   es6Imports: boolean,
   autoloads: { [namespace: string]: string },
   autoloadedAliases: string[],
@@ -37,4 +37,4 @@ export interface IoCContract {
   with (namespaces: string[], cb: (...args: any[]) => void): void
 }
 
-export type BindCallback = (app: IoC) => unknown
+export type BindCallback = (app: IocContract) => unknown

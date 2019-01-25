@@ -11,12 +11,12 @@
 * file that was distributed with this source code.
 */
 
-import { IoCContract } from '../Contracts'
+import { IocContract } from '../Contracts'
 
 export class Registrar {
   private _providersPaths: string[]
 
-  constructor (public ioc: IoCContract) {
+  constructor (public ioc: IocContract) {
   }
 
   /**

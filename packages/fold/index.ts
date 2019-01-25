@@ -13,3 +13,4 @@
 
 export { Ioc } from './src/Ioc'
 export { Registrar } from './src/Registrar'
+export { IocContract } from './src/Contracts'

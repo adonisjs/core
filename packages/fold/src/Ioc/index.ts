@@ -13,7 +13,7 @@
 
 import { normalize, resolve, dirname } from 'path'
 
-import { IoCContract, BindCallback } from '../Contracts'
+import { IocContract, BindCallback } from '../Contracts'
 import { IoCProxyObject, IocProxyClass } from './IoCProxy'
 import tracer from './Tracer'
 
@@ -44,7 +44,7 @@ export type AutoloadCacheItem = {
  * in your application and provides all the neccessary tools to make
  * DI simpler.
  */
-export class Ioc implements IoCContract {
+export class Ioc implements IocContract {
   public tracer = tracer(this._emitEvents)
 
   /**
