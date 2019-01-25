@@ -767,6 +767,149 @@ test.group('Router | commit', () => {
       },
     })
   })
+
+  test('process routes via pre processor if defined', (assert) => {
+    const router = new Router((routeJSON) => {
+      routeJSON.meta.processed = true
+    })
+
+    router.get('/', 'FooHandler.get')
+    router.commit()
+
+    assert.deepEqual(router['_store'].tree, {
+      tokens: [[{
+        old: 'root',
+        type: 0,
+        val: 'root',
+        end: '',
+      }]],
+      domains: {
+        'root': {
+          'GET': {
+            tokens: [
+              [
+                {
+                  old: '/',
+                  type: 0,
+                  val: '/',
+                  end: '',
+                },
+              ],
+            ],
+            routes: {
+              '/': {
+                pattern: '/',
+                handler: 'FooHandler.get',
+                meta: {
+                  processed: true,
+                },
+                middleware: [],
+                name: undefined,
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+
+  test('process resource via pre processor if defined', (assert) => {
+    const router = new Router((routeJSON) => {
+      routeJSON.meta.processed = true
+    })
+
+    router.resource('photos', 'PhotosController').only(['create'])
+    router.commit()
+
+    assert.deepEqual(router['_store'].tree, {
+      tokens: [[{
+        old: 'root',
+        type: 0,
+        val: 'root',
+        end: '',
+      }]],
+      domains: {
+        'root': {
+          'GET': {
+            tokens: [
+              [
+                {
+                  old: '/photos/create',
+                  type: 0,
+                  val: 'photos',
+                  end: '',
+                },
+                {
+                  old: '/photos/create',
+                  type: 0,
+                  val: 'create',
+                  end: '',
+                },
+              ],
+            ],
+            routes: {
+              '/photos/create': {
+                pattern: '/photos/create',
+                handler: 'PhotosController.create',
+                meta: {
+                  processed: true,
+                },
+                middleware: [],
+                name: 'photos.create',
+              },
+            },
+          },
+        },
+      },
+    })
+  })
+
+  test('process group routes via pre processor if defined', (assert) => {
+    const router = new Router((routeJSON) => {
+      routeJSON.meta.processed = true
+    })
+
+    router.group(() => {
+      router.get('/', 'FooHandler.get')
+    })
+    router.commit()
+
+    assert.deepEqual(router['_store'].tree, {
+      tokens: [[{
+        old: 'root',
+        type: 0,
+        val: 'root',
+        end: '',
+      }]],
+      domains: {
+        'root': {
+          'GET': {
+            tokens: [
+              [
+                {
+                  old: '/',
+                  type: 0,
+                  val: '/',
+                  end: '',
+                },
+              ],
+            ],
+            routes: {
+              '/': {
+                pattern: '/',
+                handler: 'FooHandler.get',
+                meta: {
+                  processed: true,
+                },
+                middleware: [],
+                name: undefined,
+              },
+            },
+          },
+        },
+      },
+    })
+  })
 })
 
 test.group('Router | find', () => {
