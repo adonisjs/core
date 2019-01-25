@@ -213,7 +213,7 @@ Everyone is welcome to contribute. Please go through the following guides, befor
 2. [Code of conduct](https://adonisjs.com/code-of-conduct)
 
 ## Authors & License
-[Harminder Virk](https://github.com/Harminder Virk) and [contributors](https://github.com/poppinss/adonis-fold/graphs/contributors).
+[Harminder Virk](https://github.com/thetutlage) and [contributors](https://github.com/poppinss/adonis-fold/graphs/contributors).
 
 MIT License, see the included [MIT](LICENSE.md) file.
 
