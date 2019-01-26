@@ -2,5 +2,5 @@ require('ts-node/register')
 
 const { configure } = require('japa')
 configure({
-  files: ['test/**/server.spec.ts']
+  files: ['test/**/middleware.spec.ts']
 })

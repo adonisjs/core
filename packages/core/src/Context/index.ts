@@ -11,6 +11,7 @@ import { IncomingMessage, ServerResponse } from 'http'
 import { Request } from '@adonisjs/request'
 import { Response } from '@adonisjs/response'
 import { Macroable } from 'macroable'
+import { ContextContract } from '../Contracts/Context'
 
 /**
  * A simple class to hold values to be passed to the HTTP
@@ -19,7 +20,7 @@ import { Macroable } from 'macroable'
  * At bare minimum [[Context]] will have [[Request]] and [[Response]]
  * objects.
  */
-export class Context extends Macroable {
+export class Context extends Macroable implements ContextContract {
   protected static _macros = {}
   protected static _getters = {}
 
