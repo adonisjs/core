@@ -119,6 +119,20 @@ export class Store {
    * ```
    */
   public add (route: RouteDefination): this {
+    /**
+     * Create a copy of route properties by cherry picking
+     * fields. We create the copy outside the forEach
+     * loop, so that the same object is shared across
+     * all the methods (saving memory)
+     */
+    const routeJSON = pick(route, [
+      'pattern',
+      'handler',
+      'meta',
+      'middleware',
+      'name',
+    ]) as RouteNode
+
     route.methods.forEach((method) => {
       const methodRoutes = this._getMethodRoutes(route.domain || 'root', method)
 
@@ -143,13 +157,7 @@ export class Store {
        * Store reference to the route, so that we can return it to the user, when
        * they call `match`.
        */
-      methodRoutes.routes[route.pattern] = pick(route, [
-        'pattern',
-        'handler',
-        'meta',
-        'middleware',
-        'name',
-      ])
+      methodRoutes.routes[route.pattern] = routeJSON
     })
 
     return this

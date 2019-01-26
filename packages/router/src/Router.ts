@@ -250,6 +250,7 @@ export class Router {
 
     this.routes = []
     this._matchers = {}
+    this._groupRoutes = []
   }
 
   /**
