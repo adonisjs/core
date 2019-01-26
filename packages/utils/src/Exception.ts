@@ -14,7 +14,7 @@
 export class Exception extends Error {
   public name: string
   public message: string
-  public code: string
+  public code?: string
   public status: number
 
   constructor (message: string, status: number = 500, code?: string) {
@@ -65,16 +65,6 @@ export class Exception extends Error {
     /**
      * Update the stack trace
      */
-    if (Error.hasOwnProperty('captureStackTrace')) {
-      Error.captureStackTrace(this, this.constructor)
-      return
-    }
-
-    Object.defineProperty(this, 'stack', {
-      configurable: true,
-      enumerable: false,
-      value: (new Error(message)).stack,
-      writable: true,
-    })
+    Error.captureStackTrace(this, this.constructor)
   }
 }
