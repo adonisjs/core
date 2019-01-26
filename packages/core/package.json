@@ -26,12 +26,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@adonisjs/request": "^1.1.4",
-    "@adonisjs/response": "^1.1.4",
-    "@adonisjs/router": "^1.2.0",
-    "@adonisjs/utils": "^1.2.0",
-    "co-compose": "^5.0.2",
-    "macroable": "^2.0.0"
   },
   "nyc": {
     "exclude": [
@@ -45,8 +39,5 @@
     "access": "public"
   },
   "devDependencies": {
-    "clear-module": "^3.1.0",
-    "fs-extra": "^7.0.1",
-    "supertest": "^3.4.2"
   }
 }
