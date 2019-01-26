@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.1.3...@adonisjs/router@1.2.0) (2019-01-26)
+
+
+### Features
+
+* **router:** add support for defining route meta data ([e48db34](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/commit/e48db34))
+* **router:** add support for pre-processor ([48720bb](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/commit/48720bb))
+
+
+### Performance Improvements
+
+* **store:** share copy of route across different methods ([79215d4](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/commit/79215d4))
+
+
+
+
+
 ## [1.1.3](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.1.2...@adonisjs/router@1.1.3) (2019-01-22)
 
 **Note:** Version bump only for package @adonisjs/router

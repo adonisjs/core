@@ -1,3 +1,16 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## 5.0.1 (2019-01-26)
+
+**Note:** Version bump only for package @adonisjs/fold
+
+
+
+
+
 <a name="4.0.9"></a>
 ## [4.0.9](https://github.com/poppinss/adonis-fold/compare/v4.0.8...v4.0.9) (2018-07-15)
 
