@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { RouteDefination, Matchers } from './Contracts'
+import { RouteDefination, Matchers, RouteContract } from './Contracts'
 import { dropSlash } from '../lib'
 
 /**
@@ -26,7 +26,7 @@ import { dropSlash } from '../lib'
  *   })
  * ```
  */
-export class Route {
+export class Route implements RouteContract {
   /**
    * By default the route is part of `root` domain. Root
    * domain is used when no domain is defined

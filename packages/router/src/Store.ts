@@ -9,7 +9,7 @@
 
 import * as pick from 'object.pick'
 import * as matchit from 'matchit'
-import { RouteDefination, RouteNode } from './Contracts'
+import { RouteDefination, RouteNode, MatchedRoute } from './Contracts'
 
 /**
  * An object of routes for a given HTTP method
@@ -37,16 +37,6 @@ type RoutesTree = {
   domains: {
     [domain: string]: DomainNode,
   },
-}
-
-/**
- * Shape of the matched route for a given
- * url inside a given domain
- */
-type MatchedRoute = {
-  route: RouteNode,
-  params: any,
-  subdomains: any,
 }
 
 /**

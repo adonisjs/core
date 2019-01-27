@@ -14,7 +14,7 @@ import { RouteGroup } from './Group'
 import { Matchers } from './Contracts'
 import { Store } from './Store'
 import { toRoutesJSON } from '../lib'
-import { RouteNode } from './Contracts'
+import { RouteNode, RouterContract, MatchedRoute } from './Contracts'
 
 type LookupNode = {
   handler: any,
@@ -35,7 +35,7 @@ type LookupNode = {
  * })
  * ```
  */
-export class Router {
+export class Router implements RouterContract {
   /**
    * Collection of routes, including route resource and route
    * group. To get a flat list of routes, call `router.toJSON()`
@@ -256,7 +256,7 @@ export class Router {
   /**
    * Find route for a given URL, method and optionally domain
    */
-  public find (url: string, method: string, domain?: string) {
+  public find (url: string, method: string, domain?: string): null | MatchedRoute {
     return this._store.match(url, method, domain)
   }
 

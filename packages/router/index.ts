@@ -8,3 +8,9 @@
  */
 
 export { Router } from './src/Router'
+export {
+  RouterContract,
+  RouteResourceContract,
+  RouteGroupContract,
+  RouteContract,
+} from './src/Contracts'

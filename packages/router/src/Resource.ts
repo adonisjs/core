@@ -8,7 +8,7 @@
  */
 
 import { singular } from 'pluralize'
-import { Matchers } from './Contracts'
+import { Matchers, RouteResourceContract } from './Contracts'
 import { Route } from './Route'
 
 /**
@@ -21,7 +21,7 @@ import { Route } from './Route'
  * const resource = new RouteResource('articles', 'ArticlesController')
  * ```
  */
-export class RouteResource {
+export class RouteResource implements RouteResourceContract {
   public routes: Route[] = []
 
   constructor (

@@ -9,13 +9,14 @@
 
 import { Route } from './Route'
 import { RouteResource } from './Resource'
+import { RouteGroupContract } from './Contracts'
 
 /**
  * Group class exposes the API to take action on a group
  * of routes. The group routes must be pre-defined using
  * the constructor.
  */
-export class RouteGroup {
+export class RouteGroup implements RouteGroupContract {
   constructor (public routes: (Route | RouteResource)[]) {
   }
 
