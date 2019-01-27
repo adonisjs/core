@@ -9,6 +9,7 @@
 
 import { Route } from './Route'
 import { RouteResource } from './Resource'
+import { BriskRoute } from './BriskRoute'
 import { RouteGroupContract } from './Contracts'
 
 /**
@@ -17,18 +18,26 @@ import { RouteGroupContract } from './Contracts'
  * the constructor.
  */
 export class RouteGroup implements RouteGroupContract {
-  constructor (public routes: (Route | RouteResource)[]) {
+  constructor (public routes: (Route | RouteResource | BriskRoute)[]) {
   }
 
   /**
    * Invokes a given method with params on the route instance or route
    * resource instance
    */
-  private _invoke (route: Route | RouteResource, method: string, params: any[]) {
+  private _invoke (route: Route | RouteResource | BriskRoute, method: string, params: any[]) {
     if (route instanceof RouteResource) {
       route.routes.forEach((child) => {
         this._invoke(child, method, params)
       })
+      return
+    }
+
+    if (route instanceof BriskRoute) {
+      /* istanbul ignore else */
+      if (route.route) {
+        route.route[method](...params)
+      }
       return
     }
 

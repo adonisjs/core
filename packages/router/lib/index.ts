@@ -9,6 +9,7 @@
 
 import { Route } from '../src/Route'
 import { RouteResource } from '../src/Resource'
+import { BriskRoute } from '../src/BriskRoute'
 import { RouteGroup } from '../src/Group'
 import { RouteDefination } from '../src/Contracts'
 
@@ -28,7 +29,7 @@ export function dropSlash (input: string): string {
  * Converts and array of routes or route groups or route resource to a flat
  * list of [[RouteDefination]]
  */
-export function toRoutesJSON (routes: (RouteGroup | RouteResource | Route)[]): RouteDefination[] {
+export function toRoutesJSON (routes: (RouteGroup | RouteResource | Route | BriskRoute)[]): RouteDefination[] {
   return routes.reduce((list: RouteDefination[], route) => {
     if (route instanceof RouteGroup) {
       list = list.concat(toRoutesJSON(route.routes))
@@ -37,6 +38,13 @@ export function toRoutesJSON (routes: (RouteGroup | RouteResource | Route)[]): R
 
     if (route instanceof RouteResource) {
       list = list.concat(toRoutesJSON(route.routes))
+      return list
+    }
+
+    if (route instanceof BriskRoute) {
+      if (route.route) {
+        list.push(route.route.toJSON())
+      }
       return list
     }
 

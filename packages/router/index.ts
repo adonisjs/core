@@ -13,4 +13,5 @@ export {
   RouteResourceContract,
   RouteGroupContract,
   RouteContract,
+  BriskRouteContract,
 } from './src/Contracts'

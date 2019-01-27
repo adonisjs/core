@@ -61,7 +61,7 @@ export interface RouteResourceContract {
 }
 
 export interface RouteGroupContract {
-  routes: (RouteContract | RouteResourceContract)[],
+  routes: (RouteContract | RouteResourceContract | BriskRouteContract)[],
   where (param: string, matcher: RegExp | string): this,
   prefix (prefix: string): this,
   domain (domain: string): this,
@@ -70,7 +70,7 @@ export interface RouteGroupContract {
 }
 
 export interface RouterContract {
-  routes: (RouteContract | RouteResourceContract | RouteGroupContract)[],
+  routes: (RouteContract | RouteResourceContract | RouteGroupContract | BriskRouteContract)[],
   route (pattern: string, methods: string[], handler: any): RouteContract,
   any (pattern: string, handler: any): RouteContract,
   get (pattern: string, handler: any): RouteContract,
@@ -84,4 +84,9 @@ export interface RouterContract {
   toJSON (): RouteNode[]
   find (url: string, method: string, domain?: string): null | MatchedRoute,
   urlFor (pattern: string, options: { params?: any, qs?: any }, domain?: string): null | string
+}
+
+export interface BriskRouteContract {
+  route: RouteContract | null,
+  setHandler (handler: any, invokedBy: string): RouteContract,
 }

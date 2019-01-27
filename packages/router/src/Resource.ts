@@ -111,6 +111,7 @@ export class RouteResource implements RouteResourceContract {
   public middleware (middleware: { [name: string]: any | any[] }): this {
     for (let name in middleware) {
       const route = this.routes.find((route) => route.name.endsWith(name))
+      /* istanbul ignore else */
       if (route) {
         route.middleware(middleware[name])
       }

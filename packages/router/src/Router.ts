@@ -11,6 +11,7 @@ import { stringify } from 'querystring'
 import { Route } from './Route'
 import { RouteResource } from './Resource'
 import { RouteGroup } from './Group'
+import { BriskRoute } from './BriskRoute'
 import { Matchers } from './Contracts'
 import { Store } from './Store'
 import { toRoutesJSON } from '../lib'
@@ -40,7 +41,7 @@ export class Router implements RouterContract {
    * Collection of routes, including route resource and route
    * group. To get a flat list of routes, call `router.toJSON()`
    */
-  public routes: (Route | RouteResource | RouteGroup)[] = []
+  public routes: (Route | RouteResource | RouteGroup | BriskRoute)[] = []
 
   /**
    * Global matchers to test route params against regular expressions.
@@ -69,7 +70,7 @@ export class Router implements RouterContract {
    * a group. Once we pass them to the group, this array
    * will be free.
    */
-  private _groupRoutes: (Route | RouteResource)[] = []
+  private _groupRoutes: (Route | RouteResource | BriskRoute)[] = []
 
   constructor (private _routeProcessor?: (route: RouteNode) => void) {
   }
@@ -194,6 +195,18 @@ export class Router implements RouterContract {
     }
 
     return resourceInstance
+  }
+
+  public on (pattern: string): BriskRoute {
+    const briskRoute = new BriskRoute(pattern, this._matchers)
+
+    if (this._inGroup) {
+      this._groupRoutes.push(briskRoute)
+    } else {
+      this.routes.push(briskRoute)
+    }
+
+    return briskRoute
   }
 
   /**

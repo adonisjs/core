@@ -1090,4 +1090,94 @@ test.group('Router | urlFor', () => {
     const url = router.urlFor('/posts', {})
     assert.isNull(url)
   })
+
+  test('define brisk route', (assert) => {
+    const router = new Router()
+    function handler () {}
+
+    router.on('/').setHandler(handler, 'render')
+    assert.deepEqual(router.toJSON(), [
+      {
+        name: undefined,
+        pattern: '/',
+        handler,
+        methods: ['GET'],
+        matchers: {},
+        meta: {},
+        domain: 'root',
+        middleware: [],
+      },
+    ])
+  })
+
+  test('define brisk route inside a group', (assert) => {
+    const router = new Router()
+    function handler () {}
+
+    router.group(() => {
+      router.on('/').setHandler(handler, 'render').as('root')
+    }).prefix('api/v1').as('v1')
+
+    assert.deepEqual(router.toJSON(), [
+      {
+        name: 'v1.root',
+        pattern: '/api/v1',
+        handler,
+        methods: ['GET'],
+        matchers: {},
+        meta: {},
+        domain: 'root',
+        middleware: [],
+      },
+    ])
+  })
+
+  test('register brisk route to store', (assert) => {
+    const router = new Router()
+    function handler () {}
+
+    router.group(() => {
+      router.on('/').setHandler(handler, 'render').as('root')
+    }).prefix('api/v1').as('v1')
+
+    router.commit()
+
+    assert.deepEqual(router['_store'].tree, {
+      tokens: [[{
+        old: 'root',
+        type: 0,
+        val: 'root',
+        end: '',
+      }]],
+      domains: {
+        root: {
+          GET: {
+            tokens: [[
+              {
+                old: '/api/v1',
+                type: 0,
+                val: 'api',
+                end: '',
+              },
+              {
+                old: '/api/v1',
+                type: 0,
+                val: 'v1',
+                end: '',
+              },
+            ]],
+            routes: {
+              '/api/v1': {
+                pattern: '/api/v1',
+                meta: {},
+                handler,
+                middleware: [],
+                name: 'v1.root',
+              },
+            },
+          },
+        },
+      },
+    })
+  })
 })
