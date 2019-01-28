@@ -26,15 +26,15 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@adonisjs/request": "^1.1.4",
-    "@adonisjs/response": "^1.1.4",
-    "@adonisjs/router": "^1.2.0",
     "@adonisjs/utils": "^1.2.0",
     "co-compose": "^5.1.1",
     "haye": "^2.0.2"
   },
   "peerDependencies": {
-    "@adonisjs/fold": "5.x"
+    "@adonisjs/fold": "5.x",
+    "@adonisjs/request": "1.x",
+    "@adonisjs/response": "1.x",
+    "@adonisjs/router": "1.x"
   },
   "nyc": {
     "exclude": [
@@ -49,6 +49,9 @@
   },
   "devDependencies": {
     "@adonisjs/fold": "^5.0.1",
+    "@adonisjs/request": "^1.1.4",
+    "@adonisjs/response": "^1.1.4",
+    "@adonisjs/router": "^1.2.0",
     "haye": "^2.0.2",
     "supertest": "^3.4.2"
   }
