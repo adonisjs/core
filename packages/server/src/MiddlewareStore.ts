@@ -1,5 +1,5 @@
 /*
- * @adonisjs/core
+ * @adonisjs/server
  *
  * (c) Harminder Virk <virk@adonisjs.com>
  *
