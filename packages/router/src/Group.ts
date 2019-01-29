@@ -7,10 +7,19 @@
  * file that was distributed with this source code.
  */
 
+import { Exception } from '@adonisjs/utils'
 import { Route } from './Route'
 import { RouteResource } from './Resource'
 import { BriskRoute } from './BriskRoute'
 import { RouteGroupContract } from './Contracts'
+
+function missingRouteName () {
+  return new Exception(
+    'All routes inside a group must have names before calling Route.group.as',
+    500,
+    'E_MISSING_ROUTE_NAME',
+  )
+}
 
 /**
  * Group class exposes the API to take action on a group
@@ -36,9 +45,25 @@ export class RouteGroup implements RouteGroupContract {
     if (route instanceof BriskRoute) {
       /* istanbul ignore else */
       if (route.route) {
+        /**
+         * Raise error when trying to prefix route name but route doesn't have
+         * a name
+         */
+        if (method === 'as' && !route.route.name) {
+          throw missingRouteName()
+        }
+
         route.route[method](...params)
       }
       return
+    }
+
+    /**
+     * Raise error when trying to prefix route name but route doesn't have
+     * a name
+     */
+    if (method === 'as' && !route.name) {
+      throw missingRouteName()
     }
 
     route[method](...params)

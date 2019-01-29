@@ -16,6 +16,7 @@ import { Matchers } from './Contracts'
 import { Store } from './Store'
 import { toRoutesJSON } from '../lib'
 import { RouteNode, RouterContract, MatchedRoute } from './Contracts'
+import { Exception } from '@adonisjs/utils'
 
 type LookupNode = {
   handler: any,
@@ -137,6 +138,10 @@ export class Router implements RouterContract {
    * to routes in bulk
    */
   public group (callback: () => void): RouteGroup {
+    if (this._inGroup) {
+      throw new Exception('Cannot create nested route groups', 500, 'E_NESTED_ROUTE_GROUPS')
+    }
+
     /**
      * Set the flag that we are in a group
      */

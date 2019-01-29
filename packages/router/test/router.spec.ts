@@ -97,6 +97,59 @@ test.group('Router | add', () => {
     const fn = () => router.commit()
     assert.throw(fn, 'Duplicate route name `home`')
   })
+
+  test('raise error when creating nested groups', (assert) => {
+    assert.plan(1)
+
+    const router = new Router()
+    function handler () {}
+
+    try {
+      router.group(() => {
+        router.group(() => {
+          router.get('/', handler)
+        })
+      }).prefix('api/v1').as('v1')
+    } catch (error) {
+      assert.equal(error.message, 'E_NESTED_ROUTE_GROUPS: Cannot create nested route groups')
+    }
+  })
+
+  test('raise error when prefixing route name of route with undefined name', (assert) => {
+    assert.plan(1)
+
+    const router = new Router()
+    function handler () {}
+
+    try {
+      router.group(() => {
+        router.get('/', handler)
+      }).prefix('api/v1').as('v1')
+    } catch (error) {
+      assert.equal(
+        error.message,
+        'E_MISSING_ROUTE_NAME: All routes inside a group must have names before calling Route.group.as',
+      )
+    }
+  })
+
+  test('raise error when prefixing brisk route name of route with undefined name', (assert) => {
+    assert.plan(1)
+
+    const router = new Router()
+    function handler () {}
+
+    try {
+      router.group(() => {
+        router.on('/').setHandler(handler, 'render')
+      }).prefix('api/v1').as('v1')
+    } catch (error) {
+      assert.equal(
+        error.message,
+        'E_MISSING_ROUTE_NAME: All routes inside a group must have names before calling Route.group.as',
+      )
+    }
+  })
 })
 
 test.group('Router | commit', () => {
