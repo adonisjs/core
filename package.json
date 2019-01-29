@@ -2,9 +2,9 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "@commitlint/cli": "^7.3.2",
+    "@commitlint/cli": "^7.4.0",
     "@commitlint/config-conventional": "^7.3.1",
-    "@types/node": "^10.12.18",
+    "@types/node": "^10.12.19",
     "del-cli": "^1.1.0",
     "husky": "^1.3.1",
     "japa": "^2.0.7",
@@ -28,7 +28,7 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap",
-    "test": "lerna run test --since e0dddab53d1e58b8d8461efc59766f7f8b87a823",
+    "test": "lerna run test --since 94e42aa23e8639006628a0f5a4071064cc0b70d0",
     "publish": "lerna run build && lerna publish"
   }
 }
