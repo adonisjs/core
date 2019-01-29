@@ -10,11 +10,7 @@
 import { Exception } from '@adonisjs/utils'
 import * as haye from 'haye'
 
-import {
-  MiddlewareStoreContract,
-  MiddlewareNode,
-  ResolvedMiddlewareNode,
-} from './Contracts/MiddlewareStore'
+import { MiddlewareStoreContract, MiddlewareNode, ResolvedMiddlewareNode } from './Contracts'
 
 /**
  * Middleware store register and keep all the application middleware at one
@@ -94,22 +90,6 @@ export class MiddlewareStore implements MiddlewareStoreContract {
    */
   public getNamed (name: string): null | ResolvedMiddlewareNode {
     return this._named[name] || null
-  }
-
-  /**
-   * Consitently executes resolve middleware node at runtime. This method
-   * must be passed to `co-compose` `runner().resolve` method.
-   */
-  public async middlewareExecutor (middleware: ResolvedMiddlewareNode, params: any[]): Promise<void> {
-    if (middleware.type === 'function') {
-      return middleware.value(...params, middleware.args)
-    }
-
-    if (middleware.type === 'class') {
-      return global['make'](middleware.value).handle(...params, middleware.args)
-    }
-
-    throw new Exception(`${middleware.type} is not a valid middleware type`, 500, 'E_INVALID_MIDDLEWARE_TYPE')
   }
 
   /**

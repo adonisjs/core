@@ -8,4 +8,12 @@
  */
 
 export { MiddlewareStore } from './src/MiddlewareStore'
-export { MiddlewareStoreContract } from './src/Contracts/MiddlewareStore'
+export { Server } from './src/Server'
+export { routePreProcessor } from './src/routePreProcessor'
+
+export {
+  MiddlewareStoreContract,
+  ServerContract,
+  ContextContract,
+  HooksContextContract,
+} from './src/Contracts'

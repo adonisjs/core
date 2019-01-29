@@ -11,6 +11,7 @@ import * as test from 'japa'
 import { Ioc } from '@adonisjs/fold'
 import { Router } from '@adonisjs/router'
 
+import { middlewareExecutor } from '../src/middlewareExecutor'
 import { MiddlewareStore } from '../src/MiddlewareStore'
 
 test.group('Middleware', () => {
@@ -59,7 +60,7 @@ test.group('Middleware', () => {
 
     const middleware = new MiddlewareStore()
     middleware.register([middlewareFn])
-    await middleware.middlewareExecutor(middleware.get()[0], [])
+    await middlewareExecutor(middleware.get()[0], [])
 
     assert.deepEqual(stack, ['middlewareFn'])
   })
@@ -80,7 +81,7 @@ test.group('Middleware', () => {
 
     const middleware = new MiddlewareStore()
     middleware.register(['App/Middleware'])
-    await middleware.middlewareExecutor(middleware.get()[0], [])
+    await middlewareExecutor(middleware.get()[0], [])
 
     assert.deepEqual(stack, ['middleware class'])
 
@@ -139,7 +140,7 @@ test.group('Middleware', () => {
     router.get('/', () => {}).middleware('auth:basic,jwt')
     router.commit()
 
-    await middleware.middlewareExecutor(
+    await middlewareExecutor(
       router['_store'].tree.domains.root['GET'].routes['/'].meta.resolvedMiddleware[0],
       [],
     )
@@ -158,11 +159,10 @@ test.group('Middleware', () => {
   })
 
   test('raise error when middleware type is not from pre-defined one\'s', async (assert) => {
-    const middleware = new MiddlewareStore()
     assert.plan(1)
 
     try {
-      await middleware.middlewareExecutor({
+      await middlewareExecutor({
         type: 'foo',
         value: async () => {},
         args: [],
