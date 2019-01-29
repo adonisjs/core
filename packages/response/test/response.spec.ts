@@ -35,10 +35,11 @@ test.group('Response', (group) => {
 
       response.header('status', 200)
       response.header('content-type', 'application/json')
+      response.flushHeaders()
       res.end()
     })
 
-    await supertest(server).get('/').expect(200).expect('Content-Type', 'application/json')
+    await supertest(server).get('/').expect(200).expect('content-type', 'application/json')
   })
 
   test('get recently set headers', async (assert) => {
@@ -48,10 +49,14 @@ test.group('Response', (group) => {
 
       response.header('status', 200)
       response.header('content-type', 'application/json')
-      res.end(JSON.stringify({ contentType: response.getHeader('Content-Type') }))
+
+      const contentType = response.getHeader('Content-Type')
+
+      response.flushHeaders()
+      res.end(JSON.stringify({ contentType }))
     })
 
-    const { body } = await supertest(server).get('/').expect(200).expect('Content-Type', 'application/json')
+    const { body } = await supertest(server).get('/').expect(200).expect('content-type', 'application/json')
     assert.deepEqual(body, {
       contentType: 'application/json',
     })
@@ -64,6 +69,7 @@ test.group('Response', (group) => {
 
       response.header('set-cookie', 'username=virk')
       response.append('set-cookie', 'age=22')
+      response.flushHeaders()
       res.end()
     })
 
@@ -77,6 +83,7 @@ test.group('Response', (group) => {
       const response = new Response(req, res, config)
 
       response.append('set-cookie', 'age=22')
+      response.flushHeaders()
       res.end()
     })
 
@@ -91,6 +98,7 @@ test.group('Response', (group) => {
 
       response.append('set-cookie', ['username=virk'])
       response.append('set-cookie', ['age=22'])
+      response.flushHeaders()
       res.end()
     })
 
@@ -104,6 +112,7 @@ test.group('Response', (group) => {
       const response = new Response(req, res, config)
 
       response.header('set-cookie', '')
+      response.flushHeaders()
       res.end()
     })
 
@@ -118,6 +127,7 @@ test.group('Response', (group) => {
 
       response.header('content-type', 'application/json')
       response.safeHeader('content-type', 'text/html')
+      response.flushHeaders()
       res.end()
     })
 
@@ -131,6 +141,7 @@ test.group('Response', (group) => {
 
       response.header('content-type', 'application/json')
       response.removeHeader('content-type')
+      response.flushHeaders()
       res.end()
     })
 
@@ -144,6 +155,7 @@ test.group('Response', (group) => {
       const response = new Response(req, res, config)
 
       response.status(201)
+      response.flushHeaders()
       res.end()
     })
 
@@ -155,7 +167,9 @@ test.group('Response', (group) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
       const { type, body } = response.buildResponseBody(Buffer.from('hello'))
+
       response.header('content-type', type)
+      response.flushHeaders()
       res.write(body)
       res.end()
     })
@@ -168,7 +182,9 @@ test.group('Response', (group) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
       const { type, body } = response.buildResponseBody('hello')
+
       response.header('content-type', type)
+      response.flushHeaders()
       res.write(body)
       res.end()
     })
@@ -183,6 +199,7 @@ test.group('Response', (group) => {
       const response = new Response(req, res, config)
       const { type, body } = response.buildResponseBody('<p> hello </p>')
       response.header('content-type', type)
+      response.flushHeaders()
       res.write(body)
       res.end()
     })
@@ -197,6 +214,7 @@ test.group('Response', (group) => {
       const response = new Response(req, res, config)
       const { type, body } = response.buildResponseBody([1, 2])
       response.header('content-type', type)
+      response.flushHeaders()
       res.write(body)
       res.end()
     })
@@ -211,6 +229,7 @@ test.group('Response', (group) => {
       const response = new Response(req, res, config)
       const { type, body } = response.buildResponseBody({ username: 'virk' })
       response.header('content-type', type)
+      response.flushHeaders()
       res.write(body)
       res.end()
     })
@@ -495,8 +514,8 @@ test.group('Response', (group) => {
 
     const { text } = await supertest(server)
       .get('/')
-      .expect('Content-type', 'text/html; charset=utf-8')
-      .expect('Content-length', '20')
+      .expect('content-type', 'text/html; charset=utf-8')
+      .expect('content-length', '20')
 
     assert.equal(text, '<p> hello world </p>')
   })
@@ -602,7 +621,7 @@ test.group('Response', (group) => {
 
     const { text } = await supertest(server)
       .get('/')
-      .expect('Content-type', 'text/html; charset=utf-8')
+      .expect('content-type', 'text/html; charset=utf-8')
       .expect('Content-length', '20')
       .expect('Content-Disposition', 'attachment; filename="hello.html"')
 
@@ -620,7 +639,7 @@ test.group('Response', (group) => {
 
     const { text } = await supertest(server)
       .get('/')
-      .expect('Content-type', 'text/html; charset=utf-8')
+      .expect('content-type', 'text/html; charset=utf-8')
       .expect('Content-length', '20')
       .expect('Content-Disposition', 'attachment; filename="ooo.html"')
 
@@ -638,7 +657,7 @@ test.group('Response', (group) => {
 
     const { text } = await supertest(server)
       .get('/')
-      .expect('Content-type', 'text/html; charset=utf-8')
+      .expect('content-type', 'text/html; charset=utf-8')
       .expect('Content-length', '20')
       .expect('Content-Disposition', 'inline; filename="ooo.html"')
 

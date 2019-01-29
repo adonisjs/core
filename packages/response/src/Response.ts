@@ -103,6 +103,8 @@ export class Response extends Macroable implements ResponseContract {
   protected static _macros = {}
   protected static _getters = {}
 
+  private _headers: any = {}
+
   constructor (public request: IncomingMessage, public response: ServerResponse, private _config: Partial<Config>) {
     super()
   }
@@ -166,7 +168,7 @@ export class Response extends Macroable implements ResponseContract {
       this.removeHeader('Content-Type')
       this.removeHeader('Content-Length')
       this.removeHeader('Transfer-Encoding')
-      this.response.end()
+      this._end()
       return
     }
 
@@ -184,7 +186,7 @@ export class Response extends Macroable implements ResponseContract {
       this.removeHeader('Content-Type')
       this.removeHeader('Content-Length')
       this.removeHeader('Transfer-Encoding')
-      this.response.end(body)
+      this._end(body)
       return
     }
 
@@ -230,9 +232,22 @@ export class Response extends Macroable implements ResponseContract {
      * Compute content length
      */
     this.header('Content-Length', Buffer.byteLength(body))
+    this._end(body)
+  }
 
-    this.response.write(body)
-    this.response.end()
+  private _end (body?: any, statusCode?: number) {
+    this.flushHeaders(statusCode)
+
+    // avoid ArgumentsAdaptorTrampoline from V8 (inspired by fastify)
+    const res = this.response as any
+    res.end(body, null, null)
+  }
+
+  public flushHeaders (statusCode?: number): this {
+    this.response.writeHead(statusCode || this.response.statusCode, this._headers)
+    this._headers = {}
+
+    return this
   }
 
   /**
@@ -240,7 +255,8 @@ export class Response extends Macroable implements ResponseContract {
    * header.
    */
   public getHeader (key: string) {
-    return this.response.getHeader(key)
+    const value = this._headers[key.toLowerCase()]
+    return value === undefined ? this.response.getHeader(key) : value
   }
 
   /**
@@ -256,7 +272,7 @@ export class Response extends Macroable implements ResponseContract {
    */
   public header (key: string, value: CastableHeader): this {
     if (value) {
-      this.response.setHeader(key, this._castHeaderValue(value))
+      this._headers[key.toLowerCase()] = this._castHeaderValue(value)
     }
     return this
   }
@@ -278,6 +294,8 @@ export class Response extends Macroable implements ResponseContract {
       return this
     }
 
+    key = key.toLowerCase()
+
     let existingHeader = this.getHeader(key)
     let casted = this._castHeaderValue(value)
 
@@ -286,13 +304,14 @@ export class Response extends Macroable implements ResponseContract {
      * away
      */
     if (!existingHeader) {
-      this.response.setHeader(key, casted)
+      this._headers[key] = casted
       return this
     }
 
     existingHeader = this._castHeaderValue(existingHeader)
     casted = Array.isArray(existingHeader) ? existingHeader.concat(casted) : [existingHeader].concat(casted)
-    this.response.setHeader(key, casted)
+
+    this._headers[key] = casted
     return this
   }
 
@@ -310,7 +329,7 @@ export class Response extends Macroable implements ResponseContract {
    * Removes the existing response header from being sent.
    */
   public removeHeader (key: string): this {
-    this.response.removeHeader(key)
+    delete this._headers[key.toLowerCase()]
     return this
   }
 
@@ -392,7 +411,7 @@ export class Response extends Macroable implements ResponseContract {
 
     const status = this.response.statusCode
     if ((status >= 200 && status < 300) || status === 304) {
-      return fresh(this.request.headers, this.response.getHeaders())
+      return fresh(this.request.headers, this._headers)
     }
 
     return false
@@ -560,8 +579,10 @@ export class Response extends Macroable implements ResponseContract {
         if (raiseErrors) {
           reject(error)
         } else {
-          this.status(error.status || 500)
-          this.response.end(error.code === 'ENOENT' ? 'File not found' : 'Cannot process file')
+          this._end(
+            error.code === 'ENOENT' ? 'File not found' : 'Cannot process file',
+            error.status || 500,
+          )
           resolve()
         }
       })
@@ -582,6 +603,7 @@ export class Response extends Macroable implements ResponseContract {
       /**
        * Pipe stream
        */
+      this.flushHeaders()
       body.pipe(this.response)
     })
   }
@@ -637,8 +659,7 @@ export class Response extends Macroable implements ResponseContract {
        */
       if (!generateEtag) {
         if (this.request.method === 'HEAD') {
-          this.status(200)
-          this.response.end()
+          this._end()
           return
         }
 
@@ -656,8 +677,7 @@ export class Response extends Macroable implements ResponseContract {
        * GET and HEAD requests.
        */
       if (fresh) {
-        this.status(304)
-        this.response.end()
+        this._end(null, 304)
         return
       }
 
@@ -666,8 +686,7 @@ export class Response extends Macroable implements ResponseContract {
        * with a 200 and ask the browser to initiate the GET request.
        */
       if (this.request.method === 'HEAD') {
-        this.status(200)
-        this.response.end()
+        this._end(null, 200)
         return
       }
 
@@ -679,8 +698,7 @@ export class Response extends Macroable implements ResponseContract {
       if (raiseErrors) {
         throw error
       } else {
-        this.status(404)
-        this.response.end('Cannot process file')
+        this._end('Cannot process file', 404)
       }
     }
   }
@@ -726,8 +744,7 @@ export class Response extends Macroable implements ResponseContract {
     this.explicitEnd = false
 
     this.location(url)
-    this.status(statusCode)
-    this.response.end(`Redirecting to ${url}`)
+    this._end(`Redirecting to ${url}`, statusCode)
   }
 
   /**
