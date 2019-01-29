@@ -53,5 +53,14 @@ async function middlewareHandler (ctx: ContextContract) {
  */
 export function routePreProcessor (route: RouteNode, middlewareStore: MiddlewareStoreContract) {
   middlewareStore.routeMiddlewareProcessor(route)
-  route.meta.finalHandler = middlewareHandler
+
+  /**
+   * Attach middleware handler when route has 1 or more middleware, otherwise
+   * skip the layer and use final handler
+   */
+  if (route.meta.resolvedMiddleware.length) {
+    route.meta.finalHandler = middlewareHandler
+  } else {
+    route.meta.finalHandler = finalHandler
+  }
 }

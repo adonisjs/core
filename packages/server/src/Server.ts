@@ -22,20 +22,25 @@ class RouteNotFound extends Exception {}
  * Server class handles the HTTP requests by using all Adonis micro modules.
  *
  * ```js
+ * const http = require('http')
  * const { Request } = require('@adonisjs/request')
  * const { Response } = require('@adonisjs/response')
- * const { Router } = require('@adonisjs/route')
+ * const { Router } = require('@adonisjs/router')
  * const { MiddlewareStore, Server, routePreProcessor } = require('@adonisjs/server')
  *
  * const middlewareStore = new MiddlewareStore()
- * const router = new Route((route) => routePreProcessor(route, middlewareStore))
+ * const router = new Router((route) => routePreProcessor(route, middlewareStore))
  *
- * const server = new Server(Request, Reponse, router, middlewareStore)
- * http.createServer(server.handler.bind(server)).listen(3000)
+ * const server = new Server(Request, Response, router, middlewareStore)
+ * http.createServer(server.handle.bind(server)).listen(3000)
  * ```
  */
 export class Server implements ServerContract {
   private _globalMiddleware = new Middleware().register(this._middlewareStore.get())
+
+  private _handler = this._middlewareStore.get().length
+    ? this._executeMiddleware.bind(this)
+    : this._executeRouteHandler.bind(this)
 
   constructor (
     private _Request: RequestConstructor,
@@ -44,6 +49,31 @@ export class Server implements ServerContract {
     private _middlewareStore: MiddlewareStoreContract,
   ) {}
 
+  /**
+   * Executes the global middleware chain before executing
+   * the route handler
+   */
+  private async _executeMiddleware (ctx) {
+    await this
+      ._globalMiddleware
+      .runner()
+      .resolve(middlewareExecutor)
+      .finalHandler(ctx.route.meta.finalHandler, [ctx])
+      .run([ctx])
+  }
+
+  /**
+   * Executes route handler directly without executing
+   * the middleware chain. This is used when global
+   * middleware length is 0
+   */
+  private async _executeRouteHandler (ctx) {
+    await ctx.route.meta.finalHandler(ctx)
+  }
+
+  /**
+   * Handles HTTP request
+   */
   private async _handleRequest (ctx) {
     const url = ctx.request.url()
     const method = ctx.request.method()
@@ -64,15 +94,7 @@ export class Server implements ServerContract {
     ctx.subdomains = route.subdomains
     ctx.route = route.route
 
-    /**
-     * Execute middleware chain and the route finalHandler
-     */
-    await this
-      ._globalMiddleware
-      .runner()
-      .resolve(middlewareExecutor)
-      .finalHandler(route.route.meta.finalHandler, [ctx])
-      .run([ctx])
+    await this._handler(ctx)
   }
 
   /**
