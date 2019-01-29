@@ -22,7 +22,7 @@
   "homepage": "https://adonisjs.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adonisjs/adonis-framework/tree/master/packages/core"
+    "url": "https://github.com/adonisjs/adonis-framework/tree/master/packages/server"
   },
   "license": "MIT",
   "dependencies": {
