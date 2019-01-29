@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.2.0...@adonisjs/router@1.3.0) (2019-01-29)
+
+
+### Features
+
+* **router:** add support for brisk route ([e0dddab](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/commit/e0dddab))
+* **router:** expose RouteNode ([fc2f382](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/commit/fc2f382))
+
+
+
+
+
 # [1.2.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.1.3...@adonisjs/router@1.2.0) (2019-01-26)
 
 
