@@ -12,4 +12,4 @@
  */
 
 export { Request } from './src/Request'
-export { RequestContract } from './src/RequestContract'
+export { RequestContract, RequestConfig } from './src/RequestContract'

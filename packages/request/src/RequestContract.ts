@@ -57,3 +57,13 @@ export interface RequestContract {
   fresh (): boolean
   stale (): boolean
 }
+
+/**
+ * Config for the request class
+ */
+export type RequestConfig = {
+  allowMethodSpoofing: boolean,
+  trustProxy: (address: string, distance: number) => boolean,
+  getIp: ((request: RequestContract) => string) | null,
+  subdomainOffset: number,
+}

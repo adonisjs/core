@@ -25,17 +25,7 @@ import * as fresh from 'fresh'
 import { Macroable } from 'macroable'
 import { ConfigReader } from '@adonisjs/utils'
 
-import { RequestContract } from './RequestContract'
-
-/**
- * Config for the request class
- */
-type Config = {
-  allowMethodSpoofing: boolean,
-  trustProxy: (address: string, distance: number) => boolean,
-  getIp: ((request: RequestContract) => string) | null,
-  subdomainOffset: number,
-}
+import { RequestContract, RequestConfig } from './RequestContract'
 
 /**
  * Config reader with default config
@@ -45,7 +35,7 @@ const $ = new ConfigReader({
   trustProxy: proxyaddr.compile('loopback'),
   getIp: null,
   subdomainOffset: 2,
-} as Config)
+} as RequestConfig)
 
 /**
  * HTTP Request class exposes the interface to consistently read values
@@ -102,7 +92,7 @@ export class Request extends Macroable implements RequestContract {
   constructor (
     public request: IncomingMessage,
     public response: ServerResponse,
-    private _config: Partial<Config>,
+    private _config: Partial<RequestConfig>,
   ) {
     super()
     this._parseQueryString()
