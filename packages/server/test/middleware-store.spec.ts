@@ -75,7 +75,7 @@ test.group('Middleware', () => {
     }
 
     const ioc = new Ioc()
-    ioc.bind('App/Middleware', () => Middleware)
+    ioc.bind('App/Middleware', () => new Middleware())
     global['use'] = ioc.use.bind(ioc)
     global['make'] = ioc.make.bind(ioc)
 
@@ -100,6 +100,7 @@ test.group('Middleware', () => {
     router.commit()
 
     assert.deepEqual(router['_store'].tree.domains.root['GET'].routes['/'].meta, {
+      namespace: 'App/Controllers/Http',
       resolvedMiddleware: [{
         type: 'function',
         value: handler,
@@ -119,6 +120,7 @@ test.group('Middleware', () => {
     router.commit()
 
     assert.deepEqual(router['_store'].tree.domains.root['GET'].routes['/'].meta, {
+      namespace: 'App/Controllers/Http',
       resolvedMiddleware: [{
         type: 'function',
         value: handler,
@@ -182,6 +184,7 @@ test.group('Middleware', () => {
     router.commit()
 
     assert.deepEqual(router['_store'].tree.domains.root['GET'].routes['/'].meta, {
+      namespace: 'App/Controllers/Http',
       resolvedMiddleware: [{
         type: 'function',
         value: handler,

@@ -46,7 +46,7 @@ export class MiddlewareStore implements MiddlewareStoreContract {
   private _resolveMiddlewareItem (middleware: MiddlewareNode): ResolvedMiddlewareNode {
     return typeof(middleware) === 'string' ? {
       type: 'class',
-      value: global['use'](middleware),
+      value: middleware,
       args: [],
     } : {
       type: 'function',

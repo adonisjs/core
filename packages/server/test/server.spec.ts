@@ -13,6 +13,7 @@ import { createServer } from 'http'
 import { Request } from '@adonisjs/request'
 import { Response } from '@adonisjs/response'
 import { Router } from '@adonisjs/router'
+import { Ioc } from '@adonisjs/fold'
 
 import { MiddlewareStore } from '../src/MiddlewareStore'
 import { Server } from '../src/Server'
@@ -292,7 +293,12 @@ test.group('Server | middleware', () => {
   })
 })
 
-test.group('Server | all', () => {
+test.group('Server | all', (group) => {
+  group.afterEach(() => {
+    delete global['use']
+    delete global['make']
+  })
+
   test('raise 404 when route is missing', async (assert) => {
     const middlewareStore = new MiddlewareStore()
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
@@ -303,5 +309,29 @@ test.group('Server | all', () => {
 
     const { text } = await supertest(httpServer).get('/').expect(404)
     assert.equal(text, 'E_ROUTE_NOT_FOUND: Cannot GET:/')
+  })
+
+  test('execute IoC container controller binding', async (assert) => {
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+
+    class HomeController {
+      public async index () {
+        return 'handled'
+      }
+    }
+
+    const ioc = new Ioc()
+    ioc.bind('App/Controllers/Http/HomeController', () => new HomeController())
+    global['make'] = ioc.make.bind(ioc)
+
+    router.get('/', 'HomeController.index')
+    router.commit()
+
+    const server = new Server(Request, Response, router, middlewareStore)
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'handled')
   })
 })

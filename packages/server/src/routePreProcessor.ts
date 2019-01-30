@@ -9,6 +9,8 @@
 
 import { RouteNode } from '@adonisjs/router'
 import { Middleware } from 'co-compose'
+import { Exception } from '@adonisjs/utils'
+
 import { ContextContract } from './Contracts'
 import { MiddlewareStoreContract } from './Contracts'
 import { middlewareExecutor } from './middlewareExecutor'
@@ -19,7 +21,16 @@ import { middlewareExecutor } from './middlewareExecutor'
  * for same.
  */
 async function finalHandler (ctx: ContextContract) {
-  const returnValue = await ctx.route!.handler(ctx)
+  const handler = ctx.route!.meta.resolvedHandler
+
+  /**
+   * Execute handler based upon it's type
+   */
+  const returnValue = await (
+    handler.type === 'class'
+      ? global['make'](handler.value)[handler.method](ctx)
+      : handler.value(ctx)
+    )
 
   if (
     returnValue !== undefined &&            // Return value is explicitly defined
@@ -53,6 +64,42 @@ async function middlewareHandler (ctx: ContextContract) {
  */
 export function routePreProcessor (route: RouteNode, middlewareStore: MiddlewareStoreContract) {
   middlewareStore.routeMiddlewareProcessor(route)
+
+  /**
+   * Resolve route handler before hand to keep HTTP layer performant
+   */
+  if (typeof (route.handler) === 'string') {
+    let handler = route.handler
+
+    /**
+     * 1. Do not prepend namespace, if `namespace` starts with `/`.
+     * 2. Else if `namespace` exists, then prepend the namespace
+     */
+    if (route.handler.startsWith('/')) {
+      handler = route.handler.substr(1)
+    } else if (route.meta.namespace) {
+      handler = `${route.meta.namespace.replace(/\/$/, '')}/${route.handler}`
+    }
+
+    /**
+     * Split the controller and method. Raise error if `method` is missing
+     */
+    const [ namespace, method ] = handler.split('.')
+    if (!method) {
+      throw new Exception(`Missing controller method on \`${route.pattern}\` route`)
+    }
+
+    route.meta.resolvedHandler = {
+      type: 'class',
+      value: namespace,
+      method,
+    }
+  } else {
+    route.meta.resolvedHandler = {
+      type: 'function',
+      value: route.handler,
+    }
+  }
 
   /**
    * Attach middleware handler when route has 1 or more middleware, otherwise
