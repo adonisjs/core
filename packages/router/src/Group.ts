@@ -123,4 +123,15 @@ export class RouteGroup implements RouteGroupContract {
 
     return this
   }
+
+  /**
+   * Define namespace for all the routes inside the group
+   */
+  public namespace (namespace: string): this {
+    this.routes.forEach((route) => {
+      this._invoke(route, 'namespace', [namespace])
+    })
+
+    return this
+  }
 }

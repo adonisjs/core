@@ -13,11 +13,13 @@ import { Route } from '../src/Route'
 test.group('Route', () => {
   test('create a basic route', (assert) => {
     function handler () {}
-    const route = new Route('/', ['GET'], handler, {})
+    const route = new Route('/', ['GET'], handler, 'App/Controllers/Http', {})
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -29,12 +31,14 @@ test.group('Route', () => {
 
   test('prefix route', (assert) => {
     function handler () {}
-    const route = new Route('/', ['GET'], handler, {})
+    const route = new Route('/', ['GET'], handler, 'App/Controllers/Http', {})
     route.prefix('admin')
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/admin',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -46,11 +50,13 @@ test.group('Route', () => {
 
   test('handle leading slash in pattern', (assert) => {
     function handler () {}
-    const route = new Route('/blog', ['GET'], handler, {})
+    const route = new Route('/blog', ['GET'], handler, 'App/Controllers/Http', {})
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/blog',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -62,12 +68,14 @@ test.group('Route', () => {
 
   test('handle leading slash in pattern along with prefix', (assert) => {
     function handler () {}
-    const route = new Route('/blog', ['GET'], handler, {})
+    const route = new Route('/blog', ['GET'], handler, 'App/Controllers/Http', {})
     route.prefix('admin')
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/admin/blog',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -79,12 +87,14 @@ test.group('Route', () => {
 
   test('define matchers for params', (assert) => {
     function handler () {}
-    const route = new Route('posts/:id', ['GET'], handler, {})
+    const route = new Route('posts/:id', ['GET'], handler, 'App/Controllers/Http', {})
     route.where('id', '^[a-z]+$')
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {
         id: /^[a-z]+$/,
@@ -98,13 +108,15 @@ test.group('Route', () => {
 
   test('define global matchers for params', (assert) => {
     function handler () {}
-    const route = new Route('posts/:id', ['GET'], handler, {
+    const route = new Route('posts/:id', ['GET'], handler, 'App/Controllers/Http', {
       id: /^[a-z]+$/,
     })
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {
         id: /^[a-z]+$/,
@@ -118,14 +130,16 @@ test.group('Route', () => {
 
   test('give preference to local matcher over global', (assert) => {
     function handler () {}
-    const route = new Route('posts/:id', ['GET'], handler, {
+    const route = new Route('posts/:id', ['GET'], handler, 'App/Controllers/Http', {
       id: /^[a-z]+$/,
     })
     route.where('id', '(.*)')
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {
         id: /(.*)/,
@@ -139,12 +153,14 @@ test.group('Route', () => {
 
   test('define route domain', (assert) => {
     function handler () {}
-    const route = new Route('posts/:id', ['GET'], handler, {})
+    const route = new Route('posts/:id', ['GET'], handler, 'App/Controllers/Http', {})
     route.domain('foo.com')
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {},
       domain: 'foo.com',
@@ -156,12 +172,14 @@ test.group('Route', () => {
 
   test('define an array of route middleware', (assert) => {
     function handler () {}
-    const route = new Route('posts/:id', ['GET'], handler, {})
+    const route = new Route('posts/:id', ['GET'], handler, 'App/Controllers/Http', {})
     route.middleware(['auth', 'acl:admin'])
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -173,12 +191,14 @@ test.group('Route', () => {
 
   test('define route middleware as a string', (assert) => {
     function handler () {}
-    const route = new Route('posts/:id', ['GET'], handler, {})
+    const route = new Route('posts/:id', ['GET'], handler, 'App/Controllers/Http', {})
     route.middleware('auth')
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {},
       domain: 'root',
@@ -190,12 +210,14 @@ test.group('Route', () => {
 
   test('give name to the route', (assert) => {
     function handler () {}
-    const route = new Route('posts/:id', ['GET'], handler, {})
+    const route = new Route('posts/:id', ['GET'], handler, 'App/Controllers/Http', {})
     route.as('showPost')
 
     assert.deepEqual(route.toJSON(), {
       pattern: '/posts/:id',
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       matchers: {},
       domain: 'root',

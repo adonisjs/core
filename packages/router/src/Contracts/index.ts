@@ -48,6 +48,7 @@ export interface RouteContract {
   domain (domain: string): this,
   middleware (middleware: any | any[], prepend?: boolean): this,
   as (name: string, append?: boolean): this,
+  namespace (namespace: string): this,
   toJSON (): RouteDefination,
 }
 
@@ -58,6 +59,7 @@ export interface RouteResourceContract {
   apiOnly (): this,
   middleware (middleware: { [name: string]: any | any[] }): this,
   where (key: string, matcher: string | RegExp): this,
+  namespace (namespace: string): this,
 }
 
 export interface RouteGroupContract {
@@ -67,6 +69,7 @@ export interface RouteGroupContract {
   domain (domain: string): this,
   as (name: string): this,
   middleware (middleware: any | any[]): this,
+  namespace (namespace: string): this,
 }
 
 export interface RouterContract {
@@ -81,9 +84,12 @@ export interface RouterContract {
   group (callback: () => void): RouteGroupContract,
   resource (resource: string, controller: string): RouteResourceContract,
   shallowResource (resource: string, controller: string): RouteResourceContract,
+  on (pattern: string): BriskRouteContract,
+  where (key: string, matcher: string | RegExp): this,
+  namespace (namespace: string): this,
   toJSON (): RouteNode[]
   find (url: string, method: string, domain?: string): null | MatchedRoute,
-  urlFor (pattern: string, options: { params?: any, qs?: any }, domain?: string): null | string
+  urlFor (pattern: string, options: { params?: any, qs?: any }, domain?: string): null | string,
 }
 
 export interface BriskRouteContract {

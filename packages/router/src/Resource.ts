@@ -27,6 +27,7 @@ export class RouteResource implements RouteResourceContract {
   constructor (
     private _resource: string,
     private _controller: string,
+    private _namespace: string,
     private _globalMatchers: Matchers,
     private _shallow = false,
   ) {
@@ -37,7 +38,7 @@ export class RouteResource implements RouteResourceContract {
    * Add a new route for the given pattern, methods and controller action
    */
   private _makeRoute (pattern, methods, action, baseName) {
-    const route = new Route(pattern, methods, `${this._controller}.${action}`, this._globalMatchers)
+    const route = new Route(pattern, methods, `${this._controller}.${action}`, this._namespace, this._globalMatchers)
     route.as(`${baseName}.${action}`)
     this.routes.push(route)
   }
@@ -126,6 +127,17 @@ export class RouteResource implements RouteResourceContract {
   public where (key: string, matcher: string | RegExp): this {
     this.routes.forEach((route) => {
       route.where(key, matcher)
+    })
+
+    return this
+  }
+
+  /**
+   * Define namespace for all the routes inside a given resource
+   */
+  public namespace (namespace: string): this {
+    this.routes.forEach((route) => {
+      route.namespace(namespace)
     })
 
     return this

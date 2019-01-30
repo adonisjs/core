@@ -67,6 +67,11 @@ export class Router implements RouterContract {
   private _inGroup: boolean = false
 
   /**
+   * Controllers namespace to shorten the path
+   */
+  private _namespace: string = 'App/Controllers/Http'
+
+  /**
    * Temporary array to hold routes and resources created inside
    * a group. Once we pass them to the group, this array
    * will be free.
@@ -80,7 +85,7 @@ export class Router implements RouterContract {
    * Add route for a given pattern and methods
    */
   public route (pattern: string, methods: string[], handler: any): Route {
-    const route = new Route(pattern, methods, handler, this._matchers)
+    const route = new Route(pattern, methods, handler, this._namespace, this._matchers)
 
     if (this._inGroup) {
       this._groupRoutes.push(route)
@@ -176,7 +181,7 @@ export class Router implements RouterContract {
    * Registers a route resource with conventional set of routes
    */
   public resource (resource: string, controller: string): RouteResource {
-    const resourceInstance = new RouteResource(resource, controller, this._matchers)
+    const resourceInstance = new RouteResource(resource, controller, this._namespace, this._matchers)
 
     if (this._inGroup) {
       this._groupRoutes.push(resourceInstance)
@@ -191,7 +196,7 @@ export class Router implements RouterContract {
    * Register a route resource with shallow nested routes.
    */
   public shallowResource (resource: string, controller: string): RouteResource {
-    const resourceInstance = new RouteResource(resource, controller, this._matchers, true)
+    const resourceInstance = new RouteResource(resource, controller, this._namespace, this._matchers, true)
 
     if (this._inGroup) {
       this._groupRoutes.push(resourceInstance)
@@ -202,8 +207,11 @@ export class Router implements RouterContract {
     return resourceInstance
   }
 
+  /**
+   * Returns a brisk route instance for a given URL pattern
+   */
   public on (pattern: string): BriskRoute {
-    const briskRoute = new BriskRoute(pattern, this._matchers)
+    const briskRoute = new BriskRoute(pattern, this._namespace, this._matchers)
 
     if (this._inGroup) {
       this._groupRoutes.push(briskRoute)
@@ -219,6 +227,15 @@ export class Router implements RouterContract {
    */
   public where (param: string, matcher: string | RegExp): this {
     this._matchers[param] = typeof (matcher) === 'string' ? new RegExp(matcher) : matcher
+    return this
+  }
+
+  /**
+   * Define global controllers namespace for all the
+   * routes
+   */
+  public namespace (namespace: string): this {
+    this._namespace = namespace
     return this
   }
 

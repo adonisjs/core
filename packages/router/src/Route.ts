@@ -68,6 +68,7 @@ export class Route implements RouteContract {
     private _pattern: string,
     private _methods: string[],
     private _handler: any,
+    private _namespace: string,
     private _globalMatchers: Matchers,
   ) {}
 
@@ -140,6 +141,14 @@ export class Route implements RouteContract {
   }
 
   /**
+   * Define controller namespace for a given route
+   */
+  public namespace (namespace: string): this {
+    this._namespace = namespace
+    return this
+  }
+
+  /**
    * Returns [[RouteDefination]] that can be passed to the [[Store]] for
    * registering the route
    */
@@ -148,7 +157,9 @@ export class Route implements RouteContract {
       domain: this._domain,
       pattern: this._getPattern(),
       matchers: this._getMatchers(),
-      meta: {},
+      meta: {
+        namespace: this._namespace,
+      },
       handler: this._handler,
       name: this.name,
       methods: this._methods,

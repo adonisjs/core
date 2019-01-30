@@ -12,7 +12,7 @@ import { BriskRoute } from '../src/BriskRoute'
 
 test.group('Brisk Route', () => {
   test('define handler for the route', (assert) => {
-    const brisk = new BriskRoute('/', {})
+    const brisk = new BriskRoute('/', 'App/Controllers/Http', {})
     function handler () {}
 
     const route = brisk.setHandler(handler, 'render')
@@ -20,7 +20,9 @@ test.group('Brisk Route', () => {
       domain: 'root',
       handler,
       matchers: {},
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       methods: ['GET'],
       middleware: [],
       name: undefined,
@@ -29,7 +31,7 @@ test.group('Brisk Route', () => {
   })
 
   test('setting handler multiple times must result in error', (assert) => {
-    const brisk = new BriskRoute('/', {})
+    const brisk = new BriskRoute('/', 'App/Controllers/Http', {})
     function handler () {}
 
     brisk.setHandler(handler, 'render')

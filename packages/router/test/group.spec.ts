@@ -16,7 +16,7 @@ import { toRoutesJSON } from '../test-helpers'
 test.group('Route Group', () => {
   test('add matcher for the given route', (assert) => {
     function handler () {}
-    const group = new RouteGroup([new Route('/:id', ['GET'], handler, {})])
+    const group = new RouteGroup([new Route('/:id', ['GET'], handler, 'App/Controllers/Http', {})])
     group.where('id', '[a-z]')
 
     assert.deepEqual(toRoutesJSON(group.routes), [
@@ -25,7 +25,9 @@ test.group('Route Group', () => {
         matchers: {
           id: new RegExp('[a-z]'),
         },
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -38,7 +40,7 @@ test.group('Route Group', () => {
   test('prepend middleware to existing route middleware', (assert) => {
     function handler () {}
 
-    const route = new Route('/:id', ['GET'], handler, {})
+    const route = new Route('/:id', ['GET'], handler, 'App/Controllers/Http', {})
     route.middleware('auth')
 
     const group = new RouteGroup([route])
@@ -48,7 +50,9 @@ test.group('Route Group', () => {
       {
         pattern: '/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: ['limitter', 'auth'],
@@ -61,7 +65,7 @@ test.group('Route Group', () => {
   test('prepend name to the existing route names', (assert) => {
     function handler () {}
 
-    const route = new Route('/:id', ['GET'], handler, {})
+    const route = new Route('/:id', ['GET'], handler, 'App/Controllers/Http', {})
     route.as('list')
 
     const group = new RouteGroup([route])
@@ -71,7 +75,9 @@ test.group('Route Group', () => {
       {
         pattern: '/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -84,7 +90,7 @@ test.group('Route Group', () => {
   test('define routes prefix', (assert) => {
     function handler () {}
 
-    const route = new Route('/:id', ['GET'], handler, {})
+    const route = new Route('/:id', ['GET'], handler, 'App/Controllers/Http', {})
     const group = new RouteGroup([route])
     group.prefix('api/v1')
 
@@ -92,7 +98,9 @@ test.group('Route Group', () => {
       {
         pattern: '/api/v1/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -105,7 +113,7 @@ test.group('Route Group', () => {
   test('define routes domain', (assert) => {
     function handler () {}
 
-    const route = new Route('/:id', ['GET'], handler, {})
+    const route = new Route('/:id', ['GET'], handler, 'App/Controllers/Http', {})
     const group = new RouteGroup([route])
     group.domain('adonisjs.com')
 
@@ -113,7 +121,9 @@ test.group('Route Group', () => {
       {
         pattern: '/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'adonisjs.com',
         middleware: [],
@@ -124,14 +134,16 @@ test.group('Route Group', () => {
   })
 
   test('define resource inside the group', (assert) => {
-    const resource = new RouteResource('photos', 'PhotosController', {})
+    const resource = new RouteResource('photos', 'PhotosController', 'App/Controllers/Http', {})
     const group = new RouteGroup([resource])
 
     assert.deepEqual(toRoutesJSON(group.routes), [
       {
         pattern: '/photos',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -141,7 +153,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/create',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -151,7 +165,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['POST'],
         domain: 'root',
         middleware: [],
@@ -161,7 +177,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -171,7 +189,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id/edit',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -181,7 +201,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['PUT', 'PATCH'],
         domain: 'root',
         middleware: [],
@@ -191,7 +213,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['DELETE'],
         domain: 'root',
         middleware: [],
@@ -202,7 +226,7 @@ test.group('Route Group', () => {
   })
 
   test('prepend name to the route resource', (assert) => {
-    const resource = new RouteResource('photos', 'PhotosController', {})
+    const resource = new RouteResource('photos', 'PhotosController', 'App/Controllers/Http', {})
     const group = new RouteGroup([resource])
     group.as('v1')
 
@@ -210,7 +234,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -220,7 +246,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/create',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -230,7 +258,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['POST'],
         domain: 'root',
         middleware: [],
@@ -240,7 +270,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -250,7 +282,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id/edit',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['GET'],
         domain: 'root',
         middleware: [],
@@ -260,7 +294,9 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['PUT', 'PATCH'],
         domain: 'root',
         middleware: [],
@@ -270,12 +306,37 @@ test.group('Route Group', () => {
       {
         pattern: '/photos/:id',
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         methods: ['DELETE'],
         domain: 'root',
         middleware: [],
         handler: 'PhotosController.destroy',
         name: 'v1.photos.destroy',
+      },
+    ])
+  })
+
+  test('define routes namespace', (assert) => {
+    function handler () {}
+
+    const route = new Route('/:id', ['GET'], handler, 'App/Controllers/Http', {})
+    const group = new RouteGroup([route])
+    group.namespace('Admin/Controllers/Http')
+
+    assert.deepEqual(toRoutesJSON(group.routes), [
+      {
+        pattern: '/:id',
+        matchers: {},
+        meta: {
+          namespace: 'Admin/Controllers/Http',
+        },
+        methods: ['GET'],
+        domain: 'root',
+        middleware: [],
+        handler,
+        name: undefined,
       },
     ])
   })

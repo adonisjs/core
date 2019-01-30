@@ -24,7 +24,9 @@ test.group('Router | add', () => {
     assert.deepEqual(getRoute.toJSON(), {
       pattern: '/',
       methods: ['GET'],
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       matchers: {},
       domain: 'root',
       handler: 'HomeController.index',
@@ -35,7 +37,9 @@ test.group('Router | add', () => {
     assert.deepEqual(postRoute.toJSON(), {
       pattern: '/',
       methods: ['POST'],
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       matchers: {},
       domain: 'root',
       handler: 'HomeController.store',
@@ -46,7 +50,9 @@ test.group('Router | add', () => {
     assert.deepEqual(putRoute.toJSON(), {
       pattern: '/',
       methods: ['PUT'],
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       matchers: {},
       domain: 'root',
       handler: 'HomeController.update',
@@ -57,7 +63,9 @@ test.group('Router | add', () => {
     assert.deepEqual(patchRoute.toJSON(), {
       pattern: '/',
       methods: ['PATCH'],
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       matchers: {},
       domain: 'root',
       handler: 'HomeController.updatePatch',
@@ -68,7 +76,9 @@ test.group('Router | add', () => {
     assert.deepEqual(destroyRoute.toJSON(), {
       pattern: '/',
       methods: ['DELETE'],
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       matchers: {},
       domain: 'root',
       handler: 'HomeController.destroy',
@@ -79,7 +89,9 @@ test.group('Router | add', () => {
     assert.deepEqual(anyRoute.toJSON(), {
       pattern: '/',
       methods: ['HEAD', 'OPTIONS', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-      meta: {},
+      meta: {
+        namespace: 'App/Controllers/Http',
+      },
       matchers: {},
       domain: 'root',
       handler: 'HomeController.handle',
@@ -150,6 +162,26 @@ test.group('Router | add', () => {
       )
     }
   })
+
+  test('define global namespace for all routes', (assert) => {
+    const router = new Router()
+    router.namespace('Admin/Controllers')
+
+    const getRoute = router.get('/', 'HomeController.index')
+
+    assert.deepEqual(getRoute.toJSON(), {
+      pattern: '/',
+      methods: ['GET'],
+      meta: {
+        namespace: 'Admin/Controllers',
+      },
+      matchers: {},
+      domain: 'root',
+      handler: 'HomeController.index',
+      middleware: [],
+      name: undefined,
+    })
+  })
 })
 
 test.group('Router | commit', () => {
@@ -180,7 +212,9 @@ test.group('Router | commit', () => {
               '/': {
                 pattern: '/',
                 handler,
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: undefined,
               },
@@ -221,7 +255,9 @@ test.group('Router | commit', () => {
               '/api': {
                 pattern: '/api',
                 handler,
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: undefined,
               },
@@ -339,28 +375,36 @@ test.group('Router | commit', () => {
               '/api/posts': {
                 pattern: '/api/posts',
                 handler: 'PostController.index',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.index',
               },
               '/api/posts/create': {
                 pattern: '/api/posts/create',
                 handler: 'PostController.create',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.create',
               },
               '/api/posts/:id': {
                 pattern: '/api/posts/:id',
                 handler: 'PostController.show',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.show',
               },
               '/api/posts/:id/edit': {
                 pattern: '/api/posts/:id/edit',
                 handler: 'PostController.edit',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.edit',
               },
@@ -387,7 +431,9 @@ test.group('Router | commit', () => {
               '/api/posts': {
                 pattern: '/api/posts',
                 handler: 'PostController.store',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.store',
               },
@@ -421,7 +467,9 @@ test.group('Router | commit', () => {
               '/api/posts/:id': {
                 pattern: '/api/posts/:id',
                 handler: 'PostController.update',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.update',
               },
@@ -455,7 +503,9 @@ test.group('Router | commit', () => {
               '/api/posts/:id': {
                 pattern: '/api/posts/:id',
                 handler: 'PostController.update',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.update',
               },
@@ -489,7 +539,9 @@ test.group('Router | commit', () => {
               '/api/posts/:id': {
                 pattern: '/api/posts/:id',
                 handler: 'PostController.destroy',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.destroy',
               },
@@ -606,28 +658,36 @@ test.group('Router | commit', () => {
               '/posts/:post_id/comments': {
                 pattern: '/posts/:post_id/comments',
                 handler: 'CommentsController.index',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.comments.index',
               },
               '/posts/:post_id/comments/create': {
                 pattern: '/posts/:post_id/comments/create',
                 handler: 'CommentsController.create',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.comments.create',
               },
               '/comments/:id': {
                 pattern: '/comments/:id',
                 handler: 'CommentsController.show',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'comments.show',
               },
               '/comments/:id/edit': {
                 pattern: '/comments/:id/edit',
                 handler: 'CommentsController.edit',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'comments.edit',
               },
@@ -661,7 +721,9 @@ test.group('Router | commit', () => {
               '/posts/:post_id/comments': {
                 pattern: '/posts/:post_id/comments',
                 handler: 'CommentsController.store',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'posts.comments.store',
               },
@@ -689,7 +751,9 @@ test.group('Router | commit', () => {
               '/comments/:id': {
                 pattern: '/comments/:id',
                 handler: 'CommentsController.update',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'comments.update',
               },
@@ -717,7 +781,9 @@ test.group('Router | commit', () => {
               '/comments/:id': {
                 pattern: '/comments/:id',
                 handler: 'CommentsController.update',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'comments.update',
               },
@@ -745,7 +811,9 @@ test.group('Router | commit', () => {
               '/comments/:id': {
                 pattern: '/comments/:id',
                 handler: 'CommentsController.destroy',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'comments.destroy',
               },
@@ -810,7 +878,9 @@ test.group('Router | commit', () => {
               '/photos/create': {
                 pattern: '/photos/create',
                 handler: 'PhotosController.create',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: 'v1.photos.create',
               },
@@ -855,6 +925,7 @@ test.group('Router | commit', () => {
                 handler: 'FooHandler.get',
                 meta: {
                   processed: true,
+                  namespace: 'App/Controllers/Http',
                 },
                 middleware: [],
                 name: undefined,
@@ -906,6 +977,7 @@ test.group('Router | commit', () => {
                 handler: 'PhotosController.create',
                 meta: {
                   processed: true,
+                  namespace: 'App/Controllers/Http',
                 },
                 middleware: [],
                 name: 'photos.create',
@@ -953,6 +1025,7 @@ test.group('Router | commit', () => {
                 handler: 'FooHandler.get',
                 meta: {
                   processed: true,
+                  namespace: 'App/Controllers/Http',
                 },
                 middleware: [],
                 name: undefined,
@@ -993,7 +1066,9 @@ test.group('Router | commit', () => {
               '/:id': {
                 pattern: '/:id',
                 handler,
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 middleware: [],
                 name: undefined,
               },
@@ -1015,7 +1090,9 @@ test.group('Router | find', () => {
     assert.deepEqual(router.find('photos', 'GET')!, {
       params: {},
       route: {
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         middleware: [],
         pattern: '/photos',
         name: 'photos.index',
@@ -1027,7 +1104,9 @@ test.group('Router | find', () => {
     assert.deepEqual(router.find('photos/create', 'GET')!, {
       params: {},
       route: {
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         middleware: [],
         pattern: '/photos/create',
         name: 'photos.create',
@@ -1039,7 +1118,9 @@ test.group('Router | find', () => {
     assert.deepEqual(router.find('photos', 'POST')!, {
       params: {},
       route: {
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         middleware: [],
         pattern: '/photos',
         name: 'photos.store',
@@ -1053,7 +1134,9 @@ test.group('Router | find', () => {
         id: '1',
       },
       route: {
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         middleware: [],
         pattern: '/photos/:id',
         name: 'photos.show',
@@ -1067,7 +1150,9 @@ test.group('Router | find', () => {
         id: '1',
       },
       route: {
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         middleware: [],
         pattern: '/photos/:id/edit',
         name: 'photos.edit',
@@ -1081,7 +1166,9 @@ test.group('Router | find', () => {
         id: '1',
       },
       route: {
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         middleware: [],
         pattern: '/photos/:id',
         name: 'photos.update',
@@ -1095,7 +1182,9 @@ test.group('Router | find', () => {
         id: '1',
       },
       route: {
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         middleware: [],
         pattern: '/photos/:id',
         name: 'photos.destroy',
@@ -1196,7 +1285,9 @@ test.group('Router | urlFor', () => {
         handler,
         methods: ['GET'],
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         domain: 'root',
         middleware: [],
       },
@@ -1218,7 +1309,9 @@ test.group('Router | urlFor', () => {
         handler,
         methods: ['GET'],
         matchers: {},
-        meta: {},
+        meta: {
+          namespace: 'App/Controllers/Http',
+        },
         domain: 'root',
         middleware: [],
       },
@@ -1262,7 +1355,9 @@ test.group('Router | urlFor', () => {
             routes: {
               '/api/v1': {
                 pattern: '/api/v1',
-                meta: {},
+                meta: {
+                  namespace: 'App/Controllers/Http',
+                },
                 handler,
                 middleware: [],
                 name: 'v1.root',

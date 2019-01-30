@@ -24,7 +24,7 @@ export class BriskRoute implements BriskRouteContract {
   public route: null | Route = null
   private _invokedBy: string = ''
 
-  constructor (private _pattern: string, private _globalMatchers: Matchers) {
+  constructor (private _pattern: string, private _namespace: string, private _globalMatchers: Matchers) {
   }
 
   /**
@@ -42,7 +42,7 @@ export class BriskRoute implements BriskRouteContract {
       )
     }
 
-    this.route = new Route(this._pattern, this._methods, handler, this._globalMatchers)
+    this.route = new Route(this._pattern, this._methods, handler, this._namespace, this._globalMatchers)
     this._invokedBy = invokedBy
     return this.route
   }
