@@ -44,6 +44,14 @@ export type LazyBody = {
 }
 
 /**
+ * Config accepted by response class
+ */
+export type ResponseConfig = {
+  etag: boolean,
+  jsonpCallbackName: string,
+}
+
+/**
  * Main response interface
  */
 export interface ResponseContract {

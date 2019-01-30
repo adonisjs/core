@@ -31,15 +31,8 @@ import {
   LazyBody,
   ResponseContentType,
   ResponseStream,
+  ResponseConfig,
 } from './ResponseContract'
-
-/**
- * Config accepted by response class
- */
-type Config = {
-  etag: boolean,
-  jsonpCallbackName: string,
-}
 
 /**
  * Config reader is used to avoid unncessary calls to `Object.assign`
@@ -48,7 +41,7 @@ type Config = {
 const $ = new ConfigReader({
   etag: false,
   jsonpCallbackName: 'callback',
-} as Config)
+} as ResponseConfig)
 
 /**
  * Wraps `fs.stat` to promise interface.
@@ -105,7 +98,11 @@ export class Response extends Macroable implements ResponseContract {
 
   private _headers: any = {}
 
-  constructor (public request: IncomingMessage, public response: ServerResponse, private _config: Partial<Config>) {
+  constructor (
+    public request: IncomingMessage,
+    public response: ServerResponse,
+    private _config: Partial<ResponseConfig>,
+  ) {
     super()
   }
 
