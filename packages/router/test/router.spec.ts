@@ -963,6 +963,46 @@ test.group('Router | commit', () => {
       },
     })
   })
+
+  test('define global matchers', (assert) => {
+    const router = new Router()
+    router.where('id', '^[a-z]+')
+
+    function handler () {}
+    router.get('/:id', handler)
+    router.commit()
+
+    assert.deepEqual(router['_store'].tree, {
+      tokens: [[{
+        old: 'root',
+        type: 0,
+        val: 'root',
+        end: '',
+      }]],
+      domains: {
+        'root': {
+          'GET': {
+            tokens: [[{
+              old: '/:id',
+              type: 1,
+              val: 'id',
+              end: '',
+              matcher: /^[a-z]+/,
+            }]],
+            routes: {
+              '/:id': {
+                pattern: '/:id',
+                handler,
+                meta: {},
+                middleware: [],
+                name: undefined,
+              },
+            },
+          },
+        },
+      },
+    })
+  })
 })
 
 test.group('Router | find', () => {

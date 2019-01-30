@@ -93,7 +93,7 @@ export class Route implements RouteContract {
    * Define Regex matcher for a given param
    */
   public where (param: string, matcher: string | RegExp): this {
-    this._matchers[param] = matcher
+    this._matchers[param] = typeof (matcher) === 'string' ? new RegExp(matcher) : matcher
     return this
   }
 

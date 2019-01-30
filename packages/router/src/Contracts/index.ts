@@ -11,7 +11,7 @@
  * Shape of route param matchers
  */
 export type Matchers = {
-  [param: string]: string | RegExp,
+  [param: string]: RegExp,
 }
 
 /**

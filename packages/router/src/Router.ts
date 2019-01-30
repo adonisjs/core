@@ -215,6 +215,14 @@ export class Router implements RouterContract {
   }
 
   /**
+   * Define global route matcher
+   */
+  public where (param: string, matcher: string | RegExp): this {
+    this._matchers[param] = typeof (matcher) === 'string' ? new RegExp(matcher) : matcher
+    return this
+  }
+
+  /**
    * Returns a flat list of routes JSON
    */
   public toJSON () {
