@@ -14,7 +14,13 @@ import { Exception } from '@adonisjs/utils'
 
 import { Context } from './Context'
 import { middlewareExecutor } from './middlewareExecutor'
-import { ServerContract, MiddlewareStoreContract, RequestConstructor, ResponseConstructor } from './Contracts'
+import {
+  ServerContract,
+  MiddlewareStoreContract,
+  RequestConstructor,
+  ResponseConstructor,
+  ServerConfig,
+} from './Contracts'
 
 class RouteNotFound extends Exception {}
 
@@ -47,6 +53,7 @@ export class Server implements ServerContract {
     private _Response: ResponseConstructor,
     private _router: RouterContract,
     private _middlewareStore: MiddlewareStoreContract,
+    private _httpConfig: Partial<ServerConfig>,
   ) {}
 
   /**
@@ -102,8 +109,8 @@ export class Server implements ServerContract {
    * server
    */
   public async handle (req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const request = new this._Request(req, res, {})
-    const response = new this._Response(req, res, {})
+    const request = new this._Request(req, res, this._httpConfig)
+    const response = new this._Response(req, res, this._httpConfig)
     response.explicitEnd = true
 
     const ctx = new Context(request, response)

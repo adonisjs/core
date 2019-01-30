@@ -24,7 +24,7 @@ test.group('Server | Response handling', () => {
     const middlewareStore = new MiddlewareStore()
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', ({ response }) => response.send('handled'))
@@ -38,7 +38,7 @@ test.group('Server | Response handling', () => {
     const middlewareStore = new MiddlewareStore()
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', () => 'handled')
@@ -52,7 +52,7 @@ test.group('Server | Response handling', () => {
     const middlewareStore = new MiddlewareStore()
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', ({ response }) => {
@@ -69,7 +69,7 @@ test.group('Server | Response handling', () => {
     const middlewareStore = new MiddlewareStore()
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', ({ response }) => {
@@ -106,7 +106,7 @@ test.group('Server | middleware', () => {
 
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', () => {
@@ -136,7 +136,7 @@ test.group('Server | middleware', () => {
 
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', () => {
@@ -170,7 +170,7 @@ test.group('Server | middleware', () => {
 
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', () => {
@@ -205,7 +205,7 @@ test.group('Server | middleware', () => {
 
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', () => {
@@ -240,7 +240,7 @@ test.group('Server | middleware', () => {
 
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', () => {
@@ -274,7 +274,7 @@ test.group('Server | middleware', () => {
 
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     router.get('/', () => {
@@ -304,7 +304,7 @@ test.group('Server | all', (group) => {
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
     router.commit()
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     const { text } = await supertest(httpServer).get('/').expect(404)
@@ -328,7 +328,7 @@ test.group('Server | all', (group) => {
     router.get('/', 'HomeController.index')
     router.commit()
 
-    const server = new Server(Request, Response, router, middlewareStore)
+    const server = new Server(Request, Response, router, middlewareStore, {})
     const httpServer = createServer(server.handle.bind(server))
 
     const { text } = await supertest(httpServer).get('/').expect(200)

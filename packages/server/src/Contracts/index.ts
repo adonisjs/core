@@ -8,8 +8,8 @@
  */
 
 import { IncomingMessage, ServerResponse } from 'http'
-import { RequestContract } from '@adonisjs/request'
-import { ResponseContract } from '@adonisjs/response'
+import { RequestContract, RequestConfig } from '@adonisjs/request'
+import { ResponseContract, ResponseConfig } from '@adonisjs/response'
 import { RouteNode } from '@adonisjs/router'
 
 /**
@@ -66,15 +66,20 @@ export interface MiddlewareStoreContract {
 }
 
 /**
+ * Config requried by request and response
+ */
+export type ServerConfig = RequestConfig & ResponseConfig
+
+/**
  * Request constructor shape
  */
 export type RequestConstructor = {
-  new (req: IncomingMessage, res: ServerResponse, config: any): RequestContract,
+  new (req: IncomingMessage, res: ServerResponse, config: Partial<ServerConfig>): RequestContract,
 }
 
 /**
  * Response constructor shape
  */
 export type ResponseConstructor = {
-  new (req: IncomingMessage, res: ServerResponse, config: any): ResponseContract,
+  new (req: IncomingMessage, res: ServerResponse, config: Partial<ServerConfig>): ResponseContract,
 }
