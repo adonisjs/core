@@ -65,6 +65,7 @@ exports.rules = {
   'variable-name': [
     true,
     'check-format',
+    'allow-pascal-case',
     'allow-leading-underscore'
   ]
 }
