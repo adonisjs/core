@@ -14,6 +14,7 @@ import { Exception } from '@adonisjs/utils'
 
 import { Context } from './Context'
 import { middlewareExecutor } from './middlewareExecutor'
+import { useReturnValue } from './useReturnValue'
 
 import {
   ServerContract,
@@ -24,6 +25,7 @@ import {
   BeforeHookNode,
   AfterHookNode,
   ContextContract,
+  ErrorHandleNode,
 } from './Contracts'
 
 class RouteNotFound extends Exception {}
@@ -46,7 +48,7 @@ class RouteNotFound extends Exception {}
  * ```
  */
 export class Server implements ServerContract {
-  private _globalMiddleware = new Middleware().register(this._middlewareStore.get())
+  private _globalMiddleware
 
   /**
    * Hooks to be executed before and after the request
@@ -64,6 +66,7 @@ export class Server implements ServerContract {
    */
   private _hooksHandler
   private _routeHandler
+  private _errorHandler: ErrorHandleNode
 
   constructor (
     private _Request: RequestConstructor,
@@ -148,7 +151,7 @@ export class Server implements ServerContract {
   /**
    * Handles error raised during HTTP request
    */
-  private async _handleError (error, ctx) {
+  private _handleError (error, ctx) {
     ctx.response.status(error.status || 500).send(error.message)
   }
 
@@ -179,6 +182,20 @@ export class Server implements ServerContract {
   }
 
   /**
+   * Define custom error handler to handler all errors
+   * occurred during HTTP request
+   */
+  public onError (cb: ErrorHandleNode): this {
+    this._errorHandler = async function scoped (error, ctx) {
+      const returnValue = await cb(error, ctx)
+      if (useReturnValue(returnValue, ctx)) {
+        ctx.response.send(returnValue)
+      }
+    }
+    return this
+  }
+
+  /**
    * Optimizes internal handlers, based upon the existence of
    * before handlers and global middleware. This helps in
    * increasing throughput by 10%
@@ -189,6 +206,7 @@ export class Server implements ServerContract {
      * of global middleware
      */
     if (this._middlewareStore.get().length) {
+      this._globalMiddleware = new Middleware().register(this._middlewareStore.get())
       this._routeHandler = this._executeMiddleware.bind(this)
     } else {
       this._routeHandler = this._executeFinalHandler.bind(this)
@@ -202,6 +220,13 @@ export class Server implements ServerContract {
       this._hooksHandler = this._executeHooksAndHandler.bind(this)
     } else {
       this._hooksHandler = this._handleRequest.bind(this)
+    }
+
+    /**
+     * Set final error handler
+     */
+    if (typeof (this._errorHandler) !== 'function') {
+      this._errorHandler = this._handleError.bind(this)
     }
   }
 
@@ -219,7 +244,7 @@ export class Server implements ServerContract {
     try {
       await this._hooksHandler(ctx)
     } catch (error) {
-      await this._handleError(error, ctx)
+      await this._errorHandler(error, ctx)
     }
 
     /**
@@ -230,7 +255,7 @@ export class Server implements ServerContract {
       try {
         await this._executeAfterHooks(ctx)
       } catch (error) {
-        await this._handleError(error, ctx)
+        await this._errorHandler(error, ctx)
       }
     }
 

@@ -14,6 +14,7 @@ import { Exception } from '@adonisjs/utils'
 import { ContextContract } from './Contracts'
 import { MiddlewareStoreContract } from './Contracts'
 import { middlewareExecutor } from './middlewareExecutor'
+import { useReturnValue } from './useReturnValue'
 
 /**
  * Final handler executes the route handler based on and set
@@ -32,12 +33,7 @@ async function finalHandler (ctx: ContextContract) {
       : handler.value(ctx)
     )
 
-  if (
-    returnValue !== undefined &&            // Return value is explicitly defined
-    returnValue !== ctx.response &&         // Return value is not the instance of response object
-    ctx.response.explicitEnd &&             // Explicit end is set to true
-    !ctx.response.hasLazyBody               // Lazy body is not set
-  ) {
+  if (useReturnValue(returnValue, ctx)) {
     ctx.response.send(returnValue)
   }
 }

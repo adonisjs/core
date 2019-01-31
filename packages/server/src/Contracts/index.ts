@@ -16,6 +16,7 @@ import { RouteNode } from '@adonisjs/router'
  * Public server
  */
 export interface ServerContract {
+  onError (cb: ErrorHandleNode): this
   handle (req: IncomingMessage, res: ServerResponse): Promise<void>
   optimize ()
   before (cb: BeforeHookNode): this
@@ -56,6 +57,11 @@ export type BeforeHookNode = (ctx: HooksContextContract) => Promise<void>
  * After hooks are executed after controller has done it's job
  */
 export type AfterHookNode = (ctx: ContextContract) => Promise<void>
+
+/**
+ * Error handler node
+ */
+export type ErrorHandleNode = (error: any, ctx: ContextContract) => Promise<any>
 
 /**
  * Shape of resolved middleware. This information is

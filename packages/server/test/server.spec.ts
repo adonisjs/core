@@ -607,6 +607,100 @@ test.group('Server | hooks', () => {
   })
 })
 
+test.group('Server | error handler', () => {
+  test('pass before hook errors to error handler', async (assert) => {
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.onError(async (_error, { response }) => {
+      response.status(200).send('handled by error handler')
+    })
+
+    server.before(async () => {
+      throw new Error('Bump')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'handled by error handler')
+  })
+
+  test('pass route handler errors to error handler', async (assert) => {
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.onError(async (_error, { response }) => {
+      response.status(200).send('handled by error handler')
+    })
+
+    router.get('/', async () => {
+      throw new Error('bump')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'handled by error handler')
+  })
+
+  test('pass middleware error to custom error handler', async (assert) => {
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.onError(async (_error, { response }) => {
+      response.status(200).send('handled by error handler')
+    })
+
+    middlewareStore.register([async function middleware () {
+      throw new Error('bump')
+    }])
+
+    router.get('/', async () => {
+      return 'handled by route'
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'handled by error handler')
+  })
+
+  test('pass after hooks error to custom error handler', async (assert) => {
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.onError(async () => {
+      return 'handled by error handler'
+    })
+
+    server.after((async function afterHook () {
+      throw new Error('Bump')
+    }))
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'handled by error handler')
+  })
+})
+
 test.group('Server | all', (group) => {
   group.afterEach(() => {
     delete global['use']
