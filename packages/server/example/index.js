@@ -11,9 +11,11 @@ router.get('/', async function ({ response }) {
   return { hello: 'world' }
 })
 
-router.commit()
+const server = new Server(Request, Response, router, middlewareStore, {})
 
-const server = new Server(Request, Response, router, middlewareStore)
+router.commit()
+server.optimize()
+
 http.createServer(server.handle.bind(server)).listen(4000, () => {
   console.log('listening on http://localhost:4000')
 })

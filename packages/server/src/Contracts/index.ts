@@ -17,6 +17,9 @@ import { RouteNode } from '@adonisjs/router'
  */
 export interface ServerContract {
   handle (req: IncomingMessage, res: ServerResponse): Promise<void>
+  optimize ()
+  before (cb: BeforeHookNode): this
+  after (cb: AfterHookNode): this
 }
 
 /**
@@ -44,6 +47,17 @@ export interface ContextContract extends HooksContextContract {
 export type MiddlewareNode = ((ctx: ContextContract, next: () => Promise<void>) => Promise<void>) | string
 
 /**
+ * Before hooks are executed before finding the route or finding
+ * middleware
+ */
+export type BeforeHookNode = (ctx: HooksContextContract) => Promise<void>
+
+/**
+ * After hooks are executed after controller has done it's job
+ */
+export type AfterHookNode = (ctx: ContextContract) => Promise<void>
+
+/**
  * Shape of resolved middleware. This information is
  * enough to execute the middleware
  */
@@ -51,6 +65,16 @@ export type ResolvedMiddlewareNode = {
   type: string,
   value: any,
   args: string[],
+}
+
+/**
+ * Node after resolving controller.method binding
+ * from the route
+ */
+export type ResolvedControllerNode = {
+  type: string,
+  value: any,
+  method?: string,
 }
 
 /**

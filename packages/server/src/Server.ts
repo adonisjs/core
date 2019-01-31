@@ -14,12 +14,16 @@ import { Exception } from '@adonisjs/utils'
 
 import { Context } from './Context'
 import { middlewareExecutor } from './middlewareExecutor'
+
 import {
   ServerContract,
   MiddlewareStoreContract,
   RequestConstructor,
   ResponseConstructor,
   ServerConfig,
+  BeforeHookNode,
+  AfterHookNode,
+  ContextContract,
 } from './Contracts'
 
 class RouteNotFound extends Exception {}
@@ -44,9 +48,22 @@ class RouteNotFound extends Exception {}
 export class Server implements ServerContract {
   private _globalMiddleware = new Middleware().register(this._middlewareStore.get())
 
-  private _handler = this._middlewareStore.get().length
-    ? this._executeMiddleware.bind(this)
-    : this._executeRouteHandler.bind(this)
+  /**
+   * Hooks to be executed before and after the request
+   */
+  private _hooks: {
+    before: BeforeHookNode[],
+    after: AfterHookNode[],
+  } = {
+    before: [],
+    after: [],
+  }
+
+  /**
+   * Caching the handler based upon the existence of global middleware
+   */
+  private _hooksHandler
+  private _routeHandler
 
   constructor (
     private _Request: RequestConstructor,
@@ -74,8 +91,18 @@ export class Server implements ServerContract {
    * the middleware chain. This is used when global
    * middleware length is 0
    */
-  private async _executeRouteHandler (ctx) {
+  private async _executeFinalHandler (ctx) {
     await ctx.route.meta.finalHandler(ctx)
+  }
+
+  /**
+   * Executes before hooks and then the route handler
+   */
+  private async _executeHooksAndHandler (ctx) {
+    const shortcircuit = await this._executeBeforeHooks(ctx)
+    if (!shortcircuit) {
+      await this._handleRequest(ctx)
+    }
   }
 
   /**
@@ -101,7 +128,81 @@ export class Server implements ServerContract {
     ctx.subdomains = route.subdomains
     ctx.route = route.route
 
-    await this._handler(ctx)
+    await this._routeHandler(ctx)
+  }
+
+  /**
+   * Executing before hooks
+   */
+  private async _executeBeforeHooks (ctx: ContextContract): Promise<boolean> {
+    for (let hook of this._hooks.before) {
+      await hook(ctx)
+      if (ctx.response.hasLazyBody || ctx.response.headersSent) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  /**
+   * Handles error raised during HTTP request
+   */
+  private async _handleError (error, ctx) {
+    ctx.response.status(error.status || 500).send(error.message)
+  }
+
+  /**
+   * Executing after hooks
+   */
+  private async _executeAfterHooks (ctx: ContextContract): Promise<void> {
+    for (let hook of this._hooks.after) {
+      await hook(ctx)
+    }
+  }
+
+  /**
+   * Define hooks to be executed as soon as a new request
+   * has been received
+   */
+  public before (cb: BeforeHookNode): this {
+    this._hooks.before.push(cb)
+    return this
+  }
+
+  /**
+   * Define hooks to be executed after the route handler
+   */
+  public after (cb: AfterHookNode): this {
+    this._hooks.after.push(cb)
+    return this
+  }
+
+  /**
+   * Optimizes internal handlers, based upon the existence of
+   * before handlers and global middleware. This helps in
+   * increasing throughput by 10%
+   */
+  public optimize () {
+    /**
+     * Choose the correct route handler based upon existence
+     * of global middleware
+     */
+    if (this._middlewareStore.get().length) {
+      this._routeHandler = this._executeMiddleware.bind(this)
+    } else {
+      this._routeHandler = this._executeFinalHandler.bind(this)
+    }
+
+    /**
+     * Choose correct hooks handler, based upon existence
+     * of before hooks
+     */
+    if (this._hooks.before.length) {
+      this._hooksHandler = this._executeHooksAndHandler.bind(this)
+    } else {
+      this._hooksHandler = this._handleRequest.bind(this)
+    }
   }
 
   /**
@@ -116,9 +217,21 @@ export class Server implements ServerContract {
     const ctx = new Context(request, response)
 
     try {
-      await this._handleRequest(ctx)
+      await this._hooksHandler(ctx)
     } catch (error) {
-      ctx.response.status(error.status || 500).send(error.message)
+      await this._handleError(error, ctx)
+    }
+
+    /**
+     * Execute after hooks when explictEnd is true and their are
+     * more than zero after hooks
+     */
+    if (ctx.response.explicitEnd && this._hooks.after.length) {
+      try {
+        await this._executeAfterHooks(ctx)
+      } catch (error) {
+        await this._handleError(error, ctx)
+      }
     }
 
     ctx.response.finish()

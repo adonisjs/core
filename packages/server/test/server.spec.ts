@@ -29,6 +29,7 @@ test.group('Server | Response handling', () => {
 
     router.get('/', ({ response }) => response.send('handled'))
     router.commit()
+    server.optimize()
 
     const { text } = await supertest(httpServer).get('/').expect(200)
     assert.equal(text, 'handled')
@@ -43,6 +44,7 @@ test.group('Server | Response handling', () => {
 
     router.get('/', () => 'handled')
     router.commit()
+    server.optimize()
 
     const { text } = await supertest(httpServer).get('/').expect(200)
     assert.equal(text, 'handled')
@@ -60,6 +62,7 @@ test.group('Server | Response handling', () => {
       return 'done'
     })
     router.commit()
+    server.optimize()
 
     const { text } = await supertest(httpServer).get('/').expect(200)
     assert.equal(text, 'handled')
@@ -81,7 +84,9 @@ test.group('Server | Response handling', () => {
 
       return 'done'
     })
+
     router.commit()
+    server.optimize()
 
     const { text } = await supertest(httpServer).get('/').expect(200)
     assert.equal(text, 'handled')
@@ -113,7 +118,9 @@ test.group('Server | middleware', () => {
       stack.push('handler')
       return 'done'
     })
+
     router.commit()
+    server.optimize()
 
     await supertest(httpServer).get('/').expect(200)
     assert.deepEqual(stack, ['fn1', 'fn2', 'handler'])
@@ -148,6 +155,7 @@ test.group('Server | middleware', () => {
     })
 
     router.commit()
+    server.optimize()
 
     await supertest(httpServer).get('/').expect(200)
     assert.deepEqual(stack, ['fn1', 'fn2', 'route fn1', 'handler'])
@@ -182,6 +190,7 @@ test.group('Server | middleware', () => {
     })
 
     router.commit()
+    server.optimize()
 
     const { text } = await supertest(httpServer).get('/').expect(200)
     assert.deepEqual(stack, ['fn1'])
@@ -217,6 +226,7 @@ test.group('Server | middleware', () => {
     })
 
     router.commit()
+    server.optimize()
 
     const { text } = await supertest(httpServer).get('/').expect(500)
     assert.deepEqual(stack, ['fn1'])
@@ -251,6 +261,7 @@ test.group('Server | middleware', () => {
     })
 
     router.commit()
+    server.optimize()
 
     const { text } = await supertest(httpServer).get('/').expect(500)
     assert.deepEqual(stack, ['fn1', 'fn2'])
@@ -286,10 +297,313 @@ test.group('Server | middleware', () => {
     })
 
     router.commit()
+    server.optimize()
 
     const { text } = await supertest(httpServer).get('/').expect(200)
     assert.deepEqual(stack, ['fn1', 'fn2', 'route fn1'])
     assert.equal(text, 'Short circuit')
+  })
+})
+
+test.group('Server | hooks', () => {
+  test('execute all before hooks', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.before(async () => {
+      stack.push('hook1')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+
+    const httpServer = createServer(server.handle.bind(server))
+    router.commit()
+    server.optimize()
+
+    await supertest(httpServer).get('/').expect(404)
+    assert.deepEqual(stack, ['hook1', 'hook2'])
+  })
+
+  test('do not execute next hook when first raises error', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.before(async () => {
+      stack.push('hook1')
+      throw new Error('Blown away')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(500)
+    assert.equal(text, 'Blown away')
+    assert.deepEqual(stack, ['hook1'])
+  })
+
+  test('do not execute next hook when first writes the body', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.before(async ({ response }) => {
+      stack.push('hook1')
+      response.send('done')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    router.commit()
+    server.optimize()
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'done')
+    assert.deepEqual(stack, ['hook1'])
+  })
+
+  test('do not execute next hook when first writes the body in non-explicit mode', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.before(async ({ response }) => {
+      response.explicitEnd = false
+      stack.push('hook1')
+      response.send('done')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    router.commit()
+    server.optimize()
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'done')
+    assert.deepEqual(stack, ['hook1'])
+  })
+
+  test('execute after hooks before writing the response', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+
+    server.before(async () => {
+      stack.push('hook1')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+    server.after(async () => {
+      stack.push('after hook1')
+    })
+
+    router.get('/', () => {
+      stack.push('handler')
+      return 'done'
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'done')
+    assert.deepEqual(stack, ['hook1', 'hook2', 'handler', 'after hook1'])
+  })
+
+  test('execute after hooks when route handler raises error', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+
+    server.before(async () => {
+      stack.push('hook1')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+    server.after(async () => {
+      stack.push('after hook1')
+    })
+
+    router.get('/', () => {
+      stack.push('handler')
+      throw new Error('handler error')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(500)
+    assert.equal(text, 'handler error')
+    assert.deepEqual(stack, ['hook1', 'hook2', 'handler', 'after hook1'])
+  })
+
+  test('execute after hooks when route is missing', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+
+    server.before(async () => {
+      stack.push('hook1')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+    server.after(async () => {
+      stack.push('after hook1')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(404)
+    assert.equal(text, 'E_ROUTE_NOT_FOUND: Cannot GET:/')
+    assert.deepEqual(stack, ['hook1', 'hook2', 'after hook1'])
+  })
+
+  test('execute after hooks when before hook raises error', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+
+    server.before(async () => {
+      stack.push('hook1')
+      throw new Error('Short circuit')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+    server.after(async () => {
+      stack.push('after hook1')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(500)
+    assert.equal(text, 'Short circuit')
+    assert.deepEqual(stack, ['hook1', 'after hook1'])
+  })
+
+  test('execute after hooks when before hook writes response', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+
+    server.before(async ({ response }) => {
+      stack.push('hook1')
+      response.send('handled inside before hook')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+    server.after(async ({ response }) => {
+      stack.push('after hook1')
+      response.send('updated inside after hook')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'updated inside after hook')
+    assert.deepEqual(stack, ['hook1', 'after hook1'])
+  })
+
+  test('do not execute after hooks when explicit end is set to false', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+
+    server.before(async ({ response }) => {
+      stack.push('hook1')
+      response.explicitEnd = false
+      response.send('handled inside before hook')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+    server.after(async ({ response }) => {
+      stack.push('after hook1')
+      response.send('updated inside after hook')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'handled inside before hook')
+    assert.deepEqual(stack, ['hook1'])
+  })
+
+  test('catch after hook errors', async (assert) => {
+    const stack: string[] = []
+
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+    const server = new Server(Request, Response, router, middlewareStore, {})
+
+    server.before(async () => {
+      stack.push('hook1')
+    })
+    server.before(async () => {
+      stack.push('hook2')
+    })
+    server.after(async () => {
+      stack.push('after hook1')
+      throw new Error('Unexpected error')
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(500)
+    assert.equal(text, 'Unexpected error')
+    assert.deepEqual(stack, ['hook1', 'hook2', 'after hook1'])
   })
 })
 
@@ -302,9 +616,11 @@ test.group('Server | all', (group) => {
   test('raise 404 when route is missing', async (assert) => {
     const middlewareStore = new MiddlewareStore()
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
-    router.commit()
 
     const server = new Server(Request, Response, router, middlewareStore, {})
+    router.commit()
+    server.optimize()
+
     const httpServer = createServer(server.handle.bind(server))
 
     const { text } = await supertest(httpServer).get('/').expect(404)
@@ -326,9 +642,12 @@ test.group('Server | all', (group) => {
     global['make'] = ioc.make.bind(ioc)
 
     router.get('/', 'HomeController.index')
-    router.commit()
 
     const server = new Server(Request, Response, router, middlewareStore, {})
+
+    router.commit()
+    server.optimize()
+
     const httpServer = createServer(server.handle.bind(server))
 
     const { text } = await supertest(httpServer).get('/').expect(200)
