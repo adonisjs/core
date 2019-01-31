@@ -281,5 +281,5 @@ test.group('Ignitor | http server', (group) => {
 
     clearModule(join(APP_ROOT, '.adonisrc.json'))
     clearModule(join(APP_ROOT, 'start/app.js'))
-  })
+  }).timeout(6000)
 })
