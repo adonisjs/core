@@ -264,9 +264,6 @@ test.group('Ignitor | http server', (group) => {
       }
     `)
 
-    process.env.PORT = '3000'
-    process.env.HOST = 'localhost'
-
     const ignitor = new Ignitor(APP_ROOT)
     await ignitor.forHttpServer().start()
 
@@ -274,7 +271,7 @@ test.group('Ignitor | http server', (group) => {
     Route.get('/', async () => 'handled')
     Route.commit()
 
-    const { text } = await supertest('http://localhost:3000').get('/').expect(200)
+    const { text } = await supertest(`http://localhost:${ignitor.server.address().port}`).get('/').expect(200)
     assert.equal(text, 'handled')
 
     ignitor.server.close()
