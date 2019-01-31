@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
-export { ConfigReader } from './src/ConfigReader'
-export { Exception } from './src/Exception'
-export { tsRequire } from './src/tsRequire'
+export function tsRequire (filePath: string, esmEnabled = false) {
+  const output = require(filePath)
+  return esmEnabled && output && output.default ? output.default : output
+}
