@@ -54,7 +54,9 @@
     "require-all": "^3.0.0"
   },
   "devDependencies": {
+    "@adonisjs/fold": "5.0.1",
     "clear-module": "^3.1.0",
-    "fs-extra": "^7.0.1"
+    "fs-extra": "^7.0.1",
+    "supertest": "^3.4.2"
   }
 }
