@@ -275,6 +275,7 @@ test.group('Ignitor | http server', (group) => {
 
     const Route = ignitor.ioc.use<any>('Route')
     Route.get('/', async ({ response }) => {
+      console.log('reached here>>>>>>')
       response.send('handled')
     })
 
