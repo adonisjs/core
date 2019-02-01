@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/utils/compare/@adonisjs/utils@1.2.0...@adonisjs/utils@1.3.0) (2019-02-01)
+
+
+### Features
+
+* **utils:** add tsRequire function ([52d332e](https://github.com/adonisjs/adonis-framework/tree/master/packages/utils/commit/52d332e))
+
+
+
+
+
 # [1.2.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/utils/compare/@adonisjs/utils@1.1.0...@adonisjs/utils@1.2.0) (2019-01-26)
 
 

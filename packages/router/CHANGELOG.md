@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.3.0...@adonisjs/router@1.4.0) (2019-02-01)
+
+
+### Features
+
+* **router:** add support for global matchers ([0e8cb88](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/commit/0e8cb88))
+* **router:** define namespace for routes ([7d0c559](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/commit/7d0c559))
+
+
+
+
+
 # [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.2.0...@adonisjs/router@1.3.0) (2019-01-29)
 
 

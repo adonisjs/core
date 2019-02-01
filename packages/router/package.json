@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/router",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "AdonisJs official HTTP router",
   "main": "build/index.js",
   "files": [
@@ -31,7 +31,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@adonisjs/utils": "^1.2.0",
+    "@adonisjs/utils": "^1.3.0",
     "matchit": "git+https://github.com/thetutlage/matchit.git",
     "object.pick": "^1.3.0",
     "pluralize": "^7.0.0"
