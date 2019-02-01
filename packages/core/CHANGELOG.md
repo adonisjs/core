@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.2.1...@adonisjs/core@1.2.2) (2019-02-01)
+
+
+### Bug Fixes
+
+* **ignitor:** use Env provider to read environment variables ([f60f47b](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/f60f47b))
+
+
+
+
+
 ## [1.2.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.2.0...@adonisjs/core@1.2.1) (2019-02-01)
 
 **Note:** Version bump only for package @adonisjs/core
