@@ -320,7 +320,9 @@ export class Ignitor {
     try {
       await this._bootstrap()
       this._createHttp(serverCallback)
-      await this._listen(process.env.PORT, process.env.HOST)
+
+      const Env = this.ioc.use<any>('Adonis/Src/Env')
+      await this._listen(Env.get('PORT'), Env.get('HOST'))
     } catch (error) {
       console.log(error)
       process.exit(1)
