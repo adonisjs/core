@@ -165,6 +165,7 @@ test.group('Ignitor | boot providers', (group) => {
 
     const ignitor = new Ignitor(APP_ROOT)
     ignitor['_loadRcFile']()
+    ignitor['_instantiateIoCContainer']()
     await ignitor['_bootProviders']()
 
     assert.deepEqual(global['AppProvider'], ['registered', 'booted'])
@@ -227,7 +228,7 @@ test.group('Ignitor | preload files', (group) => {
     await outputFile(join(APP_ROOT, 'start/routes.js'), `global['START_ROUTES'] = true`)
 
     const ignitor = new Ignitor(APP_ROOT)
-    ignitor.forAce()
+    ignitor['_intent'] = 'ace'
     ignitor['_loadRcFile']()
     ignitor['_preloadFiles']()
 
@@ -265,16 +266,18 @@ test.group('Ignitor | http server', (group) => {
     `)
 
     const ignitor = new Ignitor(APP_ROOT)
-    await ignitor.forHttpServer().start()
+    ignitor['_intent'] = 'http'
+
+    await ignitor['_bootstrap']()
+    ignitor['_createHttp']()
 
     const Route = ignitor.ioc.use<any>('Route')
-    Route.get('/', async () => 'handled')
-    Route.commit()
+    Route.get('/', async ({ response }) => {
+      response.send('handled')
+    })
 
-    const { text } = await supertest(`http://localhost:${ignitor.server.address().port}`).get('/').expect(200)
+    const { text } = await supertest(ignitor.server).get('/').expect(200)
     assert.equal(text, 'handled')
-
-    ignitor.server.close()
 
     clearModule(join(APP_ROOT, '.adonisrc.json'))
     clearModule(join(APP_ROOT, 'start/app.js'))

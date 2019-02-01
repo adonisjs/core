@@ -28,7 +28,7 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap",
-    "test": "lerna run test --since fe99d2deeb3fa67734556e5c3976d8478c2818a4",
+    "test": "lerna run test --since f7ab6e1f283e0052a95240da2e2017076f5319dd",
     "publish": "lerna run build && lerna publish"
   }
 }

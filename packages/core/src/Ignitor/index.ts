@@ -113,16 +113,6 @@ export class Ignitor {
   }
 
   /**
-   * Ensure the `intent` is defined, otherwise ignitor won't be able to bootstrap
-   * the app properly
-   */
-  private _ensureIntent () {
-    if (!this._intent) {
-      throw new Exception('ignitor intent is required to bootstrap the application', 500, 'E_MISSING_IGNITOR_INTENT')
-    }
-  }
-
-  /**
    * Load `.adonisrc.json` file from the project root. Only `directories` will be merged
    * and everything else will overwrite the defaults.
    */
@@ -159,8 +149,11 @@ export class Ignitor {
   private _loadAppFile () {
     const appFile = join(this.appRoot, this.directories.start, 'app')
     const appExports = this._require(appFile)
-    const requiredExports = ['providers', 'aceProviders', 'commands']
 
+    /**
+     * Validate the required props to ensure they exists
+     */
+    const requiredExports = ['providers', 'aceProviders', 'commands']
     requiredExports.forEach((prop) => {
       if (!appExports[prop]) {
         throw new Exception(
@@ -175,16 +168,26 @@ export class Ignitor {
   }
 
   /**
+   * Instantiate IoC container
+   */
+  private _instantiateIoCContainer () {
+    this.ioc = new Ioc(false, this.typescript)
+  }
+
+  /**
+   * Register autoloads
+   */
+  private _registerAutoloads () {
+    Object.keys(this.autoloads).forEach((alias) => {
+      this.ioc.autoload(join(this.appRoot, this.autoloads[alias]), alias)
+    })
+  }
+
+  /**
    * Register and boot service providers
    */
   private async _bootProviders () {
-    this.ioc = new Ioc(false, this.typescript)
     const registrar = new Registrar(this.ioc)
-
-    /**
-     * Bind helpers right after instantiating IoC container
-     */
-    this._bindHelpers()
 
     /**
      * Loads `start/app` file and use providers and aliases from it. In
@@ -234,30 +237,71 @@ export class Ignitor {
   }
 
   /**
+   * Bootstrap the application
+   */
+  private async _bootstrap () {
+    /**
+     * Load the rc file (ignore if file is missing)
+     */
+    this._loadRcFile()
+
+    /**
+     * New up IoC container
+     */
+    this._instantiateIoCContainer()
+
+    /**
+     * Bind helpers as first class citizen
+     */
+    this._bindHelpers()
+
+    /**
+     * Boot all the providers
+     */
+    await this._bootProviders()
+
+    /**
+     * Register autoloaded directories
+     */
+    this._registerAutoloads()
+
+    /**
+     * Preload all files
+     */
+    this._preloadFiles()
+  }
+
+  /**
    * Start the HTTP server by pulling it from the IoC container
    */
-  private _runHttpServer () {
+  private _createHttp (serverCallback?: (handler) => any) {
+    const server = this.ioc.use<any>('Adonis/Src/Server')
+    const router = this.ioc.use<any>('Adonis/Src/Route')
+
+    /**
+     * Commit routes to the router store
+     */
+    router.commit()
+
+    /**
+     * Optimize server to cache handler
+     */
+    server.optimize()
+
+    /**
+     * Finally start the HTTP server and keep reference to
+     * it
+     */
+    const handler = server.handle.bind(server)
+    this.server = serverCallback ? serverCallback(handler) : createServer(server.handle.bind(server))
+  }
+
+  /**
+   * Make HTTP server listen on a given port
+   */
+  private _listen (port, host?) {
     return new Promise((resolve, reject) => {
-      const server = this.ioc.use<any>('Adonis/Src/Server')
-      const router = this.ioc.use<any>('Adonis/Src/Route')
-
-      /**
-       * Commit routes to the router store
-       */
-      router.commit()
-
-      /**
-       * Optimize server to cache handler
-       */
-      server.optimize()
-
-      /**
-       * Finally start the HTTP server and keep reference to
-       * it
-       */
-      this.server = createServer(server.handle.bind(server))
-
-      this.server.listen(process.env.PORT, process.env.HOST, (error) => {
+      this.server.listen(port, host, (error) => {
         if (error) {
           reject(error)
         } else {
@@ -268,49 +312,15 @@ export class Ignitor {
   }
 
   /**
-   * Set intent to ace
-   */
-  public forAce (): this {
-    this._intent = 'ace'
-    return this
-  }
-
-  /**
-   * Set intent to http server
-   */
-  public forHttpServer (): this {
-    this._intent = 'http'
-    return this
-  }
-
-  /**
    * Bootstrap the app
    */
-  public async start () {
+  public async startHttpServer (serverCallback?: (handler) => any) {
+    this._intent = 'http'
+
     try {
-      /**
-       * Intent is required before we can do anything else
-       */
-      this._ensureIntent()
-
-      /**
-       * Load the rc file (ignore if file is missing)
-       */
-      this._loadRcFile()
-
-      /**
-       * Boot all the providers
-       */
-      await this._bootProviders()
-
-      /**
-       * Preload all files
-       */
-      this._preloadFiles()
-
-      if (this._intent === 'http') {
-        await this._runHttpServer()
-      }
+      await this._bootstrap()
+      this._createHttp(serverCallback)
+      await this._listen(process.env.PORT, process.env.HOST)
     } catch (error) {
       console.log(error)
       process.exit(1)
