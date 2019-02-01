@@ -6,7 +6,8 @@
   "files": [
     "build/src",
     "build/index.js",
-    "build/index.d.ts"
+    "build/index.d.ts",
+    "build/providers"
   ],
   "scripts": {
     "pretest": "npm run lint",
