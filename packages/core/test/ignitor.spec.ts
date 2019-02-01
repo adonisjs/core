@@ -268,13 +268,13 @@ test.group('Ignitor | http server', (group) => {
     const ignitor = new Ignitor(APP_ROOT)
     ignitor['_intent'] = 'http'
 
-    await ignitor['_bootstrap']()
-    ignitor['_createHttp']()
-
     const Route = ignitor.ioc.use<any>('Route')
     Route.get('/', async ({ response }) => {
       response.send('handled')
     })
+
+    await ignitor['_bootstrap']()
+    ignitor['_createHttp']()
 
     const { text } = await supertest(ignitor.server).get('/').expect(200)
     assert.equal(text, 'handled')
