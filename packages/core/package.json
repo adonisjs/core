@@ -45,6 +45,7 @@
     "url": "https://github.com/adonisjs/adonis-framework/issues"
   },
   "dependencies": {
+    "@adonisjs/fold": "5.0.1",
     "@adonisjs/request": "^1.1.5",
     "@adonisjs/response": "^1.1.6",
     "@adonisjs/router": "^1.4.0",
@@ -55,7 +56,6 @@
     "require-all": "^3.0.0"
   },
   "devDependencies": {
-    "@adonisjs/fold": "5.0.1",
     "clear-module": "^3.1.0",
     "fs-extra": "^7.0.1",
     "supertest": "^3.4.2"

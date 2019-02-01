@@ -172,6 +172,9 @@ export class Ignitor {
    */
   private _instantiateIoCContainer () {
     this.ioc = new Ioc(false, this.typescript)
+
+    global['use'] = this.ioc.use.bind(this.ioc)
+    global['make'] = this.ioc.make.bind(this.ioc)
   }
 
   /**
