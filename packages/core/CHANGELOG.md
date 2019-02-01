@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.2.2...@adonisjs/core@1.2.3) (2019-02-01)
+
+
+### Bug Fixes
+
+* **ignitor:** add ioc.use and make to globals ([8de3517](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/8de3517))
+
+
+
+
+
 ## [1.2.2](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.2.1...@adonisjs/core@1.2.2) (2019-02-01)
 
 
