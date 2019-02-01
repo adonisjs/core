@@ -275,7 +275,6 @@ test.group('Ignitor | http server', (group) => {
 
     const Route = ignitor.ioc.use<any>('Route')
     Route.get('/', async ({ response }) => {
-      console.log(response)
       response.send('handled')
     })
 
@@ -286,5 +285,5 @@ test.group('Ignitor | http server', (group) => {
 
     clearModule(join(APP_ROOT, '.adonisrc.json'))
     clearModule(join(APP_ROOT, 'start/app.js'))
-  }).timeout(6000)
+  }).timeout(0)
 })
