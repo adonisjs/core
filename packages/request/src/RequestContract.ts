@@ -11,6 +11,7 @@
  * file that was distributed with this source code.
  */
 
+import { MacroableConstructorContract } from 'macroable'
 import { UrlWithStringQuery } from 'url'
 import { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'http'
 
@@ -66,4 +67,12 @@ export type RequestConfig = {
   trustProxy: (address: string, distance: number) => boolean,
   getIp: ((request: RequestContract) => string) | null,
   subdomainOffset: number,
+}
+
+/**
+ * Constructor contract is required coz of static methods
+ * on the request class
+ */
+export interface RequestConstructorContract extends MacroableConstructorContract {
+  new (request: IncomingMessage, response: ServerResponse, config: Partial<RequestConfig>): RequestContract
 }
