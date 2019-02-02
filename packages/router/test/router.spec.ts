@@ -9,6 +9,21 @@
 
 import * as test from 'japa'
 import { Router } from '../src/Router'
+import { BriskRoute } from '../src/BriskRoute'
+import { RouteResource } from '../src/Resource'
+import { RouteGroup } from '../src/Group'
+import { Route } from '../src/Route'
+
+test.group('Router', () => {
+  test('add route class from the router instance', (assert) => {
+    const router = new Router()
+
+    assert.deepEqual(router.BriskRoute, BriskRoute)
+    assert.deepEqual(router.RouteResource, RouteResource)
+    assert.deepEqual(router.RouteGroup, RouteGroup)
+    assert.deepEqual(router.Route, Route)
+  })
+})
 
 test.group('Router | add', () => {
   test('add routes', (assert) => {
