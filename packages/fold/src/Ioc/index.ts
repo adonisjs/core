@@ -474,7 +474,7 @@ export class Ioc implements IocContract {
    * ioc.use('lodash')              // Fallback to Node.js require
    * ```
    */
-  public use<T> (namespace: string, relativeFrom?: string): T {
+  public use<T extends any> (namespace: string, relativeFrom?: string): T {
     const value = this._resolve(namespace, relativeFrom)
 
     if (!this._useProxies) {
@@ -500,7 +500,7 @@ export class Ioc implements IocContract {
    * The bindings added via `ioc.bind` or `ioc.singleton` controls their state
    * by themselves.
    */
-  public make<T> (namespace: any, relativeFrom?: string): T {
+  public make<T extends any> (namespace: any, relativeFrom?: string): T {
     const value = this._resolveAndMake(namespace, relativeFrom)
 
     if (!this._useProxies) {
@@ -527,7 +527,7 @@ export class Ioc implements IocContract {
    * point to a fake when `ADONIS_IOC_PROXY` is set to true and fake
    * exists.
    */
-  public useFake<T> (namespace: string): T {
+  public useFake<T extends any> (namespace: string): T {
     const fake = this._fakes.get(namespace)
 
     if (!fake) {
