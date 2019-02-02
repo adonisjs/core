@@ -45,6 +45,15 @@ export class Router implements RouterContract {
   public routes: (Route | RouteResource | RouteGroup | BriskRoute)[] = []
 
   /**
+   * Exposing BriskRoute, RouteGroup and RouteResource constructors
+   * to be extended from outside
+   */
+  public BriskRoute = BriskRoute
+  public RouteGroup = RouteGroup
+  public RouteResource = RouteResource
+  public Route = Route
+
+  /**
    * Global matchers to test route params against regular expressions.
    */
   private _matchers: Matchers = {}

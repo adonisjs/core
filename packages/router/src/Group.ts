@@ -8,6 +8,8 @@
  */
 
 import { Exception } from '@adonisjs/utils'
+import { Macroable } from 'macroable'
+
 import { Route } from './Route'
 import { RouteResource } from './Resource'
 import { BriskRoute } from './BriskRoute'
@@ -26,8 +28,12 @@ function missingRouteName () {
  * of routes. The group routes must be pre-defined using
  * the constructor.
  */
-export class RouteGroup implements RouteGroupContract {
+export class RouteGroup extends Macroable implements RouteGroupContract {
+  protected static _macros = {}
+  protected static _getters = {}
+
   constructor (public routes: (Route | RouteResource | BriskRoute)[]) {
+    super()
   }
 
   /**

@@ -8,6 +8,7 @@
  */
 
 import { singular } from 'pluralize'
+import { Macroable } from 'macroable'
 import { Matchers, RouteResourceContract } from './Contracts'
 import { Route } from './Route'
 
@@ -21,7 +22,10 @@ import { Route } from './Route'
  * const resource = new RouteResource('articles', 'ArticlesController')
  * ```
  */
-export class RouteResource implements RouteResourceContract {
+export class RouteResource extends Macroable implements RouteResourceContract {
+  protected static _macros = {}
+  protected static _getters = {}
+
   public routes: Route[] = []
 
   constructor (
@@ -31,6 +35,7 @@ export class RouteResource implements RouteResourceContract {
     private _globalMatchers: Matchers,
     private _shallow = false,
   ) {
+    super()
     this._buildRoutes()
   }
 

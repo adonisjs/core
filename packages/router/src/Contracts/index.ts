@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { MacroableConstructorContract } from 'macroable'
+
 /**
  * Shape of route param matchers
  */
@@ -23,6 +25,38 @@ export type RouteNode = {
   middleware: any[],
   meta: any,
   name?: string,
+}
+
+/**
+ * These interfaces are required coz of static methods on the respective
+ * classes
+ */
+interface BriskRouteConstructorContract extends MacroableConstructorContract {
+  new (pattern: string, namespace: string, globalMatchers: Matchers): BriskRouteContract
+}
+
+interface RouteGroupConstructorContract extends MacroableConstructorContract {
+  new (routes: (RouteContract | RouteResourceContract | BriskRouteContract)[]): RouteGroupContract
+}
+
+interface RouteResourceConstructorContract extends MacroableConstructorContract {
+  new (
+    resource: string,
+    controller: string,
+    namespace: string,
+    globalMatchers: Matchers,
+    shallow?: boolean,
+  ): RouteResourceContract
+}
+
+interface RouteConstructorContract extends MacroableConstructorContract {
+  new (
+    pattern: string,
+    methods: string[],
+    handler: any,
+    namespace: string,
+    globalMatchers: Matchers,
+  ): RouteContract
 }
 
 /**
@@ -73,6 +107,10 @@ export interface RouteGroupContract {
 }
 
 export interface RouterContract {
+  BriskRoute: BriskRouteConstructorContract,
+  RouteGroup: RouteGroupConstructorContract,
+  RouteResource: RouteResourceConstructorContract,
+  Route: RouteConstructorContract,
   routes: (RouteContract | RouteResourceContract | RouteGroupContract | BriskRouteContract)[],
   route (pattern: string, methods: string[], handler: any): RouteContract,
   any (pattern: string, handler: any): RouteContract,

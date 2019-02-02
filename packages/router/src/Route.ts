@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { Macroable } from 'macroable'
 import { RouteDefination, Matchers, RouteContract } from './Contracts'
 import { dropSlash } from '../lib'
 
@@ -26,7 +27,10 @@ import { dropSlash } from '../lib'
  *   })
  * ```
  */
-export class Route implements RouteContract {
+export class Route extends Macroable implements RouteContract {
+  protected static _macros = {}
+  protected static _getters = {}
+
   /**
    * By default the route is part of `root` domain. Root
    * domain is used when no domain is defined
@@ -70,7 +74,9 @@ export class Route implements RouteContract {
     private _handler: any,
     private _namespace: string,
     private _globalMatchers: Matchers,
-  ) {}
+  ) {
+    super()
+  }
 
   /**
    * Returns an object of param matchers by merging global and local

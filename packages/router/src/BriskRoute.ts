@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { Macroable } from 'macroable'
 import { BriskRouteContract, Matchers } from './Contracts'
 import { Route } from './Route'
 import { Exception } from '@adonisjs/utils'
@@ -19,12 +20,16 @@ import { Exception } from '@adonisjs/utils'
  * to render a view without defining a controller method or
  * closure.
  */
-export class BriskRoute implements BriskRouteContract {
+export class BriskRoute extends Macroable implements BriskRouteContract {
+  protected static _macros = {}
+  protected static _getters = {}
+
   private _methods = ['GET']
   public route: null | Route = null
   private _invokedBy: string = ''
 
   constructor (private _pattern: string, private _namespace: string, private _globalMatchers: Matchers) {
+    super()
   }
 
   /**
