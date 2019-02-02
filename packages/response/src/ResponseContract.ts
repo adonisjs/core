@@ -11,6 +11,7 @@
  * file that was distributed with this source code.
  */
 
+import { MacroableConstructorContract } from 'macroable'
 import { ServerResponse, IncomingMessage } from 'http'
 
 /**
@@ -94,4 +95,12 @@ export interface ResponseContract {
   redirect (url: string, reflectQueryParams?: boolean, statusCode?: number): void
 
   finish (): void
+}
+
+/**
+ * Constructor contract is required coz of static methods
+ * on the response class
+ */
+export interface ResponseConstructorContract extends MacroableConstructorContract {
+  new (request: IncomingMessage, response: ServerResponse, config: Partial<ResponseConfig>): ResponseContract
 }

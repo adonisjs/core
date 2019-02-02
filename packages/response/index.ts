@@ -12,4 +12,4 @@
 */
 
 export { Response } from './src/Response'
-export { ResponseContract, ResponseConfig } from './src/ResponseContract'
+export { ResponseContract, ResponseConfig, ResponseConstructorContract } from './src/ResponseContract'
