@@ -9,14 +9,7 @@
 
 import * as requireAll from 'require-all'
 import { get, set, mergeWith } from 'lodash'
-import { IocContract } from '@adonisjs/fold'
-
 import { ConfigContract } from '../Contracts/Config'
-
-declare global {
-  const use: IocContract['use']
-  const make: IocContract['make']
-}
 
 /**
  * Config module eases the process of using configuration inside your AdonisJs
