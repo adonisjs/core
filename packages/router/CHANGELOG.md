@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.4.0...@adonisjs/router@1.5.0) (2019-02-04)
+
+
+### Features
+
+* **router:** expose route classes for extending ([6f4c33f](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/commit/6f4c33f))
+
+
+
+
+
 # [1.4.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.3.0...@adonisjs/router@1.4.0) (2019-02-01)
 
 
