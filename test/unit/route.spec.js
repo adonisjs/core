@@ -726,6 +726,14 @@ test.group('Route | Manager', (group) => {
     assert.throw(fn, 'E_NESTED_ROUTE_GROUPS: Nested route groups are not allowed')
   })
 
+  test.failing('throw exception when name is already used', (assert) => {
+    const fn = () => {
+      RouteManager.get('/', function () {}).as('foo')
+      RouteManager.get('/', function () {}).as('foo')
+    }
+    assert.throw(fn, 'E_ROUTE_NAME_TAKEN: This route name is already used')
+  })
+
   test('define route resource', (assert) => {
     const resource = RouteManager.resource('users', 'UsersController')
     assert.instanceOf(resource, RouteResource)
