@@ -198,6 +198,8 @@ test.group('Ignitor | preload files', (group) => {
 
     const ignitor = new Ignitor(APP_ROOT)
     ignitor['_loadRcFile']()
+    ignitor['_instantiateIoCContainer']()
+    ignitor['_instantiateProfiler']()
     ignitor['_preloadFiles']()
 
     assert.isTrue(global['START_KERNEL'])
@@ -230,6 +232,8 @@ test.group('Ignitor | preload files', (group) => {
     const ignitor = new Ignitor(APP_ROOT)
     ignitor['_intent'] = 'ace'
     ignitor['_loadRcFile']()
+    ignitor['_instantiateIoCContainer']()
+    ignitor['_instantiateProfiler']()
     ignitor['_preloadFiles']()
 
     assert.isUndefined(global['START_KERNEL'])
@@ -269,6 +273,7 @@ test.group('Ignitor | http server', (group) => {
     ignitor['_intent'] = 'http'
     ignitor['_loadRcFile']()
     ignitor['_instantiateIoCContainer']()
+    ignitor['_instantiateProfiler']()
     ignitor['_bindHelpers']()
 
     await ignitor['_bootProviders']()

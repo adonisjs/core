@@ -12,6 +12,7 @@ import { merge } from 'lodash'
 import { createServer } from 'http'
 import { Exception, tsRequire } from '@adonisjs/utils'
 import { Registrar, Ioc } from '@adonisjs/fold'
+import { Profiler, ProfilerRowContract, ProfilerSubscriber } from '@adonisjs/profiler'
 
 import { Helpers } from '../Helpers'
 
@@ -94,6 +95,14 @@ export class Ignitor {
    * to bootstrap the app
    */
   private _intent: string
+
+  /**
+   * Profiler row instance to profile actions under
+   * bootstrap row
+   */
+  private _bootstrapper: ProfilerRowContract | null
+
+  private _profilerSubscriber: ProfilerSubscriber
 
   constructor (public appRoot: string) {}
 
@@ -236,7 +245,44 @@ export class Ignitor {
   private _preloadFiles () {
     this.preloads
       .filter((node) => node.intent === this._intent || !node.intent)
-      .forEach((node) => this._require(join(this.appRoot, node.file), node.optional))
+      .forEach((node) => {
+        const loadFileAction = this._bootstrapper!.profile('load:file')
+        this._require(join(this.appRoot, node.file), node.optional)
+        loadFileAction.end()
+      })
+  }
+
+  /**
+   * Returns the profiler config by reading `config/app.js` file. This is
+   * bit quirky, since all config files are supposed to be loaded by
+   * the `ConfigProvider`. However, we need the profiler config
+   * before we load providers.
+   *
+   * Another alternative is to have a seperate config for the profiler, which
+   * is even worst, since we are creating multiple sources to store config.
+   */
+  private _getProfilerConfig () {
+    const config = this._require(join(this.appRoot, this.directories.config, 'app'), true)
+    return config && config.profiler ? config.profiler : {}
+  }
+
+  /**
+   * Creates a new profiler instance and holds reference
+   * to it
+   */
+  private _instantiateProfiler () {
+    const profiler = new Profiler(this._getProfilerConfig())
+    this.ioc.singleton('Adonis/Src/Profiler', () => profiler)
+    this.ioc.alias('Adonis/Src/Profiler', 'Profiler')
+
+    /**
+     * Attach subscriber if exists
+     */
+    if (this._profilerSubscriber) {
+      profiler.subscribe(this._profilerSubscriber)
+    }
+
+    this._bootstrapper = profiler.create('bootstrap', { intent: this._intent })
   }
 
   /**
@@ -254,6 +300,11 @@ export class Ignitor {
     this._instantiateIoCContainer()
 
     /**
+     * Instantiates the IoC container
+     */
+    this._instantiateProfiler()
+
+    /**
      * Bind helpers as first class citizen
      */
     this._bindHelpers()
@@ -261,7 +312,9 @@ export class Ignitor {
     /**
      * Boot all the providers
      */
+    const providersAction = this._bootstrapper!.profile('boot:providers')
     await this._bootProviders()
+    providersAction.end()
 
     /**
      * Register autoloaded directories
@@ -284,12 +337,16 @@ export class Ignitor {
     /**
      * Commit routes to the router store
      */
+    const compileRouteAction = this._bootstrapper!.profile('compile:routes')
     router.commit()
+    compileRouteAction.end()
 
     /**
      * Optimize server to cache handler
      */
+    const optimizeServerAction = this._bootstrapper!.profile('optimize:server')
     server.optimize()
+    optimizeServerAction.end()
 
     /**
      * Finally start the HTTP server and keep reference to
@@ -304,7 +361,9 @@ export class Ignitor {
    */
   private _listen (port, host?) {
     return new Promise((resolve, reject) => {
+      const startServerAction = this._bootstrapper!.profile('server:listen')
       this.server.listen(port, host, (error) => {
+        startServerAction.end()
         if (error) {
           reject(error)
         } else {
@@ -315,17 +374,24 @@ export class Ignitor {
   }
 
   /**
+   * Attach subscriber to listen for profiler events
+   */
+  public onProfile (callback: ProfilerSubscriber): void {
+    this._profilerSubscriber = callback
+  }
+
+  /**
    * Bootstrap the app
    */
   public async startHttpServer (serverCallback?: (handler) => any) {
     this._intent = 'http'
-
     try {
       await this._bootstrap()
       this._createHttp(serverCallback)
 
       const Env = this.ioc.use<any>('Adonis/Src/Env')
       await this._listen(Env.get('PORT'), Env.get('HOST'))
+      this._bootstrapper = null
     } catch (error) {
       console.log(error)
       process.exit(1)
