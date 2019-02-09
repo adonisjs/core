@@ -14,4 +14,5 @@ export {
   ProfilerRowDataPacket,
   ProfilerActionContract,
   ProfilerActionDataPacket,
+  ProfilerSubscriber,
 } from './src/Contracts'
