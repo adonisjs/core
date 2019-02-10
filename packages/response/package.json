@@ -13,6 +13,7 @@
     "test": "nyc node japaFile.js",
     "lint": "tslint --project tsconfig.json",
     "clean": "del build",
+    "doc": "typedoc",
     "compile": "npm run lint && npm run clean && tsc",
     "build": "npm run compile",
     "coverage": "nyc report --reporter=text-lcov | coveralls"

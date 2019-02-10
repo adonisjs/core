@@ -13,6 +13,8 @@
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "tslint-eslint-rules": "^5.4.0",
+    "typedoc": "^0.14.2",
+    "typedoc-plugin-external-module-name": "^2.0.0",
     "typescript": "^3.3.3"
   },
   "commitlint": {
@@ -28,7 +30,7 @@
   },
   "scripts": {
     "postinstall": "lerna bootstrap",
-    "test": "lerna run test --since d22248b8e488e9ae834895ba3e9bd0412476dd75",
+    "test": "lerna run test --since c24aa24ed97d9fe3ae57ce8467af18b30e8a0efe",
     "publish": "lerna run build && lerna publish"
   }
 }

@@ -1,3 +1,7 @@
+/**
+ * @module Http.Router
+ */
+
 /*
  * @adonisjs/core
  *

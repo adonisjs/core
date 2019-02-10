@@ -1,5 +1,5 @@
 /**
- * @module http
+ * @module Http.Request
  */
 
 /**

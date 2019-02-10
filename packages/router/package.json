@@ -16,6 +16,7 @@
     "clean": "del build",
     "compile": "npm run lint && npm run clean && tsc",
     "build": "npm run compile",
+    "doc": "typedoc",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "commit": "git-cz"
   },
