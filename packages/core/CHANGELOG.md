@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.2.4...@adonisjs/core@1.3.0) (2019-02-10)
+
+
+### Features
+
+* **core:** add profiler support ([6dcc9ed](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/6dcc9ed))
+
+
+
+
+
 ## [1.2.4](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.2.3...@adonisjs/core@1.2.4) (2019-02-04)
 
 **Note:** Version bump only for package @adonisjs/core

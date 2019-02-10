@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/request",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Facade over Node.js HTTP req object",
   "main": "build/index.js",
   "files": [
@@ -34,7 +34,7 @@
     "supertest": "^3.4.2"
   },
   "dependencies": {
-    "@adonisjs/utils": "^1.3.0",
+    "@adonisjs/utils": "^1.3.1",
     "accepts": "^1.3.5",
     "fresh": "^0.5.2",
     "get-value": "^3.0.1",

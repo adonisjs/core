@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.5.0...@adonisjs/router@1.5.1) (2019-02-10)
+
+**Note:** Version bump only for package @adonisjs/router
+
+
+
+
+
 # [1.5.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/router/compare/@adonisjs/router@1.4.0...@adonisjs/router@1.5.0) (2019-02-04)
 
 

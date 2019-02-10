@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/utils/compare/@adonisjs/utils@1.3.0...@adonisjs/utils@1.3.1) (2019-02-10)
+
+**Note:** Version bump only for package @adonisjs/utils
+
+
+
+
+
 # [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/utils/compare/@adonisjs/utils@1.2.0...@adonisjs/utils@1.3.0) (2019-02-01)
 
 
