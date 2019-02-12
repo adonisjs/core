@@ -9,10 +9,11 @@
     "declaration": true,
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true
   },
   "exclude": [
-    "node_modules",
-    "build"
+    "./node_modules",
+    "./build"
   ]
 }
