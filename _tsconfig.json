@@ -9,8 +9,7 @@
     "declaration": true,
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true,
-    "noEmit": true
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "./node_modules",
