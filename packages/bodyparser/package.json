@@ -1,0 +1,45 @@
+{
+  "name": "@adonisjs/bodyparser",
+  "version": "2.0.9",
+  "description": "AdonisJs body parser to read and parse HTTP request bodies",
+  "main": "build/index.js",
+  "files": [
+    "build/src",
+    "build/index.js",
+    "build/index.d.ts"
+  ],
+  "scripts": {
+    "pretest": "npm run lint",
+    "test": "nyc node japaFile.js",
+    "lint": "tslint --project tsconfig.json",
+    "clean": "del build",
+    "doc": "typedoc",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "keywords": [],
+  "author": "virk",
+  "homepage": "https://adonisjs.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adonisjs/adonis-framework/tree/master/packages/bodyparser"
+  },
+  "license": "MIT",
+  "dependencies": {
+  },
+  "peerDependencies": {
+  },
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "next"
+  }
+}
