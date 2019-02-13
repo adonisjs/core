@@ -27,8 +27,7 @@
   },
   "license": "MIT",
   "dependencies": {
-  },
-  "peerDependencies": {
+    "lodash": "^4.17.11"
   },
   "nyc": {
     "exclude": [
