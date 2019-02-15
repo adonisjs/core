@@ -10,44 +10,7 @@
 import { RequestContract } from '@adonisjs/request'
 import { ConfigReader } from '@adonisjs/utils'
 import * as coBody from 'co-body'
-
-type QueryStringConfig = {
-  depth?: number,
-  allowPrototypes?: boolean,
-  plainObjects?: boolean,
-  parameterLimit?: number,
-  arrayLimit?: number,
-  ignoreQueryPrefix?: boolean,
-  delimiter?: RegExp | string,
-  allowDots?: boolean,
-  charset?: string,
-  charsetSentinel?: boolean,
-  interpretNumericEntities?: boolean,
-  parseArrays?: boolean,
-  comma?: boolean,
-}
-
-export type BodyParserConfig = {
-  whitelistedMethods: string[],
-  json: {
-    encoding?: string,
-    limit?: string | number,
-    strict?: boolean,
-    types: string[],
-  },
-  form: {
-    encoding?: string,
-    limit?: string | number,
-    queryString?: QueryStringConfig,
-    types: string[],
-  },
-  raw: {
-    encoding?: string,
-    limit?: string | number,
-    queryString?: QueryStringConfig,
-    types: string[],
-  },
-}
+import { BodyParserConfig } from '../Contracts'
 
 /**
  * The default body parser config
