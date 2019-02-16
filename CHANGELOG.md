@@ -1,3 +1,22 @@
+<a name="5.0.13"></a>
+## [5.0.13](https://github.com/adonisjs/adonis-framework/compare/v5.0.12...v5.0.13) (2019-02-16)
+
+
+### Bug Fixes
+
+* **Env:** allow escaping dollar sign ([22b54b5](https://github.com/adonisjs/adonis-framework/commit/22b54b5)), closes [#1037](https://github.com/adonisjs/adonis-framework/issues/1037)
+* **Env:** Env.load() docblock ([#1010](https://github.com/adonisjs/adonis-framework/issues/1010)) ([1b0412e](https://github.com/adonisjs/adonis-framework/commit/1b0412e))
+
+
+### Features
+
+* **error:** add forum link to youch error page ([c26328f](https://github.com/adonisjs/adonis-framework/commit/c26328f))
+* **exception:** Add forum link ([4e82b59](https://github.com/adonisjs/adonis-framework/commit/4e82b59))
+* **Router:** duplicate route name failing test ([#1025](https://github.com/adonisjs/adonis-framework/issues/1025)) ([9a34cac](https://github.com/adonisjs/adonis-framework/commit/9a34cac))
+* **routing:** prefix route's name via group ([98ca091](https://github.com/adonisjs/adonis-framework/commit/98ca091))
+
+
+
 <a name="5.0.12"></a>
 ## [5.0.12](https://github.com/adonisjs/adonis-framework/compare/v5.0.11...v5.0.12) (2018-10-16)
 
