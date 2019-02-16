@@ -71,12 +71,21 @@ class Env {
    * @private
    */
   _interpolate (env, envConfig) {
-    const matches = env.match(/\$([a-zA-Z0-9_]+)|\${([a-zA-Z0-9_]+)}/g) || []
+    const matches = env.match(/(\\)?\$([a-zA-Z0-9_]+)|(\\)?\${([a-zA-Z0-9_]+)}/g) || []
     _.each(matches, (match) => {
+      /**
+       * Variable is escaped
+       */
+      if (match.indexOf('\\') === 0) {
+        env = env.replace(match, match.replace(/^\\\$/, '$'))
+        return
+      }
+
       const key = match.replace(/\$|{|}/g, '')
       const variable = envConfig[key] || process.env[key] || ''
       env = env.replace(match, this._interpolate(variable, envConfig))
     })
+
     return env
   }
 

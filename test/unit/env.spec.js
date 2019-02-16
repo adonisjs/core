@@ -19,6 +19,17 @@ test.group('Env', (group) => {
     this.helpers = new Helpers(path.join(__dirname))
   })
 
+  group.afterEach(() => {
+    delete process.env.ENV_PATH
+    delete process.env.HELLO
+    delete process.env.HOST
+    delete process.env.PORT
+    delete process.env.URL
+    delete process.env.PRICE
+    delete process.env.PASSWORD
+    delete process.env.ENV_SILENT
+  })
+
   test('load .env file by initiating Env class', (assert) => {
     assert.plan(1)
 
@@ -116,6 +127,16 @@ test.group('Env', (group) => {
     assert.throws(() => {
       env.getOrFail('THIS_ENV_DOES_NOT_EXIST')
     }, Error)
+
+    delete process.env.ENV_PATH
+  })
+
+  test('work fine with escaped dollar sign', (assert) => {
+    process.env.ENV_PATH = './user/.env.expand'
+    const env = new Env(this.helpers._appRoot)
+
+    assert.equal(env.get('PASSWORD'), 'pass$ord')
+    assert.equal(env.get('PRICE'), '$2.99')
 
     delete process.env.ENV_PATH
   })
