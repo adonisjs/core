@@ -28,7 +28,7 @@ export default class AppProvider {
   private _registerConfig () {
     this.app.singleton('Adonis/Src/Config', () => {
       const Helpers = this.app.use('Adonis/Src/Helpers')
-      return new Config(Helpers.appRoot())
+      return new Config(Helpers.configPath())
     })
     this.app.alias('Adonis/Src/Config', 'Config')
   }
