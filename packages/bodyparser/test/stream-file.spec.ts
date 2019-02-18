@@ -25,7 +25,8 @@ test.group('streamFile', (group) => {
     await outputFile(MAIN_FILE, 'hello')
 
     const file = createReadStream(MAIN_FILE)
-    await streamFile(file, SAMPLE_FILE)
+    const size = await streamFile(file, SAMPLE_FILE)
+    assert.equal(size, Buffer.byteLength('hello'))
 
     const hasFile = await pathExists(SAMPLE_FILE)
     assert.isTrue(hasFile)

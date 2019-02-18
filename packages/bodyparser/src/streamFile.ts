@@ -16,7 +16,11 @@ import { Exception } from '@adonisjs/utils'
  * Streams file to the destination by monitoring it's size and raising
  * error, if it's over limit.
  */
-export function streamFile (readStream: Readable, location: string, limit?: number) {
+export function streamFile (
+  readStream: Readable,
+  location: string,
+  limit?: number,
+): Promise<number> {
   return new Promise((resolve, reject) => {
     let size = 0
 
@@ -40,7 +44,7 @@ export function streamFile (readStream: Readable, location: string, limit?: numb
            * streaming
            */
           if (!error) {
-            resolve()
+            resolve(size)
             return
           }
 
@@ -63,7 +67,10 @@ export function streamFile (readStream: Readable, location: string, limit?: numb
           size += line.length
 
           if (limit && size > limit) {
-            readStream.emit('error', new Exception('stream size exceeded', 500, 'E_UNALLOWED_FILE_SIZE'))
+            readStream.emit(
+              'error',
+              new Exception('stream size exceeded', 500, 'E_UNALLOWED_FILE_SIZE'),
+            )
           }
         })
 
