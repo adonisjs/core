@@ -23,7 +23,6 @@ import * as contentDisposition from 'content-disposition'
 import * as vary from 'vary'
 import * as fresh from 'fresh'
 import { Macroable } from 'macroable'
-import { ConfigReader } from '@adonisjs/utils'
 
 import {
   ResponseContract,
@@ -33,15 +32,6 @@ import {
   ResponseStream,
   ResponseConfig,
 } from './ResponseContract'
-
-/**
- * Config reader is used to avoid unncessary calls to `Object.assign`
- * on every new instance of response
- */
-const $ = new ConfigReader({
-  etag: false,
-  jsonpCallbackName: 'callback',
-} as ResponseConfig)
 
 /**
  * Wraps `fs.stat` to promise interface.
@@ -101,7 +91,7 @@ export class Response extends Macroable implements ResponseContract {
   constructor (
     public request: IncomingMessage,
     public response: ServerResponse,
-    private _config: Partial<ResponseConfig>,
+    private _config: ResponseConfig,
   ) {
     super()
   }
@@ -475,7 +465,7 @@ export class Response extends Macroable implements ResponseContract {
    * This method buffers the body if `explicitEnd = true`, which is the default
    * behavior and do not change, unless you know what you are doing.
    */
-  public send (body: any, generateEtag: boolean = $.get(this._config, 'etag')): void {
+  public send (body: any, generateEtag: boolean = this._config.etag): void {
     if (this.explicitEnd) {
       this.lazyBody = {
         writer: this._writeBody,
@@ -508,8 +498,8 @@ export class Response extends Macroable implements ResponseContract {
    */
   public jsonp (
     body: any,
-    callbackName: string = $.get(this._config, 'jsonpCallbackName'),
-    generateEtag: boolean = $.get(this._config, 'etag'),
+    callbackName: string = this._config.jsonpCallbackName,
+    generateEtag: boolean = this._config.etag,
   ) {
     if (this.explicitEnd) {
       this.lazyBody = {
@@ -632,7 +622,7 @@ export class Response extends Macroable implements ResponseContract {
    */
   public async download (
     filePath: string,
-    generateEtag: boolean = $.get(this._config, 'etag'),
+    generateEtag: boolean = this._config.etag,
     raiseErrors: boolean = false,
   ) {
     this.explicitEnd = false

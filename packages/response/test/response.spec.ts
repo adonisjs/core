@@ -14,11 +14,13 @@ import { stat, outputFile, remove, ensureDir } from 'fs-extra'
 import { createWriteStream, createReadStream } from 'fs'
 import { createServer } from 'http'
 import * as etag from 'etag'
+import { config } from '../config'
 
 import { Response } from '../src/Response'
+import { ResponseConfig } from '../src/ResponseContract'
 
-const fakeConfig = (config?) => {
-  return Object.assign({}, config)
+const fakeConfig = (conf?: Partial<ResponseConfig>) => {
+  return Object.assign(config, conf)
 }
 
 const APP_ROOT = join(__dirname, 'app')

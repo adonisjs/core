@@ -12,4 +12,5 @@
 */
 
 export { Response } from './src/Response'
+export { config as responseConfig } from './config'
 export { ResponseContract, ResponseConfig, ResponseConstructorContract } from './src/ResponseContract'
