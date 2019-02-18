@@ -10,11 +10,13 @@
 import * as test from 'japa'
 import * as supertest from 'supertest'
 import { createServer } from 'http'
+import { config } from '../config'
 
 import { Request } from '../src/Request'
+import { RequestConfig } from '../src/RequestContract'
 
-const fakeConfig = (config?) => {
-  return Object.assign({}, config)
+const fakeConfig = (conf?: Partial<RequestConfig>) => {
+  return Object.assign(config, conf)
 }
 
 test.group('Request', () => {
@@ -686,7 +688,7 @@ test.group('Request', () => {
     const server = createServer((req, res) => {
       const config = fakeConfig({
         getIp (request) {
-          return request.header('host').split(':')[0]
+          return request.header('host')!.split(':')[0]
         },
       })
 

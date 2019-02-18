@@ -12,4 +12,5 @@
  */
 
 export { Request } from './src/Request'
+export { config as requestConfig } from './config'
 export { RequestContract, RequestConfig, RequestConstructorContract } from './src/RequestContract'

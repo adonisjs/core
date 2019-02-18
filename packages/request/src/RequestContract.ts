@@ -65,7 +65,7 @@ export interface RequestContract {
 export type RequestConfig = {
   allowMethodSpoofing: boolean,
   trustProxy: (address: string, distance: number) => boolean,
-  getIp: ((request: RequestContract) => string) | null,
+  getIp?: ((request: RequestContract) => string),
   subdomainOffset: number,
 }
 
