@@ -126,6 +126,25 @@ test.group('BodyParser Middleware | form data', () => {
 
     assert.deepEqual(text, 'E_REQUEST_ENTITY_TOO_LARGE: request entity too large')
   })
+
+  test('ignore fields with empty name', async (assert) => {
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, {})
+      const middleware = new BodyParserMiddleware(config)
+
+      await middleware.handle({ request }, () => {
+        res.writeHead(200, { 'content-type': 'application/json' })
+        res.end(JSON.stringify(request.all()))
+      })
+    })
+
+    const { body } = await supertest(server)
+      .post('/')
+      .type('form')
+      .send({ '': 'virk' })
+
+    assert.deepEqual(body, {})
+  })
 })
 
 test.group('BodyParser Middleware | json', () => {
@@ -173,6 +192,25 @@ test.group('BodyParser Middleware | json', () => {
       .expect(413)
 
     assert.deepEqual(text, 'E_REQUEST_ENTITY_TOO_LARGE: request entity too large')
+  })
+
+  test('ignore fields with empty name', async (assert) => {
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, {})
+      const middleware = new BodyParserMiddleware(config)
+
+      await middleware.handle({ request }, () => {
+        res.writeHead(200, { 'content-type': 'application/json' })
+        res.end(JSON.stringify(request.all()))
+      })
+    })
+
+    const { body } = await supertest(server)
+      .post('/')
+      .type('json')
+      .send({ '': 'virk' })
+
+    assert.deepEqual(body, { '': 'virk' })
   })
 })
 
@@ -326,5 +364,42 @@ test.group('BodyParser Middleware | multipart', () => {
 
     assert.isTrue(file1)
     assert.isFalse(file2)
+  })
+
+  test('handle request with empty field name', async (assert) => {
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, {})
+      const middleware = new BodyParserMiddleware(config)
+
+      await middleware.handle({ request }, () => {
+        res.writeHead(200, { 'content-type': 'application/json' })
+        res.end(JSON.stringify(request.all()))
+      })
+    })
+
+    const { body } = await supertest(server)
+      .post('/')
+      .attach('package', PACKAGE_FILE_PATH)
+      .field('', 'virk')
+
+    assert.deepEqual(body, {})
+  })
+
+  test('handle request with empty file name', async (assert) => {
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, {})
+      const middleware = new BodyParserMiddleware(config)
+
+      await middleware.handle({ request }, () => {
+        res.writeHead(200)
+        res.end(String(Object.keys(request['_files']).length))
+      })
+    })
+
+    const { text } = await supertest(server)
+      .post('/')
+      .attach('', PACKAGE_FILE_PATH)
+
+    assert.deepEqual(text, '0')
   })
 })

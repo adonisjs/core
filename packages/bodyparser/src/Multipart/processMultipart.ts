@@ -29,7 +29,11 @@ export async function processMultipart (multipart: Multipart, config: BodyParser
   /**
    * Reading all fields data
    */
-  multipart.onField('*', (key, value) => fields.add(key, value))
+  multipart.onField('*', (key, value) => {
+    if (key) {
+      fields.add(key, value)
+    }
+  })
 
   /**
    * Reading all files data

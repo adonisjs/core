@@ -94,6 +94,11 @@ export class Multipart implements MultipartContract {
    * handler
    */
   private async _handlePart (part: MultipartStream) {
+    if (!part.name) {
+      part.resume()
+      return
+    }
+
     const name = this._getHandlerName(part.name)
     const handler = this._handlers.files[name] || this._handlers.files['*']
     if (!handler) {
