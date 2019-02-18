@@ -11,7 +11,7 @@ import * as test from 'japa'
 import { createReadStream, remove, pathExists, outputFile } from 'fs-extra'
 import { join } from 'path'
 
-import { streamFile } from '../src/streamFile'
+import { streamFile } from '../src/Multipart/streamFile'
 
 const SAMPLE_FILE = join(__dirname, 'hello-out.txt')
 const MAIN_FILE = join(__dirname, 'hello-in.txt')
@@ -25,8 +25,7 @@ test.group('streamFile', (group) => {
     await outputFile(MAIN_FILE, 'hello')
 
     const file = createReadStream(MAIN_FILE)
-    const size = await streamFile(file, SAMPLE_FILE)
-    assert.equal(size, Buffer.byteLength('hello'))
+    await streamFile(file, SAMPLE_FILE)
 
     const hasFile = await pathExists(SAMPLE_FILE)
     assert.isTrue(hasFile)
@@ -46,19 +45,6 @@ test.group('streamFile', (group) => {
       await streamFile(file, SAMPLE_FILE)
     } catch (error) {
       assert.equal(error, 'blowup')
-    }
-  })
-
-  test('raise error when stream exceeds the bytes limit', async (assert) => {
-    assert.plan(1)
-
-    await outputFile(MAIN_FILE, 'hello\n\hi\nhow are you')
-
-    const file = createReadStream(MAIN_FILE)
-    try {
-      await streamFile(file, SAMPLE_FILE, 1)
-    } catch (error) {
-      assert.equal(error.message, 'E_UNALLOWED_FILE_SIZE: stream size exceeded')
     }
   })
 })

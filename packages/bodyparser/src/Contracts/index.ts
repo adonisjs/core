@@ -17,30 +17,18 @@ export type MultipartStream = Readable & {
   headers: any,
   name: string,
   filename: string,
-  byteOffset: number,
-  byteCount: number,
+  bytes: number,
 }
 
 /**
  * Stream part handler
  */
-export type PartHandler = (file: MultipartStream) => Promise<void>
+export type PartHandler = (part: MultipartStream) => Promise<void>
 
 /**
  * Field handler
  */
 export type FieldHandler = (key: string, value: string) => void
-
-/**
- * Multipart class contract, since it's exposed on the
- * request object, we need the interface to extend
- * typings
- */
-export interface MultipartContract {
-  consumed: boolean,
-  process (): Promise<void>,
-  onFile (name: string, callback: PartHandler): this
-}
 
 /**
  * Qs module config
@@ -62,26 +50,92 @@ type QueryStringConfig = {
 }
 
 /**
+ * Base config used by all types
+ */
+export type BodyParserBaseConfig = {
+  encoding: string,
+  limit: string | number,
+  types: string[],
+}
+
+/**
+ * Body parser config for parsing JSON requests
+ */
+export type BodyParserJSONConfig = BodyParserBaseConfig & {
+  strict: boolean,
+}
+
+/**
+ * Parser config for parsing form data
+ */
+export type BodyParserFormConfig = BodyParserBaseConfig & {
+  queryString: QueryStringConfig,
+}
+
+/**
+ * Parser config for parsing raw body (untouched)
+ */
+export type BodyParserRawConfig = BodyParserBaseConfig & {
+  queryString: QueryStringConfig,
+}
+
+/**
+ * Parser config for parsing multipart requests
+ */
+export type BodyParserMultipartConfig = BodyParserBaseConfig & {
+  autoProcess: boolean,
+  processManually: string[],
+  tmpFileName (): string,
+}
+
+/**
  * Body parser config for all different types
  */
 export type BodyParserConfig = {
   whitelistedMethods: string[],
-  json: {
-    encoding?: string,
-    limit?: string | number,
-    strict?: boolean,
-    types: string[],
-  },
-  form: {
-    encoding?: string,
-    limit?: string | number,
-    queryString?: QueryStringConfig,
-    types: string[],
-  },
-  raw: {
-    encoding?: string,
-    limit?: string | number,
-    queryString?: QueryStringConfig,
-    types: string[],
-  },
+  json: BodyParserJSONConfig,
+  form: BodyParserFormConfig,
+  raw: BodyParserRawConfig,
+  multipart: BodyParserMultipartConfig,
+}
+
+/**
+ * Multipart class contract, since it's exposed on the
+ * request object, we need the interface to extend
+ * typings
+ */
+export interface MultipartContract {
+  consumed: boolean,
+  process (): Promise<void>,
+  onFile (name: string, callback: PartHandler): this
+  onField (key: string, value: any): this
+}
+
+/**
+ * Error shape for file upload errors
+ */
+export type FileUploadError = {
+  fieldName: string,
+  clientName: string,
+  message: string,
+  type: string,
+}
+
+/**
+ * Multipart file interface, used to loose coupling
+ */
+export interface MultipartFileContract {
+  moved: boolean,
+  isValid: boolean,
+  clientName: string,
+  // fileName: string,
+  fieldName: string,
+  tmpPath: string,
+  size: number,
+  // type: string,
+  // subtype: string,
+  // status: 'pending' | 'consumed' | 'moved' | 'error',
+  // extname: string,
+  // errors: FileUploadError[],
+  move (): Promise<void>,
 }

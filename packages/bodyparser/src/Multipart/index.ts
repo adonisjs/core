@@ -25,7 +25,7 @@ import {
  *
  * ### Usage
  *
- * ```ts
+ * ```
  * const multipart = new Multipart(options)
  *
  * multipart.onFile('profile', async (stream) => {
@@ -48,7 +48,18 @@ export class Multipart implements MultipartContract {
     fields: {},
   }
 
+  /**
+   * We track the finishing of `this.onFile` async handlers
+   * to make sure that `process` promise resolves for all
+   * handlers to finish.
+   */
   private _pendingHandlers = 0
+
+  /**
+   * A boolean to know, if there are any handlers defined
+   * to the read the request body. Otherwise avoid reading
+   * the body
+   */
   private _gotHandlers = false
 
   /**
@@ -129,7 +140,18 @@ export class Multipart implements MultipartContract {
   }
 
   /**
-   * Get notified on a given field
+   * Get notified on a given field or all fields. An exception inside
+   * the callback will abort the request body parsing and raises
+   * and exception.
+   *
+   * @example
+   * ```
+   * multipart.onField('username', (key, value) => {
+   * })
+   *
+   * multipart.onField('*', (key, value) => {
+   * })
+   * ```
    */
   public onField (name: string, handler: FieldHandler): this {
     this._gotHandlers = true
@@ -147,6 +169,11 @@ export class Multipart implements MultipartContract {
         reject(new Exception('multipart stream has already been consumed', 500, 'E_CONSUMED_MULTIPART_STREAM'))
         return
       }
+
+      /**
+       * Setting the flag to avoid multiple calls
+       * to the `process` method
+       */
       this.consumed = true
 
       /**
@@ -171,7 +198,7 @@ export class Multipart implements MultipartContract {
        * promise when all parts are consumed and processed
        * by their handlers
        */
-      form.on('part', async (part) => {
+      form.on('part', async (part: MultipartStream) => {
         try {
           await this._handlePart(part)
 
@@ -191,7 +218,7 @@ export class Multipart implements MultipartContract {
       /**
        * Listen for fields
        */
-      form.on('field', (key, value) => {
+      form.on('field', (key: string, value: any) => {
         try {
           this._handleField(key, value)
         } catch (error) {
