@@ -13,4 +13,5 @@ export {
   MultipartContract,
   MultipartFileContract,
   BodyParserConfig,
+  FileValidationOptions,
 } from './src/Contracts'
