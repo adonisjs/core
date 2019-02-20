@@ -20,7 +20,7 @@ import { BodyParserMiddleware } from '../src/BodyParser'
 import { config } from '../config'
 
 const PACKAGE_FILE_PATH = join(__dirname, '../package.json')
-const PACKAGE_FILE_SIZE = Buffer.byteLength(JSON.stringify(require('../package.json'), null, 2)) + 1
+const PACKAGE_FILE_SIZE = Buffer.from(JSON.stringify(require('../package.json'), null, 2), 'utf-8').length + 1
 
 test.group('BodyParser Middleware | generic', () => {
   test('do not parse get requests', async (assert) => {
