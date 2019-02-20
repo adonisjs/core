@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.3.0...@adonisjs/core@1.3.1) (2019-02-20)
+
+
+### Bug Fixes
+
+* **provider:** give config path to the config provider ([8e1f34f](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/8e1f34f))
+
+
+
+
+
 # [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.2.4...@adonisjs/core@1.3.0) (2019-02-10)
 
 
