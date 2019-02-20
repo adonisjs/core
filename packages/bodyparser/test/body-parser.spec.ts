@@ -14,7 +14,7 @@ import { merge } from 'lodash'
 import { createServer } from 'http'
 import { pathExists } from 'fs-extra'
 import * as supertest from 'supertest'
-import { Request } from '@adonisjs/request'
+import { Request, requestConfig } from '@adonisjs/request'
 
 import { BodyParserMiddleware } from '../src/BodyParser'
 import { config } from '../config'
@@ -25,7 +25,7 @@ const PACKAGE_FILE_SIZE = Buffer.byteLength(JSON.stringify(require('../package.j
 test.group('BodyParser Middleware | generic', () => {
   test('do not parse get requests', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -44,7 +44,7 @@ test.group('BodyParser Middleware | generic', () => {
 
   test('by pass when body is empty', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -62,7 +62,7 @@ test.group('BodyParser Middleware | generic', () => {
 
   test('by pass when content type is not supported', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -83,7 +83,7 @@ test.group('BodyParser Middleware | generic', () => {
 test.group('BodyParser Middleware | form data', () => {
   test('handle request with form data', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -102,7 +102,7 @@ test.group('BodyParser Middleware | form data', () => {
 
   test('abort if request size is over limit', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(merge({}, config, {
         form: {
           limit: 2,
@@ -129,7 +129,7 @@ test.group('BodyParser Middleware | form data', () => {
 
   test('abort if specified encoding is not supported', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(merge({}, config, {
         form: {
           encoding: 'foo',
@@ -156,7 +156,7 @@ test.group('BodyParser Middleware | form data', () => {
 
   test('ignore fields with empty name', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -177,7 +177,7 @@ test.group('BodyParser Middleware | form data', () => {
 test.group('BodyParser Middleware | json', () => {
   test('handle request with json body', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -196,7 +196,7 @@ test.group('BodyParser Middleware | json', () => {
 
   test('abort if request size is over limit', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(merge({}, config, {
         json: {
           limit: 2,
@@ -223,7 +223,7 @@ test.group('BodyParser Middleware | json', () => {
 
   test('ignore fields with empty name', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -244,7 +244,7 @@ test.group('BodyParser Middleware | json', () => {
 test.group('BodyParser Middleware | raw body', () => {
   test('handle request with raw body', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -263,7 +263,7 @@ test.group('BodyParser Middleware | raw body', () => {
 
   test('abort if request size is over limit', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(merge({}, config, {
         raw: {
           limit: 2,
@@ -292,7 +292,7 @@ test.group('BodyParser Middleware | raw body', () => {
 test.group('BodyParser Middleware | multipart', () => {
   test('handle request with just files', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -314,7 +314,7 @@ test.group('BodyParser Middleware | multipart', () => {
 
   test('handle request with files and fields', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -336,7 +336,7 @@ test.group('BodyParser Middleware | multipart', () => {
 
   test('handle request array of files', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -359,7 +359,7 @@ test.group('BodyParser Middleware | multipart', () => {
     let index = 0
 
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(merge({}, config, {
         multipart: {
           autoProcess: true,
@@ -395,7 +395,7 @@ test.group('BodyParser Middleware | multipart', () => {
 
   test('handle request with empty field name', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
@@ -414,7 +414,7 @@ test.group('BodyParser Middleware | multipart', () => {
 
   test('handle request with empty file name', async (assert) => {
     const server = createServer(async (req, res) => {
-      const request = new Request(req, res, {})
+      const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
       await middleware.handle({ request }, () => {
