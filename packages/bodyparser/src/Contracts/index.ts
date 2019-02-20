@@ -21,6 +21,15 @@ export type MultipartStream = Readable & {
 }
 
 /**
+ * File validation options
+ */
+export type FileValidationOptions = {
+  size: string | number,
+  types: string[],
+  extnames: string[],
+}
+
+/**
  * Stream part handler
  */
 export type PartHandler = (part: MultipartStream) => Promise<void>
@@ -118,7 +127,20 @@ export type FileUploadError = {
   fieldName: string,
   clientName: string,
   message: string,
-  type: string,
+  type: 'size' | 'extname',
+}
+
+/**
+ * New file constructor options shape
+ */
+export type FileInputNode = {
+  fieldName: string,
+  fileName: string,
+  tmpPath: string,
+  bytes: number,
+  headers: {
+    [key: string]: string,
+  },
 }
 
 /**
@@ -128,14 +150,14 @@ export interface MultipartFileContract {
   moved: boolean,
   isValid: boolean,
   clientName: string,
-  // fileName: string,
+  fileName?: string,
   fieldName: string,
   tmpPath: string,
   size: number,
-  // type: string,
-  // subtype: string,
-  // status: 'pending' | 'consumed' | 'moved' | 'error',
-  // extname: string,
-  // errors: FileUploadError[],
-  move (): Promise<void>,
+  type?: string,
+  subtype?: string,
+  status: 'pending' | 'moved' | 'error',
+  extname: string,
+  setValidationOptions (options: Partial<FileValidationOptions>): this,
+  errors: FileUploadError[]
 }

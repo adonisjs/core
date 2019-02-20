@@ -11,12 +11,7 @@ import * as multiparty from 'multiparty'
 import { Exception } from '@adonisjs/utils'
 import { IncomingMessage } from 'http'
 
-import {
-  MultipartContract,
-  PartHandler,
-  MultipartStream,
-  FieldHandler,
-} from '../Contracts'
+import { MultipartContract, PartHandler, MultipartStream, FieldHandler } from '../Contracts'
 
 /**
  * Multipart class offers a low level API to interact the incoming
@@ -25,11 +20,14 @@ import {
  *
  * ### Usage
  *
- * ```
+ * ```js
  * const multipart = new Multipart(options)
  *
  * multipart.onFile('profile', async (stream) => {
  *  stream.pipe(fs.createWriteStream('./profile.jpg'))
+ * })
+ *
+ * multipart.onField('*', async (key, value) => {
  * })
  *
  * try {
@@ -94,12 +92,20 @@ export class Multipart implements MultipartContract {
    * handler
    */
   private async _handlePart (part: MultipartStream) {
+    /**
+     * Skip parts with empty names. This is a use case of bad client
+     * or intentional attempt to break the server
+     */
     if (!part.name) {
       part.resume()
       return
     }
 
     const name = this._getHandlerName(part.name)
+
+    /**
+     * Skip, if their is no handler to consume the part.
+     */
     const handler = this._handlers.files[name] || this._handlers.files['*']
     if (!handler) {
       part.resume()
@@ -171,7 +177,7 @@ export class Multipart implements MultipartContract {
   public process (): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.consumed) {
-        reject(new Exception('multipart stream has already been consumed', 500, 'E_CONSUMED_MULTIPART_STREAM'))
+        reject(new Exception('multipart stream has already been consumed', 500, 'E_RUNTIME_EXCEPTION'))
         return
       }
 

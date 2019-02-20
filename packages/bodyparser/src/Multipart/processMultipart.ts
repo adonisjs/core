@@ -13,8 +13,8 @@ import { Exception } from '@adonisjs/utils'
 
 import { File } from './File'
 import { Multipart } from './index'
-import { FormFields } from '../FormFields'
 import { streamFile } from './streamFile'
+import { FormFields } from '../FormFields'
 import { BodyParserMultipartConfig } from '../Contracts'
 
 /**
@@ -72,6 +72,7 @@ export async function processMultipart (multipart: Multipart, config: BodyParser
       fieldName: part.name,
       tmpPath: tmpPath,
       bytes: bytes,
+      headers: part.headers,
     })
 
     files.add(file.fieldName, file)

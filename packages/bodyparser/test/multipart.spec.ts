@@ -244,6 +244,6 @@ test.group('Multipart', () => {
       .post('/')
       .field('name', 'virk')
 
-    assert.equal(text, 'E_CONSUMED_MULTIPART_STREAM: multipart stream has already been consumed')
+    assert.equal(text, 'E_RUNTIME_EXCEPTION: multipart stream has already been consumed')
   })
 })

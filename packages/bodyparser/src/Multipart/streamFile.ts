@@ -12,8 +12,9 @@ import { open, close, createWriteStream, unlink } from 'fs-extra'
 import { Readable } from 'stream'
 
 /**
- * Streams file to the destination by monitoring it's size and raising
- * error, if it's over limit.
+ * Writes readable stream to the given location by properly cleaning up readable
+ * and writable streams in case of any errors. Also an optional data listener
+ * can listen for the `data` event.
  */
 export function streamFile (readStream: Readable, location: string, dataListener?): Promise<void> {
   return new Promise((resolve, reject) => {
