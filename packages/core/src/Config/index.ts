@@ -112,6 +112,19 @@ export class Config implements ConfigContract {
   }
 
   /**
+   * Defaults allows providers to define the default config for their
+   * module, which is merged with the user config
+   */
+  public defaults (key: string, value: any): void {
+    const existingValue = this.get(key)
+    if (!existingValue) {
+      this.set(key, value)
+    } else {
+      mergeWith(this.get(key), value)
+    }
+  }
+
+  /**
    * Update in memory value of the pre-loaded config
    *
    * @example

@@ -133,4 +133,36 @@ test.group('Config', (group) => {
 
     clearModule(join(APP_ROOT, 'config/app.js'))
   })
+
+  test('merge defaults with existing user defaults', async (assert) => {
+    await outputFile(join(APP_ROOT, 'config/app.js'), `module.exports = {
+      logger: {
+        driver: 'file'
+      }
+    }`)
+
+    const config = new Config(join(APP_ROOT, 'config'), ['js'])
+    config.defaults('app.logger', { filePath: join(__dirname) })
+
+    assert.deepEqual(config.get('app.logger'), {
+      filePath: join(__dirname),
+      driver: 'file',
+    })
+
+    clearModule(join(APP_ROOT, 'config/app.js'))
+  })
+
+  test('merge defaults with existing user defaults when they are missing', async (assert) => {
+    await outputFile(join(APP_ROOT, 'config/app.js'), `module.exports = {
+    }`)
+
+    const config = new Config(join(APP_ROOT, 'config'), ['js'])
+    config.defaults('app.logger', { filePath: join(__dirname) })
+
+    assert.deepEqual(config.get('app.logger'), {
+      filePath: join(__dirname),
+    })
+
+    clearModule(join(APP_ROOT, 'config/app.js'))
+  })
 })

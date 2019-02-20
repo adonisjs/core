@@ -11,5 +11,6 @@ export interface ConfigContract {
   get (key: string, defaultValue?: any): any
   merge (key: string, defaultValues: object, customizer?: Function): any
   set (key: string, value: any): void
+  defaults (key: string, value: any): void
   sync (): void
 }
