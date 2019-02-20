@@ -115,9 +115,9 @@ export type BodyParserConfig = {
  */
 export interface MultipartContract {
   consumed: boolean,
+  onFile (name: string, callback: PartHandler): this,
+  onField (key: string, value: any): this,
   process (): Promise<void>,
-  onFile (name: string, callback: PartHandler): this
-  onField (key: string, value: any): this
 }
 
 /**
@@ -147,7 +147,6 @@ export type FileInputNode = {
  * Multipart file interface, used to loose coupling
  */
 export interface MultipartFileContract {
-  moved: boolean,
   isValid: boolean,
   clientName: string,
   fileName?: string,
@@ -159,5 +158,5 @@ export interface MultipartFileContract {
   status: 'pending' | 'moved' | 'error',
   extname: string,
   setValidationOptions (options: Partial<FileValidationOptions>): this,
-  errors: FileUploadError[]
+  errors: FileUploadError[],
 }

@@ -127,6 +127,33 @@ test.group('BodyParser Middleware | form data', () => {
     assert.deepEqual(text, 'E_REQUEST_ENTITY_TOO_LARGE: request entity too large')
   })
 
+  test('abort if specified encoding is not supported', async (assert) => {
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, {})
+      const middleware = new BodyParserMiddleware(merge({}, config, {
+        form: {
+          encoding: 'foo',
+        },
+      }))
+
+      try {
+        await middleware.handle({ request }, () => {
+        })
+      } catch (error) {
+        res.writeHead(error.status)
+        res.end(error.message)
+      }
+    })
+
+    const { text } = await supertest(server)
+      .post('/')
+      .type('form')
+      .send({ username: 'virk' })
+      .expect(415)
+
+    assert.deepEqual(text, 'E_ENCODING_UNSUPPORTED: specified encoding unsupported')
+  })
+
   test('ignore fields with empty name', async (assert) => {
     const server = createServer(async (req, res) => {
       const request = new Request(req, res, {})

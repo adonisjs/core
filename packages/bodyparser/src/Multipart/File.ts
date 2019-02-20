@@ -12,6 +12,10 @@ import * as bytes from 'bytes'
 import * as mediaTyper from 'media-typer'
 import { MultipartFileContract, FileValidationOptions, FileUploadError, FileInputNode } from '../Contracts'
 
+/**
+ * File class exposes a friendly API to validate or save uploaded
+ * files.
+ */
 export class File implements MultipartFileContract {
   /**
    * Field name is the name of the field
@@ -118,15 +122,6 @@ export class File implements MultipartFileContract {
         type: 'extname',
       })
     }
-  }
-
-  /**
-   * Returns a boolean telling if file has been
-   * moved to the destination successfully
-   * or not
-   */
-  public get moved (): boolean {
-    return false
   }
 
   /**
