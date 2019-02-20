@@ -7,6 +7,5 @@
  * file that was distributed with this source code.
  */
 
-export { ConfigReader } from './src/ConfigReader'
 export { Exception } from './src/Exception'
 export { tsRequire } from './src/tsRequire'
