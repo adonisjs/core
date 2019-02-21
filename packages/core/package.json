@@ -46,6 +46,7 @@
     "url": "https://github.com/adonisjs/adonis-framework/issues"
   },
   "dependencies": {
+    "@adonisjs/bodyparser": "^2.1.0",
     "@adonisjs/fold": "^5.0.3",
     "@adonisjs/profiler": "^1.1.2",
     "@adonisjs/request": "^1.1.8",
@@ -55,11 +56,13 @@
     "@adonisjs/utils": "^1.3.2",
     "dotenv": "^6.2.0",
     "lodash": "^4.17.11",
+    "pino": "^5.11.1",
     "require-all": "^3.0.0"
   },
   "devDependencies": {
     "clear-module": "^3.1.0",
     "fs-extra": "^7.0.1",
+    "split2": "^3.1.0",
     "supertest": "^3.4.2"
   }
 }
