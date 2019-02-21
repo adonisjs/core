@@ -24,9 +24,9 @@ export interface IocContract {
   autoload (directoryPath: string, namespace: string): void
   clearAutoloadCache (namespace?: string, clearRequireCache?: boolean): void
   fake (name: string, callback: BindCallback): void
-  use<T> (name: string, relativeFrom?: string): T
-  make<T> (name: string, relativeFrom?: string): T
-  useFake<T> (name: string): T
+  use<T extends any = any> (name: string, relativeFrom?: string): T
+  make<T extends any = any> (name: string, relativeFrom?: string): T
+  useFake<T extends any = any> (name: string): T
   hasFake (name: string): boolean
   hasAlias (name: string): boolean
   hasBinding (namespace: string, checkAliases?: boolean): boolean
