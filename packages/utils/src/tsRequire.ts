@@ -11,7 +11,7 @@
  * Handles ESM `default` exports and common js vanilla exports. The `default`
  * exports are only entertained, when `esmEnabled` is set to true.
  */
-export function tsRequire (filePath: string, esmEnabled = false) {
+export function tsRequire (filePath: string) {
   const output = require(filePath)
-  return esmEnabled && output && output.default ? output.default : output
+  return output && output.__esModule && output.default ? output.default : output
 }
