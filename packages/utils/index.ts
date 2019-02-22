@@ -9,3 +9,4 @@
 
 export { Exception } from './src/Exception'
 export { tsRequire } from './src/tsRequire'
+export { requireAll } from './src/requireAll'

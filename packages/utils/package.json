@@ -42,5 +42,12 @@
   "publishConfig": {
     "access": "public",
     "tag": "latest"
+  },
+  "dependencies": {
+    "require-all": "^3.0.0"
+  },
+  "devDependencies": {
+    "clear-module": "^3.1.0",
+    "fs-extra": "^7.0.1"
   }
 }
