@@ -42,7 +42,7 @@ export class ProfilerAction {
   }
 
   /**
-   * End profiling action
+   * End profiling action.
    */
   public end (data?: any) {
     if (!this._subscriber) {

@@ -40,7 +40,8 @@
     ]
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "latest"
   },
   "dependencies": {
     "@adonisjs/utils": "^1.3.2",

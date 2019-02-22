@@ -12,7 +12,7 @@ import { ProfilerRow } from './Row'
 import { DummyAction, DummyRow } from './Dummy'
 
 /**
- * Profile exposes the public interface to create new profiling
+ * Profiler exposes the public interface to create new profiling
  * rows and actions. In case of blacklisted actions, dummy
  * implementations are returned, resulting in noop.
  */
