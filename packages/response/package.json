@@ -54,6 +54,7 @@
     ]
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "latest"
   }
 }
