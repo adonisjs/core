@@ -812,6 +812,35 @@ test.group('Route | Manager', (group) => {
     assert.equal(url, 'http://blog.example.com/author/1')
   })
 
+  test('make url with query string (without params)', (assert) => {
+    RouteManager.get('users', 'UsersController.show')
+    const url = RouteManager.url('UsersController.show', null, { query: { foo: 'bar' } })
+    assert.equal(url, '/users?foo=bar')
+  })
+
+  test('make url with query string', (assert) => {
+    RouteManager.get('users/:id', 'UsersController.show')
+    const url = RouteManager.url('UsersController.show', { id: 1 }, { query: { foo: 'bar' } })
+    assert.equal(url, '/users/1?foo=bar')
+  })
+
+  test('make url with query string (qs)', (assert) => {
+    RouteManager.get('users/:id', 'UsersController.show')
+    const url = RouteManager.url('UsersController.show', { id: 1 }, { qs: { foo: 'bar' } })
+    assert.equal(url, '/users/1?foo=bar')
+  })
+
+  test('make url for route with options', (assert) => {
+    RouteManager.get('users/:id', 'UsersController.show')
+    RouteManager.get('author/:id', 'UsersController.show').domain('blog.example.com')
+    const url = RouteManager.url('UsersController.show', { id: 1 }, {
+      domain: 'blog.example.com',
+      protocol: 'https',
+      query: { foo: 'bar' }
+    })
+    assert.equal(url, 'https://blog.example.com/author/1?foo=bar')
+  })
+
   test('define protocol for the url', (assert) => {
     RouteManager.get('users/:id', 'UsersController.show')
     RouteManager.get('author/:id', 'UsersController.show').domain('blog.example.com')
