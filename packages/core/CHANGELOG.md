@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.3.1...@adonisjs/core@1.4.0) (2019-02-22)
+
+
+### Features
+
+* **config:** allow merging defaults with user config ([6173839](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/6173839))
+* **logger:** add logger ([054b64c](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/054b64c))
+* **logger:** bind logger to the container ([bc79103](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/bc79103))
+
+
+
+
+
 ## [1.3.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.3.0...@adonisjs/core@1.3.1) (2019-02-20)
 
 

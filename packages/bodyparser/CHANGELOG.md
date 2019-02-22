@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/bodyparser/compare/@adonisjs/bodyparser@2.1.0...@adonisjs/bodyparser@2.1.1) (2019-02-22)
+
+
+### Bug Fixes
+
+* **bodyparser:** add config dir to publish files ([e84baa4](https://github.com/adonisjs/adonis-framework/tree/master/packages/bodyparser/commit/e84baa4))
+
+
+
+
+
 # 2.1.0 (2019-02-20)
 
 

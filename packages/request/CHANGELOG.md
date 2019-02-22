@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.9](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/compare/@adonisjs/request@1.1.8...@adonisjs/request@1.1.9) (2019-02-22)
+
+
+### Bug Fixes
+
+* **request:** add config dir to publish files ([1c76af5](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/commit/1c76af5))
+
+
+
+
+
 ## [1.1.8](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/compare/@adonisjs/request@1.1.7...@adonisjs/request@1.1.8) (2019-02-20)
 
 **Note:** Version bump only for package @adonisjs/request

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.10](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/compare/@adonisjs/response@1.1.9...@adonisjs/response@1.1.10) (2019-02-22)
+
+
+### Bug Fixes
+
+* **response:** add config dir to publish files ([7aef253](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/commit/7aef253))
+
+
+
+
+
 ## [1.1.9](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/compare/@adonisjs/response@1.1.8...@adonisjs/response@1.1.9) (2019-02-20)
 
 **Note:** Version bump only for package @adonisjs/response
