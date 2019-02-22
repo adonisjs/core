@@ -72,7 +72,7 @@ It is always helpful if we try to follow certain practices when creating issues 
 
 ## Regression Tests
 
-Regression tests are tests, which shows how a piece of code fails under certain circumstance, but the beauty is even after the failure, the test suite will never fail. Actually is a nice way to notify about bugs, but making sure everything is green.
+Regression tests are tests which show how a piece of code fails under certain circumstances, but the beauty is even after the failure, the test suite will never fail. Actually this is a nice way to notify about bugs, but make sure everything is green.
 
 The regression tests are created using
 
