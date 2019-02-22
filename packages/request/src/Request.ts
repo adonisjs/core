@@ -13,8 +13,7 @@
 
 import { parse, UrlWithStringQuery } from 'url'
 import { ServerResponse, IncomingMessage, IncomingHttpHeaders } from 'http'
-import * as omit from 'object.omit'
-import * as pick from 'object.pick'
+import { omit, pick } from 'lodash'
 import * as getValue from 'get-value'
 import * as qs from 'qs'
 import * as proxyaddr from 'proxy-addr'
