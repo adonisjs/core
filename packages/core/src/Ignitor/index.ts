@@ -102,6 +102,10 @@ export class Ignitor {
    */
   private _bootstrapper: ProfilerRowContract | null
 
+  /**
+   * Application wide subscriber for collecting profiler
+   * data
+   */
   private _profilerSubscriber: ProfilerSubscriber
 
   constructor (public appRoot: string) {}
@@ -333,8 +337,8 @@ export class Ignitor {
    * Start the HTTP server by pulling it from the IoC container
    */
   private _createHttp (serverCallback?: (handler) => any) {
-    const server = this.ioc.use<any>('Adonis/Src/Server')
-    const router = this.ioc.use<any>('Adonis/Src/Route')
+    const server = this.ioc.use('Adonis/Src/Server')
+    const router = this.ioc.use('Adonis/Src/Route')
 
     /**
      * Commit routes to the router store
@@ -391,8 +395,9 @@ export class Ignitor {
       await this._bootstrap()
       this._createHttp(serverCallback)
 
-      const Env = this.ioc.use<any>('Adonis/Src/Env')
+      const Env = this.ioc.use('Adonis/Src/Env')
       await this._listen(Env.get('PORT'), Env.get('HOST'))
+
       this._bootstrapper = null
     } catch (error) {
       console.log(error)
