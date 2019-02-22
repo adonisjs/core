@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/core",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "AdonisJs core package",
   "main": "build/index.js",
   "files": [
