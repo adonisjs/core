@@ -10,6 +10,7 @@
 import * as test from 'japa'
 import { join } from 'path'
 import * as supertest from 'supertest'
+import { createServer } from 'http'
 import * as clearModule from 'clear-module'
 import { remove, outputJSON, outputFile } from 'fs-extra'
 
@@ -249,12 +250,15 @@ test.group('Ignitor | preload files', (group) => {
 
 test.group('Ignitor | http server', (group) => {
   group.afterEach(async () => {
+    delete process.env.ENV_SILENT
     await remove(APP_ROOT)
   })
 
-  test('start http server', async (assert) => {
+  test('start http server on defined host and port', async (assert) => {
+    process.env.ENV_SILENT = 'true'
     await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
       typescript: true,
+      preloads: [{ file: 'start/routes' }],
     })
 
     await outputFile(join(APP_ROOT, 'start/app.js'), `
@@ -269,26 +273,23 @@ test.group('Ignitor | http server', (group) => {
       }
     `)
 
+    await outputFile(join(APP_ROOT, 'start/routes.js'), `
+      const Route = use('Route')
+      Route.get('/', async ({ response }) => {
+        response.send('handled')
+      })
+    `)
+
     const ignitor = new Ignitor(APP_ROOT)
-    ignitor['_intent'] = 'http'
-    ignitor['_loadRcFile']()
-    ignitor['_instantiateIoCContainer']()
-    ignitor['_instantiateProfiler']()
-    ignitor['_bindHelpers']()
-
-    await ignitor['_bootProviders']()
-
-    const Route = ignitor.ioc.use<any>('Route')
-    Route.get('/', async ({ response }) => {
-      response.send('handled')
+    await ignitor.startHttpServer((handler) => {
+      return createServer(handler)
     })
-
-    ignitor['_createHttp']()
 
     const { text } = await supertest(ignitor.server).get('/').expect(200)
     assert.equal(text, 'handled')
 
     clearModule(join(APP_ROOT, '.adonisrc.json'))
     clearModule(join(APP_ROOT, 'start/app.js'))
+    clearModule(join(APP_ROOT, 'start/routes.js'))
   }).timeout(0)
 })

@@ -336,7 +336,7 @@ export class Ignitor {
   /**
    * Start the HTTP server by pulling it from the IoC container
    */
-  private _createHttp (serverCallback?: (handler) => any) {
+  private _createHttpServer (serverCallback?: (handler) => any) {
     const server = this.ioc.use('Adonis/Src/Server')
     const router = this.ioc.use('Adonis/Src/Route')
 
@@ -359,20 +359,28 @@ export class Ignitor {
      * it
      */
     const handler = server.handle.bind(server)
-    this.server = serverCallback ? serverCallback(handler) : createServer(server.handle.bind(server))
+    this.server = serverCallback ? serverCallback(handler) : createServer(handler)
   }
 
   /**
-   * Make HTTP server listen on a given port
+   * Attach http server to a given port and host by picking it from
+   * the `environment` variables.
    */
-  private _listen (port, host?) {
+  private _listen () {
     return new Promise((resolve, reject) => {
       const startServerAction = this._bootstrapper!.profile('server:listen')
+
+      const Env = this.ioc.use('Adonis/Src/Env')
+      const Logger = this.ioc.use('Adonis/Src/Logger')
+      const host = Env.get('HOST', '0.0.0.0')
+      const port = Env.get('PORT', '3333')
+
       this.server.listen(port, host, (error) => {
         startServerAction.end()
         if (error) {
           reject(error)
         } else {
+          Logger.info('started server on %s:%s', host, port)
           resolve()
         }
       })
@@ -391,17 +399,28 @@ export class Ignitor {
    */
   public async startHttpServer (serverCallback?: (handler) => any) {
     this._intent = 'http'
+
     try {
+      /**
+       * Bootstrap the app
+       */
       await this._bootstrap()
-      this._createHttp(serverCallback)
 
-      const Env = this.ioc.use('Adonis/Src/Env')
-      const Logger = this.ioc.use('Adonis/Src/Logger')
+      /**
+       * Create the server, but don't attach it to any port or host yet
+       */
+      this._createHttpServer(serverCallback)
 
-      await this._listen(Env.get('PORT'), Env.get('HOST'))
-      Logger.info('started server on %s:%s', Env.get('PORT'), Env.get('HOST'))
+      /**
+       * Make server listen to port and host defined inside `Environment` variables
+       */
+      await this._listen()
 
+      /**
+       * Memory cleanup
+       */
       this._bootstrapper = null
+      this.preloads = []
     } catch (error) {
       console.log(error)
       process.exit(1)
