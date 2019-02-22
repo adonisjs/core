@@ -27,7 +27,7 @@ export class Registrar {
    * automatically.
    */
   private _loadProvider (providerPath: string) {
-    const provider = tsRequire(providerPath, true)
+    const provider = tsRequire(providerPath)
     return new provider(this.ioc)
   }
 

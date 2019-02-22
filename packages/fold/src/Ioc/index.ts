@@ -154,7 +154,7 @@ export class Ioc implements IocContract {
      */
     if (!cacheEntry) {
       const absPath = this._makeRequirePath(baseNamespace, namespace)
-      const importValue = tsRequire(absPath, true)
+      const importValue = tsRequire(absPath)
       this._autoloadsCache.set(namespace, { diskPath: absPath, cachedValue: importValue })
     }
 
