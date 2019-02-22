@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-import * as pick from 'object.pick'
+import { pick } from 'lodash'
 import * as matchit from 'matchit'
 import { RouteDefination, RouteNode, MatchedRoute } from './Contracts'
 
