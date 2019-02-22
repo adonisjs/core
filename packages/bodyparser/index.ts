@@ -8,7 +8,7 @@
 */
 
 export { BodyParserMiddleware } from './src/BodyParser'
-export { config } from './config'
+export { config as bodyParserConfig } from './config'
 export {
   MultipartContract,
   MultipartFileContract,
