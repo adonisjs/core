@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import * as requireAll from 'require-all'
+import { requireAll } from '@adonisjs/utils'
 import { get, set, mergeWith } from 'lodash'
 import { ConfigContract } from '../Contracts/Config'
 
@@ -50,7 +50,7 @@ import { ConfigContract } from '../Contracts/Config'
 export class Config implements ConfigContract {
   private _configCache: object = {}
 
-  constructor (private _configPath: string, private _extensions: string[] = ['js']) {
+  constructor (private _configPath: string) {
     this.sync()
   }
 
@@ -59,18 +59,7 @@ export class Config implements ConfigContract {
    * require files using the `require` method.
    */
   public sync () {
-    try {
-      this._configCache = requireAll({
-        dirname: this._configPath,
-        filter: new RegExp(`(.*)\.(${this._extensions.join('|')})$`),
-        recursive: true,
-      })
-    } catch (error) {
-      /* istanbul ignore else */
-      if (error.code !== 'ENOENT') {
-        throw error
-      }
-    }
+    this._configCache = requireAll(this._configPath, true, true) || {}
   }
 
   /**

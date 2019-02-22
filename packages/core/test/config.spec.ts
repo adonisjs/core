@@ -47,7 +47,7 @@ test.group('Config', (group) => {
       }
     }`)
 
-    const config = new Config(join(APP_ROOT, 'config'), ['js', 'ts'])
+    const config = new Config(join(APP_ROOT, 'config'))
     assert.deepEqual(config['_configCache'], {
       app: {
         logger: {
@@ -60,7 +60,7 @@ test.group('Config', (group) => {
   })
 
   test('do not raise errors when there are no config files', async (assert) => {
-    const config = new Config(join(APP_ROOT, 'config'), ['js', 'ts'])
+    const config = new Config(join(APP_ROOT, 'config'))
     assert.deepEqual(config['_configCache'], {})
   })
 
@@ -71,7 +71,7 @@ test.group('Config', (group) => {
       }
     }`)
 
-    const config = new Config(join(APP_ROOT, 'config'), ['js'])
+    const config = new Config(join(APP_ROOT, 'config'))
     assert.deepEqual(config.merge('app.logger', { filePath: 'foo' }), {
       driver: 'file',
       filePath: 'foo',
@@ -87,7 +87,7 @@ test.group('Config', (group) => {
       }
     }`)
 
-    const config = new Config(join(APP_ROOT, 'config'), ['js'])
+    const config = new Config(join(APP_ROOT, 'config'))
 
     assert.deepEqual(config.merge('app.logger', { filePath: 'foo' }, (_objValue, _srcValue, key) => {
       if (key === 'driver') {
@@ -108,7 +108,7 @@ test.group('Config', (group) => {
       }
     }`)
 
-    const config = new Config(join(APP_ROOT, 'config'), ['js'])
+    const config = new Config(join(APP_ROOT, 'config'))
     config.set('app.logger', { driver: 'memory' })
     assert.deepEqual(config.get('app.logger'), { driver: 'memory' })
 
@@ -125,7 +125,7 @@ test.group('Config', (group) => {
     }`)
 
     try {
-      new Config(join(APP_ROOT, 'config'), ['js'])
+      new Config(join(APP_ROOT, 'config'))
     } catch ({ message, stack }) {
       assert.equal(message, 'Invalid or unexpected token')
       assert.isTrue(stack.split('\n')[0].endsWith('app.js:3'))
@@ -141,7 +141,7 @@ test.group('Config', (group) => {
       }
     }`)
 
-    const config = new Config(join(APP_ROOT, 'config'), ['js'])
+    const config = new Config(join(APP_ROOT, 'config'))
     config.defaults('app.logger', { filePath: join(__dirname) })
 
     assert.deepEqual(config.get('app.logger'), {
@@ -156,7 +156,7 @@ test.group('Config', (group) => {
     await outputFile(join(APP_ROOT, 'config/app.js'), `module.exports = {
     }`)
 
-    const config = new Config(join(APP_ROOT, 'config'), ['js'])
+    const config = new Config(join(APP_ROOT, 'config'))
     config.defaults('app.logger', { filePath: join(__dirname) })
 
     assert.deepEqual(config.get('app.logger'), {
@@ -164,5 +164,12 @@ test.group('Config', (group) => {
     })
 
     clearModule(join(APP_ROOT, 'config/app.js'))
+  })
+
+  test('do not load d.ts files', async (assert) => {
+    await outputFile(join(APP_ROOT, 'config/app.d.ts'), `throw new Error('blow up')`)
+
+    const config = () => new Config(join(APP_ROOT, 'config'))
+    assert.doesNotThrow(config)
   })
 })

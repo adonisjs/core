@@ -115,7 +115,7 @@ export class Ignitor {
    */
   private _require (filePath: string, optional = false): any | null {
     try {
-      return tsRequire(filePath, this.typescript)
+      return tsRequire(filePath)
     } catch (error) {
       if (['MODULE_NOT_FOUND', 'ENOENT'].indexOf(error.code) > -1 && optional) {
         return null
