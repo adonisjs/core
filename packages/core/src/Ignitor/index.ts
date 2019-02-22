@@ -396,7 +396,10 @@ export class Ignitor {
       this._createHttp(serverCallback)
 
       const Env = this.ioc.use('Adonis/Src/Env')
+      const Logger = this.ioc.use('Adonis/Src/Logger')
+
       await this._listen(Env.get('PORT'), Env.get('HOST'))
+      Logger.info('started server on %s:%s', Env.get('PORT'), Env.get('HOST'))
 
       this._bootstrapper = null
     } catch (error) {

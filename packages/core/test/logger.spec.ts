@@ -12,12 +12,12 @@ import * as split from 'split2'
 import * as pino from 'pino'
 
 import { Logger } from '../src/Logger'
-import { LoggerOptions } from '../src/Contracts/Logger'
+import { LoggerConfig } from '../src/Contracts/Logger'
 import { loggerConfig } from '../config/logger'
 
 const levels = pino().levels.values
 
-function getConfig (config): LoggerOptions {
+function getConfig (config): LoggerConfig {
   return Object.assign({}, loggerConfig, config)
 }
 

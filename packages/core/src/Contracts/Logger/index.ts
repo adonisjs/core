@@ -18,7 +18,7 @@ export type LoggerLevels = {
 /**
  * Following are the config options accepted by the logger class
  */
-export type LoggerOptions = {
+export type LoggerConfig = {
   name?: string,
   level: 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace' | 'silent',
   enabled: boolean,

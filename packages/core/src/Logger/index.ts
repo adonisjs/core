@@ -8,7 +8,7 @@
  */
 
 import * as pino from 'pino'
-import { LoggerContract, LoggerLevels, LoggerOptions } from '../Contracts/Logger'
+import { LoggerContract, LoggerLevels, LoggerConfig } from '../Contracts/Logger'
 
 /**
  * Logger class it used to log messages from the application. The
@@ -23,7 +23,7 @@ import { LoggerContract, LoggerLevels, LoggerOptions } from '../Contracts/Logger
 export class Logger implements LoggerContract {
   private _pino: any
 
-  constructor (options: LoggerOptions) {
+  constructor (options: LoggerConfig) {
     const pinoOptions = Object.assign({}, options)
     const changeLevelName = options.levelLabelKey
     const destination = options.logDestination

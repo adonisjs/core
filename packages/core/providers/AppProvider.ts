@@ -15,6 +15,8 @@ import { IocContract } from '@adonisjs/fold'
 
 import { Config } from '../src/Config'
 import { Env } from '../src/Env'
+import { Logger } from '../src/Logger'
+import { loggerConfig } from '../config/logger'
 
 export default class AppProvider {
   constructor (public app: IocContract) {}
@@ -78,6 +80,21 @@ export default class AppProvider {
   }
 
   /**
+   * Register logger provider to the IoC container.
+   *
+   * Namespace: Adonis/Src/Logger
+   * Alias: Logger
+   */
+  private _registerLogger () {
+    this.app.singleton('Adonis/Src/Logger', (app) => {
+      const loggerConfig = app.use('Adonis/Src/Logger').get('app.logger', {})
+      return new Logger(loggerConfig)
+    })
+
+    this.app.alias('Adonis/Src/Logger', 'Logger')
+  }
+
+  /**
    * Register HTTP server to the IoC container
    *
    * Namespace: Adonis/Src/Server
@@ -101,6 +118,7 @@ export default class AppProvider {
     this._registerEnv()
     this._registerConfig()
     this._registerRoute()
+    this._registerLogger()
     this._registerServer()
     this._registerHttpMiddleware()
   }
@@ -111,6 +129,7 @@ export default class AppProvider {
   public boot () {
     this.app.with(['Adonis/Src/Config'], (Config) => {
       Config.defaults('app.http', { ...requestConfig, ...responseConfig })
+      Config.defaults('app.logger', loggerConfig)
     })
   }
 }
