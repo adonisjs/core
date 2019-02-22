@@ -15,7 +15,6 @@
  * IIOC container interface
  */
 export interface IocContract {
-  es6Imports: boolean,
   autoloads: { [namespace: string]: string },
   autoloadedAliases: string[],
   bind (name: string, callback: BindCallback): void

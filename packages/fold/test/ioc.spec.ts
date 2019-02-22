@@ -464,7 +464,7 @@ test.group('Ioc', (group) => {
       public name = 'bar'
     }`)
 
-    const ioc = new Ioc(false, true)
+    const ioc = new Ioc()
     ioc.autoload(APP, 'App')
     assert.deepEqual((ioc.make('App/Bar') as any).name, 'bar')
   })
@@ -472,7 +472,7 @@ test.group('Ioc', (group) => {
   test('execute the callback when all bindings exists', async (assert) => {
     assert.plan(2)
 
-    const ioc = new Ioc(false, false)
+    const ioc = new Ioc(false)
     ioc.bind('App/Foo', () => {
       return 'foo'
     })
@@ -488,7 +488,7 @@ test.group('Ioc', (group) => {
   })
 
   test('do not execute the callback if any bindings is missing', async () => {
-    const ioc = new Ioc(false, false)
+    const ioc = new Ioc(false)
     ioc.bind('App/Foo', () => {
       return 'foo'
     })

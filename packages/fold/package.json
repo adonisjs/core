@@ -58,5 +58,8 @@
   "publishConfig": {
     "access": "public",
     "tag": "next"
+  },
+  "dependencies": {
+    "@adonisjs/utils": "^1.3.3"
   }
 }

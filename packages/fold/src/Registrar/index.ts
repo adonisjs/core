@@ -11,6 +11,7 @@
 * file that was distributed with this source code.
 */
 
+import { tsRequire } from '@adonisjs/utils'
 import { IocContract } from '../Contracts'
 
 export class Registrar {
@@ -26,11 +27,8 @@ export class Registrar {
    * automatically.
    */
   private _loadProvider (providerPath: string) {
-    const provider = require(providerPath)
-
-    return (this.ioc.es6Imports && provider.default
-      ? new provider.default(this.ioc)
-      : new provider(this.ioc))
+    const provider = tsRequire(providerPath, true)
+    return new provider(this.ioc)
   }
 
   /**

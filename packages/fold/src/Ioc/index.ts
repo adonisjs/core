@@ -12,6 +12,7 @@
 */
 
 import { normalize, resolve, dirname } from 'path'
+import { tsRequire } from '@adonisjs/utils'
 
 import { IocContract, BindCallback } from '../Contracts'
 import { IoCProxyObject, IocProxyClass } from './IoCProxy'
@@ -86,7 +87,7 @@ export class Ioc implements IocContract {
    */
   private _useProxies = false
 
-  constructor (private _emitEvents = false, public es6Imports = false) {
+  constructor (private _emitEvents = false) {
   }
 
   /**
@@ -153,20 +154,8 @@ export class Ioc implements IocContract {
      */
     if (!cacheEntry) {
       const absPath = this._makeRequirePath(baseNamespace, namespace)
-      const importValue = require(absPath)
-
-      /**
-       * Use `default` when parent app uses `ES6 imports` and
-       * default export exists on the return value
-       */
-      const value = importValue.default && this.es6Imports
-        ? importValue.default
-        : importValue
-
-      this._autoloadsCache.set(namespace, {
-        diskPath: absPath,
-        cachedValue: value,
-      })
+      const importValue = tsRequire(absPath, true)
+      this._autoloadsCache.set(namespace, { diskPath: absPath, cachedValue: importValue })
     }
 
     this.tracer.out()

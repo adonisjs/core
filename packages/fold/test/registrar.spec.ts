@@ -50,7 +50,7 @@ test.group('Registrar', (group) => {
       }
     }`)
 
-    const registrar = new Registrar(new Ioc(false, true))
+    const registrar = new Registrar(new Ioc(false))
     registrar.useProviders([join(APP, 'providers', 'BarProvider')])
 
     const providers = registrar.register()
@@ -73,7 +73,7 @@ test.group('Registrar', (group) => {
       }
     }`)
 
-    const registrar = new Registrar(new Ioc(false, true))
+    const registrar = new Registrar(new Ioc(false))
     registrar.useProviders([join(APP, 'providers', 'BarProvider')])
 
     const providers = await registrar.registerAndBoot()
