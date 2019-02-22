@@ -12,6 +12,7 @@ import { Server, MiddlewareStore, routePreProcessor } from '@adonisjs/server'
 import { Request, requestConfig } from '@adonisjs/request'
 import { Response, responseConfig } from '@adonisjs/response'
 import { IocContract } from '@adonisjs/fold'
+import { BodyParserMiddleware, bodyParserConfig } from '@adonisjs/bodyparser'
 
 import { Config } from '../src/Config'
 import { Env } from '../src/Env'
@@ -66,6 +67,30 @@ export default class AppProvider {
   }
 
   /**
+   * Registers Request class to the IoC container
+   *
+   * Namespace: Adonis/Src/Request
+   * Alias: NONE
+   */
+  private _registerRequest () {
+    this.app.singleton('Adonis/Src/Request', () => {
+      return Request
+    })
+  }
+
+  /**
+   * Registers Response class to the IoC container
+   *
+   * Namespace: Adonis/Src/Response
+   * Alias: NONE
+   */
+  private _registerResponse () {
+    this.app.singleton('Adonis/Src/Response', () => {
+      return Response
+    })
+  }
+
+  /**
    * Register router to the IoC container
    *
    * Namespace: Adonis/Src/Route
@@ -87,7 +112,7 @@ export default class AppProvider {
    */
   private _registerLogger () {
     this.app.singleton('Adonis/Src/Logger', (app) => {
-      const loggerConfig = app.use('Adonis/Src/Logger').get('app.logger', {})
+      const loggerConfig = app.use('Adonis/Src/Config').get('app.logger', {})
       return new Logger(loggerConfig)
     })
 
@@ -103,12 +128,28 @@ export default class AppProvider {
   private _registerServer () {
     this.app.singleton('Adonis/Src/Server', (app) => {
       const Route = app.use('Adonis/Src/Route')
+      const HttpRequest = app.use('Adonis/Src/Request')
+      const HttpResponse = app.use('Adonis/Src/Response')
       const HttpMiddleware = app.use('Adonis/Src/HttpMiddleware')
+
       const httpConfig = app.use('Adonis/Src/Config').get('app.http', {})
-      return new Server(Request, Response, Route, HttpMiddleware, httpConfig)
+      return new Server(HttpRequest, HttpResponse, Route, HttpMiddleware, httpConfig)
     })
 
     this.app.alias('Adonis/Src/Server', 'Server')
+  }
+
+  /**
+   * Register body parser middleware to the IoC container
+   *
+   * Namespace: Adonis/Middleware/BodyParser
+   * Alias: NONE
+   */
+  private _registerBodyParserMiddleware () {
+    this.app.bind('Adonis/Middleware/BodyParser', (app) => {
+      const config = app.use('Adonis/Src/Config').get('bodyparser', {})
+      return new BodyParserMiddleware(config)
+    })
   }
 
   /**
@@ -118,9 +159,12 @@ export default class AppProvider {
     this._registerEnv()
     this._registerConfig()
     this._registerRoute()
+    this._registerRequest()
+    this._registerResponse()
     this._registerLogger()
     this._registerServer()
     this._registerHttpMiddleware()
+    this._registerBodyParserMiddleware()
   }
 
   /**
@@ -130,6 +174,7 @@ export default class AppProvider {
     this.app.with(['Adonis/Src/Config'], (Config) => {
       Config.defaults('app.http', { ...requestConfig, ...responseConfig })
       Config.defaults('app.logger', loggerConfig)
+      Config.defaults('bodyparser', bodyParserConfig)
     })
   }
 }

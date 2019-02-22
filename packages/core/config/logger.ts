@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { LoggerOptions } from '../src/Contracts/Logger'
+import { LoggerConfig } from '../src/Contracts/Logger'
 
-export const loggerConfig: LoggerOptions = {
+export const loggerConfig: LoggerConfig = {
   /*
   |--------------------------------------------------------------------------
   | Name
