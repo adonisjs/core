@@ -8,8 +8,13 @@
  */
 
 /**
- * Extended exception class that allows setting `status` and
- * `code` on the error object
+ * Extended Error object with the option to set error `status` and `code`.
+ * At AdonisJs, we prefer exceptions with proper error codes to handle
+ * them without relying on message pattern matching.
+ *
+ * ```js
+ * new Exception('message', 500, 'E_RUNTIME_EXCEPTION')
+ * ```
  */
 export class Exception extends Error {
   public name: string
