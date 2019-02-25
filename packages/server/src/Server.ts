@@ -7,7 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { IncomingMessage, ServerResponse } from 'http'
+ import { Server as HttpsServer } from 'https'
+import { IncomingMessage, ServerResponse, Server as HttpServer } from 'http'
 import { RouterContract } from '@adonisjs/router'
 import { Middleware } from 'co-compose'
 import { Exception } from '@adonisjs/utils'
@@ -67,6 +68,8 @@ export class Server implements ServerContract {
   private _hooksHandler
   private _routeHandler
   private _errorHandler: ErrorHandleNode
+
+  public instance?: HttpServer | HttpsServer
 
   constructor (
     private _Request: RequestConstructor,
