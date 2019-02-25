@@ -249,12 +249,14 @@ test.group('Ignitor | preload files', (group) => {
 })
 
 test.group('Ignitor | http server', (group) => {
+  group.timeout(0)
+
   group.afterEach(async () => {
     delete process.env.ENV_SILENT
     await remove(APP_ROOT)
   })
 
-  test('start http server on defined host and port', async (assert) => {
+  test('start http server on defined host and port', async (assert, done) => {
     process.env.ENV_SILENT = 'true'
     await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
       typescript: true,
@@ -291,5 +293,114 @@ test.group('Ignitor | http server', (group) => {
     clearModule(join(APP_ROOT, '.adonisrc.json'))
     clearModule(join(APP_ROOT, 'start/app.js'))
     clearModule(join(APP_ROOT, 'start/routes.js'))
-  }).timeout(0)
+
+    ignitor.server.close(done)
+  })
+
+  test('execute onHttpServer hook', async (assert, done) => {
+    process.env.ENV_SILENT = 'true'
+    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+      typescript: true,
+    })
+
+    await outputFile(join(APP_ROOT, 'start/app.js'), `
+      const { join } = require('path')
+
+      module.exports = {
+        providers: [
+          join(__dirname, '..', '..', '..', 'providers', 'AppProvider'),
+          join(__dirname, '..', 'providers', 'MyProvider')
+        ],
+        aceProviders: [],
+        commands: [],
+      }
+    `)
+
+    await outputFile(join(APP_ROOT, 'providers', 'MyProvider.js'), `
+      module.exports = class MyProvider {
+        onHttpServer () {
+          process.env.onHttpServer = true
+        }
+      }
+    `)
+
+    const ignitor = new Ignitor(APP_ROOT)
+    await ignitor.startHttpServer()
+
+    assert.equal(process.env.onHttpServer, 'true')
+
+    delete process.env.onHttpServer
+
+    clearModule(join(APP_ROOT, 'start/app.js'))
+    clearModule(join(APP_ROOT, 'providers', 'MyProvider.js'))
+
+    ignitor.server.close(done)
+  })
+
+  test('remove providers reference after boot', async (assert, done) => {
+    process.env.ENV_SILENT = 'true'
+    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+      typescript: true,
+    })
+
+    await outputFile(join(APP_ROOT, 'start/app.js'), `
+      const { join } = require('path')
+
+      module.exports = {
+        providers: [
+          join(__dirname, '..', '..', '..', 'providers', 'AppProvider')
+        ],
+        aceProviders: [],
+        commands: [],
+      }
+    `)
+
+    const ignitor = new Ignitor(APP_ROOT)
+    await ignitor.startHttpServer()
+
+    assert.deepEqual(ignitor['_providersList'], [])
+    assert.lengthOf(ignitor['_providersWithExitHook'], 0)
+
+    clearModule(join(APP_ROOT, 'start/app.js'))
+
+    ignitor.server.close(done)
+  })
+
+  test('hold reference to providers with onExit hook', async (assert, done) => {
+    process.env.ENV_SILENT = 'true'
+    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+      typescript: true,
+    })
+
+    await outputFile(join(APP_ROOT, 'start/app.js'), `
+      const { join } = require('path')
+
+      module.exports = {
+        providers: [
+          join(__dirname, '..', '..', '..', 'providers', 'AppProvider'),
+          join(__dirname, '..', 'providers', 'MyProvider')
+        ],
+        aceProviders: [],
+        commands: [],
+      }
+    `)
+
+    await outputFile(join(APP_ROOT, 'providers', 'MyProvider.js'), `
+      module.exports = class MyProvider {
+        onExit () {
+        }
+      }
+    `)
+
+    const ignitor = new Ignitor(APP_ROOT)
+    await ignitor.startHttpServer()
+
+    assert.deepEqual(ignitor['_providersList'], [])
+    assert.lengthOf(ignitor['_providersWithExitHook'], 1)
+
+    clearModule(join(APP_ROOT, 'start/app.js'))
+    clearModule(join(APP_ROOT, 'providers', 'MyProvider.js'))
+
+    ignitor.server.close(done)
+  })
 })

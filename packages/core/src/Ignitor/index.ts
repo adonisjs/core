@@ -108,6 +108,9 @@ export class Ignitor {
    */
   private _profilerSubscriber: ProfilerSubscriber
 
+  private _providersList: any[] = []
+  private _providersWithExitHook: any[] = []
+
   constructor (public appRoot: string) {}
 
   /**
@@ -217,7 +220,8 @@ export class Ignitor {
     /**
      * Register all providers
      */
-    const providersInstances = registrar.useProviders(list).register()
+    this._providersList = registrar.useProviders(list).register()
+    this._providersWithExitHook = this._providersList.filter((provider) => typeof (provider.onExit) === 'function')
 
     /**
      * Register aliases after registering providers. This will override
@@ -233,7 +237,7 @@ export class Ignitor {
     /**
      * Finally boot providers, which is an async process.
      */
-    await registrar.boot(providersInstances)
+    await registrar.boot(this._providersList)
   }
 
   /**
@@ -336,7 +340,7 @@ export class Ignitor {
   /**
    * Start the HTTP server by pulling it from the IoC container
    */
-  private _createHttpServer (serverCallback?: (handler) => any) {
+  private async _createHttpServer (serverCallback?: (handler) => any) {
     const server = this.ioc.use('Adonis/Src/Server')
     const router = this.ioc.use('Adonis/Src/Route')
 
@@ -360,6 +364,56 @@ export class Ignitor {
      */
     const handler = server.handle.bind(server)
     this.server = serverCallback ? serverCallback(handler) : createServer(handler)
+
+    /**
+     * Pull providers with HTTP server hook
+     */
+    const providersWithHttpHook = this._providersList.filter((provider) => {
+      return typeof (provider.onHttpServer) === 'function'
+    })
+
+    /**
+     * Execute hooks
+     */
+    await Promise.all(providersWithHttpHook.map((provider) => provider.onHttpServer()))
+  }
+
+  /**
+   * Closes HTTP server and then executes all `onExit` hooks
+   * before exiting the process.
+   *
+   * The HTTP is closed first, so that other unavailable resources
+   * will not impact existing requests.
+   */
+  private _onExit () {
+    this.server.close(async (error) => {
+      if (error) {
+        process.exit(1)
+      }
+
+      try {
+        await Promise.all(this._providersWithExitHook.map((provider) => provider.onExit()))
+        process.exit(0)
+      } catch (error) {
+        process.exit(1)
+      }
+    })
+  }
+
+  /**
+   * Bind listeners for `SIGINT` and `SIGTERM` signals. The `SIGINT`
+   * signal is only handled when process is started using pm2.
+   */
+  private _listenForExitEvents () {
+    /**
+     * Only when starting using pm2, otherwise only `Ctrl+C` sends
+     * SIGINT signal, which doesn't need graceful exit.
+     */
+    if (process.env.pm_id) {
+      process.on('SIGINT', this._onExit.bind(this))
+    }
+
+    process.on('SIGTERM', this._onExit.bind(this))
   }
 
   /**
@@ -409,7 +463,7 @@ export class Ignitor {
       /**
        * Create the server, but don't attach it to any port or host yet
        */
-      this._createHttpServer(serverCallback)
+      await this._createHttpServer(serverCallback)
 
       /**
        * Make server listen to port and host defined inside `Environment` variables
@@ -417,10 +471,17 @@ export class Ignitor {
       await this._listen()
 
       /**
+       * Attach on process signal events for graceful
+       * shutdown
+       */
+      this._listenForExitEvents()
+
+      /**
        * Memory cleanup
        */
       this._bootstrapper = null
       this.preloads = []
+      this._providersList = []
     } catch (error) {
       console.log(error)
       process.exit(1)
