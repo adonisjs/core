@@ -366,6 +366,11 @@ export class Ignitor {
     this.server = serverCallback ? serverCallback(handler) : createServer(handler)
 
     /**
+     * Set Http or Https server as an instance on Adonis server
+     */
+    server.instance = this.server
+
+    /**
      * Pull providers with HTTP server hook
      */
     const providersWithHttpHook = this._providersList.filter((provider) => {
