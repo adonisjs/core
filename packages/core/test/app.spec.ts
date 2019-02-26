@@ -23,7 +23,7 @@ import { Logger } from '../src/Logger'
 import { loggerConfig } from '../config/logger'
 import { Env } from '../src/Env'
 
-const ioc = new Ioc(false, true)
+const ioc = new Ioc(false)
 const registrar = new Registrar(ioc)
 
 test.group('App', (group) => {

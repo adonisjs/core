@@ -18,7 +18,7 @@ import { ServerContract, MiddlewareStoreContract } from '@adonisjs/server'
 
 import { Helpers } from '../src/Helpers'
 
-const ioc = new Ioc(false, true)
+const ioc = new Ioc(false)
 const registrar = new Registrar(ioc)
 
 test.group('Server', (group) => {

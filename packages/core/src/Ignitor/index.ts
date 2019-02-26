@@ -187,7 +187,7 @@ export class Ignitor {
    * Instantiate IoC container
    */
   private _instantiateIoCContainer () {
-    this.ioc = new Ioc(false, true)
+    this.ioc = new Ioc(false)
 
     global['use'] = this.ioc.use.bind(this.ioc)
     global['make'] = this.ioc.make.bind(this.ioc)
