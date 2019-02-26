@@ -7,24 +7,24 @@
  * file that was distributed with this source code.
  */
 
-import * as test from 'japa'
 import { join } from 'path'
+import * as test from 'japa'
 import * as supertest from 'supertest'
 import { createServer } from 'http'
-import * as clearModule from 'clear-module'
-import { remove, outputJSON, outputFile } from 'fs-extra'
+import { Filesystem } from '@adonisjs/dev-utils'
 
 import { Ignitor } from '../src/Ignitor'
 
-const APP_ROOT = join(__dirname, 'app')
+const fs = new Filesystem(join(__dirname, 'app'))
+const AppProvider = join(__dirname, '..', 'providers', 'AppProvider')
 
 test.group('Ignitor | loadRcFile', (group) => {
   group.afterEach(async () => {
-    await remove(APP_ROOT)
+    await fs.cleanup()
   })
 
   test('use defaults when rc file is missing', (assert) => {
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     ignitor['_loadRcFile']()
 
     assert.deepEqual(ignitor.directories, {
@@ -44,7 +44,7 @@ test.group('Ignitor | loadRcFile', (group) => {
   })
 
   test('merge .adonisrc.json with default when file exists', async (assert) => {
-    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+    await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
       autoloads: {
         Admin: './app',
@@ -52,9 +52,9 @@ test.group('Ignitor | loadRcFile', (group) => {
       directories: {
         uploads: './uploads',
       },
-    })
+    }))
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     ignitor['_loadRcFile']()
 
     assert.deepEqual(ignitor.directories, {
@@ -72,18 +72,16 @@ test.group('Ignitor | loadRcFile', (group) => {
 
     assert.deepEqual(ignitor.autoloads, { Admin: './app' })
     assert.isTrue(ignitor.typescript)
-
-    clearModule(join(APP_ROOT, '.adonisrc.json'))
   })
 })
 
 test.group('Ignitor | loadAppFile', (group) => {
   group.afterEach(async () => {
-    await remove(APP_ROOT)
+    await fs.cleanup()
   })
 
   test('raise error if start/app.js file is missing', (assert) => {
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     ignitor['_loadRcFile']()
 
     const fn = () => ignitor['_loadAppFile']()
@@ -91,56 +89,51 @@ test.group('Ignitor | loadAppFile', (group) => {
   })
 
   test('raise error if app file is missing providers, aceProviders or commands', async (assert) => {
-    await outputFile(join(APP_ROOT, 'start/app.js'), `
+    await fs.add('start/app.js', `
       module.exports = {
         providers: [],
         aceProviders: []
       }
     `)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     ignitor['_loadRcFile']()
 
     const fn = () => ignitor['_loadAppFile']()
     assert.throw(fn, 'E_MISSING_APP_ESSENTIALS: export `commands` from `./start/app` file')
-
-    clearModule(join(APP_ROOT, 'start/app.js'))
   })
 
   test('load start/app.ts file', async (assert) => {
-    await outputFile(join(APP_ROOT, 'start-ts/app.ts'), `
+    await fs.add('.adonisrc.json', JSON.stringify({
+      directories: {
+        start: './start-ts',
+      },
+    }))
+
+    await fs.add('start-ts/app.ts', `
     export const providers = []
     export const aceProviders = []
     export const commands = []
     `)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     ignitor['_loadRcFile']()
-
-    /**
-     * Node internally caches the extension for the file and hence, we need
-     * to change the directory to load the same file but with different
-     * extension
-     */
-    ignitor.directories.start = 'start-ts'
 
     assert.deepEqual(ignitor['_loadAppFile'](), {
       providers: [],
       aceProviders: [],
       commands: [],
     })
-
-    clearModule(join(APP_ROOT, 'start-ts/app.ts'))
   })
 })
 
 test.group('Ignitor | boot providers', (group) => {
   group.afterEach(async () => {
-    await remove(APP_ROOT)
+    await fs.cleanup()
   })
 
   test('register and boot providers', async (assert) => {
-    await outputFile(join(APP_ROOT, 'start/app.js'), `
+    await fs.add('start/app.js', `
       const { join } = require('path')
 
       module.exports = {
@@ -152,7 +145,7 @@ test.group('Ignitor | boot providers', (group) => {
       }
     `)
 
-    await outputFile(join(APP_ROOT, 'start/AppProvider.js'), `
+    await fs.add('start/AppProvider.js', `
       module.exports = class AppProvider {
         register () {
           global['AppProvider'] = ['registered']
@@ -164,26 +157,23 @@ test.group('Ignitor | boot providers', (group) => {
       }
     `)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     ignitor['_loadRcFile']()
     ignitor['_instantiateIoCContainer']()
     await ignitor['_bootProviders']()
 
     assert.deepEqual(global['AppProvider'], ['registered', 'booted'])
-
-    clearModule(join(APP_ROOT, 'start/app.js'))
-    clearModule(join(APP_ROOT, 'start/AppProvider.js'))
     delete global['AppProvider']
   })
 })
 
 test.group('Ignitor | preload files', (group) => {
   group.afterEach(async () => {
-    await remove(APP_ROOT)
+    await fs.cleanup()
   })
 
   test('preload all files with no intent', async (assert) => {
-    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+    await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
         {
           file: 'start/kernel',
@@ -192,12 +182,12 @@ test.group('Ignitor | preload files', (group) => {
           file: 'start/routes',
         },
       ],
-    })
+    }))
 
-    await outputFile(join(APP_ROOT, 'start/kernel.js'), `global['START_KERNEL'] = true`)
-    await outputFile(join(APP_ROOT, 'start/routes.js'), `global['START_ROUTES'] = true`)
+    await fs.add('start/kernel.js', `global['START_KERNEL'] = true`)
+    await fs.add('start/routes.js', `global['START_ROUTES'] = true`)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     ignitor['_loadRcFile']()
     ignitor['_instantiateIoCContainer']()
     ignitor['_instantiateProfiler']()
@@ -206,15 +196,12 @@ test.group('Ignitor | preload files', (group) => {
     assert.isTrue(global['START_KERNEL'])
     assert.isTrue(global['START_ROUTES'])
 
-    clearModule(join(APP_ROOT, '.adonisrc.json'))
-    clearModule(join(APP_ROOT, 'start/routes.js'))
-    clearModule(join(APP_ROOT, 'start/kernel.js'))
     delete global['START_KERNEL']
     delete global['START_ROUTES']
   })
 
   test('preload files for the selected intent only', async (assert) => {
-    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+    await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
         {
           file: 'start/kernel',
@@ -225,12 +212,12 @@ test.group('Ignitor | preload files', (group) => {
           intent: 'ace',
         },
       ],
-    })
+    }))
 
-    await outputFile(join(APP_ROOT, 'start/kernel.js'), `global['START_KERNEL'] = true`)
-    await outputFile(join(APP_ROOT, 'start/routes.js'), `global['START_ROUTES'] = true`)
+    await fs.add('start/kernel.js', `global['START_KERNEL'] = true`)
+    await fs.add('start/routes.js', `global['START_ROUTES'] = true`)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     ignitor['_intent'] = 'ace'
     ignitor['_loadRcFile']()
     ignitor['_instantiateIoCContainer']()
@@ -239,10 +226,6 @@ test.group('Ignitor | preload files', (group) => {
 
     assert.isUndefined(global['START_KERNEL'])
     assert.isTrue(global['START_ROUTES'])
-
-    clearModule(join(APP_ROOT, '.adonisrc.json'))
-    clearModule(join(APP_ROOT, 'start/routes.js'))
-    clearModule(join(APP_ROOT, 'start/kernel.js'))
     delete global['START_KERNEL']
     delete global['START_ROUTES']
   })
@@ -252,63 +235,55 @@ test.group('Ignitor | http server', (group) => {
   group.timeout(0)
 
   group.afterEach(async () => {
-    delete process.env.ENV_SILENT
-    await remove(APP_ROOT)
+    await fs.cleanup()
   })
 
   test('start http server on defined host and port', async (assert, done) => {
-    process.env.ENV_SILENT = 'true'
-    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+    await fs.addEnv('.env', {})
+    await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
       preloads: [{ file: 'start/routes' }],
-    })
+    }))
 
-    await outputFile(join(APP_ROOT, 'start/app.js'), `
+    await fs.add('start/app.js', `
       const { join } = require('path')
 
       module.exports = {
         providers: [
-          join(__dirname, '..', '..', '..', 'providers', 'AppProvider')
+          '${AppProvider}'
         ],
         aceProviders: [],
         commands: [],
       }
     `)
 
-    await outputFile(join(APP_ROOT, 'start/routes.js'), `
+    await fs.add('start/routes.js', `
       const Route = use('Route')
       Route.get('/', async ({ response }) => {
         response.send('handled')
       })
     `)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     await ignitor.startHttpServer((handler) => {
       return createServer(handler)
     })
 
     const { text } = await supertest(ignitor.server).get('/').expect(200)
     assert.equal(text, 'handled')
-
-    clearModule(join(APP_ROOT, '.adonisrc.json'))
-    clearModule(join(APP_ROOT, 'start/app.js'))
-    clearModule(join(APP_ROOT, 'start/routes.js'))
-
     ignitor.server.close(done)
   })
 
   test('execute onHttpServer hook', async (assert, done) => {
-    process.env.ENV_SILENT = 'true'
-    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
-      typescript: true,
-    })
+    await fs.addEnv('.env', {})
+    await fs.add('.adonisrc.json', JSON.stringify({ typescript: true }))
 
-    await outputFile(join(APP_ROOT, 'start/app.js'), `
+    await fs.add('start/app.js', `
       const { join } = require('path')
 
       module.exports = {
         providers: [
-          join(__dirname, '..', '..', '..', 'providers', 'AppProvider'),
+          '${AppProvider}',
           join(__dirname, '..', 'providers', 'MyProvider')
         ],
         aceProviders: [],
@@ -316,7 +291,7 @@ test.group('Ignitor | http server', (group) => {
       }
     `)
 
-    await outputFile(join(APP_ROOT, 'providers', 'MyProvider.js'), `
+    await fs.add('providers/MyProvider.js', `
       module.exports = class MyProvider {
         onHttpServer () {
           process.env.onHttpServer = true
@@ -324,60 +299,53 @@ test.group('Ignitor | http server', (group) => {
       }
     `)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     await ignitor.startHttpServer()
-
     assert.equal(process.env.onHttpServer, 'true')
 
     delete process.env.onHttpServer
-
-    clearModule(join(APP_ROOT, 'start/app.js'))
-    clearModule(join(APP_ROOT, 'providers', 'MyProvider.js'))
-
     ignitor.server.close(done)
   })
 
   test('remove providers reference after boot', async (assert, done) => {
-    process.env.ENV_SILENT = 'true'
-    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+    await fs.addEnv('.env', {})
+    await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
-    })
+    }))
 
-    await outputFile(join(APP_ROOT, 'start/app.js'), `
+    await fs.add('start/app.js', `
       const { join } = require('path')
 
       module.exports = {
         providers: [
-          join(__dirname, '..', '..', '..', 'providers', 'AppProvider')
+          '${AppProvider}'
         ],
         aceProviders: [],
         commands: [],
       }
     `)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     await ignitor.startHttpServer()
 
     assert.deepEqual(ignitor['_providersList'], [])
     assert.lengthOf(ignitor['_providersWithExitHook'], 0)
 
-    clearModule(join(APP_ROOT, 'start/app.js'))
-
     ignitor.server.close(done)
   })
 
   test('hold reference to providers with onExit hook', async (assert, done) => {
-    process.env.ENV_SILENT = 'true'
-    await outputJSON(join(APP_ROOT, '.adonisrc.json'), {
+    await fs.addEnv('.env', {})
+    await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
-    })
+    }))
 
-    await outputFile(join(APP_ROOT, 'start/app.js'), `
+    await fs.add('start/app.js', `
       const { join } = require('path')
 
       module.exports = {
         providers: [
-          join(__dirname, '..', '..', '..', 'providers', 'AppProvider'),
+          '${AppProvider}',
           join(__dirname, '..', 'providers', 'MyProvider')
         ],
         aceProviders: [],
@@ -385,22 +353,18 @@ test.group('Ignitor | http server', (group) => {
       }
     `)
 
-    await outputFile(join(APP_ROOT, 'providers', 'MyProvider.js'), `
+    await fs.add('providers/MyProvider.js', `
       module.exports = class MyProvider {
         onExit () {
         }
       }
     `)
 
-    const ignitor = new Ignitor(APP_ROOT)
+    const ignitor = new Ignitor(fs.basePath)
     await ignitor.startHttpServer()
 
     assert.deepEqual(ignitor['_providersList'], [])
     assert.lengthOf(ignitor['_providersWithExitHook'], 1)
-
-    clearModule(join(APP_ROOT, 'start/app.js'))
-    clearModule(join(APP_ROOT, 'providers', 'MyProvider.js'))
-
     ignitor.server.close(done)
   })
 })

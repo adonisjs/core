@@ -60,8 +60,7 @@
     "pino": "^5.11.1"
   },
   "devDependencies": {
-    "clear-module": "^3.1.0",
-    "fs-extra": "^7.0.1",
+    "@adonisjs/dev-utils": "^1.1.0",
     "split2": "^3.1.0",
     "supertest": "^3.4.2"
   }
