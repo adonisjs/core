@@ -44,7 +44,7 @@
     "access": "public",
     "tag": "latest"
   },
-  "devDependencies": {
+  "dependencies": {
     "clear-module": "^3.1.0",
     "fs-extra": "^7.0.1"
   }

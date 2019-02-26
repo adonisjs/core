@@ -58,13 +58,16 @@ export class Filesystem {
   }
 
   /**
+   * Removes ext from the file path
+   */
+  private _dropExt (filePath: string): string {
+    return filePath.replace(/\.\w+$/, '')
+  }
+
+  /**
    * Removes the file path from nodejs module cache
    */
   private _removeFromModule (filePath: string): void {
-    if (!this._isModule(filePath)) {
-      return
-    }
-
     const absPath = this._makePath(filePath)
     this._modules.delete(absPath)
 
@@ -146,8 +149,16 @@ export class Filesystem {
    * Remove file
    */
   public async remove (filePath: string): Promise<void> {
-    await remove(this._makePath(filePath))
-    this._removeFromModule(filePath)
+    const absPath = this._makePath(filePath)
+    await remove(absPath)
+
+    const withoutExt = this._dropExt(absPath)
+    if (this._modules.has(absPath) || this._modules.has(withoutExt)) {
+      this._removeFromModule(filePath)
+      this._removeFromModule(withoutExt)
+      return
+    }
+
     this._removeFromEnv(filePath)
   }
 
@@ -158,6 +169,7 @@ export class Filesystem {
     await remove(this.basePath)
     this._modules.forEach((mod) => {
       this._removeFromModule(mod)
+      this._removeFromModule(this._dropExt(mod))
     })
 
     this._envVars.forEach((_, envFile) => {

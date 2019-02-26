@@ -52,6 +52,23 @@ test.group('Filesystem', () => {
     await remove(fs.basePath)
   })
 
+  test('clean module from require cache, when required without extension', async (assert) => {
+    const fs = new Filesystem()
+
+    await fs.add('foo.js', `module.exports = 'Hello world'`)
+    assert.equal(require(join(fs.basePath, 'foo')), 'Hello world')
+
+    /**
+     * Should clean it from cache too
+     */
+    await fs.remove('foo.js')
+
+    await fs.add('foo.js', `module.exports = 'Hi world'`)
+    assert.equal(require(join(fs.basePath, 'foo')), 'Hi world')
+
+    await remove(fs.basePath)
+  })
+
   test('adding env file should track env keys', async (assert) => {
     const fs = new Filesystem()
 
