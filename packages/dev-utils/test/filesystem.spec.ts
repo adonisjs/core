@@ -77,6 +77,7 @@ test.group('Filesystem', () => {
 
     assert.equal(envContents, 'PORT=3333')
     assert.deepEqual(fs['_envVars'].get(join(fs.basePath, '.env')), ['PORT'])
+
     await remove(fs.basePath)
   })
 
@@ -112,5 +113,17 @@ test.group('Filesystem', () => {
     } catch (error) {
       assert.equal(error.code, 'MODULE_NOT_FOUND')
     }
+
+    await remove(fs.basePath)
+  })
+
+  test('create base path directory if missing', async (assert) => {
+    const fs = new Filesystem()
+    await fs.ensureRoot()
+
+    const exists = await pathExists(fs.basePath)
+    assert.isTrue(exists)
+
+    await remove(fs.basePath)
   })
 })

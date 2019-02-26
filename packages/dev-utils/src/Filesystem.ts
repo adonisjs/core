@@ -9,7 +9,7 @@
 
 import { join, extname, isAbsolute } from 'path'
 import { tmpdir } from 'os'
-import { outputFile, remove, readFile } from 'fs-extra'
+import * as fsExtra from 'fs-extra'
 import * as clearModule from 'clear-module'
 
 /**
@@ -38,6 +38,11 @@ import * as clearModule from 'clear-module'
 export class Filesystem {
   private _modules: Set<string> = new Set()
   private _envVars: Map<string, string[]> = new Map()
+
+  /**
+   * Reference to fsExtra
+   */
+  public fsExtra = fsExtra
 
   constructor (public basePath = join(tmpdir(), `${new Date().getTime()}`)) {
   }
@@ -119,16 +124,23 @@ export class Filesystem {
    */
   public async add (filePath: string, contents: string): Promise<void> {
     const absPath = this._makePath(filePath)
-    await outputFile(absPath, contents)
+    await this.fsExtra.outputFile(absPath, contents)
 
     this._addToModule(filePath)
+  }
+
+  /**
+   * Creates base path dir (if missing)
+   */
+  public async ensureRoot () {
+    return this.fsExtra.ensureDir(this.basePath)
   }
 
   /**
    * Returns file contents
    */
   public async get (filePath: string): Promise<string> {
-    return readFile(this._makePath(filePath), 'utf-8')
+    return this.fsExtra.readFile(this._makePath(filePath), 'utf-8')
   }
 
   /**
@@ -150,7 +162,7 @@ export class Filesystem {
    */
   public async remove (filePath: string): Promise<void> {
     const absPath = this._makePath(filePath)
-    await remove(absPath)
+    await this.fsExtra.remove(absPath)
 
     const withoutExt = this._dropExt(absPath)
     if (this._modules.has(absPath) || this._modules.has(withoutExt)) {
@@ -166,7 +178,7 @@ export class Filesystem {
    * Cleanup all files and modules cache (if any)
    */
   public async cleanup (): Promise<void> {
-    await remove(this.basePath)
+    await this.fsExtra.remove(this.basePath)
     this._modules.forEach((mod) => {
       this._removeFromModule(mod)
       this._removeFromModule(this._dropExt(mod))
