@@ -7,7 +7,8 @@ node_js:
   - 10.0.0
 sudo: false
 install:
-  - npm install
+  - npm install -g npm@latest
+  - npm ci
 notifications:
   slack:
     secure: >-
