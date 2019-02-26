@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/compare/@adonisjs/server@1.3.0...@adonisjs/server@1.3.1) (2019-02-26)
+
+**Note:** Version bump only for package @adonisjs/server
+
+
+
+
+
 # [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/compare/@adonisjs/server@1.2.4...@adonisjs/server@1.3.0) (2019-02-26)
 
 

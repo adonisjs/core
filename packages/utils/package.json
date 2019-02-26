@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/utils",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A collection of utilities to keep AdonisJs codebase dry",
   "main": "build/index.js",
   "files": [
@@ -47,6 +47,6 @@
     "require-all": "^3.0.0"
   },
   "devDependencies": {
-    "@adonisjs/dev-utils": "^1.1.0"
+    "@adonisjs/dev-utils": "^1.2.0"
   }
 }

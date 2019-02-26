@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.11](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/compare/@adonisjs/response@1.1.10...@adonisjs/response@1.1.11) (2019-02-26)
+
+**Note:** Version bump only for package @adonisjs/response
+
+
+
+
+
 ## [1.1.10](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/compare/@adonisjs/response@1.1.9...@adonisjs/response@1.1.10) (2019-02-22)
 
 

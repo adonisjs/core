@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/profiler",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "AdonisJs lean profiler to time and profile code",
   "main": "build/index.js",
   "files": [
@@ -44,7 +44,7 @@
     "tag": "latest"
   },
   "dependencies": {
-    "@adonisjs/utils": "^1.4.0",
+    "@adonisjs/utils": "^1.4.1",
     "uniqid": "^5.0.3"
   }
 }
