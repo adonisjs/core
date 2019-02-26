@@ -10,7 +10,7 @@
 import * as test from 'japa'
 import * as supertest from 'supertest'
 import { join } from 'path'
-import { stat, outputFile, remove, ensureDir } from 'fs-extra'
+import { Filesystem } from '@adonisjs/dev-utils'
 import { createWriteStream, createReadStream } from 'fs'
 import { createServer } from 'http'
 import * as etag from 'etag'
@@ -23,11 +23,11 @@ const fakeConfig = (conf?: Partial<ResponseConfig>) => {
   return Object.assign(config, conf)
 }
 
-const APP_ROOT = join(__dirname, 'app')
+const fs = new Filesystem()
 
 test.group('Response', (group) => {
   group.afterEach(async () => {
-    await remove(APP_ROOT)
+    await fs.cleanup()
   })
 
   test('set http response headers', async () => {
@@ -398,12 +398,12 @@ test.group('Response', (group) => {
   })
 
   test('stream response', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.txt'), 'hello world')
+    await fs.add('hello.txt', 'hello world')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.stream(createReadStream(join(APP_ROOT, 'hello.txt')), true)
+      response.stream(createReadStream(join(fs.basePath, 'hello.txt')), true)
     })
 
     const { text } = await supertest(server).get('/')
@@ -431,12 +431,12 @@ test.group('Response', (group) => {
 
   test('raise error when input is not a readable stream', async (assert) => {
     assert.plan(1)
-    await ensureDir(APP_ROOT)
+    await fs.ensureRoot()
 
     const server = createServer(async (req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      const writeStream = createWriteStream(join(APP_ROOT, 'hello.txt'))
+      const writeStream = createWriteStream(join(fs.basePath, 'hello.txt'))
 
       try {
         const stream = response.stream as any
@@ -452,12 +452,12 @@ test.group('Response', (group) => {
   })
 
   test('should not hit the maxListeners when making more than 10 calls', async () => {
-    await outputFile(join(APP_ROOT, 'hello.txt'), 'hello world')
+    await fs.add('hello.txt', 'hello world')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.stream(createReadStream(join(APP_ROOT, 'hello.txt')), true)
+      response.stream(createReadStream(join(fs.basePath, 'hello.txt')), true)
     })
 
     const requests = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(() => supertest(server).get('/').expect(200))
@@ -469,7 +469,7 @@ test.group('Response', (group) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
       response
-        .stream(createReadStream(join(APP_ROOT, 'hello.txt')), true)
+        .stream(createReadStream(join(fs.basePath, 'hello.txt')), true)
         .catch((error) => {
           res.end(error.message)
         })
@@ -484,7 +484,7 @@ test.group('Response', (group) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
       response
-        .stream(createReadStream(join(APP_ROOT, 'hello.txt')), true)
+        .stream(createReadStream(join(fs.basePath, 'hello.txt')), true)
         .catch((error) => {
           res.end(error.code)
         })
@@ -498,7 +498,7 @@ test.group('Response', (group) => {
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.stream(createReadStream(join(APP_ROOT, 'hello.txt')))
+      response.stream(createReadStream(join(fs.basePath, 'hello.txt')))
     })
 
     const { text } = await supertest(server).get('/')
@@ -506,12 +506,12 @@ test.group('Response', (group) => {
   })
 
   test('download file with correct content type', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.download(join(APP_ROOT, 'hello.html'))
+      response.download(join(fs.basePath, 'hello.html'))
     })
 
     const { text } = await supertest(server)
@@ -526,7 +526,7 @@ test.group('Response', (group) => {
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.download(join(APP_ROOT))
+      response.download(join(fs.basePath))
     })
 
     const { text } = await supertest(server).get('/').expect(404)
@@ -537,7 +537,7 @@ test.group('Response', (group) => {
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.download(join(APP_ROOT, 'hello.html'))
+      response.download(join(fs.basePath, 'hello.html'))
     })
 
     const { text } = await supertest(server).get('/').expect(404)
@@ -550,7 +550,7 @@ test.group('Response', (group) => {
       const response = new Response(req, res, config)
 
       try {
-        await response.download(join(APP_ROOT, 'hello.html'), false, true)
+        await response.download(join(fs.basePath, 'hello.html'), false, true)
       } catch (error) {
         res.writeHead(404)
         res.end('Custom error during file processing')
@@ -562,12 +562,12 @@ test.group('Response', (group) => {
   })
 
   test('do not stream file on HEAD calls', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.download(join(APP_ROOT, 'hello.html'))
+      response.download(join(fs.basePath, 'hello.html'))
     })
 
     const { text } = await supertest(server).head('/').expect(200)
@@ -575,15 +575,15 @@ test.group('Response', (group) => {
   })
 
   test('do not stream file when cache is fresh', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.download(join(APP_ROOT, 'hello.html'), true)
+      response.download(join(fs.basePath, 'hello.html'), true)
     })
 
-    const stats = await stat(join(APP_ROOT, 'hello.html'))
+    const stats = await fs.fsExtra.stat(join(fs.basePath, 'hello.html'))
 
     const { text } = await supertest(server)
       .get('/')
@@ -594,15 +594,15 @@ test.group('Response', (group) => {
   })
 
   test('set HTTP status to 304 when cache is fresh and request is HEAD', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.download(join(APP_ROOT, 'hello.html'), true)
+      response.download(join(fs.basePath, 'hello.html'), true)
     })
 
-    const stats = await stat(join(APP_ROOT, 'hello.html'))
+    const stats = await fs.fsExtra.stat(join(fs.basePath, 'hello.html'))
 
     const { text } = await supertest(server)
       .head('/')
@@ -613,12 +613,12 @@ test.group('Response', (group) => {
   })
 
   test('download file with correct content disposition', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.attachment(join(APP_ROOT, 'hello.html'))
+      response.attachment(join(fs.basePath, 'hello.html'))
     })
 
     const { text } = await supertest(server)
@@ -631,12 +631,12 @@ test.group('Response', (group) => {
   })
 
   test('download file with custom file name', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.attachment(join(APP_ROOT, 'hello.html'), 'ooo.html')
+      response.attachment(join(fs.basePath, 'hello.html'), 'ooo.html')
     })
 
     const { text } = await supertest(server)
@@ -649,12 +649,12 @@ test.group('Response', (group) => {
   })
 
   test('download file with custom disposition', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.attachment(join(APP_ROOT, 'hello.html'), 'ooo.html', 'inline')
+      response.attachment(join(fs.basePath, 'hello.html'), 'ooo.html', 'inline')
     })
 
     const { text } = await supertest(server)
@@ -805,12 +805,12 @@ test.group('Response', (group) => {
   })
 
   test('send response as 200 when request method is HEAD and cache is not fresh', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.download(join(APP_ROOT, 'hello.html'), true)
+      response.download(join(fs.basePath, 'hello.html'), true)
     })
 
     const { text } = await supertest(server)
@@ -822,12 +822,12 @@ test.group('Response', (group) => {
   })
 
   test('stream the file when request method is GET and cache is not fresh', async (assert) => {
-    await outputFile(join(APP_ROOT, 'hello.html'), '<p> hello world </p>')
+    await fs.add('hello.html', '<p> hello world </p>')
 
     const server = createServer((req, res) => {
       const config = fakeConfig()
       const response = new Response(req, res, config)
-      response.download(join(APP_ROOT, 'hello.html'), true)
+      response.download(join(fs.basePath, 'hello.html'), true)
     })
 
     const { text } = await supertest(server)

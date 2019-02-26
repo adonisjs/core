@@ -22,7 +22,7 @@
   "author": "virk",
   "license": "MIT",
   "devDependencies": {
-    "fs-extra": "^7.0.1",
+    "@adonisjs/dev-utils": "^1.1.0",
     "supertest": "^3.4.2"
   },
   "dependencies": {
