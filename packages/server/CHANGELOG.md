@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/compare/@adonisjs/server@1.2.4...@adonisjs/server@1.3.0) (2019-02-26)
+
+
+### Features
+
+* **server:** expose instance property, which is a http or https server ([3356dd6](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/commit/3356dd6))
+
+
+
+
+
 ## [1.2.4](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/compare/@adonisjs/server@1.2.3...@adonisjs/server@1.2.4) (2019-02-22)
 
 **Note:** Version bump only for package @adonisjs/server

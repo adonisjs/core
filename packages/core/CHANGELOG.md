@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.4.1...@adonisjs/core@1.5.0) (2019-02-26)
+
+
+### Features
+
+* **ignitor:** add support for hooks ([ac805b1](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/ac805b1))
+
+
+
+
+
 ## [1.4.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.4.0...@adonisjs/core@1.4.1) (2019-02-22)
 
 

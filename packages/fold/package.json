@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/fold",
-  "version": "5.0.4",
+  "version": "5.0.5",
   "description": "Dependency manager and ioc container for your next NodeJs application",
   "main": "build/index.js",
   "files": [
@@ -60,6 +60,6 @@
     "tag": "next"
   },
   "dependencies": {
-    "@adonisjs/utils": "^1.3.3"
+    "@adonisjs/utils": "^1.4.0"
   }
 }

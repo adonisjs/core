@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/dev-utils",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Development utilities used by AdonisJs core team",
   "keywords": [
     "adonisjs",
@@ -43,8 +43,6 @@
   "publishConfig": {
     "access": "public",
     "tag": "latest"
-  },
-  "dependencies": {
   },
   "devDependencies": {
     "clear-module": "^3.1.0",

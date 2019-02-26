@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/utils/compare/@adonisjs/utils@1.3.3...@adonisjs/utils@1.4.0) (2019-02-26)
+
+
+### Features
+
+* **utils:** add requireAll method ([14179b8](https://github.com/adonisjs/adonis-framework/tree/master/packages/utils/commit/14179b8))
+
+
+
+
+
 ## [1.3.3](https://github.com/adonisjs/adonis-framework/tree/master/packages/utils/compare/@adonisjs/utils@1.3.2...@adonisjs/utils@1.3.3) (2019-02-22)
 
 **Note:** Version bump only for package @adonisjs/utils
