@@ -8,21 +8,23 @@
 */
 
 import * as test from 'japa'
-import { createReadStream, remove, pathExists, outputFile } from 'fs-extra'
+import { Filesystem } from '@adonisjs/dev-utils'
 import { join } from 'path'
+import { createReadStream, pathExists } from 'fs-extra'
 
 import { streamFile } from '../src/Multipart/streamFile'
 
-const SAMPLE_FILE = join(__dirname, 'hello-out.txt')
-const MAIN_FILE = join(__dirname, 'hello-in.txt')
+const fs = new Filesystem()
+const SAMPLE_FILE = join(fs.basePath, 'hello-out.txt')
+const MAIN_FILE = join(fs.basePath, 'hello-in.txt')
 
 test.group('streamFile', (group) => {
   group.afterEach(async () => {
-    await Promise.all([remove(MAIN_FILE), remove(SAMPLE_FILE)])
+    await fs.cleanup()
   })
 
   test('write readable stream to the destination', async (assert) => {
-    await outputFile(MAIN_FILE, 'hello')
+    await fs.add(MAIN_FILE, 'hello')
 
     const file = createReadStream(MAIN_FILE)
     await streamFile(file, SAMPLE_FILE)
@@ -34,7 +36,7 @@ test.group('streamFile', (group) => {
   test('raise error when stream gets interuppted', async (assert) => {
     assert.plan(1)
 
-    await outputFile(MAIN_FILE, 'hello\n\hi\nhow are you')
+    await fs.add(MAIN_FILE, 'hello\n\hi\nhow are you')
 
     const file = createReadStream(MAIN_FILE)
     file.on('readable', () => {

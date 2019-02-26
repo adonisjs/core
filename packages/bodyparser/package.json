@@ -54,6 +54,7 @@
     "tag": "next"
   },
   "devDependencies": {
+    "@adonisjs/dev-utils": "^1.1.0",
     "@adonisjs/request": "^1.1.9",
     "supertest": "^3.4.2"
   }
