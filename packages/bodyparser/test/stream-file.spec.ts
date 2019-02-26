@@ -14,7 +14,7 @@ import { createReadStream, pathExists } from 'fs-extra'
 
 import { streamFile } from '../src/Multipart/streamFile'
 
-const fs = new Filesystem()
+const fs = new Filesystem(join(__dirname, 'app'))
 const SAMPLE_FILE = join(fs.basePath, 'hello-out.txt')
 const MAIN_FILE = join(fs.basePath, 'hello-in.txt')
 
