@@ -8,27 +8,26 @@
  */
 
 import * as test from 'japa'
-import { join } from 'path'
-import { remove, outputFile } from 'fs-extra'
+import { Filesystem } from '@adonisjs/dev-utils'
 
 import { requireAll } from '../src/requireAll'
-const BASE_PATH = join(__dirname, 'app')
+const fs = new Filesystem()
 
 test.group('require all', (group) => {
   group.afterEach(async () => {
-    await remove(BASE_PATH)
+    await fs.cleanup()
   })
 
   test('require .js, .ts and .json files from the disk', async (assert) => {
-    await outputFile(join(BASE_PATH, 'app.ts'), `export default {
+    await fs.add('app.ts', `export default {
       loaded: true
     }`)
 
-    await outputFile(join(BASE_PATH, 'server.ts'), `export const loaded = true`)
-    await outputFile(join(BASE_PATH, 'config.js'), `module.exports = { loaded: true }`)
-    await outputFile(join(BASE_PATH, 'main.json'), `{ "loaded": true }`)
+    await fs.add('server.ts', `export const loaded = true`)
+    await fs.add('config.js', `module.exports = { loaded: true }`)
+    await fs.add('main.json', `{ "loaded": true }`)
 
-    const output = requireAll(BASE_PATH)
+    const output = requireAll(fs.basePath)
     assert.deepEqual(output, {
       app: { loaded: true },
       server: { loaded: true },
@@ -38,15 +37,15 @@ test.group('require all', (group) => {
   })
 
   test('require files recursively', async (assert) => {
-    await outputFile(join(BASE_PATH, 'ts/app.ts'), `export default {
+    await fs.add('ts/app.ts', `export default {
       loaded: true
     }`)
 
-    await outputFile(join(BASE_PATH, 'ts/server.ts'), `export const loaded = true`)
-    await outputFile(join(BASE_PATH, 'js/config.js'), `module.exports = { loaded: true }`)
-    await outputFile(join(BASE_PATH, 'json/main.json'), `{ "loaded": true }`)
+    await fs.add('ts/server.ts', `export const loaded = true`)
+    await fs.add('js/config.js', `module.exports = { loaded: true }`)
+    await fs.add('json/main.json', `{ "loaded": true }`)
 
-    const output = requireAll(BASE_PATH)
+    const output = requireAll(fs.basePath)
     assert.deepEqual(output, {
       ts: {
         app: { loaded: true },
@@ -62,28 +61,28 @@ test.group('require all', (group) => {
   })
 
   test('do not require recursively when disabled', async (assert) => {
-    await outputFile(join(BASE_PATH, 'ts/app.ts'), `export default {
+    await fs.add('ts/app.ts', `export default {
       loaded: true
     }`)
 
-    await outputFile(join(BASE_PATH, 'ts/server.ts'), `export const loaded = true`)
-    await outputFile(join(BASE_PATH, 'js/config.js'), `module.exports = { loaded: true }`)
-    await outputFile(join(BASE_PATH, 'json/main.json'), `{ "loaded": true }`)
+    await fs.add('ts/server.ts', `export const loaded = true`)
+    await fs.add('js/config.js', `module.exports = { loaded: true }`)
+    await fs.add('json/main.json', `{ "loaded": true }`)
 
-    const output = requireAll(BASE_PATH, false)
+    const output = requireAll(fs.basePath, false)
     assert.deepEqual(output, {})
   })
 
   test('ignore .d.ts files', async (assert) => {
-    await outputFile(join(BASE_PATH, 'ts/app.ts'), `export default {
+    await fs.add('ts/app.ts', `export default {
       loaded: true
     }`)
 
-    await outputFile(join(BASE_PATH, 'ts/server.d.ts'), `export const loaded = true`)
-    await outputFile(join(BASE_PATH, 'js/config.js'), `module.exports = { loaded: true }`)
-    await outputFile(join(BASE_PATH, 'json/main.json'), `{ "loaded": true }`)
+    await fs.add('ts/server.d.ts', `export const loaded = true`)
+    await fs.add('js/config.js', `module.exports = { loaded: true }`)
+    await fs.add('json/main.json', `{ "loaded": true }`)
 
-    const output = requireAll(BASE_PATH)
+    const output = requireAll(fs.basePath)
     assert.deepEqual(output, {
       ts: {
         app: { loaded: true },
@@ -98,12 +97,12 @@ test.group('require all', (group) => {
   })
 
   test('raise error when files are missing', async (assert) => {
-    const fn = () => requireAll(BASE_PATH)
+    const fn = () => requireAll(fs.basePath)
     assert.throw(fn, /ENOENT: no such file or directory, scandir/)
   })
 
   test('ignore when optional is true and files are missing', async (assert) => {
-    const fn = () => requireAll(BASE_PATH, true, true)
+    const fn = () => requireAll(fs.basePath, true, true)
     assert.doesNotThrow(fn)
   })
 })
