@@ -6,8 +6,9 @@ node_js:
   - node
   - 10.0.0
 sudo: false
+before_install:
+  - npm i -g npm@latest
 install:
-  - npm install -g npm@latest
   - npm ci
 notifications:
   slack:
