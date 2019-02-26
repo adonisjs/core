@@ -12,7 +12,7 @@
     "allowSyntheticDefaultImports": true
   },
   "exclude": [
-    "./node_modules",
-    "./build"
+    "packages/**/node_modules",
+    "packages/**/build"
   ]
 }
