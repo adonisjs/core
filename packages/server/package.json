@@ -54,6 +54,6 @@
     "@adonisjs/response": "^1.1.11",
     "@adonisjs/router": "^1.5.5",
     "haye": "^2.0.2",
-    "supertest": "^3.4.2"
+    "supertest": "^4.0.2"
   }
 }
