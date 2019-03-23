@@ -49,8 +49,6 @@ class RouteNotFound extends Exception {}
  * ```
  */
 export class Server implements ServerContract {
-  private _globalMiddleware
-
   /**
    * Hooks to be executed before and after the request
    */
@@ -63,12 +61,32 @@ export class Server implements ServerContract {
   }
 
   /**
-   * Caching the handler based upon the existence of global middleware
+   * Caching the handler based upon the existence of global middleware,
+   * hooks and error handler.
+   */
+  private _globalMiddleware
+
+  /**
+   * Hooks handler value is decided by [[Server.optimize]] method.
    */
   private _hooksHandler
+
+  /**
+   * Route handler is called on every request. The actual of this var depends
+   * upon certain factors. Check [[Server.optimize]] for same.
+   */
   private _routeHandler
+
+  /**
+   * Value of error handler is again decided inside [[Server.optimize]] method.
+   */
   private _errorHandler: ErrorHandleNode
 
+  /**
+   * The server itself doesn't create the http server instance. However, the consumer
+   * of this class can create one and set the instance for further reference. This
+   * is what ignitor does.
+   */
   public instance?: HttpServer | HttpsServer
 
   constructor (
@@ -138,7 +156,9 @@ export class Server implements ServerContract {
   }
 
   /**
-   * Executing before hooks
+   * Executing before hooks. If this method returns `true`, it means that
+   * one of the before hooks wants to end the request without further
+   * processing it.
    */
   private async _executeBeforeHooks (ctx: HttpContextContract): Promise<boolean> {
     for (let hook of this._hooks.before) {
@@ -191,10 +211,12 @@ export class Server implements ServerContract {
   public onError (cb: ErrorHandleNode): this {
     this._errorHandler = async function scoped (error, ctx) {
       const returnValue = await cb(error, ctx)
+
       if (useReturnValue(returnValue, ctx)) {
         ctx.response.send(returnValue)
       }
     }
+
     return this
   }
 
@@ -244,6 +266,10 @@ export class Server implements ServerContract {
 
     const ctx = new HttpContext(request, response)
 
+    /**
+     * Start with before hooks upfront. If they raise error
+     * then execute error handler.
+     */
     try {
       await this._hooksHandler(ctx)
     } catch (error) {
@@ -252,7 +278,7 @@ export class Server implements ServerContract {
 
     /**
      * Execute after hooks when explictEnd is true and their are
-     * more than zero after hooks
+     * more than zero after hooks.
      */
     if (ctx.response.explicitEnd && this._hooks.after.length) {
       try {

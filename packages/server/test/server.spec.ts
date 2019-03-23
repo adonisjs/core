@@ -699,6 +699,24 @@ test.group('Server | error handler', () => {
     const { text } = await supertest(httpServer).get('/').expect(200)
     assert.equal(text, 'handled by error handler')
   })
+
+   test('passing missing route error to error handler', async (assert) => {
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router((route) => routePreProcessor(route, middlewareStore))
+
+    const server = new Server(Request, Response, router, middlewareStore, {})
+    server.onError(async () => {
+      return 'handled by error handler'
+    })
+
+    router.commit()
+    server.optimize()
+
+    const httpServer = createServer(server.handle.bind(server))
+
+    const { text } = await supertest(httpServer).get('/').expect(200)
+    assert.equal(text, 'handled by error handler')
+  })
 })
 
 test.group('Server | all', (group) => {
