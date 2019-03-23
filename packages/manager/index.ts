@@ -23,12 +23,12 @@ export abstract class Manager<T> {
   /**
    * List of drivers added at runtime
    */
-  private _extendedDrivers: { [key: string]: (app) => T } = {}
+  private _extendedDrivers: { [key: string]: (container) => T } = {}
 
   /**
    * Whether or not to cache drivers
    */
-  protected abstract cacheDrivers: boolean
+  protected abstract $cacheDrivers: boolean
 
   /**
    * Getting the default driver name, incase a named driver
@@ -36,15 +36,15 @@ export abstract class Manager<T> {
    */
   protected abstract getDefaultDriver (): string
 
-  constructor (protected app) {
+  constructor (protected $container) {
   }
 
   /**
    * Returns the value saved inside cache, this method will check for
    * `cacheDrivers` attribute before entertaining the cache
    */
-  private _getCachedDriver (name): T | null {
-    if (this.cacheDrivers && this._driversCache[name]) {
+  private _getCachedDriver (name: string): T | null {
+    if (this.$cacheDrivers && this._driversCache[name]) {
       return this._driversCache[name]
     }
 
@@ -56,7 +56,7 @@ export abstract class Manager<T> {
    * `cacheDrivers` attribute before entertaining the cache.
    */
   private _saveDriverToCache (name: string, value: T): void {
-    if (this.cacheDrivers) {
+    if (this.$cacheDrivers) {
       this._driversCache[name] = value
     }
   }
@@ -64,8 +64,8 @@ export abstract class Manager<T> {
   /**
    * Make the extended driver instance and save it to cache (if enabled)
    */
-  private _makeExtendedDriver (name): T {
-    const value = this._extendedDrivers[name](this.app)
+  private _makeExtendedDriver (name: string): T {
+    const value = this._extendedDrivers[name](this.$container)
     this._saveDriverToCache(name, value)
 
     return value
@@ -117,7 +117,7 @@ export abstract class Manager<T> {
    * Extend by adding new driver. The compisiton of driver
    * is the responsibility of the callback function
    */
-  public extend (name: string, callback: (app) => T) {
+  public extend (name: string, callback: (container) => T) {
     this._extendedDrivers[name] = callback
   }
 }

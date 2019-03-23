@@ -17,7 +17,7 @@ interface Mailable {
 test.group('Manager', () => {
   test('raise error when driver doesn\'t exists', (assert) => {
     class Mail extends Manager<Mailable> {
-      protected cacheDrivers = false
+      protected $cacheDrivers = false
       protected getDefaultDriver () {
         return 'smtp'
       }
@@ -35,7 +35,7 @@ test.group('Manager', () => {
     }
 
     class Mail extends Manager<Mailable> {
-      protected cacheDrivers = false
+      protected $cacheDrivers = false
       protected getDefaultDriver () {
         return 'smtp'
       }
@@ -56,7 +56,7 @@ test.group('Manager', () => {
     }
 
     class Mail extends Manager<Mailable> {
-      protected cacheDrivers = false
+      protected $cacheDrivers = false
       protected getDefaultDriver () {
         return 'smtp'
       }
@@ -77,7 +77,7 @@ test.group('Manager', () => {
     }
 
     class Mail extends Manager<Mailable> {
-      protected cacheDrivers = false
+      protected $cacheDrivers = false
       protected getDefaultDriver () {
         return 'smtp'
       }
@@ -105,7 +105,7 @@ test.group('Manager', () => {
     }
 
     class Mail extends Manager<Mailable> {
-      protected cacheDrivers = true
+      protected $cacheDrivers = true
       protected getDefaultDriver () {
         return 'smtp'
       }
@@ -133,7 +133,7 @@ test.group('Manager', () => {
     }
 
     class Mail extends Manager<Mailable> {
-      protected cacheDrivers = true
+      protected $cacheDrivers = true
       protected getDefaultDriver () {
         return 'smtp'
       }
