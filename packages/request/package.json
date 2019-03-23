@@ -32,7 +32,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "supertest": "^3.4.2"
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "accepts": "^1.3.5",
@@ -41,7 +41,7 @@
     "lodash": "^4.17.11",
     "macroable": "^2.0.1",
     "proxy-addr": "^2.0.4",
-    "qs": "^6.6.0",
+    "qs": "^6.7.0",
     "type-is": "^1.6.16"
   },
   "nyc": {
