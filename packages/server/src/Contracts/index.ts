@@ -28,7 +28,7 @@ export interface ServerContract {
 /**
  * Context passed to server hooks
  */
-export interface HooksContextContract {
+export interface HooksHttpContextContract {
   request: RequestContract,
   response: ResponseContract
 }
@@ -37,7 +37,7 @@ export interface HooksContextContract {
  * Http request context passed to all middleware
  * and route handler
  */
-export interface ContextContract extends HooksContextContract {
+export interface HttpContextContract extends HooksHttpContextContract {
   route: RouteNode,
   params: any,
   subdomains: any,
@@ -47,23 +47,23 @@ export interface ContextContract extends HooksContextContract {
  * Input middleware node must be function or a string pointing
  * to the IoC container
  */
-export type MiddlewareNode = ((ctx: ContextContract, next: () => Promise<void>) => Promise<void>) | string
+export type MiddlewareNode = ((ctx: HttpContextContract, next: () => Promise<void>) => Promise<void>) | string
 
 /**
  * Before hooks are executed before finding the route or finding
  * middleware
  */
-export type BeforeHookNode = (ctx: HooksContextContract) => Promise<void>
+export type BeforeHookNode = (ctx: HttpContextContract) => Promise<void>
 
 /**
  * After hooks are executed after controller has done it's job
  */
-export type AfterHookNode = (ctx: ContextContract) => Promise<void>
+export type AfterHookNode = (ctx: HttpContextContract) => Promise<void>
 
 /**
  * Error handler node
  */
-export type ErrorHandleNode = (error: any, ctx: ContextContract) => Promise<any>
+export type ErrorHandleNode = (error: any, ctx: HttpContextContract) => Promise<any>
 
 /**
  * Shape of resolved middleware. This information is

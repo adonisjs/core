@@ -9,9 +9,9 @@
 
 import { RequestContract } from '@adonisjs/request'
 import { ResponseContract } from '@adonisjs/response'
-import { ContextContract } from './Contracts'
+import { HttpContextContract } from './Contracts'
 
-export class Context implements ContextContract {
+export class HttpContext implements HttpContextContract {
   public params
   public subdomains
   public route

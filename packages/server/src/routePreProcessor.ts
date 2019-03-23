@@ -11,7 +11,7 @@ import { RouteNode } from '@adonisjs/router'
 import { Middleware } from 'co-compose'
 import { Exception } from '@adonisjs/utils'
 
-import { ContextContract } from './Contracts'
+import { HttpContextContract } from './Contracts'
 import { MiddlewareStoreContract } from './Contracts'
 import { middlewareExecutor } from './middlewareExecutor'
 import { useReturnValue } from './useReturnValue'
@@ -21,7 +21,7 @@ import { useReturnValue } from './useReturnValue'
  * the response body on various conditions (check method body)
  * for same.
  */
-async function finalHandler (ctx: ContextContract) {
+async function finalHandler (ctx: HttpContextContract) {
   const handler = ctx.route!.meta.resolvedHandler
 
   /**
@@ -41,7 +41,7 @@ async function finalHandler (ctx: ContextContract) {
 /**
  * Executes the route middleware
  */
-async function middlewareHandler (ctx: ContextContract) {
+async function middlewareHandler (ctx: HttpContextContract) {
   await new Middleware()
     .register(ctx.route!.meta.resolvedMiddleware)
     .runner()

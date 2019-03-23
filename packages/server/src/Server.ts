@@ -13,7 +13,7 @@ import { RouterContract } from '@adonisjs/router'
 import { Middleware } from 'co-compose'
 import { Exception } from '@adonisjs/utils'
 
-import { Context } from './Context'
+import { HttpContext } from './HttpContext'
 import { middlewareExecutor } from './middlewareExecutor'
 import { useReturnValue } from './useReturnValue'
 
@@ -25,7 +25,7 @@ import {
   ServerConfig,
   BeforeHookNode,
   AfterHookNode,
-  ContextContract,
+  HttpContextContract,
   ErrorHandleNode,
 } from './Contracts'
 
@@ -140,7 +140,7 @@ export class Server implements ServerContract {
   /**
    * Executing before hooks
    */
-  private async _executeBeforeHooks (ctx: ContextContract): Promise<boolean> {
+  private async _executeBeforeHooks (ctx: HttpContextContract): Promise<boolean> {
     for (let hook of this._hooks.before) {
       await hook(ctx)
       if (ctx.response.hasLazyBody || ctx.response.headersSent) {
@@ -161,7 +161,7 @@ export class Server implements ServerContract {
   /**
    * Executing after hooks
    */
-  private async _executeAfterHooks (ctx: ContextContract): Promise<void> {
+  private async _executeAfterHooks (ctx: HttpContextContract): Promise<void> {
     for (let hook of this._hooks.after) {
       await hook(ctx)
     }
@@ -242,7 +242,7 @@ export class Server implements ServerContract {
     const response = new this._Response(req, res, this._httpConfig)
     response.explicitEnd = true
 
-    const ctx = new Context(request, response)
+    const ctx = new HttpContext(request, response)
 
     try {
       await this._hooksHandler(ctx)

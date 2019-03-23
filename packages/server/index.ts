@@ -14,6 +14,6 @@ export { routePreProcessor } from './src/routePreProcessor'
 export {
   MiddlewareStoreContract,
   ServerContract,
-  ContextContract,
-  HooksContextContract,
+  HttpContextContract,
+  HooksHttpContextContract,
 } from './src/Contracts'
