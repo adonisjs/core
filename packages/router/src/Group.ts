@@ -18,12 +18,13 @@ import { Route } from './Route'
 import { RouteResource } from './Resource'
 import { BriskRoute } from './BriskRoute'
 import { RouteGroupContract } from './Contracts'
+import { exceptionCodes } from '../lib'
 
 function missingRouteName () {
   return new Exception(
     'All routes inside a group must have names before calling Route.group.as',
     500,
-    'E_MISSING_ROUTE_NAME',
+    exceptionCodes.E_MISSING_ROUTE_NAME,
   )
 }
 

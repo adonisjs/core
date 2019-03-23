@@ -15,6 +15,7 @@ import { Macroable } from 'macroable'
 import { BriskRouteContract, Matchers } from './Contracts'
 import { Route } from './Route'
 import { Exception } from '@adonisjs/utils'
+import { exceptionCodes } from '../lib'
 
 /**
  * Brisk route enables you to expose expressive API for
@@ -28,9 +29,17 @@ export class BriskRoute extends Macroable implements BriskRouteContract {
   protected static _macros = {}
   protected static _getters = {}
 
-  private _methods = ['GET']
-  public route: null | Route = null
+  /**
+   * Invoked by is reference to the parent method that calls `setHandler` on
+   * this class. We keep a reference to the parent method name for raising
+   * meaningful exception
+   */
   private _invokedBy: string = ''
+
+  /**
+   * Reference to route instance. Set after `setHandler` is called
+   */
+  public route: null | Route = null
 
   constructor (private _pattern: string, private _namespace: string, private _globalMatchers: Matchers) {
     super()
@@ -42,17 +51,18 @@ export class BriskRoute extends Macroable implements BriskRouteContract {
    * readable error message when `setHandler` is called for multiple
    * times.
    */
-  public setHandler (handler: any, invokedBy: string): Route {
+  public setHandler (handler: any, invokedBy: string, methods?: string[]): Route {
     if (this.route) {
       throw new Exception(
         `\`Route.${invokedBy}\` and \`${this._invokedBy}\` cannot be called together`,
         500,
-        'E_MULTIPLE_BRISK_HANDLERS',
+        exceptionCodes.E_MULTIPLE_BRISK_HANDLERS,
       )
     }
 
-    this.route = new Route(this._pattern, this._methods, handler, this._namespace, this._globalMatchers)
+    this.route = new Route(this._pattern, methods || ['GET'], handler, this._namespace, this._globalMatchers)
     this._invokedBy = invokedBy
+
     return this.route
   }
 }

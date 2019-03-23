@@ -13,7 +13,9 @@
 
 import { pick } from 'lodash'
 import * as matchit from 'matchit'
+import { Exception } from '@adonisjs/utils'
 import { RouteDefination, RouteNode, MatchedRoute } from './Contracts'
+import { exceptionCodes } from '../lib'
 
 /**
  * An object of routes for a given HTTP method
@@ -136,9 +138,7 @@ export class Store {
        * routes with the same pattern.
        */
       if (methodRoutes.routes[route.pattern]) {
-        const error = new Error(`Duplicate route \`${method}:${route.pattern}\``) as NodeJS.ErrnoException
-        error.code = 'E_DUPLICATE_ROUTE'
-        throw error
+        throw new Exception(`Duplicate route \`${method}:${route.pattern}\``, 500, exceptionCodes.E_DUPLICATE_ROUTE)
       }
 
       /**

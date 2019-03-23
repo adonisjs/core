@@ -54,3 +54,15 @@ export function toRoutesJSON (routes: (RouteGroup | RouteResource | Route | Bris
     return list
   }, [])
 }
+
+/**
+ * Module wide exception codes
+ */
+export const exceptionCodes = {
+  E_MISSING_ROUTE_NAME: 'E_MISSING_ROUTE_NAME',
+  E_MULTIPLE_BRISK_HANDLERS: 'E_MULTIPLE_BRISK_HANDLERS',
+  E_DUPLICATE_ROUTE: 'E_DUPLICATE_ROUTE',
+  E_NESTED_ROUTE_GROUPS: 'E_NESTED_ROUTE_GROUPS',
+  E_DUPLICATE_ROUTE_NAME: 'E_DUPLICATE_ROUTE_NAME',
+  E_MISSING_ROUTE_PARAM_VALUE: 'E_MISSING_ROUTE_PARAM_VALUE',
+}

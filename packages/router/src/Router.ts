@@ -18,7 +18,7 @@ import { RouteGroup } from './Group'
 import { BriskRoute } from './BriskRoute'
 import { Matchers } from './Contracts'
 import { Store } from './Store'
-import { toRoutesJSON } from '../lib'
+import { toRoutesJSON, exceptionCodes } from '../lib'
 import { RouteNode, RouterContract, MatchedRoute } from './Contracts'
 import { Exception } from '@adonisjs/utils'
 
@@ -157,7 +157,7 @@ export class Router implements RouterContract {
    */
   public group (callback: () => void): RouteGroup {
     if (this._inGroup) {
-      throw new Exception('Cannot create nested route groups', 500, 'E_NESTED_ROUTE_GROUPS')
+      throw new Exception('Cannot create nested route groups', 500, exceptionCodes.E_NESTED_ROUTE_GROUPS)
     }
 
     /**
@@ -272,7 +272,7 @@ export class Router implements RouterContract {
        * to ensure that only one route is returned during lookup.
        */
       if (route.name && names.indexOf(route.name) > -1) {
-        throw new Error(`Duplicate route name \`${route.name}\``)
+        throw new Exception(`Duplicate route name \`${route.name}\``, 500, exceptionCodes.E_DUPLICATE_ROUTE_NAME)
       }
 
       /**
@@ -365,7 +365,11 @@ export class Router implements RouterContract {
          * A required param is always required to make the complete URL
          */
         if (!param && !isOptional) {
-          throw new Error(`\`${paramName}\` param is required to make URL for \`${matchingRoute.pattern}\` route`)
+          throw new Exception(
+            `\`${paramName}\` param is required to make URL for \`${matchingRoute.pattern}\` route`,
+            500,
+            exceptionCodes.E_MISSING_ROUTE_PARAM_VALUE,
+          )
         }
 
         return param
