@@ -85,6 +85,14 @@ export function routePreProcessor (route: RouteNode, middlewareStore: Middleware
       throw new Exception(`Missing controller method on \`${route.pattern}\` route`)
     }
 
+    /**
+     * Unlike middleware, we do not prefetch controller from the IoC container
+     * since controllers in an app can grow to a huge number and lazy loading
+     * them improves the performance overall.
+     *
+     * Sometime later, we can introduce `hot cache` in IoC container, which
+     * avoids lookup cost within the IoC container.
+     */
     route.meta.resolvedHandler = {
       type: 'class',
       value: namespace,
@@ -99,7 +107,7 @@ export function routePreProcessor (route: RouteNode, middlewareStore: Middleware
 
   /**
    * Attach middleware handler when route has 1 or more middleware, otherwise
-   * skip the layer and use final handler
+   * skip the middleware layer and use final handler
    */
   if (route.meta.resolvedMiddleware.length) {
     route.meta.finalHandler = middlewareHandler

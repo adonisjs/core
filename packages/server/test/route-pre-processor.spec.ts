@@ -72,7 +72,7 @@ test.group('Route pre processor', (group) => {
 
     assert.deepEqual(route.meta.resolvedMiddleware, [{
       type: 'class',
-      value: 'App/Middleware/Auth',
+      value: Auth,
       args: ['jwt'],
     }])
   })

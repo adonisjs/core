@@ -8,6 +8,7 @@
  */
 
 import { Exception } from '@adonisjs/utils'
+import { RouteNode } from '@adonisjs/router'
 import * as haye from 'haye'
 
 import { MiddlewareStoreContract, MiddlewareNode, ResolvedMiddlewareNode } from './Contracts'
@@ -41,12 +42,18 @@ export class MiddlewareStore implements MiddlewareStoreContract {
   private _named: { [alias: string]: ResolvedMiddlewareNode } = {}
 
   /**
-   * Resolves the middleware node based upon it's type
+   * Resolves the middleware node based upon it's type. If value is a string, then
+   * we pre-fetch it from the IoC container upfront. On every request, we just
+   * create a new instance of the class and avoid re-fetching it from the IoC
+   * container for performance reasons.
+   *
+   * The annoying part is that one has to create the middleware before registering
+   * it, otherwise an exception will be raised.
    */
   private _resolveMiddlewareItem (middleware: MiddlewareNode): ResolvedMiddlewareNode {
     return typeof(middleware) === 'string' ? {
       type: 'class',
-      value: middleware,
+      value: global['use'](middleware),
       args: [],
     } : {
       type: 'function',
@@ -98,14 +105,24 @@ export class MiddlewareStore implements MiddlewareStoreContract {
    * property, which can be read later by the middleware
    * processing layer.
    */
-  public routeMiddlewareProcessor (route) {
+  public routeMiddlewareProcessor (route: RouteNode) {
     route.meta.resolvedMiddleware = route.middleware.map((item) => {
+      /**
+       * Plain old function
+       */
       if (typeof (item) === 'function') {
         return { type: 'function', value: item, args: [] }
       }
 
+      /**
+       * Extract middleware name and args from the string
+       */
       const [ { name, args } ] = haye.fromPipe(item).toArray()
 
+      /**
+       * Get resolved node for the given name and raise exception when that
+       * name is missing
+       */
       const resolvedMiddleware = this.getNamed(name)
       if (!resolvedMiddleware) {
         throw new Exception(`Cannot find named middleware ${name}`, 500, 'E_MISSING_NAMED_MIDDLEWARE')
