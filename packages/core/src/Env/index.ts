@@ -17,6 +17,7 @@ import * as dotenv from 'dotenv'
 import { Exception } from '@adonisjs/utils'
 
 import { EnvContract } from '../Contracts/Env'
+import { exceptionCodes } from '../../lib'
 
 /**
  * The ENV module enables the use of environment variables by loading different `.env` files.
@@ -169,7 +170,7 @@ export class Env implements EnvContract {
     const value = this.get(key, defaultValue)
 
     if (!value && value !== false) {
-      throw new Exception(`Make sure to define environment variable ${key}`, 500, 'E_MISSING_ENV_KEY')
+      throw new Exception(`Make sure to define environment variable ${key}`, 500, exceptionCodes.E_MISSING_ENV_KEY)
     }
 
     return value

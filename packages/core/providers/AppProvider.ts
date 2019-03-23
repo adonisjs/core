@@ -18,9 +18,10 @@ import { Config } from '../src/Config'
 import { Env } from '../src/Env'
 import { Logger } from '../src/Logger'
 import { loggerConfig } from '../config/logger'
+import { requestBindings } from '../src/Bindings/Request'
 
 export default class AppProvider {
-  constructor (public app: IocContract) {}
+  constructor (protected $container: IocContract) {}
 
   /**
    * Registers the env provider to the IoC container.
@@ -29,12 +30,12 @@ export default class AppProvider {
    * Alias: Env
    */
   private _registerEnv () {
-    this.app.singleton('Adonis/Src/Env', () => {
-      const Helpers = this.app.use('Adonis/Src/Helpers')
+    this.$container.singleton('Adonis/Src/Env', () => {
+      const Helpers = this.$container.use('Adonis/Src/Helpers')
       return new Env(Helpers.appRoot())
     })
 
-    this.app.alias('Adonis/Src/Env', 'Env')
+    this.$container.alias('Adonis/Src/Env', 'Env')
   }
 
   /**
@@ -44,12 +45,12 @@ export default class AppProvider {
    * Alias: Config
    */
   private _registerConfig () {
-    this.app.singleton('Adonis/Src/Config', () => {
-      const Helpers = this.app.use('Adonis/Src/Helpers')
+    this.$container.singleton('Adonis/Src/Config', () => {
+      const Helpers = this.$container.use('Adonis/Src/Helpers')
       return new Config(Helpers.configPath())
     })
 
-    this.app.alias('Adonis/Src/Config', 'Config')
+    this.$container.alias('Adonis/Src/Config', 'Config')
   }
 
   /**
@@ -59,11 +60,11 @@ export default class AppProvider {
    * Alias: HttpMiddleware
    */
   private _registerHttpMiddleware () {
-    this.app.singleton('Adonis/Src/HttpMiddleware', () => {
+    this.$container.singleton('Adonis/Src/HttpMiddleware', () => {
       return new MiddlewareStore()
     })
 
-    this.app.alias('Adonis/Src/HttpMiddleware', 'HttpMiddleware')
+    this.$container.alias('Adonis/Src/HttpMiddleware', 'HttpMiddleware')
   }
 
   /**
@@ -73,7 +74,7 @@ export default class AppProvider {
    * Alias: NONE
    */
   private _registerRequest () {
-    this.app.singleton('Adonis/Src/Request', () => {
+    this.$container.singleton('Adonis/Src/Request', () => {
       return Request
     })
   }
@@ -85,7 +86,7 @@ export default class AppProvider {
    * Alias: NONE
    */
   private _registerResponse () {
-    this.app.singleton('Adonis/Src/Response', () => {
+    this.$container.singleton('Adonis/Src/Response', () => {
       return Response
     })
   }
@@ -97,11 +98,11 @@ export default class AppProvider {
    * Alias: Route
    */
   private _registerRoute () {
-    this.app.singleton('Adonis/Src/Route', (app) => {
+    this.$container.singleton('Adonis/Src/Route', (app) => {
       return new Router((route) => routePreProcessor(route, app.use('Adonis/Src/HttpMiddleware')))
     })
 
-    this.app.alias('Adonis/Src/Route', 'Route')
+    this.$container.alias('Adonis/Src/Route', 'Route')
   }
 
   /**
@@ -111,12 +112,12 @@ export default class AppProvider {
    * Alias: Logger
    */
   private _registerLogger () {
-    this.app.singleton('Adonis/Src/Logger', (app) => {
+    this.$container.singleton('Adonis/Src/Logger', (app) => {
       const loggerConfig = app.use('Adonis/Src/Config').get('app.logger', {})
       return new Logger(loggerConfig)
     })
 
-    this.app.alias('Adonis/Src/Logger', 'Logger')
+    this.$container.alias('Adonis/Src/Logger', 'Logger')
   }
 
   /**
@@ -126,7 +127,7 @@ export default class AppProvider {
    * Alias: Server
    */
   private _registerServer () {
-    this.app.singleton('Adonis/Src/Server', (app) => {
+    this.$container.singleton('Adonis/Src/Server', (app) => {
       const Route = app.use('Adonis/Src/Route')
       const HttpRequest = app.use('Adonis/Src/Request')
       const HttpResponse = app.use('Adonis/Src/Response')
@@ -136,7 +137,7 @@ export default class AppProvider {
       return new Server(HttpRequest, HttpResponse, Route, HttpMiddleware, httpConfig)
     })
 
-    this.app.alias('Adonis/Src/Server', 'Server')
+    this.$container.alias('Adonis/Src/Server', 'Server')
   }
 
   /**
@@ -146,9 +147,31 @@ export default class AppProvider {
    * Alias: NONE
    */
   private _registerBodyParserMiddleware () {
-    this.app.bind('Adonis/Middleware/BodyParser', (app) => {
+    this.$container.bind('Adonis/Middleware/BodyParser', (app) => {
       const config = app.use('Adonis/Src/Config').get('bodyparser', {})
       return new BodyParserMiddleware(config)
+    })
+  }
+
+  /**
+   * Registers default configs for different parts of the
+   * application
+   */
+  private _registerConfigDefaults () {
+    this.$container.with(['Adonis/Src/Config'], (Config) => {
+      Config.defaults('app.http', { ...requestConfig, ...responseConfig })
+      Config.defaults('app.logger', loggerConfig)
+      Config.defaults('bodyparser', bodyParserConfig)
+    })
+  }
+
+  /**
+   * Extends the request class. See [[requestBindings]] function
+   * for more info.
+   */
+  private _extendRequest () {
+    this.$container.with(['Adonis/Src/Request'], (Request) => {
+      requestBindings(Request)
     })
   }
 
@@ -171,10 +194,7 @@ export default class AppProvider {
    * Hook into boot cycle
    */
   public boot () {
-    this.app.with(['Adonis/Src/Config'], (Config) => {
-      Config.defaults('app.http', { ...requestConfig, ...responseConfig })
-      Config.defaults('app.logger', loggerConfig)
-      Config.defaults('bodyparser', bodyParserConfig)
-    })
+    this._registerConfigDefaults()
+    this._extendRequest()
   }
 }

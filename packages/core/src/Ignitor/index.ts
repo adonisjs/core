@@ -15,6 +15,7 @@ import { Registrar, Ioc } from '@adonisjs/fold'
 import { Profiler, ProfilerRowContract, ProfilerSubscriber } from '@adonisjs/profiler'
 
 import { Helpers } from '../Helpers'
+import { exceptionCodes } from '../../lib'
 
 /**
  * Preload file node. It must be defined as it is
@@ -175,7 +176,7 @@ export class Ignitor {
         throw new Exception(
           `export \`${prop}\` from \`${this.directories.start}/app\` file`,
           500,
-          'E_MISSING_APP_ESSENTIALS',
+          exceptionCodes.E_MISSING_APP_ESSENTIALS,
         )
       }
     })

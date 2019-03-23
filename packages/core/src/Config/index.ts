@@ -101,7 +101,7 @@ export class Config implements ConfigContract {
   }
 
   /**
-   * Defaults allows providers to define the default config for their
+   * Defaults allows providers to define the default config for a
    * module, which is merged with the user config
    */
   public defaults (key: string, value: any): void {

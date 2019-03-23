@@ -25,14 +25,13 @@ export class Logger implements LoggerContract {
 
   constructor (options: LoggerConfig) {
     const pinoOptions = Object.assign({}, options)
-    const changeLevelName = options.levelLabelKey
     const destination = options.logDestination
 
     /**
      * Swap property names
      */
-    if (changeLevelName) {
-      pinoOptions['changeLevelName'] = changeLevelName
+    if (options.levelLabelKey) {
+      pinoOptions['changeLevelName'] = options.levelLabelKey
     }
 
     /**
@@ -77,7 +76,6 @@ export class Logger implements LoggerContract {
    * Log message at trace level
    */
   public trace (message: string, ...values: any[]): void
-  public trace (mergingObject: any, message: string, ...values: any[]): void
   public trace (mergingObject: any, message: string, ...values: any[]): void {
     this.log('trace', mergingObject, message, ...values)
   }
@@ -86,7 +84,6 @@ export class Logger implements LoggerContract {
    * Log message at debug level
    */
   public debug (message: string, ...values: any[]): void
-  public debug (mergingObject: any, message: string, ...values: any[]): void
   public debug (mergingObject: any, message: string, ...values: any[]): void {
     this.log('debug', mergingObject, message, ...values)
   }
@@ -95,7 +92,6 @@ export class Logger implements LoggerContract {
    * Log message at info level
    */
   public info (message: string, ...values: any[]): void
-  public info (mergingObject: any, message: string, ...values: any[]): void
   public info (mergingObject: any, message: string, ...values: any[]): void {
     this.log('info', mergingObject, message, ...values)
   }
@@ -104,7 +100,6 @@ export class Logger implements LoggerContract {
    * Log message at warn level
    */
   public warn (message: string, ...values: any[]): void
-  public warn (mergingObject: any, message: string, ...values: any[]): void
   public warn (mergingObject: any, message: string, ...values: any[]): void {
     this.log('warn', mergingObject, message, ...values)
   }
@@ -113,7 +108,6 @@ export class Logger implements LoggerContract {
    * Log message at error level
    */
   public error (message: string, ...values: any[]): void
-  public error (mergingObject: any, message: string, ...values: any[]): void
   public error (mergingObject: any, message: string, ...values: any[]): void {
     this.log('error', mergingObject, message, ...values)
   }
@@ -122,7 +116,6 @@ export class Logger implements LoggerContract {
    * Log message at fatal level
    */
   public fatal (message: string, ...values: any[]): void
-  public fatal (mergingObject: any, message: string, ...values: any[]): void
   public fatal (mergingObject: any, message: string, ...values: any[]): void {
     this.log('fatal', mergingObject, message, ...values)
   }

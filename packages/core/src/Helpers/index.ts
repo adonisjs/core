@@ -90,4 +90,14 @@ export class Helpers implements HelpersContract {
   public tmpPath (...paths: string[]): string {
     return this.appRoot(this.directories.tmp, ...paths)
   }
+
+  /**
+   * Make code sleep for a while with `setTimeout` wrapped
+   * inside a promise
+   */
+  public sleep (time: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, time)
+    })
+  }
 }

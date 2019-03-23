@@ -11,13 +11,14 @@ export interface HelpersContract {
   directories: {
     [name: string]: string,
   },
-  appRoot (...paths: string[]): string
-  publicPath (...paths: string[]): string
-  configPath (...paths: string[]): string
-  databasePath (...paths: string[]): string
-  migrationsPath (...paths: string[]): string
-  seedsPath (...paths: string[]): string
-  resourcesPath (...paths: string[]): string
-  viewsPath (...paths: string[]): string
-  tmpPath (...paths: string[]): string
+  appRoot (...paths: string[]): string,
+  publicPath (...paths: string[]): string,
+  configPath (...paths: string[]): string,
+  databasePath (...paths: string[]): string,
+  migrationsPath (...paths: string[]): string,
+  seedsPath (...paths: string[]): string,
+  resourcesPath (...paths: string[]): string,
+  viewsPath (...paths: string[]): string,
+  tmpPath (...paths: string[]): string,
+  sleep (time: number): Promise<void>,
 }
