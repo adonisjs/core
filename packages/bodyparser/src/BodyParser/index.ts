@@ -10,6 +10,7 @@
 import * as coBody from 'co-body'
 import { Exception } from '@adonisjs/utils'
 import { RequestContract } from '@adonisjs/request'
+import { RouteNode } from '@adonisjs/router'
 
 import { Multipart } from '../Multipart'
 import { BodyParserConfig } from '../Contracts'
@@ -68,7 +69,7 @@ export class BodyParserMiddleware {
    * Handle HTTP request body by parsing it as per the user
    * config
    */
-  public async handle ({ request }: { request: RequestContract }, next): Promise<void> {
+  public async handle ({ request, route }: { request: RequestContract, route: RouteNode }, next): Promise<void> {
     /**
      * Only process for whitelisted nodes
      */
@@ -92,9 +93,17 @@ export class BodyParserMiddleware {
      */
     const multipartConfig = this._getConfigFor('multipart')
     if (this._isType(request, multipartConfig.types)) {
-      const multipart = new Multipart(request.request)
-      const { files, fields } = await processMultipart(multipart, multipartConfig)
+      request['multipart'] = new Multipart(request.request)
 
+      /**
+       * Skip parsing when `autoProcess` is disabled or route matches one
+       * of the defined processManually route patterns.
+       */
+      if (!multipartConfig.autoProcess || multipartConfig.processManually.indexOf(route.pattern) > -1) {
+        return next()
+      }
+
+      const { files, fields } = await processMultipart(request['multipart'], multipartConfig)
       request.setInitialBody(fields)
       request['_files'] = files
       return next()

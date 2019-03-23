@@ -28,7 +28,8 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@adonisjs/request": "1.x"
+    "@adonisjs/request": "1.x",
+    "@adonisjs/router": "1.x"
   },
   "dependencies": {
     "@adonisjs/utils": "^1.4.1",
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@adonisjs/dev-utils": "^1.2.0",
     "@adonisjs/request": "^1.1.9",
+    "@adonisjs/router": "^1.5.5",
     "supertest": "^4.0.2"
   }
 }

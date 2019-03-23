@@ -15,12 +15,17 @@ import { createServer } from 'http'
 import { pathExists } from 'fs-extra'
 import * as supertest from 'supertest'
 import { Request, requestConfig } from '@adonisjs/request'
+import { Router } from '@adonisjs/router'
 
 import { BodyParserMiddleware } from '../src/BodyParser'
+import { Multipart } from '../src/Multipart'
 import { config } from '../config'
 
 const PACKAGE_FILE_PATH = join(__dirname, '../package.json')
 const PACKAGE_FILE_SIZE = Buffer.from(JSON.stringify(require('../package.json'), null, 2), 'utf-8').length + 1
+
+const router = new Router()
+const route = router.post('/', () => {}).toJSON()
 
 test.group('BodyParser Middleware | generic', () => {
   test('do not parse get requests', async (assert) => {
@@ -28,7 +33,7 @@ test.group('BodyParser Middleware | generic', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify(request.all()))
       })
@@ -47,7 +52,7 @@ test.group('BodyParser Middleware | generic', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify(request.all()))
       })
@@ -65,7 +70,7 @@ test.group('BodyParser Middleware | generic', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify(request.all()))
       })
@@ -86,7 +91,7 @@ test.group('BodyParser Middleware | form data', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify(request.all()))
       })
@@ -110,7 +115,7 @@ test.group('BodyParser Middleware | form data', () => {
       }))
 
       try {
-        await middleware.handle({ request }, () => {
+        await middleware.handle({ request, route }, () => {
         })
       } catch (error) {
         res.writeHead(error.status)
@@ -137,7 +142,7 @@ test.group('BodyParser Middleware | form data', () => {
       }))
 
       try {
-        await middleware.handle({ request }, () => {
+        await middleware.handle({ request, route }, () => {
         })
       } catch (error) {
         res.writeHead(error.status)
@@ -159,7 +164,7 @@ test.group('BodyParser Middleware | form data', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify(request.all()))
       })
@@ -180,7 +185,7 @@ test.group('BodyParser Middleware | json', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify(request.all()))
       })
@@ -204,7 +209,7 @@ test.group('BodyParser Middleware | json', () => {
       }))
 
       try {
-        await middleware.handle({ request }, () => {
+        await middleware.handle({ request, route }, () => {
         })
       } catch (error) {
         res.writeHead(error.status)
@@ -226,7 +231,7 @@ test.group('BodyParser Middleware | json', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify(request.all()))
       })
@@ -247,7 +252,7 @@ test.group('BodyParser Middleware | raw body', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(request.raw())
       })
@@ -271,7 +276,7 @@ test.group('BodyParser Middleware | raw body', () => {
       }))
 
       try {
-        await middleware.handle({ request }, () => {
+        await middleware.handle({ request, route }, () => {
         })
       } catch (error) {
         res.writeHead(error.status)
@@ -295,7 +300,7 @@ test.group('BodyParser Middleware | multipart', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify({
           tmpPath: request['_files'].package.tmpPath,
@@ -317,7 +322,7 @@ test.group('BodyParser Middleware | multipart', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify({
           size: request['_files'].package.size,
@@ -340,7 +345,7 @@ test.group('BodyParser Middleware | multipart', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify({
           multiple: Array.isArray(request['_files'].package),
@@ -373,7 +378,7 @@ test.group('BodyParser Middleware | multipart', () => {
       }))
 
       try {
-        await middleware.handle({ request }, () => {})
+        await middleware.handle({ request, route }, () => {})
       } catch (error) {
         res.writeHead(error.status)
         res.end(error.message)
@@ -399,7 +404,7 @@ test.group('BodyParser Middleware | multipart', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify(request.all()))
       })
@@ -418,7 +423,7 @@ test.group('BodyParser Middleware | multipart', () => {
       const request = new Request(req, res, requestConfig)
       const middleware = new BodyParserMiddleware(config)
 
-      await middleware.handle({ request }, () => {
+      await middleware.handle({ request, route }, () => {
         res.writeHead(200)
         res.end(String(Object.keys(request['_files']).length))
       })
@@ -429,5 +434,135 @@ test.group('BodyParser Middleware | multipart', () => {
       .attach('', PACKAGE_FILE_PATH)
 
     assert.deepEqual(text, '0')
+  })
+
+  test('do not process request when autoProcess is false', async (assert) => {
+    assert.plan(2)
+
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, requestConfig)
+      const middleware = new BodyParserMiddleware(merge({}, config, {
+        multipart: {
+          autoProcess: false,
+        },
+      }))
+
+      await middleware.handle({ request, route }, () => {
+        assert.isUndefined(request['_files'])
+        assert.instanceOf(request['multipart'], Multipart)
+        res.end()
+      })
+    })
+
+    await supertest(server)
+      .post('/')
+      .attach('package', PACKAGE_FILE_PATH)
+      .field('username', 'virk')
+  })
+
+  test('do not process request when processManually static route matches', async (assert) => {
+    assert.plan(2)
+
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, requestConfig)
+      const middleware = new BodyParserMiddleware(merge({}, config, {
+        multipart: {
+          autoProcess: true,
+          processManually: ['/'],
+        },
+      }))
+
+      await middleware.handle({ request, route }, () => {
+        assert.isUndefined(request['_files'])
+        assert.instanceOf(request['multipart'], Multipart)
+        res.end()
+      })
+    })
+
+    await supertest(server)
+      .post('/')
+      .attach('package', PACKAGE_FILE_PATH)
+      .field('username', 'virk')
+  })
+
+  test('do not process request when processManually has dynamic route', async (assert) => {
+    assert.plan(2)
+
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, requestConfig)
+      const middleware = new BodyParserMiddleware(merge({}, config, {
+        multipart: {
+          autoProcess: true,
+          processManually: ['/project/:id/file'],
+        },
+      }))
+
+      const customRoute = router.post('/project/:id/file', () => {}).toJSON()
+
+      await middleware.handle({ request, route: customRoute }, () => {
+        assert.isUndefined(request['_files'])
+        assert.instanceOf(request['multipart'], Multipart)
+        res.end()
+      })
+    })
+
+    await supertest(server)
+      .post('/')
+      .attach('package', PACKAGE_FILE_PATH)
+      .field('username', 'virk')
+  })
+
+  test('do not process request when processManually route with leading slash matches', async (assert) => {
+    assert.plan(2)
+
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, requestConfig)
+      const middleware = new BodyParserMiddleware(merge({}, config, {
+        multipart: {
+          autoProcess: true,
+          processManually: ['/project/:id/file'],
+        },
+      }))
+
+      const customRoute = router.post('project/:id/file', () => {}).toJSON()
+
+      await middleware.handle({ request, route: customRoute }, () => {
+        assert.isUndefined(request['_files'])
+        assert.instanceOf(request['multipart'], Multipart)
+        res.end()
+      })
+    })
+
+    await supertest(server)
+      .post('/')
+      .attach('package', PACKAGE_FILE_PATH)
+      .field('username', 'virk')
+  })
+
+  test('do not process request when processManually route with trailing slash matches', async (assert) => {
+    assert.plan(2)
+
+    const server = createServer(async (req, res) => {
+      const request = new Request(req, res, requestConfig)
+      const middleware = new BodyParserMiddleware(merge({}, config, {
+        multipart: {
+          autoProcess: true,
+          processManually: ['/project/:id/file'],
+        },
+      }))
+
+      const customRoute = router.post('project/:id/file/', () => {}).toJSON()
+
+      await middleware.handle({ request, route: customRoute }, () => {
+        assert.isUndefined(request['_files'])
+        assert.instanceOf(request['multipart'], Multipart)
+        res.end()
+      })
+    })
+
+    await supertest(server)
+      .post('/')
+      .attach('package', PACKAGE_FILE_PATH)
+      .field('username', 'virk')
   })
 })

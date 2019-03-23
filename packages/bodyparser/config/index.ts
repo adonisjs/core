@@ -108,6 +108,17 @@ export const config: BodyParserConfig = {
     | You can turn off `autoProcess` for certain routes as well by defining
     | routes inside the following array.
     |
+    | NOTE: Make sure the route pattern starts with a leading slash.
+    |
+    | Correct
+    | ```js
+    | /projects/:id/file
+    | ```
+    |
+    | Incorrect
+    | ```js
+    | projects/:id/file
+    | ```
     */
     processManually: [],
 
