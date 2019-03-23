@@ -7,7 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { IncomingMessage, ServerResponse } from 'http'
+import { Server as HttpsServer } from 'https'
+import { IncomingMessage, ServerResponse, Server as HttpServer } from 'http'
 import { RequestContract, RequestConfig } from '@adonisjs/request'
 import { ResponseContract, ResponseConfig } from '@adonisjs/response'
 import { RouteNode } from '@adonisjs/router'
@@ -16,6 +17,7 @@ import { RouteNode } from '@adonisjs/router'
  * Public server
  */
 export interface ServerContract {
+  instance?: HttpServer | HttpsServer,
   onError (cb: ErrorHandleNode): this
   handle (req: IncomingMessage, res: ServerResponse): Promise<void>
   optimize ()

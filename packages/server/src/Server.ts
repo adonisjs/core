@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
- import { Server as HttpsServer } from 'https'
+import { Server as HttpsServer } from 'https'
 import { IncomingMessage, ServerResponse, Server as HttpServer } from 'http'
 import { RouterContract } from '@adonisjs/router'
 import { Middleware } from 'co-compose'
