@@ -16,6 +16,7 @@ import { Exception } from '@adonisjs/utils'
 import { HttpContext } from './HttpContext'
 import { middlewareExecutor } from './middlewareExecutor'
 import { useReturnValue } from './useReturnValue'
+import { exceptionCodes } from '../lib'
 
 import {
   ServerContract,
@@ -141,7 +142,7 @@ export class Server implements ServerContract {
      */
     const route = this._router.find(url, method)
     if (!route) {
-      throw new RouteNotFound(`Cannot ${method}:${url}`, 404, 'E_ROUTE_NOT_FOUND')
+      throw new RouteNotFound(`Cannot ${method}:${url}`, 404, exceptionCodes.E_ROUTE_NOT_FOUND)
     }
 
     /**

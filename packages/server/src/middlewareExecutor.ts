@@ -9,6 +9,7 @@
 
 import { Exception } from '@adonisjs/utils'
 import { ResolvedMiddlewareNode } from './Contracts'
+import { exceptionCodes } from '../lib'
 
 /**
  * Executes the middleware based upon it's shape and type
@@ -32,5 +33,9 @@ export function middlewareExecutor (middleware: ResolvedMiddlewareNode, params: 
   /**
    * We don't know what type of middleware object is this
    */
-  throw new Exception(`${middleware.type} is not a valid middleware type`, 500, 'E_INVALID_MIDDLEWARE_TYPE')
+  throw new Exception(
+    `${middleware.type} is not a valid middleware type`,
+    500,
+    exceptionCodes.E_INVALID_MIDDLEWARE_TYPE,
+  )
 }

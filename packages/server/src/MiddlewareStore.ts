@@ -12,6 +12,7 @@ import { RouteNode } from '@adonisjs/router'
 import * as haye from 'haye'
 
 import { MiddlewareStoreContract, MiddlewareNode, ResolvedMiddlewareNode } from './Contracts'
+import { exceptionCodes } from '../lib'
 
 /**
  * Middleware store register and keep all the application middleware at one
@@ -125,7 +126,7 @@ export class MiddlewareStore implements MiddlewareStoreContract {
        */
       const resolvedMiddleware = this.getNamed(name)
       if (!resolvedMiddleware) {
-        throw new Exception(`Cannot find named middleware ${name}`, 500, 'E_MISSING_NAMED_MIDDLEWARE')
+        throw new Exception(`Cannot find named middleware ${name}`, 500, exceptionCodes.E_MISSING_NAMED_MIDDLEWARE)
       }
 
       resolvedMiddleware.args = args

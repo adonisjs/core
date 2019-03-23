@@ -15,6 +15,7 @@ import { HttpContextContract } from './Contracts'
 import { MiddlewareStoreContract } from './Contracts'
 import { middlewareExecutor } from './middlewareExecutor'
 import { useReturnValue } from './useReturnValue'
+import { exceptionCodes } from '../lib'
 
 /**
  * Final handler executes the route handler based on and set
@@ -82,7 +83,11 @@ export function routePreProcessor (route: RouteNode, middlewareStore: Middleware
      */
     const [ namespace, method ] = handler.split('.')
     if (!method) {
-      throw new Exception(`Missing controller method on \`${route.pattern}\` route`)
+      throw new Exception(
+        `Missing controller method on \`${route.pattern}\` route`,
+        500,
+        exceptionCodes.E_MISSING_NAMED_MIDDLEWARE,
+      )
     }
 
     /**
