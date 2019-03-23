@@ -23,7 +23,7 @@
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/dev-utils": "^1.2.0",
-    "supertest": "^3.4.2"
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "content-disposition": "^0.5.3",
