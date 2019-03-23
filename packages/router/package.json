@@ -34,7 +34,7 @@
   "dependencies": {
     "@adonisjs/utils": "^1.4.1",
     "lodash": "^4.17.11",
-    "macroable": "^2.0.1",
+    "macroable": "^2.0.2",
     "matchit": "git+https://github.com/thetutlage/matchit.git",
     "pluralize": "^7.0.0"
   },
