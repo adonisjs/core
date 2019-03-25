@@ -21,7 +21,7 @@
   },
   "scripts": {
     "pretest": "npm run lint",
-    "test": "nyc node japaFile.js",
+    "test": "node japaFile.js",
     "lint": "tslint --project tsconfig.json",
     "clean": "del build",
     "doc": "typedoc",
