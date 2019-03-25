@@ -74,7 +74,7 @@ test.group('require all', (group) => {
     assert.deepEqual(output, {})
   })
 
-  test('ignore .d.ts files', async (assert) => {
+  test.skipInCI('ignore .d.ts files', async (assert) => {
     await fs.add('ts/app.ts', `export default {
       loaded: true
     }`)
