@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.7](https://github.com/adonisjs/adonis-framework/tree/master/packages/fold/compare/@adonisjs/fold@5.0.6...@adonisjs/fold@5.0.7) (2019-03-25)
+
+**Note:** Version bump only for package @adonisjs/fold
+
+
+
+
+
 ## [5.0.6](https://github.com/adonisjs/adonis-framework/tree/master/packages/fold/compare/@adonisjs/fold@5.0.5...@adonisjs/fold@5.0.6) (2019-02-26)
 
 **Note:** Version bump only for package @adonisjs/fold

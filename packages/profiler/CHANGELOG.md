@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.6](https://github.com/adonisjs/adonis-framework/tree/master/packages/profiler/compare/@adonisjs/profiler@1.1.5...@adonisjs/profiler@1.1.6) (2019-03-25)
+
+**Note:** Version bump only for package @adonisjs/profiler
+
+
+
+
+
 ## [1.1.5](https://github.com/adonisjs/adonis-framework/tree/master/packages/profiler/compare/@adonisjs/profiler@1.1.4...@adonisjs/profiler@1.1.5) (2019-02-26)
 
 **Note:** Version bump only for package @adonisjs/profiler

@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/server",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "AdonisJs server package to run the HTTP server",
   "main": "build/index.js",
   "files": [
@@ -27,7 +27,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@adonisjs/utils": "^1.4.1",
+    "@adonisjs/utils": "^1.4.2",
     "co-compose": "^5.1.1",
     "haye": "^2.0.2"
   },
@@ -49,10 +49,10 @@
     "access": "public"
   },
   "devDependencies": {
-    "@adonisjs/fold": "^5.0.6",
+    "@adonisjs/fold": "^5.0.7",
     "@adonisjs/request": "^1.1.10",
     "@adonisjs/response": "^1.1.12",
-    "@adonisjs/router": "^1.5.6",
+    "@adonisjs/router": "^1.5.7",
     "haye": "^2.0.2",
     "supertest": "^4.0.2"
   }
