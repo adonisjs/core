@@ -7,7 +7,8 @@
     "build/src",
     "build/config",
     "build/index.js",
-    "build/index.d.ts"
+    "build/index.d.ts",
+    "build/lib"
   ],
   "scripts": {
     "pretest": "npm run lint",
