@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/router",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "description": "AdonisJs official HTTP router",
   "main": "build/index.js",
   "files": [

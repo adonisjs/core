@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/compare/@adonisjs/server@1.3.1...@adonisjs/server@2.0.0) (2019-03-25)
+
+
+### Code Refactoring
+
+* **server:** rename Context to HttpContext ([da19583](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/commit/da19583))
+
+
+### Features
+
+* **server:** add public instance property ([bbe4e1f](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/commit/bbe4e1f))
+
+
+### BREAKING CHANGES
+
+* **server:** Since Context is a commonly used keyword, we
+try to be explicit by calling it HttpContext
+
+
+
+
+
 ## [1.3.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/server/compare/@adonisjs/server@1.3.0...@adonisjs/server@1.3.1) (2019-02-26)
 
 **Note:** Version bump only for package @adonisjs/server

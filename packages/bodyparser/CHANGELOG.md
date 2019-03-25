@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/bodyparser/compare/@adonisjs/bodyparser@2.1.3...@adonisjs/bodyparser@2.2.0) (2019-03-25)
+
+
+### Features
+
+* **bodyparser:** add support for disabling multipart autoprocess ([ec4b77e](https://github.com/adonisjs/adonis-framework/tree/master/packages/bodyparser/commit/ec4b77e))
+
+
+
+
+
 ## [2.1.3](https://github.com/adonisjs/adonis-framework/tree/master/packages/bodyparser/compare/@adonisjs/bodyparser@2.1.2...@adonisjs/bodyparser@2.1.3) (2019-02-26)
 
 **Note:** Version bump only for package @adonisjs/bodyparser
