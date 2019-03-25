@@ -8,10 +8,11 @@
  */
 
 import * as test from 'japa'
+import { join } from 'path'
 import { Filesystem } from '@adonisjs/dev-utils'
 
 import { requireAll } from '../src/requireAll'
-const fs = new Filesystem()
+const fs = new Filesystem(join(__dirname, 'app'))
 
 test.group('require all', (group) => {
   group.afterEach(async () => {
