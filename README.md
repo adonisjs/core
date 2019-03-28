@@ -33,16 +33,16 @@
 </div>
 
 ## About
-AdonisJs is an MIT licensed open source framework for Node.js. It stands out from all other Node frameworks because of it's goals and architectural decisions.
+AdonisJs is an MIT licensed open source framework for Node.js. It stands out from all other Node frameworks because of its goals and architectural decisions.
 
 ### Goals
 1. Serve as a fully featured framework.
-2. Offer rich and consistent API for all modules. No more fighting between promises, callbacks and so on.
+2. Offer a rich and consistent API for all modules. No more fighting between promises, callbacks and so on.
 3. There are many fast frameworks in Nodejs. We focus on being the most complete framework.
 4. Documentation is as important as code.
 
 ## Ecosystem
-AdonisJs is seperated into multiple high level and dozens of low level packages. You won't have to worry about low level packages, unless you are contributing to the code. Below is the list of all 1st party high level packages.
+AdonisJs is seperated into multiple high-level and dozens of low-level packages. You won't have to worry about low-level packages, unless you are contributing to the code. Below is the list of all 1st party high-level packages.
 
 | Project | Version | Description |
 |----------|----------|----------|
@@ -54,7 +54,7 @@ AdonisJs is seperated into multiple high level and dozens of low level packages.
 ## Code structure
 AdonisJs uses [Typescript](https://www.typescriptlang.org/) for creating official packages. So in order to contribute effectively, you do need some knowledge of Typescript.
 
-Also, the projects are created using [Lerna monorepos](https://lernajs.io). Which helps in publishing low level modules as individual packages, without creating a new repo for all of them.
+Also, the projects are created using [Lerna monorepos](https://lernajs.io). This helps in publishing low-level modules as individual packages, without creating a new repo for all of them.
 
 ## Contributors
 
