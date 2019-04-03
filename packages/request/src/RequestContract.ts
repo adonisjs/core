@@ -23,14 +23,14 @@ export interface RequestContract {
   updateBody (body: any): void
   updateRawBody (body: string): void
   updateQs (data: any): void
-  get (): { [key: string]: string | string[] }
-  post (): { [key: string]: string | string[] }
-  original (): { [key: string]: string | string[] }
-  all (): { [key: string]: string | string[] }
+  get (): { [key: string]: any }
+  post (): { [key: string]: any }
+  original (): { [key: string]: any }
+  all (): { [key: string]: any }
   raw (): string | null
   input (key: string, defaultValue?: any): any
-  except (keys: string[]): { [key: string]: string | string[] }
-  only (keys: string[]): { [key: string]: string | string[] }
+  except (keys: string[]): { [key: string]: any }
+  only<T extends string, U = { [K in T]: any }> (keys: T[]): U
   method (): string
   intended (): string
   headers (): IncomingHttpHeaders

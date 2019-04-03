@@ -156,7 +156,7 @@ export class Request extends Macroable implements RequestContract {
   /**
    * Returns reference to the query string object
    */
-  public get (): { [key: string]: string | string[] } {
+  public get (): { [key: string]: any } {
     return this._qs
   }
 
@@ -229,8 +229,8 @@ export class Request extends Macroable implements RequestContract {
    * request.only(['username', 'age'])
    * ```
    */
-  public only (keys: string[]): { [key: string]: any } {
-    return pick(this._all, keys)
+  public only <T extends string, U = { [K in T]: any }> (keys: T[]): U {
+    return pick(this._all, keys) as unknown as U
   }
 
   /**
