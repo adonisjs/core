@@ -19,7 +19,7 @@ jobs:
 
   build_node_latest:
     docker:
-    - image: circleci/node:latest
+    - image: circleci/node:11.10.0
     working_directory: ~/adonis-framework
     steps:
     - checkout
