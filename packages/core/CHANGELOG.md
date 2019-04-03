@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.3](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.6.2...@adonisjs/core@1.6.3) (2019-04-03)
+
+**Note:** Version bump only for package @adonisjs/core
+
+
+
+
+
 ## [1.6.2](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.6.1...@adonisjs/core@1.6.2) (2019-03-25)
 
 **Note:** Version bump only for package @adonisjs/core

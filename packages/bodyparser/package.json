@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/bodyparser",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "AdonisJs body parser to read and parse HTTP request bodies",
   "main": "build/index.js",
   "files": [
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@adonisjs/dev-utils": "^1.2.0",
-    "@adonisjs/request": "^1.1.10",
+    "@adonisjs/request": "^1.1.11",
     "@adonisjs/router": "^1.5.7",
     "supertest": "^4.0.2"
   }

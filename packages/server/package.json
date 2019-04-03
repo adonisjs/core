@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/server",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "AdonisJs server package to run the HTTP server",
   "main": "build/index.js",
   "files": [
@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@adonisjs/fold": "^5.0.7",
-    "@adonisjs/request": "^1.1.10",
+    "@adonisjs/request": "^1.1.11",
     "@adonisjs/response": "^1.1.12",
     "@adonisjs/router": "^1.5.7",
     "haye": "^2.0.2",
