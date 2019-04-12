@@ -25,7 +25,7 @@
   "license": "MIT",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "clear-module": "^3.1.0",
+    "clear-module": "^3.2.0",
     "fs-extra": "^7.0.1"
   },
   "keywords": [

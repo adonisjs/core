@@ -45,7 +45,7 @@
     "tag": "latest"
   },
   "dependencies": {
-    "clear-module": "^3.1.0",
+    "clear-module": "^3.2.0",
     "fs-extra": "^7.0.1"
   }
 }
