@@ -57,6 +57,10 @@ export interface RequestContract {
   hasBody (): boolean
   fresh (): boolean
   stale (): boolean
+  cookies (): { [key: string]: any }
+  plainCookies (): { [key: string]: any }
+  cookie (key: string, defaultValue?: any): any
+  plainCookie (key: string, defaultValue?: any): any
 }
 
 /**

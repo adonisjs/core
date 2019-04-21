@@ -22,6 +22,7 @@ import * as typeIs from 'type-is'
 import * as accepts from 'accepts'
 import * as fresh from 'fresh'
 import { Macroable } from 'macroable'
+import { parse as parseCookie } from '@adonisjs/cookie'
 
 import { RequestContract, RequestConfig } from './RequestContract'
 
@@ -74,6 +75,11 @@ export class Request extends Macroable implements RequestContract {
    */
   private _lazyAccepts: any = null
 
+  private _parsedCookies: {
+    signedCookies: { [key: string]: any },
+    plainCookies: { [key: string]: any },
+  } | null = null
+
   protected static _macros = {}
   protected static _getters = {}
 
@@ -81,6 +87,7 @@ export class Request extends Macroable implements RequestContract {
     public request: IncomingMessage,
     public response: ServerResponse,
     private _config: RequestConfig,
+    private _secret?: string,
   ) {
     super()
     this._parseQueryString()
@@ -93,6 +100,16 @@ export class Request extends Macroable implements RequestContract {
     if (this.parsedUrl.query) {
       this.updateQs(qs.parse(this.parsedUrl.query))
       this._original = { ...this._all }
+    }
+  }
+
+  /**
+   * Parse cookies, if not already parsed cookies. Cookies are only
+   * parsed, when any of the cookie methods are used.
+   */
+  private _parseCookies () {
+    if (!this._parsedCookies) {
+      this._parsedCookies = parseCookie(this.header('cookie')!, this._secret)
     }
   }
 
@@ -736,5 +753,42 @@ export class Request extends Macroable implements RequestContract {
    */
   public stale (): boolean {
     return !this.fresh()
+  }
+
+  /**
+   * Returns all parsed and signed cookies. Signed cookies ensures
+   * that their value isn't tampered.
+   */
+  public cookies () {
+    this._parseCookies()
+    return this._parsedCookies!.signedCookies
+  }
+
+  /**
+   * Returns value for a given key from signed cookies. Optional
+   * defaultValue is returned when actual value is undefined.
+   */
+  public cookie (key: string, defaultValue?: string): any {
+    this._parseCookies()
+    return getValue(this._parsedCookies!.signedCookies, key, { default: defaultValue })
+  }
+
+  /**
+   * Returns all parsed and unsigned cookies. Unsigned cookies gives
+   * no guarantee for cookie tampering. You only need `plainCookies`
+   * when cookie is set by the client and not the server
+   */
+  public plainCookies () {
+    this._parseCookies()
+    return this._parsedCookies!.plainCookies
+  }
+
+  /**
+   * Returns value for a given key from unsigned cookies. Optional
+   * defaultValue is returned when actual value is undefined.
+   */
+  public plainCookie (key: string, defaultValue?: string): any {
+    this._parseCookies()
+    return getValue(this._parsedCookies!.plainCookies, key, { default: defaultValue })
   }
 }

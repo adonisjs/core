@@ -10,10 +10,13 @@
 import * as test from 'japa'
 import * as supertest from 'supertest'
 import { createServer } from 'http'
+import { serialize } from '@adonisjs/cookie'
 import { config } from '../config'
 
 import { Request } from '../src/Request'
 import { RequestConfig } from '../src/RequestContract'
+
+const SECRET = Math.random().toFixed(36).substring(2, 38)
 
 const fakeConfig = (conf?: Partial<RequestConfig>) => {
   return Object.assign(config, conf)
@@ -771,6 +774,94 @@ test.group('Request', () => {
     const { body } = await supertest(server).get('/')
     assert.deepEqual(body, {
       subdomains: [],
+    })
+  })
+
+  test('get all unsigned cookies via plainCookies', async (assert) => {
+    const server = createServer((req, res) => {
+      const request = new Request(req, res, fakeConfig())
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({ plainCookies: request.plainCookies(), cookies: request.cookies() }))
+    })
+
+    const cookies = serialize('name', 'virk')
+    const { body } = await supertest(server).get('/').set('cookie', cookies)
+    assert.deepEqual(body, {
+      plainCookies: {
+        name: 'virk',
+      },
+      cookies: {},
+    })
+  })
+
+  test('get all signed cookies when secret is defined', async (assert) => {
+    const server = createServer((req, res) => {
+      const request = new Request(req, res, fakeConfig(), SECRET)
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({ plainCookies: request.plainCookies(), cookies: request.cookies() }))
+    })
+
+    const cookies = serialize('name', 'virk', SECRET)
+    const { body } = await supertest(server).get('/').set('cookie', cookies)
+    assert.deepEqual(body, {
+      plainCookies: {},
+      cookies: {
+        name: 'virk',
+      },
+    })
+  })
+
+  test('get value for a single cookie', async (assert) => {
+    const server = createServer((req, res) => {
+      const request = new Request(req, res, fakeConfig(), SECRET)
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({ name: request.cookie('name') }))
+    })
+
+    const cookies = serialize('name', 'virk', SECRET)
+    const { body } = await supertest(server).get('/').set('cookie', cookies)
+    assert.deepEqual(body, {
+      name: 'virk',
+    })
+  })
+
+  test('use default value when actual value is missing', async (assert) => {
+    const server = createServer((req, res) => {
+      const request = new Request(req, res, fakeConfig(), SECRET)
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({ name: request.cookie('name', 'nikk') }))
+    })
+
+    const { body } = await supertest(server).get('/')
+    assert.deepEqual(body, {
+      name: 'nikk',
+    })
+  })
+
+  test('get value for a single unsigned cookie', async (assert) => {
+    const server = createServer((req, res) => {
+      const request = new Request(req, res, fakeConfig(), SECRET)
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({ name: request.plainCookie('name') }))
+    })
+
+    const cookies = serialize('name', 'virk')
+    const { body } = await supertest(server).get('/').set('cookie', cookies)
+    assert.deepEqual(body, {
+      name: 'virk',
+    })
+  })
+
+  test('use default value when actual unsigned value is missing', async (assert) => {
+    const server = createServer((req, res) => {
+      const request = new Request(req, res, fakeConfig(), SECRET)
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({ name: request.plainCookie('name', 'nikk') }))
+    })
+
+    const { body } = await supertest(server).get('/')
+    assert.deepEqual(body, {
+      name: 'nikk',
     })
   })
 })
