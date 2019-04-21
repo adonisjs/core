@@ -87,14 +87,13 @@ export function unpack (value: string, secretKey?: string): null | { value: any,
 export function parse (
   cookieHeader: string,
   secretKey?: string,
-  cookieOptions?: Partial<CookieOptions>,
 ): { signedCookies: { [key: string]: any }, plainCookies: { [key: string]: any } } {
   const output = { signedCookies: {}, plainCookies: {} }
   if (!cookieHeader) {
     return output
   }
 
-  const parsed = cookie.parse(cookieHeader, cookieOptions)
+  const parsed = cookie.parse(cookieHeader)
 
   return Object.keys(parsed).reduce((result, key: string) => {
     const unpacked = this.unpack(parsed[key], secretKey)
