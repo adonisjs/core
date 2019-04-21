@@ -14,10 +14,13 @@ import { Filesystem } from '@adonisjs/dev-utils'
 import { createWriteStream, createReadStream } from 'fs'
 import { createServer } from 'http'
 import * as etag from 'etag'
-import { config } from '../config'
+import { parse } from '@adonisjs/cookie'
 
+import { config } from '../config'
 import { Response } from '../src/Response'
 import { ResponseConfig } from '../src/ResponseContract'
+
+const SECRET = Math.random().toFixed(36).substring(2, 38)
 
 const fakeConfig = (conf?: Partial<ResponseConfig>) => {
   return Object.assign(config, conf)
@@ -851,5 +854,101 @@ test.group('Response', (group) => {
       .expect('content-type', 'plain/text; charset=ascii')
 
     assert.equal(text, 'done')
+  })
+
+  test('set signed cookie', async (assert) => {
+    const server = createServer((req, res) => {
+      const config = fakeConfig()
+      const response = new Response(req, res, config, SECRET)
+      response.cookie('name', 'virk').send('done')
+    })
+
+    const { headers } = await supertest(server).get('/').expect(200)
+    const cookies = headers['set-cookie'].map((cookie: string) => {
+      const [value, ...options] = cookie.split(';')
+      return { value: parse(value, SECRET), options: options.map((option) => option.trim()) }
+    })
+
+    assert.deepEqual(cookies, [
+      {
+        value: {
+          signedCookies: { name: 'virk' },
+          plainCookies: {},
+        },
+        options: ['Max-Age=90', 'Path=/', 'HttpOnly'],
+      },
+    ])
+  })
+
+  test('set plain cookie', async (assert) => {
+    const server = createServer((req, res) => {
+      const config = fakeConfig()
+      const response = new Response(req, res, config, SECRET)
+      response.plainCookie('name', 'virk').send('done')
+    })
+
+    const { headers } = await supertest(server).get('/').expect(200)
+    const cookies = headers['set-cookie'].map((cookie: string) => {
+      const [value, ...options] = cookie.split(';')
+      return { value: parse(value, SECRET), options: options.map((option) => option.trim()) }
+    })
+
+    assert.deepEqual(cookies, [
+      {
+        value: {
+          signedCookies: {},
+          plainCookies: { name: 'virk' },
+        },
+        options: ['Max-Age=90', 'Path=/', 'HttpOnly'],
+      },
+    ])
+  })
+
+  test('set cookie with custom domain', async (assert) => {
+    const server = createServer((req, res) => {
+      const config = fakeConfig()
+      const response = new Response(req, res, config, SECRET)
+      response.cookie('name', 'virk', { domain: 'foo.com' }).send('done')
+    })
+
+    const { headers } = await supertest(server).get('/').expect(200)
+    const cookies = headers['set-cookie'].map((cookie: string) => {
+      const [value, ...options] = cookie.split(';')
+      return { value: parse(value, SECRET), options: options.map((option) => option.trim()) }
+    })
+
+    assert.deepEqual(cookies, [
+      {
+        value: {
+          signedCookies: { name: 'virk' },
+          plainCookies: {},
+        },
+        options: ['Max-Age=90', 'Domain=foo.com', 'Path=/', 'HttpOnly'],
+      },
+    ])
+  })
+
+  test('clear cookie by setting expiry in fast', async (assert) => {
+    const server = createServer((req, res) => {
+      const config = fakeConfig()
+      const response = new Response(req, res, config, SECRET)
+      response.clearCookie('name').send('done')
+    })
+
+    const { headers } = await supertest(server).get('/').expect(200)
+    const cookies = headers['set-cookie'].map((cookie: string) => {
+      const [value, ...options] = cookie.split(';')
+      return { value: parse(value, SECRET), options: options.map((option) => option.trim()) }
+    })
+
+    assert.deepEqual(cookies, [
+      {
+        value: {
+          signedCookies: {},
+          plainCookies: {},
+        },
+        options: ['Max-Age=90', 'Path=/', 'Expires=Thu, 01 Jan 1970 00:00:00 GMT', 'HttpOnly'],
+      },
+    ])
   })
 })

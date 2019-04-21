@@ -12,4 +12,12 @@ import { ResponseConfig } from '../src/ResponseContract'
 export const config: ResponseConfig = {
   etag: false,
   jsonpCallbackName: 'callback',
+
+  cookie: {
+    maxAge: 90,
+    path: '/',
+    httpOnly: true,
+    sameSite: false,
+    secure: false,
+  },
 }

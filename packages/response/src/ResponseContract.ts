@@ -13,6 +13,7 @@
 
 import { MacroableConstructorContract } from 'macroable'
 import { ServerResponse, IncomingMessage } from 'http'
+import { CookieOptions } from '@adonisjs/cookie'
 
 /**
  * Types from which response header can be casted to a
@@ -50,6 +51,7 @@ export type LazyBody = {
 export type ResponseConfig = {
   etag: boolean,
   jsonpCallbackName: string,
+  cookie: Partial<CookieOptions>,
 }
 
 /**
@@ -93,6 +95,10 @@ export interface ResponseContract {
 
   location (url: string): this
   redirect (url: string, reflectQueryParams?: boolean, statusCode?: number): void
+
+  cookie (key: string, value: any, options?: CookieOptions): this
+  plainCookie (key: string, value: any, options?: CookieOptions): this
+  clearCookie (key: string): this
 
   finish (): void
 }

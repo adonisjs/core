@@ -23,6 +23,7 @@ import * as contentDisposition from 'content-disposition'
 import * as vary from 'vary'
 import * as fresh from 'fresh'
 import { Macroable } from 'macroable'
+import { serialize, CookieOptions } from '@adonisjs/cookie'
 
 import {
   ResponseContract,
@@ -92,6 +93,7 @@ export class Response extends Macroable implements ResponseContract {
     public request: IncomingMessage,
     public response: ServerResponse,
     private _config: ResponseConfig,
+    private _secretKey?: string,
   ) {
     super()
   }
@@ -732,6 +734,67 @@ export class Response extends Macroable implements ResponseContract {
 
     this.location(url)
     this._end(`Redirecting to ${url}`, statusCode)
+  }
+
+  /**
+   * Set signed cookie as the response header. The inline options overrides
+   * all options from the config (means they are not merged).
+   */
+  public cookie (key: string, value: any, options?: Partial<CookieOptions>): this {
+    if (options) {
+      options = Object.assign({}, this._config.cookie, options)
+    } else {
+      options = this._config.cookie
+    }
+
+    const serialized = serialize(key, value, this._secretKey, options)
+    if (!serialized) {
+      return this
+    }
+
+    this.append('set-cookie', serialized)
+    return this
+  }
+
+  /**
+   * Set unsigned cookie as the response header. The inline options overrides
+   * all options from the config (means they are not merged)
+   */
+  public plainCookie (key: string, value: any, options?: Partial<CookieOptions>): this {
+    if (options) {
+      options = Object.assign({}, this._config.cookie, options)
+    } else {
+      options = this._config.cookie
+    }
+
+    const serialized = serialize(key, value, undefined, options)
+    if (!serialized) {
+      return this
+    }
+
+    this.append('set-cookie', serialized)
+    return this
+  }
+
+  /**
+   * Clear existing cookie.
+   */
+  public clearCookie (key: string, options?: Partial<CookieOptions>): this {
+    if (options) {
+      options = Object.assign({}, this._config.cookie, options)
+    } else {
+      options = this._config.cookie
+    }
+
+    options.expires = new Date(1)
+
+    const serialized = serialize(key, '', undefined, options)
+    if (!serialized) {
+      return this
+    }
+
+    this.append('set-cookie', serialized)
+    return this
   }
 
   /**
