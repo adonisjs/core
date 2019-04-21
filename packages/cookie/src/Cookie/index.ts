@@ -96,8 +96,8 @@ export function parse (
   const parsed = cookie.parse(cookieHeader)
 
   return Object.keys(parsed).reduce((result, key: string) => {
-    const unpacked = this.unpack(parsed[key], secretKey)
-    if (!unpacked) {
+    const unpacked = unpack(parsed[key], secretKey)
+    if (unpacked === null) {
       return result
     }
 
@@ -122,7 +122,7 @@ export function serialize (
   options?: Partial<CookieOptions>,
 ): string | null {
   const packedValue = pack(value, secretKey)
-  if (!packedValue) {
+  if (packedValue === null) {
     return null
   }
 
