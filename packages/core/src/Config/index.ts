@@ -106,11 +106,11 @@ export class Config implements ConfigContract {
    */
   public defaults (key: string, value: any): void {
     const existingValue = this.get(key)
-    if (!existingValue) {
-      this.set(key, value)
-    } else {
-      mergeWith(this.get(key), value)
+    if (existingValue) {
+      mergeWith(value, existingValue)
     }
+
+    this.set(key, value)
   }
 
   /**

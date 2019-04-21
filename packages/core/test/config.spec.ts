@@ -128,7 +128,7 @@ test.group('Config', (group) => {
     }`)
 
     const config = new Config(join(fs.basePath, 'config'))
-    config.defaults('app.logger', { filePath: join(__dirname) })
+    config.defaults('app.logger', { filePath: join(__dirname), driver: 'console' })
 
     assert.deepEqual(config.get('app.logger'), {
       filePath: join(__dirname),
