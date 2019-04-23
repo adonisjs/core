@@ -66,7 +66,7 @@ export class Logger implements LoggerContract {
     if (values.length) {
       this._pino[level](mergingObject, message, ...values)
     } else if (message) {
-      this._pino[level](mergingObject, ...message)
+      this._pino[level](mergingObject, message)
     } else {
       this._pino[level](mergingObject)
     }
