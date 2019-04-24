@@ -24,15 +24,23 @@ import { exceptionCodes } from '../lib'
  */
 async function finalHandler (ctx: HttpContextContract) {
   const handler = ctx.route!.meta.resolvedHandler
+  let returnValue: any
 
-  /**
-   * Execute handler based upon it's type
-   */
-  const returnValue = await (
-    handler.type === 'class'
-      ? global['make'](handler.value)[handler.method](ctx)
-      : handler.value(ctx)
-    )
+  if (handler.type === 'class') {
+    const controllerInstance = global['make'](handler.value)
+    /* istanbul ignore-else */
+    if (!controllerInstance[handler.method]) {
+      throw new Exception(
+        `Cannot find ${handler.value}.${handler.method} method`,
+        500,
+        exceptionCodes.E_MISSING_CONTROLLER_METHOD,
+      )
+    }
+
+    returnValue = await controllerInstance[handler.method](ctx)
+  } else {
+    returnValue = await handler.value(ctx)
+  }
 
   if (useReturnValue(returnValue, ctx)) {
     ctx.response.send(returnValue)
@@ -86,7 +94,7 @@ export function routePreProcessor (route: RouteNode, middlewareStore: Middleware
       throw new Exception(
         `Missing controller method on \`${route.pattern}\` route`,
         500,
-        exceptionCodes.E_MISSING_NAMED_MIDDLEWARE,
+        exceptionCodes.E_INVALID_ROUTE_NAMESPACE,
       )
     }
 

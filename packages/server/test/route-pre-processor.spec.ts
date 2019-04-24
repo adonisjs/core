@@ -153,4 +153,21 @@ test.group('Route pre processor', (group) => {
 
     assert.throw(fn, 'Missing controller method on `/` route')
   })
+
+  test('raise error when controller method is missing', (_assert) => {
+    const middlewareStore = new MiddlewareStore()
+    const router = new Router()
+
+    class UserController {
+    }
+
+    const ioc = new Ioc()
+    ioc.bind('App/Controllers/Http/UserController', () => UserController)
+    global['use'] = ioc.use.bind(ioc)
+
+    const route = router.get('/', '/UserController.store').toJSON()
+    routePreProcessor(route, middlewareStore)
+
+    console.log(route.meta.finalHandler)
+  })
 })
