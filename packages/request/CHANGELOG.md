@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/compare/@adonisjs/request@1.1.11...@adonisjs/request@1.2.0) (2019-04-24)
+
+
+### Features
+
+* **request:** add support for reading cookies ([adea0cd](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/commit/adea0cd))
+
+
+
+
+
 ## [1.1.11](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/compare/@adonisjs/request@1.1.10...@adonisjs/request@1.1.11) (2019-04-03)
 
 **Note:** Version bump only for package @adonisjs/request

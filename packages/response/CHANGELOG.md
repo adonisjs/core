@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/compare/@adonisjs/response@1.1.12...@adonisjs/response@1.2.0) (2019-04-24)
+
+
+### Features
+
+* **response:** add support for cookies ([52f93d5](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/commit/52f93d5))
+
+
+
+
+
 ## [1.1.12](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/compare/@adonisjs/response@1.1.11...@adonisjs/response@1.1.12) (2019-03-25)
 
 **Note:** Version bump only for package @adonisjs/response

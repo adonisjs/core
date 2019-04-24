@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/cookie",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Cookie parser for AdonisJs framework",
   "main": "build/index.js",
   "files": [

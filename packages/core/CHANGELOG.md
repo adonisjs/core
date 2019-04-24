@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.6.3...@adonisjs/core@1.7.0) (2019-04-24)
+
+
+### Bug Fixes
+
+* **config:** give preference to user config over defaults object ([0991b01](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/0991b01))
+* **logger:** do not spread message argument ([639e3e0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/639e3e0))
+
+
+### Features
+
+* **cors:** add support for cors middleware ([0b702c8](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/0b702c8))
+
+
+
+
+
 ## [1.6.3](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.6.2...@adonisjs/core@1.6.3) (2019-04-03)
 
 **Note:** Version bump only for package @adonisjs/core

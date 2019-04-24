@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/dev-utils/compare/@adonisjs/dev-utils@1.2.0...@adonisjs/dev-utils@1.3.0) (2019-04-24)
+
+
+### Features
+
+* **dev-utils:** add support for fake context ([8e45150](https://github.com/adonisjs/adonis-framework/tree/master/packages/dev-utils/commit/8e45150))
+
+
+
+
+
 # [1.2.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/dev-utils/compare/@adonisjs/dev-utils@1.1.0...@adonisjs/dev-utils@1.2.0) (2019-02-26)
 
 
