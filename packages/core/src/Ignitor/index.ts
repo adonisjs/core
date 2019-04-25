@@ -17,27 +17,7 @@ import { Profiler, ProfilerRowContract, ProfilerSubscriber } from '@adonisjs/pro
 
 import { Helpers } from '../Helpers'
 import { exceptionCodes } from '../../lib'
-
-/**
- * Preload file node. It must be defined as it is
- * inside `.adonisrc.json` file
- */
-type PreloadNode = {
-  file: string,
-  intent: string,
-  optional: boolean,
-}
-
-/**
- * Shape of `.adonisrc.json` file
- */
-type RcFileNode = {
-  typescript: boolean,
-  exceptionHandlerNamespace?: string,
-  preloads: PreloadNode[],
-  autoloads: { [alias: string]: string },
-  directories: { [identifier: string]: string },
-}
+import { RcFileNode, PreloadNode } from '../Contracts/Ignitor'
 
 /**
  * Defaults when file is missing or incomplete
@@ -322,48 +302,6 @@ export class Ignitor {
   }
 
   /**
-   * Bootstrap the application
-   */
-  private async _bootstrap () {
-    /**
-     * Load the rc file (ignore if file is missing)
-     */
-    this._loadRcFile()
-
-    /**
-     * New up IoC container
-     */
-    this._instantiateIoCContainer()
-
-    /**
-     * Instantiates the IoC container
-     */
-    this._instantiateProfiler()
-
-    /**
-     * Bind helpers as first class citizen
-     */
-    this._bindHelpers()
-
-    /**
-     * Boot all the providers
-     */
-    const providersAction = this._bootstrapper!.profile('boot:providers')
-    await this._bootProviders()
-    providersAction.end()
-
-    /**
-     * Register autoloaded directories
-     */
-    this._registerAutoloads()
-
-    /**
-     * Preload all files
-     */
-    this._preloadFiles()
-  }
-
-  /**
    * Binds exception handler when it's namespace is
    * defined
    */
@@ -480,7 +418,7 @@ export class Ignitor {
       const host = Env.get('HOST', '0.0.0.0')
       const port = Env.get('PORT', '3333')
 
-      this.server.listen(port, host, (error) => {
+      this.server.listen(port, host, (error: any) => {
         startServerAction.end()
         if (error) {
           reject(error)
@@ -493,10 +431,62 @@ export class Ignitor {
   }
 
   /**
+   * Pretty prints the error on terminal
+   */
+  private async _prettyPrintError (error: any) {
+    const Youch = require('youch')
+    const output = await new Youch(error, {}).toJSON()
+    console.log(require('youch-terminal')(output))
+    process.exit(1)
+  }
+
+  /**
    * Attach subscriber to listen for profiler events
    */
   public onProfile (callback: ProfilerSubscriber): void {
     this._profilerSubscriber = callback
+  }
+
+  /**
+   * Bootstrap the application
+   */
+  public async bootstrap () {
+    /**
+     * Load the rc file (ignore if file is missing)
+     */
+    this._loadRcFile()
+
+    /**
+     * New up IoC container
+     */
+    this._instantiateIoCContainer()
+
+    /**
+     * Instantiates the IoC container
+     */
+    this._instantiateProfiler()
+
+    /**
+     * Bind helpers as first class citizen
+     */
+    this._bindHelpers()
+
+    /**
+     * Boot all the providers
+     */
+    const providersAction = this._bootstrapper!.profile('boot:providers')
+    await this._bootProviders()
+    providersAction.end()
+
+    /**
+     * Register autoloaded directories
+     */
+    this._registerAutoloads()
+
+    /**
+     * Preload all files
+     */
+    this._preloadFiles()
   }
 
   /**
@@ -509,7 +499,7 @@ export class Ignitor {
       /**
        * Bootstrap the app
        */
-      await this._bootstrap()
+      await this.bootstrap()
 
       /**
        * Create the server, but don't attach it to any port or host yet
@@ -534,8 +524,7 @@ export class Ignitor {
       this.preloads = []
       this._providersList = []
     } catch (error) {
-      console.log(error)
-      process.exit(1)
+      this._prettyPrintError(error)
     }
   }
 }
