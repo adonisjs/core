@@ -39,7 +39,7 @@
     "end-of-stream": "^1.4.1",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.11",
-    "media-typer": "^1.0.1",
+    "media-typer": "^1.1.0",
     "multiparty": "^4.2.1",
     "uuid": "^3.3.2"
   },

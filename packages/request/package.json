@@ -41,7 +41,7 @@
     "get-value": "^3.0.1",
     "lodash": "^4.17.11",
     "macroable": "^2.0.2",
-    "proxy-addr": "^2.0.4",
+    "proxy-addr": "^2.0.5",
     "qs": "^6.7.0",
     "type-is": "^1.6.16"
   },

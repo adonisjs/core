@@ -58,7 +58,7 @@
     "@adonisjs/utils": "^1.4.3",
     "dotenv": "^7.0.0",
     "lodash": "^4.17.11",
-    "pino": "^5.12.2",
+    "pino": "^5.12.3",
     "youch": "^2.0.10"
   },
   "devDependencies": {
