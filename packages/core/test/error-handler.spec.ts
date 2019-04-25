@@ -203,8 +203,6 @@ test.group('HttpExceptionHandler', () => {
   })
 
   test('use return value of exception handle method', async (assert) => {
-    assert.plan(1)
-
     class AppHandler extends HttpExceptionHandler {
       protected context () {
         return { username: 'virk' }
@@ -213,7 +211,6 @@ test.group('HttpExceptionHandler', () => {
 
     class InvalidAuth extends Exception {
       public async handle () {
-        assert.isTrue(true)
         return 'foo'
       }
     }
