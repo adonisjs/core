@@ -11,6 +11,7 @@ import { join } from 'path'
 import { merge } from 'lodash'
 import { createServer } from 'http'
 import { Exception, tsRequire } from '@adonisjs/utils'
+import { ServerContract, useReturnValue } from '@adonisjs/server'
 import { Registrar, Ioc } from '@adonisjs/fold'
 import { Profiler, ProfilerRowContract, ProfilerSubscriber } from '@adonisjs/profiler'
 
@@ -32,6 +33,7 @@ type PreloadNode = {
  */
 type RcFileNode = {
   typescript: boolean,
+  exceptionHandlerNamespace?: string,
   preloads: PreloadNode[],
   autoloads: { [alias: string]: string },
   directories: { [identifier: string]: string },
@@ -109,8 +111,26 @@ export class Ignitor {
    */
   private _profilerSubscriber: ProfilerSubscriber
 
+  /**
+   * Reference to provider class instances. We need to keep
+   * a reference to execute lifecycle hooks during the
+   * startup process.
+   */
   private _providersList: any[] = []
+
+  /**
+   * An array of provider instances, that has `onExit` hook. We
+   * need a reference of those providers through out the
+   * app lifecycle, so that we call `onExit` hook when
+   * server stops.
+   */
   private _providersWithExitHook: any[] = []
+
+  /**
+   * Reference to the exception handler namespace, defined
+   * inside `.adonisrc.json` file.
+   */
+  private _exceptionHandlerNamespace?: string
 
   constructor (public appRoot: string) {}
 
@@ -152,6 +172,11 @@ export class Ignitor {
      * Use rc `typescript` flag or fallback to DEFAULTS
      */
     this.typescript = rcFile.typescript || DEFAULTS.typescript
+
+    /**
+     * Update reference
+     */
+    this._exceptionHandlerNamespace = rcFile.exceptionHandlerNamespace
 
     /**
      * Use rc `preloads` or fallback to an empty array
@@ -339,6 +364,24 @@ export class Ignitor {
   }
 
   /**
+   * Binds exception handler when it's namespace is
+   * defined
+   */
+  private _bindExceptionHandler (server: ServerContract) {
+    if (this._exceptionHandlerNamespace) {
+      const handlerInstance = this.ioc.make(this._exceptionHandlerNamespace)
+      server.onError(async (error, ctx) => {
+        handlerInstance.report(error, ctx)
+
+        const response = await handlerInstance.handle(error, ctx)
+        if (useReturnValue(response, ctx)) {
+          ctx.response.send(response)
+        }
+      })
+    }
+  }
+
+  /**
    * Start the HTTP server by pulling it from the IoC container
    */
   private async _createHttpServer (serverCallback?: (handler) => any) {
@@ -358,6 +401,8 @@ export class Ignitor {
     const optimizeServerAction = this._bootstrapper!.profile('optimize:server')
     server.optimize()
     optimizeServerAction.end()
+
+    this._bindExceptionHandler(server)
 
     /**
      * Finally start the HTTP server and keep reference to

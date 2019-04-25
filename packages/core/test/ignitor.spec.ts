@@ -234,7 +234,13 @@ test.group('Ignitor | preload files', (group) => {
 test.group('Ignitor | http server', (group) => {
   group.timeout(0)
 
+  group.beforeEach(async () => {
+    process.env.PORT = '4000'
+    await fs.cleanup()
+  })
+
   group.afterEach(async () => {
+    delete process.env.PORT
     await fs.cleanup()
   })
 
@@ -271,6 +277,46 @@ test.group('Ignitor | http server', (group) => {
 
     const { text } = await supertest(ignitor.server).get('/').expect(200)
     assert.equal(text, 'handled')
+    ignitor.server.close(done)
+  })
+
+  test('pass exceptions to custom http exception handler', async (assert, done) => {
+    await fs.addEnv('.env', {})
+    await fs.add('.adonisrc.json', JSON.stringify({
+      typescript: true,
+      exceptionHandlerNamespace: 'App/Exceptions/Handler',
+    }))
+
+    await fs.add('start/app.js', `
+      const { join } = require('path')
+
+      module.exports = {
+        providers: [
+          '${AppProvider}'
+        ],
+        aceProviders: [],
+        commands: [],
+      }
+    `)
+
+    await fs.add('app/Exceptions/Handler.js', `
+      module.exports = class Handler {
+        handle () {
+          return 'error handler response'
+        }
+
+        report () {
+        }
+      }
+    `)
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.startHttpServer((handler) => {
+      return createServer(handler)
+    })
+
+    const { text } = await supertest(ignitor.server).get('/').expect(200)
+    assert.equal(text, 'error handler response')
     ignitor.server.close(done)
   })
 
