@@ -9,3 +9,4 @@
 
 export { Filesystem } from './src/Filesystem'
 export { FakeHttpContext } from './src/Context'
+export { FakeLogger } from './src/Logger'
