@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/request",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Facade over Node.js HTTP req object",
   "main": "build/index.js",
   "files": [

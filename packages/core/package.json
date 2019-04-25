@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/core",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "AdonisJs core package",
   "main": "build/index.js",
   "files": [
@@ -48,14 +48,14 @@
     "url": "https://github.com/adonisjs/adonis-framework/issues"
   },
   "dependencies": {
-    "@adonisjs/bodyparser": "^2.2.3",
-    "@adonisjs/fold": "^5.0.8",
-    "@adonisjs/profiler": "^1.1.7",
-    "@adonisjs/request": "^1.2.0",
-    "@adonisjs/response": "^1.2.0",
-    "@adonisjs/router": "^1.5.8",
-    "@adonisjs/server": "^2.0.4",
-    "@adonisjs/utils": "^1.4.3",
+    "@adonisjs/bodyparser": "^2.2.4",
+    "@adonisjs/fold": "^5.0.9",
+    "@adonisjs/profiler": "^1.1.8",
+    "@adonisjs/request": "^1.2.1",
+    "@adonisjs/response": "^1.2.1",
+    "@adonisjs/router": "^1.5.9",
+    "@adonisjs/server": "^2.0.5",
+    "@adonisjs/utils": "^1.4.4",
     "dotenv": "^7.0.0",
     "lodash": "^4.17.11",
     "pino": "^5.12.3",
@@ -63,7 +63,7 @@
     "youch-terminal": "^1.0.0"
   },
   "devDependencies": {
-    "@adonisjs/dev-utils": "^1.3.0",
+    "@adonisjs/dev-utils": "^1.4.0",
     "split2": "^3.1.1",
     "supertest": "^4.0.2"
   }

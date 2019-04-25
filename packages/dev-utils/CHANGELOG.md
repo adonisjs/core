@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/dev-utils/compare/@adonisjs/dev-utils@1.3.0...@adonisjs/dev-utils@1.4.0) (2019-04-25)
+
+
+### Features
+
+* **dev-utils:** add support for fake logger for testing ([1eb15f4](https://github.com/adonisjs/adonis-framework/tree/master/packages/dev-utils/commit/1eb15f4))
+
+
+
+
+
 # [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/dev-utils/compare/@adonisjs/dev-utils@1.2.0...@adonisjs/dev-utils@1.3.0) (2019-04-24)
 
 

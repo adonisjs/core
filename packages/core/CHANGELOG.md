@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.7.0...@adonisjs/core@1.8.0) (2019-04-25)
+
+
+### Features
+
+* **core:** add base exception handler ([3cfc94e](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/3cfc94e))
+* **ignitor:** add support for exception handler in .adonisrc.json file ([baa34a1](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/baa34a1))
+
+
+
+
+
 # [1.7.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.6.3...@adonisjs/core@1.7.0) (2019-04-24)
 
 
