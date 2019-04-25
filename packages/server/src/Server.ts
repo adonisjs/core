@@ -15,7 +15,6 @@ import { Exception } from '@adonisjs/utils'
 
 import { HttpContext } from './HttpContext'
 import { middlewareExecutor } from './middlewareExecutor'
-import { useReturnValue } from './useReturnValue'
 import { exceptionCodes } from '../lib'
 
 import {
@@ -102,7 +101,7 @@ export class Server implements ServerContract {
    * Executes the global middleware chain before executing
    * the route handler
    */
-  private async _executeMiddleware (ctx) {
+  private async _executeMiddleware (ctx: HttpContextContract) {
     await this
       ._globalMiddleware
       .runner()
@@ -116,14 +115,14 @@ export class Server implements ServerContract {
    * the middleware chain. This is used when global
    * middleware length is 0
    */
-  private async _executeFinalHandler (ctx) {
+  private async _executeFinalHandler (ctx: HttpContextContract) {
     await ctx.route.meta.finalHandler(ctx)
   }
 
   /**
    * Executes before hooks and then the route handler
    */
-  private async _executeHooksAndHandler (ctx) {
+  private async _executeHooksAndHandler (ctx: HttpContextContract) {
     const shortcircuit = await this._executeBeforeHooks(ctx)
     if (!shortcircuit) {
       await this._handleRequest(ctx)
@@ -133,7 +132,7 @@ export class Server implements ServerContract {
   /**
    * Handles HTTP request
    */
-  private async _handleRequest (ctx) {
+  private async _handleRequest (ctx: HttpContextContract) {
     const url = ctx.request.url()
     const method = ctx.request.method()
 
@@ -175,7 +174,7 @@ export class Server implements ServerContract {
   /**
    * Handles error raised during HTTP request
    */
-  private _handleError (error, ctx) {
+  private _handleError (error: any, ctx: HttpContextContract) {
     ctx.response.status(error.status || 500).send(error.message)
   }
 
@@ -210,14 +209,7 @@ export class Server implements ServerContract {
    * occurred during HTTP request
    */
   public onError (cb: ErrorHandleNode): this {
-    this._errorHandler = async function scoped (error, ctx) {
-      const returnValue = await cb(error, ctx)
-
-      if (useReturnValue(returnValue, ctx)) {
-        ctx.response.send(returnValue)
-      }
-    }
-
+    this._errorHandler = cb
     return this
   }
 

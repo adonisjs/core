@@ -10,6 +10,7 @@
 export { MiddlewareStore } from './src/MiddlewareStore'
 export { Server } from './src/Server'
 export { routePreProcessor } from './src/routePreProcessor'
+export { useReturnValue } from './src/useReturnValue'
 
 export {
   MiddlewareStoreContract,

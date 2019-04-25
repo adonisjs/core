@@ -683,8 +683,8 @@ test.group('Server | error handler', () => {
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
     const server = new Server(Request, Response, router, middlewareStore, {})
-    server.onError(async () => {
-      return 'handled by error handler'
+    server.onError(async (_error, { response }) => {
+      response.send('handled by error handler')
     })
 
     server.after((async function afterHook () {
@@ -705,8 +705,8 @@ test.group('Server | error handler', () => {
     const router = new Router((route) => routePreProcessor(route, middlewareStore))
 
     const server = new Server(Request, Response, router, middlewareStore, {})
-    server.onError(async () => {
-      return 'handled by error handler'
+    server.onError(async (_error, { response }) => {
+      response.send('handled by error handler')
     })
 
     router.commit()
