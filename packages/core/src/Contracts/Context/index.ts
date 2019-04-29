@@ -27,7 +27,7 @@ import {
  * interface
  */
 export interface RequestContract extends BaseRequestContract {
-  file (key: string, options: FileValidationOptions): null | MultipartFileContract | MultipartFileContract[]
+  file (key: string, options?: Partial<FileValidationOptions>): null | MultipartFileContract | MultipartFileContract[]
   multipart (): MultipartContract
 }
 

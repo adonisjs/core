@@ -513,6 +513,43 @@ export const specFixtures = [
     },
   },
   {
+    title: 'set preflight headers when request headers is in the list of comma seperated list',
+
+    configureOptions (): CorsConfig {
+      return Object.assign({}, corsConfig, {
+        origin: true,
+        headers: 'X-Adonis,X-Time',
+      })
+    },
+
+    configureRequest (req: IncomingMessage) {
+      req.headers = {
+        origin: 'foo.com',
+        'access-control-request-method': 'GET',
+        'access-control-request-headers': 'origin,X-Adonis',
+      }
+    },
+
+    assertNormal (assert: Assert, res: any) {
+      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS.filter((key) => {
+        return [
+          'access-control-allow-origin',
+          'access-control-allow-credentials',
+        ].indexOf(key) === -1
+      }))
+    },
+
+    assertOptions (assert: Assert, res: any) {
+      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS.filter((key) => {
+        return [
+          'access-control-expose-headers',
+        ].indexOf(key) > -1
+      }))
+
+      assert.equal(res.headers['access-control-allow-headers'], 'x-adonis,x-time')
+    },
+  },
+  {
     title: 'set preflight headers when case insensitive match passes',
 
     configureOptions (): CorsConfig {

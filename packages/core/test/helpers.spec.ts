@@ -48,4 +48,16 @@ test.group('Helpers', () => {
     assert.equal(helpers.viewsPath('main.edge'), join(APP_ROOT, 'resources/views', 'main.edge'))
     assert.equal(helpers.tmpPath('uploads'), join(APP_ROOT, 'tmp', 'uploads'))
   })
+
+  test('sleep async executation context', async (assert) => {
+    const ignitor = new Ignitor(APP_ROOT)
+    ignitor['_loadRcFile']()
+
+    const helpers = new Helpers(ignitor.appRoot, ignitor.directories)
+
+    const start = new Date().getTime()
+    await helpers.sleep(500)
+    const diff = new Date().getTime() - start
+    assert.isAbove(diff, 500)
+  })
 })
