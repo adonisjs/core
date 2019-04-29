@@ -58,6 +58,6 @@ test.group('Helpers', () => {
     const start = new Date().getTime()
     await helpers.sleep(500)
     const diff = new Date().getTime() - start
-    assert.isAbove(diff, 500)
+    assert.isAbove(diff, 499)
   })
 })
