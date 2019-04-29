@@ -95,6 +95,7 @@ export class Server implements ServerContract {
     private _router: RouterContract,
     private _middlewareStore: MiddlewareStoreContract,
     private _httpConfig: Partial<ServerConfig>,
+    private _secretKey?: string,
   ) {}
 
   /**
@@ -253,8 +254,8 @@ export class Server implements ServerContract {
    * server
    */
   public async handle (req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const request = new this._Request(req, res, this._httpConfig)
-    const response = new this._Response(req, res, this._httpConfig)
+    const request = new this._Request(req, res, this._httpConfig, this._secretKey)
+    const response = new this._Response(req, res, this._httpConfig, this._secretKey)
     response.explicitEnd = true
 
     const ctx = new HttpContext(request, response)

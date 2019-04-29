@@ -20,7 +20,7 @@ export interface ServerContract {
   instance?: HttpServer | HttpsServer,
   onError (cb: ErrorHandleNode): this
   handle (req: IncomingMessage, res: ServerResponse): Promise<void>
-  optimize ()
+  optimize (): void
   before (cb: BeforeHookNode): this
   after (cb: AfterHookNode): this
 }
@@ -106,12 +106,22 @@ export type ServerConfig = RequestConfig & ResponseConfig
  * Request constructor shape
  */
 export type RequestConstructor = {
-  new (req: IncomingMessage, res: ServerResponse, config: Partial<ServerConfig>): RequestContract,
+  new (
+    req: IncomingMessage,
+    res: ServerResponse,
+    config: Partial<ServerConfig>,
+    secret?: string,
+  ): RequestContract,
 }
 
 /**
  * Response constructor shape
  */
 export type ResponseConstructor = {
-  new (req: IncomingMessage, res: ServerResponse, config: Partial<ServerConfig>): ResponseContract,
+  new (
+    req: IncomingMessage,
+    res: ServerResponse,
+    config: Partial<ServerConfig>,
+    secret?: string,
+  ): ResponseContract,
 }
