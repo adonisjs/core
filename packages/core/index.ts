@@ -28,5 +28,6 @@ export { ConfigContract } from './src/Contracts/Config'
 export { HelpersContract } from './src/Contracts/Helpers'
 export { LoggerContract, LoggerConfig } from './src/Contracts/Logger'
 export { RequestContract, HttpContextContract, HooksHttpContextContract } from './src/Contracts/Context'
+export { EncryptionContract } from './src/Contracts/Encryption'
 
 export { HttpExceptionHandler } from './src/HttpExceptionHandler'

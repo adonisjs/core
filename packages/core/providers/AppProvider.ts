@@ -17,6 +17,7 @@ import { BodyParserMiddleware, bodyParserConfig } from '@adonisjs/bodyparser'
 import { Config } from '../src/Config'
 import { Env } from '../src/Env'
 import { Logger } from '../src/Logger'
+import { Encryption } from '../src/Encryption'
 import { loggerConfig } from '../config/logger'
 import { requestBindings } from '../src/Bindings/Request'
 
@@ -121,6 +122,19 @@ export default class AppProvider {
   }
 
   /**
+   * Registers encryption provider under `Adonis/Src/Encryption`
+   * namespace.
+   */
+  private _registerEncryption () {
+    this.$container.singleton('Adonis/Src/Encryption', (app) => {
+      const appKey = app.use('Adonis/Src/Config').get('app.appKey')
+      return new Encryption(appKey)
+    })
+
+    this.$container.alias('Adonis/Src/Encryption', 'Encryption')
+  }
+
+  /**
    * Register HTTP server to the IoC container
    *
    * Namespace: Adonis/Src/Server
@@ -188,6 +202,7 @@ export default class AppProvider {
     this._registerServer()
     this._registerHttpMiddleware()
     this._registerBodyParserMiddleware()
+    this._registerEncryption()
   }
 
   /**

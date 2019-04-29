@@ -59,6 +59,7 @@
     "dotenv": "^7.0.0",
     "lodash": "^4.17.11",
     "pino": "^5.12.3",
+    "simple-encryptor": "^2.0.0",
     "youch": "^2.0.10",
     "youch-terminal": "^1.0.0"
   },
