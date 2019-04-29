@@ -8,21 +8,31 @@
  */
 
 import { Router } from '@adonisjs/router'
-import { Server, MiddlewareStore, routePreProcessor } from '@adonisjs/server'
+import { Exception } from '@adonisjs/utils'
+import { IocContract } from '@adonisjs/fold'
 import { Request, requestConfig } from '@adonisjs/request'
 import { Response, responseConfig } from '@adonisjs/response'
-import { IocContract } from '@adonisjs/fold'
+import { Server, MiddlewareStore, routePreProcessor } from '@adonisjs/server'
 import { BodyParserMiddleware, bodyParserConfig } from '@adonisjs/bodyparser'
 
-import { Config } from '../src/Config'
 import { Env } from '../src/Env'
 import { Logger } from '../src/Logger'
+import { Config } from '../src/Config'
+import { exceptionCodes } from '../lib'
 import { Encryption } from '../src/Encryption'
 import { loggerConfig } from '../config/logger'
 import { requestBindings } from '../src/Bindings/Request'
 
 export default class AppProvider {
   constructor (protected $container: IocContract) {}
+
+  private _getAppKey (): string {
+    const appKey = this.$container.use('Adonis/Src/Config').get('app.appKey')
+    if (!appKey) {
+      throw new Exception('Define appKey inside config/app file', 500, exceptionCodes.E_MISSING_APP_KEY)
+    }
+    return appKey
+  }
 
   /**
    * Registers the env provider to the IoC container.
@@ -126,9 +136,8 @@ export default class AppProvider {
    * namespace.
    */
   private _registerEncryption () {
-    this.$container.singleton('Adonis/Src/Encryption', (app) => {
-      const appKey = app.use('Adonis/Src/Config').get('app.appKey')
-      return new Encryption(appKey)
+    this.$container.singleton('Adonis/Src/Encryption', () => {
+      return new Encryption(this._getAppKey())
     })
 
     this.$container.alias('Adonis/Src/Encryption', 'Encryption')
@@ -148,7 +157,8 @@ export default class AppProvider {
       const HttpMiddleware = app.use('Adonis/Src/HttpMiddleware')
 
       const httpConfig = app.use('Adonis/Src/Config').get('app.http', {})
-      return new Server(HttpRequest, HttpResponse, Route, HttpMiddleware, httpConfig)
+      const appKey = this._getAppKey()
+      return new Server(HttpRequest, HttpResponse, Route, HttpMiddleware, httpConfig, appKey)
     })
 
     this.$container.alias('Adonis/Src/Server', 'Server')

@@ -36,9 +36,4 @@ test.group('Encryption', () => {
     const buff = new Buffer('hello-world')
     assert.equal(encryption.base64Decode(encryption.base64Encode(buff)), 'hello-world')
   })
-
-  test('raise error when secret key is missing', (assert) => {
-    const fn = () => new (Encryption as any)()
-    assert.throw(fn, 'E_MISSING_APP_KEY: Define appKey inside config/app file')
-  })
 })

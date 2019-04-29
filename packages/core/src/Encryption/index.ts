@@ -7,9 +7,7 @@
 * file that was distributed with this source code.
 */
 
-import { Exception } from '@adonisjs/utils'
 import * as SimpleEncryptor from 'simple-encryptor'
-import { exceptionCodes } from '../../lib'
 import { EncryptionContract, EncryptionConfig } from '../Contracts/Encryption'
 
 /**
@@ -25,10 +23,6 @@ export class Encryption implements EncryptionContract {
   private _encryptor: any
 
   constructor (private _secret: string, private _options?: Partial<EncryptionConfig>) {
-    if (!this._secret) {
-      throw new Exception('Define appKey inside config/app file', 500, exceptionCodes.E_MISSING_APP_KEY)
-    }
-
     this._encryptor = (SimpleEncryptor as any)(Object.assign({
       key: this._secret,
       debug: false,
