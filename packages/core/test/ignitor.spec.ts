@@ -246,6 +246,7 @@ test.group('Ignitor | http server', (group) => {
 
   test('start http server on defined host and port', async (assert, done) => {
     await fs.addEnv('.env', {})
+    await fs.add('config/app.js', `module.exports = { appKey: 'hell-world' }`)
     await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
       preloads: [{ file: 'start/routes' }],
@@ -282,6 +283,7 @@ test.group('Ignitor | http server', (group) => {
 
   test('pass exceptions to custom http exception handler', async (assert, done) => {
     await fs.addEnv('.env', {})
+    await fs.add('config/app.js', `module.exports = { appKey: 'hell-world' }`)
     await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
       exceptionHandlerNamespace: 'App/Exceptions/Handler',
@@ -322,6 +324,7 @@ test.group('Ignitor | http server', (group) => {
 
   test('execute onHttpServer hook', async (assert, done) => {
     await fs.addEnv('.env', {})
+    await fs.add('config/app.js', `module.exports = { appKey: 'hell-world' }`)
     await fs.add('.adonisrc.json', JSON.stringify({ typescript: true }))
 
     await fs.add('start/app.js', `
@@ -355,6 +358,7 @@ test.group('Ignitor | http server', (group) => {
 
   test('remove providers reference after boot', async (assert, done) => {
     await fs.addEnv('.env', {})
+    await fs.add('config/app.js', `module.exports = { appKey: 'hell-world' }`)
     await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
     }))
@@ -382,6 +386,7 @@ test.group('Ignitor | http server', (group) => {
 
   test('hold reference to providers with onExit hook', async (assert, done) => {
     await fs.addEnv('.env', {})
+    await fs.add('config/app.js', `module.exports = { appKey: 'hell-world' }`)
     await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
     }))

@@ -26,6 +26,7 @@ test.group('Server', (group) => {
     ioc.bind('Adonis/Src/Helpers', () => new Helpers(__dirname, { config: 'config' }))
     global['make'] = ioc.make.bind(ioc)
     await registrar.useProviders([join(__dirname, '../providers', 'AppProvider')]).registerAndBoot()
+    ioc.use('Adonis/Src/Config').set('app.appKey', 'hello-world')
   })
 
   test('handle http requests', async (assert) => {

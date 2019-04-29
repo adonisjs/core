@@ -33,7 +33,8 @@ test.group('Encryption', () => {
     const encryption = new Encryption('real secret keys should be long and random')
     assert.equal(encryption.base64Decode(encryption.base64Encode('hello-world')), 'hello-world')
 
-    const buff = new Buffer('hello-world')
+    const buff = Buffer.from('aGVsbG8td29ybGQ=', 'base64')
     assert.equal(encryption.base64Decode(encryption.base64Encode(buff)), 'hello-world')
+    assert.equal(encryption.base64Decode(buff), 'hello-world')
   })
 })
