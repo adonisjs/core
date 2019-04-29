@@ -10,6 +10,9 @@
 import { RequestConstructorContract } from '@adonisjs/request'
 import { FileValidationOptions, MultipartFileContract } from '@adonisjs/bodyparser'
 
+/**
+ * Adds `file` macro the request object to read uploaded files
+ */
 export function requestBindings (Request: RequestConstructorContract) {
   Request.macro('file', function getFile (key: string, options: FileValidationOptions) {
     const file = this._files[key]
