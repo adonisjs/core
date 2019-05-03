@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/compare/@adonisjs/response@1.2.1...@adonisjs/response@1.2.2) (2019-05-03)
+
+
+### Bug Fixes
+
+* do not override explicitly set user status when body is empty ([cddd3e8](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/commit/cddd3e8))
+
+
+
+
+
 ## [1.2.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/response/compare/@adonisjs/response@1.2.0...@adonisjs/response@1.2.1) (2019-04-25)
 
 **Note:** Version bump only for package @adonisjs/response

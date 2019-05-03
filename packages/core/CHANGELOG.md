@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.8.0...@adonisjs/core@1.9.0) (2019-05-03)
+
+
+### Features
+
+* **core:** add Encryption provider ([ed34381](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/ed34381))
+
+
+
+
+
 # [1.8.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.7.0...@adonisjs/core@1.8.0) (2019-04-25)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/core",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "AdonisJs core package",
   "main": "build/index.js",
   "files": [
@@ -52,9 +52,9 @@
     "@adonisjs/fold": "^5.0.9",
     "@adonisjs/profiler": "^1.1.8",
     "@adonisjs/request": "^1.2.1",
-    "@adonisjs/response": "^1.2.1",
+    "@adonisjs/response": "^1.2.2",
     "@adonisjs/router": "^1.5.9",
-    "@adonisjs/server": "^2.0.5",
+    "@adonisjs/server": "^2.0.6",
     "@adonisjs/utils": "^1.4.4",
     "dotenv": "^7.0.0",
     "lodash": "^4.17.11",
