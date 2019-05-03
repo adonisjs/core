@@ -88,6 +88,7 @@ export class Response extends Macroable implements ResponseContract {
   protected static _getters = {}
 
   private _headers: any = {}
+  private _explicitStatus = false
 
   constructor (
     public request: IncomingMessage,
@@ -153,7 +154,7 @@ export class Response extends Macroable implements ResponseContract {
      * is null
      */
     if (body === null) {
-      this.status(204)
+      this.safeStatus(204)
       this.removeHeader('Content-Type')
       this.removeHeader('Content-Length')
       this.removeHeader('Transfer-Encoding')
@@ -232,6 +233,9 @@ export class Response extends Macroable implements ResponseContract {
     res.end(body, null, null)
   }
 
+  /**
+   * Writes headers to the response.
+   */
   public flushHeaders (statusCode?: number): this {
     this.response.writeHead(statusCode || this.response.statusCode, this._headers)
     this._headers = {}
@@ -326,6 +330,20 @@ export class Response extends Macroable implements ResponseContract {
    * Set HTTP status code
    */
   public status (code: number): this {
+    this._explicitStatus = true
+    this.response.statusCode = code
+    return this
+  }
+
+  /**
+   * Set's status code only when it's not explictly
+   * set
+   */
+  public safeStatus (code: number): this {
+    if (this._explicitStatus) {
+      return this
+    }
+
     this.response.statusCode = code
     return this
   }

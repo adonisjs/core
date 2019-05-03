@@ -723,6 +723,16 @@ test.group('Response', (group) => {
     await supertest(server).get('/').expect(204)
   })
 
+  test('do not override explicit status even when body is empty', async () => {
+    const server = createServer((req, res) => {
+      const config = fakeConfig()
+      const response = new Response(req, res, config)
+      response.status(200).send('')
+    })
+
+    await supertest(server).get('/').expect(200)
+  })
+
   test('remove previously set content headers when status code is 304', async (assert) => {
     const server = createServer((req, res) => {
       const config = fakeConfig()

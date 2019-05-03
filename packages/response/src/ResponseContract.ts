@@ -74,6 +74,7 @@ export interface ResponseContract {
   removeHeader (key: string): this
 
   status (code: number): this
+  safeStatus (code: number): this
   type (type: string, charset?: string): this
   vary (field: string): this
   setEtag (body: any, weak?: boolean): this
