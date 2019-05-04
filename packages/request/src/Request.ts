@@ -22,6 +22,7 @@ import * as typeIs from 'type-is'
 import * as accepts from 'accepts'
 import * as fresh from 'fresh'
 import { Macroable } from 'macroable'
+import * as cuid from 'cuid'
 import { parse as parseCookie } from '@adonisjs/cookie'
 
 import { RequestContract, RequestConfig } from './RequestContract'
@@ -120,6 +121,20 @@ export class Request extends Macroable implements RequestContract {
    */
   private _initiateAccepts () {
     this._lazyAccepts = this._lazyAccepts || accepts(this.request)
+  }
+
+  /**
+   * Returns the request id from the `x-request-id` header. The
+   * header is untoched, if it already exists.
+   */
+  public id (): string {
+    let requestId = this.header('x-request-id')
+    if (!requestId) {
+      requestId = cuid()
+      this.request.headers['x-request-id'] = requestId
+    }
+
+    return requestId
   }
 
   /**

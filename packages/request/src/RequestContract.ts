@@ -19,6 +19,7 @@ export interface RequestContract {
   parsedUrl: UrlWithStringQuery
   request: IncomingMessage
   response: ServerResponse
+  id (): string,
   setInitialBody (body: any): void
   updateBody (body: any): void
   updateRawBody (body: string): void

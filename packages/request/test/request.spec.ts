@@ -864,4 +864,24 @@ test.group('Request', () => {
       name: 'nikk',
     })
   })
+
+  test('set x-request-id header when id method is called', async (assert) => {
+    const server = createServer((req, res) => {
+      const request = new Request(req, res, fakeConfig())
+      res.writeHead(200, { 'content-type': 'application/json' })
+      res.end(JSON.stringify({
+        id: request.id(),
+        header: request.header('x-request-id'),
+        reComputed: request.header('x-request-id'),
+      }))
+    })
+
+    const { body } = await supertest(server).get('/')
+    assert.exists(body.id)
+    assert.exists(body.header)
+    assert.exists(body.reComputed)
+
+    assert.equal(body.id, body.header)
+    assert.equal(body.id, body.reComputed)
+  })
 })
