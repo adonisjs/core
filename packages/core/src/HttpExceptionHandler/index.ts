@@ -25,6 +25,15 @@ export abstract class HttpExceptionHandler implements HttpExceptionHandlerContra
   }
 
   /**
+   * An array of exceptions to be reported. When whitelists
+   * are defined, then blacklists are ignored completely.
+   *
+   * Which means if an exception code is whitelisted and
+   * blacklisted both, then it will be reported.
+   */
+  protected onlyReport: string[]
+
+  /**
    * An array of error codes that must not
    * be reported
    */
@@ -47,7 +56,7 @@ export abstract class HttpExceptionHandler implements HttpExceptionHandlerContra
    */
   protected context (ctx: HttpContextContract): any {
     return {
-      requestId: ctx.request['id'],
+      'x-request-id': ctx.request.id(),
     }
   }
 
@@ -56,15 +65,22 @@ export abstract class HttpExceptionHandler implements HttpExceptionHandlerContra
    * to be logged or not
    */
   protected shouldReport (error: any): boolean {
-    if (error.code && this.dontReport.indexOf(error.code) > -1) {
-      return false
+    if (!error.code) {
+      return true
     }
 
-    if (error.code && this.internalDontReport.indexOf(error.code) > -1) {
-      return false
+    /**
+     * Only consider the `report` array if it exists.
+     */
+    if (Array.isArray(this.onlyReport)) {
+      return this.onlyReport.indexOf(error.code) > -1
     }
 
-    return true
+    /**
+     * Make sure it's not in the dont report list
+     */
+    return this.dontReport.indexOf(error.code) === -1 &&
+      this.internalDontReport.indexOf(error.code) === -1
   }
 
   /**

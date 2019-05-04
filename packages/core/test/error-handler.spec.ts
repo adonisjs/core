@@ -40,7 +40,32 @@ test.group('HttpExceptionHandler', () => {
     assert.deepEqual(logger.logs, [
       {
         method: 'error',
-        data: [{ requestId: undefined }, 'E_BAD_REQUEST: bad request'],
+        data: [{ 'x-request-id': ctx.request.id() }, 'E_BAD_REQUEST: bad request'],
+      },
+    ])
+  })
+
+  test('give preference to whitelist over blacklist', (assert) => {
+    class AppHandler extends HttpExceptionHandler {
+      protected onlyReport = [
+        'E_BAD_REQUEST',
+      ]
+
+      protected dontReport = [
+        'E_BAD_REQUEST',
+      ]
+    }
+
+    const logger = new FakeLogger()
+    const handler = new AppHandler(logger)
+
+    const ctx = new FakeHttpContext(Request, Response, {})
+    handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
+
+    assert.deepEqual(logger.logs, [
+      {
+        method: 'error',
+        data: [{ 'x-request-id': ctx.request.id() }, 'E_BAD_REQUEST: bad request'],
       },
     ])
   })
