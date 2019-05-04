@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/compare/@adonisjs/request@1.2.1...@adonisjs/request@1.3.0) (2019-05-04)
+
+
+### Features
+
+* add support for request ids ([5816ea0](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/commit/5816ea0))
+
+
+
+
+
 ## [1.2.1](https://github.com/adonisjs/adonis-framework/tree/master/packages/request/compare/@adonisjs/request@1.2.0...@adonisjs/request@1.2.1) (2019-04-25)
 
 **Note:** Version bump only for package @adonisjs/request

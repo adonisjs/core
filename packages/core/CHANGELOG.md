@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.9.0...@adonisjs/core@1.10.0) (2019-05-04)
+
+
+### Features
+
+* **exceptionhandler:** add support for whitelisting error codes ([5a9d074](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/commit/5a9d074))
+
+
+
+
+
 # [1.9.0](https://github.com/adonisjs/adonis-framework/tree/master/packages/core/compare/@adonisjs/core@1.8.0...@adonisjs/core@1.9.0) (2019-05-03)
 
 
