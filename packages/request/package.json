@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@adonisjs/cookie": "^1.1.0",
-    "accepts": "^1.3.5",
+    "accepts": "^1.3.7",
     "cuid": "^2.1.6",
     "fresh": "^0.5.2",
     "get-value": "^3.0.1",
@@ -44,7 +44,7 @@
     "macroable": "^2.0.2",
     "proxy-addr": "^2.0.5",
     "qs": "^6.7.0",
-    "type-is": "^1.6.16"
+    "type-is": "^1.6.18"
   },
   "nyc": {
     "exclude": [
