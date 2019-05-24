@@ -1,9 +1,0 @@
-{
-  "extends": "../../_tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./build"
-  },
-  "include": [
-    "**/*"
-  ]
-}

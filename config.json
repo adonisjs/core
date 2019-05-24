@@ -1,0 +1,9 @@
+{
+  "core": true,
+  "ts": true,
+  "license": "MIT",
+  "services": [
+    "circleci"
+  ],
+  "minNodeVersion": "10.15.3"
+}

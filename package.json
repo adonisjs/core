@@ -1,36 +1,72 @@
 {
-  "name": "root",
-  "private": true,
+  "name": "@adonisjs/core",
+  "version": "1.10.0",
+  "description": "Adonisjs core",
+  "scripts": {
+    "mrm": "mrm --preset=@adonisjs/mrm-preset",
+    "pretest": "npm run lint",
+    "test": "node japaFile.js",
+    "prepublishOnly": "npm run build",
+    "lint": "tslint --project tsconfig.json",
+    "clean": "del build",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile",
+    "commit": "git-cz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonisjs/adonis-framework.git"
+  },
+  "keywords": [
+    "adonisjs",
+    "framework",
+    "mvc"
+  ],
+  "author": "virk,adonisjs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-framework/issues"
+  },
+  "homepage": "https://github.com/adonisjs/adonis-framework#readme",
   "devDependencies": {
-    "@commitlint/cli": "^7.6.1",
-    "@commitlint/config-conventional": "^7.6.0",
-    "@types/node": "^12.0.0",
+    "@adonisjs/mrm-preset": "^2.0.3",
+    "@types/node": "^12.0.2",
+    "commitizen": "^3.1.1",
+    "cz-conventional-changelog": "^2.1.0",
     "del-cli": "^1.1.0",
-    "husky": "^2.2.0",
+    "doctoc": "^1.4.0",
+    "husky": "^2.3.0",
     "japa": "^2.0.10",
-    "lerna": "^3.13.4",
-    "nyc": "^14.1.1",
+    "mrm": "^1.2.2",
+    "pkg-ok": "^2.3.1",
     "ts-node": "^8.1.0",
     "tslint": "^5.16.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typedoc": "^0.14.2",
-    "typedoc-plugin-external-module-name": "^2.1.0",
     "typescript": "^3.4.5"
   },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
     ]
   },
+  "main": "build/index.js",
+  "files": [
+    "build/src",
+    "build/index.d.ts",
+    "build/index.js"
+  ],
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "pre-commit": "doctoc README.md --title='## Table of contents' && git add README.md",
+      "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js"
     }
   },
-  "scripts": {
-    "postinstall": "lerna bootstrap",
-    "pretest": "lerna run build",
-    "test": "lerna run test",
-    "publish": "lerna run build && lerna publish"
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

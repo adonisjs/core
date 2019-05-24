@@ -1,41 +1,40 @@
 version: 2
 jobs:
-  build_node_10:
+  build_10.15.3:
     docker:
-    - image: circleci/node:10.0.0
-    working_directory: ~/adonis-framework
+      - image: 'circleci/node:10.15.3'
+    working_directory: ~/app
     steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - v1-dependencies-{{ checksum "package.json" }}
-        - v1-dependencies-
-    - run: npm install
-    - save_cache:
-        paths:
-        - node_modules
-        key: v1-dependencies-{{ checksum "package.json" }}
-    - run: npm test
-
-  build_node_latest:
+      - checkout
+      - restore_cache:
+          keys:
+            - 'v1-dependencies-{{ checksum "package.json" }}'
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: 'v1-dependencies-{{ checksum "package.json" }}'
+      - run: npm test
+  build_latest:
     docker:
-    - image: circleci/node:11.10.0
-    working_directory: ~/adonis-framework
+      - image: 'circleci/node:latest'
+    working_directory: ~/app
     steps:
-    - checkout
-    - restore_cache:
-        keys:
-        - v1-dependencies-{{ checksum "package.json" }}
-        - v1-dependencies-
-    - run: npm install
-    - save_cache:
-        paths:
-        - node_modules
-        key: v1-dependencies-{{ checksum "package.json" }}
-    - run: npm test
+      - checkout
+      - restore_cache:
+          keys:
+            - 'v1-dependencies-{{ checksum "package.json" }}'
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: 'v1-dependencies-{{ checksum "package.json" }}'
+      - run: npm test
 workflows:
   version: 2
   workflow:
     jobs:
-    - build_node_latest
-    - build_node_10
+      - build_10.15.3
+      - build_latest

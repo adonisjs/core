@@ -1,12 +1,8 @@
-coverage
 node_modules
-.DS_Store
-npm-debug.log
-.idea
-out
-.nyc_output
-test/tmp
+coverage
 .DS_STORE
+.nyc_output
+.idea
 .vscode/
 *.sublime-project
 *.sublime-workspace
@@ -15,5 +11,4 @@ build
 dist
 yarn.lock
 shrinkwrap.yaml
-docs
-api-docs
+package-lock.json
