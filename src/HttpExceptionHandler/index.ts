@@ -21,7 +21,7 @@ export abstract class HttpExceptionHandler {
    */
   static get inject () {
     return {
-      instance: ['Adonis/Src/Logger'],
+      instance: ['Adonis/Core/Logger'],
     }
   }
 
