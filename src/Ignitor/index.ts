@@ -15,6 +15,7 @@ import { ServerContract, HttpContext } from '@poppinss/http-server'
 import { Application, ApplicationContract } from '@poppinss/application'
 import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
 import { useReturnValue } from '@poppinss/http-server/build/src/Server/useReturnValue'
+import * as findPkg from 'find-package-json'
 
 type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
 type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
@@ -61,7 +62,8 @@ export class Ignitor {
      * The package file is required to read the version of `@adonisjs/core`
      * package and set that as the application version
      */
-    const pkgVersion = require(join(__dirname, '..', '..', 'package.json')).version
+    const nearestDir = join(__dirname, '..', '..')
+    const pkgVersion = findPkg(nearestDir).next().value.version
 
     /**
      * The contents of the rc file

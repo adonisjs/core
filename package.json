@@ -84,6 +84,7 @@
     "@poppinss/request": "^1.0.8",
     "@poppinss/response": "^1.0.7",
     "@poppinss/utils": "^1.0.1",
+    "find-package-json": "^1.2.0",
     "simple-encryptor": "^3.0.0",
     "youch": "^2.0.10",
     "youch-terminal": "^1.0.0"
