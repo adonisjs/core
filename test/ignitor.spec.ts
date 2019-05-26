@@ -42,7 +42,7 @@ test.group('Ignitor', (group) => {
     ]`)
 
     await fs.add(`config/app.ts`, `
-      const Env = global['use']('Adonis/Src/Env')
+      const Env = global['use']('Adonis/Core/Env')
       export const appKey = Env.get('APP_KEY')
     `)
 
@@ -52,32 +52,32 @@ test.group('Ignitor', (group) => {
     await ignitor.bootstrap()
 
     assert.deepEqual(
-      ignitor.application.container.use('Adonis/Src/Config'),
-      ignitor.application.container.use('Adonis/Src/Config'),
+      ignitor.application.container.use('Adonis/Core/Config'),
+      ignitor.application.container.use('Adonis/Core/Config'),
     )
 
     assert.deepEqual(
-      ignitor.application.container.use('Adonis/Src/Env'),
-      ignitor.application.container.use('Adonis/Src/Env'),
+      ignitor.application.container.use('Adonis/Core/Env'),
+      ignitor.application.container.use('Adonis/Core/Env'),
     )
 
     assert.deepEqual(
-      ignitor.application.container.use('Adonis/Src/Route'),
-      ignitor.application.container.use('Adonis/Src/Route'),
+      ignitor.application.container.use('Adonis/Core/Route'),
+      ignitor.application.container.use('Adonis/Core/Route'),
     )
 
     assert.deepEqual(
-      ignitor.application.container.use('Adonis/Src/Server'),
-      ignitor.application.container.use('Adonis/Src/Server'),
+      ignitor.application.container.use('Adonis/Core/Server'),
+      ignitor.application.container.use('Adonis/Core/Server'),
     )
 
     assert.deepEqual(
-      ignitor.application.container.use('Adonis/Src/MiddlewareStore'),
-      ignitor.application.container.use('Adonis/Src/MiddlewareStore'),
+      ignitor.application.container.use('Adonis/Core/MiddlewareStore'),
+      ignitor.application.container.use('Adonis/Core/MiddlewareStore'),
     )
 
-    const config = ignitor.application.container.use('Adonis/Src/Config')
-    const env = ignitor.application.container.use('Adonis/Src/Env')
+    const config = ignitor.application.container.use('Adonis/Core/Config')
+    const env = ignitor.application.container.use('Adonis/Core/Env')
 
     assert.equal(config.get('app.appKey'), 'foo')
     assert.equal(env.get('APP_KEY'), 'foo')
@@ -89,7 +89,7 @@ test.group('Ignitor', (group) => {
     ]`)
 
     await fs.add(`start/route.ts`, `
-      const Config = global['use']('Adonis/Src/Config')
+      const Config = global['use']('Adonis/Core/Config')
       Config.set('routeLoaded', true)
     `)
 
@@ -104,7 +104,7 @@ test.group('Ignitor', (group) => {
     const ignitor = new Ignitor(fs.basePath)
     await ignitor.bootstrap()
 
-    const config = ignitor.application.container.use('Adonis/Src/Config')
+    const config = ignitor.application.container.use('Adonis/Core/Config')
     assert.isTrue(config.get('routeLoaded'))
   })
 
@@ -114,7 +114,7 @@ test.group('Ignitor', (group) => {
     ]`)
 
     await fs.add(`start/route.ts`, `
-      const Config = global['use']('Adonis/Src/Config')
+      const Config = global['use']('Adonis/Core/Config')
       Config.set('routeLoaded', true)
     `)
 
@@ -136,7 +136,7 @@ test.group('Ignitor', (group) => {
     const ignitor = new Ignitor(fs.basePath)
     await ignitor.bootstrap()
 
-    const config = ignitor.application.container.use('Adonis/Src/Config')
+    const config = ignitor.application.container.use('Adonis/Core/Config')
     assert.isTrue(config.get('routeLoaded'))
   })
 
@@ -244,14 +244,14 @@ test.group('Ignitor', (group) => {
       constructor (protected $container) {}
 
       public async onHttpServer () {
-        this.$container.use('Adonis/Src/Server').hookCalled = true
+        this.$container.use('Adonis/Core/Server').hookCalled = true
       }
     }
     `)
 
     const ignitor = new Ignitor(fs.basePath)
     await ignitor.startHttpServer()
-    const server = ignitor.application.container.use('Adonis/Src/Server')
+    const server = ignitor.application.container.use('Adonis/Core/Server')
     server.instance.close()
 
     assert.isTrue(server.hookCalled)
@@ -283,10 +283,10 @@ test.group('Ignitor', (group) => {
     const ignitor = new Ignitor(fs.basePath)
     await ignitor.bootstrap()
 
-    ignitor.application.container.use('Adonis/Src/Route').get('/', () => 'handled')
+    ignitor.application.container.use('Adonis/Core/Route').get('/', () => 'handled')
 
     await ignitor.startHttpServer((handler) => createServer(handler))
-    const server = ignitor.application.container.use('Adonis/Src/Server')
+    const server = ignitor.application.container.use('Adonis/Core/Server')
 
     const { text } = await supertest(server.instance).get('/').expect(200)
     server.instance.close()
@@ -322,7 +322,7 @@ test.group('Ignitor', (group) => {
     await ignitor.bootstrap()
 
     await ignitor.startHttpServer((handler) => createServer(handler))
-    const server = ignitor.application.container.use('Adonis/Src/Server')
+    const server = ignitor.application.container.use('Adonis/Core/Server')
     server.instance.close()
 
     const { text } = await supertest(server.instance).get('/').expect(404)

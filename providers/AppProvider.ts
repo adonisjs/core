@@ -32,15 +32,15 @@ export default class AppProvider {
    * Register request and response bindings to the container
    */
   protected $registerRequestResponse () {
-    this.$container.bind('Adonis/Src/Request', () => Request)
-    this.$container.bind('Adonis/Src/Response', () => Response)
+    this.$container.bind('Adonis/Core/Request', () => Request)
+    this.$container.bind('Adonis/Core/Response', () => Response)
   }
 
   /**
    * Register config binding to the container
    */
   protected $registerConfigProvider () {
-    this.$container.singleton('Adonis/Src/Config', () => {
+    this.$container.singleton('Adonis/Core/Config', () => {
       const app = this.$container.use<ApplicationContract>('Application')
       return new Config(requireAll(app.configPath()))
     })
@@ -50,8 +50,8 @@ export default class AppProvider {
    * Register logger binding to the container
    */
   protected $registerLogger () {
-    this.$container.singleton('Adonis/Src/Logger', () => {
-      return getLogger(this.$container.use('Adonis/Src/Config').get('app.logger', {}))
+    this.$container.singleton('Adonis/Core/Logger', () => {
+      return getLogger(this.$container.use('Adonis/Core/Config').get('app.logger', {}))
     })
   }
 
@@ -60,7 +60,7 @@ export default class AppProvider {
    * contents of the `.env` and `.env.testing` files.
    */
   protected $registerEnv () {
-    this.$container.singleton('Adonis/Src/Env', () => {
+    this.$container.singleton('Adonis/Core/Env', () => {
       const app = this.$container.use<ApplicationContract>('Application')
       const { envContents, testEnvContent } = envLoader(app.appRoot)
 
@@ -75,15 +75,15 @@ export default class AppProvider {
    * Registering middleware store to the container
    */
   protected $registerMiddlewareStore () {
-    this.$container.singleton('Adonis/Src/MiddlewareStore', () => new MiddlewareStore())
+    this.$container.singleton('Adonis/Core/MiddlewareStore', () => new MiddlewareStore())
   }
 
   /**
    * Registering router to the container.
    */
   protected $registerRouter () {
-    this.$container.singleton('Adonis/Src/Route', () => {
-      const middlewareStore = this.$container.use('Adonis/Src/MiddlewareStore')
+    this.$container.singleton('Adonis/Core/Route', () => {
+      const middlewareStore = this.$container.use('Adonis/Core/MiddlewareStore')
       return new Router((route) => routePreProcessor(route, middlewareStore))
     })
   }
@@ -92,18 +92,18 @@ export default class AppProvider {
    * Binding http server to the container
    */
   protected $registerHttpServer () {
-    this.$container.bind('Adonis/Src/HttpContext', () => HttpContext)
+    this.$container.bind('Adonis/Core/HttpContext', () => HttpContext)
 
-    this.$container.singleton('Adonis/Src/Server', () => {
-      const Config = this.$container.use('Adonis/Src/Config')
+    this.$container.singleton('Adonis/Core/Server', () => {
+      const Config = this.$container.use('Adonis/Core/Config')
       const httpConfig = Config.get('app.http', {})
       const secret = Config.get('app.appKey')
 
       return new Server(
         HttpContext,
-        this.$container.use('Adonis/Src/Route'),
-        this.$container.use('Adonis/Src/MiddlewareStore'),
-        this.$container.use('Adonis/Src/Logger'),
+        this.$container.use('Adonis/Core/Route'),
+        this.$container.use('Adonis/Core/MiddlewareStore'),
+        this.$container.use('Adonis/Core/Logger'),
         Object.assign({ secret }, httpConfig),
       )
     })
@@ -113,7 +113,7 @@ export default class AppProvider {
    * Register `HttpExceptionHandler` to the container.
    */
   protected $registerHttpExceptionHandler () {
-    this.$container.bind('Adonis/Src/HttpExceptionHandler', () => HttpExceptionHandler)
+    this.$container.bind('Adonis/Core/HttpExceptionHandler', () => HttpExceptionHandler)
   }
 
   /**

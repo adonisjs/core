@@ -218,8 +218,8 @@ export class Ignitor {
    * Start the HTTP server by pulling it from the IoC container
    */
   private async _createHttpServer (serverCallback?: CustomServerCallback) {
-    const server = this.application.container.use('Adonis/Src/Server')
-    const router = this.application.container.use('Adonis/Src/Route')
+    const server = this.application.container.use('Adonis/Core/Server')
+    const router = this.application.container.use('Adonis/Core/Route')
 
     /**
      * Commit routes to the router store
@@ -267,9 +267,9 @@ export class Ignitor {
    */
   private _listen () {
     return new Promise((resolve) => {
-      const Env = this.application.container.use('Adonis/Src/Env')
-      const Logger = this.application.container.use('Adonis/Src/Logger')
-      const Server = this.application.container.use('Adonis/Src/Server')
+      const Env = this.application.container.use('Adonis/Core/Env')
+      const Logger = this.application.container.use('Adonis/Core/Logger')
+      const Server = this.application.container.use('Adonis/Core/Server')
       const host = Env.get('HOST', '0.0.0.0') as string
       const port = Number(Env.get('PORT', '3333') as string)
 
@@ -288,7 +288,7 @@ export class Ignitor {
    * will not impact existing requests.
    */
   private _onExit () {
-    const Server = this.application.container.use('Adonis/Src/Server')
+    const Server = this.application.container.use('Adonis/Core/Server')
 
     Server.instance!.close(async (error: any) => {
       if (error) {
