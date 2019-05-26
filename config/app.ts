@@ -8,10 +8,10 @@
 */
 
 import * as proxyAddr from 'proxy-addr'
-import { RequestConfigContract } from '@ioc:Adonis/Src/Request'
-import { ResponseConfigContract } from '@ioc:Adonis/Src/Response'
-import { LoggerConfigContract } from '@ioc:Adonis/Src/Logger'
-import Env from '@ioc:Adonis/Src/Env'
+import { RequestConfigContract } from '@ioc:Adonis/Core/Request'
+import { ResponseConfigContract } from '@ioc:Adonis/Core/Response'
+import { LoggerConfigContract } from '@ioc:Adonis/Core/Logger'
+import Env from '@ioc:Adonis/Core/Env'
 
 /*
 |--------------------------------------------------------------------------
