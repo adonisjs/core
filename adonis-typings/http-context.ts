@@ -16,7 +16,7 @@ declare module '@ioc:Adonis/Core/HttpContext' {
   import { ResponseContract } from '@ioc:Adonis/Core/Response'
   import { RequestContract } from '@ioc:Adonis/Core/Request'
   import { LoggerContract } from '@ioc:Adonis/Core/Logger'
-  import { HttpContextContract as BaseContextContract, ServerConfig } from '@poppinss/http-server'
+  import { HttpContextContract as BaseContextContract, ServerConfigContract } from '@poppinss/http-server'
 
   const HttpContext: HttpContextConstructorContract
 
@@ -35,7 +35,7 @@ declare module '@ioc:Adonis/Core/HttpContext' {
       routeParams: any,
       req?: IncomingMessage,
       res?: ServerResponse,
-      serverConfig?: ServerConfig,
+      serverConfig?: ServerConfigContract,
     ): HttpContextContract
   }
 
