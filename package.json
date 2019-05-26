@@ -4,6 +4,7 @@
   "description": "Adonisjs core",
   "main": "build/index.js",
   "files": [
+    "build/providers",
     "build/adonis-typings",
     "build/src",
     "build/index.d.ts",
