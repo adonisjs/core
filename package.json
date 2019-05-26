@@ -2,6 +2,13 @@
   "name": "@adonisjs/core",
   "version": "1.10.0",
   "description": "Adonisjs core",
+  "main": "build/index.js",
+  "files": [
+    "build/adonis-typings",
+    "build/src",
+    "build/index.d.ts",
+    "build/index.js"
+  ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
@@ -13,6 +20,7 @@
     "build": "npm run compile",
     "commit": "git-cz"
   },
+  "types": "./build/adonis-typings/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adonisjs/adonis-framework.git"
@@ -54,12 +62,6 @@
       ".ts"
     ]
   },
-  "main": "build/index.js",
-  "files": [
-    "build/src",
-    "build/index.d.ts",
-    "build/index.js"
-  ],
   "husky": {
     "hooks": {
       "pre-commit": "doctoc README.md --title='## Table of contents' && git add README.md",
