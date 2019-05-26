@@ -76,7 +76,7 @@
     }
   },
   "dependencies": {
-    "@adonisjs/fold": "^6.0.0",
+    "@adonisjs/fold": "^6.0.2",
     "@poppinss/application": "^1.0.2",
     "@poppinss/config": "^1.0.4",
     "@poppinss/env": "^1.0.4",

@@ -57,6 +57,7 @@ export class Ignitor {
      */
     global['use'] = ioc.use.bind(ioc)
     global['make'] = ioc.make.bind(ioc)
+    global['useEsm'] = ioc.useEsm.bind(ioc)
 
     /**
      * The package file is required to read the version of `@adonisjs/core`
