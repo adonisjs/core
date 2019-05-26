@@ -13,12 +13,13 @@
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
     "test": "node japaFile.js",
-    "prepublishOnly": "npm run build",
     "lint": "tslint --project tsconfig.json",
     "clean": "del build",
     "compile": "npm run lint && npm run clean && tsc",
     "build": "npm run compile",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "release": "np",
+    "version": "npm run build"
   },
   "types": "./build/adonis-typings/index.d.ts",
   "repository": {
@@ -47,7 +48,7 @@
     "husky": "^2.3.0",
     "japa": "^2.0.10",
     "mrm": "^1.2.2",
-    "pkg-ok": "^2.3.1",
+    "np": "^5.0.2",
     "supertest": "^4.0.2",
     "ts-node": "^8.2.0",
     "tslint": "^5.16.0",
@@ -86,5 +87,9 @@
     "simple-encryptor": "^3.0.0",
     "youch": "^2.0.10",
     "youch-terminal": "^1.0.0"
+  },
+  "np": {
+    "contents": ".",
+    "anyBranch": false
   }
 }
