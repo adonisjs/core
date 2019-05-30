@@ -15,6 +15,7 @@ import { Response } from '@poppinss/response'
 import { getLogger } from '@poppinss/logger'
 import { requireAll } from '@poppinss/utils'
 import { ApplicationContract } from '@poppinss/application'
+import { Emitter } from '@poppinss/events'
 import { Server, HttpContext, MiddlewareStore, Router, routePreProcessor } from '@poppinss/http-server'
 
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
@@ -117,6 +118,15 @@ export default class AppProvider {
   }
 
   /**
+   * Register `Event emitter` to the container.
+   */
+  protected $registerEmitter () {
+    this.$container.singleton('Adonis/Core/Event', () => {
+      return new Emitter()
+    })
+  }
+
+  /**
    * Registering all required bindings to the container
    */
   public register () {
@@ -128,5 +138,6 @@ export default class AppProvider {
     this.$registerMiddlewareStore()
     this.$registerHttpServer()
     this.$registerHttpExceptionHandler()
+    this.$registerEmitter()
   }
 }

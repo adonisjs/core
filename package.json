@@ -80,6 +80,7 @@
     "@poppinss/application": "^1.0.2",
     "@poppinss/config": "^1.0.4",
     "@poppinss/env": "^1.0.4",
+    "@poppinss/events": "^1.0.0",
     "@poppinss/http-server": "^1.1.3",
     "@poppinss/logger": "^1.0.5",
     "@poppinss/request": "^1.0.8",
