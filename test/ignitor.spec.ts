@@ -10,7 +10,7 @@
 import { join } from 'path'
 import * as test from 'japa'
 import { createServer } from 'http'
-import { Filesystem } from '@adonisjs/dev-utils'
+import { Filesystem } from '@poppinss/dev-utils'
 import * as supertest from 'supertest'
 import { Ignitor } from '../src/Ignitor'
 
@@ -24,6 +24,7 @@ test.group('Ignitor', (group) => {
   group.after(async () => {
     await fs.cleanup()
     delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
   })
 
   group.afterEach(async () => {
@@ -42,11 +43,11 @@ test.group('Ignitor', (group) => {
     ]`)
 
     await fs.add(`config/app.ts`, `
-      const Env = global['use']('Adonis/Core/Env')
+      const Env = global[Symbol.for('ioc.use')]('Adonis/Core/Env')
       export const appKey = Env.get('APP_KEY')
     `)
 
-    await fs.addEnv(`.env`, { APP_KEY: 'foo' })
+    await fs.add(`.env`, `APP_KEY=foo`)
 
     const ignitor = new Ignitor(fs.basePath)
     await ignitor.bootstrap()
@@ -89,7 +90,7 @@ test.group('Ignitor', (group) => {
     ]`)
 
     await fs.add(`start/route.ts`, `
-      const Config = global['use']('Adonis/Core/Config')
+      const Config = global[Symbol.for('ioc.use')]('Adonis/Core/Config')
       Config.set('routeLoaded', true)
     `)
 
@@ -114,7 +115,7 @@ test.group('Ignitor', (group) => {
     ]`)
 
     await fs.add(`start/route.ts`, `
-      const Config = global['use']('Adonis/Core/Config')
+      const Config = global[Symbol.for('ioc.use')]('Adonis/Core/Config')
       Config.set('routeLoaded', true)
     `)
 

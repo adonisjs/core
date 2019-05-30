@@ -12,7 +12,7 @@ import { Config } from '@poppinss/config'
 import { Request } from '@poppinss/request'
 import { IocContract } from '@adonisjs/fold'
 import { Response } from '@poppinss/response'
-import { getLogger } from '@poppinss/logger'
+import { Logger } from '@poppinss/logger'
 import { requireAll } from '@poppinss/utils'
 import { ApplicationContract } from '@poppinss/application'
 import { Emitter } from '@poppinss/events'
@@ -52,7 +52,7 @@ export default class AppProvider {
    */
   protected $registerLogger () {
     this.$container.singleton('Adonis/Core/Logger', () => {
-      return getLogger(this.$container.use('Adonis/Core/Config').get('app.logger', {}))
+      return new Logger(this.$container.use('Adonis/Core/Config').get('app.logger', {}))
     })
   }
 

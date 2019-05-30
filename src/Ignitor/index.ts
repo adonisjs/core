@@ -52,12 +52,12 @@ export class Ignitor {
     const ioc = new Ioc()
 
     /**
-     * Defining `use` and `make` globals to ease the process
-     * of resolving container dependencies.
+     * Adding IoC container resolver methods to the globals.
      */
-    global['use'] = ioc.use.bind(ioc)
-    global['make'] = ioc.make.bind(ioc)
-    global['useEsm'] = ioc.useEsm.bind(ioc)
+    global[Symbol.for('ioc.use')] = ioc.use.bind(ioc)
+    global[Symbol.for('ioc.make')] = ioc.make.bind(ioc)
+    global[Symbol.for('ioc.call')] = ioc.call.bind(ioc)
+    global[Symbol.for('ioc.useEsm')] = ioc.useEsm.bind(ioc)
 
     /**
      * The package file is required to read the version of `@adonisjs/core`
@@ -74,7 +74,7 @@ export class Ignitor {
     /**
      * Setting up the application
      */
-    this.application = new Application(pkgVersion, this._appRoot, ioc, rcContents)
+    this.application = new Application(this._appRoot, ioc, rcContents, pkgVersion)
 
     /**
      * For now we hardcode the envirnonment to web. Later this will change after

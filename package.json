@@ -39,12 +39,12 @@
   },
   "homepage": "https://github.com/adonisjs/adonis-framework#readme",
   "devDependencies": {
-    "@adonisjs/dev-utils": "^1.4.0",
     "@adonisjs/mrm-preset": "^2.0.3",
-    "@types/node": "^12.0.2",
+    "@poppinss/dev-utils": "^1.0.0",
+    "@types/node": "^12.0.3",
     "commitizen": "^3.1.1",
     "cz-conventional-changelog": "^2.1.0",
-    "del-cli": "^1.1.0",
+    "del-cli": "^2.0.0",
     "doctoc": "^1.4.0",
     "husky": "^2.3.0",
     "japa": "^2.0.10",
@@ -54,7 +54,7 @@
     "ts-node": "^8.2.0",
     "tslint": "^5.16.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.4.5"
+    "typescript": "^3.5.1"
   },
   "nyc": {
     "exclude": [
@@ -76,16 +76,16 @@
     }
   },
   "dependencies": {
-    "@adonisjs/fold": "^6.0.2",
-    "@poppinss/application": "^1.0.2",
-    "@poppinss/config": "^1.0.4",
-    "@poppinss/env": "^1.0.4",
+    "@adonisjs/fold": "^6.0.3",
+    "@poppinss/application": "^1.0.3",
+    "@poppinss/config": "^1.0.5",
+    "@poppinss/env": "^1.0.5",
     "@poppinss/events": "^1.0.0",
-    "@poppinss/http-server": "^1.1.3",
-    "@poppinss/logger": "^1.0.5",
-    "@poppinss/request": "^1.0.8",
-    "@poppinss/response": "^1.0.7",
-    "@poppinss/utils": "^1.0.1",
+    "@poppinss/http-server": "^1.1.5",
+    "@poppinss/logger": "^1.1.0",
+    "@poppinss/request": "^1.0.9",
+    "@poppinss/response": "^1.0.8",
+    "@poppinss/utils": "^1.0.3",
     "find-package-json": "^1.2.0",
     "simple-encryptor": "^3.0.0",
     "youch": "^2.0.10",

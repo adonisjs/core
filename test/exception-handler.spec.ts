@@ -9,7 +9,7 @@
 
 import * as test from 'japa'
 import { Exception } from '@poppinss/utils'
-import { getFakeLogger } from '@poppinss/logger'
+import { FakeLogger } from '@poppinss/logger'
 import { HttpContext } from '@poppinss/http-server'
 
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
@@ -27,7 +27,7 @@ test.group('HttpExceptionHandler', () => {
       protected dontReport = ['E_BAD_REQUEST']
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -39,7 +39,7 @@ test.group('HttpExceptionHandler', () => {
   test('report error when not inside ignore list', (assert) => {
     class AppHandler extends HttpExceptionHandler {
     }
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -61,7 +61,7 @@ test.group('HttpExceptionHandler', () => {
       protected dontReport = []
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -76,7 +76,7 @@ test.group('HttpExceptionHandler', () => {
         return { username: 'virk' }
       }
     }
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -108,7 +108,7 @@ test.group('HttpExceptionHandler', () => {
       }
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -125,7 +125,7 @@ test.group('HttpExceptionHandler', () => {
     class InvalidAuth extends Exception {
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -146,7 +146,7 @@ test.group('HttpExceptionHandler', () => {
     class InvalidAuth extends Exception {
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -168,7 +168,7 @@ test.group('HttpExceptionHandler', () => {
     class InvalidAuth extends Exception {
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -192,7 +192,7 @@ test.group('HttpExceptionHandler', () => {
     class InvalidAuth extends Exception {
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -220,7 +220,7 @@ test.group('HttpExceptionHandler', () => {
       }
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
@@ -243,7 +243,7 @@ test.group('HttpExceptionHandler', () => {
       }
     }
 
-    const logger = getFakeLogger(loggerConfig)
+    const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create('/', {})
