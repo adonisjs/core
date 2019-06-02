@@ -16,7 +16,7 @@ import { createServer } from 'http'
 import * as supertest from 'supertest'
 import { HttpContext } from '@poppinss/http-server'
 
-import { Cors } from '../src/Cors'
+import { Cors } from '../src/Middleware/Cors'
 import { specFixtures } from './fixtures/cors'
 
 test.group('Cors', () => {
