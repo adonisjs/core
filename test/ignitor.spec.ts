@@ -200,6 +200,7 @@ test.group('Ignitor', (group) => {
   })
 
   test('define autoload aliases with ioc container', async (assert) => {
+    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
     await fs.add(`start/app.ts`, `export const providers = [
       '${join(__dirname, '../providers/AppProvider.ts')}'
     ]`)

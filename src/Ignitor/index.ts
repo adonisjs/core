@@ -16,6 +16,7 @@ import { Application, ApplicationContract } from '@poppinss/application'
 import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
 import { useReturnValue } from '@poppinss/http-server/build/src/Server/useReturnValue'
 import * as findPkg from 'find-package-json'
+import { LoggerContract } from '@poppinss/logger'
 
 type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
 type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
@@ -169,7 +170,10 @@ export class Ignitor {
    * Register autoloads
    */
   private _registerAutoloads () {
+    const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
+
     this.application.autoloadsMap.forEach((toPath, alias) => {
+      logger.trace('autoloading %s to %s namespace', toPath, alias)
       this.application.container.autoload(join(this.application.appRoot, toPath), alias)
     })
   }
@@ -178,6 +182,8 @@ export class Ignitor {
    * Preloads all files defined inside `.adonisrc.json` file.
    */
   private _preloadFiles () {
+    const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
+
     this.application.preloads
       .filter((node) => {
         if (!node.environment) {
@@ -191,6 +197,7 @@ export class Ignitor {
         return node.environment.indexOf(this.application.environment) > -1
       })
       .forEach((node) => {
+        logger.trace('preloading %s', node.file)
         this._require(join(this.application.appRoot, node.file), node.optional)
       })
   }
@@ -200,6 +207,9 @@ export class Ignitor {
    * defined
    */
   private _bindExceptionHandler (server: ServerContract<HttpContext>) {
+    const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
+    logger.trace('binding %s exception handler', this.application.exceptionHandlerNamespace)
+
     const handlerInstance = this.application.container.make(this.application.exceptionHandlerNamespace)
 
     /**
@@ -223,16 +233,19 @@ export class Ignitor {
   private async _createHttpServer (serverCallback?: CustomServerCallback) {
     const server = this.application.container.use('Adonis/Core/Server')
     const router = this.application.container.use('Adonis/Core/Route')
+    const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
 
     /**
      * Commit routes to the router store
      */
     router.commit()
+    logger.trace('commiting routes')
 
     /**
      * Optimize server to cache handler
      */
     server.optimize()
+    logger.trace('optimizing http server handlers')
 
     /**
      * Handled exceptions during the HTTP request/response
@@ -292,16 +305,20 @@ export class Ignitor {
    */
   private _onExit () {
     const Server = this.application.container.use('Adonis/Core/Server')
+    const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
 
     Server.instance!.close(async (error: any) => {
       if (error) {
+        logger.error(error, 'exiting server with error')
         process.exit(1)
       }
 
       try {
         await Promise.all(this._providersWithExitHook.map((provider: any) => provider.onExit()))
+        logger.info('exiting server gracefully')
         process.exit(0)
       } catch (error) {
+        logger.error(error, 'exiting server with error')
         process.exit(1)
       }
     })
@@ -344,6 +361,7 @@ export class Ignitor {
 
     this._bootstraped = true
     await this._bootProviders()
+
     this._registerAutoloads()
     this._preloadFiles()
   }
