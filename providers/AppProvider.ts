@@ -17,6 +17,7 @@ import { requireAll } from '@poppinss/utils'
 import { ApplicationContract } from '@poppinss/application'
 import { Emitter } from '@poppinss/events'
 import { Server, HttpContext, MiddlewareStore, Router, routePreProcessor } from '@poppinss/http-server'
+import { Cors } from '../src/Cors'
 
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 import { envLoader } from '../src/envLoader'
@@ -127,6 +128,16 @@ export default class AppProvider {
   }
 
   /**
+   * Registers `cors` middleware to the container
+   */
+  protected $registerCorsMiddleware () {
+    this.$container.bind('Adonis/Core/CorsMiddleware', () => {
+      const Config = this.$container.use('Adonis/Core/Config')
+      return new Cors(Config.get('cors', {}))
+    })
+  }
+
+  /**
    * Registering all required bindings to the container
    */
   public register () {
@@ -139,5 +150,6 @@ export default class AppProvider {
     this.$registerHttpServer()
     this.$registerHttpExceptionHandler()
     this.$registerEmitter()
+    this.$registerCorsMiddleware()
   }
 }
