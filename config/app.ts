@@ -98,4 +98,5 @@ export const logger: LoggerConfigContract = {
   messageKey: 'msg',
   enabled: true,
   level: 'trace',
+  prettyPrint: Env.get('NODE_ENV') === 'development',
 }
