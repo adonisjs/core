@@ -11,6 +11,7 @@
 /// <reference path="./cors.ts" />
 /// <reference path="./encryption.ts" />
 /// <reference path="./env.ts" />
+/// <reference path="./event.ts" />
 /// <reference path="./exception-handler.ts" />
 /// <reference path="./http-context.ts" />
 /// <reference path="./logger.ts" />

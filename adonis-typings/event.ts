@@ -11,7 +11,7 @@
  * The binding for the given module is defined inside `providers/AppProvider.ts`
  * file.
  */
-declare module '@ioc:Adonis/Core/Events' {
+declare module '@ioc:Adonis/Core/Event' {
   import { EmitterContract as BaseContract } from '@poppinss/events'
 
   const Event: EmitterContract<EventsMap>
