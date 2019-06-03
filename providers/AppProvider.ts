@@ -21,6 +21,7 @@ import { Cors } from '../src/Middleware/Cors'
 
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 import { envLoader } from '../src/envLoader'
+import { RequestLogger } from '../src/HttpHooks/RequestLogger'
 
 /**
  * The application provider that sticks all core components
@@ -151,5 +152,22 @@ export default class AppProvider {
     this.$registerHttpExceptionHandler()
     this.$registerEmitter()
     this.$registerCorsMiddleware()
+  }
+
+  public boot () {
+    const logRequests = this.$container.use('Adonis/Core/Config').get('app.http.logRequests', false)
+    if (!logRequests) {
+      return
+    }
+
+    /**
+     * Create a single instance of the logger and hook it as a `before` server hook.
+     */
+    const requestLogData = this.$container.use('Adonis/Core/Config').get('app.http.requestLogData')
+    const logger = new RequestLogger({ logRequests, requestLogData })
+
+    this.$container.with(['Adonis/Core/Server'], (Server) => {
+      Server.before(logger.onRequest.bind(logger))
+    })
   }
 }
