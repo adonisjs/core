@@ -289,6 +289,16 @@ export class Ignitor {
       const host = Env.get('HOST', '0.0.0.0') as string
       const port = Number(Env.get('PORT', '3333') as string)
 
+      Server.instance!.on('error', (error: NodeJS.ErrnoException) => {
+        Server.instance.close()
+        if (error.code === 'EADDRINUSE') {
+          Logger.fatal(`PORT ${port} is already in use`)
+          return
+        }
+
+        Logger.fatal(error, 'shutting down server')
+      })
+
       Server.instance!.listen(port, host, () => {
         Logger.info('started server on %s:%s', host, port)
         resolve()
