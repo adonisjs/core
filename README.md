@@ -8,7 +8,7 @@
 
 [![circleci-image]][circleci-url]
 [![npm-image]][npm-url]
-![](https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript)
+![typescript-image](https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
