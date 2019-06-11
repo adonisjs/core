@@ -34,7 +34,7 @@ Everyone is welcome to contribute. Please go through the following guides, befor
 
 ## Authors & License
 
-[Harminder virk](https://github.com/Harminder virk) and [contributors](https://github.com/adonisjs/adonis-framework/graphs/contributors).
+[Harminder virk](https://github.com/thetutlage) and [contributors](https://github.com/adonisjs/adonis-framework/graphs/contributors).
 
 MIT License, see the included [MIT](LICENSE.md) file.
 
