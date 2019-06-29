@@ -84,7 +84,7 @@
     "@poppinss/http-server": "^1.1.5",
     "@poppinss/logger": "^1.1.0",
     "@poppinss/request": "^1.0.9",
-    "@poppinss/response": "^1.0.8",
+    "@poppinss/response": "^1.0.9",
     "@poppinss/utils": "^1.0.3",
     "find-package-json": "^1.2.0",
     "on-finished": "^2.3.0",
