@@ -20,7 +20,9 @@
     "build": "npm run compile",
     "commit": "git-cz",
     "release": "np",
-    "version": "npm run build"
+    "version": "npm run build",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "types": "./build/adonis-typings/index.d.ts",
   "repository": {
@@ -91,10 +93,12 @@
     "pretty-ms": "^5.0.0",
     "simple-encryptor": "^3.0.0",
     "youch": "^2.0.10",
-    "youch-terminal": "^1.0.0"
+    "youch-terminal": "^1.0.0",
+    "snyk": "^1.189.0"
   },
   "np": {
     "contents": ".",
     "anyBranch": false
-  }
+  },
+  "snyk": true
 }
