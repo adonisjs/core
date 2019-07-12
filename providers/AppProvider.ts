@@ -16,6 +16,7 @@ import { Logger } from '@poppinss/logger'
 import { requireAll } from '@poppinss/utils'
 import { ApplicationContract } from '@poppinss/application'
 import { Emitter } from '@poppinss/events'
+import { Hash } from '@poppinss/hash'
 import { Server, HttpContext, MiddlewareStore, Router, routePreProcessor } from '@poppinss/http-server'
 import { Cors } from '../src/Middleware/Cors'
 
@@ -139,6 +140,16 @@ export default class AppProvider {
   }
 
   /**
+   * Registering the hash provider
+   */
+  protected $registerHash () {
+    this.$container.singleton('Adonis/Core/Hash', () => {
+      const config = this.$container.use('Adonis/Core/Config').get('hash', {})
+      return new Hash(this.$container, config)
+    })
+  }
+
+  /**
    * Registering all required bindings to the container
    */
   public register () {
@@ -152,6 +163,7 @@ export default class AppProvider {
     this.$registerHttpExceptionHandler()
     this.$registerEmitter()
     this.$registerCorsMiddleware()
+    this.$registerHash()
   }
 
   public boot () {
