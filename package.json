@@ -41,7 +41,7 @@
   "devDependencies": {
     "@adonisjs/mrm-preset": "^2.0.3",
     "@poppinss/dev-utils": "^1.0.0",
-    "@types/node": "^12.0.10",
+    "@types/node": "^12.6.6",
     "commitizen": "^3.1.1",
     "cz-conventional-changelog": "^2.1.0",
     "del-cli": "^2.0.0",
@@ -81,7 +81,7 @@
     "@poppinss/config": "^1.0.5",
     "@poppinss/env": "^1.0.5",
     "@poppinss/events": "^1.0.0",
-    "@poppinss/hash": "^1.0.1",
+    "@poppinss/hash": "^1.0.3",
     "@poppinss/http-server": "^1.1.5",
     "@poppinss/logger": "^1.1.0",
     "@poppinss/request": "^1.0.9",
