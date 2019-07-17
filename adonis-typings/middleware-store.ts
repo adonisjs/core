@@ -11,7 +11,7 @@
  * The binding for the given module is defined inside `providers/AppProvider.ts`
  * file.
  */
-declare module '@ioc:Adonis/Src/MiddlewareStore' {
+declare module '@ioc:Adonis/Core/MiddlewareStore' {
   import { MiddlewareStoreContract as BaseMiddlewareContract } from '@poppinss/http-server'
   import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
