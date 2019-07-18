@@ -8,7 +8,9 @@
     "build/adonis-typings",
     "build/src",
     "build/index.d.ts",
-    "build/index.js"
+    "build/index.js",
+    "build/config",
+    "build/instructions.js"
   ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
