@@ -85,7 +85,7 @@
     "@poppinss/env": "^1.0.5",
     "@poppinss/events": "^1.0.0",
     "@poppinss/hash": "^1.0.3",
-    "@poppinss/http-server": "^1.1.5",
+    "@poppinss/http-server": "^1.1.6",
     "@poppinss/logger": "^1.1.0",
     "@poppinss/request": "^1.0.9",
     "@poppinss/response": "^1.0.9",
