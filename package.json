@@ -101,5 +101,8 @@
   "np": {
     "contents": ".",
     "anyBranch": false
+  },
+  "adonisjs": {
+    "instructions": "./build/instructions.js"
   }
 }

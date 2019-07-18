@@ -1,15 +1,13 @@
-/*
-* @adonisjs/core
-*
-* (c) Harminder Virk <virk@adonisjs.com>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+/**
+ * Config source: https://git.io/fj1K5
+ *
+ * Feel free to let us know via PR, if you find something broken in this config
+ * file.
+ */
 
-import { CorsConfig } from '@ioc:Adonis/Core/Cors'
+import { CorsConfigContract } from '@ioc:Adonis/Core/Cors'
 
-export const corsConfig: CorsConfig = {
+const corsConfig: CorsConfigContract = {
   /*
   |--------------------------------------------------------------------------
   | Origin
@@ -115,3 +113,5 @@ export const corsConfig: CorsConfig = {
   */
   maxAge: 90,
 }
+
+export default corsConfig

@@ -1,18 +1,18 @@
-/*
-* @adonisjs/core
-*
-* (c) Harminder Virk <virk@adonisjs.com>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+/**
+ * Config source: https://git.io/fj1K7
+ *
+ * Feel free to let us know via PR, if you find something broken in this config
+ * file.
+ */
 
 import * as proxyAddr from 'proxy-addr'
+import Env from '@ioc:Adonis/Core/Env'
+import { LoggerConfigContract } from '@ioc:Adonis/Core/Logger'
 import { RequestConfigContract } from '@ioc:Adonis/Core/Request'
 import { ResponseConfigContract } from '@ioc:Adonis/Core/Response'
 import { RequestLoggerConfigContract } from '@ioc:Adonis/Core/RequestLogger'
-import { LoggerConfigContract } from '@ioc:Adonis/Core/Logger'
-import Env from '@ioc:Adonis/Core/Env'
+
+type HttpOptions = RequestConfigContract & ResponseConfigContract & RequestLoggerConfigContract
 
 /*
 |--------------------------------------------------------------------------
@@ -37,14 +37,15 @@ export const appKey: string = Env.getOrFail('APP_KEY') as string
 | the config properties to make keep server secure.
 |
 */
-export const http: RequestConfigContract & ResponseConfigContract & RequestLoggerConfigContract = {
+export const http: HttpOptions = {
   /*
   |--------------------------------------------------------------------------
   | Log HTTP requests
   |--------------------------------------------------------------------------
   |
   | Set the value to true, to automatically log every HTTP requests. It is
-  | okay to log requests in production too.
+  | okay to log requests in production too, but make sure to use a
+  | logging service to collect logs from stdout
   |
   */
   logRequests: true,
@@ -150,18 +151,20 @@ export const logger: LoggerConfigContract = {
   | Logging level
   |--------------------------------------------------------------------------
   |
-  | The level from which you want the logger to flush logs.
+  | The level from which you want the logger to flush logs. It is recommended
+  | to make use of the environment variable, so that you can define log levels
+  | at deployment level and not code level.
   |
   */
-  level: 'info',
+  level: Env.get('LOG_LEVEL', 'info') as string,
 
   /*
   |--------------------------------------------------------------------------
   | Pretty print
   |--------------------------------------------------------------------------
   |
-  | It is highly advised not to use `prettyPrint` in production, since it
-  | can have huge impact on performance
+  | It is highly advised NOT to use `prettyPrint` in production, since it
+  | can have huge impact on performance.
   |
   */
   prettyPrint: Env.get('NODE_ENV') === 'development',

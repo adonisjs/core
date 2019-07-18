@@ -9,7 +9,7 @@
 
 declare module '@ioc:Adonis/Core/Cors' {
   type AllowedValuesTypes = boolean | string | string[]
-  export type CorsConfig = {
+  export type CorsConfigContract = {
     origin: AllowedValuesTypes | ((origin: string) => AllowedValuesTypes),
     methods: string[],
     headers: AllowedValuesTypes | ((headers: string[]) => AllowedValuesTypes),

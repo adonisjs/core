@@ -9,7 +9,7 @@
 
 import { ResponseContract } from '@ioc:Adonis/Core/Response'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { CorsConfig } from '@ioc:Adonis/Core/Cors'
+import { CorsConfigContract } from '@ioc:Adonis/Core/Cors'
 
 /**
  * List of default exposed headers.
@@ -31,7 +31,7 @@ const SIMPLE_EXPOSE_HEADERS = [
  * sure not to set request specific instance properties.
  */
 export class Cors {
-  constructor (private _options: CorsConfig) {
+  constructor (private _options: CorsConfigContract) {
     this._normalizeOptions()
   }
 
