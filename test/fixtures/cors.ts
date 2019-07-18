@@ -10,8 +10,8 @@
 import { IncomingMessage } from 'http'
 import { Assert } from 'japa/build/src/Assert'
 
-import { CorsConfig } from '@ioc:Adonis/Core/Cors'
-import { corsConfig } from '../../config/cors'
+import { CorsConfigContract } from '@ioc:Adonis/Core/Cors'
+import corsConfig from '../../config/cors'
 
 const CORS_HEADERS = [
   'access-control-allow-origin',
@@ -30,7 +30,7 @@ export const specFixtures = [
   {
     title: 'do not set any headers when origin is not defined',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig)
     },
 
@@ -48,7 +48,7 @@ export const specFixtures = [
   {
     title: 'do not set any headers when origin mis-matches',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: 'adonisjs.com',
       })
@@ -71,7 +71,7 @@ export const specFixtures = [
   {
     title: 'do not set any headers when all origins are dis-allowed',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: false,
       })
@@ -94,7 +94,7 @@ export const specFixtures = [
   {
     title: 'do not set headers when origin case sensitive match fails',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: 'foo.com',
       })
@@ -117,7 +117,7 @@ export const specFixtures = [
   {
     title: 'do not set headers when current origin isn\'t inside array of allowed origins',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: ['foo.com'],
       })
@@ -140,7 +140,7 @@ export const specFixtures = [
   {
     title: 'allow all origins when origin is set to true',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
       })
@@ -165,7 +165,7 @@ export const specFixtures = [
   {
     title: 'allow origin when current origin is in allowed array list',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: ['foo.com', 'bar.com'],
       })
@@ -190,7 +190,7 @@ export const specFixtures = [
   {
     title: 'allow origin when current origin is in allowed comma seperated list',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: 'foo.com,bar.com',
       })
@@ -215,7 +215,7 @@ export const specFixtures = [
   {
     title: 'allow origin when config function returns true',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: () => true,
       })
@@ -240,7 +240,7 @@ export const specFixtures = [
   {
     title: 'set current origin when using wildcard identifier with credentails=true',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: '*',
       })
@@ -266,7 +266,7 @@ export const specFixtures = [
   {
     title: 'set wildcard when using wildcard identifier with credentails=false',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: '*',
         credentials: false,
@@ -293,7 +293,7 @@ export const specFixtures = [
   {
     title: 'set expose headers when defined',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: '*',
         exposeHeaders: ['X-Adonis'],
@@ -326,7 +326,7 @@ export const specFixtures = [
   {
     title: 'set required preflight headers when request method exists',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
       })
@@ -359,7 +359,7 @@ export const specFixtures = [
   {
     title: 'do not set preflight headers when request method isn\'t allowed',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
       })
@@ -388,7 +388,7 @@ export const specFixtures = [
   {
     title: 'do not set preflight headers when all of the request headers are not allowed',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: false,
@@ -419,7 +419,7 @@ export const specFixtures = [
   {
     title: 'do not set preflight headers when any of the request headers are not allowed',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: ['cache-control'],
@@ -450,7 +450,7 @@ export const specFixtures = [
   {
     title: 'set preflight headers when all of the request headers are allowed',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: true,
@@ -487,7 +487,7 @@ export const specFixtures = [
   {
     title: 'set preflight headers when request headers is in the list of allowed headers',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: ['X-Adonis'],
@@ -524,7 +524,7 @@ export const specFixtures = [
   {
     title: 'set preflight headers when request headers is in the list of comma seperated list',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: 'X-Adonis,X-Time',
@@ -561,7 +561,7 @@ export const specFixtures = [
   {
     title: 'set preflight headers when case insensitive match passes',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: ['x-adonis'],
@@ -598,7 +598,7 @@ export const specFixtures = [
   {
     title: 'set all allow headers when request header match passes',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: ['x-adonis', 'x-foo', 'x-bar'],
@@ -635,7 +635,7 @@ export const specFixtures = [
   {
     title: 'set allow headers when headers config function returns true',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: () => true,
@@ -672,7 +672,7 @@ export const specFixtures = [
   {
     title: 'set max age when defined',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: () => true,
@@ -710,7 +710,7 @@ export const specFixtures = [
   {
     title: 'set expose headers when defined',
 
-    configureOptions (): CorsConfig {
+    configureOptions (): CorsConfigContract {
       return Object.assign({}, corsConfig, {
         origin: true,
         headers: () => true,
