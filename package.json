@@ -47,7 +47,7 @@
     "@poppinss/dev-utils": "^1.0.0",
     "@types/node": "^12.6.8",
     "commitizen": "^3.1.2",
-    "cz-conventional-changelog": "^2.1.0",
+    "cz-conventional-changelog": "^3.0.2",
     "del-cli": "^2.0.0",
     "doctoc": "^1.4.0",
     "husky": "^3.0.0",
