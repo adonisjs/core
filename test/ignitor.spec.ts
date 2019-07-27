@@ -245,7 +245,7 @@ test.group('Ignitor', (group) => {
     export default class AppProvider {
       constructor (protected $container) {}
 
-      public async onHttpServer () {
+      public async ready () {
         this.$container.use('Adonis/Core/Server').hookCalled = true
       }
     }

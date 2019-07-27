@@ -147,7 +147,7 @@ export class Ignitor {
      * call them, when application goes down.
      */
     this._providersWithExitHook = this._providersList.filter((provider) => {
-      return typeof (provider.onExit) === 'function'
+      return typeof (provider.shutdown) === 'function'
     })
 
     /**
@@ -252,18 +252,24 @@ export class Ignitor {
      * Set Http or Https server as an instance on Adonis server
      */
     server.instance = serverCallback ? serverCallback(handler) : createServer(handler)
+  }
 
+  /**
+   * Executes the ready hooks when the application is ready. In case of HTTP server
+   * it is called just before calling the `listen` method.
+   */
+  private async _executeReadyHooks () {
     /**
      * Pull providers with HTTP server hook
      */
     const providersWithHttpHook = this._providersList.filter((provider) => {
-      return typeof (provider.onHttpServer) === 'function'
+      return typeof (provider.ready) === 'function'
     })
 
     /**
      * Execute hooks
      */
-    await Promise.all(providersWithHttpHook.map((provider) => provider.onHttpServer()))
+    await Promise.all(providersWithHttpHook.map((provider) => provider.ready()))
   }
 
   /**
@@ -271,27 +277,26 @@ export class Ignitor {
    * the `environment` variables.
    */
   private _listen () {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const Env = this.application.container.use('Adonis/Core/Env')
       const Logger = this.application.container.use('Adonis/Core/Logger')
       const Server = this.application.container.use('Adonis/Core/Server')
       const host = Env.get('HOST', '0.0.0.0') as string
       const port = Number(Env.get('PORT', '3333') as string)
 
-      Server.instance!.on('error', (error: NodeJS.ErrnoException) => {
-        Server.instance.close()
-        if (error.code === 'EADDRINUSE') {
-          Logger.fatal(`PORT ${port} is already in use`)
-          return
-        }
-
-        Logger.fatal(error, 'shutting down server')
-      })
-
-      Server.instance!.listen(port, host, () => {
-        Logger.info('started server on %s:%s', host, port)
-        resolve()
-      })
+      /**
+       * The hooks must be executed before we start accepting new requests, since
+       * the hooks may construct some state required by the HTTP server.
+       */
+      this
+        ._executeReadyHooks()
+        .then(() => {
+          Server.instance!.listen(port, host, () => {
+            Logger.info('started server on %s:%s', host, port)
+            resolve()
+          })
+        })
+        .catch(reject)
     })
   }
 
@@ -302,25 +307,26 @@ export class Ignitor {
    * The HTTP is closed first, so that other unavailable resources
    * will not impact existing requests.
    */
-  private _onExit () {
+  private async _prepareShutDown () {
     const Server = this.application.container.use('Adonis/Core/Server')
     const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
+    this.application.isShuttingDown = true
 
-    Server.instance!.close(async (error: any) => {
-      if (error) {
-        logger.error(error, 'exiting server with error')
-        process.exit(1)
-      }
+    /**
+     * Close the HTTP server when it exists.
+     */
+    if (Server.instance) {
+      Server.instance.close()
+    }
 
-      try {
-        await Promise.all(this._providersWithExitHook.map((provider: any) => provider.onExit()))
-        logger.info('exiting server gracefully')
-        process.exit(0)
-      } catch (error) {
-        logger.error(error, 'exiting server with error')
-        process.exit(1)
-      }
-    })
+    try {
+      await Promise.all(this._providersWithExitHook.map((provider: any) => provider.shutdown()))
+      logger.info('exiting server gracefully')
+      process.exit(0)
+    } catch (error) {
+      logger.error(error, 'exiting server with error')
+      process.exit(1)
+    }
   }
 
   /**
@@ -333,10 +339,34 @@ export class Ignitor {
      * SIGINT signal, which doesn't need graceful exit.
      */
     if (process.env.pm_id) {
-      process.on('SIGINT', this._onExit.bind(this))
+      process.on('SIGINT', this._prepareShutDown.bind(this))
     }
 
-    process.on('SIGTERM', this._onExit.bind(this))
+    process.on('SIGTERM', this._prepareShutDown.bind(this))
+
+    /**
+     * Listen for HTTP server error when the server instance exists. We consider
+     * server error as an exit event as well.
+     */
+    const Server = this.application.container.use('Adonis/Core/Server')
+    if (Server.instance) {
+      Server.on('close', () => {
+        this.application.isReady = false
+      })
+
+      Server.instance.on('error', (error: NodeJS.ErrnoException) => {
+        if (error.code === 'EADDRINUSE') {
+          Server.instance.close()
+          return
+        }
+
+        /**
+         * Shutdown as we will normally do in case of SIGTERM and SIGINT. `EADDRINUSE`
+         * is not part of standard shutdown though.
+         */
+        this._prepareShutDown()
+      })
+    }
   }
 
   /**
