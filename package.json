@@ -72,7 +72,6 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "doctoc README.md --title='## Table of contents' && git add README.md",
       "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js"
     }
   },
