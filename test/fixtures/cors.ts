@@ -11,7 +11,14 @@ import { IncomingMessage } from 'http'
 import { Assert } from 'japa/build/src/Assert'
 
 import { CorsConfigContract } from '@ioc:Adonis/Core/Cors'
-import corsConfig from '../../config/cors'
+const corsConfig = {
+  origin: true,
+  methods: ['GET', 'PUT', 'POST'],
+  headers: true,
+  credentials: true,
+  maxAge: 90,
+  exposeHeaders: [],
+}
 
 const CORS_HEADERS = [
   'access-control-allow-origin',
