@@ -7,12 +7,15 @@
 * file that was distributed with this source code.
 */
 
+/// <reference path="./application.ts" />
 /// <reference path="./config.ts" />
 /// <reference path="./cors.ts" />
 /// <reference path="./encryption.ts" />
 /// <reference path="./env.ts" />
 /// <reference path="./event.ts" />
 /// <reference path="./exception-handler.ts" />
+/// <reference path="./hash.ts" />
+/// <reference path="./health-check.ts" />
 /// <reference path="./http-context.ts" />
 /// <reference path="./logger.ts" />
 /// <reference path="./middleware-store.ts" />
