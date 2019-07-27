@@ -46,7 +46,7 @@ export default class AppProvider {
    */
   protected $registerConfigProvider () {
     this.$container.singleton('Adonis/Core/Config', () => {
-      const app = this.$container.use<ApplicationContract>('Application')
+      const app = this.$container.use<ApplicationContract>('Adonis/Core/Application')
       return new Config(requireAll(app.configPath()))
     })
   }
@@ -66,7 +66,7 @@ export default class AppProvider {
    */
   protected $registerEnv () {
     this.$container.singleton('Adonis/Core/Env', () => {
-      const app = this.$container.use<ApplicationContract>('Application')
+      const app = this.$container.use<ApplicationContract>('Adonis/Core/Application')
       const { envContents, testEnvContent } = envLoader(app.appRoot)
 
       env.process(envContents, false)

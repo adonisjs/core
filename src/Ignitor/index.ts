@@ -77,7 +77,7 @@ export class Ignitor {
      * themselves.
      */
     this.application = new Application(this._appRoot, ioc, rcContents, pkg)
-    ioc.singleton('Adonis/Core/Application', () => this)
+    ioc.singleton('Adonis/Core/Application', () => this.application)
   }
 
   /**
