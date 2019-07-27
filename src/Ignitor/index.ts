@@ -72,15 +72,12 @@ export class Ignitor {
     const rcContents = this._require(join(this._appRoot, '.adonisrc.json'), true) || {}
 
     /**
-     * Setting up the application
+     * Setting up the application and binding it to the container as well. This makes
+     * it's way to the container even before the providers starts registering
+     * themselves.
      */
     this.application = new Application(this._appRoot, ioc, rcContents, pkg)
-
-    /**
-     * For now we hardcode the envirnonment to web. Later this will change after
-     * the introduction of `console` and `test` bootstrappers within ignitor.
-     */
-    this.application.environment = 'web'
+    ioc.singleton('Adonis/Core/Application', () => this)
   }
 
   /**
@@ -350,7 +347,7 @@ export class Ignitor {
      */
     const Server = this.application.container.use('Adonis/Core/Server')
     if (Server.instance) {
-      Server.on('close', () => {
+      Server.instance.on('close', () => {
         this.application.isReady = false
       })
 
@@ -400,6 +397,8 @@ export class Ignitor {
    * new connections.
    */
   public async startHttpServer (serverCallback?: CustomServerCallback) {
+    this.application.environment = 'web'
+
     try {
       await this.bootstrap()
       await this._createHttpServer(serverCallback)

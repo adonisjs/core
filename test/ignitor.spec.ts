@@ -135,6 +135,7 @@ test.group('Ignitor', (group) => {
     }))
 
     const ignitor = new Ignitor(fs.basePath)
+    ignitor.application.environment = 'web'
     await ignitor.bootstrap()
 
     const config = ignitor.application.container.use('Adonis/Core/Config')
