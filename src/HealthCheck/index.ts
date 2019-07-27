@@ -9,7 +9,7 @@
 
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { parseIocReference, callIocReference } from '@poppinss/utils'
-import { HealthCheckContract, Checker, HealthReport, HealthReportEntry } from '@ioc:Adonis/Core/HealtCheck'
+import { HealthCheckContract, Checker, HealthReport, HealthReportEntry } from '@ioc:Adonis/Core/HealthCheck'
 
 /**
  * The module exposes the API to find the health, liveliness and readiness of

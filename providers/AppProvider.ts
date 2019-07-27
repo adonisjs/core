@@ -23,6 +23,7 @@ import { Cors } from '../src/Middleware/Cors'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 import { envLoader } from '../src/envLoader'
 import { RequestLogger } from '../src/HttpHooks/RequestLogger'
+import { HealthCheck } from '../src/HealthCheck'
 
 /**
  * The application provider that sticks all core components
@@ -149,6 +150,15 @@ export default class AppProvider {
     })
   }
 
+    /**
+   * Registering the health check provider
+   */
+  protected $registerHealthCheck () {
+    this.$container.singleton('Adonis/Core/HealthCheck', () => {
+      return new HealthCheck(this.$container.use('Adonis/Core/Application'))
+    })
+  }
+
   /**
    * Registering all required bindings to the container
    */
@@ -164,6 +174,7 @@ export default class AppProvider {
     this.$registerEmitter()
     this.$registerCorsMiddleware()
     this.$registerHash()
+    this.$registerHealthCheck()
   }
 
   public boot () {
