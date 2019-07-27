@@ -1,43 +1,70 @@
-<div align="center">
-  <img src="https://res.cloudinary.com/adonisjs/image/upload/q_100/v1558612869/adonis-readme_zscycu.jpg" width="600px">
-</div>
-
-# Adonis Core
-
-> The core of the framework to run AdonisJs applications
-
-[![circleci-image]][circleci-url]
-[![npm-image]][npm-url]
-![typescript-image](https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript)
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of contents
 
-- [Change log](#change-log)
-- [Contributing](#contributing)
-- [Authors & License](#authors--license)
+- [Fullstack MVC framework for Node.js](#fullstack-mvc-framework-for-nodejs)
+- [
+    
+      Website
+    
+     | 
+    
+      Guides
+    
+     | 
+    
+      Contributing
+    
+  ](#website%0A----%0A------%0A----%0A------guides%0A----%0A------%0A----%0A------contributing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Change log
+<div align="center">
+  <img src="https://res.cloudinary.com/adonisjs/image/upload/q_100/v1558612869/adonis-readme_zscycu.jpg" width="600px">
+</div>
 
-The change log can be found in the [CHANGELOG.md](CHANGELOG.md) file.
+<br />
 
-## Contributing
+<div align="center">
+  <h3>Fullstack MVC framework for Node.js</h3>
+  <p>AdonisJs is a fullstack Web framework with focus on <strong> ergonomics and speed </strong>. It takes care of much of the Web development hassles, offering you a clean and stable API to build Web apps and micro services.</p>
+</div>
 
-Everyone is welcome to contribute. Please go through the following guides, before getting started.
+<br />
 
-1. [Contributing](https://adonisjs.com/contributing)
-2. [Code of conduct](https://adonisjs.com/code-of-conduct)
+<div align="center">
 
-## Authors & License
+[![circleci-image]][circleci-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url]
 
-[Harminder virk](https://github.com/thetutlage) and [contributors](https://github.com/adonisjs/adonis-framework/graphs/contributors).
+</div>
 
-MIT License, see the included [MIT](LICENSE.md) file.
+<div align="center">
+  <h3>
+    <a href="https://adonisjs.com">
+      Website
+    </a>
+    <span> | </span>
+    <a href="https://adonisjs.com/docs">
+      Guides
+    </a>
+    <span> | </span>
+    <a href=".github/CONTRIBUTING.md">
+      Contributing
+    </a>
+  </h3>
+</div>
+
+<div align="center">
+  <sub>Built with ❤︎ by <a href="https://github.com/thetutlage">Harminder Virk</a>
+</div>
 
 [circleci-image]: https://img.shields.io/circleci/project/github/adonisjs/adonis-framework/master.svg?style=for-the-badge&logo=circleci
 [circleci-url]: https://circleci.com/gh/adonisjs/adonis-framework "circleci"
+
 [npm-image]: https://img.shields.io/npm/v/@adonisjs/core.svg?style=for-the-badge&logo=npm
 [npm-url]: https://npmjs.org/package/@adonisjs/core "npm"
+
+[typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
+
+[license-url]: LICENSE.md
+[license-image]: https://img.shields.io/aur/license/pac.svg?style=for-the-badge
