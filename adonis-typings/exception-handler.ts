@@ -16,6 +16,7 @@ declare module '@ioc:Adonis/Core/HttpExceptionHandler' {
   import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 
   export default abstract class HttpExceptionHandler {
+    constructor (logger: LoggerContract)
     protected logger: LoggerContract
     protected dontReport: string[]
     protected ignoreStatuses: number[]

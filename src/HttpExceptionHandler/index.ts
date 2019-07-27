@@ -17,22 +17,13 @@ import { HttpContextContract } from '@poppinss/http-server'
  */
 export abstract class HttpExceptionHandler {
   /**
-   * Inject logger as a dependency to constructor
-   */
-  static get inject () {
-    return {
-      instance: ['Adonis/Core/Logger'],
-    }
-  }
-
-  /**
    * An array of error codes that must not be reported
    */
   protected dontReport: string[] = []
 
   /**
    * An array of http statuses that must not be reported. The first
-   * level of filteration is not on the basis on statuses and then
+   * level of filteration is on the basis of statuses and then
    * the error codes.
    */
   protected ignoreStatuses: number[] = []
