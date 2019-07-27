@@ -8,15 +8,14 @@
 */
 
 import { join } from 'path'
+import * as findPkg from 'find-package-json'
 import { Server as HttpsServer } from 'https'
 import { Ioc, Registrar } from '@adonisjs/fold'
+import { LoggerContract } from '@poppinss/logger'
 import { esmRequire, Exception } from '@poppinss/utils'
 import { ServerContract, HttpContext } from '@poppinss/http-server'
 import { Application, ApplicationContract } from '@poppinss/application'
 import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
-import { useReturnValue } from '@poppinss/http-server/build/src/Server/useReturnValue'
-import * as findPkg from 'find-package-json'
-import { LoggerContract } from '@poppinss/logger'
 
 type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
 type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
@@ -65,7 +64,7 @@ export class Ignitor {
      * package and set that as the application version
      */
     const nearestDir = join(__dirname, '..', '..')
-    const pkgVersion = findPkg(nearestDir).next().value.version
+    const pkg = findPkg(nearestDir).next().value
 
     /**
      * The contents of the rc file
@@ -75,7 +74,7 @@ export class Ignitor {
     /**
      * Setting up the application
      */
-    this.application = new Application(this._appRoot, ioc, rcContents, pkgVersion)
+    this.application = new Application(this._appRoot, ioc, rcContents, pkg)
 
     /**
      * For now we hardcode the envirnonment to web. Later this will change after
@@ -210,21 +209,11 @@ export class Ignitor {
     const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
     logger.trace('binding %s exception handler', this.application.exceptionHandlerNamespace)
 
-    const handlerInstance = this.application.container.make(this.application.exceptionHandlerNamespace)
-
     /**
      * Attaching a custom callback to the server to forward
      * errors to the App exception handler
      */
-    server.onError(async (error, ctx) => {
-      handlerInstance.report(error, ctx)
-      const response = await handlerInstance.handle(error, ctx)
-
-      if (useReturnValue(response, ctx)) {
-        ctx.response.safeStatus(error.status || 500)
-        ctx.response.send(response)
-      }
-    })
+    server.errorHandler(this.application.exceptionHandlerNamespace)
   }
 
   /**

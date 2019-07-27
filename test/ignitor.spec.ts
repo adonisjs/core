@@ -34,7 +34,7 @@ test.group('Ignitor', (group) => {
   test('setup application', async (assert) => {
     const ignitor = new Ignitor(fs.basePath)
     assert.exists(ignitor.application.version)
-    assert.equal(ignitor.application.appName, 'adonis-app')
+    assert.equal(ignitor.application.appName, '@adonisjs/core')
   })
 
   test('register and boot providers', async (assert) => {
