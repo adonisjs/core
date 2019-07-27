@@ -58,7 +58,9 @@
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "youch": "^2.0.10",
+    "youch-terminal": "^1.0.0"
   },
   "nyc": {
     "exclude": [
@@ -93,9 +95,7 @@
     "find-package-json": "^1.2.0",
     "on-finished": "^2.3.0",
     "pretty-ms": "^5.0.0",
-    "simple-encryptor": "^3.0.0",
-    "youch": "^2.0.10",
-    "youch-terminal": "^1.0.0"
+    "simple-encryptor": "^3.0.0"
   },
   "peerDependencies": {
     "@adonisjs/fold": "^6.x.x"

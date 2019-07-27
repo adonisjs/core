@@ -405,7 +405,12 @@ export class Ignitor {
       await this._listen()
       await this._listenForExitEvents()
     } catch (error) {
-      this._prettyPrintError(error)
+      if (this.application.inDev) {
+        this._prettyPrintError(error)
+      } else {
+        console.error(error.stack)
+        process.exit(1)
+      }
     }
   }
 }
