@@ -43,7 +43,7 @@
   "devDependencies": {
     "@adonisjs/fold": "^6.1.0",
     "@adonisjs/mrm-preset": "^2.0.3",
-    "@adonisjs/sink": "^2.0.1",
+    "@adonisjs/sink": "^2.0.4",
     "@poppinss/dev-utils": "^1.0.0",
     "@types/node": "^12.6.8",
     "commitizen": "^4.0.3",

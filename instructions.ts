@@ -9,7 +9,7 @@
 
 import { join } from 'path'
 import * as sinkStatic from '@adonisjs/sink'
-import { Application } from '@poppinss/application'
+import { ApplicationContract } from '@poppinss/application'
 
 const templates = ['app.ts', 'cors.ts', 'hash.ts']
 
@@ -18,15 +18,14 @@ const templates = ['app.ts', 'cors.ts', 'hash.ts']
  */
 export default function instructions (
   projectRoot: string,
-  application: Application,
+  application: ApplicationContract,
   { TemplateFile }: typeof sinkStatic,
 ) {
   templates.forEach((filename) => {
-    new TemplateFile(
-      projectRoot,
-      application.configPath(filename),
-      join(__dirname, './config/app.ts'),
-    )
+    const dest = application.configPath(filename)
+    const src = join(__dirname, 'config', filename)
+
+    new TemplateFile(projectRoot, dest, src)
       .apply({})
       .commit()
   })
