@@ -27,7 +27,9 @@ declare module '@ioc:Adonis/Core/Request' {
   /**
    * Module exports
    */
-  export interface RequestContract extends BaseContract {}
+  export interface RequestContract extends BaseContract {
+    hasValidSignature (): boolean,
+  }
   export interface RequestConstructorContract extends MacroableConstructorContract {}
   export { RequestConfigContract }
   export default Request

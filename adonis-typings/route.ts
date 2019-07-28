@@ -36,7 +36,30 @@ declare module '@ioc:Adonis/Core/Route' {
     RouteGroupContract,
     RouteResourceContract,
     BriskRouteContract
-  > {}
+  > {
+    /**
+     * Make a url to a given route using it's name or pattern or
+     * `controller.method`
+     */
+    makeUrl (
+      routeIdentifier: string,
+      options?: { qs?: any, params?: any },
+      domain?: string,
+    ): string | null
+
+    /**
+     * Make a signed url to a given route using it's name or pattern or
+     * `controller.method`.
+     *
+     * Signed urls can later be verified using the request class `request.hasValidSignature`
+     * method.
+     */
+    makeSignedUrl (
+      routeIdentifier: string,
+      options?: { qs?: any, params?: any, expiresIn?: string | number },
+      domain?: string,
+    ): string | null
+  }
 
   export default Route
 }

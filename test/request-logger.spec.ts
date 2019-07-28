@@ -10,11 +10,18 @@
 /// <reference path="../adonis-typings/index.ts" />
 
 import * as test from 'japa'
-import { FakeLogger } from '@poppinss/logger'
-import { HttpContext } from '@poppinss/http-server'
-import * as supertest from 'supertest'
 import { createServer } from 'http'
+import * as supertest from 'supertest'
+import { FakeLogger } from '@poppinss/logger'
+import { HttpContext as BaseHttpContext } from '@poppinss/http-server'
+import { HttpContextConstructorContract } from '@ioc:Adonis/Core/HttpContext'
 import { RequestLogger } from '../src/HttpHooks/RequestLogger'
+
+/**
+ * We need to update the context reference so that it points to the correct
+ * request class which is extended by us
+ */
+const HttpContext = BaseHttpContext as unknown as HttpContextConstructorContract
 
 test.group('Request logger', () => {
   test('log http responses with 200 status', async (assert) => {

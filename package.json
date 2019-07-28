@@ -53,6 +53,7 @@
     "japa": "^2.0.10",
     "mrm": "^1.2.2",
     "np": "^5.0.3",
+    "proxy-addr": "^2.0.5",
     "supertest": "^4.0.2",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
@@ -89,8 +90,8 @@
     "@poppinss/logger": "^1.1.2",
     "@poppinss/utils": "^1.0.4",
     "find-package-json": "^1.2.0",
+    "ms": "^2.1.2",
     "on-finished": "^2.3.0",
-    "pretty-ms": "^5.0.0",
     "simple-encryptor": "^3.0.0"
   },
   "peerDependencies": {

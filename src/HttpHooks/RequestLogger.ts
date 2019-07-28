@@ -7,7 +7,7 @@
 * file that was distributed with this source code.
 */
 
-import * as prettyMs from 'pretty-ms'
+import * as prettyMs from 'ms'
 import { ServerResponse } from 'http'
 import * as onFinished from 'on-finished'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
