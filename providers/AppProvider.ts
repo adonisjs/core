@@ -8,22 +8,25 @@
 */
 
 import { env } from '@poppinss/env'
+import { Hash } from '@poppinss/hash'
+import { Logger } from '@poppinss/logger'
 import { Config } from '@poppinss/config'
+import { Emitter } from '@poppinss/events'
 import { Request } from '@poppinss/request'
+import { requireAll } from '@poppinss/utils'
 import { IocContract } from '@adonisjs/fold'
 import { Response } from '@poppinss/response'
-import { Logger } from '@poppinss/logger'
-import { requireAll } from '@poppinss/utils'
 import { ApplicationContract } from '@poppinss/application'
-import { Emitter } from '@poppinss/events'
-import { Hash } from '@poppinss/hash'
 import { Server, HttpContext, MiddlewareStore, Router, routePreProcessor } from '@poppinss/http-server'
-import { Cors } from '../src/Middleware/Cors'
 
-import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 import { envLoader } from '../src/envLoader'
-import { RequestLogger } from '../src/HttpHooks/RequestLogger'
+import { Cors } from '../src/Middleware/Cors'
+import { Encryption } from '../src/Encryption'
+import extendRouter from '../src/Bindings/Route'
 import { HealthCheck } from '../src/HealthCheck'
+import extendRequest from '../src/Bindings/Request'
+import { RequestLogger } from '../src/HttpHooks/RequestLogger'
+import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 /**
  * The application provider that sticks all core components
@@ -150,12 +153,22 @@ export default class AppProvider {
     })
   }
 
-    /**
+  /**
    * Registering the health check provider
    */
   protected $registerHealthCheck () {
     this.$container.singleton('Adonis/Core/HealthCheck', () => {
       return new HealthCheck(this.$container.use('Adonis/Core/Application'))
+    })
+  }
+
+  /**
+   * Registering the health check provider
+   */
+  protected $registerEncryption () {
+    this.$container.singleton('Adonis/Core/Encryption', () => {
+      const Config = this.$container.use('Adonis/Core/Config')
+      return new Encryption(Config.get('app.appKey'))
     })
   }
 
@@ -174,6 +187,7 @@ export default class AppProvider {
     this.$registerEmitter()
     this.$registerCorsMiddleware()
     this.$registerHash()
+    this.$registerEncryption()
     this.$registerHealthCheck()
   }
 
@@ -186,11 +200,24 @@ export default class AppProvider {
     /**
      * Create a single instance of the logger and hook it as a `before` server hook.
      */
-    const requestLogData = this.$container.use('Adonis/Core/Config').get('app.http.requestLogData')
-    const logger = new RequestLogger({ logRequests, requestLogData })
-
     this.$container.with(['Adonis/Core/Server'], (Server) => {
+      const requestLogData = this.$container.use('Adonis/Core/Config').get('app.http.requestLogData')
+      const logger = new RequestLogger({ logRequests, requestLogData })
       Server.before(logger.onRequest.bind(logger))
+    })
+
+    /**
+     * Extending request class
+     */
+    this.$container.with(['Adonis/Core/Request', 'Adonis/Core/Encryption'], (Request, Encryption) => {
+      extendRequest(Request, Encryption)
+    })
+
+    /**
+     * Extending router class
+     */
+    this.$container.with(['Adonis/Core/Route', 'Adonis/Core/Encryption'], (Route, Encryption) => {
+      extendRouter(Route, Encryption)
     })
   }
 }
