@@ -14,10 +14,13 @@
  import * as test from 'japa'
 import { createServer } from 'http'
 import * as supertest from 'supertest'
-import { HttpContext } from '@poppinss/http-server'
+import { HttpContext as BaseHttpContext } from '@poppinss/http-server'
+import { HttpContextConstructorContract } from '@ioc:Adonis/Core/HttpContext'
 
 import { Cors } from '../src/Middleware/Cors'
 import { specFixtures } from './fixtures/cors'
+
+const HttpContext = BaseHttpContext as unknown as HttpContextConstructorContract
 
 test.group('Cors', () => {
   specFixtures.forEach((fixture) => {
