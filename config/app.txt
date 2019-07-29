@@ -69,6 +69,12 @@ export const http: HttpOptions = {
   |--------------------------------------------------------------------------
   | Allow method spoofing
   |--------------------------------------------------------------------------
+  |
+  | Method spoofing enables defining custom HTTP methods using a query string
+  | `_method`. This is usually required when you are making traditional
+  | form requests and wants to use HTTP verbs like `PUT`, `DELETE` and
+  | so on.
+  |
   */
   allowMethodSpoofing: false,
 
@@ -81,8 +87,23 @@ export const http: HttpOptions = {
 
   /*
   |--------------------------------------------------------------------------
+  | Request Ids
+  |--------------------------------------------------------------------------
+  |
+  | Setting this value to `true` will generate a unique request id for each
+  | HTTP request and set it as `x-request-id` header.
+  |
+  */
+  generateRequestId: false,
+
+  /*
+  |--------------------------------------------------------------------------
   | Trusting proxy servers
   |--------------------------------------------------------------------------
+  |
+  | Define the proxy servers that AdonisJs must trust for reading `X-Forwarded`
+  | headers.
+  |
   */
   trustProxy: proxyAddr.compile('loopback'),
 
@@ -90,6 +111,9 @@ export const http: HttpOptions = {
   |--------------------------------------------------------------------------
   | Generating Etag
   |--------------------------------------------------------------------------
+  |
+  | Whether or not to generate an etag for every response.
+  |
   */
   etag: false,
 
