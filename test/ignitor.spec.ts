@@ -7,6 +7,8 @@
 * file that was distributed with this source code.
 */
 
+/// <reference path="../adonis-typings/index.ts" />
+
 import { join } from 'path'
 import * as test from 'japa'
 import { createServer } from 'http'
@@ -260,7 +262,7 @@ test.group('Ignitor', (group) => {
     assert.isTrue(server.hookCalled)
   })
 
-  test('start http server to accept incoming requests', async (assert) => {
+  test('start http server to accept incoming requests', async (assert, done) => {
     await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
     await fs.add('.adonisrc.json', JSON.stringify({
       autoloads: {
@@ -289,12 +291,17 @@ test.group('Ignitor', (group) => {
     ignitor.application.container.use('Adonis/Core/Route').get('/', () => 'handled')
 
     await ignitor.startHttpServer((handler) => createServer(handler))
-    const server = ignitor.application.container.use('Adonis/Core/Server')
+    assert.isTrue(ignitor.application.isReady)
 
+    const server = ignitor.application.container.use('Adonis/Core/Server')
     const { text } = await supertest(server.instance).get('/').expect(200)
     server.instance.close()
 
-    assert.equal(text, 'handled')
+    setTimeout(() => {
+      assert.isFalse(ignitor.application.isReady)
+      assert.equal(text, 'handled')
+      done()
+    }, 100)
   })
 
   test('forward errors to app error handler', async (assert) => {
