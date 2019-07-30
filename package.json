@@ -41,7 +41,7 @@
   "devDependencies": {
     "@adonisjs/fold": "^6.1.2",
     "@adonisjs/mrm-preset": "^2.0.3",
-    "@adonisjs/sink": "^2.0.7",
+    "@adonisjs/sink": "^2.0.12",
     "@poppinss/dev-utils": "^1.0.0",
     "@types/node": "^12.6.8",
     "commitizen": "^4.0.3",
@@ -49,7 +49,7 @@
     "cz-conventional-changelog": "^3.0.2",
     "del-cli": "^2.0.0",
     "doctoc": "^1.4.0",
-    "husky": "^3.0.1",
+    "husky": "^3.0.2",
     "japa": "^2.0.10",
     "mrm": "^1.2.2",
     "np": "^5.0.3",
