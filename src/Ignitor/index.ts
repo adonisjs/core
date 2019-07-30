@@ -289,6 +289,7 @@ export class Ignitor {
         ._executeReadyHooks()
         .then(() => {
           Server.instance!.listen(port, host, () => {
+            this.application.isReady = true
             Logger.info('started server on %s:%s', host, port)
             resolve()
           })
