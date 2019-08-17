@@ -17,6 +17,7 @@ import { requireAll } from '@poppinss/utils'
 import { IocContract } from '@adonisjs/fold'
 import { Response } from '@poppinss/response'
 import { ApplicationContract } from '@poppinss/application'
+import { Profiler } from '@poppinss/profiler'
 import { Server, HttpContext, MiddlewareStore, Router, routePreProcessor } from '@poppinss/http-server'
 
 import { envLoader } from '../src/envLoader'
@@ -60,6 +61,16 @@ export default class AppProvider {
   protected $registerLogger () {
     this.$container.singleton('Adonis/Core/Logger', () => {
       return new Logger(this.$container.use('Adonis/Core/Config').get('app.logger', {}))
+    })
+  }
+
+  /**
+   * Register profiler under `Adonis/Core/Profiler` namespace
+   */
+  protected $registerProfiler () {
+    this.$container.singleton('Adonis/Core/Profiler', () => {
+      const Config = this.$container.use('Adonis/Core/Config')
+      return new Profiler(Config.get('app.profiler', {}))
     })
   }
 
@@ -112,6 +123,7 @@ export default class AppProvider {
         this.$container.use('Adonis/Core/Route'),
         this.$container.use('Adonis/Core/MiddlewareStore'),
         this.$container.use('Adonis/Core/Logger'),
+        this.$container.use('Adonis/Core/Profiler'),
         Object.assign({ secret }, httpConfig),
       )
     })
@@ -179,6 +191,7 @@ export default class AppProvider {
     this.$registerEnv()
     this.$registerConfigProvider()
     this.$registerLogger()
+    this.$registerProfiler()
     this.$registerRequestResponse()
     this.$registerRouter()
     this.$registerMiddlewareStore()

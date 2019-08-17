@@ -11,6 +11,7 @@ import { LoggerConfigContract } from '@ioc:Adonis/Core/Logger'
 import { RequestConfigContract } from '@ioc:Adonis/Core/Request'
 import { ResponseConfigContract } from '@ioc:Adonis/Core/Response'
 import { RequestLoggerConfigContract } from '@ioc:Adonis/Core/RequestLogger'
+import { ProfilerConfigContract } from '@ioc:Adonis/Core/Profiler'
 
 type HttpOptions = RequestConfigContract & ResponseConfigContract & RequestLoggerConfigContract
 
@@ -192,4 +193,43 @@ export const logger: LoggerConfigContract = {
   |
   */
   prettyPrint: Env.get('NODE_ENV') === 'development',
+}
+
+/*
+|--------------------------------------------------------------------------
+| Profiler
+|--------------------------------------------------------------------------
+*/
+export const profiler: ProfilerConfigContract = {
+  /*
+  |--------------------------------------------------------------------------
+  | Toggle profiler
+  |--------------------------------------------------------------------------
+  |
+  | Enable or disable profiler
+  |
+  */
+  enabled: true,
+
+  /*
+  |--------------------------------------------------------------------------
+  | Blacklist actions/row labels
+  |--------------------------------------------------------------------------
+  |
+  | Define an array of actions or row labels that you want to disable from
+  | getting profiled.
+  |
+  */
+  blacklist: [],
+
+  /*
+  |--------------------------------------------------------------------------
+  | Whitelist actions/row labels
+  |--------------------------------------------------------------------------
+  |
+  | Define an array of actions or row labels that you want to whitelist for
+  | the profiler. When whitelist is defined, then `blacklist` is ignored.
+  |
+  */
+  whitelist: [],
 }
