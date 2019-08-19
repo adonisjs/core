@@ -19,7 +19,7 @@ const templates = ['app.ts', 'cors.ts', 'hash.ts']
 export default function instructions (
   projectRoot: string,
   application: ApplicationContract,
-  { TemplateFile }: typeof sinkStatic,
+  { TemplateFile, kleur }: typeof sinkStatic,
 ) {
   templates.forEach((filename) => {
     const dest = `${application.directoriesMap.get('config')}/${filename}`
@@ -28,5 +28,7 @@ export default function instructions (
     new TemplateFile(projectRoot, dest, src)
       .apply({})
       .commit()
+
+    console.log(`  create  ${kleur.green(`config/${filename}`)}`)
   })
 }
