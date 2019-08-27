@@ -16,8 +16,8 @@ import { Request } from '@poppinss/request'
 import { requireAll } from '@poppinss/utils'
 import { IocContract } from '@adonisjs/fold'
 import { Response } from '@poppinss/response'
-import { ApplicationContract } from '@poppinss/application'
 import { Profiler } from '@poppinss/profiler'
+import { ApplicationContract } from '@poppinss/application'
 import { Server, HttpContext, MiddlewareStore, Router, routePreProcessor } from '@poppinss/http-server'
 
 import { envLoader } from '../src/envLoader'
@@ -26,7 +26,6 @@ import { Encryption } from '../src/Encryption'
 import extendRouter from '../src/Bindings/Route'
 import { HealthCheck } from '../src/HealthCheck'
 import extendRequest from '../src/Bindings/Request'
-import { RequestLogger } from '../src/HttpHooks/RequestLogger'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 /**
@@ -209,15 +208,6 @@ export default class AppProvider {
     if (!logRequests) {
       return
     }
-
-    /**
-     * Create a single instance of the logger and hook it as a `before` server hook.
-     */
-    this.$container.with(['Adonis/Core/Server'], (Server) => {
-      const requestLogData = this.$container.use('Adonis/Core/Config').get('app.http.requestLogData')
-      const logger = new RequestLogger({ logRequests, requestLogData })
-      Server.before(logger.onRequest.bind(logger))
-    })
 
     /**
      * Extending request class
