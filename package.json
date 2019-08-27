@@ -81,7 +81,7 @@
     }
   },
   "dependencies": {
-    "@poppinss/application": "^1.0.7",
+    "@poppinss/application": "^1.0.8",
     "@poppinss/config": "^1.0.6",
     "@poppinss/env": "^1.0.5",
     "@poppinss/events": "^1.0.1",
