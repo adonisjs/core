@@ -41,33 +41,6 @@ export const appKey: string = Env.getOrFail('APP_KEY') as string
 export const http: HttpOptions = {
   /*
   |--------------------------------------------------------------------------
-  | Log HTTP requests
-  |--------------------------------------------------------------------------
-  |
-  | Set the value to true, to automatically log every HTTP requests. It is
-  | okay to log requests in production too, but make sure to use a
-  | logging service to collect logs from stdout
-  |
-  */
-  logRequests: true,
-
-  /*
-  |--------------------------------------------------------------------------
-  | Request log data
-  |--------------------------------------------------------------------------
-  |
-  | Optional, custom function to log custom data with every HTTP request
-  | log
-  |
-  */
-  // requestLogData: () => {
-  //   return {
-  //     foo: 'bar',
-  //   }
-  // }
-
-  /*
-  |--------------------------------------------------------------------------
   | Allow method spoofing
   |--------------------------------------------------------------------------
   |
