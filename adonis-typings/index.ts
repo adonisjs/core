@@ -20,7 +20,6 @@
 /// <reference path="./logger.ts" />
 /// <reference path="./middleware-store.ts" />
 /// <reference path="./profiler.ts" />
-/// <reference path="./request-logger.ts" />
 /// <reference path="./request.ts" />
 /// <reference path="./response.ts" />
 /// <reference path="./route.ts" />
