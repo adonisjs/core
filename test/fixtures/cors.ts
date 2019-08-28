@@ -12,6 +12,7 @@ import { Assert } from 'japa/build/src/Assert'
 
 import { CorsConfigContract } from '@ioc:Adonis/Core/Cors'
 const corsConfig = {
+  enabled: true,
   origin: true,
   methods: ['GET', 'PUT', 'POST'],
   headers: true,
@@ -747,6 +748,29 @@ export const specFixtures = [
     assertOptions (assert: Assert, res: any) {
       assert.containsAllKeys(res.headers, CORS_HEADERS)
       assert.equal(res.headers['access-control-expose-headers'], 'x-response-time')
+    },
+  },
+  {
+    title: 'do not set any headers when cors is disabled',
+
+    configureOptions (): CorsConfigContract {
+      return Object.assign({}, corsConfig, {
+        enabled: false,
+      })
+    },
+
+    configureRequest (req: IncomingMessage) {
+      req.headers = {
+        origin: 'foo.com',
+      }
+    },
+
+    assertNormal (assert: Assert, res: any) {
+      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+    },
+
+    assertOptions (assert: Assert, res: any) {
+      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
     },
   },
 ]

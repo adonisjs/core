@@ -130,7 +130,6 @@ test.group('HttpExceptionHandler', () => {
 
     const ctx = HttpContext.create('/', {})
     ctx.request.request.headers = { accept: 'text/html' }
-    ctx.response.explicitEnd = true
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.deepEqual(ctx.response.lazyBody!.args, ['<h1> bad request </h1>', false])
@@ -151,7 +150,6 @@ test.group('HttpExceptionHandler', () => {
 
     const ctx = HttpContext.create('/', {})
     ctx.request.request.headers = { accept: 'application/json' }
-    ctx.response.explicitEnd = true
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.deepEqual(ctx.response.lazyBody!.args, [{ message: 'bad request' }, false])
@@ -173,7 +171,6 @@ test.group('HttpExceptionHandler', () => {
 
     const ctx = HttpContext.create('/', {})
     ctx.request.request.headers = { accept: 'application/json' }
-    ctx.response.explicitEnd = true
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.exists(ctx.response.lazyBody!.args[0].stack)
@@ -197,7 +194,6 @@ test.group('HttpExceptionHandler', () => {
 
     const ctx = HttpContext.create('/', {})
     ctx.request.request.headers = { accept: 'text/html' }
-    ctx.response.explicitEnd = true
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.isTrue(/youch/.test(ctx.response.lazyBody!.args[0]))
@@ -225,7 +221,6 @@ test.group('HttpExceptionHandler', () => {
 
     const ctx = HttpContext.create('/', {})
     ctx.request.request.headers = { accept: 'text/html' }
-    ctx.response.explicitEnd = true
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
   })
@@ -248,7 +243,6 @@ test.group('HttpExceptionHandler', () => {
 
     const ctx = HttpContext.create('/', {})
     ctx.request.request.headers = { accept: 'text/html' }
-    ctx.response.explicitEnd = true
 
     const response = await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.equal(response, 'foo')

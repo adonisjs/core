@@ -17,6 +17,7 @@ import * as supertest from 'supertest'
 import { Ignitor } from '../src/Ignitor'
 
 const fs = new Filesystem(join(__dirname, '__app'))
+const SECRET = 'asecureandlongrandomsecret'
 
 test.group('Ignitor', (group) => {
   group.before(() => {
@@ -49,7 +50,7 @@ test.group('Ignitor', (group) => {
       export const appKey = Env.get('APP_KEY')
     `)
 
-    await fs.add(`.env`, `APP_KEY=foo`)
+    await fs.add(`.env`, `APP_KEY=${SECRET}`)
 
     const ignitor = new Ignitor(fs.basePath)
     await ignitor.bootstrap()
@@ -82,8 +83,71 @@ test.group('Ignitor', (group) => {
     const config = ignitor.application.container.use('Adonis/Core/Config')
     const env = ignitor.application.container.use('Adonis/Core/Env')
 
-    assert.equal(config.get('app.appKey'), 'foo')
-    assert.equal(env.get('APP_KEY'), 'foo')
+    assert.equal(config.get('app.appKey'), SECRET)
+    assert.equal(env.get('APP_KEY'), SECRET)
+  })
+
+  test('setup cors before hooks when enabled is set to true', async (assert) => {
+    await fs.add(`start/app.ts`, `export const providers = [
+      '${join(__dirname, '../providers/AppProvider.ts')}'
+    ]`)
+
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+    `)
+
+    await fs.add(`config/cors.ts`, `
+      export const enabled = true
+      export const exposeHeaders = []
+    `)
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.bootstrap()
+    const Server = ignitor.application.container.use('Adonis/Core/Server')
+
+    assert.lengthOf(Server._hooks.before, 1)
+  })
+
+  test('setup cors before hooks when enabled is set to a function', async (assert) => {
+    await fs.add(`start/app.ts`, `export const providers = [
+      '${join(__dirname, '../providers/AppProvider.ts')}'
+    ]`)
+
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+    `)
+
+    await fs.add(`config/cors.ts`, `
+      export const enabled = () => false
+      export const exposeHeaders = []
+    `)
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.bootstrap()
+    const Server = ignitor.application.container.use('Adonis/Core/Server')
+
+    assert.lengthOf(Server._hooks.before, 1)
+  })
+
+  test('do not setup cors before hooks when enabled is set to false', async (assert) => {
+    await fs.add(`start/app.ts`, `export const providers = [
+      '${join(__dirname, '../providers/AppProvider.ts')}'
+    ]`)
+
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+    `)
+
+    await fs.add(`config/cors.ts`, `
+      export const enabled = false
+      export const exposeHeaders = []
+    `)
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.bootstrap()
+    const Server = ignitor.application.container.use('Adonis/Core/Server')
+
+    assert.lengthOf(Server._hooks.before, 0)
   })
 
   test('on boot load preload files', async (assert) => {
@@ -96,7 +160,7 @@ test.group('Ignitor', (group) => {
       Config.set('routeLoaded', true)
     `)
 
-    await fs.add(`config/app.ts`, '')
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [{
@@ -121,7 +185,7 @@ test.group('Ignitor', (group) => {
       Config.set('routeLoaded', true)
     `)
 
-    await fs.add(`config/app.ts`, '')
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
@@ -152,7 +216,7 @@ test.group('Ignitor', (group) => {
     ]`)
 
     await fs.add(`start/route.ts`, '')
-    await fs.add(`config/app.ts`, '')
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
@@ -182,7 +246,7 @@ test.group('Ignitor', (group) => {
     ]`)
 
     await fs.add(`start/route.ts`, '')
-    await fs.add(`config/app.ts`, '')
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
@@ -207,6 +271,7 @@ test.group('Ignitor', (group) => {
     await fs.add(`start/app.ts`, `export const providers = [
       '${join(__dirname, '../providers/AppProvider.ts')}'
     ]`)
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add('.adonisrc.json', JSON.stringify({
       autoloads: {
@@ -227,6 +292,7 @@ test.group('Ignitor', (group) => {
         'App': './app',
       },
     }))
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add(`start/app.ts`, `export const providers = [
       '${join(__dirname, '../providers/AppProvider.ts')}',
@@ -269,6 +335,7 @@ test.group('Ignitor', (group) => {
         'App': './app',
       },
     }))
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add(`start/app.ts`, `export const providers = [
       '${join(__dirname, '../providers/AppProvider.ts')}'
@@ -310,6 +377,7 @@ test.group('Ignitor', (group) => {
     await fs.add(`start/app.ts`, `export const providers = [
       '${join(__dirname, '../providers/AppProvider.ts')}'
     ]`)
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add('.adonisrc.json', JSON.stringify({
       autoloads: {

@@ -21,7 +21,7 @@ import { ApplicationContract } from '@poppinss/application'
 import { Server, HttpContext, MiddlewareStore, Router, routePreProcessor } from '@poppinss/http-server'
 
 import { envLoader } from '../src/envLoader'
-import { Cors } from '../src/Middleware/Cors'
+import { serverHook } from '../src/Hooks/Cors'
 import { Encryption } from '../src/Encryption'
 import extendRouter from '../src/Bindings/Route'
 import { HealthCheck } from '../src/HealthCheck'
@@ -145,16 +145,6 @@ export default class AppProvider {
   }
 
   /**
-   * Registers `cors` middleware to the container
-   */
-  protected $registerCorsMiddleware () {
-    this.$container.singleton('Adonis/Core/CorsMiddleware', () => {
-      const config = this.$container.use('Adonis/Core/Config').get('cors', {})
-      return new Cors(config)
-    })
-  }
-
-  /**
    * Registering the hash provider
    */
   protected $registerHash () {
@@ -197,18 +187,12 @@ export default class AppProvider {
     this.$registerHttpServer()
     this.$registerHttpExceptionHandler()
     this.$registerEmitter()
-    this.$registerCorsMiddleware()
     this.$registerHash()
     this.$registerEncryption()
     this.$registerHealthCheck()
   }
 
   public boot () {
-    const logRequests = this.$container.use('Adonis/Core/Config').get('app.http.logRequests', false)
-    if (!logRequests) {
-      return
-    }
-
     /**
      * Extending request class
      */
@@ -221,6 +205,13 @@ export default class AppProvider {
      */
     this.$container.with(['Adonis/Core/Route', 'Adonis/Core/Encryption'], (Route, Encryption) => {
       extendRouter(Route, Encryption)
+    })
+
+    /**
+     * Register the cors before hook with the server
+     */
+    this.$container.with(['Adonis/Core/Config', 'Adonis/Core/Server'], (Config, Server) => {
+      serverHook(Server, Config.get('cors', {}))
     })
   }
 }

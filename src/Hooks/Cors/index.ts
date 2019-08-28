@@ -10,6 +10,7 @@
 import { ResponseContract } from '@ioc:Adonis/Core/Response'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { CorsConfigContract } from '@ioc:Adonis/Core/Cors'
+import { ServerContract } from '@ioc:Adonis/Core/Server'
 
 /**
  * List of default exposed headers.
@@ -31,6 +32,8 @@ const SIMPLE_EXPOSE_HEADERS = [
  * sure not to set request specific instance properties.
  */
 export class Cors {
+  private _isEnabled: ((request) => boolean)
+
   constructor (private _options: CorsConfigContract) {
     this._normalizeOptions()
   }
@@ -53,6 +56,15 @@ export class Cors {
      */
     if (!hasExtraHeaders) {
       this._options.exposeHeaders = []
+    }
+
+    /**
+     * A pre-computed function to know if CORS is enabled for current request or not
+     */
+    if (typeof (this._options.enabled) === 'function') {
+      this._isEnabled = this._options.enabled
+    } else {
+      this._isEnabled = () => this._options.enabled as boolean
     }
   }
 
@@ -228,9 +240,17 @@ export class Cors {
   }
 
   /**
-   * Handle HTTP request for CORS.
+   * Handle HTTP request for CORS. This method is binded as a before hook
+   * to the HTTP server.
    */
-  public async handle ({ request, response }: HttpContextContract, next: () => Promise<void>) {
+  public async handle ({ request, response }: HttpContextContract) {
+    /**
+     * Return early when CORS is not enabled for the current request
+     */
+    if (!this._isEnabled(request)) {
+      return
+    }
+
     const origin = request.header('origin')
     const isOptions = request.method() === 'OPTIONS'
 
@@ -239,39 +259,38 @@ export class Cors {
      * this situation, since the request is outside the scope of CORS.
      */
     if (!origin) {
-      await next()
       return
     }
 
     const allowedOrigin = this._computeResponseOrigin(origin)
 
     /**
-     * If current origin is not allowed, then do not set any headers
-     * and end the OPTIONS request.
-     *
-     * For non OPTIONS request, we advance the middleware chain.
+     * If origin is not allowed, then we don't set any of the cors headers
      */
     if (!allowedOrigin) {
+      /**
+       * Also end the OPTIONS request right away
+       */
       if (isOptions) {
         this._endPreFlight(response)
-      } else {
-        await next()
       }
 
       return
     }
 
     /**
-     * Non options requests
+     * Set required headers for non options request.
      */
-    if (request.method() !== 'OPTIONS') {
+    if (!isOptions) {
       this._setOrigin(response, allowedOrigin)
       this._setCredentials(response)
       this._setExposedHeaders(response)
-      await next()
       return
     }
 
+    /**
+     * Everything below is for pre-flight (aka OPTIONS) request
+     */
     const requestMethod = request.header('Access-Control-Request-Method')
 
     /**
@@ -333,5 +352,19 @@ export class Cors {
     this._setAllowHeaders(response, allowedHeaders)
     this._setMaxAge(response)
     this._endPreFlight(response)
+  }
+}
+
+/**
+ * Exposes a function to bind the CORS class as a server before hook.
+ * We only add the hook when `enabled` is set to true or a function.
+ *
+ * Since in most cases users will use a boolean value (true or false),
+ * it is better not to add CORS to the stack when it's disabled.
+ */
+export function serverHook (server: ServerContract, corsConfig: CorsConfigContract) {
+  if (corsConfig.enabled) {
+    const cors = new Cors(corsConfig)
+    server.before(cors.handle.bind(cors))
   }
 }

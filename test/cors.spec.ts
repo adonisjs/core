@@ -17,7 +17,7 @@ import * as supertest from 'supertest'
 import { HttpContext as BaseHttpContext } from '@poppinss/http-server'
 import { HttpContextConstructorContract } from '@ioc:Adonis/Core/HttpContext'
 
-import { Cors } from '../src/Middleware/Cors'
+import { Cors } from '../src/Hooks/Cors'
 import { specFixtures } from './fixtures/cors'
 
 const HttpContext = BaseHttpContext as unknown as HttpContextConstructorContract
@@ -30,9 +30,13 @@ test.group('Cors', () => {
 
         fixture.configureRequest(req)
         const ctx = HttpContext.create('/', {}, req, res)
-        await cors.handle(ctx, async () => {
+        await cors.handle(ctx)
+
+        if (!ctx.response.hasLazyBody) {
           ctx.response.send(null)
-        })
+        }
+
+        ctx.response.finish()
       })
 
       const res = await supertest(server).get('/')
