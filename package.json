@@ -96,7 +96,9 @@
     "simple-encryptor": "^3.0.0"
   },
   "peerDependencies": {
-    "@adonisjs/fold": "^6.x.x"
+    "@adonisjs/fold": "^6.x.x",
+    "youch": "^2.x.x",
+    "youch-terminal": "^1.x.x"
   },
   "np": {
     "contents": ".",
