@@ -7,7 +7,7 @@
 * file that was distributed with this source code.
 */
 
-import * as ms from 'ms'
+import ms from 'ms'
 import { makeUrl } from '@poppinss/http-server'
 import { RouterContract } from '@ioc:Adonis/Core/Route'
 import { EncryptionContract } from '@ioc:Adonis/Core/Encryption'

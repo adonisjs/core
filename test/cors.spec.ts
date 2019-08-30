@@ -11,9 +11,9 @@
 /// <reference path="../adonis-typings/response.ts" />
 /// <reference path="../adonis-typings/http-context.ts" />
 
- import * as test from 'japa'
+import test from 'japa'
 import { createServer } from 'http'
-import * as supertest from 'supertest'
+import supertest from 'supertest'
 import { HttpContext as BaseHttpContext } from '@poppinss/http-server'
 import { HttpContextConstructorContract } from '@ioc:Adonis/Core/HttpContext'
 

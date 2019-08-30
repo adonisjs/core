@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import * as test from 'japa'
+import test from 'japa'
 import { Exception } from '@poppinss/utils'
 import { FakeLogger } from '@poppinss/logger'
 import { HttpContext } from '@poppinss/http-server'

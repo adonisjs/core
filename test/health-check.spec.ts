@@ -10,7 +10,7 @@
 /// <reference path="../adonis-typings/application.ts" />
 /// <reference path="../adonis-typings/health-check.ts" />
 
-import * as test from 'japa'
+import test from 'japa'
 import { Ioc } from '@adonisjs/fold'
 import { Application } from '@poppinss/application'
 import { HealthCheck } from '../src/HealthCheck'

@@ -10,10 +10,10 @@
 /// <reference path="../adonis-typings/index.ts" />
 
 import { join } from 'path'
-import * as test from 'japa'
+import test from 'japa'
 import { createServer } from 'http'
 import { Filesystem } from '@poppinss/dev-utils'
-import * as supertest from 'supertest'
+import supertest from 'supertest'
 import { Ignitor } from '../src/Ignitor'
 
 const fs = new Filesystem(join(__dirname, '__app'))

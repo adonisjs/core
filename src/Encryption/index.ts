@@ -7,7 +7,7 @@
 * file that was distributed with this source code.
 */
 
-import * as SimpleEncryptor from 'simple-encryptor'
+import SimpleEncryptor from 'simple-encryptor'
 import { EncryptionContract, EncryptionConfig } from '@ioc:Adonis/Core/Encryption'
 
 /**

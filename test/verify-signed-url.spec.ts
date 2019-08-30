@@ -8,9 +8,9 @@
 */
 /// <reference path="../adonis-typings/index.ts" />
 
-import * as test from 'japa'
+import test from 'japa'
 import { createServer } from 'http'
-import * as supertest from 'supertest'
+import supertest from 'supertest'
 import { Request } from '@poppinss/request'
 import { Router } from '@poppinss/http-server'
 import { RouterContract } from '@ioc:Adonis/Core/Route'

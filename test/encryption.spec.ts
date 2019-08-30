@@ -9,7 +9,7 @@
 
 /// <reference path="../adonis-typings/encryption.ts" />
 
-import * as test from 'japa'
+import test from 'japa'
 import { Encryption } from '../src/Encryption'
 
 test.group('Encryption', () => {

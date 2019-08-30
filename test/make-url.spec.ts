@@ -8,7 +8,7 @@
 */
 /// <reference path="../adonis-typings/index.ts" />
 
-import * as test from 'japa'
+import test from 'japa'
 import { parse } from 'querystring'
 import { RouterContract } from '@ioc:Adonis/Core/Route'
 import { Router } from '@poppinss/http-server'
