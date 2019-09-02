@@ -8,7 +8,7 @@
 */
 
 import { join } from 'path'
-import * as findPkg from 'find-package-json'
+import findPkg from 'find-package-json'
 import { Server as HttpsServer } from 'https'
 import { Ioc, Registrar } from '@adonisjs/fold'
 import { LoggerContract } from '@poppinss/logger'
