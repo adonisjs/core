@@ -51,7 +51,7 @@
     "cz-conventional-changelog": "^3.0.2",
     "del-cli": "^2.0.0",
     "doctoc": "^1.4.0",
-    "husky": "^3.0.4",
+    "husky": "^3.0.5",
     "japa": "^3.0.0",
     "mrm": "^1.2.2",
     "np": "^5.0.3",
