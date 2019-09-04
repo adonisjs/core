@@ -41,10 +41,10 @@
   "devDependencies": {
     "@adonisjs/fold": "^6.1.5",
     "@adonisjs/mrm-preset": "^2.1.0",
-    "@adonisjs/sink": "^2.1.5",
+    "@adonisjs/sink": "^2.1.6",
     "@poppinss/dev-utils": "^1.0.1",
     "@types/ms": "^0.7.30",
-    "@types/node": "^12.7.3",
+    "@types/node": "^12.7.4",
     "@types/supertest": "^2.0.8",
     "commitizen": "^4.0.3",
     "copyfiles": "^2.1.1",
