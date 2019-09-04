@@ -10,7 +10,6 @@ import Env from '@ioc:Adonis/Core/Env'
 import { LoggerConfigContract } from '@ioc:Adonis/Core/Logger'
 import { RequestConfigContract } from '@ioc:Adonis/Core/Request'
 import { ResponseConfigContract } from '@ioc:Adonis/Core/Response'
-import { RequestLoggerConfigContract } from '@ioc:Adonis/Core/RequestLogger'
 import { ProfilerConfigContract } from '@ioc:Adonis/Core/Profiler'
 
 type HttpOptions = RequestConfigContract & ResponseConfigContract
