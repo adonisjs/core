@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/core",
-  "version": "2.0.15",
+  "version": "2.0.16",
   "description": "Adonisjs core",
   "main": "build/index.js",
   "files": [
@@ -109,7 +109,11 @@
   "adonisjs": {
     "templates": {
       "basePath": "./build/config",
-      "config": ["app.txt", "cors.txt", "hash.txt"]
+      "config": [
+        "app.txt",
+        "cors.txt",
+        "hash.txt"
+      ]
     }
   }
 }
