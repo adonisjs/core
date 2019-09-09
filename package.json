@@ -88,7 +88,7 @@
     "@adonisjs/env": "^1.0.10",
     "@adonisjs/events": "^1.0.5",
     "@adonisjs/hash": "^1.0.8",
-    "@adonisjs/http-server": "^1.2.8",
+    "@adonisjs/http-server": "^1.2.9",
     "@adonisjs/logger": "^1.1.6",
     "@adonisjs/profiler": "^1.2.4",
     "@poppinss/utils": "^2.0.0",
