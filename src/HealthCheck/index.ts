@@ -7,14 +7,14 @@
 * file that was distributed with this source code.
 */
 
+import { IocResolverContract } from '@adonisjs/fold'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { parseIocReference, callIocReference } from '@poppinss/utils'
 
 import {
-  HealthCheckContract,
   Checker,
   HealthReport,
   HealthReportEntry,
+  HealthCheckContract,
 } from '@ioc:Adonis/Core/HealthCheck'
 
 /**
@@ -23,19 +23,21 @@ import {
  */
 export class HealthCheck implements HealthCheckContract {
   /**
-   * A copy of custom checkers
+   * A copy of registered checkers
    */
   private _healthCheckers: { [service: string]: Checker } = {}
+
+  /**
+   * Reference to IoC container to resolve health checkers
+   */
+  private _resolver: IocResolverContract = this._application.container.getResolver('report')
 
   constructor (private _application: ApplicationContract) {}
 
   /**
    * Invokes a given checker to collect the report metrics.
    */
-  private async _invokeChecker (
-    service: string,
-    reportSheet: HealthReport,
-  ): Promise<boolean> {
+  private async _invokeChecker (service: string, reportSheet: HealthReport): Promise<boolean> {
     const checker = this._healthCheckers[service]
     let report: HealthReportEntry
 
@@ -43,7 +45,7 @@ export class HealthCheck implements HealthCheckContract {
       if (typeof (checker) === 'function') {
         report = await checker()
       } else {
-        report = await callIocReference(parseIocReference(`${checker}.report`), [])
+        report = await this._resolver.call(checker)
       }
     } catch (error) {
       report = {
@@ -65,7 +67,7 @@ export class HealthCheck implements HealthCheckContract {
       return false
     }
 
-    const { healthy } = await this.report()
+    const { healthy } = await this.getReport()
     return healthy
   }
 
@@ -89,8 +91,9 @@ export class HealthCheck implements HealthCheckContract {
    * Returns the health check reports. The health checks are performed when
    * this method is invoked.
    */
-  public async report (): Promise<{ healthy: boolean, report: HealthReport }> {
+  public async getReport (): Promise<{ healthy: boolean, report: HealthReport }> {
     const report: HealthReport = {}
+
     await Promise.all(Object.keys(this._healthCheckers).map((service) => {
       return this._invokeChecker(service, report)
     }))

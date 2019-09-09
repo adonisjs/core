@@ -38,9 +38,9 @@
   },
   "homepage": "https://github.com/adonisjs/adonis-framework#readme",
   "devDependencies": {
-    "@adonisjs/fold": "^6.1.6",
+    "@adonisjs/fold": "^6.1.9",
     "@adonisjs/mrm-preset": "^2.1.0",
-    "@adonisjs/sink": "^2.1.9",
+    "@adonisjs/sink": "^2.1.10",
     "@poppinss/dev-utils": "^1.0.1",
     "@types/ms": "^0.7.31",
     "@types/node": "^12.7.4",
@@ -48,7 +48,7 @@
     "commitizen": "^4.0.3",
     "copyfiles": "^2.1.1",
     "cz-conventional-changelog": "^3.0.2",
-    "del-cli": "^2.0.0",
+    "del-cli": "^3.0.0",
     "doctoc": "^1.4.0",
     "husky": "^3.0.5",
     "japa": "^3.0.1",
@@ -82,15 +82,16 @@
     }
   },
   "dependencies": {
-    "@poppinss/application": "^1.0.10",
-    "@poppinss/config": "^1.0.7",
-    "@poppinss/env": "^1.0.6",
-    "@poppinss/events": "^1.0.2",
-    "@poppinss/hash": "^1.0.4",
-    "@poppinss/http-server": "^1.2.3",
-    "@poppinss/logger": "^1.1.3",
-    "@poppinss/profiler": "^1.2.0",
-    "@poppinss/utils": "^1.0.9",
+    "@adonisjs/application": "^1.0.13",
+    "@adonisjs/config": "^1.0.10",
+    "@adonisjs/encryption": "^1.0.1",
+    "@adonisjs/env": "^1.0.10",
+    "@adonisjs/events": "^1.0.5",
+    "@adonisjs/hash": "^1.0.8",
+    "@adonisjs/http-server": "^1.2.7",
+    "@adonisjs/logger": "^1.1.6",
+    "@adonisjs/profiler": "^1.2.4",
+    "@poppinss/utils": "^2.0.0",
     "@types/proxy-addr": "^2.0.0",
     "find-package-json": "^1.2.0",
     "ms": "^2.1.2",
@@ -111,8 +112,7 @@
       "basePath": "./build/config",
       "config": [
         "app.txt",
-        "cors.txt",
-        "hash.txt"
+        "cors.txt"
       ]
     }
   }

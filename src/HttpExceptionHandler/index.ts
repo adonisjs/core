@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { LoggerContract } from '@poppinss/logger'
-import { HttpContextContract } from '@poppinss/http-server'
+import { LoggerContract } from '@ioc:Adonis/Core/Logger'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 /**
  * Http exception handler serves as the base exception handler

@@ -7,12 +7,11 @@
 * file that was distributed with this source code.
 */
 
-/// <reference path="../adonis-typings/application.ts" />
-/// <reference path="../adonis-typings/health-check.ts" />
+/// <reference path="../adonis-typings/index.ts" />
 
 import test from 'japa'
 import { Ioc } from '@adonisjs/fold'
-import { Application } from '@poppinss/application'
+import { Application } from '@adonisjs/application/build/standalone'
 import { HealthCheck } from '../src/HealthCheck'
 
 test.group('HealthCheck', () => {
@@ -41,7 +40,7 @@ test.group('HealthCheck', () => {
       }
     })
 
-    const report = await healthCheck.report()
+    const report = await healthCheck.getReport()
     assert.deepEqual(report, {
       healthy: true,
       report: {
@@ -62,7 +61,7 @@ test.group('HealthCheck', () => {
       throw new Error('boom')
     })
 
-    const report = await healthCheck.report()
+    const report = await healthCheck.getReport()
     assert.deepEqual(report, {
       healthy: false,
       report: {
@@ -95,7 +94,7 @@ test.group('HealthCheck', () => {
       throw new Error('boom')
     })
 
-    const report = await healthCheck.report()
+    const report = await healthCheck.getReport()
     assert.deepEqual(report, {
       healthy: false,
       report: {
@@ -141,7 +140,7 @@ test.group('HealthCheck', () => {
 
     healthCheck.addChecker('database', 'App/Checkers/Db')
 
-    const report = await healthCheck.report()
+    const report = await healthCheck.getReport()
     assert.deepEqual(report, {
       healthy: true,
       report: {

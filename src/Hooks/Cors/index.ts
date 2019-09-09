@@ -365,6 +365,6 @@ export class Cors {
 export function serverHook (server: ServerContract, corsConfig: CorsConfigContract) {
   if (corsConfig.enabled) {
     const cors = new Cors(corsConfig)
-    server.before(cors.handle.bind(cors))
+    server.hooks.before(cors.handle.bind(cors))
   }
 }

@@ -11,11 +11,12 @@ import { join } from 'path'
 import findPkg from 'find-package-json'
 import { Server as HttpsServer } from 'https'
 import { Ioc, Registrar } from '@adonisjs/fold'
-import { LoggerContract } from '@poppinss/logger'
+import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { esmRequire, Exception } from '@poppinss/utils'
-import { ServerContract, HttpContext } from '@poppinss/http-server'
-import { Application, ApplicationContract } from '@poppinss/application'
+import { ServerContract } from '@ioc:Adonis/Core/Server'
+import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
+import { Application } from '@adonisjs/application/build/standalone'
 
 type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
 type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
@@ -159,7 +160,7 @@ export class Ignitor {
     /**
      * Finally boot providers, which is an async process.
      */
-    await registrar.boot(this._providersList)
+    await registrar.boot()
   }
 
   /**
@@ -202,7 +203,7 @@ export class Ignitor {
    * Binds exception handler when it's namespace is
    * defined
    */
-  private _bindExceptionHandler (server: ServerContract<HttpContext>) {
+  private _bindExceptionHandler (server: ServerContract) {
     const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
     logger.trace('binding %s exception handler', this.application.exceptionHandlerNamespace)
 

@@ -40,7 +40,7 @@ declare module '@ioc:Adonis/Core/HealthCheck' {
     addChecker (service: string, checker: Checker): void,
     isLive (): Promise<boolean>,
     isReady (): boolean,
-    report (): Promise<{ healthy: boolean, report: HealthReport }>,
+    getReport (): Promise<{ healthy: boolean, report: HealthReport }>,
   }
 
   const HealthCheck: HealthCheckContract
