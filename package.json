@@ -41,7 +41,7 @@
   "devDependencies": {
     "@adonisjs/fold": "^6.1.9",
     "@adonisjs/mrm-preset": "^2.1.0",
-    "@adonisjs/sink": "^2.1.10",
+    "@adonisjs/sink": "^2.1.11",
     "@poppinss/dev-utils": "^1.0.1",
     "@types/ms": "^0.7.31",
     "@types/node": "^12.7.4",
@@ -58,7 +58,7 @@
     "proxy-addr": "^2.0.5",
     "supertest": "^4.0.2",
     "ts-node": "^8.3.0",
-    "tslint": "^5.19.0",
+    "tslint": "^5.20.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.6.2",
     "youch": "^2.0.10",
@@ -83,13 +83,13 @@
     }
   },
   "dependencies": {
-    "@adonisjs/application": "^1.0.13",
+    "@adonisjs/application": "^1.0.14",
     "@adonisjs/config": "^1.0.10",
     "@adonisjs/encryption": "^1.0.1",
     "@adonisjs/env": "^1.0.10",
     "@adonisjs/events": "^1.0.5",
     "@adonisjs/hash": "^1.0.8",
-    "@adonisjs/http-server": "^1.2.9",
+    "@adonisjs/http-server": "^1.2.10",
     "@adonisjs/logger": "^1.1.6",
     "@adonisjs/profiler": "^1.2.4",
     "@poppinss/utils": "^2.0.0",
