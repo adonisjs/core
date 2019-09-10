@@ -4,10 +4,11 @@
   "description": "Adonisjs core",
   "main": "build/index.js",
   "files": [
-    "build/providers",
     "build/adonis-typings",
+    "build/config",
+    "build/providers",
     "build/src",
-    "build/config"
+    "build/instructions.js"
   ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
