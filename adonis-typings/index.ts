@@ -7,15 +7,15 @@
 * file that was distributed with this source code.
 */
 
-/// <reference path="../node_modules/@adonisjs/application/build/adonis-typings/application.d.ts" />
-/// <reference path="../node_modules/@adonisjs/config/build/adonis-typings/config.d.ts" />
-/// <reference path="../node_modules/@adonisjs/env/build/adonis-typings/env.d.ts" />
-/// <reference path="../node_modules/@adonisjs/events/build/adonis-typings/events.d.ts" />
-/// <reference path="../node_modules/@adonisjs/hash/build/adonis-typings/hash.d.ts" />
-/// <reference path="../node_modules/@adonisjs/http-server/build/adonis-typings/http-server.d.ts" />
-/// <reference path="../node_modules/@adonisjs/logger/build/adonis-typings/logger.d.ts" />
-/// <reference path="../node_modules/@adonisjs/profiler/build/adonis-typings/profiler.d.ts" />
-/// <reference path="../node_modules/@adonisjs/encryption/build/adonis-typings/encryption.d.ts" />
+/// <reference types="@adonisjs/application/build/adonis-typings/application" />
+/// <reference types="@adonisjs/config/build/adonis-typings/config" />
+/// <reference types="@adonisjs/env/build/adonis-typings/env" />
+/// <reference types="@adonisjs/events/build/adonis-typings/events" />
+/// <reference types="@adonisjs/hash/build/adonis-typings/hash" />
+/// <reference types="@adonisjs/http-server/build/adonis-typings/index" />
+/// <reference types="@adonisjs/logger/build/adonis-typings/logger" />
+/// <reference types="@adonisjs/profiler/build/adonis-typings/profiler" />
+/// <reference types="@adonisjs/encryption/build/adonis-typings/encryption" />
 /// <reference path="./cors.ts" />
 /// <reference path="./health-check.ts" />
 /// <reference path="./exception-handler.ts" />
