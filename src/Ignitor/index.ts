@@ -49,6 +49,11 @@ export class Ignitor {
    */
   private _bootstraped: boolean
 
+  /**
+   * The registrar to register and boot providers
+   */
+  private _registrar: Registrar
+
   constructor (private _appRoot: string) {
     const ioc = new Ioc()
 
@@ -122,11 +127,10 @@ export class Ignitor {
   }
 
   /**
-   * Register and boot all application providers. Also defines the aliases
-   * for IoC container bindings.
+   * Registers all the providers with the IoC container
    */
-  private async _bootProviders () {
-    const registrar = new Registrar(this.application.container)
+  private _registerProviders () {
+    this._registrar = new Registrar(this.application.container)
 
     /**
      * Loads `start/app` file and use providers and aliases from it. In
@@ -137,7 +141,7 @@ export class Ignitor {
     /**
      * Register all providers
      */
-    this._providersList = registrar.useProviders(providers).register()
+    this._providersList = this._registrar.useProviders(providers).register()
 
     /**
      * We need to persist the providers with `exit` hook, so that we can
@@ -155,11 +159,6 @@ export class Ignitor {
     Object.keys(aliases).forEach((alias) => {
       this.application.container.alias(aliases[alias], alias)
     })
-
-    /**
-     * Finally boot providers, which is an async process.
-     */
-    await registrar.boot()
   }
 
   /**
@@ -218,14 +217,7 @@ export class Ignitor {
    */
   private async _createHttpServer (serverCallback?: CustomServerCallback) {
     const server = this.application.container.use('Adonis/Core/Server')
-    const router = this.application.container.use('Adonis/Core/Route')
     const logger = this.application.container.use<LoggerContract>('Adonis/Core/Logger')
-
-    /**
-     * Commit routes to the router store
-     */
-    router.commit()
-    logger.trace('commiting routes')
 
     /**
      * Optimize server to cache handler
@@ -341,30 +333,38 @@ export class Ignitor {
     }
 
     process.on('SIGTERM', this._prepareShutDown.bind(this))
+  }
 
+  /**
+   * Monitors HTTP server for by attaching `onClose` and `onError`
+   * listeners
+   */
+  private _monitorHttpServer () {
     /**
      * Listen for HTTP server error when the server instance exists. We consider
      * server error as an exit event as well.
      */
     const Server = this.application.container.use('Adonis/Core/Server')
-    if (Server.instance) {
-      Server.instance.on('close', () => {
-        this.application.isReady = false
-      })
-
-      Server.instance.on('error', (error: NodeJS.ErrnoException) => {
-        if (error.code === 'EADDRINUSE') {
-          Server.instance.close()
-          return
-        }
-
-        /**
-         * Shutdown as we will normally do in case of SIGTERM and SIGINT. `EADDRINUSE`
-         * is not part of standard shutdown though.
-         */
-        this._prepareShutDown()
-      })
+    if (!Server.instance) {
+      return
     }
+
+    Server.instance.on('close', () => {
+      this.application.isReady = false
+    })
+
+    Server.instance.on('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE') {
+        Server.instance.close()
+        return
+      }
+
+      /**
+       * Shutdown as we will normally do in case of SIGTERM and SIGINT. `EADDRINUSE`
+       * is not part of standard shutdown though.
+       */
+      this._prepareShutDown()
+    })
   }
 
   /**
@@ -374,44 +374,87 @@ export class Ignitor {
     const Youch = require('youch')
     const output = await new Youch(error, {}).toJSON()
     console.log(require('youch-terminal')(output))
-    process.exit(1)
   }
 
   /**
    * Bootstrap the application by register and booting all
    * providers, setting up autoloads and preloading files.
    */
-  public async bootstrap () {
+  public async bootstrap (deferBootingProviders: boolean = false) {
     if (this._bootstraped) {
       return
     }
 
     this._bootstraped = true
-    await this._bootProviders()
+    this._registerProviders()
+
+    /**
+     * Boot providers when not deferring the boot process
+     */
+    if (!deferBootingProviders) {
+      await this.bootProviders()
+    }
 
     this._registerAutoloads()
     this._preloadFiles()
   }
 
   /**
+   * Register and boot all application providers. Also defines the aliases
+   * for IoC container bindings.
+   */
+  public async bootProviders () {
+    /**
+     * Finally boot providers, which is an async process.
+     */
+    await this._registrar.boot()
+  }
+
+  /**
    * Bootstrap the application and start HTTP server to accept
    * new connections.
    */
-  public async startHttpServer (serverCallback?: CustomServerCallback) {
+  public async startHttpServer (
+    serverCallback?: CustomServerCallback,
+    deferBootingProviders: boolean = false,
+  ) {
     this.application.environment = 'web'
 
     try {
-      await this.bootstrap()
+      await this.bootstrap(deferBootingProviders)
       await this._createHttpServer(serverCallback)
       await this._listen()
-      await this._listenForExitEvents()
+      this._monitorHttpServer()
+      this._listenForExitEvents()
     } catch (error) {
       if (this.application.inDev) {
         this._prettyPrintError(error)
       } else {
         console.error(error.stack)
-        process.exit(1)
       }
+
+      process.exit(1)
     }
+  }
+
+  /**
+   * Closes the ignitor process. This will perform a graceful
+   * shutdown.
+   */
+  public async close () {
+    await this._prepareShutDown()
+  }
+
+  /**
+   * Kills the ignitor process by attempting to perform a graceful
+   * shutdown or killing the app forcefully as waiting for configured
+   * seconds.
+   */
+  public async kill (waitTimeout: number = 3000) {
+    await Promise.race([this._prepareShutDown(), new Promise((resolve) => {
+      setTimeout(resolve, waitTimeout)
+    })])
+
+    process.exit(0)
   }
 }
