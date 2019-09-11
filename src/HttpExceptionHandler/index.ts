@@ -132,7 +132,7 @@ export abstract class HttpExceptionHandler {
       return error.handle(error, ctx)
     }
 
-    if (ctx.request.accepts(['json'])) {
+    if (ctx.request.accepts(['html', 'json']) === 'json') {
       return this.makeJSONResponse(error, ctx)
     }
 
