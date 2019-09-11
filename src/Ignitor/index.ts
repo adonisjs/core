@@ -58,7 +58,6 @@ export class Ignitor {
     global[Symbol.for('ioc.use')] = ioc.use.bind(ioc)
     global[Symbol.for('ioc.make')] = ioc.make.bind(ioc)
     global[Symbol.for('ioc.call')] = ioc.call.bind(ioc)
-    global[Symbol.for('ioc.useEsm')] = ioc.useEsm.bind(ioc)
 
     /**
      * The package file is required to read the version of `@adonisjs/core`
