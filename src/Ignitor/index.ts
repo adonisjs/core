@@ -374,6 +374,7 @@ export class Ignitor {
     const Youch = require('youch')
     const output = await new Youch(error, {}).toJSON()
     console.log(require('youch-terminal')(output))
+    process.exit(1)
   }
 
   /**
@@ -431,9 +432,8 @@ export class Ignitor {
         this._prettyPrintError(error)
       } else {
         console.error(error.stack)
+        process.exit(1)
       }
-
-      process.exit(1)
     }
   }
 
