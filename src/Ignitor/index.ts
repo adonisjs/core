@@ -309,14 +309,8 @@ export class Ignitor {
       Server.instance.close()
     }
 
-    try {
-      await Promise.all(this._providersWithExitHook.map((provider: any) => provider.shutdown()))
-      logger.info('exiting server gracefully')
-      process.exit(0)
-    } catch (error) {
-      logger.error(error, 'exiting server with error')
-      process.exit(1)
-    }
+    logger.trace('preparing server shutdown')
+    await Promise.all(this._providersWithExitHook.map((provider: any) => provider.shutdown()))
   }
 
   /**
@@ -329,10 +323,24 @@ export class Ignitor {
      * SIGINT signal, which doesn't need graceful exit.
      */
     if (process.env.pm_id) {
-      process.on('SIGINT', this._prepareShutDown.bind(this))
+      process.on('SIGINT', async () => {
+        try {
+          await this._prepareShutDown()
+          process.exit(0)
+        } catch (error) {
+          process.exit(1)
+        }
+      })
     }
 
-    process.on('SIGTERM', this._prepareShutDown.bind(this))
+    process.on('SIGTERM', async () => {
+      try {
+        await this._prepareShutDown()
+        process.exit(0)
+      } catch (error) {
+        process.exit(1)
+      }
+    })
   }
 
   /**
@@ -360,10 +368,10 @@ export class Ignitor {
       }
 
       /**
-       * Shutdown as we will normally do in case of SIGTERM and SIGINT. `EADDRINUSE`
-       * is not part of standard shutdown though.
+       * Attempt to gracefully shutdown the server or kill it after
+       * 3 seconds at max
        */
-      this._prepareShutDown()
+      this.kill(3000)
     })
   }
 
@@ -374,7 +382,6 @@ export class Ignitor {
     const Youch = require('youch')
     const output = await new Youch(error, {}).toJSON()
     console.log(require('youch-terminal')(output))
-    process.exit(1)
   }
 
   /**
@@ -429,7 +436,7 @@ export class Ignitor {
       this._listenForExitEvents()
     } catch (error) {
       if (this.application.inDev) {
-        this._prettyPrintError(error)
+        this._prettyPrintError(error).finally(() => process.exit(1))
       } else {
         console.error(error.stack)
         process.exit(1)
@@ -451,10 +458,13 @@ export class Ignitor {
    * seconds.
    */
   public async kill (waitTimeout: number = 3000) {
-    await Promise.race([this._prepareShutDown(), new Promise((resolve) => {
-      setTimeout(resolve, waitTimeout)
-    })])
-
-    process.exit(0)
+    try {
+      await Promise.race([this._prepareShutDown(), new Promise((resolve) => {
+        setTimeout(resolve, waitTimeout)
+      })])
+      process.exit(0)
+    } catch (error) {
+      process.exit(1)
+    }
   }
 }
