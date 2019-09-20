@@ -41,7 +41,7 @@
   "devDependencies": {
     "@adonisjs/fold": "^6.2.0",
     "@adonisjs/mrm-preset": "^2.1.0",
-    "@adonisjs/sink": "^2.1.12",
+    "@adonisjs/sink": "^2.2.0",
     "@poppinss/dev-utils": "^1.0.1",
     "@types/ms": "^0.7.31",
     "@types/node": "^12.7.5",
@@ -57,7 +57,7 @@
     "np": "^5.1.0",
     "proxy-addr": "^2.0.5",
     "supertest": "^4.0.2",
-    "ts-node": "^8.3.0",
+    "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.6.3",
