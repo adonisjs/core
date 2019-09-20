@@ -109,6 +109,7 @@
     "anyBranch": false
   },
   "adonisjs": {
+    "instructions": "./build/instructions.js",
     "templates": {
       "basePath": "./build/config",
       "config": [
