@@ -404,6 +404,6 @@ test.group('Ignitor', (group) => {
     server.instance.close()
 
     const { text } = await supertest(server.instance).get('/').expect(404)
-    assert.equal(text, 'handled E_ROUTE_NOT_FOUND: Cannot GET:/')
+    assert.equal(text, 'handled Cannot GET:/')
   })
 })
