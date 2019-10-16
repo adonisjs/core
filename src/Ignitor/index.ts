@@ -15,8 +15,8 @@ import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { esmRequire, Exception } from '@poppinss/utils'
 import { ServerContract } from '@ioc:Adonis/Core/Server'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
 import { Application } from '@adonisjs/application/build/standalone'
+import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
 
 type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
 type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
@@ -26,8 +26,6 @@ type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
  * the application.
  */
 export class Ignitor {
-  public application: ApplicationContract
-
   /**
    * Reference to provider class instances. We need to keep
    * a reference to execute lifecycle hooks during the
@@ -44,15 +42,20 @@ export class Ignitor {
   private _providersWithExitHook: any[] = []
 
   /**
-   * Tracking if application has already been bootstrapped
-   * or not.
-   */
-  private _bootstraped: boolean
-
-  /**
    * The registrar to register and boot providers
    */
   private _registrar: Registrar
+
+  /**
+   * Reference to the application instance
+   */
+  public application: ApplicationContract
+
+  /**
+   * Tracking if application has already been bootstrapped
+   * or not.
+   */
+  public bootstraped: boolean = false
 
   constructor (private _appRoot: string) {
     const ioc = new Ioc()
@@ -103,7 +106,11 @@ export class Ignitor {
   /**
    * Returns `providers` and `aliases` from the app file.
    */
-  private _requireAppFile (): { providers: string[], aliases: { [key: string]: string } } {
+  private _requireAppFile (): {
+    providers: string[],
+    commands: string[],
+    aliases: { [key: string]: string },
+  } {
     const appExports = require(this.application.startPath('app'))
 
     /**
@@ -123,6 +130,7 @@ export class Ignitor {
     return {
       providers: appExports.providers,
       aliases: appExports.aliases || {},
+      commands: appExports.commands || [],
     }
   }
 
@@ -262,6 +270,92 @@ export class Ignitor {
   }
 
   /**
+   * Loads ts node. Wrapped in try/catch, so that we can give informative
+   * error when module is missing.
+   */
+  private _loadTsNode () {
+    try {
+      return require('ts-node')
+    } catch (error) {
+      if (['MODULE_NOT_FOUND', 'ENOENT'].includes(error.code)) {
+        throw new Exception('ts-node must be installed to execute ace commands')
+      }
+      throw error
+    }
+  }
+
+  /**
+   * Generates the manifest file for
+   */
+  private async _generateManifest (manifest) {
+    await this.bootstrap(true)
+    let { commands } = this._requireAppFile()
+
+    /**
+     * Loop over all the providers and register commands
+     */
+    this._providersList.forEach((provider) => {
+      if (provider.commands) {
+        commands = commands.concat(provider.commands)
+      }
+    })
+
+    await manifest.generate(commands)
+  }
+
+  /**
+   * Executes the ace command and optionally boots the app when instructed
+   */
+  private async _executeAceCommand (argv: string[]) {
+    const { Kernel, handleError, Manifest } = require('@adonisjs/ace')
+    const manifest = new Manifest(this._appRoot)
+
+    /**
+     * We always bootstrap the app when generating manifest, since it will
+     * load all the commands
+     */
+    if (argv[0] === 'generate:manifest') {
+      await this._generateManifest(manifest)
+      return
+    }
+
+    const kernel = new Kernel()
+    kernel.useManifest(manifest)
+
+    if (!argv.length) {
+      kernel.printHelp()
+      process.exit(0)
+    }
+
+    /**
+     * Printing the help screen
+     */
+    kernel.flag('help', (value, _options, command) => {
+      if (!value) {
+        return
+      }
+
+      kernel.printHelp(command)
+      process.exit(0)
+    }, {})
+
+    /**
+     * Only bootstrapping the application when command sets `loadApp` to true
+     */
+    kernel.before('find', async (command) => {
+      if (command && command.settings && command.settings.loadApp) {
+        await this.bootstrap(false)
+      }
+    })
+
+    try {
+      await kernel.handle(argv)
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  /**
    * Attach http server to a given port and host by picking it from
    * the `environment` variables.
    */
@@ -389,11 +483,11 @@ export class Ignitor {
    * providers, setting up autoloads and preloading files.
    */
   public async bootstrap (deferBootingProviders: boolean = false) {
-    if (this._bootstraped) {
+    if (this.bootstraped) {
       return
     }
 
-    this._bootstraped = true
+    this.bootstraped = true
     this._registerProviders()
 
     /**
@@ -419,6 +513,25 @@ export class Ignitor {
   }
 
   /**
+   * Register ts node with appropriate hoosk when runtime is typescript
+   */
+  public registerTsNode () {
+    if (!this.application.typescript) {
+      return
+    }
+
+    const { iocTransformer } = require('@adonisjs/ioc-transformer')
+    this._loadTsNode().register({
+      files: true,
+      transformers: {
+        after: [
+          iocTransformer(require('typescript/lib/typescript'), this.application.rcFile),
+        ],
+      },
+    })
+  }
+
+  /**
    * Bootstrap the application and start HTTP server to accept
    * new connections.
    */
@@ -433,6 +546,25 @@ export class Ignitor {
       await this._createHttpServer(serverCallback)
       await this._listen()
       this._monitorHttpServer()
+      this._listenForExitEvents()
+    } catch (error) {
+      if (this.application.inDev) {
+        this._prettyPrintError(error).finally(() => process.exit(1))
+      } else {
+        console.error(error.stack)
+        process.exit(1)
+      }
+    }
+  }
+
+  /**
+   * Starts the process by listening for ace commands
+   */
+  public async handleAceCommand (argv: string[]) {
+    this.application.environment = 'console'
+
+    try {
+      await this._executeAceCommand(argv)
       this._listenForExitEvents()
     } catch (error) {
       if (this.application.inDev) {

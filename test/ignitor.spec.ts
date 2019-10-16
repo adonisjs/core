@@ -9,17 +9,18 @@
 
 /// <reference path="../adonis-typings/index.ts" />
 
-import { join } from 'path'
 import test from 'japa'
+import { join } from 'path'
+import supertest from 'supertest'
 import { createServer } from 'http'
 import { Filesystem } from '@poppinss/dev-utils'
-import supertest from 'supertest'
+
 import { Ignitor } from '../src/Ignitor'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 const SECRET = 'asecureandlongrandomsecret'
 
-test.group('Ignitor', (group) => {
+test.group('Ignitor | Setup', (group) => {
   group.before(() => {
     process.env.ENV_SILENT = 'true'
   })
@@ -86,68 +87,21 @@ test.group('Ignitor', (group) => {
     assert.equal(config.get('app.appKey'), SECRET)
     assert.equal(env.get('APP_KEY'), SECRET)
   })
+})
 
-  test('setup cors before hooks when enabled is set to true', async (assert) => {
-    await fs.add(`start/app.ts`, `export const providers = [
-      '${join(__dirname, '../providers/AppProvider.ts')}'
-    ]`)
-
-    await fs.add(`config/app.ts`, `
-      export const appKey = '${SECRET}'
-    `)
-
-    await fs.add(`config/cors.ts`, `
-      export const enabled = true
-      export const exposeHeaders = []
-    `)
-
-    const ignitor = new Ignitor(fs.basePath)
-    await ignitor.bootstrap()
-    const Server = ignitor.application.container.use('Adonis/Core/Server')
-
-    assert.lengthOf(Server.hooks._hooks.before, 1)
+test.group('Ignitor | Preloads', (group) => {
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
   })
 
-  test('setup cors before hooks when enabled is set to a function', async (assert) => {
-    await fs.add(`start/app.ts`, `export const providers = [
-      '${join(__dirname, '../providers/AppProvider.ts')}'
-    ]`)
-
-    await fs.add(`config/app.ts`, `
-      export const appKey = '${SECRET}'
-    `)
-
-    await fs.add(`config/cors.ts`, `
-      export const enabled = () => false
-      export const exposeHeaders = []
-    `)
-
-    const ignitor = new Ignitor(fs.basePath)
-    await ignitor.bootstrap()
-    const Server = ignitor.application.container.use('Adonis/Core/Server')
-
-    assert.lengthOf(Server.hooks._hooks.before, 1)
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
   })
 
-  test('do not setup cors before hooks when enabled is set to false', async (assert) => {
-    await fs.add(`start/app.ts`, `export const providers = [
-      '${join(__dirname, '../providers/AppProvider.ts')}'
-    ]`)
-
-    await fs.add(`config/app.ts`, `
-      export const appKey = '${SECRET}'
-    `)
-
-    await fs.add(`config/cors.ts`, `
-      export const enabled = false
-      export const exposeHeaders = []
-    `)
-
-    const ignitor = new Ignitor(fs.basePath)
-    await ignitor.bootstrap()
-    const Server = ignitor.application.container.use('Adonis/Core/Server')
-
-    assert.lengthOf(Server.hooks._hooks.before, 0)
+  group.afterEach(async () => {
+    await fs.cleanup()
   })
 
   test('on boot load preload files', async (assert) => {
@@ -265,6 +219,22 @@ test.group('Ignitor', (group) => {
     const ignitor = new Ignitor(fs.basePath)
     await ignitor.bootstrap()
   })
+})
+
+test.group('Ignitor | Autoloads', (group) => {
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
+
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
+
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
 
   test('define autoload aliases with ioc container', async (assert) => {
     await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
@@ -283,6 +253,101 @@ test.group('Ignitor', (group) => {
     await ignitor.bootstrap()
 
     assert.deepEqual(ignitor.application.container.autoloads, { App: join(fs.basePath, 'app') })
+  })
+})
+
+test.group('Ignitor | App Provider', (group) => {
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
+
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
+
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
+
+  test('setup cors before hooks when enabled is set to true', async (assert) => {
+    await fs.add(`start/app.ts`, `export const providers = [
+      '${join(__dirname, '../providers/AppProvider.ts')}'
+    ]`)
+
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+    `)
+
+    await fs.add(`config/cors.ts`, `
+      export const enabled = true
+      export const exposeHeaders = []
+    `)
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.bootstrap()
+    const Server = ignitor.application.container.use('Adonis/Core/Server')
+
+    assert.lengthOf(Server.hooks._hooks.before, 1)
+  })
+
+  test('setup cors before hooks when enabled is set to a function', async (assert) => {
+    await fs.add(`start/app.ts`, `export const providers = [
+      '${join(__dirname, '../providers/AppProvider.ts')}'
+    ]`)
+
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+    `)
+
+    await fs.add(`config/cors.ts`, `
+      export const enabled = () => false
+      export const exposeHeaders = []
+    `)
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.bootstrap()
+    const Server = ignitor.application.container.use('Adonis/Core/Server')
+
+    assert.lengthOf(Server.hooks._hooks.before, 1)
+  })
+
+  test('do not setup cors before hooks when enabled is set to false', async (assert) => {
+    await fs.add(`start/app.ts`, `export const providers = [
+      '${join(__dirname, '../providers/AppProvider.ts')}'
+    ]`)
+
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+    `)
+
+    await fs.add(`config/cors.ts`, `
+      export const enabled = false
+      export const exposeHeaders = []
+    `)
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.bootstrap()
+    const Server = ignitor.application.container.use('Adonis/Core/Server')
+
+    assert.lengthOf(Server.hooks._hooks.before, 0)
+  })
+})
+
+test.group('Ignitor | Http', (group) => {
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
+
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
+
+  group.afterEach(async () => {
+    await fs.cleanup()
   })
 
   test('call httpServerHooks when http server is created', async (assert) => {
@@ -405,5 +470,193 @@ test.group('Ignitor', (group) => {
 
     const { text } = await supertest(server.instance).get('/').expect(404)
     assert.equal(text, 'handled Cannot GET:/')
+  })
+})
+
+test.group('Ignitor | Ace', (group) => {
+  group.after(async () => {
+    await fs.cleanup()
+  })
+
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
+
+  test('do not bootstrap application when running ace command', async (assert) => {
+    const ignitor = new Ignitor(fs.basePath)
+    await fs.add('ace-manifest.json', JSON.stringify({
+      foo: {
+        commandName: 'foo',
+        commandPath: 'foo.ts',
+      },
+    }))
+
+    await fs.add('foo.ts', `export default class Foo {
+      public static args = []
+      public static flags = []
+
+      public static boot () {
+      }
+
+      public handle () {
+      }
+    }`)
+
+    await ignitor.handleAceCommand(['foo'])
+    assert.isFalse(ignitor.bootstraped)
+  })
+
+  test('bootstrap application when loadApp setting is true', async (assert) => {
+    const ignitor = new Ignitor(fs.basePath)
+    await fs.add('ace-manifest.json', JSON.stringify({
+      foo: {
+        commandName: 'foo',
+        commandPath: 'foo.ts',
+        settings: {
+          loadApp: true,
+        },
+      },
+    }))
+
+    await fs.add('foo.ts', `export default class Foo {
+      public static args = []
+      public static flags = []
+
+      public static boot () {
+      }
+
+      public handle () {
+      }
+    }`)
+
+    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
+
+    await fs.add(`start/app.ts`, `export const providers = [
+      '${join(__dirname, '../providers/AppProvider.ts')}'
+    ]`)
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
+    await fs.add('.adonisrc.json', JSON.stringify({
+      autoloads: {
+        'App': './app',
+      },
+    }))
+
+    await ignitor.handleAceCommand(['foo'])
+    assert.isTrue(ignitor.bootstraped)
+  })
+
+  test('generate manifest file', async (assert) => {
+    const ignitor = new Ignitor(fs.basePath)
+
+    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
+
+    await fs.add('providers/AppProvider.ts', `
+      import { join } from 'path'
+
+      export default class AppProvider {
+        public commands = [join(__dirname, '..', 'commands', 'Foo.ts')]
+      }
+    `)
+
+    await fs.add('commands/Foo.ts', `
+      export default class Foo {
+        public static commandName = 'foo'
+        public static description = 'Print foo'
+
+        public static args = []
+        public static flags = []
+
+        public static boot () {
+        }
+
+        public handle () {
+        }
+      }
+    `)
+
+    await fs.add(`start/app.ts`, `export const providers = [
+      '${join(__dirname, '../providers/AppProvider.ts')}',
+      '${join(fs.basePath, 'providers/AppProvider.ts')}',
+    ]`)
+
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
+
+    await fs.add('.adonisrc.json', JSON.stringify({
+      autoloads: {
+        'App': './app',
+      },
+    }))
+
+    await ignitor.handleAceCommand(['generate:manifest'])
+    assert.isTrue(ignitor.bootstraped)
+
+    const manifestFile = await fs.get('ace-manifest.json')
+    assert.deepEqual(JSON.parse(manifestFile), {
+      foo: {
+        settings: {},
+        commandPath: join(fs.basePath, 'commands/Foo'),
+        commandName: 'foo',
+        description: 'Print foo',
+        args: [],
+        flags: [],
+      },
+    })
+  })
+
+  test('load commands from start/app file', async (assert) => {
+    const ignitor = new Ignitor(fs.basePath)
+
+    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
+
+    await fs.add('commands/Foo.ts', `
+      export default class Foo {
+        public static commandName = 'foo'
+        public static description = 'Print foo'
+
+        public static args = []
+        public static flags = []
+
+        public static boot () {
+        }
+
+        public handle () {
+        }
+      }
+    `)
+
+    await fs.add(`start/app.ts`, `
+      import { join } from 'path'
+
+      export const providers = [
+        '${join(__dirname, '../providers/AppProvider.ts')}',
+      ]
+
+      export const commands = [
+        join(__dirname, '..', 'commands', 'Foo.ts')
+      ]
+    `)
+
+    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
+
+    await fs.add('.adonisrc.json', JSON.stringify({
+      autoloads: {
+        'App': './app',
+      },
+    }))
+
+    await ignitor.handleAceCommand(['generate:manifest'])
+    assert.isTrue(ignitor.bootstraped)
+
+    const manifestFile = await fs.get('ace-manifest.json')
+    assert.deepEqual(JSON.parse(manifestFile), {
+      foo: {
+        settings: {},
+        commandPath: join(fs.basePath, 'commands/Foo'),
+        commandName: 'foo',
+        description: 'Print foo',
+        args: [],
+        flags: [],
+      },
+    })
   })
 })
