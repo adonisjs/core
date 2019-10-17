@@ -83,7 +83,7 @@
     }
   },
   "dependencies": {
-    "@adonisjs/ace": "^6.2.1",
+    "@adonisjs/ace": "^6.2.2",
     "@adonisjs/application": "^1.1.0",
     "@adonisjs/config": "^1.0.10",
     "@adonisjs/encryption": "^1.0.1",
