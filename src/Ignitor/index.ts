@@ -120,6 +120,36 @@ export class Ignitor {
   }
 
   /**
+   * Bind listeners for `SIGINT` and `SIGTERM` signals. The `SIGINT`
+   * signal is only handled when process is started using pm2.
+   */
+  private _listenForExitEvents () {
+    /**
+     * Only when starting using pm2, otherwise only `Ctrl+C` sends
+     * SIGINT signal, which doesn't need graceful exit.
+     */
+    if (process.env.pm_id) {
+      process.on('SIGINT', async () => {
+        try {
+          await this.close()
+          process.exit(0)
+        } catch (error) {
+          process.exit(1)
+        }
+      })
+    }
+
+    process.on('SIGTERM', async () => {
+      try {
+        await this.close()
+        process.exit(0)
+      } catch (error) {
+        process.exit(1)
+      }
+    })
+  }
+
+  /**
    * Bootstrap the application by register and booting all
    * providers, setting up autoloads and preloading files.
    */
@@ -195,7 +225,10 @@ export class Ignitor {
        * Update app ready status to true, when server is ready for incoming
        * requests
        */
-      this._httpServer.after('start', () => this.application.isReady = true)
+      this._httpServer.after('start', () => {
+        this.application.isReady = true
+        this._listenForExitEvents()
+      })
 
       /**
        * Kill the app, when server recieves error. Server will be
@@ -226,7 +259,12 @@ export class Ignitor {
     const ace = new Ace(this)
 
     ace.before('start', () => this._executeReadyHooks())
-    ace.after('start', () => this.application.isReady = true)
+
+    ace.after('start', () => {
+      this.application.isReady = true
+      this._listenForExitEvents()
+    })
+
     ace.before('manifest', () => {
       const { commands } = this._bootstrapper.getAppFileContents()
       ace.injectCommands(commands.concat(this._providersCommands))
