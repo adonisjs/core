@@ -94,6 +94,7 @@
     "@adonisjs/ioc-transformer": "^1.0.0",
     "@adonisjs/logger": "^1.1.6",
     "@adonisjs/profiler": "^1.2.4",
+    "@poppinss/hooks": "^1.0.0",
     "@poppinss/utils": "^2.0.0",
     "@types/proxy-addr": "^2.0.0",
     "find-package-json": "^1.2.0",
