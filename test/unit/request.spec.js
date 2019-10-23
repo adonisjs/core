@@ -298,7 +298,10 @@ test.group('Request', () => {
       res.end()
     })
 
-    const res = await supertest(server).get('/').set('Content-type', 'application/json').expect(200)
+    const res = await supertest(server).post('/')
+      .set('content-type', 'application/json')
+      .send({ username: 'virk' })
+      .expect(200)
     assert.equal(res.body.contentType, 'json')
   })
 
