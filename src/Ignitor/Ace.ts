@@ -176,6 +176,7 @@ export class Ace {
      * Print help when no command is defined
      */
     if (!argv.length) {
+      await kernel.handle() // This will load the commands from manifest
       kernel.printHelp()
       process.exit(0)
     }
