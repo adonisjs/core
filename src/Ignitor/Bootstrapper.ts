@@ -55,6 +55,15 @@ export class Bootstrapper {
     global[Symbol.for('ioc.make')] = ioc.make.bind(ioc)
     global[Symbol.for('ioc.call')] = ioc.call.bind(ioc)
 
+    const adonisCorePkgFile = findPkg(join(__dirname, '..', '..')).next().value
+    const appPkgFile = findPkg(this._application.appRoot).next().value
+
+    const pkgFile = {
+      name: appPkgFile.name,
+      version: appPkgFile.version,
+      adonisVersion: adonisCorePkgFile.version,
+    }
+
     /**
      * Setting up the application and binding it to the container as well. This makes
      * it's way to the container even before the providers starts registering
@@ -63,8 +72,8 @@ export class Bootstrapper {
     this._application = new Application(
       this._appRoot,
       ioc,
-      optionalRequire(join(this._appRoot, '.adonisrc.json'), true) || {}, // rc file contents
-      findPkg(join(__dirname, '..', '..')).next().value, // finding package.json of @adonisjs/core
+      optionalRequire(join(this._appRoot, '.adonisrc.json'), true) || {},
+      pkgFile,
     )
 
     this._registrar = new Registrar(ioc)

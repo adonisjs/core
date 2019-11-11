@@ -8,7 +8,6 @@
 */
 
 import { Hooks } from '@poppinss/hooks'
-import { Exception } from '@poppinss/utils'
 
 import { Ignitor } from './index'
 import { ErrorHandler } from './ErrorHandler'
@@ -19,51 +18,15 @@ import { ErrorHandler } from './ErrorHandler'
 export class Ace {
   private _hooks = new Hooks()
 
-  /**
-   * A reference to application commands injected via
-   * hooks, since to fetch the commands we need to
-   * boot the app.
-   */
-  private _commands: string[] = []
-
   constructor (private _ignitor: Ignitor) {
   }
 
   /**
-   * Loads the ts node with a helpful message to install ts-node
-   * when it's missing as peer dependency.
+   * Prints the ascii logo
    */
-  private _loadTsNode () {
-    try {
-      return require('ts-node')
-    } catch (error) {
-      if (['MODULE_NOT_FOUND', 'ENOENT'].includes(error.code)) {
-        throw new Exception('ts-node must be installed to execute ace commands')
-      }
-      throw error
-    }
-  }
-
-  /**
-   * Registers ts node with ioc transformer in place
-   */
-  private _registerTsNode (files: boolean) {
-    /**
-     * Do not register ts-node when application is not
-     * loaded as part of typescript source
-     */
-    if (!this._ignitor.application.typescript || process.env.TS_NODE) {
-      return
-    }
-
-    const { iocTransformer } = require('@adonisjs/ioc-transformer')
-    const ts = require('typescript/lib/typescript')
-    this._loadTsNode().register({
-      files,
-      transformers: {
-        after: [iocTransformer(ts, this._ignitor.application.rcFile)],
-      },
-    })
+  private _dumpAsciiLogo () {
+    // tslint:disable-next-line: max-line-length quotemark
+    console.log("    _       _             _         _     \n   / \\   __| | ___  _ __ (_)___    | |___ \n  / _ \\ / _` |/ _ \\| '_ \\| / __|_  | / __|\n / ___ \\ (_| | (_) | | | | \\__ \\ |_| \\__ \\\n/_/   \\_\\__,_|\\___/|_| |_|_|___/\\___/|___/\n")
   }
 
   /**
@@ -74,9 +37,7 @@ export class Ace {
       if (!value) {
         return
       }
-
-      kernel.printHelp(command)
-      process.exit(0)
+      this._printHelp(kernel, command)
     }, {})
 
     kernel.flag('version', (value) => {
@@ -84,9 +45,22 @@ export class Ace {
         return
       }
 
-      console.log(`Framework version: ${this._ignitor.application.adonisVersion || 'NA'}`)
+      this._dumpAsciiLogo()
+      console.log(`Framework version: ${this._ignitor.application.adonisVersion?.version || 'NA'}`)
+      console.log(`App version: ${this._ignitor.application.version?.version || 'NA'}`)
+      console.log('')
       process.exit(0)
     }, {})
+  }
+
+  /**
+   * Prints help for all or a given command
+   */
+  private _printHelp (kernel: any, command?: any) {
+    this._dumpAsciiLogo()
+    kernel.printHelp(command)
+    console.log('')
+    process.exit(0)
   }
 
   /**
@@ -94,17 +68,27 @@ export class Ace {
    * multiple providers and the app itself.
    */
   private async _generateManifest (manifest: any, command: any) {
-    /**
-     * It is important to setup complete app when generating manifest, since
-     * one or more commands will have imports related to AdonisJs and we
-     * need to load commands for generating manifest file
-     */
-    this._registerTsNode(true)
-    await this._ignitor.bootstrap(false)
-    await this._hooks.exec('before', 'manifest')
+    try {
+      /**
+       * It is important to setup complete app when generating manifest, since
+       * one or more commands will have imports related to AdonisJs and we
+       * need to load commands for generating manifest file
+       */
+      await this._ignitor.bootstrap(false)
 
-    manifest.generate(this._commands)
-    command.logger.create('ace-manifest.json')
+      await this._hooks.exec('before', 'manifest')
+      await manifest.generate(this._ignitor.application.rcFile.commands)
+
+      /**
+       * Done
+       */
+      command.logger.create('ace-manifest.json')
+
+      process.exit(0)
+    } catch (error) {
+      await new ErrorHandler(this._ignitor.application).handleError(error)
+      process.exit(1)
+    }
   }
 
   /**
@@ -113,34 +97,21 @@ export class Ace {
   private async _bootstrap (command: any) {
     if (command && command.settings && command.settings.loadApp) {
       /**
-       * When the command needs the application, then we will setup ts node
-       * to include all the files mentioned in `tsconfig.json` and then
-       * boostrap the app
+       * Bootstrap the application when command needs the app.
        */
-      this._registerTsNode(true)
       await this._ignitor.bootstrap(false)
 
       /**
        * We can make hooks only work, when the command relies on the app
        */
       await this._hooks.exec('before', 'start')
-    } else {
-      /**
-       * Otherwise, we still register ts-node, since the command user maybe using
-       * typescript files but, we let ts-node to discover the imports and then
-       * compile them on fly.
-       *
-       * In short, this method doesn't allow AdonisJs `@ioc` style imports
-       * to work
-       */
-      this._registerTsNode(false)
     }
   }
 
   /**
    * Register a before hook
    */
-  public before (event: 'start' | 'manifest', handler: () => any): this {
+  public before (event: 'start', handler: () => any): this {
     this._hooks.add('before', event, handler)
     return this
   }
@@ -148,16 +119,9 @@ export class Ace {
   /**
    * Register an after hook
    */
-  public after (event: 'start' | 'close', handler: () => any): this {
+  public after (event: 'start', handler: () => any): this {
     this._hooks.add('after', event, handler)
     return this
-  }
-
-  /**
-   * Inject commands for which to generate the manifest file
-   */
-  public injectCommands (commands: string[]) {
-    this._commands = commands
   }
 
   /**
@@ -170,29 +134,22 @@ export class Ace {
     const manifest = new Manifest(this._ignitor.application.appRoot)
     const kernel = new Kernel()
     kernel.useManifest(manifest)
-    this._registerGlobalFlags(kernel)
 
     /**
      * Print help when no command is defined
      */
     if (!argv.length) {
       await kernel.handle() // This will load the commands from manifest
-      kernel.printHelp()
-      process.exit(0)
+      this._printHelp(kernel)
+      return
     }
 
     /**
      * Generate manifest when command is `generate:manifest`
      */
     if (argv[0] === 'generate:manifest') {
-      try {
-        class Noop extends BaseCommand {}
-        await this._generateManifest(manifest, new Noop())
-      } catch (error) {
-        await new ErrorHandler(this._ignitor.application).handleError(error)
-        process.exit(1)
-      }
-
+      class Noop extends BaseCommand {}
+      this._generateManifest(manifest, new Noop())
       return
     }
 
@@ -216,6 +173,7 @@ export class Ace {
      * running processes.
      */
     try {
+      this._registerGlobalFlags(kernel)
       await this._hooks.exec('after', 'start')
       await kernel.handle(argv)
     } catch (error) {

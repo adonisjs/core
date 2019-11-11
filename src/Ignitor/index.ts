@@ -265,11 +265,6 @@ export class Ignitor {
       this._listenForExitEvents()
     })
 
-    ace.before('manifest', () => {
-      const { commands } = this._bootstrapper.getAppFileContents()
-      ace.injectCommands(commands.concat(this._providersCommands))
-    })
-
     await ace.handle(argv)
   }
 
