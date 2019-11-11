@@ -40,7 +40,7 @@
   "homepage": "https://github.com/adonisjs/adonis-framework#readme",
   "devDependencies": {
     "@adonisjs/mrm-preset": "^2.1.0",
-    "@adonisjs/sink": "^2.2.3",
+    "@adonisjs/sink": "^2.3.0",
     "@poppinss/dev-utils": "^1.0.1",
     "@types/ms": "^0.7.31",
     "@types/node": "^12.12.7",
