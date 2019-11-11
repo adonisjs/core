@@ -22,6 +22,16 @@ export class Ace {
   }
 
   /**
+   * Exit process conditionally
+   */
+  private _exitProcess (signal) {
+    if (process.env.NODE_ENV === 'testing') {
+      return
+    }
+    process.exit(signal)
+  }
+
+  /**
    * Prints the ascii logo
    */
   private _dumpAsciiLogo () {
@@ -49,7 +59,7 @@ export class Ace {
       console.log(`Framework version: ${this._ignitor.application.adonisVersion?.version || 'NA'}`)
       console.log(`App version: ${this._ignitor.application.version?.version || 'NA'}`)
       console.log('')
-      process.exit(0)
+      this._exitProcess(0)
     }, {})
   }
 
@@ -60,7 +70,7 @@ export class Ace {
     this._dumpAsciiLogo()
     kernel.printHelp(command)
     console.log('')
-    process.exit(0)
+    this._exitProcess(0)
   }
 
   /**
@@ -84,10 +94,10 @@ export class Ace {
        */
       command.logger.create('ace-manifest.json')
 
-      process.exit(0)
+      this._exitProcess(0)
     } catch (error) {
       await new ErrorHandler(this._ignitor.application).handleError(error)
-      process.exit(1)
+      this._exitProcess(1)
     }
   }
 
@@ -149,7 +159,7 @@ export class Ace {
      */
     if (argv[0] === 'generate:manifest') {
       class Noop extends BaseCommand {}
-      this._generateManifest(manifest, new Noop())
+      await this._generateManifest(manifest, new Noop())
       return
     }
 
@@ -162,7 +172,7 @@ export class Ace {
         await this._bootstrap(command)
       } catch (error) {
         await new ErrorHandler(this._ignitor.application).handleError(error)
-        process.exit(1)
+        this._exitProcess(1)
       }
     })
 
@@ -178,7 +188,7 @@ export class Ace {
       await kernel.handle(argv)
     } catch (error) {
       handleError(error)
-      process.exit(1)
+      this._exitProcess(1)
     }
   }
 }

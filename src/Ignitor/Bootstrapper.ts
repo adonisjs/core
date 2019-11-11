@@ -56,7 +56,7 @@ export class Bootstrapper {
     global[Symbol.for('ioc.call')] = ioc.call.bind(ioc)
 
     const adonisCorePkgFile = findPkg(join(__dirname, '..', '..')).next().value
-    const appPkgFile = findPkg(this._application.appRoot).next().value
+    const appPkgFile = findPkg(this._appRoot).next().value
 
     const pkgFile = {
       name: appPkgFile.name,

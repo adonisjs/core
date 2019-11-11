@@ -88,6 +88,16 @@ export class Ignitor {
   }
 
   /**
+   * Exit process conditionally
+   */
+  private _exitProcess (signal) {
+    if (process.env.NODE_ENV === 'testing') {
+      return
+    }
+    process.exit(signal)
+  }
+
+  /**
    * Executes the ready hooks when the application is ready.
    *
    * - In case of HTTP server it is called just before calling the `listen` method.
@@ -132,9 +142,9 @@ export class Ignitor {
       process.on('SIGINT', async () => {
         try {
           await this.close()
-          process.exit(0)
+          this._exitProcess(0)
         } catch (error) {
-          process.exit(1)
+          this._exitProcess(1)
         }
       })
     }
@@ -142,9 +152,9 @@ export class Ignitor {
     process.on('SIGTERM', async () => {
       try {
         await this.close()
-        process.exit(0)
+        this._exitProcess(0)
       } catch (error) {
-        process.exit(1)
+        this._exitProcess(1)
       }
     })
   }
@@ -245,7 +255,7 @@ export class Ignitor {
       await this._httpServer.start()
     } catch (error) {
       await this._errorHandler.handleError(error)
-      process.exit(1)
+      this._exitProcess(1)
     }
   }
 
@@ -286,10 +296,10 @@ export class Ignitor {
       await Promise.race([this._prepareShutDown(), new Promise((resolve) => {
         setTimeout(resolve, waitTimeout)
       })])
-      process.exit(0)
+      this._exitProcess(0)
     } catch (error) {
       await this._errorHandler.handleError(error)
-      process.exit(1)
+      this._exitProcess(1)
     }
   }
 }

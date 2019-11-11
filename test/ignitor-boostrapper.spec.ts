@@ -23,6 +23,10 @@ test.group('Ignitor | Setup', (group) => {
     process.env.ENV_SILENT = 'true'
   })
 
+  group.beforeEach(() => {
+    process.env.NODE_ENV = 'testing'
+  })
+
   group.after(async () => {
     await fs.cleanup()
     delete process.env.ENV_SILENT
@@ -30,6 +34,7 @@ test.group('Ignitor | Setup', (group) => {
   })
 
   group.afterEach(async () => {
+    delete process.env.NODE_ENV
     await fs.cleanup()
   })
 
