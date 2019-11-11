@@ -132,7 +132,14 @@ test.group('Ignitor | Http', (group) => {
       },
     }))
 
-    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+      export const http = {
+        trustProxy () {
+          return true
+        }
+      }
+    `)
 
     await fs.add(`start/app.ts`, `export const providers = [
       '${join(__dirname, '../providers/AppProvider.ts')}',
@@ -164,7 +171,14 @@ test.group('Ignitor | Http', (group) => {
         'App': './app',
       },
     }))
-    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+      export const http = {
+        trustProxy () {
+          return true
+        }
+      }
+    `)
 
     await fs.add(`start/app.ts`, `export const providers = [
       '${join(__dirname, '../providers/AppProvider.ts')}'
@@ -180,7 +194,7 @@ test.group('Ignitor | Http', (group) => {
 
     const server = ignitor.application.container.use('Adonis/Core/Server')
     const { text } = await supertest(server.instance).get('/').expect(200)
-    server.instance.close()
+    await server.instance.close()
 
     setTimeout(() => {
       assert.isFalse(ignitor.application.isReady)
@@ -190,8 +204,14 @@ test.group('Ignitor | Http', (group) => {
   })
 
   test('forward errors to app error handler', async (assert) => {
-    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
-    await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
+    await fs.add(`config/app.ts`, `
+      export const appKey = '${SECRET}'
+      export const http = {
+        trustProxy () {
+          return true
+        }
+      }
+    `)
 
     await fs.add(`start/app.ts`, `export const providers = [
       '${join(__dirname, '../providers/AppProvider.ts')}'
@@ -228,7 +248,6 @@ test.group('Ignitor | Http', (group) => {
   test('kill app when server receives error', async (assert) => {
     assert.plan(1)
 
-    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
     await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add(`start/app.ts`, `export const providers = [
@@ -258,7 +277,6 @@ test.group('Ignitor | Http', (group) => {
   test('close http server gracefully when closing the app', async (assert, done) => {
     assert.plan(2)
 
-    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
     await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add(`start/app.ts`, `export const providers = [
@@ -292,7 +310,6 @@ test.group('Ignitor | Http', (group) => {
       },
     }))
 
-    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
     await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
 
     await fs.add(`start/app.ts`, `export const providers = [

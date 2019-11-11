@@ -122,6 +122,7 @@ export abstract class HttpExceptionHandler {
      */
     if (ctx['view'] && this.statusPages[error.status]) {
       ctx['view'].render(this.statusPages[error.status], { error })
+      return
     }
 
     ctx.response.status(error.status).send(`<h1> ${error.message} </h1>`)
