@@ -250,4 +250,147 @@ test.group('HttpExceptionHandler', () => {
     const response = await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.equal(response, 'foo')
   })
+
+  test('render status page when defined', async (assert) => {
+    assert.plan(2)
+
+    class AppHandler extends HttpExceptionHandler {
+      protected statusPages = {
+        404: '404.edge',
+      }
+
+      protected context () {
+        return { username: 'virk' }
+      }
+    }
+
+    class InvalidAuth extends Exception {
+      constructor (message) {
+        super(message, 404, 'E_INVALID_AUTH')
+      }
+    }
+
+    const logger = new FakeLogger(loggerConfig)
+    const handler = new AppHandler(logger)
+
+    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    ctx['view'] = {
+      render (view, data) {
+        assert.equal(view, '404.edge')
+        assert.equal(data.error.message, 'E_INVALID_AUTH: bad request')
+      },
+    }
+
+    ctx.request.request.headers = { accept: 'text/html' }
+    await handler.handle(new InvalidAuth('bad request'), ctx)
+  })
+
+  test('do not render status page when content negotiation passes for json', async (assert) => {
+    class AppHandler extends HttpExceptionHandler {
+      protected statusPages = {
+        404: '404.edge',
+      }
+
+      protected context () {
+        return { username: 'virk' }
+      }
+    }
+
+    class InvalidAuth extends Exception {
+      constructor (message) {
+        super(message, 404, 'E_INVALID_AUTH')
+      }
+    }
+
+    const logger = new FakeLogger(loggerConfig)
+    const handler = new AppHandler(logger)
+
+    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    ctx['view'] = {
+      render () {
+        throw new Error('Not expected')
+      },
+    }
+
+    ctx.request.request.headers = { accept: 'application/json' }
+    await handler.handle(new InvalidAuth('bad request'), ctx)
+    assert.deepEqual(ctx.response.lazyBody!.args, [{ message: 'E_INVALID_AUTH: bad request' }, false])
+  })
+
+  test('do not render status page when disabled for development mode', async (assert) => {
+    process.env.NODE_ENV = 'development'
+
+    class AppHandler extends HttpExceptionHandler {
+      protected statusPages = {
+        404: '404.edge',
+      }
+
+      protected disableStatusPagesInDevelopment = true
+
+      protected context () {
+        return { username: 'virk' }
+      }
+    }
+
+    class InvalidAuth extends Exception {
+      constructor (message) {
+        super(message, 404, 'E_INVALID_AUTH')
+      }
+    }
+
+    const logger = new FakeLogger(loggerConfig)
+    const handler = new AppHandler(logger)
+
+    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    ctx['view'] = {
+      render () {
+        throw new Error('Not expected')
+      },
+    }
+
+    ctx.request.request.headers = { accept: 'text/html' }
+    await handler.handle(new InvalidAuth('bad request'), ctx)
+    assert.isTrue(/youch/.test(ctx.response.lazyBody!.args[0]))
+
+    delete process.env.NODE_ENV
+  })
+
+  test('always render status page when in production mode', async (assert) => {
+    assert.plan(2)
+
+    process.env.NODE_ENV = 'production'
+
+    class AppHandler extends HttpExceptionHandler {
+      protected statusPages = {
+        404: '404.edge',
+      }
+
+      protected disableStatusPagesInDevelopment = true
+
+      protected context () {
+        return { username: 'virk' }
+      }
+    }
+
+    class InvalidAuth extends Exception {
+      constructor (message) {
+        super(message, 404, 'E_INVALID_AUTH')
+      }
+    }
+
+    const logger = new FakeLogger(loggerConfig)
+    const handler = new AppHandler(logger)
+
+    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    ctx['view'] = {
+      render (view, data) {
+        assert.equal(view, '404.edge')
+        assert.equal(data.error.message, 'E_INVALID_AUTH: bad request')
+      },
+    }
+
+    ctx.request.request.headers = { accept: 'text/html' }
+    await handler.handle(new InvalidAuth('bad request'), ctx)
+    delete process.env.NODE_ENV
+  })
 })

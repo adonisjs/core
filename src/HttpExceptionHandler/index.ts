@@ -36,6 +36,17 @@ export abstract class HttpExceptionHandler {
     'E_ROUTE_NOT_FOUND',
   ]
 
+  /**
+   * Map of status pages to render, instead of making the
+   * regular response
+   */
+  protected statusPages: { [key: number]: string } = {}
+
+  /**
+   * A flag to disable status pages during development
+   */
+  protected disableStatusPagesInDevelopment: boolean = false
+
   constructor (protected logger: LoggerContract) {
   }
 
@@ -96,11 +107,21 @@ export abstract class HttpExceptionHandler {
    * which the app is runing
    */
   protected async makeHtmlResponse (error: any, ctx: HttpContextContract) {
-    if (process.env.NODE_ENV === 'development') {
+    if (
+      process.env.NODE_ENV === 'development' &&
+      (!this.statusPages[error.status] || this.disableStatusPagesInDevelopment)
+    ) {
       const Youch = require('youch')
       const html = await new Youch(error, ctx.request.request).toHTML()
       ctx.response.status(error.status).send(html)
       return
+    }
+
+    /**
+     * Render status pages
+     */
+    if (ctx['view'] && this.statusPages[error.status]) {
+      ctx['view'].render(this.statusPages[error.status], { error })
     }
 
     ctx.response.status(error.status).send(`<h1> ${error.message} </h1>`)
