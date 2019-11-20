@@ -25,7 +25,7 @@ export class Bootstrapper {
   /**
    * Reference to the application
    */
-  private _application: ApplicationContract
+  public application: ApplicationContract
 
   /**
    * Reference to registrar
@@ -37,6 +37,16 @@ export class Bootstrapper {
    * have been registered.
    */
   private _logger?: LoggerContract
+
+  /**
+   * Providers that has ready hook function
+   */
+  private _providersWithReadyHook: any[] = []
+
+  /**
+   * Providers that has shutdown hook function
+   */
+  private _providersWithShutdownHook: any[] = []
 
   constructor (private _appRoot: string) {
   }
@@ -59,9 +69,9 @@ export class Bootstrapper {
     const appPkgFile = findPkg(this._appRoot).next().value
 
     const pkgFile = {
-      name: appPkgFile.name,
-      version: appPkgFile.version,
-      adonisVersion: adonisCorePkgFile.version,
+      name: appPkgFile ? appPkgFile.name : 'adonis',
+      version: appPkgFile ? appPkgFile.version : '0.0.0',
+      adonisVersion: adonisCorePkgFile!.version,
     }
 
     /**
@@ -69,25 +79,23 @@ export class Bootstrapper {
      * it's way to the container even before the providers starts registering
      * themselves.
      */
-    this._application = new Application(
+    this.application = new Application(
       this._appRoot,
       ioc,
       optionalRequire(join(this._appRoot, '.adonisrc.json'), true) || {},
       pkgFile,
     )
 
-    this._registrar = new Registrar(ioc)
-
-    ioc.singleton('Adonis/Core/Application', () => this._application)
-    return this._application
+    this._registrar = new Registrar(ioc, this._appRoot)
+    ioc.singleton('Adonis/Core/Application', () => this.application)
+    return this.application
   }
 
   /**
-   * Returns providers, aceProviders, aliases and commands from the
-   * start/app file
+   * Returns providers, aceProviders, and aliases from the start/app file
    */
   public getAppFileContents () {
-    const appExports = require(this._application.startPath('app'))
+    const appExports = require(this.application.startPath('app'))
 
     /**
      * Validate the required props to ensure they exists
@@ -104,10 +112,9 @@ export class Bootstrapper {
     })
 
     return {
-      providers: appExports.providers || [],
-      aceProviders: appExports.aceProviders || [],
-      aliases: appExports.aliases || {},
-      commands: appExports.commands || [],
+      providers: (appExports.providers || []) as string[],
+      aceProviders: (appExports.aceProviders || []) as string[],
+      aliases: (appExports.aliases || {}) as { [key: string]: string },
     }
   }
 
@@ -122,10 +129,23 @@ export class Bootstrapper {
 
     const providersRefs = this._registrar.useProviders(providersList).register()
     Object.keys(aliases).forEach((alias) => {
-      this._application.container.alias(aliases[alias], alias)
+      this.application.container.alias(aliases[alias], alias)
     })
 
-    this._logger = this._application.container.use('Adonis/Core/Logger')
+    /**
+     * Storing a reference of providers that has ready and exit hooks
+     */
+    providersRefs.forEach((provider) => {
+      if (typeof (provider.ready) === 'function') {
+        this._providersWithReadyHook.push(provider)
+      }
+
+      if (typeof (provider.shutdown) === 'function') {
+        this._providersWithShutdownHook.push(provider)
+      }
+    })
+
+    this._logger = this.application.container.use('Adonis/Core/Logger')
     return providersRefs
   }
 
@@ -133,11 +153,11 @@ export class Bootstrapper {
    * Registers autoloading directories
    */
   public registerAutoloads () {
-    this._application.autoloadsMap.forEach((toPath, alias) => {
+    this.application.autoloadsMap.forEach((toPath, alias) => {
       if (this._logger) {
         this._logger.trace(`registering %s under %s alias`, toPath, alias)
       }
-      this._application.container.autoload(join(this._application.appRoot, toPath), alias)
+      this.application.container.autoload(join(this.application.appRoot, toPath), alias)
     })
   }
 
@@ -145,26 +165,43 @@ export class Bootstrapper {
    * Requires preloads
    */
   public registerPreloads () {
-    this._application.preloads
+    this.application.preloads
       .filter((node) => {
-        if (!node.environment || this._application.environment === 'unknown') {
+        if (!node.environment || this.application.environment === 'unknown') {
           return true
         }
 
-        return node.environment.indexOf(this._application.environment) > -1
+        return node.environment.indexOf(this.application.environment) > -1
       })
       .forEach((node) => {
         if (this._logger) {
           this._logger.trace(`preloading %s file`, node.file)
         }
-        optionalRequire(join(this._application.appRoot, node.file), node.optional)
+        optionalRequire(join(this.application.appRoot, node.file), node.optional)
       })
+  }
+
+  /**
+   * Executes the ready hooks on the providers
+   */
+  public async executeReadyHooks () {
+    await Promise.all(this._providersWithReadyHook.map((provider) => provider.ready()))
+    this._providersWithReadyHook = []
+  }
+
+  /**
+   * Executes the ready hooks on the providers
+   */
+  public async executeShutdownHooks () {
+    await Promise.all(this._providersWithShutdownHook.map((provider) => provider.shutdown()))
+    this._providersWithShutdownHook = []
   }
 
   /**
    * Boot providers by invoking `boot` method on them
    */
   public async bootProviders () {
+    this._logger!.trace('booting providers')
     await this._registrar.boot()
   }
 }

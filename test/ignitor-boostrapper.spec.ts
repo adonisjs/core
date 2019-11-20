@@ -14,6 +14,7 @@ import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 
 import { Bootstrapper } from '../src/Ignitor/Bootstrapper'
+import { setupApplicationFiles } from '../test-helpers'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 const SECRET = 'asecureandlongrandomsecret'
@@ -47,16 +48,7 @@ test.group('Ignitor | Setup', (group) => {
   })
 
   test('register providers by loading app file', async (assert) => {
-    await fs.add(`start/app.ts`, `export const providers = [
-      '${join(__dirname, '../providers/AppProvider.ts')}'
-    ]`)
-
-    await fs.add(`config/app.ts`, `
-      const Env = global[Symbol.for('ioc.use')]('Adonis/Core/Env')
-      export const appKey = Env.get('APP_KEY')
-    `)
-
-    await fs.add(`.env`, `APP_KEY=${SECRET}`)
+    await setupApplicationFiles(fs)
 
     const bootstrapper = new Bootstrapper(fs.basePath)
     const application = bootstrapper.setup()
@@ -119,7 +111,6 @@ test.group('Ignitor | Setup', (group) => {
       providers: ['foo'],
       aceProviders: ['foo-ace'],
       aliases: {},
-      commands: ['foo-command'],
     })
   })
 
@@ -234,5 +225,63 @@ test.group('Ignitor | Setup', (group) => {
 
     const fn = () => bootstrapper.registerPreloads()
     assert.doesNotThrow(fn)
+  })
+
+  test('boot providers', async (assert) => {
+    await fs.add('providers/AppProvider.ts', `export default class AppProvider {
+      public async boot () {
+        process.env.APP_PROVIDER_BOOTED = 'true'
+      }
+    }`)
+
+    await setupApplicationFiles(fs, ['./providers/AppProvider'])
+
+    const bootstrapper = new Bootstrapper(fs.basePath)
+
+    bootstrapper.setup()
+    bootstrapper.registerProviders(false)
+    await bootstrapper.bootProviders()
+
+    assert.equal(process.env.APP_PROVIDER_BOOTED, 'true')
+    delete process.env.APP_PROVIDER_BOOTED
+  })
+
+  test('execute ready hooks', async (assert) => {
+    await fs.add('providers/AppProvider.ts', `export default class AppProvider {
+      public async ready () {
+        process.env.APP_PROVIDER_READY = 'true'
+      }
+    }`)
+
+    await setupApplicationFiles(fs, ['./providers/AppProvider'])
+
+    const bootstrapper = new Bootstrapper(fs.basePath)
+
+    bootstrapper.setup()
+    bootstrapper.registerProviders(false)
+    await bootstrapper.bootProviders()
+    await bootstrapper.executeReadyHooks()
+
+    assert.equal(process.env.APP_PROVIDER_READY, 'true')
+    delete process.env.APP_PROVIDER_READY
+  })
+
+  test('execute shutdown hooks', async (assert) => {
+    await fs.add('providers/AppProvider.ts', `export default class AppProvider {
+      public async shutdown () {
+        process.env.APP_PROVIDER_SHUTDOWN = 'true'
+      }
+    }`)
+
+    await setupApplicationFiles(fs, ['./providers/AppProvider'])
+    const bootstrapper = new Bootstrapper(fs.basePath)
+
+    bootstrapper.setup()
+    bootstrapper.registerProviders(false)
+    await bootstrapper.bootProviders()
+    await bootstrapper.executeShutdownHooks()
+
+    assert.equal(process.env.APP_PROVIDER_SHUTDOWN, 'true')
+    delete process.env.APP_PROVIDER_SHUTDOWN
   })
 })
