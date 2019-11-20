@@ -7,9 +7,9 @@
 * file that was distributed with this source code.
 */
 
+import { Ace } from './Ace'
 import { HttpServer } from './HttpServer'
 import { Bootstrapper } from './Bootstrapper'
-import { Ace } from './Ace'
 
 /**
  * Ignitor is used to wireup different pieces of AdonisJs to bootstrap

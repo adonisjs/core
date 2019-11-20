@@ -15,7 +15,7 @@ import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { Application } from '@adonisjs/application/build/standalone'
 
-import { optionalRequire } from '../utils'
+import { optionalRequire } from '../../utils'
 
 /**
  * Exposes the API to bootstrap the application by registering-booting the

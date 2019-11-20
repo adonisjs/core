@@ -13,9 +13,9 @@ import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
 
-import { Bootstrapper } from './Bootstrapper'
-import { ErrorHandler } from './ErrorHandler'
-import { SignalsListener } from './SignalsListener'
+import { Bootstrapper } from '../Bootstrapper'
+import { ErrorHandler } from '../ErrorHandler'
+import { SignalsListener } from '../SignalsListener'
 
 type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
 type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
