@@ -9,6 +9,7 @@
 
 import { HttpServer } from './HttpServer'
 import { Bootstrapper } from './Bootstrapper'
+import { Ace } from './Ace'
 
 /**
  * Ignitor is used to wireup different pieces of AdonisJs to bootstrap
@@ -31,5 +32,13 @@ export class Ignitor {
    */
   public httpServer () {
     return new HttpServer(this._appRoot)
+  }
+
+  /**
+   * Returns instance of ace to handle console
+   * commands
+   */
+  public ace () {
+    return new Ace(this._appRoot)
   }
 }

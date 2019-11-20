@@ -1,126 +1,275 @@
-// test.group('Ignitor | Ace', (group) => {
-//   group.after(async () => {
-//     await fs.cleanup()
-//   })
+/*
+* @adonisjs/core
+*
+* (c) Harminder Virk <virk@adonisjs.com>
+*
+* For the full copyright and license information, please view the LICENSE
+* file that was distributed with this source code.
+*/
 
-//   group.beforeEach(() => {
-//     process.env.NODE_ENV = 'testing'
-//   })
+/// <reference path="../adonis-typings/index.ts" />
 
-//   group.afterEach(async () => {
-//     delete process.env.NODE_ENV
-//     await fs.cleanup()
-//   })
+import test from 'japa'
+import { join } from 'path'
+import stripAnsi from 'strip-ansi'
+import { stderr, stdout } from 'test-console'
+import { Filesystem } from '@poppinss/dev-utils'
 
-//   test('do not bootstrap application when running ace command', async (assert) => {
-//     process.env.TS_NODE = 'true'
+import { Ignitor } from '../src/Ignitor'
+import { setupApplicationFiles, setupCompiledApplicationFiles } from '../test-helpers'
 
-//     const ignitor = new Ignitor(fs.basePath)
-//     await fs.add('ace-manifest.json', JSON.stringify({
-//       foo: {
-//         commandName: 'foo',
-//         commandPath: './fooCommand',
-//       },
-//     }))
+const fs = new Filesystem(join(__dirname, '__app'))
 
-//     await fs.add('fooCommand.ts', `export default class FooCommand {
-//       public static args = []
-//       public static flags = []
+test.group('Ignitor | Ace', (group) => {
+  group.before(() => {
+    process.env.MODULE_TESTING = 'true'
+  })
 
-//       public static $boot () {
-//       }
+  group.after(async () => {
+    delete process.env.MODULE_TESTING
+    await fs.cleanup()
+  })
 
-//       public handle () {
-//       }
-//     }`)
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
 
-//     await ignitor.handleAceCommand(['foo'])
-//     assert.isFalse(ignitor.bootstraped)
-//   })
+  test('raise error when tsconfig file is missing', async (assert) => {
+    await setupApplicationFiles(fs)
+    const { output, restore } = stderr.inspect()
 
-//   test('bootstrap application when loadApp setting is true', async (assert) => {
-//     const ignitor = new Ignitor(fs.basePath)
-//     await fs.add('ace-manifest.json', JSON.stringify({
-//       foo: {
-//         commandName: 'foo',
-//         commandPath: './foo.ts',
-//         settings: {
-//           loadApp: true,
-//         },
-//       },
-//     }))
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add('.adonisrc.json', JSON.stringify({
+      typescript: true,
+    }))
 
-//     await fs.add('foo.ts', `export default class Foo {
-//       public static args = []
-//       public static flags = []
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
+    restore()
 
-//       public static $boot () {
-//       }
+    assert.equal(
+      stripAnsi(output[0]).trim(),
+      `✖  error     Typescript projects must have "tsconfig.json" file inside the project root`,
+    )
+  })
 
-//       public handle () {
-//       }
-//     }`)
+  test('raise error when outdir inside tsconfig file is missing', async (assert) => {
+    await setupApplicationFiles(fs)
+    const { output, restore } = stderr.inspect()
 
-//     await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add('.adonisrc.json', JSON.stringify({
+      typescript: true,
+    }))
 
-//     await fs.add(`start/app.ts`, `export const providers = [
-//       '${join(__dirname, '../providers/AppProvider.ts')}'
-//     ]`)
+    await fs.add('tsconfig.json', JSON.stringify({
+    }))
 
-//     await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
-//     await fs.add('.adonisrc.json', JSON.stringify({
-//       autoloads: {
-//         'App': './app',
-//       },
-//     }))
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
+    restore()
 
-//     await ignitor.handleAceCommand(['foo'])
-//     assert.isTrue(ignitor.bootstraped)
-//   })
+    assert.equal(
+      stripAnsi(output[0]).trim(),
+      `✖  error     Make sure to define \"compilerOptions.outDir\" in tsconfig.json file`,
+    )
+  })
+})
 
-//   test('generate manifest file', async (assert) => {
-//     await fs.add('commands/Foo.ts', `
-//       export default class Foo {
-//         public static commandName = 'foo'
-//         public static description = 'Print foo'
+test.group('Ignitor | Ace | Generate Manifest', (group) => {
+  group.before(() => {
+    process.env.MODULE_TESTING = 'true'
+  })
 
-//         public static args = []
-//         public static flags = []
+  group.after(async () => {
+    delete process.env.MODULE_TESTING
+    await fs.cleanup()
+  })
 
-//         public static $boot () {
-//         }
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
 
-//         public handle () {
-//         }
-//       }
-//     `)
+  test('generate manifest file inside the build directory', async (assert) => {
+    await setupApplicationFiles(fs)
+    const { output, restore } = stdout.inspect()
 
-//     await fs.add(`start/app.ts`, `export const providers = [
-//       '${join(__dirname, '../providers/AppProvider.ts')}',
-//     ]`)
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add('.adonisrc.json', JSON.stringify({
+      typescript: true,
+      commands: ['./FooCommand'],
+    }))
 
-//     await fs.add(`config/app.ts`, `export const appKey = '${SECRET}'`)
-//     await fs.add('.adonisrc.json', JSON.stringify({
-//       autoloads: {
-//         'App': './app',
-//       },
-//       commands: ['./commands/Foo'],
-//     }))
+    await fs.add('tsconfig.json', JSON.stringify({
+      compilerOptions: {
+        outDir: './build',
+      },
+    }))
 
-//     const ignitor = new Ignitor(fs.basePath)
-//     await ignitor.handleAceCommand(['generate:manifest'])
-//     assert.isTrue(ignitor.bootstraped)
+    await fs.add('build/FooCommand.js', `
+      const { BaseCommand } = require('@adonisjs/ace')
+      module.exports = class FooCommand extends BaseCommand {
+        static get commandName () {
+          return 'foo'
+        }
 
-//     const manifestFile = await fs.get('ace-manifest.json')
-//     assert.deepEqual(JSON.parse(manifestFile), {
-//       foo: {
-//         settings: {},
-//         commandPath: './commands/Foo',
-//         commandName: 'foo',
-//         description: 'Print foo',
-//         args: [],
-//         flags: [],
-//       },
-//     })
-//   })
-// })
+        handle () {}
+      }
+    `)
+
+    await setupCompiledApplicationFiles(fs, 'build')
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
+    restore()
+
+    const aceManifest = await fs.fsExtra.readJson(join(fs.basePath, './build/ace-manifest.json'))
+    assert.deepEqual(aceManifest, {
+      foo: {
+        settings: {},
+        commandPath: './FooCommand',
+        commandName: 'foo',
+        description: '',
+        args: [],
+        flags: [],
+      },
+    })
+
+    assert.equal(
+      stripAnsi(output[0]).trim(),
+      `✔  create    .adonisrc.json`,
+    )
+  })
+
+  test('do not load tsconfig.json when typescript inside rc file is false', async (assert) => {
+    await setupApplicationFiles(fs)
+    const { output, restore } = stdout.inspect()
+
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add('.adonisrc.json', JSON.stringify({ typescript: false }))
+
+    await setupCompiledApplicationFiles(fs, 'build')
+
+    const ignitor = new Ignitor(join(fs.basePath, 'build'))
+    await ignitor.ace().handle(['generate:manifest'])
+    restore()
+
+    assert.equal(
+      stripAnsi(output[0]).trim(),
+      `✔  create    .adonisrc.json`,
+    )
+  })
+})
+
+test.group('Ignitor | Ace | Generate Manifest', (group) => {
+  group.before(() => {
+    process.env.MODULE_TESTING = 'true'
+  })
+
+  group.after(async () => {
+    delete process.env.MODULE_TESTING
+    await fs.cleanup()
+  })
+
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
+
+  test('run command without loading the app', async (assert) => {
+    await setupApplicationFiles(fs)
+
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add('.adonisrc.json', JSON.stringify({
+      typescript: true,
+      commands: ['./FooCommand'],
+    }))
+
+    await fs.add('tsconfig.json', JSON.stringify({
+      compilerOptions: {
+        outDir: './build',
+      },
+    }))
+
+    await fs.add('build/FooCommand.js', `
+      const { BaseCommand } = require('@adonisjs/ace')
+      module.exports = class FooCommand extends BaseCommand {
+        static get commandName () {
+          return 'foo'
+        }
+
+        handle () {
+          console.log(\`is ready \${this.application.isReady}\`)
+        }
+      }
+    `)
+
+    await setupCompiledApplicationFiles(fs, 'build')
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
+
+    const { output, restore } = stdout.inspect()
+    await ignitor.ace().handle(['foo'])
+    restore()
+
+    assert.equal(output[0].trim(), 'is ready false')
+  })
+
+  test('load app when command setting loadApp is true', async (assert) => {
+    await setupApplicationFiles(fs)
+
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add('.adonisrc.json', JSON.stringify({
+      typescript: true,
+      commands: ['./FooCommand'],
+    }))
+
+    await fs.add('tsconfig.json', JSON.stringify({
+      compilerOptions: {
+        outDir: './build',
+      },
+    }))
+
+    await fs.add('build/FooCommand.js', `
+      const { BaseCommand } = require('@adonisjs/ace')
+      module.exports = class FooCommand extends BaseCommand {
+        static get commandName () {
+          return 'foo'
+        }
+
+        static get settings () {
+          return {
+            loadApp: true,
+          }
+        }
+
+        handle () {
+          console.log(\`is ready \${this.application.isReady}\`)
+        }
+      }
+    `)
+
+    await setupCompiledApplicationFiles(fs, 'build')
+
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
+
+    const { output, restore } = stdout.inspect()
+    await ignitor.ace().handle(['foo'])
+    restore()
+
+    assert.equal(output[0].trim(), 'is ready true')
+  })
+})
