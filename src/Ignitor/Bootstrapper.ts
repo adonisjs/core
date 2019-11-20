@@ -185,6 +185,7 @@ export class Bootstrapper {
    * Executes the ready hooks on the providers
    */
   public async executeReadyHooks () {
+    this._logger!.trace('executing ready hooks')
     await Promise.all(this._providersWithReadyHook.map((provider) => provider.ready()))
     this._providersWithReadyHook = []
   }
@@ -193,6 +194,7 @@ export class Bootstrapper {
    * Executes the ready hooks on the providers
    */
   public async executeShutdownHooks () {
+    this._logger!.trace('executing shutdown hooks')
     await Promise.all(this._providersWithShutdownHook.map((provider) => provider.shutdown()))
     this._providersWithShutdownHook = []
   }

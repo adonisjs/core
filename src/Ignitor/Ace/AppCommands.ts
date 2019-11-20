@@ -25,6 +25,11 @@ export class AppCommands {
   private _wired = false
 
   /**
+   * Signals listener to listen for exit signals and kill command
+   */
+  private _signalsListener = new SignalsListener()
+
+  /**
    * Source root always points to the compiled source
    * code.
    */
@@ -32,6 +37,25 @@ export class AppCommands {
     private _sourceRoot: string,
     private _ace: typeof ace,
   ) {
+  }
+
+  /**
+   * Hooks into kernel lifecycle events to conditionally
+   * load the app.
+   */
+  private _addKernelHooks (kernel: ace.Kernel) {
+    kernel.before('find', async (command) => {
+      if (command && command.settings.loadApp) {
+        await this._wire()
+        this._bootstrapper.application.isReady = true
+      }
+    })
+
+    kernel.before('run', async () => {
+      if (this._wired) {
+        await this._bootstrapper.executeReadyHooks()
+      }
+    })
   }
 
   /**
@@ -61,24 +85,12 @@ export class AppCommands {
 
     const manifest = new this._ace.Manifest(this._sourceRoot)
     const kernel = new this._ace.Kernel(this._bootstrapper.application)
-
-    kernel.before('find', async (command) => {
-      if (command && command.settings.loadApp) {
-        await this._wire()
-        this._bootstrapper.application.isReady = true
-      }
-    })
-
-    kernel.before('run', async () => {
-      if (this._wired) {
-        await this._bootstrapper.executeReadyHooks()
-      }
-    })
+    this._addKernelHooks(kernel)
 
     kernel.useManifest(manifest)
     await kernel.handle(argv)
 
-    new SignalsListener().listen(async () => {
+    this._signalsListener.listen(async () => {
       if (this._wired) {
         await this._bootstrapper.executeShutdownHooks()
       }

@@ -203,7 +203,7 @@ export class HttpServer {
       this._monitorHttpServer()
       this._signalsListener.listen(() => this.close())
     } catch (error) {
-      new ErrorHandler(this.application).handleError(error).finally(() => process.exit(1))
+      new ErrorHandler(this.application).handleError(error)
     }
   }
 
@@ -219,8 +219,6 @@ export class HttpServer {
      * we are not accepting any new request during cool off.
      */
     await this._closeHttpServer()
-
-    this._logger.trace('preparing server shutdown')
     await this._bootstrapper.executeShutdownHooks()
   }
 
@@ -230,6 +228,8 @@ export class HttpServer {
    * seconds.
    */
   public async kill (waitTimeout: number = 3000) {
+    this._logger.trace('forcefully killing http server')
+
     try {
       await Promise.race([this.close(), new Promise((resolve) => {
         setTimeout(resolve, waitTimeout)

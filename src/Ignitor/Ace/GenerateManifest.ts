@@ -9,7 +9,6 @@
 
 import ace from '@adonisjs/ace'
 import { Bootstrapper } from '../Bootstrapper'
-import { exitProcess } from '../../utils'
 
 /**
  * Exposes the API to generate the manifest file
@@ -52,6 +51,5 @@ export class GenerateManifest {
      * Success
      */
     this._ace.logger.create('.adonisrc.json')
-    exitProcess(0)
   }
 }
