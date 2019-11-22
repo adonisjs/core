@@ -149,6 +149,8 @@ export abstract class HttpExceptionHandler extends Macroable {
    * Report a given error
    */
   public report (error: any, ctx: HttpContextContract) {
+    error.status = error.status || 500
+
     if (!this.shouldReport(error)) {
       return
     }
@@ -158,7 +160,17 @@ export abstract class HttpExceptionHandler extends Macroable {
       return
     }
 
-    this.logger.error(this.context(ctx), error.message)
+    /**
+     * - Using `error` for `500 and above`
+     * - `warn` for `400 and above`
+     * - `info` for rest. This should not happen, but technically it's possible for someone
+     *    to raise with 200
+     */
+    const loggerFn: keyof LoggerContract = error.status >= 500
+      ? 'error'
+      : (error.status >= 400) ? 'warn' : 'info'
+
+    this.logger[loggerFn](this.context(ctx), error.message)
   }
 
   /**
