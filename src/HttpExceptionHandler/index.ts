@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { Macroable } from 'macroable'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
@@ -15,7 +16,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
  * to handle all exceptions occured during the HTTP request
  * lifecycle and makes appropriate response for them.
  */
-export abstract class HttpExceptionHandler {
+export abstract class HttpExceptionHandler extends Macroable {
   /**
    * An array of error codes that must not be reported
    */
@@ -43,11 +44,27 @@ export abstract class HttpExceptionHandler {
   protected statusPages: { [key: string]: string } = {}
 
   /**
+   * Map of status pages for after expanding the expressions
+   * defined inside statusPages.
+   *
+   * This property is initialized using the getter defined at
+   * the end of this file
+   */
+  public expandedStatusPages: { [key: string]: string }
+
+  /**
    * A flag to disable status pages during development
    */
   protected disableStatusPagesInDevelopment: boolean = false
 
+  /**
+   * Required by macroable
+   */
+  protected _getters = {}
+  protected _macros = {}
+
   constructor (protected logger: LoggerContract) {
+    super()
   }
 
   /**
@@ -109,7 +126,7 @@ export abstract class HttpExceptionHandler {
   protected async makeHtmlResponse (error: any, ctx: HttpContextContract) {
     if (
       process.env.NODE_ENV === 'development' &&
-      (!this.statusPages[error.status] || this.disableStatusPagesInDevelopment)
+      (!this.expandedStatusPages[error.status] || this.disableStatusPagesInDevelopment)
     ) {
       const Youch = require('youch')
       const html = await new Youch(error, ctx.request.request).toHTML()
@@ -120,8 +137,8 @@ export abstract class HttpExceptionHandler {
     /**
      * Render status pages
      */
-    if (ctx['view'] && this.statusPages[error.status]) {
-      ctx['view'].render(this.statusPages[error.status], { error })
+    if (ctx['view'] && this.expandedStatusPages[error.status]) {
+      ctx['view'].render(this.expandedStatusPages[error.status], { error })
       return
     }
 
@@ -161,3 +178,28 @@ export abstract class HttpExceptionHandler {
     return this.makeHtmlResponse(error, ctx)
   }
 }
+
+/**
+ * Single getter to pull status pages after expanding the range expression
+ */
+HttpExceptionHandler.getter('expandedStatusPages', function expandedStatusPages () {
+  return Object.keys(this.statusPages).reduce((result: any, codeRange: string) => {
+    const parts = codeRange.split('.')
+    const min = Number(parts[0])
+    const max = Number(parts[parts.length - 1])
+
+    if (isNaN(min) || isNaN(max)) {
+      return result
+    }
+
+    if (min === max) {
+      result[codeRange] = this.statusPages[codeRange]
+    }
+
+    Array.apply(null, new Array((max - min) + 1)).forEach((_v, step) => {
+      result[min + step] = this.statusPages[codeRange]
+    })
+
+    return result
+  }, {})
+}, true)

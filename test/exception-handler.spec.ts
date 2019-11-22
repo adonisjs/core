@@ -393,4 +393,73 @@ test.group('HttpExceptionHandler', () => {
     await handler.handle(new InvalidAuth('bad request'), ctx)
     delete process.env.NODE_ENV
   })
+
+  test('compute status pages from expression', async (assert) => {
+    class AppHandler extends HttpExceptionHandler {
+      protected statusPages = {
+        '500..509': '500.edge',
+      }
+
+      protected context () {
+        return { username: 'virk' }
+      }
+    }
+
+    const appHandler = new AppHandler(new FakeLogger(loggerConfig))
+    assert.deepEqual(appHandler.expandedStatusPages, {
+      500: '500.edge',
+      501: '500.edge',
+      502: '500.edge',
+      503: '500.edge',
+      504: '500.edge',
+      505: '500.edge',
+      506: '500.edge',
+      507: '500.edge',
+      508: '500.edge',
+      509: '500.edge',
+    })
+  })
+
+  test('ensure expandedStatusPages is a singleton', async (assert) => {
+    class AppHandler extends HttpExceptionHandler {
+      protected statusPages = {
+        '500..509': '500.edge',
+      }
+
+      protected context () {
+        return { username: 'virk' }
+      }
+    }
+
+    const appHandler = new AppHandler(new FakeLogger(loggerConfig))
+    assert.deepEqual(appHandler.expandedStatusPages, {
+      500: '500.edge',
+      501: '500.edge',
+      502: '500.edge',
+      503: '500.edge',
+      504: '500.edge',
+      505: '500.edge',
+      506: '500.edge',
+      507: '500.edge',
+      508: '500.edge',
+      509: '500.edge',
+    })
+
+    appHandler['statusPages'] = {
+      '500..502': '500.edge',
+    } as any
+
+    assert.deepEqual(appHandler.expandedStatusPages, {
+      500: '500.edge',
+      501: '500.edge',
+      502: '500.edge',
+      503: '500.edge',
+      504: '500.edge',
+      505: '500.edge',
+      506: '500.edge',
+      507: '500.edge',
+      508: '500.edge',
+      509: '500.edge',
+    })
+  })
 })
