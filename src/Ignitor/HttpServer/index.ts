@@ -130,8 +130,7 @@ export class HttpServer {
 
     this._server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        this._server.instance!.close()
-        return
+        this._logger.trace(`Port in use, closing server`)
       }
 
       await this.kill(3000)
@@ -199,8 +198,8 @@ export class HttpServer {
       this._setLogger()
       this._setServer()
       this.createServer(serverCallback)
-      await this.listen()
       this._monitorHttpServer()
+      await this.listen()
       this._signalsListener.listen(() => this.close())
     } catch (error) {
       new ErrorHandler(this.application).handleError(error)
