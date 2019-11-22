@@ -40,7 +40,7 @@ export abstract class HttpExceptionHandler {
    * Map of status pages to render, instead of making the
    * regular response
    */
-  protected statusPages: { [key: number]: string } = {}
+  protected statusPages: { [key: string]: string } = {}
 
   /**
    * A flag to disable status pages during development
