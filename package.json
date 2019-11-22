@@ -39,6 +39,8 @@
   },
   "homepage": "https://github.com/adonisjs/adonis-framework#readme",
   "devDependencies": {
+    "@adonisjs/ace": "^6.6.1",
+    "@adonisjs/assembler": "^1.0.1",
     "@adonisjs/fold": "^6.2.3",
     "@adonisjs/mrm-preset": "^2.1.0",
     "@adonisjs/sink": "^2.3.1",
@@ -85,7 +87,6 @@
     }
   },
   "dependencies": {
-    "@adonisjs/ace": "^6.6.1",
     "@adonisjs/application": "^1.2.1",
     "@adonisjs/config": "^1.0.10",
     "@adonisjs/encryption": "^1.0.2",
@@ -93,10 +94,8 @@
     "@adonisjs/events": "^1.0.5",
     "@adonisjs/hash": "^1.0.8",
     "@adonisjs/http-server": "^1.4.0",
-    "@adonisjs/ioc-transformer": "^1.0.0",
     "@adonisjs/logger": "^1.1.6",
     "@adonisjs/profiler": "^1.2.4",
-    "@poppinss/hooks": "^1.0.0",
     "@poppinss/utils": "^2.1.0",
     "@types/find-package-json": "^1.1.0",
     "@types/proxy-addr": "^2.0.0",
@@ -107,6 +106,8 @@
   },
   "peerDependencies": {
     "youch": "^2.x.x",
+    "@adonisjs/fold": "^6.x.x",
+    "@adonisjs/ace": "^6.x.x",
     "youch-terminal": "^1.x.x"
   },
   "np": {

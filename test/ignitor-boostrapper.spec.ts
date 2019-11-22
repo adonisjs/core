@@ -40,6 +40,7 @@ test.group('Ignitor | Setup', (group) => {
   })
 
   test('setup application', async (assert) => {
+    await setupApplicationFiles(fs)
     const bootstrapper = new Bootstrapper(fs.basePath)
     const application = bootstrapper.setup()
 
@@ -87,6 +88,7 @@ test.group('Ignitor | Setup', (group) => {
   })
 
   test('raise exception when providers array is missing in app file', async (assert) => {
+    await setupApplicationFiles(fs)
     await fs.add(`start/app.ts`, ``)
 
     const bootstrapper = new Bootstrapper(fs.basePath)
@@ -97,6 +99,8 @@ test.group('Ignitor | Setup', (group) => {
   })
 
   test('return all whitelist exports from app file', async (assert) => {
+    await setupApplicationFiles(fs)
+
     await fs.add(`start/app.ts`, `
       export const providers = ['foo']
       export const aceProviders = ['foo-ace']

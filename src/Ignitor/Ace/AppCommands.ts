@@ -7,16 +7,18 @@
 * file that was distributed with this source code.
 */
 
+import { exists } from 'fs'
 import ace from '@adonisjs/ace'
 import { Bootstrapper } from '../Bootstrapper'
 import { SignalsListener } from '../SignalsListener'
+import { RuntimeException } from './RuntimeException'
 
 /**
  * Exposes the API to execute app commands registered under
  * the manifest file.
  */
 export class AppCommands {
-  private _bootstrapper = new Bootstrapper(this._sourceRoot)
+  private _bootstrapper = new Bootstrapper(this._buildRoot)
 
   /**
    * Whether or not the app was wired. App is only wired, when
@@ -34,9 +36,26 @@ export class AppCommands {
    * code.
    */
   constructor (
-    private _sourceRoot: string,
+    private _buildRoot: string,
     private _ace: typeof ace,
   ) {
+  }
+
+  /**
+   * Raises human friendly error when the `build` directory is
+   * missing during `generate:manifest` command.
+   */
+  private _ensureBuildRoot (command: string) {
+    command = command || '<command>'
+    return new Promise((resolve, reject) => {
+      exists(this._buildRoot, (exists) => {
+        if (!exists) {
+          reject(new RuntimeException(`Make sure to compile the code before running "node ace ${command}"`))
+        } else {
+          resolve()
+        }
+      })
+    })
   }
 
   /**
@@ -81,9 +100,10 @@ export class AppCommands {
    * Handle application command
    */
   public async handle (argv: string[]) {
+    await this._ensureBuildRoot(argv[0])
     this._bootstrapper.setup()
 
-    const manifest = new this._ace.Manifest(this._sourceRoot)
+    const manifest = new this._ace.Manifest(this._buildRoot)
     const kernel = new this._ace.Kernel(this._bootstrapper.application)
     this._addKernelHooks(kernel)
 

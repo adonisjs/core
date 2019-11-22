@@ -7,29 +7,49 @@
 * file that was distributed with this source code.
 */
 
+import { exists } from 'fs'
 import ace from '@adonisjs/ace'
 import { Bootstrapper } from '../Bootstrapper'
+import { RuntimeException } from './RuntimeException'
 
 /**
  * Exposes the API to generate the manifest file
  */
 export class GenerateManifest {
-  private _bootstrapper = new Bootstrapper(this._sourceRoot)
+  private _bootstrapper = new Bootstrapper(this._buildRoot)
 
   /**
    * Source root always points to the compiled source
    * code.
    */
   constructor (
-    private _sourceRoot: string,
+    private _buildRoot: string,
     private _ace: typeof ace,
   ) {
+  }
+
+  /**
+   * Raises human friendly error when the `build` directory is
+   * missing during `generate:manifest` command.
+   */
+  private _ensureBuildRoot () {
+    return new Promise((resolve, reject) => {
+      exists(this._buildRoot, (exists) => {
+        if (!exists) {
+          reject(new RuntimeException('Make sure to compile the code before running "node ace generate:manifest"'))
+        } else {
+          resolve()
+        }
+      })
+    })
   }
 
   /**
    * Generates the manifest file for commands
    */
   public async handle () {
+    await this._ensureBuildRoot()
+
     this._bootstrapper.setup()
     const application = this._bootstrapper.application
     const commands = application.rcFile.commands
@@ -45,11 +65,11 @@ export class GenerateManifest {
     /**
      * Generate file
      */
-    await new this._ace.Manifest(this._sourceRoot).generate(commands)
+    await new this._ace.Manifest(this._buildRoot).generate(commands)
 
     /**
      * Success
      */
-    this._ace.logger.create('.adonisrc.json')
+    this._ace.logger.create('ace-manifest.json')
   }
 }

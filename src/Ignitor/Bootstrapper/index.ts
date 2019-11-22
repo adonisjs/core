@@ -9,13 +9,13 @@
 
 import { join } from 'path'
 import findPkg from 'find-package-json'
-import { Exception } from '@poppinss/utils'
 import { Ioc, Registrar } from '@adonisjs/fold'
+import { Exception, esmRequire } from '@poppinss/utils'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { Application } from '@adonisjs/application/build/standalone'
 
-import { optionalRequire } from '../../utils'
+import { optionalRequire, isMissingModuleError } from '../../utils'
 
 /**
  * Exposes the API to bootstrap the application by registering-booting the
@@ -75,16 +75,25 @@ export class Bootstrapper {
     }
 
     /**
+     * Loading `.adonisrc.json` file with custom error handling when
+     * the file is missing
+     */
+    let rcContents = {}
+    try {
+      rcContents = esmRequire(join(this._appRoot, '.adonisrc.json'))
+    } catch (error) {
+      if (isMissingModuleError(error)) {
+        throw new Error('Make sure the project root has ".adonisrc.json"')
+      }
+      throw error
+    }
+
+    /**
      * Setting up the application and binding it to the container as well. This makes
      * it's way to the container even before the providers starts registering
      * themselves.
      */
-    this.application = new Application(
-      this._appRoot,
-      ioc,
-      optionalRequire(join(this._appRoot, '.adonisrc.json'), true) || {},
-      pkgFile,
-    )
+    this.application = new Application(this._appRoot, ioc, rcContents, pkgFile)
 
     this._registrar = new Registrar(ioc, this._appRoot)
     ioc.singleton('Adonis/Core/Application', () => this.application)

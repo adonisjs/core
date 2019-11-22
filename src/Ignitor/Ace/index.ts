@@ -27,7 +27,7 @@ export class Ace {
      * This environment variable helps runtime to find the actual
      * source directory
      */
-    process.env.ADONIS_CLI_CWD = this._appRoot
+    process.env.ADONIS_ACE_CWD = this._appRoot
   }
 
   /**
@@ -97,7 +97,19 @@ export class Ace {
     const ace = await this._importAce()
 
     try {
-      const buildDir = join(this._appRoot, this._isTsProject() ? this._getBuildDir() : './')
+      const isTypescript = this._isTsProject()
+
+      /**
+       * By default the current directory is the build directory. However, if
+       * the application is the typescript source code, then we fetch the
+       * build directory from `tsconfig.json` file.
+       */
+      let buildDir = this._appRoot
+      if (isTypescript) {
+        process.env.ADONIS_IS_TYPESCRIPT = 'true'
+        process.env.ADONIS_BUILD_DIR = this._getBuildDir()
+        buildDir = join(this._appRoot, process.env.ADONIS_BUILD_DIR!)
+      }
 
       /**
        * Handle generate manifest manually
@@ -111,7 +123,7 @@ export class Ace {
        * Pass command over to core commands from `assembler`
        */
       if (CoreCommands.commandsList.includes(argv[0])) {
-        console.log('will handle it')
+        await new CoreCommands(this._appRoot, ace).handle(argv)
         return
       }
 

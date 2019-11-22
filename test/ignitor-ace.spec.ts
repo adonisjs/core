@@ -143,7 +143,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 
     assert.equal(
       stripAnsi(output[0]).trim(),
-      `✔  create    .adonisrc.json`,
+      `✔  create    ace-manifest.json`,
     )
   })
 
@@ -164,7 +164,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 
     assert.equal(
       stripAnsi(output[0]).trim(),
-      `✔  create    .adonisrc.json`,
+      `✔  create    ace-manifest.json`,
     )
   })
 })
