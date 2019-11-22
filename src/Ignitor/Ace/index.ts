@@ -13,7 +13,7 @@ import { AppCommands } from './AppCommands'
 import { CoreCommands } from './CoreCommands'
 import { isMissingModuleError } from '../../utils'
 import { GenerateManifest } from './GenerateManifest'
-import { RuntimeException } from './RuntimeException'
+import { AceRuntimeException } from './AceRuntimeException'
 
 const RC_FILE_NAME = '.adonisrc.json'
 const TS_CONFIG_FILE = 'tsconfig.json'
@@ -38,7 +38,7 @@ export class Ace {
       return await import('@adonisjs/ace')
     } catch (error) {
       if (isMissingModuleError(error)) {
-        throw new RuntimeException('Install "@adonisjs/ace" to execute ace commands')
+        throw new AceRuntimeException('Install "@adonisjs/ace" to execute ace commands')
       }
 
       throw error
@@ -56,7 +56,7 @@ export class Ace {
       return rcFile.typescript === false ? false : true
     } catch (error) {
       if (isMissingModuleError(error)) {
-        throw new RuntimeException(
+        throw new AceRuntimeException(
           `Error: Before running ace commands, ensure that project root has "${RC_FILE_NAME}" file`,
         )
       }
@@ -73,7 +73,7 @@ export class Ace {
     try {
       const tsConfig = require(join(this._appRoot, TS_CONFIG_FILE)) || {}
       if (!tsConfig.compilerOptions || !tsConfig.compilerOptions.outDir) {
-        throw new RuntimeException(
+        throw new AceRuntimeException(
           `Make sure to define "compilerOptions.outDir" in ${TS_CONFIG_FILE} file`,
         )
       }
@@ -81,7 +81,7 @@ export class Ace {
       return tsConfig.compilerOptions.outDir
     } catch (error) {
       if (isMissingModuleError(error)) {
-        throw new RuntimeException(
+        throw new AceRuntimeException(
           `Typescript projects must have "${TS_CONFIG_FILE}" file inside the project root`,
         )
       }
@@ -133,7 +133,7 @@ export class Ace {
       await new AppCommands(buildDir, ace!).handle(argv)
     } catch (error) {
       ace.handleError(error, (_error, logger) => {
-        if (error instanceof RuntimeException) {
+        if (error instanceof AceRuntimeException) {
           logger.error(error.message)
         } else {
           logger.fatal(error)

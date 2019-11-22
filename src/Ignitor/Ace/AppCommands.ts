@@ -11,7 +11,7 @@ import { exists } from 'fs'
 import ace from '@adonisjs/ace'
 import { Bootstrapper } from '../Bootstrapper'
 import { SignalsListener } from '../SignalsListener'
-import { RuntimeException } from './RuntimeException'
+import { AceRuntimeException } from './AceRuntimeException'
 
 /**
  * Exposes the API to execute app commands registered under
@@ -50,7 +50,7 @@ export class AppCommands {
     return new Promise((resolve, reject) => {
       exists(this._buildRoot, (exists) => {
         if (!exists) {
-          reject(new RuntimeException(`Make sure to compile the code before running "node ace ${command}"`))
+          reject(new AceRuntimeException(`Make sure to compile the code before running "node ace ${command}"`))
         } else {
           resolve()
         }

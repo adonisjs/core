@@ -14,7 +14,7 @@ import { esmRequire } from '@poppinss/utils'
 import { Application } from '@adonisjs/application/build/standalone'
 
 import { isMissingModuleError } from '../../utils'
-import { RuntimeException } from './RuntimeException'
+import { AceRuntimeException } from './AceRuntimeException'
 
 /**
  * Exposes the API to run core commands from `@adonisjs/assembler`.
@@ -46,7 +46,7 @@ export class CoreCommands {
       rcContents = esmRequire(join(this._appRoot, '.adonisrc.json'))
     } catch (error) {
       if (isMissingModuleError(error)) {
-        throw new RuntimeException('Make sure the project root has ".adonisrc.json"')
+        throw new AceRuntimeException('Make sure the project root has ".adonisrc.json"')
       }
       throw error
     }
@@ -62,7 +62,7 @@ export class CoreCommands {
       return await import('@adonisjs/assembler')
     } catch (error) {
       if (isMissingModuleError(error)) {
-        throw new RuntimeException(`Install "@adonisjs/assembler" to execute "${command}" command`)
+        throw new AceRuntimeException(`Install "@adonisjs/assembler" to execute "${command}" command`)
       }
 
       throw error

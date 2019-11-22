@@ -10,7 +10,7 @@
 import { exists } from 'fs'
 import ace from '@adonisjs/ace'
 import { Bootstrapper } from '../Bootstrapper'
-import { RuntimeException } from './RuntimeException'
+import { AceRuntimeException } from './AceRuntimeException'
 
 /**
  * Exposes the API to generate the manifest file
@@ -36,7 +36,7 @@ export class GenerateManifest {
     return new Promise((resolve, reject) => {
       exists(this._buildRoot, (exists) => {
         if (!exists) {
-          reject(new RuntimeException('Make sure to compile the code before running "node ace generate:manifest"'))
+          reject(new AceRuntimeException('Make sure to compile the code before running "node ace generate:manifest"'))
         } else {
           resolve()
         }
