@@ -12,10 +12,11 @@
  * file.
  */
 declare module '@ioc:Adonis/Core/HttpExceptionHandler' {
+  import { Macroable } from 'macroable'
   import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
   import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 
-  export default abstract class HttpExceptionHandler {
+  export default abstract class HttpExceptionHandler extends Macroable {
     constructor (logger: LoggerContract)
     protected logger: LoggerContract
     protected dontReport: string[]
