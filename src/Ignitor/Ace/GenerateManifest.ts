@@ -29,6 +29,21 @@ export class GenerateManifest {
   }
 
   /**
+   * Returns manifest object for showing help
+   */
+  public static getManifestJSON () {
+    return {
+      'generate:manifest': {
+        commandName: 'generate:manifest',
+        description: 'Generate manifest file to execute ace commands',
+        args: [],
+        flags: [],
+        settings: {},
+      },
+    }
+  }
+
+  /**
    * Raises human friendly error when the `build` directory is
    * missing during `generate:manifest` command.
    */

@@ -7,10 +7,10 @@
 * file that was distributed with this source code.
 */
 
-import { join } from 'path'
 import ace from '@adonisjs/ace'
+import { join, dirname } from 'path'
 import { Ioc } from '@adonisjs/fold'
-import { esmRequire } from '@poppinss/utils'
+import { esmRequire, resolveFrom } from '@poppinss/utils'
 import { Application } from '@adonisjs/application/build/standalone'
 
 import { isMissingModuleError } from '../../utils'
@@ -27,6 +27,17 @@ export class CoreCommands {
     'build',
     'serve',
   ]
+
+  /**
+   * Returns assembler manifest file for showing help
+   */
+  public static getManifestJSON () {
+    try {
+      return require('@adonisjs/assembler/build/ace-manifest.json')
+    } catch (error) {
+      return {}
+    }
+  }
 
   private _application: Application
 
@@ -76,8 +87,21 @@ export class CoreCommands {
     this._setupApplication()
     await this._importAssembler(argv[0])
 
-    const manifest = new this._ace.Manifest(this._appRoot)
+    const manifest = new this._ace.Manifest(dirname(resolveFrom(this._appRoot, '@adonisjs/assembler')))
     const kernel = new this._ace.Kernel(this._application)
+
+    /**
+     * Showing commands help
+     */
+    kernel.flag('help', async (value, _parsed, command) => {
+      if (!value) {
+        return
+      }
+
+      kernel.printHelp(command)
+      process.exit(0)
+    }, { alias: 'h' })
+
     kernel.useManifest(manifest)
     await kernel.handle(argv)
   }

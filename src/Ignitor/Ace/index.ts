@@ -128,9 +128,18 @@ export class Ace {
       }
 
       /**
+       * Passing manifest json of core commands and generate manifest, so that
+       * we can append in the help output
+       */
+      const additionalManifestJSON = Object.assign(
+        CoreCommands.getManifestJSON(),
+        GenerateManifest.getManifestJSON(),
+      )
+
+      /**
        * Proxy over to application commands
        */
-      await new AppCommands(buildDir, ace!).handle(argv)
+      await new AppCommands(buildDir, ace!, additionalManifestJSON).handle(argv)
     } catch (error) {
       ace.handleError(error, (_error, logger) => {
         if (error instanceof AceRuntimeException) {

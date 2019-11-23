@@ -38,6 +38,7 @@ export class AppCommands {
   constructor (
     private _buildRoot: string,
     private _ace: typeof ace,
+    private _additionalManifestCommands: any,
   ) {
   }
 
@@ -78,6 +79,46 @@ export class AppCommands {
   }
 
   /**
+   * Adding flags
+   */
+  private _addKernelFlags (kernel: ace.Kernel) {
+    /**
+     * Showing help including core commands
+     */
+    kernel.flag('help', async (value, _parsed, command) => {
+      if (!value) {
+        return
+      }
+
+      /**
+       * Updating manifest commands object during help
+       */
+      Object.keys(this._additionalManifestCommands).forEach((commandName) => {
+        kernel.manifestCommands![commandName] = this._additionalManifestCommands[commandName]
+      })
+
+      kernel.printHelp(command)
+      process.exit(0)
+    }, { alias: 'h' })
+
+    /**
+     * Showing app and AdonisJs version
+     */
+    kernel.flag('version', async (value) => {
+      if (!value) {
+        return
+      }
+
+      const appVersion = this._bootstrapper.application.version
+      const adonisVersion = this._bootstrapper.application.adonisVersion
+
+      console.log(`App version`, appVersion ? appVersion.version : 'NA')
+      console.log(`Framework version`, adonisVersion ? adonisVersion.version : 'NA')
+      process.exit(0)
+    }, { alias: 'v' })
+  }
+
+  /**
    * Boot the application.
    */
   private async _wire () {
@@ -106,8 +147,10 @@ export class AppCommands {
     const manifest = new this._ace.Manifest(this._buildRoot)
     const kernel = new this._ace.Kernel(this._bootstrapper.application)
     this._addKernelHooks(kernel)
+    this._addKernelFlags(kernel)
 
     kernel.useManifest(manifest)
+    await kernel.preloadManifest()
     await kernel.handle(argv)
 
     this._signalsListener.listen(async () => {
