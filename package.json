@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/adonisjs/adonis-framework#readme",
   "devDependencies": {
-    "@adonisjs/ace": "^6.6.1",
+    "@adonisjs/ace": "^6.7.0",
     "@adonisjs/assembler": "^1.1.0",
     "@adonisjs/fold": "^6.2.3",
     "@adonisjs/mrm-preset": "^2.1.0",
