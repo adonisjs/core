@@ -31,14 +31,3 @@ export function optionalRequire (filePath: string, optional = false): any | null
     throw error
   }
 }
-
-/**
- * Exit process only when not running module tests
- */
-export function exitProcess (signal: number) {
-  if (process.env.MODULE_TESTING) {
-    return
-  }
-
-  process.exit(signal)
-}
