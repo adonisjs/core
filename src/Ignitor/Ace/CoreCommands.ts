@@ -23,10 +23,7 @@ export class CoreCommands {
   /**
    * List of core commands
    */
-  public static commandsList = [
-    'build',
-    'serve',
-  ]
+  public static commandsList = Object.keys(CoreCommands.getManifestJSON())
 
   /**
    * Returns assembler manifest file for showing help

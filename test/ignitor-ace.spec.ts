@@ -16,6 +16,7 @@ import { stderr, stdout } from 'test-console'
 import { Filesystem } from '@poppinss/dev-utils'
 
 import { Ignitor } from '../src/Ignitor'
+import { CoreCommands } from '../src/Ignitor/Ace/CoreCommands'
 import { setupApplicationFiles, setupCompiledApplicationFiles } from '../test-helpers'
 
 const fs = new Filesystem(join(__dirname, '__app'))
@@ -77,6 +78,18 @@ test.group('Ignitor | Ace', (group) => {
       stripAnsi(output[0]).trim(),
       `✖  error     Make sure to define \"compilerOptions.outDir\" in tsconfig.json file`,
     )
+  })
+
+  test('get list of core commands', async (assert) => {
+    assert.deepEqual(CoreCommands.commandsList, [
+      'build',
+      'serve',
+      'invoke',
+      'make:command',
+      'make:controller',
+      'make:middleware',
+      'make:provider',
+    ])
   })
 })
 
@@ -173,7 +186,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
   })
 })
 
-test.group('Ignitor | Ace | Generate Manifest', (group) => {
+test.group('Ignitor | Ace | Run Command', (group) => {
   group.before(() => {
     process.env.MODULE_TESTING = 'true'
   })
