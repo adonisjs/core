@@ -252,7 +252,7 @@ test.group('HttpExceptionHandler', () => {
   })
 
   test('render status page when defined', async (assert) => {
-    assert.plan(2)
+    assert.plan(3)
 
     class AppHandler extends HttpExceptionHandler {
       protected statusPages = {
@@ -283,6 +283,7 @@ test.group('HttpExceptionHandler', () => {
 
     ctx.request.request.headers = { accept: 'text/html' }
     await handler.handle(new InvalidAuth('bad request'), ctx)
+    assert.equal(ctx.response.response.statusCode, 404)
   })
 
   test('do not render status page when content negotiation passes for json', async (assert) => {
@@ -315,6 +316,7 @@ test.group('HttpExceptionHandler', () => {
     ctx.request.request.headers = { accept: 'application/json' }
     await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.deepEqual(ctx.response.lazyBody!.args, [{ message: 'E_INVALID_AUTH: bad request' }, false])
+    assert.equal(ctx.response.response.statusCode, 404)
   })
 
   test('do not render status page when disabled for development mode', async (assert) => {
@@ -350,13 +352,15 @@ test.group('HttpExceptionHandler', () => {
 
     ctx.request.request.headers = { accept: 'text/html' }
     await handler.handle(new InvalidAuth('bad request'), ctx)
+
     assert.isTrue(/youch/.test(ctx.response.lazyBody!.args[0]))
+    assert.equal(ctx.response.response.statusCode, 404)
 
     delete process.env.NODE_ENV
   })
 
   test('always render status page when in production mode', async (assert) => {
-    assert.plan(2)
+    assert.plan(3)
 
     process.env.NODE_ENV = 'production'
 
@@ -391,6 +395,8 @@ test.group('HttpExceptionHandler', () => {
 
     ctx.request.request.headers = { accept: 'text/html' }
     await handler.handle(new InvalidAuth('bad request'), ctx)
+
+    assert.equal(ctx.response.response.statusCode, 404)
     delete process.env.NODE_ENV
   })
 

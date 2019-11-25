@@ -114,9 +114,7 @@ export abstract class HttpExceptionHandler extends Macroable {
       return
     }
 
-    ctx.response.status(error.status).send({
-      message: error.message,
-    })
+    ctx.response.status(error.status).send({ message: error.message })
   }
 
   /**
@@ -138,7 +136,8 @@ export abstract class HttpExceptionHandler extends Macroable {
      * Render status pages
      */
     if (ctx['view'] && this.expandedStatusPages[error.status]) {
-      ctx['view'].render(this.expandedStatusPages[error.status], { error })
+      const html = ctx['view'].render(this.expandedStatusPages[error.status], { error })
+      ctx.response.status(error.status).send(html)
       return
     }
 
