@@ -22,6 +22,9 @@ declare module '@ioc:Adonis/Core/HttpExceptionHandler' {
     protected dontReport: string[]
     protected ignoreStatuses: number[]
     protected internalDontReport: string[]
+    protected statusPages: { [key: string]: string }
+    public expandedStatusPages: { [key: string]: string }
+    protected disableStatusPagesInDevelopment: boolean
     protected context (ctx: HttpContextContract): any
     protected shouldReport (error: any): boolean
     protected makeJSONResponse (error: any, ctx: HttpContextContract): Promise<void>
