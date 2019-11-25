@@ -40,7 +40,7 @@
   "homepage": "https://github.com/adonisjs/adonis-framework#readme",
   "devDependencies": {
     "@adonisjs/ace": "^6.7.2",
-    "@adonisjs/assembler": "^1.1.2",
+    "@adonisjs/assembler": "^1.2.0",
     "@adonisjs/fold": "^6.2.3",
     "@adonisjs/mrm-preset": "^2.1.0",
     "@adonisjs/sink": "^2.4.0",
@@ -55,7 +55,7 @@
     "doctoc": "^1.4.0",
     "husky": "^3.1.0",
     "japa": "^3.0.1",
-    "mrm": "^1.2.3",
+    "mrm": "^2.0.0",
     "np": "^5.1.3",
     "proxy-addr": "^2.0.5",
     "strip-ansi": "^6.0.0",
