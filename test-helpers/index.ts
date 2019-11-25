@@ -71,7 +71,7 @@ export async function setupCompiledApplicationFiles (
     ? additionalProviders.concat(join(__dirname, '../providers/AppProvider.ts'))
     : [join(__dirname, '../providers/AppProvider.ts')]
 
-  await fs.add(`${outDir}/start//app.js`, `module.exports = {
+  await fs.add(`${outDir}/start/app.js`, `module.exports = {
     providers: [
       ${providers.map((one) => `'${one}',`).join('\n')}
     ]

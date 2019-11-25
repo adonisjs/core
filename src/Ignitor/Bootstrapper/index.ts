@@ -15,7 +15,7 @@ import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { Application } from '@adonisjs/application/build/standalone'
 
-import { optionalRequire, isMissingModuleError } from '../../utils'
+import { optionalResolveAndRequire, isMissingModuleError } from '../../utils'
 
 /**
  * Exposes the API to bootstrap the application by registering-booting the
@@ -186,7 +186,7 @@ export class Bootstrapper {
         if (this._logger) {
           this._logger.trace(`preloading %s file`, node.file)
         }
-        optionalRequire(join(this.application.appRoot, node.file), node.optional)
+        optionalResolveAndRequire(node.file, this.application.appRoot, node.optional)
       })
   }
 

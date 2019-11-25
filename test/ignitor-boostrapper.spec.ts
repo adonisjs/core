@@ -136,10 +136,10 @@ test.group('Ignitor | Setup', (group) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
         {
-          file: 'foo.ts',
+          file: './foo.ts',
         },
         {
-          file: 'bar.ts',
+          file: './bar.ts',
         },
       ],
     }))
@@ -162,11 +162,11 @@ test.group('Ignitor | Setup', (group) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
         {
-          file: 'foo.ts',
+          file: './foo.ts',
           environment: ['web'],
         },
         {
-          file: 'bar.ts',
+          file: './bar.ts',
           environment: ['console'],
         },
       ],
@@ -192,10 +192,10 @@ test.group('Ignitor | Setup', (group) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
         {
-          file: 'foo.ts',
+          file: './foo.ts',
         },
         {
-          file: 'bar.ts',
+          file: './bar.ts',
         },
       ],
     }))
@@ -209,14 +209,14 @@ test.group('Ignitor | Setup', (group) => {
     assert.throw(fn, /ENOENT: no such file or directory/)
   })
 
-  test('do not raise error when preload file is optional', async (assert) => {
+  test('do not raise error when preload file is optional and missing', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       preloads: [
         {
-          file: 'foo.ts',
+          file: './foo.ts',
         },
         {
-          file: 'bar.ts',
+          file: './bar.ts',
           optional: true,
         },
       ],
