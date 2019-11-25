@@ -104,6 +104,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
       commands: ['./FooCommand'],
+      providers: [join(__dirname, '../providers/AppProvider.ts')],
     }))
 
     await fs.add('tsconfig.json', JSON.stringify({
@@ -154,7 +155,10 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
     /**
      * Overwriting .adonisrc.json
      */
-    await fs.add('.adonisrc.json', JSON.stringify({ typescript: false }))
+    await fs.add('.adonisrc.json', JSON.stringify({
+      typescript: false,
+      providers: [join(__dirname, '../providers/AppProvider.ts')],
+    }))
 
     await setupCompiledApplicationFiles(fs, 'build')
 
@@ -192,6 +196,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
       commands: ['./FooCommand'],
+      providers: [join(__dirname, '../providers/AppProvider.ts')],
     }))
 
     await fs.add('tsconfig.json', JSON.stringify({
@@ -234,6 +239,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       typescript: true,
       commands: ['./FooCommand'],
+      providers: [join(__dirname, '../providers/AppProvider.ts')],
     }))
 
     await fs.add('tsconfig.json', JSON.stringify({

@@ -87,37 +87,6 @@ test.group('Ignitor | Setup', (group) => {
     assert.equal(env.get('APP_KEY'), SECRET)
   })
 
-  test('raise exception when providers array is missing in app file', async (assert) => {
-    await setupApplicationFiles(fs)
-    await fs.add(`start/app.ts`, ``)
-
-    const bootstrapper = new Bootstrapper(fs.basePath)
-    bootstrapper.setup()
-
-    const fn = () => bootstrapper.registerProviders(false)
-    assert.throw(fn, 'E_MISSING_APP_ESSENTIALS: export `providers` array from start/app file')
-  })
-
-  test('return all whitelist exports from app file', async (assert) => {
-    await setupApplicationFiles(fs)
-
-    await fs.add(`start/app.ts`, `
-      export const providers = ['foo']
-      export const aceProviders = ['foo-ace']
-      export const commands = ['foo-command']
-    `)
-
-    const bootstrapper = new Bootstrapper(fs.basePath)
-    bootstrapper.setup()
-
-    const appFile = bootstrapper.getAppFileContents()
-    assert.deepEqual(appFile, {
-      providers: ['foo'],
-      aceProviders: ['foo-ace'],
-      aliases: {},
-    })
-  })
-
   test('register autoloads defined in adonisrc.json file', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
       autoloads: {

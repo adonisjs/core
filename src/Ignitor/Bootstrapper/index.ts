@@ -9,8 +9,8 @@
 
 import { join } from 'path'
 import findPkg from 'find-package-json'
+import { esmRequire } from '@poppinss/utils'
 import { Ioc, Registrar } from '@adonisjs/fold'
-import { Exception, esmRequire } from '@poppinss/utils'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { Application } from '@adonisjs/application/build/standalone'
@@ -101,45 +101,15 @@ export class Bootstrapper {
   }
 
   /**
-   * Returns providers, aceProviders, and aliases from the start/app file
-   */
-  public getAppFileContents () {
-    const appExports = require(this.application.startPath('app'))
-
-    /**
-     * Validate the required props to ensure they exists
-     */
-    const requiredExports = ['providers']
-    requiredExports.forEach((prop) => {
-      if (!appExports[prop]) {
-        throw new Exception(
-          `export \`${prop}\` array from start/app file`,
-          500,
-          'E_MISSING_APP_ESSENTIALS',
-        )
-      }
-    })
-
-    return {
-      providers: (appExports.providers || []) as string[],
-      aceProviders: (appExports.aceProviders || []) as string[],
-      aliases: (appExports.aliases || {}) as { [key: string]: string },
-    }
-  }
-
-  /**
    * Register the providers and their aliases to the IoC container.
    */
   public registerProviders (includeAce: boolean) {
-    const { providers, aceProviders, aliases } = this.getAppFileContents()
-    const providersList = (includeAce ? providers.concat(aceProviders) : providers).filter((provider) => {
-      return !!provider
-    })
+    const providers = includeAce
+      ? this.application.rcFile.providers.concat(this.application.rcFile.aceProviders)
+      : this.application.rcFile.providers
 
+    const providersList = providers.filter((provider) => !!provider)
     const providersRefs = this._registrar.useProviders(providersList).register()
-    Object.keys(aliases).forEach((alias) => {
-      this.application.container.alias(aliases[alias], alias)
-    })
 
     /**
      * Storing a reference of providers that has ready and exit hooks

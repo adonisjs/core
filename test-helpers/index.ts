@@ -18,10 +18,15 @@ const SECRET = 'asecureandlongrandomsecret'
 export async function setupApplicationFiles (fs: Filesystem, additionalProviders?: string[]) {
   await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
 
+  const providers = Array.isArray(additionalProviders)
+    ? additionalProviders.concat(join(__dirname, '../providers/AppProvider.ts'))
+    : [join(__dirname, '../providers/AppProvider.ts')]
+
   await fs.add('.adonisrc.json', JSON.stringify({
     autoloads: {
       'App': './app',
     },
+    providers: providers,
   }))
 
   await fs.add(`config/app.ts`, `
@@ -34,14 +39,6 @@ export async function setupApplicationFiles (fs: Filesystem, additionalProviders
   `)
 
   await fs.add('.env', `APP_KEY = ${SECRET}`)
-
-  const providers = Array.isArray(additionalProviders)
-    ? additionalProviders.concat(join(__dirname, '../providers/AppProvider.ts'))
-    : [join(__dirname, '../providers/AppProvider.ts')]
-
-  await fs.add(`start/app.ts`, `export const providers = [
-    ${providers.map((one) => `'${one}',`).join('\n')}
-  ]`)
 }
 
 /**
