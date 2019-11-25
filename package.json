@@ -122,6 +122,7 @@
         "cors.txt"
       ]
     },
-    "types": "@adonisjs/core"
+    "types": "@adonisjs/core",
+    "providers": ["@adonisjs/core"]
   }
 }
