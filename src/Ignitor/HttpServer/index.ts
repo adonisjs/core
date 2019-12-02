@@ -130,7 +130,8 @@ export class HttpServer {
 
     this._server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        this._logger.trace(`Port in use, closing server`)
+        this._logger.error(`Port in use, closing server`)
+        process.exitCode = 1
         return
       }
 
@@ -175,18 +176,22 @@ export class HttpServer {
    * Starts the http server a given host and port
    */
   public listen () {
-    return new Promise(async (resolve) => {
-      await this._bootstrapper.executeReadyHooks()
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this._bootstrapper.executeReadyHooks()
 
-      const Env = this.application.container.use('Adonis/Core/Env')
-      const host = Env.get('HOST', '0.0.0.0') as string
-      const port = Number(Env.get('PORT', '3333') as string)
+        const Env = this.application.container.use('Adonis/Core/Env')
+        const host = Env.get('HOST', '0.0.0.0') as string
+        const port = Number(Env.get('PORT', '3333') as string)
 
-      this._server.instance!.listen(port, host, () => {
-        this._logger.info('started server on %s:%s', host, port)
-        this.application.isReady = true
-        resolve()
-      })
+        this._server.instance!.listen(port, host, () => {
+          this._logger.info('started server on %s:%s', host, port)
+          this.application.isReady = true
+          resolve()
+        })
+      } catch (error) {
+        reject(error)
+      }
     })
   }
 
