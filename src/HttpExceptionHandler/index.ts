@@ -55,7 +55,7 @@ export abstract class HttpExceptionHandler extends Macroable {
   /**
    * A flag to disable status pages during development
    */
-  protected disableStatusPagesInDevelopment: boolean = false
+  protected disableStatusPagesInDevelopment: boolean = true
 
   /**
    * Required by macroable
