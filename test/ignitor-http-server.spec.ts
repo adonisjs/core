@@ -69,7 +69,7 @@ test.group('Ignitor | Http', (group) => {
     const httpServer = ignitor.httpServer()
     const application = boostrapper.setup()
 
-    boostrapper.registerAutoloads()
+    boostrapper.registerAliases()
     boostrapper.registerProviders(false)
     await boostrapper.bootProviders()
 

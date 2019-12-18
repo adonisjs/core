@@ -87,16 +87,16 @@ test.group('Ignitor | Setup', (group) => {
     assert.equal(env.get('APP_KEY'), SECRET)
   })
 
-  test('register autoloads defined in adonisrc.json file', async (assert) => {
+  test('register aliases defined in adonisrc.json file', async (assert) => {
     await fs.add('.adonisrc.json', JSON.stringify({
-      autoloads: {
+      aliases: {
         'App': './app',
       },
     }))
 
     const bootstrapper = new Bootstrapper(fs.basePath)
     const application = bootstrapper.setup()
-    bootstrapper.registerAutoloads()
+    bootstrapper.registerAliases()
 
     assert.deepEqual(application.container.autoloads, { App: join(fs.basePath, './app') })
   })

@@ -132,7 +132,7 @@ export class AppCommands {
      * Do not change sequence
      */
     this._bootstrapper.registerProviders(true)
-    this._bootstrapper.registerAutoloads()
+    this._bootstrapper.registerAliases()
     await this._bootstrapper.bootProviders()
     this._bootstrapper.registerPreloads()
   }

@@ -83,7 +83,7 @@ export class HttpServer {
     /**
      * Registering directories to be autoloaded
      */
-    this._bootstrapper.registerAutoloads()
+    this._bootstrapper.registerAliases()
 
     /**
      * Booting providers

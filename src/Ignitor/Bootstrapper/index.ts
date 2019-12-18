@@ -131,8 +131,8 @@ export class Bootstrapper {
   /**
    * Registers autoloading directories
    */
-  public registerAutoloads () {
-    this.application.autoloadsMap.forEach((toPath, alias) => {
+  public registerAliases () {
+    this.application.aliasesMap.forEach((toPath, alias) => {
       if (this._logger) {
         this._logger.trace(`registering %s under %s alias`, toPath, alias)
       }

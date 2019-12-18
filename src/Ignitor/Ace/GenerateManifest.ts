@@ -75,7 +75,7 @@ export class GenerateManifest {
      * the manifest file
      */
     this._bootstrapper.registerProviders(true)
-    this._bootstrapper.registerAutoloads()
+    this._bootstrapper.registerAliases()
 
     /**
      * Generate file
