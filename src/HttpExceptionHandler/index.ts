@@ -27,7 +27,7 @@ export abstract class HttpExceptionHandler extends Macroable {
    * level of filteration is on the basis of statuses and then
    * the error codes.
    */
-  protected ignoreStatuses: number[] = []
+  protected ignoreStatuses: number[] = [400, 422, 401]
 
   /**
    * An array of internal error codes to ignore
