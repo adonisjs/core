@@ -112,7 +112,7 @@ test.group('Ignitor | Http', (group) => {
 
     const { text } = await supertest(server.instance).get('/').expect(404)
     server.instance.close()
-    assert.equal(text, 'handled Cannot GET:/')
+    assert.equal(text, 'handled E_ROUTE_NOT_FOUND: Cannot GET:/')
   })
 
   test('kill app when server receives error', async (assert) => {
