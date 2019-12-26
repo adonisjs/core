@@ -16,4 +16,6 @@ export default async function instructions (
   { executeInstructions }: typeof sinkStatic,
 ) {
   await executeInstructions('@adonisjs/hash', projectRoot, application)
+  await executeInstructions('@adonisjs/validator', projectRoot, application)
+  await executeInstructions('@adonisjs/bodyparser', projectRoot, application)
 }

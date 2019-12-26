@@ -55,34 +55,29 @@ test.group('Ignitor | Setup', (group) => {
     const application = bootstrapper.setup()
     bootstrapper.registerProviders(false)
 
-    assert.deepEqual(
-      application.container.use('Adonis/Core/Config'),
-      application.container.use('Adonis/Core/Config'),
-    )
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Env'), 'has Adonis/Core/Env')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Config'), 'has Adonis/Core/Config')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Profiler'), 'has Adonis/Core/Profiler')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Logger'), 'has Adonis/Core/Logger')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Encryption'), 'has Adonis/Core/Encryption')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Event'), 'has Adonis/Core/Event')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Hash'), 'has Adonis/Core/Hash')
 
-    assert.deepEqual(
-      application.container.use('Adonis/Core/Env'),
-      application.container.use('Adonis/Core/Env'),
-    )
+    assert.isTrue(application.container.hasBinding('Adonis/Core/HttpContext'), 'has Adonis/Core/HttpContext')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Request'), 'has Adonis/Core/Request')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Response'), 'has Adonis/Core/Response')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Server'), 'has Adonis/Core/Server')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Route'), 'has Adonis/Core/Route')
+    assert.isTrue(application.container.hasBinding('Adonis/Core/MiddlewareStore'), 'has Adonis/Core/MiddlewareStore')
 
-    assert.deepEqual(
-      application.container.use('Adonis/Core/Route'),
-      application.container.use('Adonis/Core/Route'),
+    assert.isTrue(
+      application.container.hasBinding('Adonis/Core/BodyParserMiddleware'),
+      'has Adonis/Core/BodyParserMiddleware',
     )
-
-    assert.deepEqual(
-      application.container.use('Adonis/Core/Server'),
-      application.container.use('Adonis/Core/Server'),
-    )
-
-    assert.deepEqual(
-      application.container.use('Adonis/Core/MiddlewareStore'),
-      application.container.use('Adonis/Core/MiddlewareStore'),
-    )
+    assert.isTrue(application.container.hasBinding('Adonis/Core/Validator'), 'has Adonis/Core/Validator')
 
     const config = application.container.use('Adonis/Core/Config')
     const env = application.container.use('Adonis/Core/Env')
-
     assert.equal(config.get('app.appKey'), SECRET)
     assert.equal(env.get('APP_KEY'), SECRET)
   })
@@ -256,5 +251,31 @@ test.group('Ignitor | Setup', (group) => {
 
     assert.equal(process.env.APP_PROVIDER_SHUTDOWN, 'true')
     delete process.env.APP_PROVIDER_SHUTDOWN
+  })
+
+  test('bodyparser decorate http request with file and files method', async (assert) => {
+    await setupApplicationFiles(fs)
+
+    const bootstrapper = new Bootstrapper(fs.basePath)
+    bootstrapper.setup()
+    bootstrapper.registerProviders(false)
+    await bootstrapper.bootProviders()
+
+    const Request = bootstrapper.application.container.use('Adonis/Core/Request')
+    assert.isTrue(Request.hasMacro('file'), 'has macro file')
+    assert.isTrue(Request.hasMacro('files'), 'has macro files')
+  })
+
+  test('validator decorate http request with validate and validateAll method', async (assert) => {
+    await setupApplicationFiles(fs)
+
+    const bootstrapper = new Bootstrapper(fs.basePath)
+    bootstrapper.setup()
+    bootstrapper.registerProviders(false)
+    await bootstrapper.bootProviders()
+
+    const Request = bootstrapper.application.container.use('Adonis/Core/Request')
+    assert.isTrue(Request.hasMacro('validate'), 'has macro validate')
+    assert.isTrue(Request.hasMacro('validateAll'), 'has macro validateAll')
   })
 })

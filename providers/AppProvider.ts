@@ -7,7 +7,6 @@
 * file that was distributed with this source code.
 */
 
-import { join } from 'path'
 import { IocContract } from '@adonisjs/fold'
 
 import { serverHook } from '../src/Hooks/Cors'
@@ -22,16 +21,21 @@ export default class AppProvider {
   constructor (protected $container: IocContract) {
   }
 
+  /**
+   * Additional providers to load
+   */
   public provides = [
-    '@adonisjs/env/build/providers/EnvProvider',
-    '@adonisjs/config/build/providers/ConfigProvider',
+    '@adonisjs/env',
+    '@adonisjs/config',
     '@adonisjs/profiler/build/providers/ProfilerProvider',
-    '@adonisjs/logger/build/providers/LoggerProvider',
-    '@adonisjs/encryption/build/providers/EncryptionProvider',
-    '@adonisjs/events/build/providers/EventProvider',
-    '@adonisjs/hash/build/providers/HashProvider',
-    '@adonisjs/http-server/build/providers/HttpServerProvider',
-  ].map((pkg) => require.resolve(pkg, { paths: [join(__dirname, '..')] }))
+    '@adonisjs/logger',
+    '@adonisjs/encryption',
+    '@adonisjs/events',
+    '@adonisjs/hash',
+    '@adonisjs/http-server',
+    '@adonisjs/bodyparser',
+    '@adonisjs/validator',
+  ]
 
   /**
    * Register `HttpExceptionHandler` to the container.
