@@ -32,6 +32,13 @@ export class HealthCheck implements HealthCheckContract {
    */
   private resolver: IocResolverContract = this.application.container.getResolver('report')
 
+  /**
+   * Returns an array of registered services names
+   */
+  public get servicesList (): string[] {
+    return Object.keys(this.healthCheckers)
+  }
+
   constructor (private application: ApplicationContract) {}
 
   /**

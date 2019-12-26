@@ -37,6 +37,7 @@ declare module '@ioc:Adonis/Core/HealthCheck' {
    * Shape of health check contract
    */
   export interface HealthCheckContract {
+    servicesList: string[],
     addChecker (service: string, checker: Checker): void,
     isLive (): Promise<boolean>,
     isReady (): boolean,
