@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { Macroable } from 'macroable'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
@@ -16,7 +15,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
  * to handle all exceptions occured during the HTTP request
  * lifecycle and makes appropriate response for them.
  */
-export abstract class HttpExceptionHandler extends Macroable {
+export abstract class HttpExceptionHandler {
   /**
    * An array of error codes that must not be reported
    */
@@ -57,14 +56,7 @@ export abstract class HttpExceptionHandler extends Macroable {
    */
   protected disableStatusPagesInDevelopment: boolean = true
 
-  /**
-   * Required by macroable
-   */
-  protected _getters = {}
-  protected _macros = {}
-
   constructor (protected logger: LoggerContract) {
-    super()
   }
 
   /**
@@ -193,24 +185,29 @@ export abstract class HttpExceptionHandler extends Macroable {
 /**
  * Single getter to pull status pages after expanding the range expression
  */
-HttpExceptionHandler.getter('expandedStatusPages', function expandedStatusPages () {
-  return Object.keys(this.statusPages).reduce((result: any, codeRange: string) => {
-    const parts = codeRange.split('.')
-    const min = Number(parts[0])
-    const max = Number(parts[parts.length - 1])
+Object.defineProperty(HttpExceptionHandler.prototype, 'expandedStatusPages', {
+  get () {
+    const value = Object.keys(this.statusPages).reduce((result: any, codeRange: string) => {
+      const parts = codeRange.split('.')
+      const min = Number(parts[0])
+      const max = Number(parts[parts.length - 1])
 
-    if (isNaN(min) || isNaN(max)) {
+      if (isNaN(min) || isNaN(max)) {
+        return result
+      }
+
+      if (min === max) {
+        result[codeRange] = this.statusPages[codeRange]
+      }
+
+      Array.apply(null, new Array((max - min) + 1)).forEach((_v, step) => {
+        result[min + step] = this.statusPages[codeRange]
+      })
+
       return result
-    }
+    }, {})
 
-    if (min === max) {
-      result[codeRange] = this.statusPages[codeRange]
-    }
-
-    Array.apply(null, new Array((max - min) + 1)).forEach((_v, step) => {
-      result[min + step] = this.statusPages[codeRange]
-    })
-
-    return result
-  }, {})
-}, true)
+    Object.defineProperty(this, 'expandedStatusPages', { value })
+    return value
+  },
+})

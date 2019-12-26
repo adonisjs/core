@@ -182,7 +182,7 @@ export class HttpServer {
 
         const Env = this.application.container.use('Adonis/Core/Env')
         const host = Env.get('HOST', '0.0.0.0') as string
-        const port = Number(Env.get('PORT', '3333') as string)
+        const port = Number(Env.get('PORT', '4000') as string)
 
         this._server.instance!.listen(port, host, () => {
           this._logger.info('started server on %s:%s', host, port)

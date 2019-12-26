@@ -53,7 +53,7 @@ test.group('Ignitor | App Provider', (group) => {
     await boostrapper.bootProviders()
 
     const Server = boostrapper.application.container.use('Adonis/Core/Server')
-    assert.lengthOf(Server.hooks._hooks.before, 1)
+    assert.lengthOf(Server.hooks.hooks.before, 1)
   })
 
   test('setup cors before hooks when enabled is set to a function', async (assert) => {
@@ -71,7 +71,7 @@ test.group('Ignitor | App Provider', (group) => {
     await boostrapper.bootProviders()
     const Server = boostrapper.application.container.use('Adonis/Core/Server')
 
-    assert.lengthOf(Server.hooks._hooks.before, 1)
+    assert.lengthOf(Server.hooks.hooks.before, 1)
   })
 
   test('do not setup cors before hooks when enabled is set to false', async (assert) => {
@@ -89,6 +89,6 @@ test.group('Ignitor | App Provider', (group) => {
     await boostrapper.bootProviders()
     const Server = boostrapper.application.container.use('Adonis/Core/Server')
 
-    assert.lengthOf(Server.hooks._hooks.before, 0)
+    assert.lengthOf(Server.hooks.hooks.before, 0)
   })
 })
