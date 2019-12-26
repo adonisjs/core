@@ -22,18 +22,18 @@ const TS_CONFIG_FILE = 'tsconfig.json'
  * Exposes the API to execute ace commands.
  */
 export class Ace {
-  constructor (private _appRoot: string) {
+  constructor (private appRoot: string) {
     /**
      * This environment variable helps runtime to find the actual
      * source directory
      */
-    process.env.ADONIS_ACE_CWD = this._appRoot
+    process.env.ADONIS_ACE_CWD = this.appRoot
   }
 
   /**
    * Lazy load ace
    */
-  private async _importAce () {
+  private async importAce () {
     try {
       return await import('@adonisjs/ace')
     } catch (error) {
@@ -50,9 +50,9 @@ export class Ace {
    * source code. This is done by inspecting `.adonisrc.json`
    * file.
    */
-  private _isTsProject () {
+  private isTsProject () {
     try {
-      const rcFile = require(join(this._appRoot, RC_FILE_NAME)) || {}
+      const rcFile = require(join(this.appRoot, RC_FILE_NAME)) || {}
       return rcFile.typescript === false ? false : true
     } catch (error) {
       if (isMissingModuleError(error)) {
@@ -69,9 +69,9 @@ export class Ace {
    * Returns the build directory relative path. Call this when you are
    * sure that it is a valid typescript project
    */
-  private _getBuildDir () {
+  private getBuildDir () {
     try {
-      const tsConfig = require(join(this._appRoot, TS_CONFIG_FILE)) || {}
+      const tsConfig = require(join(this.appRoot, TS_CONFIG_FILE)) || {}
       if (!tsConfig.compilerOptions || !tsConfig.compilerOptions.outDir) {
         throw new AceRuntimeException(
           `Make sure to define "compilerOptions.outDir" in ${TS_CONFIG_FILE} file`,
@@ -94,21 +94,21 @@ export class Ace {
    * Handles the ace command
    */
   public async handle (argv: string[]) {
-    const ace = await this._importAce()
+    const ace = await this.importAce()
 
     try {
-      const isTypescript = this._isTsProject()
+      const isTypescript = this.isTsProject()
 
       /**
        * By default the current directory is the build directory. However, if
        * the application is the typescript source code, then we fetch the
        * build directory from `tsconfig.json` file.
        */
-      let buildDir = this._appRoot
+      let buildDir = this.appRoot
       if (isTypescript) {
         process.env.ADONIS_IS_TYPESCRIPT = 'true'
-        process.env.ADONIS_BUILD_DIR = this._getBuildDir()
-        buildDir = join(this._appRoot, process.env.ADONIS_BUILD_DIR!)
+        process.env.ADONIS_BUILD_DIR = this.getBuildDir()
+        buildDir = join(this.appRoot, process.env.ADONIS_BUILD_DIR!)
       }
 
       /**
@@ -123,7 +123,7 @@ export class Ace {
        * Pass command over to core commands from `assembler`
        */
       if (CoreCommands.commandsList.includes(argv[0])) {
-        await new CoreCommands(this._appRoot, ace).handle(argv)
+        await new CoreCommands(this.appRoot, ace).handle(argv)
         return
       }
 
@@ -141,7 +141,7 @@ export class Ace {
        */
       await new AppCommands(buildDir, ace!, additionalManifestJSON).handle(argv)
     } catch (error) {
-      ace.handleError(error, (_error, logger) => {
+      ace.handleError(error, (_, logger) => {
         if (error instanceof AceRuntimeException) {
           logger.error(error.message)
         } else {

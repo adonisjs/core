@@ -32,22 +32,22 @@ const SIMPLE_EXPOSE_HEADERS = [
  * sure not to set request specific instance properties.
  */
 export class Cors {
-  private _isEnabled: ((request) => boolean)
+  private isEnabled: ((request) => boolean)
 
-  constructor (private _options: CorsConfigContract) {
-    this._normalizeOptions()
+  constructor (private options: CorsConfigContract) {
+    this.normalizeOptions()
   }
 
   /**
    * Normalize config options
    */
-  private _normalizeOptions () {
+  private normalizeOptions () {
     /**
      * Convert all headers to lowercase
      */
-    this._options.exposeHeaders = this._options.exposeHeaders.map((header) => header.toLowerCase())
+    this.options.exposeHeaders = this.options.exposeHeaders.map((header) => header.toLowerCase())
 
-    const hasExtraHeaders = this._options.exposeHeaders.find((header) => {
+    const hasExtraHeaders = this.options.exposeHeaders.find((header) => {
       return SIMPLE_EXPOSE_HEADERS.indexOf(header) === -1
     })
 
@@ -55,16 +55,16 @@ export class Cors {
      * If expose headers doesn't have extra headers, then empty the list
      */
     if (!hasExtraHeaders) {
-      this._options.exposeHeaders = []
+      this.options.exposeHeaders = []
     }
 
     /**
      * A pre-computed function to know if CORS is enabled for current request or not
      */
-    if (typeof (this._options.enabled) === 'function') {
-      this._isEnabled = this._options.enabled
+    if (typeof (this.options.enabled) === 'function') {
+      this.isEnabled = this.options.enabled
     } else {
-      this._isEnabled = () => this._options.enabled as boolean
+      this.isEnabled = () => this.options.enabled as boolean
     }
   }
 
@@ -74,8 +74,8 @@ export class Cors {
    *
    * Origin match is always case sensitive
    */
-  private _computeResponseOrigin (origin: string): string | null {
-    let allowedOrigins = this._options.origin
+  private computeResponseOrigin (origin: string): string | null {
+    let allowedOrigins = this.options.origin
 
     /**
      * If the `origin` value inside user config is a function, we
@@ -113,7 +113,7 @@ export class Cors {
        * isn't allowed. So in that case, we return the value of the current origin and not the
        * wildcard identifier.
        */
-      return this._options.credentials === true ? origin : '*'
+      return this.options.credentials === true ? origin : '*'
     }
 
     /**
@@ -146,8 +146,8 @@ export class Cors {
    * The array items are casted to lowercase for case insensitive
    * match.
   */
-  private _computedAllowedHeaders (headers: string[]): string[] {
-    let allowedHeaders = this._options.headers
+  private computedAllowedHeaders (headers: string[]): string[] {
+    let allowedHeaders = this.options.headers
 
     /**
      * Compute allowed headers by calling the config function.
@@ -184,7 +184,7 @@ export class Cors {
   /**
    * Sets the `Access-Control-Allow-Origin` header
    */
-  private _setOrigin (response: ResponseContract, allowedOrigin: string) {
+  private setOrigin (response: ResponseContract, allowedOrigin: string) {
     response.header('Access-Control-Allow-Origin', allowedOrigin)
   }
 
@@ -193,9 +193,9 @@ export class Cors {
    * are defined. If no custom headers are defined, then simple response
    * headers are used instead.
    */
-  private _setExposedHeaders (response: ResponseContract) {
-    if (this._options.exposeHeaders.length) {
-      response.header('Access-Control-Expose-Headers', this._options.exposeHeaders.join(','))
+  private setExposedHeaders (response: ResponseContract) {
+    if (this.options.exposeHeaders.length) {
+      response.header('Access-Control-Expose-Headers', this.options.exposeHeaders.join(','))
     }
   }
 
@@ -203,8 +203,8 @@ export class Cors {
    * Allows `Access-Control-Allow-Credentials` when enabled inside the user
    * config.
    */
-  private _setCredentials (response: ResponseContract) {
-    if (this._options.credentials === true) {
+  private setCredentials (response: ResponseContract) {
+    if (this.options.credentials === true) {
       response.header('Access-Control-Allow-Credentials', 'true')
     }
   }
@@ -212,30 +212,30 @@ export class Cors {
   /**
    * Set `Access-Control-Allow-Methods` header.
    */
-  private _setAllowMethods (response: ResponseContract) {
-    response.header('Access-Control-Allow-Methods', this._options.methods.join(','))
+  private setAllowMethods (response: ResponseContract) {
+    response.header('Access-Control-Allow-Methods', this.options.methods.join(','))
   }
 
   /**
    * Set `Access-Control-Allow-Headers` header.
    */
-  private _setAllowHeaders (response: ResponseContract, allowedHeaders: string[]) {
+  private setAllowHeaders (response: ResponseContract, allowedHeaders: string[]) {
     response.header('Access-Control-Allow-Headers', allowedHeaders.join(','))
   }
 
   /**
    * Set `Access-Control-Max-Age` header.
    */
-  private _setMaxAge (response: ResponseContract) {
-    if (this._options.maxAge) {
-      response.header('Access-Control-Max-Age', this._options.maxAge)
+  private setMaxAge (response: ResponseContract) {
+    if (this.options.maxAge) {
+      response.header('Access-Control-Max-Age', this.options.maxAge)
     }
   }
 
   /**
    * Ends the preflight request with 204 status code
    */
-  private _endPreFlight (response: ResponseContract) {
+  private endPreFlight (response: ResponseContract) {
     response.status(204).send(null)
   }
 
@@ -247,7 +247,7 @@ export class Cors {
     /**
      * Return early when CORS is not enabled for the current request
      */
-    if (!this._isEnabled(request)) {
+    if (!this.isEnabled(request)) {
       return
     }
 
@@ -262,7 +262,7 @@ export class Cors {
       return
     }
 
-    const allowedOrigin = this._computeResponseOrigin(origin)
+    const allowedOrigin = this.computeResponseOrigin(origin)
 
     /**
      * If origin is not allowed, then we don't set any of the cors headers
@@ -272,7 +272,7 @@ export class Cors {
        * Also end the OPTIONS request right away
        */
       if (isOptions) {
-        this._endPreFlight(response)
+        this.endPreFlight(response)
       }
 
       return
@@ -282,9 +282,9 @@ export class Cors {
      * Set required headers for non options request.
      */
     if (!isOptions) {
-      this._setOrigin(response, allowedOrigin)
-      this._setCredentials(response)
-      this._setExposedHeaders(response)
+      this.setOrigin(response, allowedOrigin)
+      this.setCredentials(response)
+      this.setExposedHeaders(response)
       return
     }
 
@@ -298,8 +298,8 @@ export class Cors {
      * part of allowed methods.
      * https://www.w3.org/TR/cors/#http-access-control-request-method
      */
-    if (!requestMethod || this._options.methods.indexOf(requestMethod) === -1) {
-      this._endPreFlight(response)
+    if (!requestMethod || this.options.methods.indexOf(requestMethod) === -1) {
+      this.endPreFlight(response)
       return
     }
 
@@ -318,7 +318,7 @@ export class Cors {
     /**
      * Computing allowed headers array from the user config
      */
-    const allowedHeaders = this._computedAllowedHeaders(requestHeaders as string[])
+    const allowedHeaders = this.computedAllowedHeaders(requestHeaders as string[])
 
     /**
      * Finding if all request `Access-Control-Request-Headers` falls under the
@@ -341,17 +341,17 @@ export class Cors {
      * https://www.w3.org/TR/cors/#http-access-control-request-headers
      */
     if (headersMatches === false) {
-      this._endPreFlight(response)
+      this.endPreFlight(response)
       return
     }
 
-    this._setOrigin(response, allowedOrigin)
-    this._setCredentials(response)
-    this._setExposedHeaders(response)
-    this._setAllowMethods(response)
-    this._setAllowHeaders(response, allowedHeaders)
-    this._setMaxAge(response)
-    this._endPreFlight(response)
+    this.setOrigin(response, allowedOrigin)
+    this.setCredentials(response)
+    this.setExposedHeaders(response)
+    this.setAllowMethods(response)
+    this.setAllowHeaders(response, allowedHeaders)
+    this.setMaxAge(response)
+    this.endPreFlight(response)
   }
 }
 

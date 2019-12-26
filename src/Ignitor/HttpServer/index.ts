@@ -28,43 +28,43 @@ export class HttpServer {
   /**
    * Reference to bootstrapper
    */
-  private _bootstrapper = new Bootstrapper(this._appRoot)
+  private bootstrapper = new Bootstrapper(this.appRoot)
 
   /**
    * Reference to core http server.
    */
-  private _server: ServerContract
+  private server: ServerContract
 
   /**
    * Reference to core logger
    */
-  private _logger: LoggerContract
+  private logger: LoggerContract
 
   /**
    * Whether or not the application has been wired.
    */
-  private _wired: boolean = false
+  private wired: boolean = false
 
   /**
    * Listens for unix signals to kill long running
    * processes.
    */
-  private _signalsListener = new SignalsListener()
+  private signalsListener = new SignalsListener()
 
   /**
    * Reference to the application.
    */
   public application: ApplicationContract
 
-  constructor (private _appRoot: string) {
+  constructor (private appRoot: string) {
   }
 
   /**
    * Wires up everything, so that we are ready to kick start
    * the HTTP server.
    */
-  private async _wire () {
-    if (this._wired) {
+  private async wire () {
+    if (this.wired) {
       return
     }
 
@@ -72,65 +72,65 @@ export class HttpServer {
      * Setting up the application. Nothing is registered yet.
      * Just calls to `ioc.use` are available.
      */
-    this.application = this._bootstrapper.setup()
-    this.injectBootstrapper(this._bootstrapper)
+    this.application = this.bootstrapper.setup()
+    this.injectBootstrapper(this.bootstrapper)
 
     /**
      * Registering providers
      */
-    this._bootstrapper.registerProviders(false)
+    this.bootstrapper.registerProviders(false)
 
     /**
      * Registering directories to be autoloaded
      */
-    this._bootstrapper.registerAliases()
+    this.bootstrapper.registerAliases()
 
     /**
      * Booting providers
      */
-    await this._bootstrapper.bootProviders()
+    await this.bootstrapper.bootProviders()
 
     /**
      * Importing preloaded files
      */
-    this._bootstrapper.registerPreloads()
+    this.bootstrapper.registerPreloads()
   }
 
   /**
    * Sets the logger reference
    */
-  private _setLogger () {
-    this._logger = this.application.container.use('Adonis/Core/Logger')
+  private setLogger () {
+    this.logger = this.application.container.use('Adonis/Core/Logger')
   }
 
   /**
    * Sets the server reference
    */
-  private _setServer () {
-    this._server = this.application.container.use('Adonis/Core/Server')
+  private setServer () {
+    this.server = this.application.container.use('Adonis/Core/Server')
   }
 
   /**
    * Closes the underlying HTTP server
    */
-  private _closeHttpServer () {
-    return new Promise((resolve) => this._server.instance!.close(() => resolve()))
+  private closeHttpServer () {
+    return new Promise((resolve) => this.server.instance!.close(() => resolve()))
   }
 
   /**
    * Monitors the HTTP server for close and error events, so that
    * we can perform a graceful shutdown
    */
-  private _monitorHttpServer () {
-    this._server.instance!.on('close', async () => {
-      this._logger.trace('closing http server')
-      this._server.instance!.removeAllListeners()
+  private monitorHttpServer () {
+    this.server.instance!.on('close', async () => {
+      this.logger.trace('closing http server')
+      this.server.instance!.removeAllListeners()
       this.application.isReady = false
     })
 
-    this._server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
+    this.server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        this._logger.error('Port in use, closing server')
+        this.logger.error('Port in use, closing server')
         process.exitCode = 1
         return
       }
@@ -145,10 +145,10 @@ export class HttpServer {
    * else and now want to start the HTTP server.
    */
   public injectBootstrapper (boostrapper: Bootstrapper) {
-    this._bootstrapper = boostrapper
-    this.application = this._bootstrapper.application
+    this.bootstrapper = boostrapper
+    this.application = this.bootstrapper.application
     this.application.environment = 'web'
-    this._wired = true
+    this.wired = true
   }
 
   /**
@@ -159,17 +159,17 @@ export class HttpServer {
     /**
      * Optimizing the server by pre-compiling routes and middleware
      */
-    this._logger.trace('optimizing http server handler')
-    this._server.optimize()
+    this.logger.trace('optimizing http server handler')
+    this.server.optimize()
 
     /**
      * Bind exception handler to handle exceptions occured during HTTP requests.
      */
-    this._logger.trace('binding %s exception handler', this.application.exceptionHandlerNamespace)
-    this._server.errorHandler(this.application.exceptionHandlerNamespace)
+    this.logger.trace('binding %s exception handler', this.application.exceptionHandlerNamespace)
+    this.server.errorHandler(this.application.exceptionHandlerNamespace)
 
-    const handler = this._server.handle.bind(this._server)
-    this._server.instance = serverCallback ? serverCallback(handler) : createServer(handler)
+    const handler = this.server.handle.bind(this.server)
+    this.server.instance = serverCallback ? serverCallback(handler) : createServer(handler)
   }
 
   /**
@@ -178,14 +178,14 @@ export class HttpServer {
   public listen () {
     return new Promise(async (resolve, reject) => {
       try {
-        await this._bootstrapper.executeReadyHooks()
+        await this.bootstrapper.executeReadyHooks()
 
         const Env = this.application.container.use('Adonis/Core/Env')
         const host = Env.get('HOST', '0.0.0.0') as string
-        const port = Number(Env.get('PORT', '4000') as string)
+        const port = Number(Env.get('PORT', '3333') as string)
 
-        this._server.instance!.listen(port, host, () => {
-          this._logger.info('started server on %s:%s', host, port)
+        this.server.instance!.listen(port, host, () => {
+          this.logger.info('started server on %s:%s', host, port)
           this.application.isReady = true
           resolve()
         })
@@ -200,13 +200,13 @@ export class HttpServer {
    */
   public async start (serverCallback?: CustomServerCallback) {
     try {
-      await this._wire()
-      this._setLogger()
-      this._setServer()
+      await this.wire()
+      this.setLogger()
+      this.setServer()
       this.createServer(serverCallback)
-      this._monitorHttpServer()
+      this.monitorHttpServer()
       await this.listen()
-      this._signalsListener.listen(() => this.close())
+      this.signalsListener.listen(() => this.close())
     } catch (error) {
       new ErrorHandler(this.application).handleError(error)
     }
@@ -223,8 +223,8 @@ export class HttpServer {
      * Close the HTTP server before excuting the `shutdown` hooks. This ensures that
      * we are not accepting any new request during cool off.
      */
-    await this._closeHttpServer()
-    await this._bootstrapper.executeShutdownHooks()
+    await this.closeHttpServer()
+    await this.bootstrapper.executeShutdownHooks()
   }
 
   /**
@@ -233,7 +233,7 @@ export class HttpServer {
    * seconds.
    */
   public async kill (waitTimeout: number = 3000) {
-    this._logger.trace('forcefully killing http server')
+    this.logger.trace('forcefully killing http server')
 
     try {
       await Promise.race([this.close(), new Promise((resolve) => {

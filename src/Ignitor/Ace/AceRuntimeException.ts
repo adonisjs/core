@@ -8,9 +8,5 @@
 */
 
 import { Exception } from '@poppinss/utils'
-
 export class AceRuntimeException extends Exception {
-  public handle (error: AceRuntimeException, logger: any) {
-    logger.error(error.message)
-  }
 }

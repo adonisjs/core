@@ -30,25 +30,25 @@ export class Bootstrapper {
   /**
    * Reference to registrar
    */
-  private _registrar: Registrar
+  private registrar: Registrar
 
   /**
    * Reference to the logger, will be set once providers
    * have been registered.
    */
-  private _logger?: LoggerContract
+  private logger?: LoggerContract
 
   /**
    * Providers that has ready hook function
    */
-  private _providersWithReadyHook: any[] = []
+  private providersWithReadyHook: any[] = []
 
   /**
    * Providers that has shutdown hook function
    */
-  private _providersWithShutdownHook: any[] = []
+  private providersWithShutdownHook: any[] = []
 
-  constructor (private _appRoot: string) {
+  constructor (private appRoot: string) {
   }
 
   /**
@@ -66,7 +66,7 @@ export class Bootstrapper {
     global[Symbol.for('ioc.call')] = ioc.call.bind(ioc)
 
     const adonisCorePkgFile = findPkg(join(__dirname, '..', '..')).next().value
-    const appPkgFile = findPkg(this._appRoot).next().value
+    const appPkgFile = findPkg(this.appRoot).next().value
 
     const pkgFile = {
       name: appPkgFile ? appPkgFile.name : 'adonis',
@@ -80,7 +80,7 @@ export class Bootstrapper {
      */
     let rcContents = {}
     try {
-      rcContents = esmRequire(join(this._appRoot, '.adonisrc.json'))
+      rcContents = esmRequire(join(this.appRoot, '.adonisrc.json'))
     } catch (error) {
       if (isMissingModuleError(error)) {
         throw new Error('Make sure the project root has ".adonisrc.json"')
@@ -93,9 +93,9 @@ export class Bootstrapper {
      * it's way to the container even before the providers starts registering
      * themselves.
      */
-    this.application = new Application(this._appRoot, ioc, rcContents, pkgFile)
+    this.application = new Application(this.appRoot, ioc, rcContents, pkgFile)
+    this.registrar = new Registrar(ioc, this.appRoot)
 
-    this._registrar = new Registrar(ioc, this._appRoot)
     ioc.singleton('Adonis/Core/Application', () => this.application)
     return this.application
   }
@@ -109,22 +109,22 @@ export class Bootstrapper {
       : this.application.rcFile.providers
 
     const providersList = providers.filter((provider) => !!provider)
-    const providersRefs = this._registrar.useProviders(providersList).register()
+    const providersRefs = this.registrar.useProviders(providersList).register()
 
     /**
      * Storing a reference of providers that has ready and exit hooks
      */
     providersRefs.forEach((provider) => {
       if (typeof (provider.ready) === 'function') {
-        this._providersWithReadyHook.push(provider)
+        this.providersWithReadyHook.push(provider)
       }
 
       if (typeof (provider.shutdown) === 'function') {
-        this._providersWithShutdownHook.push(provider)
+        this.providersWithShutdownHook.push(provider)
       }
     })
 
-    this._logger = this.application.container.use('Adonis/Core/Logger')
+    this.logger = this.application.container.use('Adonis/Core/Logger')
     return providersRefs
   }
 
@@ -133,8 +133,8 @@ export class Bootstrapper {
    */
   public registerAliases () {
     this.application.aliasesMap.forEach((toPath, alias) => {
-      if (this._logger) {
-        this._logger.trace('registering %s under %s alias', toPath, alias)
+      if (this.logger) {
+        this.logger.trace('registering %s under %s alias', toPath, alias)
       }
       this.application.container.autoload(join(this.application.appRoot, toPath), alias)
     })
@@ -153,8 +153,8 @@ export class Bootstrapper {
         return node.environment.indexOf(this.application.environment) > -1
       })
       .forEach((node) => {
-        if (this._logger) {
-          this._logger.trace('preloading %s file', node.file)
+        if (this.logger) {
+          this.logger.trace('preloading %s file', node.file)
         }
         optionalResolveAndRequire(node.file, this.application.appRoot, node.optional)
       })
@@ -164,25 +164,25 @@ export class Bootstrapper {
    * Executes the ready hooks on the providers
    */
   public async executeReadyHooks () {
-    this._logger!.trace('executing ready hooks')
-    await Promise.all(this._providersWithReadyHook.map((provider) => provider.ready()))
-    this._providersWithReadyHook = []
+    this.logger!.trace('executing ready hooks')
+    await Promise.all(this.providersWithReadyHook.map((provider) => provider.ready()))
+    this.providersWithReadyHook = []
   }
 
   /**
    * Executes the ready hooks on the providers
    */
   public async executeShutdownHooks () {
-    this._logger!.trace('executing shutdown hooks')
-    await Promise.all(this._providersWithShutdownHook.map((provider) => provider.shutdown()))
-    this._providersWithShutdownHook = []
+    this.logger!.trace('executing shutdown hooks')
+    await Promise.all(this.providersWithShutdownHook.map((provider) => provider.shutdown()))
+    this.providersWithShutdownHook = []
   }
 
   /**
    * Boot providers by invoking `boot` method on them
    */
   public async bootProviders () {
-    this._logger!.trace('booting providers')
-    await this._registrar.boot()
+    this.logger!.trace('booting providers')
+    await this.registrar.boot()
   }
 }

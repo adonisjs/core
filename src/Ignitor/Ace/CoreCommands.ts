@@ -7,8 +7,8 @@
 * file that was distributed with this source code.
 */
 
-import ace from '@adonisjs/ace'
 import { join, dirname } from 'path'
+import adonisAce from '@adonisjs/ace'
 import { Ioc } from '@adonisjs/fold'
 import { esmRequire, resolveFrom } from '@poppinss/utils'
 import { Application } from '@adonisjs/application/build/standalone'
@@ -36,9 +36,9 @@ export class CoreCommands {
     }
   }
 
-  private _application: Application
+  private application: Application
 
-  constructor (private _appRoot: string, private _ace: typeof ace) {
+  constructor (private appRoot: string, private ace: typeof adonisAce) {
   }
 
   /**
@@ -47,11 +47,11 @@ export class CoreCommands {
    * we handle it in a different way to show console friendly one liner
    * errors.
    */
-  private _setupApplication () {
+  private setupApplication () {
     let rcContents = {}
 
     try {
-      rcContents = esmRequire(join(this._appRoot, '.adonisrc.json'))
+      rcContents = esmRequire(join(this.appRoot, '.adonisrc.json'))
     } catch (error) {
       if (isMissingModuleError(error)) {
         throw new AceRuntimeException('Make sure the project root has ".adonisrc.json"')
@@ -59,13 +59,13 @@ export class CoreCommands {
       throw error
     }
 
-    this._application = new Application(this._appRoot, new Ioc(), rcContents, {})
+    this.application = new Application(this.appRoot, new Ioc(), rcContents, {})
   }
 
   /**
    * Lazy load @adonisjs/assembler
    */
-  private async _importAssembler (command: string) {
+  private async importAssembler (command: string) {
     try {
       return await import('@adonisjs/assembler')
     } catch (error) {
@@ -81,16 +81,16 @@ export class CoreCommands {
    * Handle core commands
    */
   public async handle (argv: string[]) {
-    this._setupApplication()
-    await this._importAssembler(argv[0])
+    this.setupApplication()
+    await this.importAssembler(argv[0])
 
-    const manifest = new this._ace.Manifest(dirname(resolveFrom(this._appRoot, '@adonisjs/assembler')))
-    const kernel = new this._ace.Kernel(this._application)
+    const manifest = new this.ace.Manifest(dirname(resolveFrom(this.appRoot, '@adonisjs/assembler')))
+    const kernel = new this.ace.Kernel(this.application)
 
     /**
      * Showing commands help
      */
-    kernel.flag('help', async (value, _parsed, command) => {
+    kernel.flag('help', async (value, _, command) => {
       if (!value) {
         return
       }

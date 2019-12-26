@@ -13,13 +13,13 @@ import { ApplicationContract } from '@ioc:Adonis/Core/Application'
  * Handles ignitor bootstrapping errors by pretty printing them in development
  */
 export class ErrorHandler {
-  constructor (private _application: ApplicationContract) {
+  constructor (private application: ApplicationContract) {
   }
 
   /**
    * Pretty prints a given error on the terminal
    */
-  private async _prettyPrintError (error: any) {
+  private async prettyPrintError (error: any) {
     try {
       const Youch = require('youch')
       const output = await new Youch(error, {}).toJSON()
@@ -33,8 +33,8 @@ export class ErrorHandler {
    * Handles ignitor boot errors
    */
   public async handleError (error: any) {
-    if (this._application.inDev) {
-      await this._prettyPrintError(error)
+    if (this.application.inDev) {
+      await this.prettyPrintError(error)
     } else {
       console.error(error.stack)
     }

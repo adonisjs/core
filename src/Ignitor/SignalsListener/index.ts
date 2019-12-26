@@ -15,7 +15,7 @@ export class SignalsListener {
   /**
    * Invoke callback and exit process
    */
-  private async _kill (callback: () => Promise<void>) {
+  private async kill (callback: () => Promise<void>) {
     try {
       await callback()
       process.exit(0)
@@ -30,9 +30,9 @@ export class SignalsListener {
    */
   public listen (callback: () => Promise<void>) {
     if (process.env.pm_id) {
-      process.on('SIGINT', () => this._kill(callback))
+      process.on('SIGINT', () => this.kill(callback))
     }
 
-    process.on('SIGTERM', () => this._kill(callback))
+    process.on('SIGTERM', () => this.kill(callback))
   }
 }

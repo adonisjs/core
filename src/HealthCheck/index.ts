@@ -25,27 +25,27 @@ export class HealthCheck implements HealthCheckContract {
   /**
    * A copy of registered checkers
    */
-  private _healthCheckers: { [service: string]: Checker } = {}
+  private healthCheckers: { [service: string]: Checker } = {}
 
   /**
    * Reference to IoC container to resolve health checkers
    */
-  private _resolver: IocResolverContract = this._application.container.getResolver('report')
+  private resolver: IocResolverContract = this.application.container.getResolver('report')
 
-  constructor (private _application: ApplicationContract) {}
+  constructor (private application: ApplicationContract) {}
 
   /**
    * Invokes a given checker to collect the report metrics.
    */
-  private async _invokeChecker (service: string, reportSheet: HealthReport): Promise<boolean> {
-    const checker = this._healthCheckers[service]
+  private async invokeChecker (service: string, reportSheet: HealthReport): Promise<boolean> {
+    const checker = this.healthCheckers[service]
     let report: HealthReportEntry
 
     try {
       if (typeof (checker) === 'function') {
         report = await checker()
       } else {
-        report = await this._resolver.call(checker)
+        report = await this.resolver.call(checker)
       }
     } catch (error) {
       report = {
@@ -76,7 +76,7 @@ export class HealthCheck implements HealthCheckContract {
    * with the server
    */
   public addChecker (service: string, checker: Checker) {
-    this._healthCheckers[service] = checker
+    this.healthCheckers[service] = checker
   }
 
   /**
@@ -84,7 +84,7 @@ export class HealthCheck implements HealthCheckContract {
    * down. This relies on the application module.
    */
   public isReady () {
-    return this._application.isReady && !this._application.isShuttingDown
+    return this.application.isReady && !this.application.isShuttingDown
   }
 
   /**
@@ -94,8 +94,8 @@ export class HealthCheck implements HealthCheckContract {
   public async getReport (): Promise<{ healthy: boolean, report: HealthReport }> {
     const report: HealthReport = {}
 
-    await Promise.all(Object.keys(this._healthCheckers).map((service) => {
-      return this._invokeChecker(service, report)
+    await Promise.all(Object.keys(this.healthCheckers).map((service) => {
+      return this.invokeChecker(service, report)
     }))
 
     /**

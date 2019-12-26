@@ -16,14 +16,14 @@ import { Bootstrapper } from './Bootstrapper'
  * the application.
  */
 export class Ignitor {
-  constructor (private _appRoot: string) {}
+  constructor (private appRoot: string) {}
 
   /**
    * Returns instance of bootstrapper to boostrap
    * the application
    */
   public boostrapper () {
-    return new Bootstrapper(this._appRoot)
+    return new Bootstrapper(this.appRoot)
   }
 
   /**
@@ -31,7 +31,7 @@ export class Ignitor {
    * the HTTP server
    */
   public httpServer () {
-    return new HttpServer(this._appRoot)
+    return new HttpServer(this.appRoot)
   }
 
   /**
@@ -39,6 +39,6 @@ export class Ignitor {
    * commands
    */
   public ace () {
-    return new Ace(this._appRoot)
+    return new Ace(this.appRoot)
   }
 }
