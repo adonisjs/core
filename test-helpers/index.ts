@@ -29,7 +29,7 @@ export async function setupApplicationFiles (fs: Filesystem, additionalProviders
     providers: providers,
   }))
 
-  await fs.add(`config/app.ts`, `
+  await fs.add('config/app.ts', `
     export const appKey = '${SECRET}'
     export const http = {
       trustProxy () {

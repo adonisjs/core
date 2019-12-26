@@ -130,7 +130,7 @@ export class HttpServer {
 
     this._server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        this._logger.error(`Port in use, closing server`)
+        this._logger.error('Port in use, closing server')
         process.exitCode = 1
         return
       }

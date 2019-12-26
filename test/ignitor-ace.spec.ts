@@ -52,7 +52,7 @@ test.group('Ignitor | Ace', (group) => {
 
     assert.equal(
       stripAnsi(output[0]).trim(),
-      `✖  error     Typescript projects must have "tsconfig.json" file inside the project root`,
+      '✖  error     Typescript projects must have "tsconfig.json" file inside the project root',
     )
   })
 
@@ -76,7 +76,7 @@ test.group('Ignitor | Ace', (group) => {
 
     assert.equal(
       stripAnsi(output[0]).trim(),
-      `✖  error     Make sure to define \"compilerOptions.outDir\" in tsconfig.json file`,
+      '✖  error     Make sure to define \"compilerOptions.outDir\" in tsconfig.json file',
     )
   })
 
@@ -158,7 +158,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 
     assert.equal(
       stripAnsi(output[0]).trim(),
-      `✔  create    ace-manifest.json`,
+      '✔  create    ace-manifest.json',
     )
   })
 
@@ -182,7 +182,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 
     assert.equal(
       stripAnsi(output[0]).trim(),
-      `✔  create    ace-manifest.json`,
+      '✔  create    ace-manifest.json',
     )
   })
 })

@@ -113,8 +113,8 @@ test.group('Ignitor | Setup', (group) => {
       ],
     }))
 
-    await fs.add('foo.ts', `global['foo'] = true`)
-    await fs.add('bar.ts', `global['bar'] = true`)
+    await fs.add('foo.ts', 'global[\'foo\'] = true')
+    await fs.add('bar.ts', 'global[\'bar\'] = true')
 
     const bootstrapper = new Bootstrapper(fs.basePath)
     bootstrapper.setup()
@@ -141,8 +141,8 @@ test.group('Ignitor | Setup', (group) => {
       ],
     }))
 
-    await fs.add('foo.ts', `global['foo'] = true`)
-    await fs.add('bar.ts', `global['bar'] = true`)
+    await fs.add('foo.ts', 'global[\'foo\'] = true')
+    await fs.add('bar.ts', 'global[\'bar\'] = true')
 
     const bootstrapper = new Bootstrapper(fs.basePath)
     const application = bootstrapper.setup()
@@ -169,7 +169,7 @@ test.group('Ignitor | Setup', (group) => {
       ],
     }))
 
-    await fs.add('foo.ts', ``)
+    await fs.add('foo.ts', '')
 
     const bootstrapper = new Bootstrapper(fs.basePath)
     bootstrapper.setup()
@@ -191,7 +191,7 @@ test.group('Ignitor | Setup', (group) => {
       ],
     }))
 
-    await fs.add('foo.ts', ``)
+    await fs.add('foo.ts', '')
 
     const bootstrapper = new Bootstrapper(fs.basePath)
     bootstrapper.setup()

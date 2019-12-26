@@ -41,7 +41,7 @@ test.group('Ignitor | App Provider', (group) => {
   test('setup cors before hooks when enabled is set to true', async (assert) => {
     await setupApplicationFiles(fs)
 
-    await fs.add(`config/cors.ts`, `
+    await fs.add('config/cors.ts', `
       export const enabled = true
       export const exposeHeaders = []
     `)
@@ -59,7 +59,7 @@ test.group('Ignitor | App Provider', (group) => {
   test('setup cors before hooks when enabled is set to a function', async (assert) => {
     await setupApplicationFiles(fs)
 
-    await fs.add(`config/cors.ts`, `
+    await fs.add('config/cors.ts', `
       export const enabled = () => false
       export const exposeHeaders = []
     `)
@@ -77,7 +77,7 @@ test.group('Ignitor | App Provider', (group) => {
   test('do not setup cors before hooks when enabled is set to false', async (assert) => {
     await setupApplicationFiles(fs)
 
-    await fs.add(`config/cors.ts`, `
+    await fs.add('config/cors.ts', `
       export const enabled = false
       export const exposeHeaders = []
     `)

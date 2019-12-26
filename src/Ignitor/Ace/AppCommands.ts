@@ -49,8 +49,8 @@ export class AppCommands {
   private _ensureBuildRoot (command: string) {
     command = command || '<command>'
     return new Promise((resolve, reject) => {
-      exists(this._buildRoot, (exists) => {
-        if (!exists) {
+      exists(this._buildRoot, (hasFile) => {
+        if (!hasFile) {
           reject(new AceRuntimeException(`Make sure to compile the code before running "node ace ${command}"`))
         } else {
           resolve()
@@ -112,8 +112,8 @@ export class AppCommands {
       const appVersion = this._bootstrapper.application.version
       const adonisVersion = this._bootstrapper.application.adonisVersion
 
-      console.log(`App version`, appVersion ? appVersion.version : 'NA')
-      console.log(`Framework version`, adonisVersion ? adonisVersion.version : 'NA')
+      console.log('App version', appVersion ? appVersion.version : 'NA')
+      console.log('Framework version', adonisVersion ? adonisVersion.version : 'NA')
       process.exit(0)
     }, { alias: 'v' })
   }

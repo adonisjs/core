@@ -134,7 +134,7 @@ export class Bootstrapper {
   public registerAliases () {
     this.application.aliasesMap.forEach((toPath, alias) => {
       if (this._logger) {
-        this._logger.trace(`registering %s under %s alias`, toPath, alias)
+        this._logger.trace('registering %s under %s alias', toPath, alias)
       }
       this.application.container.autoload(join(this.application.appRoot, toPath), alias)
     })
@@ -154,7 +154,7 @@ export class Bootstrapper {
       })
       .forEach((node) => {
         if (this._logger) {
-          this._logger.trace(`preloading %s file`, node.file)
+          this._logger.trace('preloading %s file', node.file)
         }
         optionalResolveAndRequire(node.file, this.application.appRoot, node.optional)
       })

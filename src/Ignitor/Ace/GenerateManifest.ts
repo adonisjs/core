@@ -49,8 +49,8 @@ export class GenerateManifest {
    */
   private _ensureBuildRoot () {
     return new Promise((resolve, reject) => {
-      exists(this._buildRoot, (exists) => {
-        if (!exists) {
+      exists(this._buildRoot, (hasFile) => {
+        if (!hasFile) {
           reject(new AceRuntimeException('Make sure to compile the code before running "node ace generate:manifest"'))
         } else {
           resolve()
