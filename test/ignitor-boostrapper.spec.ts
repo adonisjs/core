@@ -74,7 +74,16 @@ test.group('Ignitor | Setup', (group) => {
       application.container.hasBinding('Adonis/Core/BodyParserMiddleware'),
       'has Adonis/Core/BodyParserMiddleware',
     )
+
     assert.isTrue(application.container.hasBinding('Adonis/Core/Validator'), 'has Adonis/Core/Validator')
+    assert.isTrue(
+      application.container.hasBinding('Adonis/Core/HttpExceptionHandler'),
+      'has Adonis/Core/HttpExceptionHandler',
+    )
+    assert.isTrue(
+      application.container.hasBinding('Adonis/Core/HealthCheck'),
+      'has Adonis/Core/HealthCheck',
+    )
 
     const config = application.container.use('Adonis/Core/Config')
     const env = application.container.use('Adonis/Core/Env')
