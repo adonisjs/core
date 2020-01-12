@@ -90,6 +90,7 @@ test.group('Ignitor | Ace', (group) => {
       'make:middleware',
       'make:provider',
       'make:view',
+      'make:model',
     ])
   })
 })

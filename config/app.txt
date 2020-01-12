@@ -105,8 +105,7 @@ export const http: HttpOptions = {
   cookie: {
     domain: '',
     path: '/',
-    maxAge: 600,
-    expires: new Date(),
+    maxAge: '2h',
     httpOnly: true,
     secure: false,
     sameSite: false,
