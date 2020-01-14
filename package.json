@@ -120,7 +120,6 @@
     "templates": {
       "basePath": "./build/config",
       "config": [
-        "app.txt",
         "cors.txt"
       ]
     },
