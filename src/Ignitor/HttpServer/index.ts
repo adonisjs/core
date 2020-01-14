@@ -208,7 +208,7 @@ export class HttpServer {
       await this.listen()
       this.signalsListener.listen(() => this.close())
     } catch (error) {
-      new ErrorHandler(this.application).handleError(error)
+      await new ErrorHandler(this.application).handleError(error)
     }
   }
 

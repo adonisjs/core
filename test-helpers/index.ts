@@ -34,7 +34,8 @@ export async function setupApplicationFiles (fs: Filesystem, additionalProviders
     export const http = {
       trustProxy () {
         return true
-      }
+      },
+      cookie: {}
     }
   `)
 
@@ -59,7 +60,8 @@ export async function setupCompiledApplicationFiles (
       http: {
         trustProxy () {
           return true
-        }
+        },
+        cookie: {}
       }
     }
   `)
