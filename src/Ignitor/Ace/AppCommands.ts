@@ -43,6 +43,21 @@ export class AppCommands {
   }
 
   /**
+   * Print commands help
+   */
+  private printHelp (kernel: adonisAce.Kernel, command?: any): never {
+    /**
+     * Updating manifest commands object during help
+     */
+    Object.keys(this.additionalManifestCommands).forEach((commandName) => {
+      kernel.manifestCommands![commandName] = this.additionalManifestCommands[commandName]
+    })
+
+    kernel.printHelp(command)
+    process.exit(0)
+  }
+
+  /**
    * Raises human friendly error when the `build` directory is
    * missing during `generate:manifest` command.
    */
@@ -95,15 +110,7 @@ export class AppCommands {
         return
       }
 
-      /**
-       * Updating manifest commands object during help
-       */
-      Object.keys(this.additionalManifestCommands).forEach((commandName) => {
-        kernel.manifestCommands![commandName] = this.additionalManifestCommands[commandName]
-      })
-
-      kernel.printHelp(command)
-      process.exit(0)
+      this.printHelp(kernel, command)
     }, { alias: 'h' })
 
     /**
@@ -156,6 +163,14 @@ export class AppCommands {
 
     kernel.useManifest(manifest)
     await kernel.preloadManifest()
+
+    /**
+     * Print help when no arguments have been passed
+     */
+    if (!argv.length) {
+      this.printHelp(kernel)
+    }
+
     await kernel.handle(argv)
 
     this.signalsListener.listen(async () => {
