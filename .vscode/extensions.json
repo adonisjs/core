@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "adonis-js-goto-controller",
+    "adonis-js-goto-view",
+    "adonisjs-vscode"
+  ],
+  "unwantedRecommendations": []
+}
