@@ -42,7 +42,7 @@ export default async function instructions (
     if (staticConfig.exists()) {
       logger.skip('config/static.ts')
     } else {
-      appConfig.apply({}).commit()
+      staticConfig.apply({}).commit()
       logger.create('config/static.ts')
     }
   }
