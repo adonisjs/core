@@ -1,5 +1,5 @@
 /**
- * Config source: https://git.io/fj1K5
+ * Config source: https://git.io/JvZlL
  *
  * Feel free to let us know via PR, if you find something broken in this config
  * file.
