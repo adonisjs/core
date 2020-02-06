@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "stef-k.adonis-js-goto-controller",
+    "stef-k.adonis-js-goto-view",
+    "hridoy.adonisjs-snippets",
+    "dbaeumer.vscode-eslint",
+    "luongnd.edge"
+  ],
+  "unwantedRecommendations": []
+}
