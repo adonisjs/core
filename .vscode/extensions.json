@@ -3,7 +3,7 @@
     "stef-k.adonis-js-goto-controller",
     "stef-k.adonis-js-goto-view",
     "hridoy.adonisjs-snippets",
-    "dbaeumer.vscode-eslint",
+    "dbaeumer.vscode-eslint"
   ],
   "unwantedRecommendations": []
 }
