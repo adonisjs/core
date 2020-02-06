@@ -8,8 +8,10 @@
 */
 
 import { IocContract } from '@adonisjs/fold'
+import { ServerContract } from '@ioc:Adonis/Core/Server'
+import { ConfigContract } from '@ioc:Adonis/Core/Config'
+import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
-import { serverHook } from '../src/Hooks/Cors'
 import { HealthCheck } from '../src/HealthCheck'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
@@ -61,12 +63,53 @@ export default class AppProvider {
     this.$registerHealthCheck()
   }
 
-  public boot () {
+  /**
+   * Lazy initialize the cors hook, if enabled inside the config
+   */
+  protected registerCorsHook () {
     /**
      * Register the cors before hook with the server
      */
-    this.$container.with(['Adonis/Core/Config', 'Adonis/Core/Server'], (Config, Server) => {
-      serverHook(Server, Config.get('cors', {}))
+    this.$container.with([
+      'Adonis/Core/Config',
+      'Adonis/Core/Server',
+    ], (Config: ConfigContract, Server: ServerContract) => {
+      const config = Config.get('cors', {})
+      if (!config.enabled) {
+        return
+      }
+
+      const Cors = require('../src/Hooks/Cors').Cors
+      const cors = new Cors(config)
+      Server.hooks.before(cors.handle.bind(cors))
     })
+  }
+
+  /**
+   * Lazy initialize the static assets hook, if enabled inside the config
+   */
+  protected registerStaticAssetsHook () {
+    /**
+     * Register the cors before hook with the server
+     */
+    this.$container.with([
+      'Adonis/Core/Config',
+      'Adonis/Core/Server',
+      'Adonis/Core/Application',
+    ], (Config: ConfigContract, Server: ServerContract, Application: ApplicationContract) => {
+      const config = Config.get('static', {})
+      if (!config.enabled) {
+        return
+      }
+
+      const ServeStatic = require('../src/Hooks/Static').ServeStatic
+      const serveStatic = new ServeStatic(Application.publicPath(), config)
+      Server.hooks.before(serveStatic.handle.bind(serveStatic))
+    })
+  }
+
+  public boot () {
+    this.registerCorsHook()
+    this.registerStaticAssetsHook()
   }
 }

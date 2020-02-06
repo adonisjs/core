@@ -91,4 +91,21 @@ test.group('Ignitor | App Provider', (group) => {
 
     assert.lengthOf(Server.hooks.hooks.before, 0)
   })
+
+  test('setup static assets before hooks when enabled is set to true', async (assert) => {
+    await setupApplicationFiles(fs)
+
+    await fs.add('config/static.ts', `
+      export const enabled = true
+    `)
+
+    const boostrapper = new Ignitor(fs.basePath).boostrapper()
+
+    boostrapper.setup()
+    boostrapper.registerProviders(false)
+    await boostrapper.bootProviders()
+
+    const Server = boostrapper.application.container.use('Adonis/Core/Server')
+    assert.lengthOf(Server.hooks.hooks.before, 1)
+  })
 })

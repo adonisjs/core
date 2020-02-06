@@ -21,3 +21,4 @@
 /// <reference path="./cors.ts" />
 /// <reference path="./health-check.ts" />
 /// <reference path="./exception-handler.ts" />
+/// <reference path="./static.ts" />

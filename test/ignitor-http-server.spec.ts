@@ -175,3 +175,161 @@ test.group('Ignitor | Http', (group) => {
     assert.isTrue(server.hookCalled)
   })
 })
+
+test.group('Ignitor | HTTP | Static Assets', (group) => {
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
+
+  group.beforeEach(() => {
+    process.env.NODE_ENV = 'testing'
+  })
+
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
+
+  group.afterEach(async () => {
+    delete process.env.NODE_ENV
+    await fs.cleanup()
+  })
+
+  test('serve static files when static hooks is enabled', async (assert, done) => {
+    await setupApplicationFiles(fs)
+    await fs.add('config/static.ts', `
+      export const enabled = true
+    `)
+
+    await fs.add('public/style.css', 'body { background: #000 }')
+
+    const ignitor = new Ignitor(fs.basePath)
+    const boostrapper = ignitor.boostrapper()
+    const httpServer = ignitor.httpServer()
+    const application = boostrapper.setup()
+
+    boostrapper.registerAliases()
+    boostrapper.registerProviders(false)
+    await boostrapper.bootProviders()
+
+    const server = application.container.use('Adonis/Core/Server')
+    httpServer.injectBootstrapper(boostrapper)
+
+    await httpServer.start((handler) => createServer(handler))
+    assert.isTrue(httpServer.application.isReady)
+
+    const { text } = await supertest(server.instance).get('/style.css').expect(200)
+    server.instance.close()
+
+    setTimeout(() => {
+      assert.isFalse(application.isReady)
+      assert.equal(text, 'body { background: #000 }')
+      done()
+    }, 100)
+  })
+
+  test('serve static files from a custom public path', async (assert, done) => {
+    await setupApplicationFiles(fs)
+    await fs.add('config/static.ts', `
+      export const enabled = true
+    `)
+
+    /**
+     * Overwriting .adonisrc.json
+     */
+    const existingContent = await fs.get('.adonisrc.json')
+    await fs.add('.adonisrc.json', JSON.stringify(Object.assign(JSON.parse(existingContent), {
+      directories: {
+        public: 'www',
+      },
+    })))
+
+    await fs.add('www/style.css', 'body { background: #000 }')
+
+    const ignitor = new Ignitor(fs.basePath)
+    const boostrapper = ignitor.boostrapper()
+    const httpServer = ignitor.httpServer()
+    const application = boostrapper.setup()
+
+    boostrapper.registerAliases()
+    boostrapper.registerProviders(false)
+    await boostrapper.bootProviders()
+
+    const server = application.container.use('Adonis/Core/Server')
+    httpServer.injectBootstrapper(boostrapper)
+
+    await httpServer.start((handler) => createServer(handler))
+    assert.isTrue(httpServer.application.isReady)
+
+    const { text } = await supertest(server.instance).get('/style.css').expect(200)
+    server.instance.close()
+
+    setTimeout(() => {
+      assert.isFalse(application.isReady)
+      assert.equal(text, 'body { background: #000 }')
+      done()
+    }, 100)
+  })
+})
+
+test.group('Ignitor | HTTP | CORS', (group) => {
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
+
+  group.beforeEach(() => {
+    process.env.NODE_ENV = 'testing'
+  })
+
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
+
+  group.afterEach(async () => {
+    delete process.env.NODE_ENV
+    await fs.cleanup()
+  })
+
+  test('respond to pre-flight requests when cors are enabled', async (assert, done) => {
+    await setupApplicationFiles(fs)
+    await fs.add('config/cors.ts', `
+      export const enabled = true
+      export const exposeHeaders = []
+      export const methods = ['GET']
+      export const origin = true
+      export const headers = true
+    `)
+
+    const ignitor = new Ignitor(fs.basePath)
+    const boostrapper = ignitor.boostrapper()
+    const httpServer = ignitor.httpServer()
+    const application = boostrapper.setup()
+
+    boostrapper.registerAliases()
+    boostrapper.registerProviders(false)
+    await boostrapper.bootProviders()
+
+    const server = application.container.use('Adonis/Core/Server')
+    httpServer.injectBootstrapper(boostrapper)
+
+    await httpServer.start((handler) => createServer(handler))
+    assert.isTrue(httpServer.application.isReady)
+
+    const { header } = await supertest(server.instance)
+      .options('/')
+      .set('origin', 'foo.com')
+      .set('Access-Control-Request-Method', 'GET')
+      .expect(204)
+    server.instance.close()
+
+    setTimeout(() => {
+      assert.isFalse(application.isReady)
+      assert.equal(header['access-control-allow-origin'], 'foo.com')
+      assert.equal(header['access-control-allow-methods'], 'GET')
+      done()
+    }, 100)
+  })
+})

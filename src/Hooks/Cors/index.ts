@@ -7,10 +7,8 @@
 * file that was distributed with this source code.
 */
 
-import { ResponseContract } from '@ioc:Adonis/Core/Response'
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { CorsConfigContract } from '@ioc:Adonis/Core/Cors'
-import { ServerContract } from '@ioc:Adonis/Core/Server'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 /**
  * List of default exposed headers.
@@ -32,7 +30,7 @@ const SIMPLE_EXPOSE_HEADERS = [
  * sure not to set request specific instance properties.
  */
 export class Cors {
-  private isEnabled: ((request) => boolean)
+  private isEnabled: ((request: HttpContextContract['request']) => boolean)
 
   constructor (private options: CorsConfigContract) {
     this.normalizeOptions()
@@ -184,7 +182,7 @@ export class Cors {
   /**
    * Sets the `Access-Control-Allow-Origin` header
    */
-  private setOrigin (response: ResponseContract, allowedOrigin: string) {
+  private setOrigin (response: HttpContextContract['response'], allowedOrigin: string) {
     response.header('Access-Control-Allow-Origin', allowedOrigin)
   }
 
@@ -193,7 +191,7 @@ export class Cors {
    * are defined. If no custom headers are defined, then simple response
    * headers are used instead.
    */
-  private setExposedHeaders (response: ResponseContract) {
+  private setExposedHeaders (response: HttpContextContract['response']) {
     if (this.options.exposeHeaders.length) {
       response.header('Access-Control-Expose-Headers', this.options.exposeHeaders.join(','))
     }
@@ -203,7 +201,7 @@ export class Cors {
    * Allows `Access-Control-Allow-Credentials` when enabled inside the user
    * config.
    */
-  private setCredentials (response: ResponseContract) {
+  private setCredentials (response: HttpContextContract['response']) {
     if (this.options.credentials === true) {
       response.header('Access-Control-Allow-Credentials', 'true')
     }
@@ -212,21 +210,21 @@ export class Cors {
   /**
    * Set `Access-Control-Allow-Methods` header.
    */
-  private setAllowMethods (response: ResponseContract) {
+  private setAllowMethods (response: HttpContextContract['response']) {
     response.header('Access-Control-Allow-Methods', this.options.methods.join(','))
   }
 
   /**
    * Set `Access-Control-Allow-Headers` header.
    */
-  private setAllowHeaders (response: ResponseContract, allowedHeaders: string[]) {
+  private setAllowHeaders (response: HttpContextContract['response'], allowedHeaders: string[]) {
     response.header('Access-Control-Allow-Headers', allowedHeaders.join(','))
   }
 
   /**
    * Set `Access-Control-Max-Age` header.
    */
-  private setMaxAge (response: ResponseContract) {
+  private setMaxAge (response: HttpContextContract['response']) {
     if (this.options.maxAge) {
       response.header('Access-Control-Max-Age', this.options.maxAge)
     }
@@ -235,7 +233,7 @@ export class Cors {
   /**
    * Ends the preflight request with 204 status code
    */
-  private endPreFlight (response: ResponseContract) {
+  private endPreFlight (response: HttpContextContract['response']) {
     response.status(204).send(null)
   }
 
@@ -352,19 +350,5 @@ export class Cors {
     this.setAllowHeaders(response, allowedHeaders)
     this.setMaxAge(response)
     this.endPreFlight(response)
-  }
-}
-
-/**
- * Exposes a function to bind the CORS class as a server before hook.
- * We only add the hook when `enabled` is set to true or a function.
- *
- * Since in most cases users will use a boolean value (true or false),
- * it is better not to add CORS to the stack when it's disabled.
- */
-export function serverHook (server: ServerContract, corsConfig: CorsConfigContract) {
-  if (corsConfig.enabled) {
-    const cors = new Cors(corsConfig)
-    server.hooks.before(cors.handle.bind(cors))
   }
 }
