@@ -1,8 +1,9 @@
 {
   "recommendations": [
-    "adonis-js-goto-controller",
-    "adonis-js-goto-view",
-    "adonisjs-vscode"
+    "stef-k.adonis-js-goto-controller",
+    "stef-k.adonis-js-goto-view",
+    "hridoy.adonisjs-snippets",
+    "dbaeumer.vscode-eslint",
   ],
   "unwantedRecommendations": []
 }
