@@ -36,7 +36,7 @@ const staticConfig: AssetsConfig = {
   | - allow: Serve the file contents
   |
   */
-  dotFiles: 'ignore'
+  dotFiles: 'ignore',
 
   /*
   |--------------------------------------------------------------------------
@@ -59,7 +59,7 @@ const staticConfig: AssetsConfig = {
   | the file system's last modified value.
   |
   */
-  lastModified: true
+  lastModified: true,
 }
 
-export default corsConfig
+export default staticConfig
