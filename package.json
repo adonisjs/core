@@ -6,6 +6,7 @@
   "files": [
     "build/adonis-typings",
     "build/config",
+    "build/commands",
     "build/providers",
     "build/src",
     "build/instructions.js"
@@ -60,6 +61,7 @@
     "mrm": "^2.0.4",
     "np": "^5.2.1",
     "proxy-addr": "^2.0.5",
+    "reflect-metadata": "^0.1.13",
     "strip-ansi": "^6.0.0",
     "supertest": "^4.0.2",
     "test-console": "^1.1.0",
@@ -101,6 +103,7 @@
     "@poppinss/utils": "^2.1.2",
     "@types/find-package-json": "^1.1.1",
     "@types/proxy-addr": "^2.0.0",
+    "cli-table3": "^0.5.1",
     "find-package-json": "^1.2.0",
     "macroable": "^4.0.2",
     "ms": "^2.1.2",
@@ -123,6 +126,9 @@
         "cors.txt"
       ]
     },
+    "commands": [
+      "@adonisjs/core/build/commands"
+    ],
     "types": "@adonisjs/core",
     "providers": [
       "@adonisjs/core"
