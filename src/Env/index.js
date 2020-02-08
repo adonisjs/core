@@ -167,6 +167,26 @@ class Env {
   }
 
   /**
+   * Get a boolean for a given key from the `process.env`
+   * object.
+   *
+   * @method boolean
+   *
+   * @param  {String} key
+   * @param  {Mixed} [defaultValue = null]
+   *
+   * @return {Boolean}
+   *
+   * @example
+   * ```js
+   * Env.boolean('CACHE_VIEWS', false)
+   * ```
+   */
+  boolean (key, defaultValue = null) {
+    return /^true$/i.test(_.get(process.env, key, defaultValue))
+  }
+
+  /**
    * Get value for a given key from the `process.env`
    * object or throw an error if the key does not exist.
    *
