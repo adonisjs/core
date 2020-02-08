@@ -12,27 +12,39 @@
  * `SIGINT (pm2 only)` signals are received.
  */
 export class SignalsListener {
+  protected onCloseCallback?: () => Promise<void>
+
   /**
    * Invoke callback and exit process
    */
-  private async kill (callback: () => Promise<void>) {
+  private kill = async function () {
     try {
-      await callback()
+      await this.onCloseCallback()
       process.exit(0)
     } catch (error) {
       process.exit(1)
     }
-  }
+  }.bind(this)
 
   /**
    * Listens for exit signals and invokes the given
    * callback
    */
   public listen (callback: () => Promise<void>) {
+    this.onCloseCallback = callback
     if (process.env.pm_id) {
-      process.on('SIGINT', () => this.kill(callback))
+      process.on('SIGINT', this.kill)
     }
 
-    process.on('SIGTERM', () => this.kill(callback))
+    process.on('SIGTERM', this.kill)
+  }
+
+  /**
+   * Cleanup event listeners
+   */
+  public cleanup () {
+    process.removeListener('SIGINT', this.kill)
+    process.removeListener('SIGTERM', this.kill)
+    this.onCloseCallback = undefined
   }
 }

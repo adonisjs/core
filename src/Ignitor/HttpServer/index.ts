@@ -224,6 +224,7 @@ export class HttpServer {
      * we are not accepting any new request during cool off.
      */
     await this.closeHttpServer()
+    this.signalsListener.cleanup()
     await this.bootstrapper.executeShutdownHooks()
   }
 
