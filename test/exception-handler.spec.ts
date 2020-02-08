@@ -33,7 +33,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
     assert.deepEqual(logger.logs, [])
@@ -45,7 +51,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
     assert.deepEqual(logger.logs.map(({ level, msg }) => {
@@ -67,7 +79,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
     assert.deepEqual(logger.logs, [])
@@ -82,7 +100,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
     assert.deepEqual(logger.logs.map(({ level, msg, username }) => {
@@ -114,7 +138,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     handler.report(new InvalidAuth('bad request'), ctx)
   })
 
@@ -131,7 +161,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx.request.request.headers = { accept: 'text/html' }
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
@@ -151,7 +187,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx.request.request.headers = { accept: 'application/json' }
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
@@ -172,7 +214,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx.request.request.headers = { accept: 'application/json' }
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
@@ -195,7 +243,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx.request.request.headers = { accept: 'text/html' }
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
@@ -222,7 +276,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx.request.request.headers = { accept: 'text/html' }
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
@@ -244,7 +304,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx.request.request.headers = { accept: 'text/html' }
 
     const response = await handler.handle(new InvalidAuth('bad request'), ctx)
@@ -273,7 +339,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx['view'] = {
       render (view, data) {
         assert.equal(view, '404.edge')
@@ -306,7 +378,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx['view'] = {
       render () {
         throw new Error('Not expected')
@@ -343,7 +421,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx['view'] = {
       render () {
         throw new Error('Not expected')
@@ -385,7 +469,13 @@ test.group('HttpExceptionHandler', () => {
     const logger = new FakeLogger(loggerConfig)
     const handler = new AppHandler(logger)
 
-    const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption)
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
     ctx['view'] = {
       render (view, data) {
         assert.equal(view, '404.edge')

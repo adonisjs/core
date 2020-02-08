@@ -25,7 +25,7 @@ const fs = new Filesystem(join(__dirname, '__app'))
 
 const encryption = new Encryption('verylongandrandom32characterskey')
 const logger = new Logger({ name: 'adonis', enabled: false, level: 'trace' })
-const profiler = new Profiler({}).create('')
+const profiler = new Profiler(__dirname, logger, {}).create('')
 
 test.group('Serve Static', (group) => {
   group.afterEach(async () => {

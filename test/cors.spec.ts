@@ -30,7 +30,15 @@ test.group('Cors', () => {
         const logger = new Logger({ name: 'adonis', enabled: false, level: 'trace' })
 
         fixture.configureRequest(req)
-        const ctx = HttpContext.create('/', {}, logger, new Profiler({}).create(''), encryption, req, res)
+        const ctx = HttpContext.create(
+          '/',
+          {},
+          logger,
+          new Profiler(__dirname, logger, {}).create(''),
+          encryption,
+          req,
+          res,
+        )
         await cors.handle(ctx)
 
         if (!ctx.response.hasLazyBody) {
