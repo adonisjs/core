@@ -29,7 +29,7 @@ export default class AppProvider {
   public provides = [
     '@adonisjs/env',
     '@adonisjs/config',
-    '@adonisjs/profiler/build/providers/ProfilerProvider',
+    '@adonisjs/profiler',
     '@adonisjs/logger',
     '@adonisjs/encryption',
     '@adonisjs/events',

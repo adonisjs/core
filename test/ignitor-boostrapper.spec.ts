@@ -275,7 +275,7 @@ test.group('Ignitor | Setup', (group) => {
     assert.isTrue(Request.hasMacro('files'), 'has macro files')
   })
 
-  test('validator decorate http request with validate and validateAll method', async (assert) => {
+  test('validator decorate http request with validate method', async (assert) => {
     await setupApplicationFiles(fs)
 
     const bootstrapper = new Bootstrapper(fs.basePath)
@@ -285,6 +285,5 @@ test.group('Ignitor | Setup', (group) => {
 
     const Request = bootstrapper.application.container.use('Adonis/Core/Request')
     assert.isTrue(Request.hasMacro('validate'), 'has macro validate')
-    assert.isTrue(Request.hasMacro('validateAll'), 'has macro validateAll')
   })
 })
