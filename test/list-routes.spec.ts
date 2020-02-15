@@ -42,17 +42,19 @@ test.group('Command | List Routes', () => {
     assert.deepEqual(JSON.parse(listRoutes.logger.logs[0]), [
       {
         methods: ['GET'],
+        name: '',
         pattern: '/about',
         handler: 'Closure',
         middleware: [],
-        domain: 'NA',
+        domain: '',
       },
       {
         methods: ['GET'],
+        name: '',
         pattern: '/contact',
         handler: 'Closure',
         middleware: [],
-        domain: 'NA',
+        domain: '',
       },
     ])
   })
@@ -73,17 +75,19 @@ test.group('Command | List Routes', () => {
     assert.deepEqual(JSON.parse(listRoutes.logger.logs[0]), [
       {
         methods: ['GET'],
+        name: '',
         pattern: '/about',
         handler: 'Closure',
         middleware: [],
-        domain: 'NA',
+        domain: '',
       },
       {
         methods: ['GET'],
+        name: '',
         pattern: '/contact',
         handler: 'Closure',
         middleware: ['auth', 'acl:admin'],
-        domain: 'NA',
+        domain: '',
       },
     ])
   })
@@ -108,16 +112,18 @@ test.group('Command | List Routes', () => {
       {
         methods: ['GET'],
         pattern: '/about',
+        name: '',
         handler: 'HomeController.index',
         middleware: [],
-        domain: 'NA',
+        domain: '',
       },
       {
         methods: ['GET'],
         pattern: '/contact',
+        name: '',
         handler: 'ContactController.handle',
         middleware: [],
-        domain: 'NA',
+        domain: '',
       },
     ])
   })
@@ -142,16 +148,18 @@ test.group('Command | List Routes', () => {
       {
         methods: ['GET'],
         pattern: '/about',
+        name: '',
         handler: 'HomeController.index',
         middleware: [],
-        domain: 'NA',
+        domain: '',
       },
       {
         methods: ['GET'],
         pattern: '/contact',
+        name: '',
         handler: 'App/Admin/ContactController.handle',
         middleware: [],
-        domain: 'NA',
+        domain: '',
       },
     ])
   })
@@ -174,6 +182,7 @@ test.group('Command | List Routes', () => {
         methods: ['GET'],
         pattern: '/about',
         handler: 'Closure',
+        name: '',
         middleware: [],
         domain: 'blogger.com',
       },
@@ -200,6 +209,7 @@ test.group('Command | List Routes', () => {
         methods: ['GET'],
         pattern: '/v1/about',
         handler: 'Closure',
+        name: '',
         middleware: [],
         domain: 'blogger.com',
       },

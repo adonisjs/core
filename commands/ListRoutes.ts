@@ -72,10 +72,10 @@ export default class ListRoutes extends BaseCommand {
 
       return {
         methods: lookupRoute.methods,
-        name: lookupRoute.name,
+        name: lookupRoute.name || '',
         pattern: lookupRoute.pattern,
         handler: handler,
-        domain: lookupRoute.domain === 'root' ? 'NA' : lookupRoute.domain,
+        domain: lookupRoute.domain === 'root' ? '' : lookupRoute.domain,
         middleware: middleware,
       }
     })
@@ -86,15 +86,16 @@ export default class ListRoutes extends BaseCommand {
    */
   private outputTable (router: RouterContract) {
     const table = new Table({
-      head: ['Route', 'Handler', 'Middleware', 'Domain'],
+      head: ['Route', 'Handler', 'Middleware', 'Name', 'Domain'].map((col) => this.colors.cyan(col)),
     })
 
     this.outputJSON(router).forEach((route) => {
       const row = [
-        `${route.methods.join(',')} ${route.pattern}${route.name? `(${route.name})` : ''}`,
+        `${this.colors.dim(route.methods.join(','))} ${route.pattern}`,
         typeof (route.handler) === 'function' ? 'Closure' : route.handler,
         route.middleware.join(','),
-        route.domain === 'root' ? 'NA': route.domain,
+        route.name,
+        route.domain,
       ]
       table.push(row as any)
     })
