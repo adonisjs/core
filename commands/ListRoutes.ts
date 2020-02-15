@@ -115,6 +115,8 @@ export default class ListRoutes extends BaseCommand {
 
   @inject(['Adonis/Core/Route'])
   public async handle (router: RouterContract) {
+    router.commit()
+
     if (this.json) {
       this.log(JSON.stringify(this.outputJSON(router), null, 2))
     } else {
