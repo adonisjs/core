@@ -18,7 +18,7 @@ import { AceRuntimeException } from './AceRuntimeException'
  * the manifest file.
  */
 export class AppCommands {
-  private bootstrapper = new Bootstrapper(this.buildRoot)
+  private bootstrapper = new Bootstrapper(this.buildRoot, true)
 
   /**
    * Whether or not the app was wired. App is only wired, when

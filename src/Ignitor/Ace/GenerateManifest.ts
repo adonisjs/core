@@ -16,7 +16,7 @@ import { AceRuntimeException } from './AceRuntimeException'
  * Exposes the API to generate the manifest file
  */
 export class GenerateManifest {
-  private bootstrapper = new Bootstrapper(this.buildRoot)
+  private bootstrapper = new Bootstrapper(this.buildRoot, false)
 
   /**
    * Source root always points to the compiled source

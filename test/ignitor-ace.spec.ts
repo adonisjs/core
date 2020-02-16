@@ -89,6 +89,7 @@ test.group('Ignitor | Ace', (group) => {
       'make:controller',
       'make:middleware',
       'make:provider',
+      'make:validator',
       'make:view',
       'make:model',
     ])

@@ -28,7 +28,7 @@ export class HttpServer {
   /**
    * Reference to bootstrapper
    */
-  private bootstrapper = new Bootstrapper(this.appRoot)
+  private bootstrapper = new Bootstrapper(this.appRoot, true)
 
   /**
    * Reference to core http server.

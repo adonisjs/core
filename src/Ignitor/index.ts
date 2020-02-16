@@ -23,7 +23,7 @@ export class Ignitor {
    * the application
    */
   public boostrapper () {
-    return new Bootstrapper(this.appRoot)
+    return new Bootstrapper(this.appRoot, true)
   }
 
   /**

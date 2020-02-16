@@ -48,7 +48,10 @@ export class Bootstrapper {
    */
   private providersWithShutdownHook: any[] = []
 
-  constructor (private appRoot: string) {
+  constructor (
+    private appRoot: string,
+    public touchContainerBindings: boolean = false,
+  ) {
   }
 
   /**
@@ -124,7 +127,9 @@ export class Bootstrapper {
       }
     })
 
-    this.logger = this.application.container.use('Adonis/Core/Logger')
+    if (this.touchContainerBindings) {
+      this.logger = this.application.container.use('Adonis/Core/Logger')
+    }
     return providersRefs
   }
 
@@ -164,7 +169,9 @@ export class Bootstrapper {
    * Executes the ready hooks on the providers
    */
   public async executeReadyHooks () {
-    this.logger!.trace('executing ready hooks')
+    if (this.logger) {
+      this.logger!.trace('executing ready hooks')
+    }
     await Promise.all(this.providersWithReadyHook.map((provider) => provider.ready()))
     this.providersWithReadyHook = []
   }
@@ -173,7 +180,9 @@ export class Bootstrapper {
    * Executes the ready hooks on the providers
    */
   public async executeShutdownHooks () {
-    this.logger!.trace('executing shutdown hooks')
+    if (this.logger) {
+      this.logger!.trace('executing shutdown hooks')
+    }
     await Promise.all(this.providersWithShutdownHook.map((provider) => provider.shutdown()))
     this.providersWithShutdownHook = []
   }
@@ -182,7 +191,9 @@ export class Bootstrapper {
    * Boot providers by invoking `boot` method on them
    */
   public async bootProviders () {
-    this.logger!.trace('booting providers')
+    if (this.logger) {
+      this.logger!.trace('booting providers')
+    }
     await this.registrar.boot()
   }
 }
