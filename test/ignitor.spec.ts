@@ -108,4 +108,17 @@ test.group('Ignitor | App Provider', (group) => {
     const Server = boostrapper.application.container.use('Adonis/Core/Server')
     assert.lengthOf(Server.hooks.hooks.before, 1)
   })
+
+  test('register base health checkers', async (assert) => {
+    await setupApplicationFiles(fs)
+
+    const boostrapper = new Ignitor(fs.basePath).boostrapper()
+
+    boostrapper.setup()
+    boostrapper.registerProviders(false)
+    await boostrapper.bootProviders()
+
+    const HealthCheck = boostrapper.application.container.use('Adonis/Core/HealthCheck')
+    assert.deepEqual(HealthCheck.servicesList, ['env', 'appKey'])
+  })
 })

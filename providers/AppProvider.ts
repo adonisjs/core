@@ -13,6 +13,8 @@ import { ConfigContract } from '@ioc:Adonis/Core/Config'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 import { HealthCheck } from '../src/HealthCheck'
+import envChecker from '../src/HealthCheck/Checkers/Env'
+import appKeyChecker from '../src/HealthCheck/Checkers/AppKey'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 /**
@@ -42,25 +44,17 @@ export default class AppProvider {
   /**
    * Register `HttpExceptionHandler` to the container.
    */
-  protected $registerHttpExceptionHandler () {
+  protected registerHttpExceptionHandler () {
     this.$container.bind('Adonis/Core/HttpExceptionHandler', () => HttpExceptionHandler)
   }
 
   /**
    * Registering the health check provider
    */
-  protected $registerHealthCheck () {
+  protected registerHealthCheck () {
     this.$container.singleton('Adonis/Core/HealthCheck', () => {
       return new HealthCheck(this.$container.use('Adonis/Core/Application'))
     })
-  }
-
-  /**
-   * Registering all required bindings to the container
-   */
-  public register () {
-    this.$registerHttpExceptionHandler()
-    this.$registerHealthCheck()
   }
 
   /**
@@ -108,8 +102,30 @@ export default class AppProvider {
     })
   }
 
+  /**
+   * Registers base health checkers
+   */
+  protected registerHealthCheckers () {
+    this.$container.with(['Adonis/Core/HealthCheck'], (healthCheck: HealthCheck) => {
+      envChecker(healthCheck)
+      appKeyChecker(healthCheck)
+    })
+  }
+
+  /**
+   * Registering all required bindings to the container
+   */
+  public register () {
+    this.registerHttpExceptionHandler()
+    this.registerHealthCheck()
+  }
+
+  /**
+   * Register hooks and health checkers on boot
+   */
   public boot () {
     this.registerCorsHook()
     this.registerStaticAssetsHook()
+    this.registerHealthCheckers()
   }
 }
