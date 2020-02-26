@@ -200,6 +200,41 @@ test.group('HttpExceptionHandler', () => {
     assert.deepEqual(ctx.response.lazyBody!.args, [{ message: 'bad request' }, false])
   })
 
+  test('handle exception by returning json api response', async (assert) => {
+    class AppHandler extends HttpExceptionHandler {
+      protected context () {
+        return { username: 'virk' }
+      }
+    }
+
+    class InvalidAuth extends Exception {
+    }
+
+    const logger = new FakeLogger(loggerConfig)
+    const handler = new AppHandler(logger)
+
+    const ctx = HttpContext.create(
+      '/',
+      {},
+      logger,
+      new Profiler(__dirname, logger, {}).create(''),
+      encryption,
+    )
+    ctx.request.request.headers = { accept: 'application/vnd.api+json' }
+
+    await handler.handle(new InvalidAuth('bad request'), ctx)
+    assert.deepEqual(ctx.response.lazyBody!.args, [
+      {
+        errors: [{
+          title: 'bad request',
+          status: 500,
+          code: undefined,
+        }],
+      },
+      false,
+    ])
+  })
+
   test('return stack trace when NODE_ENV=development', async (assert) => {
     process.env.NODE_ENV = 'development'
     class AppHandler extends HttpExceptionHandler {

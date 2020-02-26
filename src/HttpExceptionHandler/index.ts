@@ -110,6 +110,23 @@ export abstract class HttpExceptionHandler {
   }
 
   /**
+   * Makes the JSON API response, based upon the environment in
+   * which the app is runing
+   */
+  protected async makeJSONAPIResponse (error: any, ctx: HttpContextContract) {
+    ctx.response.status(error.status).send({
+      errors: [
+        {
+          title: error.message,
+          ...(process.env.NODE_ENV === 'development' ? { detail: error.stack } : {}),
+          code: error.code,
+          status: error.status,
+        },
+      ],
+    })
+  }
+
+  /**
    * Makes the HTML response, based upon the environment in
    * which the app is runing
    */
@@ -174,11 +191,18 @@ export abstract class HttpExceptionHandler {
       return error.handle(error, ctx)
     }
 
-    if (ctx.request.accepts(['html', 'json']) === 'json') {
-      return this.makeJSONResponse(error, ctx)
+    /**
+     * Attempt to find the best error reporter for validation
+     */
+    switch (ctx.request.accepts(['html', 'application/vnd.api+json', 'json'])) {
+      case 'html':
+      case null:
+        return this.makeHtmlResponse(error, ctx)
+      case 'json':
+        return this.makeJSONResponse(error, ctx)
+      case 'application/vnd.api+json':
+        return this.makeJSONAPIResponse(error, ctx)
     }
-
-    return this.makeHtmlResponse(error, ctx)
   }
 }
 
