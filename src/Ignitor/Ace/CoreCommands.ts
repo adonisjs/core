@@ -26,6 +26,21 @@ export class CoreCommands {
   public static commandsList = Object.keys(CoreCommands.getManifestJSON())
 
   /**
+   * A local list of assembler commands. We need this, so that when assembler
+   * is not installed (probably in production) and someone is trying to
+   * build the project by running `serve` or `build`, we should give
+   * them a better descriptive error.
+   *
+   * Also, do note that at times this list will be stale, but we get it back
+   * in sync over time.
+   */
+  public static localCommandsList = [
+    'build',
+    'serve',
+    'invoke',
+  ]
+
+  /**
    * Returns assembler manifest file for showing help
    */
   public static getManifestJSON () {

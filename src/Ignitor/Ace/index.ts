@@ -128,6 +128,18 @@ export class Ace {
       }
 
       /**
+       * Trying to run an assembler command without installing assembler
+       */
+      if (
+        CoreCommands.commandsList.length === 0 &&
+        CoreCommands.localCommandsList.includes(argv[0])
+      ) {
+        throw new AceRuntimeException(
+          `Make sure to install "@adonisjs/assembler" before running "${argv[0]}" command`
+        )
+      }
+
+      /**
        * Passing manifest json of core commands and generate manifest, so that
        * we can append in the help output
        */
