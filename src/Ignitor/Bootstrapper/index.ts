@@ -8,6 +8,7 @@
 */
 
 import { join } from 'path'
+import semver from 'semver'
 import findPkg from 'find-package-json'
 import { esmRequire } from '@poppinss/utils'
 import { Ioc, Registrar } from '@adonisjs/fold'
@@ -55,6 +56,24 @@ export class Bootstrapper {
   }
 
   /**
+   * If package.json file defines a the engines.node property, then
+   * this method will ensure that current node version satisfies
+   * the defined range.
+   */
+  private verifyNodeJsVersion (pkgFile?: findPkg.Package): void {
+    const nodeEngine = pkgFile?.engines?.node
+    if (!nodeEngine) {
+      return
+    }
+
+    if (!semver.satisfies(process.version, nodeEngine)) {
+      throw new Error(
+        `The installed Node.js version "${process.version}" does not satisfies the expected version "${nodeEngine}" defined inside package.json file`,
+      )
+    }
+  }
+
+  /**
    * Setup the Ioc container globals and the application. This lays
    * off the ground for not having `global.use` runtime errors.
    */
@@ -98,6 +117,8 @@ export class Bootstrapper {
      */
     this.application = new Application(this.appRoot, ioc, rcContents, pkgFile)
     this.registrar = new Registrar(ioc, this.appRoot)
+
+    this.verifyNodeJsVersion(appPkgFile)
 
     ioc.singleton('Adonis/Core/Application', () => this.application)
     return this.application

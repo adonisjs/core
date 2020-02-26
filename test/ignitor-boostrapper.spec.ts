@@ -39,6 +39,15 @@ test.group('Ignitor | Setup', (group) => {
     await fs.cleanup()
   })
 
+  test('raise error when node engine inside package.json file doesn\'t satisfies current verison', async (assert) => {
+    await setupApplicationFiles(fs)
+    const bootstrapper = new Bootstrapper(fs.basePath)
+    await fs.add('package.json', JSON.stringify({ engines: { node: '4.x.x' } }))
+    const fn = () => bootstrapper.setup()
+    // eslint-disable-next-line max-len
+    assert.throw(fn, `The installed Node.js version \"${process.version}\" does not satisfies the expected version \"4.x.x\" defined inside package.json file`)
+  })
+
   test('setup application', async (assert) => {
     await setupApplicationFiles(fs)
     const bootstrapper = new Bootstrapper(fs.basePath)
