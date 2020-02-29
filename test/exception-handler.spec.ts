@@ -27,7 +27,7 @@ const encryption = new Encryption('verylongandrandom32characterskey')
 test.group('HttpExceptionHandler', () => {
   test('do not report error if error code is in ignore list', (assert) => {
     class AppHandler extends HttpExceptionHandler {
-      protected dontReport = ['E_BAD_REQUEST']
+      protected ignoreCodes = ['E_BAD_REQUEST']
     }
 
     const logger = new FakeLogger(loggerConfig)
