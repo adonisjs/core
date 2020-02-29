@@ -19,7 +19,7 @@ export abstract class HttpExceptionHandler {
   /**
    * An array of error codes that must not be reported
    */
-  protected dontReport: string[] = []
+  protected ignoreCodes: string[] = []
 
   /**
    * An array of http statuses that must not be reported. The first
@@ -32,7 +32,7 @@ export abstract class HttpExceptionHandler {
    * An array of internal error codes to ignore
    * from the reporting list
    */
-  protected internalDontReport: string[] = [
+  protected internalIgnoreCodes: string[] = [
     'E_ROUTE_NOT_FOUND',
   ]
 
@@ -85,7 +85,7 @@ export abstract class HttpExceptionHandler {
     /**
      * Don't report when error has a code and it's in the ignore list.
      */
-    if (error.code && this.dontReport.concat(this.internalDontReport).indexOf(error.code) > -1) {
+    if (error.code && this.ignoreCodes.concat(this.internalIgnoreCodes).indexOf(error.code) > -1) {
       return false
     }
 
