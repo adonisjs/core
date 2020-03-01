@@ -96,7 +96,7 @@
     "@adonisjs/env": "^1.0.12",
     "@adonisjs/events": "^1.0.7",
     "@adonisjs/hash": "^1.0.11",
-    "@adonisjs/http-server": "^1.8.0",
+    "@adonisjs/http-server": "^1.8.1",
     "@adonisjs/logger": "^1.1.9",
     "@adonisjs/profiler": "^2.0.0",
     "@adonisjs/validator": "^6.2.4",
