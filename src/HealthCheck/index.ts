@@ -54,8 +54,10 @@ export class HealthCheck implements HealthCheckContract {
       } else {
         report = await this.resolver.call(checker)
       }
+      report.displayName = report.displayName || service
     } catch (error) {
       report = {
+        displayName: service,
         health: { healthy: false, message: error.message },
         meta: { fatal: true },
       }

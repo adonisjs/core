@@ -26,6 +26,8 @@ const INSECURE_APP_KEY_MESSAGE = [
   'Run "node ace generate:key" to generate a secure key',
 ].join(' ')
 
+const DISPLAY_NAME = 'App Key Check'
+
 /**
  * Check for the APP_KEY to ensure it is present and has
  * desired length.
@@ -34,6 +36,7 @@ export default function addAppKeyChecker (healthCheck: HealthCheckContract) {
   healthCheck.addChecker('appKey', async () => {
     if (!process.env.APP_KEY) {
       return {
+        displayName: DISPLAY_NAME,
         health: {
           healthy: false,
           message: MISSING_APP_KEY_MESSAGE,
@@ -43,6 +46,7 @@ export default function addAppKeyChecker (healthCheck: HealthCheckContract) {
 
     if (process.env.APP_KEY && process.env.APP_KEY.length < 32) {
       return {
+        displayName: DISPLAY_NAME,
         health: {
           healthy: false,
           message: INSECURE_APP_KEY_MESSAGE,
@@ -51,6 +55,7 @@ export default function addAppKeyChecker (healthCheck: HealthCheckContract) {
     }
 
     return {
+      displayName: DISPLAY_NAME,
       health: {
         healthy: true,
       },

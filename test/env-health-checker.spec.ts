@@ -26,6 +26,7 @@ test.group('Env Health Checker', () => {
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
       env: {
+        displayName: 'Node Env Check',
         health: {
           healthy: false,
           message: 'Missing NODE_ENV environment variable. It can make some parts of the application misbehave',
@@ -45,6 +46,7 @@ test.group('Env Health Checker', () => {
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
       env: {
+        displayName: 'Node Env Check',
         health: {
           healthy: true,
         },

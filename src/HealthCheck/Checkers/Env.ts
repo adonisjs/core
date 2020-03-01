@@ -17,6 +17,8 @@ const MISSING_APP_KEY_MESSAGE = [
   'It can make some parts of the application misbehave',
 ].join(' ')
 
+const DISPLAY_NAME = 'Node Env Check'
+
 /**
  * Register the `env` checker to ensure that `NODE_ENV` environment
  * variable is defined.
@@ -24,10 +26,12 @@ const MISSING_APP_KEY_MESSAGE = [
 export default function addEnvChecker (healthCheck: HealthCheckContract) {
   healthCheck.addChecker('env', async () => {
     return process.env.NODE_ENV ? {
+      displayName: DISPLAY_NAME,
       health: {
         healthy: true,
       },
     } : {
+      displayName: DISPLAY_NAME,
       health: {
         healthy: false,
         message: MISSING_APP_KEY_MESSAGE,

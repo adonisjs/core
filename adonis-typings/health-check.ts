@@ -19,6 +19,7 @@ declare module '@ioc:Adonis/Core/HealthCheck' {
    * return an object with similar shape.
    */
   export type HealthReportEntry = {
+    displayName: string,
     health: {
       healthy: boolean,
       message?: string,

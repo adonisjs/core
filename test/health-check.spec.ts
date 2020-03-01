@@ -34,6 +34,7 @@ test.group('HealthCheck', () => {
 
     healthCheck.addChecker('event-loop', async () => {
       return {
+        displayName: 'event loop',
         health: {
           healthy: true,
         },
@@ -45,6 +46,7 @@ test.group('HealthCheck', () => {
       healthy: true,
       report: {
         'event-loop': {
+          displayName: 'event loop',
           health: {
             healthy: true,
           },
@@ -66,6 +68,7 @@ test.group('HealthCheck', () => {
       healthy: false,
       report: {
         'event-loop': {
+          displayName: 'event-loop',
           health: {
             healthy: false,
             message: 'boom',
@@ -84,6 +87,7 @@ test.group('HealthCheck', () => {
 
     healthCheck.addChecker('database', async () => {
       return {
+        displayName: 'database',
         health: {
           healthy: true,
         },
@@ -99,6 +103,7 @@ test.group('HealthCheck', () => {
       healthy: false,
       report: {
         'event-loop': {
+          displayName: 'event-loop',
           health: {
             healthy: false,
             message: 'boom',
@@ -108,6 +113,7 @@ test.group('HealthCheck', () => {
           },
         },
         'database': {
+          displayName: 'database',
           health: {
             healthy: true,
           },
@@ -145,6 +151,7 @@ test.group('HealthCheck', () => {
       healthy: true,
       report: {
         'database': {
+          displayName: 'database',
           health: {
             healthy: true,
           },

@@ -23,6 +23,7 @@ test.group('Env Health Checker', () => {
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
       appKey: {
+        displayName: 'App Key Check',
         health: {
           healthy: false,
           message: 'Missing APP_KEY environment variable. It is required to keep your application secure',
@@ -41,10 +42,11 @@ test.group('Env Health Checker', () => {
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
       appKey: {
+        displayName: 'App Key Check',
         health: {
           healthy: false,
           // eslint-disable-next-line max-len
-          message: 'Insecure APP_KEY. It must be over 32 characters long. Run \"node ace generate:key\" to generate a secure key',
+          message: 'Insecure APP_KEY. It must be 32 characters long. Run \"node ace generate:key\" to generate a secure key',
         },
       },
     })
@@ -62,10 +64,11 @@ test.group('Env Health Checker', () => {
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
       appKey: {
+        displayName: 'App Key Check',
         health: {
           healthy: false,
           // eslint-disable-next-line max-len
-          message: 'Insecure APP_KEY. It must be over 32 characters long. Run \"node ace generate:key\" to generate a secure key',
+          message: 'Insecure APP_KEY. It must be 32 characters long. Run \"node ace generate:key\" to generate a secure key',
         },
       },
     })
