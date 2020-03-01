@@ -22,11 +22,13 @@ const MISSING_APP_KEY_MESSAGE = [
  */
 const INSECURE_APP_KEY_MESSAGE = [
   'Insecure APP_KEY.',
-  'It must be over 32 characters long.',
+  'It must be 32 characters long.',
   'Run "node ace generate:key" to generate a secure key',
 ].join(' ')
 
 /**
+ * Check for the APP_KEY to ensure it is present and has
+ * desired length.
  */
 export default function addAppKeyChecker (healthCheck: HealthCheckContract) {
   healthCheck.addChecker('appKey', async () => {
