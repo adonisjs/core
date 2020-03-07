@@ -9,7 +9,7 @@
 
 /**
  * Exposes the API to invoke a callback when `SIGTERM` or
- * `SIGINT (pm2 only)` signals are received.
+ * `SIGINT` signals are received.
  */
 export class SignalsListener {
   protected onCloseCallback?: () => Promise<void>
@@ -19,6 +19,7 @@ export class SignalsListener {
    */
   private kill = async function () {
     try {
+      console.log('Shutting down server...')
       await this.onCloseCallback()
       process.exit(0)
     } catch (error) {
@@ -32,10 +33,8 @@ export class SignalsListener {
    */
   public listen (callback: () => Promise<void>) {
     this.onCloseCallback = callback
-    if (process.env.pm_id) {
-      process.on('SIGINT', this.kill)
-    }
 
+    process.on('SIGINT', this.kill)
     process.on('SIGTERM', this.kill)
   }
 
