@@ -7,7 +7,7 @@
 * file that was distributed with this source code.
 */
 
-import { CorsConfigContract } from '@ioc:Adonis/Core/Cors'
+import { CorsConfig } from '@ioc:Adonis/Core/Cors'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 /**
@@ -32,7 +32,7 @@ const SIMPLE_EXPOSE_HEADERS = [
 export class Cors {
   private isEnabled: ((request: HttpContextContract['request']) => boolean)
 
-  constructor (private options: CorsConfigContract) {
+  constructor (private options: CorsConfig) {
     this.normalizeOptions()
   }
 

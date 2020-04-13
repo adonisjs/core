@@ -5,7 +5,7 @@
   "main": "build/providers/AppProvider.js",
   "files": [
     "build/adonis-typings",
-    "build/config",
+    "build/templates",
     "build/commands",
     "build/providers",
     "build/src",
@@ -17,7 +17,7 @@
     "test": "node japaFile.js",
     "lint": "eslint . --ext=.ts",
     "clean": "del build",
-    "compile": "npm run lint && npm run clean && tsc && copyfiles config/* build",
+    "compile": "npm run lint && npm run clean && tsc && copyfiles templates/**/* build",
     "build": "npm run compile",
     "commit": "git-cz",
     "release": "np",
@@ -44,7 +44,7 @@
     "@adonisjs/assembler": "^1.3.9",
     "@adonisjs/fold": "^6.3.5",
     "@adonisjs/mrm-preset": "^2.3.0",
-    "@adonisjs/sink": "^2.4.5",
+    "@adonisjs/sink": "^3.0.0",
     "@poppinss/dev-utils": "^1.0.6",
     "@types/node": "^13.11.1",
     "@types/supertest": "^2.0.8",
@@ -102,7 +102,6 @@
     "@types/find-package-json": "^1.1.1",
     "cli-table3": "^0.6.0",
     "find-package-json": "^1.2.0",
-    "randomstring": "^1.1.5",
     "semver": "^7.2.2",
     "serve-static": "^1.14.1"
   },
@@ -117,9 +116,30 @@
   "adonisjs": {
     "instructions": "./build/instructions.js",
     "templates": {
-      "basePath": "./build/config",
+      "basePath": "./build/templates",
       "config": [
-        "cors.txt"
+        {
+          "src": "config/bodyparser.txt",
+          "dest": "bodyparser.txt"
+        },
+        {
+          "src": "config/cors.txt",
+          "dest": "cors.txt"
+        },
+        {
+          "src": "config/hash.txt",
+          "dest": "hash.txt"
+        }
+      ],
+      "contracts": [
+        {
+          "src": "contracts/events.txt",
+          "dest": "events.txt"
+        },
+        {
+          "src": "contracts/hash.txt",
+          "dest": "hash.txt"
+        }
       ]
     },
     "commands": [

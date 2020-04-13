@@ -7,7 +7,7 @@
 * file that was distributed with this source code.
 */
 
-import randomstring from 'randomstring'
+import { randomString } from '@poppinss/utils'
 import { BaseCommand } from '@adonisjs/ace'
 
 /**
@@ -18,7 +18,7 @@ export default class GenerateKey extends BaseCommand {
   public static description = 'Generate a new APP_KEY secret'
 
   public async handle () {
-    const secret = randomstring.generate({ length: 32 })
+    const secret = randomString(32)
     console.log(this.colors.green(secret))
 
     console.log(this.colors.gray(

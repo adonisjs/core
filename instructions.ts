@@ -16,20 +16,19 @@ const STATIC_TEMPLATE_STUB = join(__dirname, './config', 'static.txt')
 
 export default async function instructions (
   projectRoot: string,
-  application: ApplicationContract,
-  { executeInstructions, TemplateFile, logger }: typeof sinkStatic,
+  _: ApplicationContract,
+  { logger, files }: typeof sinkStatic,
 ) {
   const isApiBoilerplate = process.env['ADONIS_CREATE_APP_BOILERPLATE'] === 'api'
 
   /**
    * Create app config file
    */
-  const appConfig = new TemplateFile(projectRoot, 'config/app.ts', APP_TEMPLATE_STUB)
+  const appConfig = new files.MustacheFile(projectRoot, 'config/app.ts', APP_TEMPLATE_STUB)
   if (appConfig.exists()) {
     logger.skip('config/app.ts')
   } else {
-    appConfig.apply({ forceContentNegotiationToJSON: isApiBoilerplate })
-    appConfig.commit()
+    appConfig.apply({ forceContentNegotiationToJSON: isApiBoilerplate }).commit()
     logger.create('config/app.ts')
   }
 
@@ -38,7 +37,7 @@ export default async function instructions (
    * is not for the api
    */
   if (!isApiBoilerplate) {
-    const staticConfig = new TemplateFile(projectRoot, 'config/static.ts', STATIC_TEMPLATE_STUB)
+    const staticConfig = new files.MustacheFile(projectRoot, 'config/static.ts', STATIC_TEMPLATE_STUB)
     if (staticConfig.exists()) {
       logger.skip('config/static.ts')
     } else {
@@ -46,8 +45,4 @@ export default async function instructions (
       logger.create('config/static.ts')
     }
   }
-
-  await executeInstructions('@adonisjs/events', projectRoot, application)
-  await executeInstructions('@adonisjs/hash', projectRoot, application)
-  await executeInstructions('@adonisjs/bodyparser', projectRoot, application)
 }
