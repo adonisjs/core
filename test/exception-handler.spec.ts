@@ -22,7 +22,9 @@ const loggerConfig = {
   level: 'debug',
 }
 
-const encryption = new Encryption('verylongandrandom32characterskey')
+const encryption = new Encryption({
+  secret: 'verylongandrandom32characterskey',
+})
 
 test.group('HttpExceptionHandler', () => {
   test('do not report error if error code is in ignore list', (assert) => {

@@ -20,7 +20,9 @@ import { HttpContext } from '@adonisjs/http-server/build/standalone'
 import { Cors } from '../src/Hooks/Cors'
 import { specFixtures } from './fixtures/cors'
 
-const encryption = new Encryption('verylongandrandom32characterskey')
+const encryption = new Encryption({
+  secret: 'verylongandrandom32characterskey',
+})
 
 test.group('Cors', () => {
   specFixtures.forEach((fixture) => {

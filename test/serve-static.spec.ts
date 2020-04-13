@@ -23,7 +23,7 @@ import { ServeStatic } from '../src/Hooks/Static'
 
 const fs = new Filesystem(join(__dirname, '__app'))
 
-const encryption = new Encryption('verylongandrandom32characterskey')
+const encryption = new Encryption({ secret: 'verylongandrandom32characterskey' })
 const logger = new Logger({ name: 'adonis', enabled: false, level: 'trace' })
 const profiler = new Profiler(__dirname, logger, {}).create('')
 
