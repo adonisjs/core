@@ -22,7 +22,7 @@ import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
  * to the container.
  */
 export default class AppProvider {
-  constructor (protected $container: IocContract) {
+  constructor (protected container: IocContract) {
   }
 
   /**
@@ -45,15 +45,15 @@ export default class AppProvider {
    * Register `HttpExceptionHandler` to the container.
    */
   protected registerHttpExceptionHandler () {
-    this.$container.bind('Adonis/Core/HttpExceptionHandler', () => HttpExceptionHandler)
+    this.container.bind('Adonis/Core/HttpExceptionHandler', () => HttpExceptionHandler)
   }
 
   /**
    * Registering the health check provider
    */
   protected registerHealthCheck () {
-    this.$container.singleton('Adonis/Core/HealthCheck', () => {
-      return new HealthCheck(this.$container.use('Adonis/Core/Application'))
+    this.container.singleton('Adonis/Core/HealthCheck', () => {
+      return new HealthCheck(this.container.use('Adonis/Core/Application'))
     })
   }
 
@@ -64,7 +64,7 @@ export default class AppProvider {
     /**
      * Register the cors before hook with the server
      */
-    this.$container.with([
+    this.container.with([
       'Adonis/Core/Config',
       'Adonis/Core/Server',
     ], (Config: ConfigContract, Server: ServerContract) => {
@@ -86,7 +86,7 @@ export default class AppProvider {
     /**
      * Register the cors before hook with the server
      */
-    this.$container.with([
+    this.container.with([
       'Adonis/Core/Config',
       'Adonis/Core/Server',
       'Adonis/Core/Application',
@@ -106,7 +106,7 @@ export default class AppProvider {
    * Registers base health checkers
    */
   protected registerHealthCheckers () {
-    this.$container.with(['Adonis/Core/HealthCheck'], (healthCheck: HealthCheck) => {
+    this.container.with(['Adonis/Core/HealthCheck'], (healthCheck: HealthCheck) => {
       envChecker(healthCheck)
       appKeyChecker(healthCheck)
     })
