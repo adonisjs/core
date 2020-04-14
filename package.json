@@ -95,7 +95,7 @@
     "@adonisjs/events": "^2.0.0",
     "@adonisjs/hash": "^2.0.2",
     "@adonisjs/http-server": "^2.0.2",
-    "@adonisjs/logger": "^2.0.1",
+    "@adonisjs/logger": "^2.0.2",
     "@adonisjs/profiler": "^3.0.1",
     "@adonisjs/validator": "^7.0.0",
     "@poppinss/utils": "^2.2.4",
