@@ -37,11 +37,11 @@
   <sub>Built with ❤︎ by <a href="https://github.com/thetutlage">Harminder Virk</a>
 </div>
 
-[circleci-image]: https://img.shields.io/circleci/project/github/adonisjs/adonis-framework/master.svg?style=for-the-badge&logo=circleci
-[circleci-url]: https://circleci.com/gh/adonisjs/adonis-framework "circleci"
+[circleci-image]: https://img.shields.io/circleci/project/github/adonisjs/core/master.svg?style=for-the-badge&logo=circleci
+[circleci-url]: https://circleci.com/gh/adonisjs/core "circleci"
 
-[npm-image]: https://img.shields.io/npm/v/@adonisjs/core.svg?style=for-the-badge&logo=npm
-[npm-url]: https://npmjs.org/package/@adonisjs/core "npm"
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/core/alpha.svg?style=for-the-badge&logo=npm
+[npm-url]: https://www.npmjs.com/package/@adonisjs/core/v/alpha "npm"
 
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
 
