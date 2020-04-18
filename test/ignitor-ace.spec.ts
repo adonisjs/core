@@ -91,6 +91,7 @@ test.group('Ignitor | Ace', (group) => {
       'make:provider',
       'make:validator',
       'make:view',
+      'make:prldfile',
     ])
   })
 })
