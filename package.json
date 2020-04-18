@@ -120,25 +120,25 @@
       "config": [
         {
           "src": "config/bodyparser.txt",
-          "dest": "bodyparser.txt"
+          "dest": "bodyparser"
         },
         {
           "src": "config/cors.txt",
-          "dest": "cors.txt"
+          "dest": "cors"
         },
         {
           "src": "config/hash.txt",
-          "dest": "hash.txt"
+          "dest": "hash"
         }
       ],
       "contracts": [
         {
           "src": "contracts/events.txt",
-          "dest": "events.txt"
+          "dest": "events"
         },
         {
           "src": "contracts/hash.txt",
-          "dest": "hash.txt"
+          "dest": "hash"
         }
       ]
     },
