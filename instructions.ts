@@ -11,8 +11,8 @@ import { join } from 'path'
 import * as sinkStatic from '@adonisjs/sink'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
-const APP_TEMPLATE_STUB = join(__dirname, './config', 'app.txt')
-const STATIC_TEMPLATE_STUB = join(__dirname, './config', 'static.txt')
+const APP_TEMPLATE_STUB = join(__dirname, './templates', 'config', 'app.txt')
+const STATIC_TEMPLATE_STUB = join(__dirname, './templates', 'config', 'static.txt')
 
 export default async function instructions (
   projectRoot: string,
