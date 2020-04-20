@@ -97,7 +97,7 @@
     "@adonisjs/http-server": "^2.1.0",
     "@adonisjs/logger": "^2.0.3",
     "@adonisjs/profiler": "^3.0.1",
-    "@adonisjs/validator": "^7.0.1",
+    "@adonisjs/validator": "^7.0.3",
     "@poppinss/utils": "^2.2.4",
     "@types/find-package-json": "^1.1.1",
     "cli-table3": "^0.6.0",
