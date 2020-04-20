@@ -76,14 +76,14 @@ export class HttpServer {
     this.injectBootstrapper(this.bootstrapper)
 
     /**
-     * Registering providers
-     */
-    this.bootstrapper.registerProviders(false)
-
-    /**
      * Registering directories to be autoloaded
      */
     this.bootstrapper.registerAliases()
+
+    /**
+     * Registering providers
+     */
+    this.bootstrapper.registerProviders(false)
 
     /**
      * Booting providers

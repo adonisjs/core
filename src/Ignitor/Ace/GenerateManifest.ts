@@ -70,12 +70,16 @@ export class GenerateManifest {
     const commands = application.rcFile.commands
 
     /**
+     * Register aliases for imports to work
+     */
+    this.bootstrapper.registerAliases()
+
+    /**
      * We register providers and autoloads to avoid runtime
      * import exception when loading commands to generate
      * the manifest file
      */
     this.bootstrapper.registerProviders(true)
-    this.bootstrapper.registerAliases()
 
     /**
      * Generate file
