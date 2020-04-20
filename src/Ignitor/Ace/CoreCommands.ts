@@ -38,6 +38,13 @@ export class CoreCommands {
     'build',
     'serve',
     'invoke',
+    'make:command',
+    'make:controller',
+    'make:middleware',
+    'make:provider',
+    'make:validator',
+    'make:view',
+    'make:prldfile',
   ]
 
   /**
