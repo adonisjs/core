@@ -41,7 +41,7 @@
   "homepage": "https://github.com/adonisjs/adonis-framework#readme",
   "devDependencies": {
     "@adonisjs/ace": "^6.9.2",
-    "@adonisjs/assembler": "^2.0.0",
+    "@adonisjs/assembler": "^2.0.1",
     "@adonisjs/fold": "^6.3.5",
     "@adonisjs/mrm-preset": "^2.3.0",
     "@adonisjs/sink": "^3.0.0",
@@ -94,7 +94,7 @@
     "@adonisjs/env": "^1.0.13",
     "@adonisjs/events": "^2.0.0",
     "@adonisjs/hash": "^2.0.2",
-    "@adonisjs/http-server": "^2.0.3",
+    "@adonisjs/http-server": "^2.1.0",
     "@adonisjs/logger": "^2.0.3",
     "@adonisjs/profiler": "^3.0.1",
     "@adonisjs/validator": "^7.0.1",
