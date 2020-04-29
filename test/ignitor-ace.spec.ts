@@ -83,15 +83,17 @@ test.group('Ignitor | Ace', (group) => {
   test('get list of core commands', async (assert) => {
     assert.deepEqual(CoreCommands.commandsList, [
       'build',
-      'serve',
       'invoke',
       'make:command',
       'make:controller',
+      'make:exception',
+      'make:listener',
       'make:middleware',
+      'make:prldfile',
       'make:provider',
       'make:validator',
       'make:view',
-      'make:prldfile',
+      'serve',
     ])
   })
 })
