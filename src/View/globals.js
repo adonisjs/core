@@ -41,7 +41,7 @@ module.exports = function (View, Route, Config) {
    */
   View.global('style', function (url, skipPrefix = false) {
     url = !url.endsWith('.css') && !skipPrefix ? `${url}.css` : url
-    return this.safe(`<link rel="stylesheet" href="${this.$globals.assetsUrl(url)}" />`)
+    return this.safe(`<link rel="stylesheet" href="${this.$globals.assetsUrl(url)}">`)
   })
 
   /**
