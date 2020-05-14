@@ -11,8 +11,9 @@ import test from 'japa'
 import { Exception } from '@poppinss/utils'
 import { FakeLogger } from '@adonisjs/logger/build/standalone'
 import { Profiler } from '@adonisjs/profiler/build/standalone'
-import { HttpContext } from '@adonisjs/http-server/build/standalone'
 import { Encryption } from '@adonisjs/encryption/build/standalone'
+import { HttpContext, Router } from '@adonisjs/http-server/build/standalone'
+
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 const loggerConfig = {
@@ -25,6 +26,7 @@ const loggerConfig = {
 const encryption = new Encryption({
   secret: 'verylongandrandom32characterskey',
 })
+const router = new Router(encryption)
 
 test.group('HttpExceptionHandler', () => {
   test('do not report error if error code is in ignore list', (assert) => {
@@ -41,6 +43,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
@@ -59,6 +62,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
@@ -87,6 +91,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
@@ -108,6 +113,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
@@ -146,6 +152,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     handler.report(new InvalidAuth('bad request'), ctx)
   })
@@ -169,6 +176,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx.request.request.headers = { accept: 'text/html' }
 
@@ -195,6 +203,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx.request.request.headers = { accept: 'application/json' }
 
@@ -221,6 +230,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx.request.request.headers = { accept: 'application/vnd.api+json' }
 
@@ -257,6 +267,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx.request.request.headers = { accept: 'application/json' }
 
@@ -286,6 +297,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx.request.request.headers = { accept: 'text/html' }
 
@@ -319,6 +331,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx.request.request.headers = { accept: 'text/html' }
 
@@ -347,6 +360,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx.request.request.headers = { accept: 'text/html' }
 
@@ -382,6 +396,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx['view'] = {
       render (view, data) {
@@ -421,6 +436,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx['view'] = {
       render () {
@@ -464,6 +480,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx['view'] = {
       render () {
@@ -512,6 +529,7 @@ test.group('HttpExceptionHandler', () => {
       logger,
       new Profiler(__dirname, logger, {}).create(''),
       encryption,
+      router,
     )
     ctx['view'] = {
       render (view, data) {

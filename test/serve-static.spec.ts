@@ -17,7 +17,7 @@ import { Filesystem } from '@poppinss/dev-utils'
 import { Logger } from '@adonisjs/logger/build/standalone'
 import { Profiler } from '@adonisjs/profiler/build/standalone'
 import { Encryption } from '@adonisjs/encryption/build/standalone'
-import { HttpContext } from '@adonisjs/http-server/build/standalone'
+import { HttpContext, Router } from '@adonisjs/http-server/build/standalone'
 
 import { ServeStatic } from '../src/Hooks/Static'
 
@@ -26,6 +26,7 @@ const fs = new Filesystem(join(__dirname, '__app'))
 const encryption = new Encryption({ secret: 'verylongandrandom32characterskey' })
 const logger = new Logger({ name: 'adonis', enabled: false, level: 'trace' })
 const profiler = new Profiler(__dirname, logger, {}).create('')
+const router = new Router(encryption)
 
 test.group('Serve Static', (group) => {
   group.afterEach(async () => {
@@ -39,7 +40,7 @@ test.group('Serve Static', (group) => {
       const serveStatic = new ServeStatic(join(fs.basePath, 'public'), {
         enabled: true,
       })
-      const ctx = HttpContext.create('/', {}, logger, profiler, encryption, req, res)
+      const ctx = HttpContext.create('/', {}, logger, profiler, encryption, router, req, res)
       await serveStatic.handle(ctx)
 
       assert.equal(ctx.response.response.listenerCount('finish'), 1)
@@ -57,7 +58,7 @@ test.group('Serve Static', (group) => {
       const serveStatic = new ServeStatic(join(fs.basePath, 'public'), {
         enabled: true,
       })
-      const ctx = HttpContext.create('/', {}, logger, profiler, encryption, req, res)
+      const ctx = HttpContext.create('/', {}, logger, profiler, encryption, router, req, res)
       await serveStatic.handle(ctx)
 
       assert.equal(ctx.response.response.listenerCount('finish'), 1)

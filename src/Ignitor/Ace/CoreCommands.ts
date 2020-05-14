@@ -89,7 +89,7 @@ export class CoreCommands {
    */
   private async importAssembler (command: string) {
     try {
-      return await import('@adonisjs/assembler')
+      return await import('@adonisjs/assembler/build/src/EnvParser/index')
     } catch (error) {
       if (isMissingModuleError(error)) {
         throw new AceRuntimeException(`Install "@adonisjs/assembler" to execute "${command}" command`)

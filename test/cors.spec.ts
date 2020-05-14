@@ -15,7 +15,7 @@ import { createServer } from 'http'
 import { Logger } from '@adonisjs/logger/build/standalone'
 import { Profiler } from '@adonisjs/profiler/build/standalone'
 import { Encryption } from '@adonisjs/encryption/build/standalone'
-import { HttpContext } from '@adonisjs/http-server/build/standalone'
+import { HttpContext, Router } from '@adonisjs/http-server/build/standalone'
 
 import { Cors } from '../src/Hooks/Cors'
 import { specFixtures } from './fixtures/cors'
@@ -30,6 +30,7 @@ test.group('Cors', () => {
       const server = createServer(async (req, res) => {
         const cors = new Cors(fixture.configureOptions())
         const logger = new Logger({ name: 'adonis', enabled: false, level: 'trace' })
+        const router = new Router(encryption)
 
         fixture.configureRequest(req)
         const ctx = HttpContext.create(
@@ -38,6 +39,7 @@ test.group('Cors', () => {
           logger,
           new Profiler(__dirname, logger, {}).create(''),
           encryption,
+          router,
           req,
           res,
         )
