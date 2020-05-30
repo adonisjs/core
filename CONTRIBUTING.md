@@ -2,15 +2,15 @@
 
 AdonisJs is a community driven project. You are free to contribute in any of the following ways.
 
-- [Coding style](coding-style)
-- [Fix bugs by creating PR's](fix-bugs-by-creating-prs)
-- [Share an RFC for new features or big changes](share-an-rfc-for-new-features-or-big-changes)
-- [Report security issues](report-security-issues)
-- [Be a part of the community](be-a-part-of-community)
+- [Coding style](#coding-style)
+- [Fix bugs by creating PR's](#fix-bugs-by-creating-prs)
+- [Share an RFC for new features or big changes](#share-an-rfc-for-new-features-or-big-changes)
+- [Report security issues](#report-security-issues)
+- [Be a part of the community](#be-a-part-of-community)
 
 ## Coding style
 
-Majority of AdonisJs core packages are written in Typescript. Having a brief knowledge of Typescript is required to contribute to the core. [Learn more](https://adonisjs.com/coding-style) about the same.
+Majority of AdonisJs core packages are written in Typescript. Having a brief knowledge of Typescript is required to contribute to the core. [Learn more](https://adonisjs.com/docs/contribution-guide#_coding_style) about the same.
 
 ## Fix bugs by creating PR's
 
@@ -39,10 +39,10 @@ The RFC proposals are created as issues on [adonisjs/rfcs](https://github.com/ad
 
 ## Report security issues
 
-All of the security issues, must be reported via [email](mailto:virk@adonisjs.com) and not using any of the public channels. [Learn more](https://adonisjs.com/security) about the security policy
+All of the security issues, must be reported via [email](mailto:virk@adonisjs.com) and not using any of the public channels. [Learn more](https://adonisjs.com/docs/security-introduction) about the security policy
 
 ## Be a part of community
 
-We welcome you to participate in the [forum](https://forum.adonisjs.com/) and the AdonisJs [discord server](https://discord.me/adonisjs). You are free to ask your questions and share your work or contributions made to AdonisJs eco-system. 
+We welcome you to participate in the [forum](https://forum.adonisjs.com/) and the AdonisJs [discord server](https://discord.gg/vDcEjq6?). You are free to ask your questions and share your work or contributions made to AdonisJs eco-system.
 
-We follow a strict [Code of Conduct](https://adonisjs.com/community-guidelines) to make sure everyone is respectful to each other.
+We follow a strict [Code of Conduct](https://preview.adonisjs.com/code-of-conduct) to make sure everyone is respectful to each other.
