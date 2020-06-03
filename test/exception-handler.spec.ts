@@ -248,7 +248,6 @@ test.group('HttpExceptionHandler', () => {
   })
 
   test('return stack trace when NODE_ENV=development', async (assert) => {
-    process.env.NODE_ENV = 'development'
     class AppHandler extends HttpExceptionHandler {
       protected context () {
         return { username: 'virk' }
@@ -259,7 +258,7 @@ test.group('HttpExceptionHandler', () => {
     }
 
     const logger = new FakeLogger(loggerConfig)
-    const handler = new AppHandler(logger)
+    const handler = new AppHandler(logger, 'development')
 
     const ctx = HttpContext.create(
       '/',
@@ -273,12 +272,9 @@ test.group('HttpExceptionHandler', () => {
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.exists(ctx.response.lazyBody!.args[0].stack)
-
-    delete process.env.NODE_ENV
   })
 
   test('print youch html in development', async (assert) => {
-    process.env.NODE_ENV = 'development'
     class AppHandler extends HttpExceptionHandler {
       protected context () {
         return { username: 'virk' }
@@ -289,7 +285,7 @@ test.group('HttpExceptionHandler', () => {
     }
 
     const logger = new FakeLogger(loggerConfig)
-    const handler = new AppHandler(logger)
+    const handler = new AppHandler(logger, 'development')
 
     const ctx = HttpContext.create(
       '/',
@@ -303,8 +299,6 @@ test.group('HttpExceptionHandler', () => {
 
     await handler.handle(new InvalidAuth('bad request'), ctx)
     assert.isTrue(/youch/.test(ctx.response.lazyBody!.args[0]))
-
-    delete process.env.NODE_ENV
   })
 
   test('call handle on actual exception when method exists', async (assert) => {
@@ -451,8 +445,6 @@ test.group('HttpExceptionHandler', () => {
   })
 
   test('do not render status page when disabled for development mode', async (assert) => {
-    process.env.NODE_ENV = 'development'
-
     class AppHandler extends HttpExceptionHandler {
       protected statusPages = {
         404: '404.edge',
@@ -472,7 +464,7 @@ test.group('HttpExceptionHandler', () => {
     }
 
     const logger = new FakeLogger(loggerConfig)
-    const handler = new AppHandler(logger)
+    const handler = new AppHandler(logger, 'development')
 
     const ctx = HttpContext.create(
       '/',
@@ -493,14 +485,10 @@ test.group('HttpExceptionHandler', () => {
 
     assert.isTrue(/youch/.test(ctx.response.lazyBody!.args[0]))
     assert.equal(ctx.response.response.statusCode, 404)
-
-    delete process.env.NODE_ENV
   })
 
   test('always render status page when in production mode', async (assert) => {
     assert.plan(3)
-
-    process.env.NODE_ENV = 'production'
 
     class AppHandler extends HttpExceptionHandler {
       protected statusPages = {
@@ -521,7 +509,7 @@ test.group('HttpExceptionHandler', () => {
     }
 
     const logger = new FakeLogger(loggerConfig)
-    const handler = new AppHandler(logger)
+    const handler = new AppHandler(logger, 'production')
 
     const ctx = HttpContext.create(
       '/',
@@ -542,7 +530,6 @@ test.group('HttpExceptionHandler', () => {
     await handler.handle(new InvalidAuth('bad request'), ctx)
 
     assert.equal(ctx.response.response.statusCode, 404)
-    delete process.env.NODE_ENV
   })
 
   test('compute status pages from expression', async (assert) => {

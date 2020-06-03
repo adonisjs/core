@@ -9,6 +9,7 @@
 
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { NODE_ENV } from '../utils'
 
 /**
  * Http exception handler serves as the base exception handler
@@ -56,7 +57,7 @@ export abstract class HttpExceptionHandler {
    */
   protected disableStatusPagesInDevelopment: boolean = true
 
-  constructor (protected logger: LoggerContract) {
+  constructor (protected logger: LoggerContract, protected environement: string | undefined = NODE_ENV) {
   }
 
   /**
@@ -97,7 +98,7 @@ export abstract class HttpExceptionHandler {
    * which the app is runing
    */
   protected async makeJSONResponse (error: any, ctx: HttpContextContract) {
-    if (process.env.NODE_ENV === 'development') {
+    if (this.environement === 'development') {
       ctx.response.status(error.status).send({
         message: error.message,
         stack: error.stack,
@@ -118,7 +119,7 @@ export abstract class HttpExceptionHandler {
       errors: [
         {
           title: error.message,
-          ...(process.env.NODE_ENV === 'development' ? { detail: error.stack } : {}),
+          ...(this.environement === 'development' ? { detail: error.stack } : {}),
           code: error.code,
           status: error.status,
         },
@@ -132,7 +133,7 @@ export abstract class HttpExceptionHandler {
    */
   protected async makeHtmlResponse (error: any, ctx: HttpContextContract) {
     if (
-      process.env.NODE_ENV === 'development' &&
+      this.environement === 'development' &&
       (!this.expandedStatusPages[error.status] || this.disableStatusPagesInDevelopment)
     ) {
       const Youch = require('youch')
