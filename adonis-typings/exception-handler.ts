@@ -30,6 +30,7 @@ declare module '@ioc:Adonis/Core/HttpExceptionHandler' {
     protected makeJSONAPIResponse (error: any, ctx: HttpContextContract): Promise<void>
     protected makeHtmlResponse (error: any, ctx: HttpContextContract): Promise<void>
     public report (error: any, ctx: HttpContextContract): void
+    protected printReport (loggerFn: 'info' | 'warn' | 'error', error: any, ctx: HttpContextContract): void
     public handle (error: any, ctx: HttpContextContract): Promise<any>
   }
 }

@@ -178,6 +178,13 @@ export abstract class HttpExceptionHandler {
       ? 'error'
       : (error.status >= 400) ? 'warn' : 'info'
 
+    this.printReport(loggerFn, error, ctx)
+  }
+
+  /**
+   * Print a given report
+   */
+  protected printReport (loggerFn: 'info' | 'warn' | 'error', error: any, ctx: HttpContextContract) {
     this.logger[loggerFn](this.context(ctx), error.message)
   }
 
