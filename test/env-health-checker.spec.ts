@@ -16,9 +16,6 @@ import envHealthChecker from '../src/HealthCheck/Checkers/Env'
 
 test.group('Env Health Checker', () => {
   test('fail when NODE_ENV is not defined', async (assert) => {
-    const oldEnvValue = process.env.NODE_ENV
-    delete process.env.NODE_ENV
-
     const application = new Application(__dirname, new Ioc(), {}, {})
     const healthCheck = new HealthCheck(application)
     envHealthChecker(healthCheck)
@@ -33,15 +30,12 @@ test.group('Env Health Checker', () => {
         },
       },
     })
-
-    process.env.NODE_ENV = oldEnvValue
   })
 
   test('work fine when NODE_ENV is defined', async (assert) => {
-    process.env.NODE_ENV = 'development'
     const application = new Application(__dirname, new Ioc(), {}, {})
     const healthCheck = new HealthCheck(application)
-    envHealthChecker(healthCheck)
+    envHealthChecker(healthCheck, 'development')
 
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
@@ -52,7 +46,5 @@ test.group('Env Health Checker', () => {
         },
       },
     })
-
-    delete process.env.NODE_ENV
   })
 })
