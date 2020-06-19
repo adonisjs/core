@@ -66,7 +66,10 @@ export class GenerateManifest {
     await this.ensureBuildRoot()
 
     this.bootstrapper.setup()
+
     const application = this.bootstrapper.application
+    application.environment = 'console'
+
     const commands = application.rcFile.commands
 
     /**

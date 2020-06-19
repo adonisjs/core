@@ -154,7 +154,9 @@ export class AppCommands {
    */
   public async handle (argv: string[]) {
     await this.ensureBuildRoot(argv[0])
+
     this.bootstrapper.setup()
+    this.bootstrapper.application.environment = 'console'
 
     const manifest = new this.ace.Manifest(this.buildRoot)
     const kernel = new this.ace.Kernel(this.bootstrapper.application)

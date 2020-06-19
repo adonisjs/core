@@ -82,6 +82,7 @@ export class CoreCommands {
     }
 
     this.application = new Application(this.appRoot, new Ioc(), rcContents, {})
+    this.application.environment = 'console'
   }
 
   /**
