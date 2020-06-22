@@ -9,9 +9,6 @@
 
 import { esmRequire, resolveFrom } from '@poppinss/utils'
 
-export const APP_KEY = process.env.APP_KEY
-export const NODE_ENV = process.env.NODE_ENV
-
 /**
  * Helper to know if error belongs to a missing module
  * error

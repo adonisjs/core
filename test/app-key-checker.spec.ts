@@ -33,9 +33,10 @@ test.group('Env Health Checker', () => {
   })
 
   test('fail when APP_KEY is not secure', async (assert) => {
+    process.env.APP_KEY = '3910200'
     const application = new Application(__dirname, new Ioc(), {}, {})
     const healthCheck = new HealthCheck(application)
-    appKeyHealthChecker(healthCheck, '3910200')
+    appKeyHealthChecker(healthCheck)
 
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
@@ -48,12 +49,16 @@ test.group('Env Health Checker', () => {
         },
       },
     })
+
+    delete process.env.APP_KEY
   })
 
   test('work fine when APP_KEY is secure', async (assert) => {
+    process.env.APP_KEY = 'asecureandlongrandomsecret'
+
     const application = new Application(__dirname, new Ioc(), {}, {})
     const healthCheck = new HealthCheck(application)
-    appKeyHealthChecker(healthCheck, 'asecureandlongrandomsecret')
+    appKeyHealthChecker(healthCheck)
 
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
@@ -66,5 +71,7 @@ test.group('Env Health Checker', () => {
         },
       },
     })
+
+    delete process.env.APP_KEY
   })
 })

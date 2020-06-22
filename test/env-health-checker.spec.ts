@@ -33,9 +33,10 @@ test.group('Env Health Checker', () => {
   })
 
   test('work fine when NODE_ENV is defined', async (assert) => {
+    process.env.NODE_ENV = 'development'
     const application = new Application(__dirname, new Ioc(), {}, {})
     const healthCheck = new HealthCheck(application)
-    envHealthChecker(healthCheck, 'development')
+    envHealthChecker(healthCheck)
 
     const report = await healthCheck.getReport()
     assert.deepEqual(report.report, {
@@ -46,5 +47,7 @@ test.group('Env Health Checker', () => {
         },
       },
     })
+
+    delete process.env.NODE_ENV
   })
 })

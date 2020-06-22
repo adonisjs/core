@@ -32,8 +32,10 @@ const DISPLAY_NAME = 'App Key Check'
  * Check for the APP_KEY to ensure it is present and has
  * desired length.
  */
-export default function addAppKeyChecker (healthCheck: HealthCheckContract, appKey?: string) {
+export default function addAppKeyChecker (healthCheck: HealthCheckContract) {
   healthCheck.addChecker('appKey', async () => {
+    const appKey = process.env.APP_KEY
+
     if (!appKey) {
       return {
         displayName: DISPLAY_NAME,

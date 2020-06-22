@@ -28,7 +28,11 @@ const encryption = new Encryption({
 })
 const router = new Router(encryption)
 
-test.group('HttpExceptionHandler', () => {
+test.group('HttpExceptionHandler', (group) => {
+  group.afterEach(() => {
+    delete process.env.NODE_ENV
+  })
+
   test('do not report error if error code is in ignore list', (assert) => {
     class AppHandler extends HttpExceptionHandler {
       protected ignoreCodes = ['E_BAD_REQUEST']
@@ -248,6 +252,7 @@ test.group('HttpExceptionHandler', () => {
   })
 
   test('return stack trace when NODE_ENV=development', async (assert) => {
+    process.env.NODE_ENV = 'development'
     class AppHandler extends HttpExceptionHandler {
       protected context () {
         return { username: 'virk' }
@@ -258,7 +263,7 @@ test.group('HttpExceptionHandler', () => {
     }
 
     const logger = new FakeLogger(loggerConfig)
-    const handler = new AppHandler(logger, 'development')
+    const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create(
       '/',
@@ -275,6 +280,8 @@ test.group('HttpExceptionHandler', () => {
   })
 
   test('print youch html in development', async (assert) => {
+    process.env.NODE_ENV = 'development'
+
     class AppHandler extends HttpExceptionHandler {
       protected context () {
         return { username: 'virk' }
@@ -285,7 +292,7 @@ test.group('HttpExceptionHandler', () => {
     }
 
     const logger = new FakeLogger(loggerConfig)
-    const handler = new AppHandler(logger, 'development')
+    const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create(
       '/',
@@ -445,6 +452,8 @@ test.group('HttpExceptionHandler', () => {
   })
 
   test('do not render status page when disabled for development mode', async (assert) => {
+    process.env.NODE_ENV = 'development'
+
     class AppHandler extends HttpExceptionHandler {
       protected statusPages = {
         404: '404.edge',
@@ -464,7 +473,7 @@ test.group('HttpExceptionHandler', () => {
     }
 
     const logger = new FakeLogger(loggerConfig)
-    const handler = new AppHandler(logger, 'development')
+    const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create(
       '/',
@@ -489,6 +498,7 @@ test.group('HttpExceptionHandler', () => {
 
   test('always render status page when in production mode', async (assert) => {
     assert.plan(3)
+    process.env.NODE_ENV = 'production'
 
     class AppHandler extends HttpExceptionHandler {
       protected statusPages = {
@@ -509,7 +519,7 @@ test.group('HttpExceptionHandler', () => {
     }
 
     const logger = new FakeLogger(loggerConfig)
-    const handler = new AppHandler(logger, 'production')
+    const handler = new AppHandler(logger)
 
     const ctx = HttpContext.create(
       '/',
