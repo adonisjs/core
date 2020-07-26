@@ -66,6 +66,7 @@ export default class AppProvider {
 			['Adonis/Core/Config', 'Adonis/Core/Server'],
 			(Config: ConfigContract, Server: ServerContract) => {
 				const config = Config.get('cors', {})
+				console.log({ config })
 				if (!config.enabled) {
 					return
 				}
