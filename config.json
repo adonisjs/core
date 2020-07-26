@@ -3,8 +3,10 @@
   "ts": true,
   "license": "MIT",
   "services": [
+    "appveyor",
     "circleci"
   ],
+  "appveyorUsername": "thetutlage",
   "minNodeVersion": "12.18.2",
   "probotApps": [
     "stale",
