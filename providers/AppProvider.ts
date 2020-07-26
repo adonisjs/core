@@ -12,11 +12,6 @@ import { ServerContract } from '@ioc:Adonis/Core/Server'
 import { ConfigContract } from '@ioc:Adonis/Core/Config'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
-import { HealthCheck } from '../src/HealthCheck'
-import envChecker from '../src/HealthCheck/Checkers/Env'
-import appKeyChecker from '../src/HealthCheck/Checkers/AppKey'
-import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
-
 /**
  * The application provider that sticks all core components
  * to the container.
@@ -44,7 +39,10 @@ export default class AppProvider {
 	 * Register `HttpExceptionHandler` to the container.
 	 */
 	protected registerHttpExceptionHandler() {
-		this.container.bind('Adonis/Core/HttpExceptionHandler', () => HttpExceptionHandler)
+		this.container.bind('Adonis/Core/HttpExceptionHandler', () => {
+			const { HttpExceptionHandler } = require('../src/HttpExceptionHandler')
+			return HttpExceptionHandler
+		})
 	}
 
 	/**
@@ -52,6 +50,7 @@ export default class AppProvider {
 	 */
 	protected registerHealthCheck() {
 		this.container.singleton('Adonis/Core/HealthCheck', () => {
+			const { HealthCheck } = require('../src/HealthCheck')
 			return new HealthCheck(this.container.use('Adonis/Core/Application'))
 		})
 	}
@@ -104,9 +103,9 @@ export default class AppProvider {
 	 * Registers base health checkers
 	 */
 	protected registerHealthCheckers() {
-		this.container.with(['Adonis/Core/HealthCheck'], (healthCheck: HealthCheck) => {
-			envChecker(healthCheck)
-			appKeyChecker(healthCheck)
+		this.container.with(['Adonis/Core/HealthCheck'], (healthCheck) => {
+			require('../src/HealthCheck/Checkers/Env').default(healthCheck)
+			require('../src/HealthCheck/Checkers/AppKey').default(healthCheck)
 		})
 	}
 
