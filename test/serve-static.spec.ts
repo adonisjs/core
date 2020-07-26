@@ -29,45 +29,45 @@ const profiler = new Profiler(__dirname, logger, {}).create('')
 const router = new Router(encryption)
 
 test.group('Serve Static', (group) => {
-  group.afterEach(async () => {
-    await fs.cleanup()
-  })
+	group.afterEach(async () => {
+		await fs.cleanup()
+	})
 
-  test('serve static file when it exists', async (assert) => {
-    await fs.add('public/style.css', 'body { background: #000 }')
+	test('serve static file when it exists', async (assert) => {
+		await fs.add('public/style.css', 'body { background: #000 }')
 
-    const server = createServer(async (req, res) => {
-      const serveStatic = new ServeStatic(join(fs.basePath, 'public'), {
-        enabled: true,
-      })
-      const ctx = HttpContext.create('/', {}, logger, profiler, encryption, router, req, res)
-      await serveStatic.handle(ctx)
+		const server = createServer(async (req, res) => {
+			const serveStatic = new ServeStatic(join(fs.basePath, 'public'), {
+				enabled: true,
+			})
+			const ctx = HttpContext.create('/', {}, logger, profiler, encryption, router, req, res)
+			await serveStatic.handle(ctx)
 
-      assert.equal(ctx.response.response.listenerCount('finish'), 1)
-      assert.isTrue(ctx.response.finished)
-    })
+			assert.equal(ctx.response.response.listenerCount('finish'), 1)
+			assert.isTrue(ctx.response.finished)
+		})
 
-    const { text } = await supertest(server).get('/style.css')
-    assert.equal(text, 'body { background: #000 }')
-  })
+		const { text } = await supertest(server).get('/style.css')
+		assert.equal(text, 'body { background: #000 }')
+	})
 
-  test('pass through when unable to lookup file', async (assert) => {
-    await fs.add('public/style.css', 'body { background: #000 }')
+	test('pass through when unable to lookup file', async (assert) => {
+		await fs.add('public/style.css', 'body { background: #000 }')
 
-    const server = createServer(async (req, res) => {
-      const serveStatic = new ServeStatic(join(fs.basePath, 'public'), {
-        enabled: true,
-      })
-      const ctx = HttpContext.create('/', {}, logger, profiler, encryption, router, req, res)
-      await serveStatic.handle(ctx)
+		const server = createServer(async (req, res) => {
+			const serveStatic = new ServeStatic(join(fs.basePath, 'public'), {
+				enabled: true,
+			})
+			const ctx = HttpContext.create('/', {}, logger, profiler, encryption, router, req, res)
+			await serveStatic.handle(ctx)
 
-      assert.equal(ctx.response.response.listenerCount('finish'), 1)
-      assert.isFalse(ctx.response.finished)
+			assert.equal(ctx.response.response.listenerCount('finish'), 1)
+			assert.isFalse(ctx.response.finished)
 
-      ctx.response.status(404).send('404')
-      ctx.response.finish()
-    })
+			ctx.response.status(404).send('404')
+			ctx.response.finish()
+		})
 
-    await supertest(server).get('/').expect(404)
-  })
+		await supertest(server).get('/').expect(404)
+	})
 })

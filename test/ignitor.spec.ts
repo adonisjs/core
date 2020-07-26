@@ -1,11 +1,11 @@
 /*
-* @adonisjs/core
-*
-* (c) Harminder Virk <virk@adonisjs.com>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * @adonisjs/core
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 /// <reference path="../adonis-typings/index.ts" />
 
@@ -19,106 +19,118 @@ import { setupApplicationFiles } from '../test-helpers'
 const fs = new Filesystem(join(__dirname, '__app'))
 
 test.group('Ignitor | App Provider', (group) => {
-  group.before(() => {
-    process.env.ENV_SILENT = 'true'
-  })
+	group.before(() => {
+		process.env.ENV_SILENT = 'true'
+	})
 
-  group.beforeEach(() => {
-    process.env.NODE_ENV = 'testing'
-  })
+	group.beforeEach(() => {
+		process.env.NODE_ENV = 'testing'
+	})
 
-  group.after(async () => {
-    await fs.cleanup()
-    delete process.env.ENV_SILENT
-    delete process.env.APP_KEY
-  })
+	group.after(async () => {
+		await fs.cleanup()
+		delete process.env.ENV_SILENT
+		delete process.env.APP_KEY
+	})
 
-  group.afterEach(async () => {
-    delete process.env.NODE_ENV
-    await fs.cleanup()
-  })
+	group.afterEach(async () => {
+		delete process.env.NODE_ENV
+		await fs.cleanup()
+	})
 
-  test('setup cors before hooks when enabled is set to true', async (assert) => {
-    await setupApplicationFiles(fs)
+	test('setup cors before hooks when enabled is set to true', async (assert) => {
+		await setupApplicationFiles(fs)
 
-    await fs.add('config/cors.ts', `
+		await fs.add(
+			'config/cors.ts',
+			`
       export const enabled = true
       export const exposeHeaders = []
-    `)
+    `
+		)
 
-    const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const boostrapper = new Ignitor(fs.basePath).boostrapper()
 
-    boostrapper.setup()
-    boostrapper.registerProviders(false)
-    await boostrapper.bootProviders()
+		boostrapper.setup()
+		boostrapper.registerProviders(false)
+		await boostrapper.bootProviders()
 
-    const Server = boostrapper.application.container.use('Adonis/Core/Server')
-    assert.lengthOf(Server.hooks.hooks.before, 1)
-  })
+		const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		assert.lengthOf(Server.hooks.hooks.before, 1)
+	})
 
-  test('setup cors before hooks when enabled is set to a function', async (assert) => {
-    await setupApplicationFiles(fs)
+	test('setup cors before hooks when enabled is set to a function', async (assert) => {
+		await setupApplicationFiles(fs)
 
-    await fs.add('config/cors.ts', `
+		await fs.add(
+			'config/cors.ts',
+			`
       export const enabled = () => false
       export const exposeHeaders = []
-    `)
+    `
+		)
 
-    const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const boostrapper = new Ignitor(fs.basePath).boostrapper()
 
-    boostrapper.setup()
-    boostrapper.registerProviders(false)
-    await boostrapper.bootProviders()
-    const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		boostrapper.setup()
+		boostrapper.registerProviders(false)
+		await boostrapper.bootProviders()
+		const Server = boostrapper.application.container.use('Adonis/Core/Server')
 
-    assert.lengthOf(Server.hooks.hooks.before, 1)
-  })
+		assert.lengthOf(Server.hooks.hooks.before, 1)
+	})
 
-  test('do not setup cors before hooks when enabled is set to false', async (assert) => {
-    await setupApplicationFiles(fs)
+	test('do not setup cors before hooks when enabled is set to false', async (assert) => {
+		await setupApplicationFiles(fs)
 
-    await fs.add('config/cors.ts', `
+		await fs.add(
+			'config/cors.ts',
+			`
       export const enabled = false
       export const exposeHeaders = []
-    `)
+    `
+		)
 
-    const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const boostrapper = new Ignitor(fs.basePath).boostrapper()
 
-    boostrapper.setup()
-    boostrapper.registerProviders(false)
-    await boostrapper.bootProviders()
-    const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		boostrapper.setup()
+		boostrapper.registerProviders(false)
+		await boostrapper.bootProviders()
+		const Server = boostrapper.application.container.use('Adonis/Core/Server')
 
-    assert.lengthOf(Server.hooks.hooks.before, 0)
-  })
+		assert.lengthOf(Server.hooks.hooks.before, 0)
+	})
 
-  test('setup static assets before hooks when enabled is set to true', async (assert) => {
-    await setupApplicationFiles(fs)
+	test('setup static assets before hooks when enabled is set to true', async (assert) => {
+		await setupApplicationFiles(fs)
 
-    await fs.add('config/static.ts', `
+		await fs.add(
+			'config/static.ts',
+			`
       export const enabled = true
-    `)
+    `
+		)
 
-    const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const boostrapper = new Ignitor(fs.basePath).boostrapper()
 
-    boostrapper.setup()
-    boostrapper.registerProviders(false)
-    await boostrapper.bootProviders()
+		boostrapper.setup()
+		boostrapper.registerProviders(false)
+		await boostrapper.bootProviders()
 
-    const Server = boostrapper.application.container.use('Adonis/Core/Server')
-    assert.lengthOf(Server.hooks.hooks.before, 1)
-  })
+		const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		assert.lengthOf(Server.hooks.hooks.before, 1)
+	})
 
-  test('register base health checkers', async (assert) => {
-    await setupApplicationFiles(fs)
+	test('register base health checkers', async (assert) => {
+		await setupApplicationFiles(fs)
 
-    const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const boostrapper = new Ignitor(fs.basePath).boostrapper()
 
-    boostrapper.setup()
-    boostrapper.registerProviders(false)
-    await boostrapper.bootProviders()
+		boostrapper.setup()
+		boostrapper.registerProviders(false)
+		await boostrapper.bootProviders()
 
-    const HealthCheck = boostrapper.application.container.use('Adonis/Core/HealthCheck')
-    assert.deepEqual(HealthCheck.servicesList, ['env', 'appKey'])
-  })
+		const HealthCheck = boostrapper.application.container.use('Adonis/Core/HealthCheck')
+		assert.deepEqual(HealthCheck.servicesList, ['env', 'appKey'])
+	})
 })

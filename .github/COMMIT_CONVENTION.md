@@ -5,7 +5,7 @@
 Using conventional commit messages, we can automate the process of generating the CHANGELOG file. All commits messages will automatically be validated against the following regex.
 
 ``` js
-/^(revert: )?(feat|fix|docs|style|refactor|perf|test|workflow|ci|chore|types|build)((.+))?: .{1,50}/
+/^(revert: )?(feat|fix|docs|style|refactor|perf|test|workflow|ci|chore|types|build|improvement)((.+))?: .{1,50}/
 ```
 
 ## Commit Message Format

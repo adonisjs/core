@@ -5,5 +5,9 @@
   "services": [
     "circleci"
   ],
-  "minNodeVersion": "12.0.0"
+  "minNodeVersion": "12.18.2",
+  "probotApps": [
+    "stale",
+    "lock"
+  ]
 }

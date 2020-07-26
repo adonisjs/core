@@ -1,8 +1,8 @@
 version: 2
 jobs:
-  build_12.0.0:
+  build_12.18.2:
     docker:
-      - image: 'circleci/node:12.0.0'
+      - image: 'circleci/node:12.18.2'
     working_directory: ~/app
     steps:
       - checkout
@@ -36,5 +36,5 @@ workflows:
   version: 2
   workflow:
     jobs:
-      - build_12.0.0
+      - build_12.18.2
       - build_latest

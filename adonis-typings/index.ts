@@ -1,11 +1,11 @@
 /*
-* @adonisjs/core
-*
-* (c) Harminder Virk <virk@adonisjs.com>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * @adonisjs/core
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 /// <reference path="../node_modules/@adonisjs/application/build/adonis-typings/application.d.ts" />
 /// <reference path="../node_modules/@adonisjs/config/build/adonis-typings/config.d.ts" />

@@ -21,42 +21,42 @@ import { Cors } from '../src/Hooks/Cors'
 import { specFixtures } from './fixtures/cors'
 
 const encryption = new Encryption({
-  secret: 'verylongandrandom32characterskey',
+	secret: 'verylongandrandom32characterskey',
 })
 
 test.group('Cors', () => {
-  specFixtures.forEach((fixture) => {
-    test(fixture.title, async (assert) => {
-      const server = createServer(async (req, res) => {
-        const cors = new Cors(fixture.configureOptions())
-        const logger = new Logger({ name: 'adonis', enabled: false, level: 'trace' })
-        const router = new Router(encryption)
+	specFixtures.forEach((fixture) => {
+		test(fixture.title, async (assert) => {
+			const server = createServer(async (req, res) => {
+				const cors = new Cors(fixture.configureOptions())
+				const logger = new Logger({ name: 'adonis', enabled: false, level: 'trace' })
+				const router = new Router(encryption)
 
-        fixture.configureRequest(req)
-        const ctx = HttpContext.create(
-          '/',
-          {},
-          logger,
-          new Profiler(__dirname, logger, {}).create(''),
-          encryption,
-          router,
-          req,
-          res,
-        )
-        await cors.handle(ctx)
+				fixture.configureRequest(req)
+				const ctx = HttpContext.create(
+					'/',
+					{},
+					logger,
+					new Profiler(__dirname, logger, {}).create(''),
+					encryption,
+					router,
+					req,
+					res
+				)
+				await cors.handle(ctx)
 
-        if (!ctx.response.hasLazyBody) {
-          ctx.response.send(null)
-        }
+				if (!ctx.response.hasLazyBody) {
+					ctx.response.send(null)
+				}
 
-        ctx.response.finish()
-      })
+				ctx.response.finish()
+			})
 
-      const res = await supertest(server).get('/')
-      fixture.assertNormal(assert, res)
+			const res = await supertest(server).get('/')
+			fixture.assertNormal(assert, res)
 
-      const resOptions = await supertest(server).options('/')
-      fixture.assertOptions(assert, resOptions)
-    })
-  })
+			const resOptions = await supertest(server).options('/')
+			fixture.assertOptions(assert, resOptions)
+		})
+	})
 })
