@@ -3,6 +3,54 @@
 </div>
 
 <br />
+<hr>
+
+<div align="center">
+  <h3>
+    <a href="https://www.patreon.com/adonisframework">
+      Patreon Supporters
+    </a>
+  </h3>
+
+  <p> Shout out to individuals and companies supporting the creator of the framework <p>
+  
+  <a href="https://pickaw.com/?utm_source=adonisjs" title="Pickaw">
+  	<img src="assets/pickaw.png" width="100px">
+  </a>
+
+  <a href="https://www.pivale.co/?utm_source=adonisjs" title="Barry Fisher">
+  	<img src="assets/pivale.png" width="100px">
+  </a>
+
+  <a href="" title="Yung Silva">
+  	<img src="assets/yung-silva.png" width="100px">
+  </a>
+
+  <a href="" title="Bastien Crettenand">
+  	<img src="assets/bastien-crettenand.png" width="100px">
+  </a>
+
+  <a href="" title="Craig Drummond">
+  	<img src="assets/craig-drummond.png" width="100px">
+  </a>
+
+  <a href="https://www.pushengage.com/?utm_source=adonisjs" title="Ravi Trivedi">
+  	<img src="assets/ravi-trivedi.png" width="100px">
+  </a>
+
+  <a href="https://mcsneaky.ap3k.pro/?utm_source=adonisjs" title="McSneaky">
+  	<img src="assets/mc-sneaky.png" width="100px">
+  </a>
+
+  <a href="" title="Sameer">
+  	<img src="assets/sameer.png" width="100px">
+  </a>
+</div>
+
+<hr>
+
+
+<br />
 
 <div align="center">
   <h3>Fullstack MVC framework for Node.js</h3>
