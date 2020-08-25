@@ -22,6 +22,10 @@
   	<img src="assets/pivale.png" width="100px">
   </a>
 
+  <a href="https://cleaver.cloud/adonis/?utm_source=adonisjs" title="Pickaw">
+  	<img src="assets/cleaver.png" width="100px">
+  </a>
+
   <a href="" title="Yung Silva">
   	<img src="assets/yung-silva.png" width="100px">
   </a>
