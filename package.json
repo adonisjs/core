@@ -96,7 +96,7 @@
   },
   "dependencies": {
     "@adonisjs/application": "^2.0.0",
-    "@adonisjs/bodyparser": "^4.0.5",
+    "@adonisjs/bodyparser": "^4.0.6",
     "@adonisjs/config": "^1.1.0",
     "@adonisjs/encryption": "^2.0.6",
     "@adonisjs/env": "^1.0.18",
@@ -105,7 +105,7 @@
     "@adonisjs/http-server": "^3.0.2",
     "@adonisjs/logger": "^2.1.0",
     "@adonisjs/profiler": "^4.0.1",
-    "@adonisjs/validator": "^7.4.0",
+    "@adonisjs/validator": "^7.4.2",
     "@poppinss/utils": "^2.5.5",
     "@types/find-package-json": "^1.1.1",
     "cli-table3": "^0.6.0",
