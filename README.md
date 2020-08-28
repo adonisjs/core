@@ -22,7 +22,7 @@
   	<img src="assets/pivale.png" width="100px">
   </a>
 
-  <a href="https://cleaver.cloud/adonis/?utm_source=adonisjs" title="Pickaw">
+  <a href="https://cleaver.cloud/adonis/?utm_source=adonisjs" title="Cleaver">
   	<img src="assets/cleaver.png" width="100px">
   </a>
 
