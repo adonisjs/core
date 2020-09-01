@@ -68,17 +68,17 @@ test.group('Ignitor | Http', (group) => {
 		await setupApplicationFiles(fs)
 
 		const ignitor = new Ignitor(fs.basePath)
-		const boostrapper = ignitor.boostrapper()
+		const bootstrapper = ignitor.bootstrapper()
 		const httpServer = ignitor.httpServer()
-		const application = boostrapper.setup()
+		const application = bootstrapper.setup()
 
-		boostrapper.registerAliases()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		bootstrapper.registerAliases()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
 
 		const server = application.container.use('Adonis/Core/Server')
 		application.container.use('Adonis/Core/Route').get('/', () => 'handled')
-		httpServer.injectBootstrapper(boostrapper)
+		httpServer.injectBootstrapper(bootstrapper)
 
 		await httpServer.start((handler) => createServer(handler))
 		assert.isTrue(httpServer.application.isReady)
@@ -217,16 +217,16 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
 		await fs.add('public/style.css', 'body { background: #000 }')
 
 		const ignitor = new Ignitor(fs.basePath)
-		const boostrapper = ignitor.boostrapper()
+		const bootstrapper = ignitor.bootstrapper()
 		const httpServer = ignitor.httpServer()
-		const application = boostrapper.setup()
+		const application = bootstrapper.setup()
 
-		boostrapper.registerAliases()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		bootstrapper.registerAliases()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
 
 		const server = application.container.use('Adonis/Core/Server')
-		httpServer.injectBootstrapper(boostrapper)
+		httpServer.injectBootstrapper(bootstrapper)
 
 		await httpServer.start((handler) => createServer(handler))
 		assert.isTrue(httpServer.application.isReady)
@@ -268,16 +268,16 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
 		await fs.add('www/style.css', 'body { background: #000 }')
 
 		const ignitor = new Ignitor(fs.basePath)
-		const boostrapper = ignitor.boostrapper()
+		const bootstrapper = ignitor.bootstrapper()
 		const httpServer = ignitor.httpServer()
-		const application = boostrapper.setup()
+		const application = bootstrapper.setup()
 
-		boostrapper.registerAliases()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		bootstrapper.registerAliases()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
 
 		const server = application.container.use('Adonis/Core/Server')
-		httpServer.injectBootstrapper(boostrapper)
+		httpServer.injectBootstrapper(bootstrapper)
 
 		await httpServer.start((handler) => createServer(handler))
 		assert.isTrue(httpServer.application.isReady)
@@ -327,16 +327,16 @@ test.group('Ignitor | HTTP | CORS', (group) => {
 		)
 
 		const ignitor = new Ignitor(fs.basePath)
-		const boostrapper = ignitor.boostrapper()
+		const bootstrapper = ignitor.bootstrapper()
 		const httpServer = ignitor.httpServer()
-		const application = boostrapper.setup()
+		const application = bootstrapper.setup()
 
-		boostrapper.registerAliases()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		bootstrapper.registerAliases()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
 
 		const server = application.container.use('Adonis/Core/Server')
-		httpServer.injectBootstrapper(boostrapper)
+		httpServer.injectBootstrapper(bootstrapper)
 
 		await httpServer.start((handler) => createServer(handler))
 		assert.isTrue(httpServer.application.isReady)

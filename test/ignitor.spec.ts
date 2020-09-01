@@ -49,13 +49,13 @@ test.group('Ignitor | App Provider', (group) => {
     `
 		)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const bootstrapper = new Ignitor(fs.basePath).bootstrapper()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		bootstrapper.setup()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
 
-		const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		const Server = bootstrapper.application.container.use('Adonis/Core/Server')
 		assert.lengthOf(Server.hooks.hooks.before, 1)
 	})
 
@@ -70,12 +70,12 @@ test.group('Ignitor | App Provider', (group) => {
     `
 		)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const bootstrapper = new Ignitor(fs.basePath).bootstrapper()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
-		const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		bootstrapper.setup()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
+		const Server = bootstrapper.application.container.use('Adonis/Core/Server')
 
 		assert.lengthOf(Server.hooks.hooks.before, 1)
 	})
@@ -91,12 +91,12 @@ test.group('Ignitor | App Provider', (group) => {
     `
 		)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const bootstrapper = new Ignitor(fs.basePath).bootstrapper()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
-		const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		bootstrapper.setup()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
+		const Server = bootstrapper.application.container.use('Adonis/Core/Server')
 
 		assert.lengthOf(Server.hooks.hooks.before, 0)
 	})
@@ -111,26 +111,26 @@ test.group('Ignitor | App Provider', (group) => {
     `
 		)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const bootstrapper = new Ignitor(fs.basePath).bootstrapper()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		bootstrapper.setup()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
 
-		const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		const Server = bootstrapper.application.container.use('Adonis/Core/Server')
 		assert.lengthOf(Server.hooks.hooks.before, 1)
 	})
 
 	test('register base health checkers', async (assert) => {
 		await setupApplicationFiles(fs)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const bootstrapper = new Ignitor(fs.basePath).bootstrapper()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		bootstrapper.setup()
+		bootstrapper.registerProviders(false)
+		await bootstrapper.bootProviders()
 
-		const HealthCheck = boostrapper.application.container.use('Adonis/Core/HealthCheck')
+		const HealthCheck = bootstrapper.application.container.use('Adonis/Core/HealthCheck')
 		assert.deepEqual(HealthCheck.servicesList, ['env', 'appKey'])
 	})
 })

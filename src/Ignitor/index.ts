@@ -19,10 +19,10 @@ export class Ignitor {
 	constructor(private appRoot: string) {}
 
 	/**
-	 * Returns instance of bootstrapper to boostrap
+	 * Returns instance of bootstrapper to bootstrap
 	 * the application
 	 */
-	public boostrapper() {
+	public bootstrapper() {
 		return new Bootstrapper(this.appRoot, true)
 	}
 

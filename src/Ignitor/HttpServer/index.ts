@@ -143,8 +143,8 @@ export class HttpServer {
 	 * when you have bootstrapped application somewhere
 	 * else and now want to start the HTTP server.
 	 */
-	public injectBootstrapper(boostrapper: Bootstrapper) {
-		this.bootstrapper = boostrapper
+	public injectBootstrapper(bootstrapper: Bootstrapper) {
+		this.bootstrapper = bootstrapper
 		this.application = this.bootstrapper.application
 		this.application.environment = 'web'
 		this.wired = true
