@@ -10,7 +10,7 @@
 import Table from 'cli-table3'
 import { inject } from '@adonisjs/fold'
 import { BaseCommand, flags } from '@adonisjs/ace'
-import { RouterContract, RouteNode } from '@ioc:Adonis/Core/Route'
+import type { RouterContract, RouteNode } from '@ioc:Adonis/Core/Route'
 
 /**
  * A command to display a list of routes
