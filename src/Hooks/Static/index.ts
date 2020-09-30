@@ -8,8 +8,8 @@
  */
 
 import staticServer from 'serve-static'
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { AssetsConfig } from '@ioc:Adonis/Core/Static'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 /**
  * A simple server hook to serve static files from the public directory.

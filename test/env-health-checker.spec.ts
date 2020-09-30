@@ -8,15 +8,14 @@
  */
 
 import test from 'japa'
-import { Ioc } from '@adonisjs/fold'
-import { Application } from '@adonisjs/application/build/standalone'
+import { Application } from '@adonisjs/application'
 
 import { HealthCheck } from '../src/HealthCheck'
 import envHealthChecker from '../src/HealthCheck/Checkers/Env'
 
 test.group('Env Health Checker', () => {
 	test('fail when NODE_ENV is not defined', async (assert) => {
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'console', {})
 		const healthCheck = new HealthCheck(application)
 		envHealthChecker(healthCheck)
 
@@ -35,7 +34,7 @@ test.group('Env Health Checker', () => {
 
 	test('work fine when NODE_ENV is defined', async (assert) => {
 		process.env.NODE_ENV = 'development'
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'console', {})
 		const healthCheck = new HealthCheck(application)
 		envHealthChecker(healthCheck)
 

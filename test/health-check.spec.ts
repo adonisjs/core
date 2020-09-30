@@ -10,18 +10,17 @@
 /// <reference path="../adonis-typings/index.ts" />
 
 import test from 'japa'
-import { Ioc } from '@adonisjs/fold'
-import { Application } from '@adonisjs/application/build/standalone'
+import { Application } from '@adonisjs/application'
 import { HealthCheck } from '../src/HealthCheck'
 
 test.group('HealthCheck', () => {
 	test('use application isReady state to find if application is ready', (assert) => {
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'web', {})
 		const healthCheck = new HealthCheck(application)
 
 		assert.isFalse(healthCheck.isReady())
 
-		application.isReady = true
+		application.state = 'ready'
 		assert.isTrue(healthCheck.isReady())
 
 		application.isShuttingDown = true
@@ -29,7 +28,7 @@ test.group('HealthCheck', () => {
 	})
 
 	test('get health checks report', async (assert) => {
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'web', {})
 		const healthCheck = new HealthCheck(application)
 
 		healthCheck.addChecker('event-loop', async () => {
@@ -56,7 +55,7 @@ test.group('HealthCheck', () => {
 	})
 
 	test('handle exceptions raised within the checker', async (assert) => {
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'web', {})
 		const healthCheck = new HealthCheck(application)
 
 		healthCheck.addChecker('event-loop', async () => {
@@ -82,7 +81,7 @@ test.group('HealthCheck', () => {
 	})
 
 	test('set healthy to false when any of the checker fails', async (assert) => {
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'web', {})
 		const healthCheck = new HealthCheck(application)
 
 		healthCheck.addChecker('database', async () => {
@@ -123,8 +122,7 @@ test.group('HealthCheck', () => {
 	})
 
 	test('define checker as IoC container binding', async (assert) => {
-		const ioc = new Ioc()
-		const application = new Application(__dirname, ioc, {}, {})
+		const application = new Application(__dirname, 'web', {})
 		const healthCheck = new HealthCheck(application)
 
 		class DbChecker {
@@ -137,12 +135,9 @@ test.group('HealthCheck', () => {
 			}
 		}
 
-		ioc.bind('App/Checkers/Db', () => {
+		application.container.bind('App/Checkers/Db', () => {
 			return new DbChecker()
 		})
-
-		global[Symbol.for('ioc.make')] = ioc.make.bind(ioc)
-		global[Symbol.for('ioc.call')] = ioc.call.bind(ioc)
 
 		healthCheck.addChecker('database', 'App/Checkers/Db')
 

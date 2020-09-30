@@ -10,13 +10,8 @@
 /// <reference path="../adonis-typings/index.ts" />
 
 import test from 'japa'
-import { join } from 'path'
-import { Filesystem } from '@poppinss/dev-utils'
-
 import { Ignitor } from '../src/Ignitor'
-import { setupApplicationFiles } from '../test-helpers'
-
-const fs = new Filesystem(join(__dirname, '__app'))
+import { setupApplicationFiles, fs } from '../test-helpers'
 
 test.group('Ignitor | App Provider', (group) => {
 	group.before(() => {
@@ -34,12 +29,14 @@ test.group('Ignitor | App Provider', (group) => {
 	})
 
 	group.afterEach(async () => {
+		process.removeAllListeners('SIGINT')
+		process.removeAllListeners('SIGTERM')
 		delete process.env.NODE_ENV
 		await fs.cleanup()
 	})
 
 	test('setup cors before hooks when enabled is set to true', async (assert) => {
-		await setupApplicationFiles(fs)
+		await setupApplicationFiles()
 
 		await fs.add(
 			'config/cors.ts',
@@ -49,18 +46,17 @@ test.group('Ignitor | App Provider', (group) => {
     `
 		)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const httpServer = new Ignitor(fs.basePath).httpServer()
+		await httpServer.start()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		const Server = httpServer.application.container.use('Adonis/Core/Server')
+		assert.lengthOf(Server.hooks['hooks'].before, 1)
 
-		const Server = boostrapper.application.container.use('Adonis/Core/Server')
-		assert.lengthOf(Server.hooks.hooks.before, 1)
+		await httpServer.close()
 	})
 
 	test('setup cors before hooks when enabled is set to a function', async (assert) => {
-		await setupApplicationFiles(fs)
+		await setupApplicationFiles()
 
 		await fs.add(
 			'config/cors.ts',
@@ -70,18 +66,17 @@ test.group('Ignitor | App Provider', (group) => {
     `
 		)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const httpServer = new Ignitor(fs.basePath).httpServer()
+		await httpServer.start()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
-		const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		const Server = httpServer.application.container.use('Adonis/Core/Server')
+		assert.lengthOf(Server.hooks['hooks'].before, 1)
 
-		assert.lengthOf(Server.hooks.hooks.before, 1)
+		await httpServer.close()
 	})
 
 	test('do not setup cors before hooks when enabled is set to false', async (assert) => {
-		await setupApplicationFiles(fs)
+		await setupApplicationFiles()
 
 		await fs.add(
 			'config/cors.ts',
@@ -91,18 +86,17 @@ test.group('Ignitor | App Provider', (group) => {
     `
 		)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const httpServer = new Ignitor(fs.basePath).httpServer()
+		await httpServer.start()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
-		const Server = boostrapper.application.container.use('Adonis/Core/Server')
+		const Server = httpServer.application.container.use('Adonis/Core/Server')
+		assert.lengthOf(Server.hooks['hooks'].before, 0)
 
-		assert.lengthOf(Server.hooks.hooks.before, 0)
+		await httpServer.close()
 	})
 
 	test('setup static assets before hooks when enabled is set to true', async (assert) => {
-		await setupApplicationFiles(fs)
+		await setupApplicationFiles()
 
 		await fs.add(
 			'config/static.ts',
@@ -111,26 +105,24 @@ test.group('Ignitor | App Provider', (group) => {
     `
 		)
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const httpServer = new Ignitor(fs.basePath).httpServer()
+		await httpServer.start()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
+		const Server = httpServer.application.container.use('Adonis/Core/Server')
+		assert.lengthOf(Server.hooks['hooks'].before, 1)
 
-		const Server = boostrapper.application.container.use('Adonis/Core/Server')
-		assert.lengthOf(Server.hooks.hooks.before, 1)
+		await httpServer.close()
 	})
 
 	test('register base health checkers', async (assert) => {
-		await setupApplicationFiles(fs)
+		await setupApplicationFiles()
 
-		const boostrapper = new Ignitor(fs.basePath).boostrapper()
+		const httpServer = new Ignitor(fs.basePath).httpServer()
+		await httpServer.start()
 
-		boostrapper.setup()
-		boostrapper.registerProviders(false)
-		await boostrapper.bootProviders()
-
-		const HealthCheck = boostrapper.application.container.use('Adonis/Core/HealthCheck')
+		const HealthCheck = httpServer.application.container.use('Adonis/Core/HealthCheck')
 		assert.deepEqual(HealthCheck.servicesList, ['env', 'appKey'])
+
+		await httpServer.close()
 	})
 })

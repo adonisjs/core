@@ -8,8 +8,6 @@
  */
 
 declare module '@ioc:Adonis/Core/Static' {
-	import { RequestContract } from '@ioc:Adonis/Core/Request'
-
 	export type AssetsConfig = {
 		enabled: boolean
 		acceptRanges?: boolean

@@ -33,10 +33,10 @@ export class SignalsListener {
 	public listen(callback: () => Promise<void>) {
 		this.onCloseCallback = callback
 		if (process.env.pm_id) {
-			process.on('SIGINT', this.kill)
+			process.once('SIGINT', this.kill)
 		}
 
-		process.on('SIGTERM', this.kill)
+		process.once('SIGTERM', this.kill)
 	}
 
 	/**

@@ -12,37 +12,28 @@
 import test from 'japa'
 import supertest from 'supertest'
 import { createServer } from 'http'
-import { Logger } from '@adonisjs/logger/build/standalone'
-import { Profiler } from '@adonisjs/profiler/build/standalone'
-import { Encryption } from '@adonisjs/encryption/build/standalone'
-import { HttpContext, Router } from '@adonisjs/http-server/build/standalone'
 
 import { Cors } from '../src/Hooks/Cors'
 import { specFixtures } from './fixtures/cors'
+import { fs, setupApp } from '../test-helpers'
 
-const encryption = new Encryption({
-	secret: 'verylongandrandom32characterskey',
-})
+test.group('Cors', (group) => {
+	group.afterEach(async () => {
+		process.removeAllListeners('SIGINT')
+		process.removeAllListeners('SIGTERM')
 
-test.group('Cors', () => {
+		await fs.cleanup()
+	})
+
 	specFixtures.forEach((fixture) => {
 		test(fixture.title, async (assert) => {
+			const app = await setupApp()
+
 			const server = createServer(async (req, res) => {
 				const cors = new Cors(fixture.configureOptions())
-				const logger = new Logger({ name: 'adonis', enabled: false, level: 'trace' })
-				const router = new Router(encryption)
-
 				fixture.configureRequest(req)
-				const ctx = HttpContext.create(
-					'/',
-					{},
-					logger,
-					new Profiler(__dirname, logger, {}).create(''),
-					encryption,
-					router,
-					req,
-					res
-				)
+
+				const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {}, req, res)
 				await cors.handle(ctx)
 
 				if (!ctx.response.hasLazyBody) {

@@ -7,9 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { IocContract } from '@adonisjs/fold'
-import { ServerContract } from '@ioc:Adonis/Core/Server'
-import { ConfigContract } from '@ioc:Adonis/Core/Config'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 /**
@@ -17,16 +14,12 @@ import { ApplicationContract } from '@ioc:Adonis/Core/Application'
  * to the container.
  */
 export default class AppProvider {
-	constructor(protected container: IocContract) {}
+	constructor(protected app: ApplicationContract) {}
 
 	/**
 	 * Additional providers to load
 	 */
 	public provides = [
-		'@adonisjs/env',
-		'@adonisjs/config',
-		'@adonisjs/profiler',
-		'@adonisjs/logger',
 		'@adonisjs/encryption',
 		'@adonisjs/events',
 		'@adonisjs/hash',
@@ -39,7 +32,7 @@ export default class AppProvider {
 	 * Register `HttpExceptionHandler` to the container.
 	 */
 	protected registerHttpExceptionHandler() {
-		this.container.bind('Adonis/Core/HttpExceptionHandler', () => {
+		this.app.container.bind('Adonis/Core/HttpExceptionHandler', () => {
 			const { HttpExceptionHandler } = require('../src/HttpExceptionHandler')
 			return HttpExceptionHandler
 		})
@@ -49,9 +42,9 @@ export default class AppProvider {
 	 * Registering the health check provider
 	 */
 	protected registerHealthCheck() {
-		this.container.singleton('Adonis/Core/HealthCheck', () => {
+		this.app.container.singleton('Adonis/Core/HealthCheck', () => {
 			const { HealthCheck } = require('../src/HealthCheck')
-			return new HealthCheck(this.container.use('Adonis/Core/Application'))
+			return new HealthCheck(this.app)
 		})
 	}
 
@@ -62,19 +55,16 @@ export default class AppProvider {
 		/**
 		 * Register the cors before hook with the server
 		 */
-		this.container.with(
-			['Adonis/Core/Config', 'Adonis/Core/Server'],
-			(Config: ConfigContract, Server: ServerContract) => {
-				const config = Config.get('cors', {})
-				if (!config.enabled) {
-					return
-				}
-
-				const Cors = require('../src/Hooks/Cors').Cors
-				const cors = new Cors(config)
-				Server.hooks.before(cors.handle.bind(cors))
+		this.app.container.with(['Adonis/Core/Config', 'Adonis/Core/Server'], (Config, Server) => {
+			const config = Config.get('cors', {})
+			if (!config.enabled) {
+				return
 			}
-		)
+
+			const Cors = require('../src/Hooks/Cors').Cors
+			const cors = new Cors(config)
+			Server.hooks.before(cors.handle.bind(cors))
+		})
 	}
 
 	/**
@@ -84,9 +74,9 @@ export default class AppProvider {
 		/**
 		 * Register the cors before hook with the server
 		 */
-		this.container.with(
+		this.app.container.with(
 			['Adonis/Core/Config', 'Adonis/Core/Server', 'Adonis/Core/Application'],
-			(Config: ConfigContract, Server: ServerContract, Application: ApplicationContract) => {
+			(Config, Server, Application) => {
 				const config = Config.get('static', {})
 				if (!config.enabled) {
 					return
@@ -103,7 +93,7 @@ export default class AppProvider {
 	 * Registers base health checkers
 	 */
 	protected registerHealthCheckers() {
-		this.container.with(['Adonis/Core/HealthCheck'], (healthCheck) => {
+		this.app.container.with(['Adonis/Core/HealthCheck'], (healthCheck) => {
 			require('../src/HealthCheck/Checkers/Env').default(healthCheck)
 			require('../src/HealthCheck/Checkers/AppKey').default(healthCheck)
 		})

@@ -11,8 +11,9 @@ import test from 'japa'
 import 'reflect-metadata'
 import { Ioc } from '@adonisjs/fold'
 import { Kernel } from '@adonisjs/ace'
+import { testingRenderer } from '@poppinss/cliui'
+import { Application } from '@adonisjs/application'
 import { Router } from '@adonisjs/http-server/build/src/Router'
-import { Application } from '@adonisjs/application/build/standalone'
 import { PreCompiler } from '@adonisjs/http-server/build/src/Server/PreCompiler/index'
 
 import ListRoutes from '../commands/ListRoutes'
@@ -25,10 +26,13 @@ const precompiler = new PreCompiler(ioc, {
 	},
 } as any)
 
-test.group('Command | List Routes', () => {
+test.group('Command | List Routes', (group) => {
+	group.afterEach(() => {
+		testingRenderer.logs = []
+	})
+
 	test('list routes in the order they are register', async (assert) => {
-		const app = new Application(__dirname, {} as any, {} as any, {})
-		app.environment = 'test'
+		const app = new Application(__dirname, 'test', {})
 
 		const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
 		router.get('about', async () => {})
@@ -36,32 +40,37 @@ test.group('Command | List Routes', () => {
 		router.commit()
 
 		const listRoutes = new ListRoutes(app, new Kernel(app))
+		listRoutes.logger.useRenderer(testingRenderer)
 		listRoutes.json = true
-		await listRoutes.handle(router)
+		await listRoutes.run(router)
 
-		assert.deepEqual(JSON.parse(listRoutes.logger.logs[0]), [
-			{
-				methods: ['GET'],
-				name: '',
-				pattern: '/about',
-				handler: 'Closure',
-				middleware: [],
-				domain: '',
-			},
-			{
-				methods: ['GET'],
-				name: '',
-				pattern: '/contact',
-				handler: 'Closure',
-				middleware: [],
-				domain: '',
-			},
-		])
+		assert.deepEqual(
+			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
+			[
+				[
+					{
+						methods: ['GET'],
+						name: '',
+						pattern: '/about',
+						handler: 'Closure',
+						middleware: [],
+						domain: '',
+					},
+					{
+						methods: ['GET'],
+						name: '',
+						pattern: '/contact',
+						handler: 'Closure',
+						middleware: [],
+						domain: '',
+					},
+				],
+			]
+		)
 	})
 
 	test('list routes with assigned middleware', async (assert) => {
-		const app = new Application(__dirname, {} as any, {} as any, {})
-		app.environment = 'test'
+		const app = new Application(__dirname, 'test', {})
 
 		const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
 		router.get('about', async () => {})
@@ -69,32 +78,37 @@ test.group('Command | List Routes', () => {
 		router.commit()
 
 		const listRoutes = new ListRoutes(app, new Kernel(app))
+		listRoutes.logger.useRenderer(testingRenderer)
 		listRoutes.json = true
-		await listRoutes.handle(router)
+		await listRoutes.run(router)
 
-		assert.deepEqual(JSON.parse(listRoutes.logger.logs[0]), [
-			{
-				methods: ['GET'],
-				name: '',
-				pattern: '/about',
-				handler: 'Closure',
-				middleware: [],
-				domain: '',
-			},
-			{
-				methods: ['GET'],
-				name: '',
-				pattern: '/contact',
-				handler: 'Closure',
-				middleware: ['auth', 'acl:admin'],
-				domain: '',
-			},
-		])
+		assert.deepEqual(
+			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
+			[
+				[
+					{
+						methods: ['GET'],
+						name: '',
+						pattern: '/about',
+						handler: 'Closure',
+						middleware: [],
+						domain: '',
+					},
+					{
+						methods: ['GET'],
+						name: '',
+						pattern: '/contact',
+						handler: 'Closure',
+						middleware: ['auth', 'acl:admin'],
+						domain: '',
+					},
+				],
+			]
+		)
 	})
 
 	test('list routes with controller handlers', async (assert) => {
-		const app = new Application(__dirname, {} as any, {} as any, {})
-		app.environment = 'test'
+		const app = new Application(__dirname, 'test', {})
 
 		ioc.bind('App/Controllers/Http/HomeController', () => {})
 		ioc.bind('App/Controllers/Http/ContactController', () => {})
@@ -106,31 +120,36 @@ test.group('Command | List Routes', () => {
 
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.json = true
-		await listRoutes.handle(router)
+		listRoutes.logger.useRenderer(testingRenderer)
+		await listRoutes.run(router)
 
-		assert.deepEqual(JSON.parse(listRoutes.logger.logs[0]), [
-			{
-				methods: ['GET'],
-				pattern: '/about',
-				name: '',
-				handler: 'HomeController.index',
-				middleware: [],
-				domain: '',
-			},
-			{
-				methods: ['GET'],
-				pattern: '/contact',
-				name: '',
-				handler: 'ContactController.handle',
-				middleware: [],
-				domain: '',
-			},
-		])
+		assert.deepEqual(
+			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
+			[
+				[
+					{
+						methods: ['GET'],
+						pattern: '/about',
+						name: '',
+						handler: 'HomeController.index',
+						middleware: [],
+						domain: '',
+					},
+					{
+						methods: ['GET'],
+						pattern: '/contact',
+						name: '',
+						handler: 'ContactController.handle',
+						middleware: [],
+						domain: '',
+					},
+				],
+			]
+		)
 	})
 
 	test('output complete controller namespace when using a custom namespace', async (assert) => {
-		const app = new Application(__dirname, {} as any, {} as any, {})
-		app.environment = 'test'
+		const app = new Application(__dirname, 'test', {})
 
 		const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
 		ioc.bind('App/Controllers/Http/HomeController', () => {})
@@ -142,31 +161,36 @@ test.group('Command | List Routes', () => {
 
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.json = true
-		await listRoutes.handle(router)
+		listRoutes.logger.useRenderer(testingRenderer)
+		await listRoutes.run(router)
 
-		assert.deepEqual(JSON.parse(listRoutes.logger.logs[0]), [
-			{
-				methods: ['GET'],
-				pattern: '/about',
-				name: '',
-				handler: 'HomeController.index',
-				middleware: [],
-				domain: '',
-			},
-			{
-				methods: ['GET'],
-				pattern: '/contact',
-				name: '',
-				handler: 'App/Admin/ContactController.handle',
-				middleware: [],
-				domain: '',
-			},
-		])
+		assert.deepEqual(
+			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
+			[
+				[
+					{
+						methods: ['GET'],
+						pattern: '/about',
+						name: '',
+						handler: 'HomeController.index',
+						middleware: [],
+						domain: '',
+					},
+					{
+						methods: ['GET'],
+						pattern: '/contact',
+						name: '',
+						handler: 'App/Admin/ContactController.handle',
+						middleware: [],
+						domain: '',
+					},
+				],
+			]
+		)
 	})
 
 	test('output route custom domain', async (assert) => {
-		const app = new Application(__dirname, {} as any, {} as any, {})
-		app.environment = 'test'
+		const app = new Application(__dirname, 'test', {})
 
 		const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
 
@@ -175,23 +199,28 @@ test.group('Command | List Routes', () => {
 
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.json = true
-		await listRoutes.handle(router)
+		listRoutes.logger.useRenderer(testingRenderer)
+		await listRoutes.run(router)
 
-		assert.deepEqual(JSON.parse(listRoutes.logger.logs[0]), [
-			{
-				methods: ['GET'],
-				pattern: '/about',
-				handler: 'Closure',
-				name: '',
-				middleware: [],
-				domain: 'blogger.com',
-			},
-		])
+		assert.deepEqual(
+			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
+			[
+				[
+					{
+						methods: ['GET'],
+						pattern: '/about',
+						handler: 'Closure',
+						name: '',
+						middleware: [],
+						domain: 'blogger.com',
+					},
+				],
+			]
+		)
 	})
 
 	test('prefix route group pattern', async (assert) => {
-		const app = new Application(__dirname, {} as any, {} as any, {})
-		app.environment = 'test'
+		const app = new Application(__dirname, 'test', {})
 
 		const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
 
@@ -204,17 +233,23 @@ test.group('Command | List Routes', () => {
 
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.json = true
-		await listRoutes.handle(router)
+		listRoutes.logger.useRenderer(testingRenderer)
+		await listRoutes.run(router)
 
-		assert.deepEqual(JSON.parse(listRoutes.logger.logs[0]), [
-			{
-				methods: ['GET'],
-				pattern: '/v1/about',
-				handler: 'Closure',
-				name: '',
-				middleware: [],
-				domain: 'blogger.com',
-			},
-		])
+		assert.deepEqual(
+			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
+			[
+				[
+					{
+						methods: ['GET'],
+						pattern: '/v1/about',
+						handler: 'Closure',
+						name: '',
+						middleware: [],
+						domain: 'blogger.com',
+					},
+				],
+			]
+		)
 	})
 })

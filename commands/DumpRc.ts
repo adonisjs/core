@@ -21,13 +21,13 @@ export default class DumpRcFile extends BaseCommand {
 	 */
 	private log(message: string) {
 		if (this.application.environment === 'test') {
-			this.logger.logs.push(message)
+			this.logger.log(message)
 		} else {
 			console.log(message)
 		}
 	}
 
-	public async handle() {
+	public async run() {
 		this.log(JSON.stringify(this.application.rcFile, null, 2))
 	}
 }

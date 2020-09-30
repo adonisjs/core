@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { IocResolverContract } from '@adonisjs/fold'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 import {
@@ -30,7 +29,7 @@ export class HealthCheck implements HealthCheckContract {
 	/**
 	 * Reference to IoC container to resolve health checkers
 	 */
-	private resolver: IocResolverContract = this.application.container.getResolver('report')
+	private resolver = this.application.container.getResolver('report')
 
 	/**
 	 * Returns an array of registered services names

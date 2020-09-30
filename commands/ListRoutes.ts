@@ -45,7 +45,7 @@ export default class ListRoutes extends BaseCommand {
 	 * Returns an array of routes as JSON
 	 */
 	private outputJSON(router: RouterContract) {
-		return router['lookupStore'].map((lookupRoute) => {
+		return router.toJSON().map((lookupRoute) => {
 			const route = this.findRoute(
 				router,
 				lookupRoute.domain,
@@ -112,16 +112,14 @@ export default class ListRoutes extends BaseCommand {
 	 */
 	private log(message: string) {
 		if (this.application.environment === 'test') {
-			this.logger.logs.push(message)
+			this.logger.log(message)
 		} else {
 			console.log(message)
 		}
 	}
 
 	@inject(['Adonis/Core/Route'])
-	public async handle(router: RouterContract) {
-		router.commit()
-
+	public async run(router: RouterContract) {
 		if (this.json) {
 			this.log(JSON.stringify(this.outputJSON(router), null, 2))
 		} else {

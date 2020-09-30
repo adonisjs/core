@@ -8,14 +8,16 @@
  */
 
 import { join } from 'path'
+import { Application } from '@adonisjs/application'
 import { Filesystem } from '@poppinss/dev-utils'
 
 const SECRET = 'asecureandlongrandomsecret'
+export const fs = new Filesystem(join(__dirname, '__app'))
 
 /**
- * Setup typescript application files for testing
+ * Setup application files for testing
  */
-export async function setupApplicationFiles(fs: Filesystem, additionalProviders?: string[]) {
+export async function setupApplicationFiles(additionalProviders?: string[]) {
 	await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
 
 	const providers = Array.isArray(additionalProviders)
@@ -61,50 +63,15 @@ export async function setupApplicationFiles(fs: Filesystem, additionalProviders?
 }
 
 /**
- * Creates compiled files
+ * Setup application for testing
  */
-export async function setupCompiledApplicationFiles(
-	fs: Filesystem,
-	outDir: string,
-	additionalProviders?: string[]
-) {
-	await fs.fsExtra.ensureDir(join(fs.basePath, outDir, 'config'))
-	await fs.fsExtra.copyFile(join(fs.basePath, '.env'), join(fs.basePath, outDir, '.env'))
-	await fs.add(
-		`${outDir}/.adonisrc.json`,
-		JSON.stringify(require(join(fs.basePath, '.adonisrc.json')))
-	)
+export async function setupApp(additionalProviders?: string[]) {
+	await setupApplicationFiles(additionalProviders)
+	const app = new Application(fs.basePath, 'console')
 
-	await fs.add(
-		`${outDir}/config/app.js`,
-		`
-    module.exports = {
-      appKey: '${SECRET}',
-      http: {
-        trustProxy () {
-          return true
-        },
-        cookie: {}
-			},
-			logger: {
-				enabled: true,
-				name: 'adonisjs',
-				level: 'info',
-			},
-    }
-  `
-	)
+	app.setup()
+	app.registerProviders()
+	await app.bootProviders()
 
-	const providers = Array.isArray(additionalProviders)
-		? additionalProviders.concat(join(__dirname, '../providers/AppProvider.ts'))
-		: [join(__dirname, '../providers/AppProvider.ts')]
-
-	await fs.add(
-		`${outDir}/start/app.js`,
-		`module.exports = {
-    providers: [
-      ${providers.map((one) => `'${one}',`).join('\n')}
-    ],
-  }`
-	)
+	return app
 }

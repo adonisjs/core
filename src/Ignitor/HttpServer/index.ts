@@ -8,13 +8,11 @@
  */
 
 import { Server as HttpsServer } from 'https'
+import { Application } from '@adonisjs/application'
 import { ServerContract } from '@ioc:Adonis/Core/Server'
-import { LoggerContract } from '@ioc:Adonis/Core/Logger'
-import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
 
-import { Bootstrapper } from '../Bootstrapper'
-import { ErrorHandler } from '../ErrorHandler'
+import { ErrorHandler } from './ErrorHandler'
 import { SignalsListener } from '../SignalsListener'
 
 type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
@@ -26,19 +24,9 @@ type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
  */
 export class HttpServer {
 	/**
-	 * Reference to bootstrapper
-	 */
-	private bootstrapper = new Bootstrapper(this.appRoot, true)
-
-	/**
 	 * Reference to core http server.
 	 */
 	private server: ServerContract
-
-	/**
-	 * Reference to core logger
-	 */
-	private logger: LoggerContract
 
 	/**
 	 * Whether or not the application has been wired.
@@ -54,7 +42,7 @@ export class HttpServer {
 	/**
 	 * Reference to the application.
 	 */
-	public application: ApplicationContract
+	public application = new Application(this.appRoot, 'web')
 
 	constructor(private appRoot: string) {}
 
@@ -68,38 +56,24 @@ export class HttpServer {
 		}
 
 		/**
-		 * Setting up the application. Nothing is registered yet.
-		 * Just calls to `ioc.use` are available.
+		 * Setting up the application.
 		 */
-		this.application = this.bootstrapper.setup()
-		this.injectBootstrapper(this.bootstrapper)
-
-		/**
-		 * Registering directories to be autoloaded
-		 */
-		this.bootstrapper.registerAliases()
+		this.application.setup()
 
 		/**
 		 * Registering providers
 		 */
-		this.bootstrapper.registerProviders(false)
+		this.application.registerProviders()
 
 		/**
 		 * Booting providers
 		 */
-		await this.bootstrapper.bootProviders()
+		await this.application.bootProviders()
 
 		/**
 		 * Importing preloaded files
 		 */
-		this.bootstrapper.registerPreloads()
-	}
-
-	/**
-	 * Sets the logger reference
-	 */
-	private setLogger() {
-		this.logger = this.application.container.use('Adonis/Core/Logger')
+		this.application.requirePreloads()
 	}
 
 	/**
@@ -122,32 +96,20 @@ export class HttpServer {
 	 */
 	private monitorHttpServer() {
 		this.server.instance!.on('close', async () => {
-			this.logger.trace('closing http server')
+			this.application.logger.trace('closing http server')
 			this.server.instance!.removeAllListeners()
-			this.application.isReady = false
+			this.application.isShuttingDown = true
 		})
 
 		this.server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
 			if (error.code === 'EADDRINUSE') {
-				this.logger.error('Port in use, closing server')
+				this.application.logger.error('Port in use, closing server')
 				process.exitCode = 1
 				return
 			}
 
 			await this.kill(3000)
 		})
-	}
-
-	/**
-	 * Inject bootstrapper from outside. This is mainly done
-	 * when you have bootstrapped application somewhere
-	 * else and now want to start the HTTP server.
-	 */
-	public injectBootstrapper(boostrapper: Bootstrapper) {
-		this.bootstrapper = boostrapper
-		this.application = this.bootstrapper.application
-		this.application.environment = 'web'
-		this.wired = true
 	}
 
 	/**
@@ -158,13 +120,16 @@ export class HttpServer {
 		/**
 		 * Optimizing the server by pre-compiling routes and middleware
 		 */
-		this.logger.trace('optimizing http server handler')
+		this.application.logger.trace('optimizing http server handler')
 		this.server.optimize()
 
 		/**
 		 * Bind exception handler to handle exceptions occured during HTTP requests.
 		 */
-		this.logger.trace('binding %s exception handler', this.application.exceptionHandlerNamespace)
+		this.application.logger.trace(
+			'binding %s exception handler',
+			this.application.exceptionHandlerNamespace
+		)
 		this.server.errorHandler(this.application.exceptionHandlerNamespace)
 
 		const handler = this.server.handle.bind(this.server)
@@ -177,15 +142,13 @@ export class HttpServer {
 	public listen() {
 		return new Promise(async (resolve, reject) => {
 			try {
-				await this.bootstrapper.executeReadyHooks()
+				await this.application.start()
 
-				const Env = this.application.container.use('Adonis/Core/Env')
-				const host = Env.get('HOST', '0.0.0.0') as string
-				const port = Number(Env.get('PORT', '3333') as string)
+				const host = this.application.env.get('HOST', '0.0.0.0')
+				const port = Number(this.application.env.get('PORT', '3333'))
 
 				this.server.instance!.listen(port, host, () => {
-					this.logger.info('started server on %s:%s', host, port)
-					this.application.isReady = true
+					this.application.logger.info('started server on %s:%s', host, port)
 					resolve()
 				})
 			} catch (error) {
@@ -200,7 +163,6 @@ export class HttpServer {
 	public async start(serverCallback?: CustomServerCallback) {
 		try {
 			await this.wire()
-			this.setLogger()
 			this.setServer()
 			this.createServer(serverCallback)
 			this.monitorHttpServer()
@@ -216,15 +178,13 @@ export class HttpServer {
 	 * lifecycle method on the providers and closes the `httpServer`.
 	 */
 	public async close() {
-		this.application.isShuttingDown = true
-
 		/**
 		 * Close the HTTP server before excuting the `shutdown` hooks. This ensures that
 		 * we are not accepting any new request during cool off.
 		 */
 		await this.closeHttpServer()
 		this.signalsListener.cleanup()
-		await this.bootstrapper.executeShutdownHooks()
+		await this.application.shutdown()
 	}
 
 	/**
@@ -233,7 +193,7 @@ export class HttpServer {
 	 * seconds.
 	 */
 	public async kill(waitTimeout: number = 3000) {
-		this.logger.trace('forcefully killing http server')
+		this.application.logger.trace('forcefully killing http server')
 
 		try {
 			await Promise.race([

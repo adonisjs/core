@@ -9,7 +9,6 @@
 
 import { Ace } from './Ace'
 import { HttpServer } from './HttpServer'
-import { Bootstrapper } from './Bootstrapper'
 
 /**
  * Ignitor is used to wireup different pieces of AdonisJs to bootstrap
@@ -17,14 +16,6 @@ import { Bootstrapper } from './Bootstrapper'
  */
 export class Ignitor {
 	constructor(private appRoot: string) {}
-
-	/**
-	 * Returns instance of bootstrapper to boostrap
-	 * the application
-	 */
-	public boostrapper() {
-		return new Bootstrapper(this.appRoot, true)
-	}
 
 	/**
 	 * Returns instance of server to start

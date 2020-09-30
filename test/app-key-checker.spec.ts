@@ -8,15 +8,14 @@
  */
 
 import test from 'japa'
-import { Ioc } from '@adonisjs/fold'
-import { Application } from '@adonisjs/application/build/standalone'
+import { Application } from '@adonisjs/application'
 
 import { HealthCheck } from '../src/HealthCheck'
 import appKeyHealthChecker from '../src/HealthCheck/Checkers/AppKey'
 
 test.group('Env Health Checker', () => {
 	test('fail when APP_KEY is not defined', async (assert) => {
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'console', {})
 		const healthCheck = new HealthCheck(application)
 		appKeyHealthChecker(healthCheck)
 
@@ -35,7 +34,7 @@ test.group('Env Health Checker', () => {
 
 	test('fail when APP_KEY is not secure', async (assert) => {
 		process.env.APP_KEY = '3910200'
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'console', {})
 		const healthCheck = new HealthCheck(application)
 		appKeyHealthChecker(healthCheck)
 
@@ -58,7 +57,7 @@ test.group('Env Health Checker', () => {
 	test('work fine when APP_KEY is secure', async (assert) => {
 		process.env.APP_KEY = 'asecureandlongrandomsecret'
 
-		const application = new Application(__dirname, new Ioc(), {}, {})
+		const application = new Application(__dirname, 'console', {})
 		const healthCheck = new HealthCheck(application)
 		appKeyHealthChecker(healthCheck)
 
