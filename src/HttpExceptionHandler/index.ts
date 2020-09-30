@@ -220,7 +220,7 @@ Object.defineProperty(HttpExceptionHandler.prototype, 'expandedStatusPages', {
 				result[codeRange] = this.statusPages[codeRange]
 			}
 
-			Array.apply(null, new Array(max - min + 1)).forEach((_, step) => {
+			Array.apply(null, new Array(max - min + 1)).forEach((_: number, step: number) => {
 				result[min + step] = this.statusPages[codeRange]
 			})
 
