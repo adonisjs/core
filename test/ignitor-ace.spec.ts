@@ -77,6 +77,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 			},
 		})
 
+		console.log(output)
 		assert.equal(stripAnsi(output[0]).split('create')[1].trim(), 'ace-manifest.json file')
 	})
 
