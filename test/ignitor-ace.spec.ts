@@ -77,8 +77,10 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 			},
 		})
 
-		console.log(output)
-		assert.equal(stripAnsi(output[0]).split('create')[1].trim(), 'ace-manifest.json file')
+		assert.equal(
+			stripAnsi(output[0]).split('create')[1].replace(/]/, '').trim(),
+			'ace-manifest.json file'
+		)
 	})
 
 	test('print helpful error message when command has ioc container imports', async (assert) => {
