@@ -273,7 +273,7 @@ test.group('Ignitor | Ace | Run Command', (group) => {
 
 		assert.match(
 			output[0].trim(),
-			/Run "node ace generate:manifest" before running any other ace commands/
+			/Run "node ace generate:manifest" before running any other ace command/
 		)
 	})
 })

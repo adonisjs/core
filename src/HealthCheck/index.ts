@@ -88,11 +88,10 @@ export class HealthCheck implements HealthCheckContract {
 	}
 
 	/**
-	 * Ensure that application is ready and is not shutting
-	 * down. This relies on the application module.
+	 * Ensure that application is ready. This relies on the application module.
 	 */
 	public isReady() {
-		return this.application.isReady && !this.application.isShuttingDown
+		return this.application.isReady
 	}
 
 	/**

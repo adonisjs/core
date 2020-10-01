@@ -79,7 +79,11 @@ export class App {
 	/**
 	 * Print framework version
 	 */
-	private printVersion(): never {
+	private printVersion(value?: any) {
+		if (!value) {
+			return
+		}
+
 		const appVersion = this.application.version
 		const adonisVersion = this.application.adonisVersion
 
@@ -87,6 +91,7 @@ export class App {
 			.add('node ace --version')
 			.add(`App version ${appVersion ? appVersion.version : 'NA'}`)
 			.add(`Framework version ${adonisVersion ? adonisVersion.version : 'NA'}`)
+			.render()
 
 		process.exit(0)
 	}
@@ -167,16 +172,7 @@ export class App {
 		/**
 		 * Showing app and AdonisJs version
 		 */
-		this.kernel.flag(
-			'version',
-			async (value) => {
-				if (!value) {
-					return
-				}
-				this.printVersion()
-			},
-			{ alias: 'v' }
-		)
+		this.kernel.flag('version', async (value) => this.printVersion(value), { alias: 'v' })
 	}
 
 	/**
@@ -208,7 +204,7 @@ export class App {
 				if (!hasFile) {
 					reject(
 						new AceRuntimeException(
-							`Run "node ace generate:manifest" before running any other ace commands`
+							`Run "node ace generate:manifest" before running any other ace command`
 						)
 					)
 				} else {

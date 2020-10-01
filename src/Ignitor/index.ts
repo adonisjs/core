@@ -7,6 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import { Application } from '@adonisjs/application'
+import { AppEnvironments } from '@ioc:Adonis/Core/Application'
+
 import { Ace } from './Ace'
 import { HttpServer } from './HttpServer'
 
@@ -16,6 +19,13 @@ import { HttpServer } from './HttpServer'
  */
 export class Ignitor {
 	constructor(private appRoot: string) {}
+
+	/**
+	 * Returns an instance of the application.
+	 */
+	public application(environment: AppEnvironments) {
+		return new Application(this.appRoot, environment)
+	}
 
 	/**
 	 * Returns instance of server to start
