@@ -26,10 +26,10 @@ export default async function instructions(
 	 */
 	const appConfig = new files.MustacheFile(projectRoot, 'config/app.ts', APP_TEMPLATE_STUB)
 	if (appConfig.exists()) {
-		logger.skip('config/app.ts')
+		logger.action('create').skipped('config/app.ts', 'File already exists')
 	} else {
 		appConfig.apply({ forceContentNegotiationToJSON: isApiBoilerplate }).commit()
-		logger.create('config/app.ts')
+		logger.action('create').succeeded('config/app.ts')
 	}
 
 	/**
@@ -43,10 +43,10 @@ export default async function instructions(
 			STATIC_TEMPLATE_STUB
 		)
 		if (staticConfig.exists()) {
-			logger.skip('config/static.ts')
+			logger.action('create').skipped('config/static.ts', 'File already exists')
 		} else {
 			staticConfig.apply({}).commit()
-			logger.create('config/static.ts')
+			logger.action('create').succeeded('config/static.ts')
 		}
 	}
 }
