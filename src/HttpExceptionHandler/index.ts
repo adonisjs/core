@@ -61,9 +61,12 @@ export abstract class HttpExceptionHandler {
 	 * errors.
 	 */
 	protected context(ctx: HttpContextContract): any {
-		return {
-			'x-request-id': ctx.request.id(),
-		}
+		const requestId = ctx.request.id()
+		return requestId
+			? {
+					'x-request-id': requestId,
+			  }
+			: {}
 	}
 
 	/**
