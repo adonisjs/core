@@ -12,6 +12,7 @@ import { ManifestGenerator } from '@adonisjs/ace'
 import { Application } from '@adonisjs/application'
 
 import { ErrorHandler } from '../ErrorHandler'
+import { registerTsHook } from '../../../utils'
 import { AceRuntimeException } from '../Exceptions'
 
 /**
@@ -46,6 +47,13 @@ export class GenerateManifest {
 	 */
 	public async handle() {
 		try {
+			/**
+			 * Register ts hook when running typescript code directly
+			 */
+			if (this.application.rcFile.typescript) {
+				registerTsHook(this.application.appRoot)
+			}
+
 			const commands = this.application.rcFile.commands
 
 			/**

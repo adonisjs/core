@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { esmRequire, resolveFrom } from '@poppinss/utils'
+import { resolveFrom } from '@poppinss/utils'
 
 /**
  * Helper to know if error belongs to a missing module
@@ -18,34 +18,16 @@ export function isMissingModuleError(error: NodeJS.ErrnoException) {
 }
 
 /**
- * Optionally require the file and ignore non existing errors
+ * Registers the ts hook to compile typescript code within the memory
  */
-export function optionalRequire(filePath: string, optional = false): any | null {
+export function registerTsHook(appRoot: string) {
 	try {
-		return esmRequire(filePath)
+		require(resolveFrom(appRoot, '@adonisjs/assembler/build/src/requireHook')).default(appRoot)
 	} catch (error) {
-		if (isMissingModuleError(error) && optional) {
-			return null
-		}
-
-		throw error
-	}
-}
-
-/**
- * Optionally resolve and require the file and
- * ignore non existing errors
- */
-export function optionalResolveAndRequire(
-	filePath: string,
-	fromPath: string,
-	optional = false
-): any | null {
-	try {
-		return optionalRequire(resolveFrom(fromPath, filePath))
-	} catch (error) {
-		if (isMissingModuleError(error) && optional) {
-			return null
+		if (isMissingModuleError(error)) {
+			throw new Error(
+				'AdonisJS requires "@adonisjs/assembler" in order to run typescript source directly'
+			)
 		}
 
 		throw error

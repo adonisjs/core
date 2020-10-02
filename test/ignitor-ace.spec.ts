@@ -41,7 +41,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 		await fs.add(
 			'.adonisrc.json',
 			JSON.stringify({
-				typescript: true,
+				typescript: false,
 				commands: ['./FooCommand'],
 				providers: [join(__dirname, '../providers/AppProvider.ts')],
 			})
@@ -93,7 +93,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 		await fs.add(
 			'.adonisrc.json',
 			JSON.stringify({
-				typescript: true,
+				typescript: false,
 				commands: ['./FooCommand'],
 				providers: [join(__dirname, '../providers/AppProvider.ts')],
 			})
@@ -152,7 +152,7 @@ test.group('Ignitor | Ace | Run Command', (group) => {
 		await fs.add(
 			'.adonisrc.json',
 			JSON.stringify({
-				typescript: true,
+				typescript: false,
 				commands: ['./FooCommand'],
 				providers: [join(__dirname, '../providers/AppProvider.ts')],
 			})
@@ -199,7 +199,7 @@ test.group('Ignitor | Ace | Run Command', (group) => {
 		await fs.add(
 			'.adonisrc.json',
 			JSON.stringify({
-				typescript: true,
+				typescript: false,
 				commands: ['./FooCommand'],
 				providers: [join(__dirname, '../providers/AppProvider.ts')],
 			})
@@ -247,7 +247,7 @@ test.group('Ignitor | Ace | Run Command', (group) => {
 		await fs.add(
 			'.adonisrc.json',
 			JSON.stringify({
-				typescript: true,
+				typescript: false,
 				providers: [join(__dirname, '../providers/AppProvider.ts')],
 			})
 		)

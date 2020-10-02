@@ -9,11 +9,12 @@
 
 import { join } from 'path'
 import { exists } from 'fs'
-import { sticker } from '@poppinss/cliui'
+import { sticker, logger } from '@poppinss/cliui'
 import { Application } from '@adonisjs/application'
 import { Kernel, ManifestLoader } from '@adonisjs/ace'
 
 import { ErrorHandler } from '../ErrorHandler'
+import { registerTsHook } from '../../../utils'
 import { AceRuntimeException } from '../Exceptions'
 import { SignalsListener } from '../../SignalsListener'
 
@@ -88,9 +89,9 @@ export class App {
 		const adonisVersion = this.application.adonisVersion
 
 		sticker()
-			.add('node ace --version')
-			.add(`App version ${appVersion ? appVersion.version : 'NA'}`)
-			.add(`Framework version ${adonisVersion ? adonisVersion.version : 'NA'}`)
+			.heading('node ace --version')
+			.add(`App version: ${logger.colors.cyan(appVersion ? appVersion.version : 'NA')}`)
+			.add(`Framework version: ${logger.colors.cyan(adonisVersion ? adonisVersion.version : 'NA')}`)
 			.render()
 
 		process.exit(0)
@@ -103,6 +104,13 @@ export class App {
 	private async onFind(command: SerializedCommand | null) {
 		if (this.wired) {
 			return
+		}
+
+		/**
+		 * Register ts hook when running typescript code directly
+		 */
+		if (this.application.rcFile.typescript) {
+			registerTsHook(this.application.appRoot)
 		}
 
 		if (!command || !command.settings.loadApp) {
