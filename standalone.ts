@@ -7,10 +7,11 @@
  * file that was distributed with this source code.
  */
 
+export { Ignitor } from './src/Ignitor'
 export { Hash } from '@adonisjs/hash/build/standalone'
 export { Emitter } from '@adonisjs/events/build/standalone'
-export { Application, rcParser } from '@adonisjs/application'
 export { Encryption } from '@adonisjs/encryption/build/standalone'
+export { Application, rcParser, inject } from '@adonisjs/application'
 
 export {
 	HttpContext,
@@ -27,4 +28,6 @@ export {
 	ManifestGenerator,
 	ManifestLoader,
 	listDirectoryFiles,
+	args,
+	flags,
 } from '@adonisjs/ace'
