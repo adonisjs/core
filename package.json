@@ -98,7 +98,6 @@
 		"@adonisjs/application": "^3.0.12",
 		"@adonisjs/bodyparser": "^5.0.2",
 		"@adonisjs/encryption": "^3.0.2",
-		"@adonisjs/env": "^2.0.2",
 		"@adonisjs/events": "^5.0.1",
 		"@adonisjs/hash": "^6.0.1",
 		"@adonisjs/http-server": "^4.0.3",
