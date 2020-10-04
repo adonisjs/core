@@ -17,17 +17,20 @@ import { stdout, stderr } from 'test-console'
 import { Ignitor } from '../src/Ignitor'
 import { setupApplicationFiles, fs } from '../test-helpers'
 
+let processExit = process.exit
+
 test.group('Ignitor | Ace | Generate Manifest', (group) => {
-	group.before(() => {
-		process.env.MODULE_TESTING = 'true'
+	group.beforeEach(() => {
+		// @ts-ignore
+		process.exit = function () {}
 	})
 
 	group.after(async () => {
-		delete process.env.MODULE_TESTING
 		await fs.cleanup()
 	})
 
 	group.afterEach(async () => {
+		process.exit = processExit
 		await fs.cleanup()
 	})
 
@@ -56,7 +59,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
           return 'foo'
         }
 
-        handle () {}
+        run () {}
       }
     `
 		)
@@ -77,13 +80,10 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 			},
 		})
 
-		assert.equal(
-			stripAnsi(output[0]).split('create')[1].replace(/]/, '').trim(),
-			'ace-manifest.json file'
-		)
+		assert.equal(stripAnsi(output[0]).split('CREATE:')[1].trim(), 'ace-manifest.json file')
 	})
 
-	test('print helpful error message when command has ioc container imports', async (assert) => {
+	test('print helpful error message when command is using ioc container imports', async (assert) => {
 		await setupApplicationFiles()
 		const { output, restore } = stderr.inspect()
 
@@ -103,7 +103,7 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 			'FooCommand.ts',
 			`
 			import { BaseCommand } from '@adonisjs/ace'
-			global[Symbol.for('ioc.use')]('Adonis/Core/Env')
+			global[Symbol.for('ioc.use')]('Adonis/Core/Env').__esModule.get('')
 
 			export default class FooCommand extends BaseCommand {
         static get commandName () {
@@ -124,22 +124,62 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 
 		assert.match(
 			stripAnsi(output[0]).trim(),
-			/Top level IoC container imports are not allowed in commands./
+			/Top level import for module "Adonis\/Core\/Env" is not allowed in commands/
 		)
 	})
 })
 
-test.group('Ignitor | Ace | Run Command', (group) => {
-	group.before(() => {
-		process.env.MODULE_TESTING = 'true'
+test.group('Ignitor | Ace | Core Commands', (group) => {
+	group.beforeEach(() => {
+		// @ts-ignore
+		process.exit = function () {}
 	})
 
 	group.after(async () => {
-		delete process.env.MODULE_TESTING
 		await fs.cleanup()
 	})
 
 	group.afterEach(async () => {
+		process.exit = processExit
+		await fs.cleanup()
+	})
+
+	test('run one of the assembler command', async (assert) => {
+		await setupApplicationFiles()
+
+		/**
+		 * Overwriting .adonisrc.json
+		 */
+		await fs.add(
+			'.adonisrc.json',
+			JSON.stringify({
+				typescript: false,
+			})
+		)
+
+		const ignitor = new Ignitor(fs.basePath)
+		await ignitor.ace().handle(['make:controller', 'Users'])
+
+		const hasController = await fs.fsExtra.pathExists(
+			join(fs.basePath, 'app/Controllers/Http/UsersController.ts')
+		)
+
+		assert.isTrue(hasController)
+	})
+})
+
+test.group('Ignitor | Ace | Run Command', (group) => {
+	group.beforeEach(() => {
+		// @ts-ignore
+		process.exit = function () {}
+	})
+
+	group.after(async () => {
+		await fs.cleanup()
+	})
+
+	group.afterEach(async () => {
+		process.exit = processExit
 		await fs.cleanup()
 	})
 
@@ -260,20 +300,5 @@ test.group('Ignitor | Ace | Run Command', (group) => {
 		restore()
 
 		assert.match(output[0].trim(), /"foo" command not found/)
-	})
-
-	test('print error when manifest file is missing', async (assert) => {
-		await setupApplicationFiles()
-
-		const ignitor = new Ignitor(fs.basePath)
-
-		const { output, restore } = stderr.inspect()
-		await ignitor.ace().handle(['foo'])
-		restore()
-
-		assert.match(
-			output[0].trim(),
-			/Run "node ace generate:manifest" before running any other ace command/
-		)
 	})
 })

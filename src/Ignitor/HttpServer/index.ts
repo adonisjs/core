@@ -113,6 +113,17 @@ export class HttpServer {
 	}
 
 	/**
+	 * Notify server is ready
+	 */
+	private notifyServerReady(host: string, port: number) {
+		this.application.logger.info('started server on %s:%s', host, port)
+
+		if (process.send) {
+			process.send({ origin: 'adonis-http-server', ready: true, port: port, host: host })
+		}
+	}
+
+	/**
 	 * Creates the HTTP server to handle incoming requests. The server is just
 	 * created but not listening on any port.
 	 */
@@ -148,7 +159,7 @@ export class HttpServer {
 				const port = Number(this.application.env.get('PORT', '3333'))
 
 				this.server.instance!.listen(port, host, () => {
-					this.application.logger.info('started server on %s:%s', host, port)
+					this.notifyServerReady(host, port)
 					resolve()
 				})
 			} catch (error) {

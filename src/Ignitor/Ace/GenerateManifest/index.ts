@@ -62,11 +62,20 @@ export class GenerateManifest {
 			 * the application is not booted and hence top level IoC container
 			 * imports will break
 			 */
-			this.application.container.onLookupFailed = () => {
-				throw new AceRuntimeException(
-					'Top level IoC container imports are not allowed in commands. Read more https://preview.adonisjs.com/guides/ace/introduction'
-				)
-			}
+			this.application.container.trap((namespace) => {
+				return {
+					__esModule: new Proxy(
+						{ namespace },
+						{
+							get(target) {
+								throw new AceRuntimeException(
+									`Top level import for module "${target.namespace}" is not allowed in commands. Learn more https://preview.adonisjs.com/guides/ace/introduction`
+								)
+							},
+						}
+					),
+				}
+			})
 
 			await new ManifestGenerator(this.appRoot, commands).generate()
 			logger.action('create').succeeded('ace-manifest.json file')
