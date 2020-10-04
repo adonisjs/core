@@ -96,12 +96,12 @@
 		}
 	},
 	"dependencies": {
-		"@adonisjs/ace": "^7.1.1",
-		"@adonisjs/application": "^3.0.13",
+		"@adonisjs/ace": "^7.1.2",
+		"@adonisjs/application": "^3.0.14",
 		"@adonisjs/bodyparser": "^5.0.2",
 		"@adonisjs/encryption": "^3.0.2",
 		"@adonisjs/events": "^5.0.1",
-		"@adonisjs/hash": "^6.0.1",
+		"@adonisjs/hash": "^6.0.2",
 		"@adonisjs/http-server": "^4.0.3",
 		"@adonisjs/validator": "^8.0.1",
 		"@poppinss/cliui": "^2.0.1",
