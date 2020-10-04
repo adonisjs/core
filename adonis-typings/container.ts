@@ -13,6 +13,6 @@ declare module '@ioc:Adonis/Core/Application' {
 
 	export interface ContainerBindings {
 		'Adonis/Core/HealthCheck': HealthCheckContract
-		'Adonis/Core/HttpExceptionHandler': HttpExceptionHandler
+		'Adonis/Core/HttpExceptionHandler': typeof HttpExceptionHandler
 	}
 }
