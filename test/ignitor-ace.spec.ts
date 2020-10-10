@@ -143,29 +143,6 @@ test.group('Ignitor | Ace | Core Commands', (group) => {
 		process.exit = processExit
 		await fs.cleanup()
 	})
-
-	test('run one of the assembler command', async (assert) => {
-		await setupApplicationFiles()
-
-		/**
-		 * Overwriting .adonisrc.json
-		 */
-		await fs.add(
-			'.adonisrc.json',
-			JSON.stringify({
-				typescript: false,
-			})
-		)
-
-		const ignitor = new Ignitor(fs.basePath)
-		await ignitor.ace().handle(['make:controller', 'Users'])
-
-		const hasController = await fs.fsExtra.pathExists(
-			join(fs.basePath, 'app/Controllers/Http/UsersController.ts')
-		)
-
-		assert.isTrue(hasController)
-	})
 })
 
 test.group('Ignitor | Ace | Run Command', (group) => {
