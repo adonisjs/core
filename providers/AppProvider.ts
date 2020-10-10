@@ -15,6 +15,7 @@ import { ApplicationContract } from '@ioc:Adonis/Core/Application'
  */
 export default class AppProvider {
 	constructor(protected app: ApplicationContract) {}
+	public static needsApplication = true
 
 	/**
 	 * Additional providers to load

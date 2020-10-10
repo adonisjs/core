@@ -44,7 +44,9 @@ test.group('Ignitor | Http', (group) => {
 			'providers/AppProvider.ts',
 			`
     export default class AppProvider {
-      constructor (protected $app) {}
+			constructor (protected $app) {}
+
+			public static needsApplication = true
 
       public async ready () {
         this.$app.container.use('Adonis/Core/Server').hookCalled = true
@@ -173,7 +175,9 @@ test.group('Ignitor | Http', (group) => {
 			'providers/AppProvider.ts',
 			`
 	    export default class AppProvider {
-	      constructor (protected $app) {}
+				constructor (protected $app) {}
+
+				public static needsApplication = true
 
 	      public async shutdown () {
 	        this.$app.container.use('Adonis/Core/Server').hookCalled = true
