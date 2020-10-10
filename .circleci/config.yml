@@ -11,13 +11,13 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - 'v1-dependencies-{{ checksum "package.json" }}'
-            - v1-dependencies-
+            - 'win-dependencies-{{ checksum "package.json" }}'
+            - win-dependencies-
       - run: npm install
       - save_cache:
           paths:
             - node_modules
-          key: 'v1-dependencies-{{ checksum "package.json" }}'
+          key: 'win-dependencies-{{ checksum "package.json" }}'
       - run: npm test
   build_12_18_2:
     docker:
