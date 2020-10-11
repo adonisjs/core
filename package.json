@@ -47,6 +47,7 @@
 	"devDependencies": {
 		"@adonisjs/assembler": "^3.0.2",
 		"@adonisjs/mrm-preset": "^2.4.0",
+		"@adonisjs/repl": "^1.1.2",
 		"@adonisjs/require-ts": "^1.0.4",
 		"@adonisjs/sink": "^4.0.3",
 		"@poppinss/dev-utils": "^1.0.11",
