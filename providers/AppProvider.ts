@@ -54,6 +54,14 @@ export default class AppProvider {
 	 */
 	protected registerCorsHook() {
 		/**
+		 * Do not register hooks when not running in web
+		 * environment
+		 */
+		if (this.app.environment !== 'web') {
+			return
+		}
+
+		/**
 		 * Register the cors before hook with the server
 		 */
 		this.app.container.with(['Adonis/Core/Config', 'Adonis/Core/Server'], (Config, Server) => {
@@ -72,6 +80,14 @@ export default class AppProvider {
 	 * Lazy initialize the static assets hook, if enabled inside the config
 	 */
 	protected registerStaticAssetsHook() {
+		/**
+		 * Do not register hooks when not running in web
+		 * environment
+		 */
+		if (this.app.environment !== 'web') {
+			return
+		}
+
 		/**
 		 * Register the cors before hook with the server
 		 */
@@ -94,10 +110,33 @@ export default class AppProvider {
 	 * Registers base health checkers
 	 */
 	protected registerHealthCheckers() {
+		/**
+		 * Do not register hooks when not running in web
+		 * environment
+		 */
+		if (this.app.environment !== 'web') {
+			return
+		}
+
 		this.app.container.with(['Adonis/Core/HealthCheck'], (healthCheck) => {
 			require('../src/HealthCheck/Checkers/Env').default(healthCheck)
 			require('../src/HealthCheck/Checkers/AppKey').default(healthCheck)
 		})
+	}
+
+	/**
+	 * Define repl bindings
+	 */
+	protected bindReplBindings() {
+		/**
+		 * Do not register repl bindings when not running in "repl"
+		 * environment
+		 */
+		if (this.app.environment !== 'repl') {
+			return
+		}
+
+		require('../src/Bindings/Repl')(this.app)
 	}
 
 	/**
@@ -115,5 +154,6 @@ export default class AppProvider {
 		this.registerCorsHook()
 		this.registerStaticAssetsHook()
 		this.registerHealthCheckers()
+		this.bindReplBindings()
 	}
 }
