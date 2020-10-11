@@ -18,6 +18,11 @@ export default class AppProvider {
 	public static needsApplication = true
 
 	/**
+	 * Find if web or test environment
+	 */
+	private isWebOrTestEnvironment = ['web', 'test'].includes(this.app.environment)
+
+	/**
 	 * Additional providers to load
 	 */
 	public provides = [
@@ -57,7 +62,7 @@ export default class AppProvider {
 		 * Do not register hooks when not running in web
 		 * environment
 		 */
-		if (this.app.environment !== 'web') {
+		if (!this.isWebOrTestEnvironment) {
 			return
 		}
 
@@ -84,7 +89,7 @@ export default class AppProvider {
 		 * Do not register hooks when not running in web
 		 * environment
 		 */
-		if (this.app.environment !== 'web') {
+		if (!this.isWebOrTestEnvironment) {
 			return
 		}
 
@@ -114,7 +119,7 @@ export default class AppProvider {
 		 * Do not register hooks when not running in web
 		 * environment
 		 */
-		if (this.app.environment !== 'web') {
+		if (!this.isWebOrTestEnvironment) {
 			return
 		}
 
