@@ -165,6 +165,12 @@ export class App {
 		 * Wire application if not wired and "loadApp" is true
 		 */
 		if (!this.wired && command.settings.loadApp) {
+			/**
+			 * Switch environment before wiring the app
+			 */
+			if (command.settings.environment) {
+				this.application.switchEnvironment(command.settings.environment)
+			}
 			await this.wire()
 		}
 	}
