@@ -8,10 +8,10 @@
  */
 
 /// <reference path="../node_modules/@adonisjs/application/build/adonis-typings/index.d.ts" />
-/// <reference path="../node_modules/@adonisjs/events/build/adonis-typings/events.d.ts" />
-/// <reference path="../node_modules/@adonisjs/hash/build/adonis-typings/hash.d.ts" />
+/// <reference path="../node_modules/@adonisjs/events/build/adonis-typings/index.d.ts" />
+/// <reference path="../node_modules/@adonisjs/hash/build/adonis-typings/index.d.ts" />
 /// <reference path="../node_modules/@adonisjs/http-server/build/adonis-typings/index.d.ts" />
-/// <reference path="../node_modules/@adonisjs/encryption/build/adonis-typings/encryption.d.ts" />
+/// <reference path="../node_modules/@adonisjs/encryption/build/adonis-typings/index.d.ts" />
 /// <reference path="../node_modules/@adonisjs/bodyparser/build/adonis-typings/index.d.ts" />
 /// <reference path="../node_modules/@adonisjs/validator/build/adonis-typings/index.d.ts" />
 /// <reference path="./container.ts" />
