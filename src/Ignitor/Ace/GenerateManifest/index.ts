@@ -63,6 +63,10 @@ export class GenerateManifest {
 			 * imports will break
 			 */
 			this.application.container.trap((namespace) => {
+				if (namespace === 'Adonis/Core/Application') {
+					return this.application
+				}
+
 				return {
 					__esModule: new Proxy(
 						{ namespace },
