@@ -27,7 +27,7 @@ export class HealthCheck implements HealthCheckContract {
 	private healthCheckers: { [service: string]: Checker } = {}
 
 	/**
-	 * Reference to IoC container to resolve health checkers
+	 * Reference to the IoC container to resolve health checkers
 	 */
 	private resolver = this.application.container.getResolver('report')
 
