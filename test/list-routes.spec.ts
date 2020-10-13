@@ -39,10 +39,12 @@ test.group('Command | List Routes', (group) => {
 		router.get('contact', async () => {})
 		router.commit()
 
+		app.container.bind('Adonis/Core/Route', () => router)
+
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.logger.useRenderer(testingRenderer)
 		listRoutes.json = true
-		await listRoutes.run(router)
+		await listRoutes.run()
 
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
@@ -77,10 +79,12 @@ test.group('Command | List Routes', (group) => {
 		router.get('contact', async () => {}).middleware(['auth', 'acl:admin'])
 		router.commit()
 
+		app.container.bind('Adonis/Core/Route', () => router)
+
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.logger.useRenderer(testingRenderer)
 		listRoutes.json = true
-		await listRoutes.run(router)
+		await listRoutes.run()
 
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
@@ -118,10 +122,12 @@ test.group('Command | List Routes', (group) => {
 		router.get('contact', 'ContactController')
 		router.commit()
 
+		app.container.bind('Adonis/Core/Route', () => router)
+
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.json = true
 		listRoutes.logger.useRenderer(testingRenderer)
-		await listRoutes.run(router)
+		await listRoutes.run()
 
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
@@ -159,10 +165,12 @@ test.group('Command | List Routes', (group) => {
 		router.get('contact', 'ContactController').namespace('App/Admin')
 		router.commit()
 
+		app.container.bind('Adonis/Core/Route', () => router)
+
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.json = true
 		listRoutes.logger.useRenderer(testingRenderer)
-		await listRoutes.run(router)
+		await listRoutes.run()
 
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
@@ -197,10 +205,12 @@ test.group('Command | List Routes', (group) => {
 		router.get('about', async () => {}).domain('blogger.com')
 		router.commit()
 
+		app.container.bind('Adonis/Core/Route', () => router)
+
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.json = true
 		listRoutes.logger.useRenderer(testingRenderer)
-		await listRoutes.run(router)
+		await listRoutes.run()
 
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
@@ -229,12 +239,14 @@ test.group('Command | List Routes', (group) => {
 				router.get('about', async () => {}).domain('blogger.com')
 			})
 			.prefix('v1')
+
 		router.commit()
+		app.container.bind('Adonis/Core/Route', () => router)
 
 		const listRoutes = new ListRoutes(app, new Kernel(app))
 		listRoutes.json = true
 		listRoutes.logger.useRenderer(testingRenderer)
-		await listRoutes.run(router)
+		await listRoutes.run()
 
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),

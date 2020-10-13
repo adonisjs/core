@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { inject } from '@adonisjs/fold'
 import { BaseCommand, flags } from '@adonisjs/ace'
 import type { RouterContract, RouteNode } from '@ioc:Adonis/Core/Route'
 
@@ -113,17 +112,18 @@ export default class ListRoutes extends BaseCommand {
 		}
 	}
 
-	@inject(['Adonis/Core/Route'])
-	public async run(router: RouterContract) {
+	public async run() {
+		const Router = this.application.container.use('Adonis/Core/Route')
+
 		/**
 		 * Commit routes before we can read them
 		 */
-		router.commit()
+		Router.commit()
 
 		if (this.json) {
-			this.log(JSON.stringify(this.outputJSON(router), null, 2))
+			this.log(JSON.stringify(this.outputJSON(Router), null, 2))
 		} else {
-			this.outputTable(router)
+			this.outputTable(Router)
 		}
 	}
 }
