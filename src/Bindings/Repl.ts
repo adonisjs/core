@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { ReplContract } from '@ioc:Adonis/Addons/Repl'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 /**
@@ -23,9 +24,10 @@ function setupReplState(repl: any, key: string, value: any) {
  * Defune repl bindings. The method must be invoked when application environment
  * is set to repl.
  */
-export default function defineReplBindings(application: ApplicationContract) {
-	const Repl = application.container.use('Adonis/Addons/Repl')
-
+export function defineReplBindings(application: ApplicationContract, Repl: ReplContract) {
+	/**
+	 * Load the encryption module
+	 */
 	Repl.addMethod(
 		'loadEncryption',
 		(repl) => {
@@ -36,6 +38,9 @@ export default function defineReplBindings(application: ApplicationContract) {
 		}
 	)
 
+	/**
+	 * Load the hash module
+	 */
 	Repl.addMethod(
 		'loadHash',
 		(repl) => {
@@ -46,6 +51,9 @@ export default function defineReplBindings(application: ApplicationContract) {
 		}
 	)
 
+	/**
+	 * Load the Env module
+	 */
 	Repl.addMethod(
 		'loadEnv',
 		(repl) => {
@@ -56,6 +64,9 @@ export default function defineReplBindings(application: ApplicationContract) {
 		}
 	)
 
+	/**
+	 * Load the HTTP router
+	 */
 	Repl.addMethod(
 		'loadRouter',
 		(repl) => {
@@ -66,6 +77,9 @@ export default function defineReplBindings(application: ApplicationContract) {
 		}
 	)
 
+	/**
+	 * Load config
+	 */
 	Repl.addMethod(
 		'loadConfig',
 		(repl) => {
@@ -76,6 +90,9 @@ export default function defineReplBindings(application: ApplicationContract) {
 		}
 	)
 
+	/**
+	 * Load validator
+	 */
 	Repl.addMethod(
 		'loadValidator',
 		(repl) => {
@@ -86,6 +103,9 @@ export default function defineReplBindings(application: ApplicationContract) {
 		}
 	)
 
+	/**
+	 * Create context for a dummy route
+	 */
 	Repl.addMethod(
 		'getContext',
 		(_, route: string, params?: any) => {

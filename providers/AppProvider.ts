@@ -132,7 +132,7 @@ export default class AppProvider {
 	/**
 	 * Define repl bindings
 	 */
-	protected bindReplBindings() {
+	protected defineReplBindings() {
 		/**
 		 * Do not register repl bindings when not running in "repl"
 		 * environment
@@ -141,7 +141,13 @@ export default class AppProvider {
 			return
 		}
 
-		require('../src/Bindings/Repl')(this.app)
+		/**
+		 * Define REPL bindings
+		 */
+		this.app.container.with(['Adonis/Addons/Repl'], (Repl) => {
+			const { defineReplBindings } = require('../src/Bindings/Repl')
+			defineReplBindings(this.app, Repl)
+		})
 	}
 
 	/**
@@ -159,6 +165,6 @@ export default class AppProvider {
 		this.registerCorsHook()
 		this.registerStaticAssetsHook()
 		this.registerHealthCheckers()
-		this.bindReplBindings()
+		this.defineReplBindings()
 	}
 }
