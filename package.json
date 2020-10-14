@@ -18,7 +18,7 @@
 		"pretest": "npm run lint",
 		"test": "node japaFile.js",
 		"clean": "del build",
-		"compile": "npm run lint && npm run clean && tsc && copyfiles templates/**/* build",
+		"compile": "npm run lint && npm run clean && tsc && copyfiles templates/**/* templates/* build",
 		"build": "npm run compile",
 		"commit": "git-cz",
 		"release": "np",
@@ -47,9 +47,9 @@
 	"devDependencies": {
 		"@adonisjs/assembler": "^3.0.2",
 		"@adonisjs/mrm-preset": "^2.4.0",
-		"@adonisjs/repl": "^1.1.2",
+		"@adonisjs/repl": "^1.1.3",
 		"@adonisjs/require-ts": "^1.0.4",
-		"@adonisjs/sink": "^4.0.3",
+		"@adonisjs/sink": "^4.1.3",
 		"@poppinss/dev-utils": "^1.0.11",
 		"@types/node": "^14.11.8",
 		"@types/supertest": "^2.0.10",
@@ -97,7 +97,7 @@
 		}
 	},
 	"dependencies": {
-		"@adonisjs/ace": "^7.1.4",
+		"@adonisjs/ace": "^7.1.5",
 		"@adonisjs/application": "^3.0.18",
 		"@adonisjs/bodyparser": "^5.0.4",
 		"@adonisjs/encryption": "^3.0.4",
@@ -105,7 +105,7 @@
 		"@adonisjs/hash": "^6.0.4",
 		"@adonisjs/http-server": "^4.0.5",
 		"@adonisjs/validator": "^8.0.4",
-		"@poppinss/cliui": "^2.0.1",
+		"@poppinss/cliui": "^2.0.2",
 		"@poppinss/utils": "^2.5.7",
 		"serve-static": "^1.14.1"
 	},
