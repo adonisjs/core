@@ -137,11 +137,13 @@ export class HttpServer {
 		/**
 		 * Bind exception handler to handle exceptions occured during HTTP requests.
 		 */
-		this.application.logger.trace(
-			'binding %s exception handler',
-			this.application.exceptionHandlerNamespace
-		)
-		this.server.errorHandler(this.application.exceptionHandlerNamespace)
+		if (this.application.exceptionHandlerNamespace) {
+			this.application.logger.trace(
+				'binding %s exception handler',
+				this.application.exceptionHandlerNamespace
+			)
+			this.server.errorHandler(this.application.exceptionHandlerNamespace)
+		}
 
 		const handler = this.server.handle.bind(this.server)
 		this.server.instance = serverCallback ? serverCallback(handler) : createServer(handler)
