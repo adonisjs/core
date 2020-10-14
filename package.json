@@ -139,6 +139,10 @@
 				{
 					"src": "contracts/hash.txt",
 					"dest": "hash"
+				},
+				{
+					"src": "contracts/env.txt",
+					"dest": "env"
 				}
 			]
 		},
