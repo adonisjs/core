@@ -10,6 +10,7 @@
 /// <reference path="../adonis-typings/index.ts" />
 
 import test from 'japa'
+import { join } from 'path'
 import supertest from 'supertest'
 import { createServer } from 'http'
 
@@ -111,6 +112,21 @@ test.group('Ignitor | Http', (group) => {
 	        }
 	      }
 	    `
+		)
+
+		/**
+		 * Overwriting .adonisrc.json
+		 */
+		await fs.add(
+			'.adonisrc.json',
+			JSON.stringify({
+				typescript: true,
+				autoloads: {
+					App: './app',
+				},
+				providers: [join(__dirname, '../providers/AppProvider.ts')],
+				exceptionHandlerNamespace: 'App/Exceptions/Handler',
+			})
 		)
 
 		const ignitor = new Ignitor(fs.basePath)
