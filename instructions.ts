@@ -72,7 +72,7 @@ export default async function instructions(
 	const env = new files.EnvFile(projectRoot)
 	env.set('PORT', 3333)
 	env.set('HOST', '0.0.0.0')
-	env.set('PORT', 'development')
+	env.set('NODE_ENV', 'development')
 	env.set('APP_KEY', randomString(32))
 	env.commit()
 	logger.action(env.exists() ? 'update' : 'create').succeeded('.env,.env.example')
