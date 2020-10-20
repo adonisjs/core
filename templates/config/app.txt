@@ -10,6 +10,7 @@ import Env from '@ioc:Adonis/Core/Env'
 import { ServerConfig } from '@ioc:Adonis/Core/Server'
 import { LoggerConfig } from '@ioc:Adonis/Core/Logger'
 import { ProfilerConfig } from '@ioc:Adonis/Core/Profiler'
+import { ValidatorConfig } from '@ioc:Adonis/Core/Validator'
 
 /*
 |--------------------------------------------------------------------------
@@ -219,4 +220,16 @@ export const profiler: ProfilerConfig = {
   |
   */
   whitelist: [],
+}
+
+/*
+|--------------------------------------------------------------------------
+| Validator
+|--------------------------------------------------------------------------
+|
+| Configure the global configuration for the validator. Here's the reference
+| to the default config https://git.io/JT0WE
+|
+*/
+export const validator: ValidatorConfig = {
 }
