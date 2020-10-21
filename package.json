@@ -1,6 +1,6 @@
 {
 	"name": "@adonisjs/core",
-	"version": "5.0.2-beta-rc-9",
+	"version": "5.0.3-beta-rc-10",
 	"description": "Core of AdonisJS",
 	"main": "build/providers/AppProvider.js",
 	"files": [
