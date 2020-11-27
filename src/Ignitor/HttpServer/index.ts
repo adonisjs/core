@@ -86,7 +86,7 @@ export class HttpServer {
 	/**
 	 * Closes the underlying HTTP server
 	 */
-	private closeHttpServer() {
+	private closeHttpServer(): Promise<void> {
 		return new Promise((resolve) => this.server.instance!.close(() => resolve()))
 	}
 
@@ -152,7 +152,7 @@ export class HttpServer {
 	/**
 	 * Starts the http server a given host and port
 	 */
-	public listen() {
+	public listen(): Promise<void> {
 		return new Promise(async (resolve, reject) => {
 			try {
 				await this.application.start()

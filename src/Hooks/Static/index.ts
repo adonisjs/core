@@ -24,7 +24,7 @@ export class ServeStatic {
 	/**
 	 * Handle the request to serve static files.
 	 */
-	public async handle({ request, response }: HttpContextContract) {
+	public async handle({ request, response }: HttpContextContract): Promise<void> {
 		return new Promise((resolve) => {
 			function next() {
 				response.response.removeListener('finish', next)
