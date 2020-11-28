@@ -65,11 +65,6 @@ export class App {
 	private wired = false
 
 	/**
-	 * Signals listener to listen for exit signals and kill command
-	 */
-	private signalsListener = new SignalsListener()
-
-	/**
 	 * Reference to the application
 	 */
 	private application = new Application(this.appRoot, 'console')
@@ -78,6 +73,11 @@ export class App {
 	 * Reference to the ace kernel
 	 */
 	private kernel = new Kernel(this.application)
+
+	/**
+	 * Signals listener to listen for exit signals and kill command
+	 */
+	private signalsListener = new SignalsListener(this.application)
 
 	/**
 	 * Find if TS hook has been registered or not
@@ -174,40 +174,12 @@ export class App {
 	}
 
 	/**
-	 * Invoked command has been ran
-	 */
-	// private async afterRun(command: CommandContract) {
-	// 	const commandConstructor = command.constructor as CommandConstructorContract
-
-	// 	/**
-	// 	 * Do not exit when the hook is not executed for the main
-	// 	 * command
-	// 	 */
-	// 	if (this.commandName !== commandConstructor.commandName) {
-	// 		return
-	// 	}
-
-	// 	/**
-	// 	 * Do not exit when the command is meant to stayalive
-	// 	 */
-	// 	if (commandConstructor.settings?.stayAlive) {
-	// 		return
-	// 	}
-
-	// 	/**
-	// 	 * Exit command
-	// 	 */
-	// 	this.forceExit = true
-	// }
-
-	/**
 	 * Hooks into kernel lifecycle events to conditionally
 	 * load the app.
 	 */
 	private addKernelHooks() {
 		this.kernel.before('find', async (command) => this.onFind(command))
 		this.kernel.before('run', async () => this.onRun())
-		// this.kernel.after('run', (command) => this.afterRun(command))
 	}
 
 	/**

@@ -34,15 +34,15 @@ export class HttpServer {
 	private wired: boolean = false
 
 	/**
-	 * Listens for unix signals to kill long running
-	 * processes.
-	 */
-	private signalsListener = new SignalsListener()
-
-	/**
 	 * Reference to the application.
 	 */
 	public application = new Application(this.appRoot, 'web')
+
+	/**
+	 * Listens for unix signals to kill long running
+	 * processes.
+	 */
+	private signalsListener = new SignalsListener(this.application)
 
 	constructor(private appRoot: string) {}
 

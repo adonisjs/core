@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { ApplicationContract } from '@ioc:Adonis/Core/Application'
+
 /**
  * Exposes the API to invoke a callback when `SIGTERM` or
  * `SIGINT (pm2 only)` signals are received.
@@ -26,6 +28,8 @@ export class SignalsListener {
 		}
 	}.bind(this)
 
+	constructor(private application: ApplicationContract) {}
+
 	/**
 	 * Listens for exit signals and invokes the given
 	 * callback
@@ -37,6 +41,19 @@ export class SignalsListener {
 		}
 
 		process.once('SIGTERM', this.kill)
+
+		/**
+		 * Cleanup on uncaught exceptions.
+		 */
+		process.once('uncaughtException', (error) => {
+			if (this.application.environment === 'repl') {
+				this.application.logger.fatal(error, '"uncaughtException" detected')
+				return
+			}
+
+			this.application.logger.fatal(error, '"uncaughtException" detected. Process will shutdown')
+			process.exit(1)
+		})
 	}
 
 	/**
