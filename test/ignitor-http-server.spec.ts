@@ -74,7 +74,7 @@ test.group('Ignitor | Http', (group) => {
 		const ignitor = new Ignitor(fs.basePath)
 		const httpServer = ignitor.httpServer()
 
-		httpServer.application.setup()
+		await await httpServer.application.setup()
 		httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
@@ -132,7 +132,7 @@ test.group('Ignitor | Http', (group) => {
 		const ignitor = new Ignitor(fs.basePath)
 		const httpServer = ignitor.httpServer()
 
-		httpServer.application.setup()
+		await httpServer.application.setup()
 		httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
@@ -153,7 +153,7 @@ test.group('Ignitor | Http', (group) => {
 
 		const ignitor = new Ignitor(fs.basePath)
 		const httpServer = ignitor.httpServer()
-		httpServer.application.setup()
+		await httpServer.application.setup()
 		httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
@@ -252,7 +252,7 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
 		const ignitor = new Ignitor(fs.basePath)
 		const httpServer = ignitor.httpServer()
 
-		httpServer.application.setup()
+		await httpServer.application.setup()
 		httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
@@ -299,7 +299,7 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
 		const ignitor = new Ignitor(fs.basePath)
 		const httpServer = ignitor.httpServer()
 
-		httpServer.application.setup()
+		await httpServer.application.setup()
 		httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
@@ -356,7 +356,7 @@ test.group('Ignitor | HTTP | CORS', (group) => {
 		const ignitor = new Ignitor(fs.basePath)
 		const httpServer = ignitor.httpServer()
 
-		httpServer.application.setup()
+		await httpServer.application.setup()
 		httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 

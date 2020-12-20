@@ -212,10 +212,10 @@ export class App {
 		/**
 		 * Do not change sequence
 		 */
-		this.application.setup()
+		await this.application.setup()
 		this.application.registerProviders()
 		await this.application.bootProviders()
-		this.application.requirePreloads()
+		await this.application.requirePreloads()
 	}
 
 	/**
