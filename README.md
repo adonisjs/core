@@ -42,7 +42,7 @@
   	<img src="assets/mc-sneaky.png" width="100px">
   </a>
 
-  <a href="https://appmasters.io" title="Into music? Support Monace">
+  <a href="https://appmasters.io" title="Expert in software development for small and medium sized companies">
   	<img src="assets/appmasters.jpg" width="100px">
   </a>
 </div>
