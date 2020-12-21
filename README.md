@@ -26,6 +26,10 @@
   	<img src="assets/yung-silva.png" width="100px">
   </a>
 
+  <a href="https://www.patreon.com/monace" title="Into music? Support Monace">
+  	<img src="assets/monace.jpg" width="100px">
+  </a>
+
   <a href="" title="Bastien Crettenand">
   	<img src="assets/bastien-crettenand.png" width="100px">
   </a>
@@ -38,8 +42,8 @@
   	<img src="assets/mc-sneaky.png" width="100px">
   </a>
 
-  <a href="" title="Sameer">
-  	<img src="assets/sameer.png" width="100px">
+  <a href="https://appmasters.io" title="Into music? Support Monace">
+  	<img src="assets/appmasters.jpg" width="100px">
   </a>
 </div>
 
