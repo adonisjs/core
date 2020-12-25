@@ -6,6 +6,19 @@
 <hr>
 
 <div align="center">
+  <h3> Sponsored by </h3>
+  
+  <p>FOSS United is a non-profit foundation that aims at promoting and strengthening the Free and Open Source Software (FOSS) ecosystem in India.</p>
+
+
+  [![FOSSUnited](http://fossunited.org/files/fossunited-badge.svg)](https://fossunited.org/)
+
+</div>
+
+<br />
+<hr>
+
+<div align="center">
   <h3>
     <a href="https://www.patreon.com/adonisframework">
       Patreon Supporters
