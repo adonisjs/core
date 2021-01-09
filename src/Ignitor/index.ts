@@ -7,6 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import { resolve } from 'path'
+import { fileURLToPath } from 'url'
+
 import { Application } from '@adonisjs/application'
 import { AppEnvironments } from '@ioc:Adonis/Core/Application'
 
@@ -18,7 +21,15 @@ import { HttpServer } from './HttpServer'
  * the application.
  */
 export class Ignitor {
-	constructor(private appRoot: string) {}
+	private appRoot: string
+
+	constructor(appRoot: string) {
+		if (appRoot.startsWith('file:')) {
+			this.appRoot = fileURLToPath(appRoot)
+		} else {
+			this.appRoot = resolve(appRoot)
+		}
+	}
 
 	/**
 	 * Returns an instance of the application.
