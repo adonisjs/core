@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
 
 import { Application } from '@adonisjs/application'
@@ -25,7 +25,7 @@ export class Ignitor {
 
 	constructor(appRoot: string) {
 		if (appRoot.startsWith('file:')) {
-			this.appRoot = fileURLToPath(appRoot)
+			this.appRoot = dirname(fileURLToPath(appRoot))
 		} else {
 			this.appRoot = resolve(appRoot)
 		}

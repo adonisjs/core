@@ -7,6 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import { dirname, resolve } from 'path'
+import { fileURLToPath } from 'url'
+
 import { App } from './App'
 import { GenerateManifest } from './GenerateManifest'
 
@@ -14,7 +17,15 @@ import { GenerateManifest } from './GenerateManifest'
  * Exposes the API to execute ace commands.
  */
 export class Ace {
-	constructor(private appRoot: string) {}
+	private appRoot: string
+
+	constructor(appRoot: string) {
+		if (appRoot.startsWith('file:')) {
+			this.appRoot = dirname(fileURLToPath(appRoot))
+		} else {
+			this.appRoot = resolve(appRoot)
+		}
+	}
 
 	/**
 	 * Handles the ace command
