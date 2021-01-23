@@ -81,7 +81,11 @@ export class GenerateManifest {
 				}
 			})
 
-			await new ManifestGenerator(this.appRoot, commands).generate()
+			await new ManifestGenerator(
+				this.appRoot,
+				commands,
+				this.application.type === 'module'
+			).generate()
 			logger.action('create').succeeded('ace-manifest.json file')
 		} catch (error) {
 			await new ErrorHandler(this.application).handleError(error)

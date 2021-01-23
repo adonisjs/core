@@ -266,7 +266,10 @@ export class App {
 			 * Manifest files to load
 			 */
 			this.kernel.useManifest(
-				new ManifestLoader(this.getAssemblerManifest().concat(this.getAppManifest()))
+				new ManifestLoader(
+					this.getAssemblerManifest().concat(this.getAppManifest()),
+					this.application.type === 'module'
+				)
 			)
 
 			/**
