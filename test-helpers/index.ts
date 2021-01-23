@@ -70,7 +70,7 @@ export async function setupApp(additionalProviders?: string[]) {
 	const app = new Application(fs.basePath, 'web')
 
 	app.setup()
-	app.registerProviders()
+	await app.registerProviders()
 	await app.bootProviders()
 
 	return app

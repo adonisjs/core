@@ -213,7 +213,7 @@ export class App {
 		 * Do not change sequence
 		 */
 		await this.application.setup()
-		this.application.registerProviders()
+		await this.application.registerProviders()
 		await this.application.bootProviders()
 		await this.application.requirePreloads()
 	}

@@ -63,7 +63,7 @@ export class HttpServer {
 		/**
 		 * Registering providers
 		 */
-		this.application.registerProviders()
+		await this.application.registerProviders()
 
 		/**
 		 * Booting providers

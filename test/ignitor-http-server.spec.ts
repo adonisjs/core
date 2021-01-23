@@ -75,7 +75,7 @@ test.group('Ignitor | Http', (group) => {
 		const httpServer = ignitor.httpServer()
 
 		await await httpServer.application.setup()
-		httpServer.application.registerProviders()
+		await httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
 		/**
@@ -133,7 +133,7 @@ test.group('Ignitor | Http', (group) => {
 		const httpServer = ignitor.httpServer()
 
 		await httpServer.application.setup()
-		httpServer.application.registerProviders()
+		await httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
 		await httpServer.start((handler) => createServer(handler))
@@ -154,7 +154,7 @@ test.group('Ignitor | Http', (group) => {
 		const ignitor = new Ignitor(fs.basePath)
 		const httpServer = ignitor.httpServer()
 		await httpServer.application.setup()
-		httpServer.application.registerProviders()
+		await httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
 		httpServer.kill = async function kill() {
@@ -253,7 +253,7 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
 		const httpServer = ignitor.httpServer()
 
 		await httpServer.application.setup()
-		httpServer.application.registerProviders()
+		await httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
 		const server = httpServer.application.container.use('Adonis/Core/Server')
@@ -300,7 +300,7 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
 		const httpServer = ignitor.httpServer()
 
 		await httpServer.application.setup()
-		httpServer.application.registerProviders()
+		await httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
 		const server = httpServer.application.container.use('Adonis/Core/Server')
@@ -357,7 +357,7 @@ test.group('Ignitor | HTTP | CORS', (group) => {
 		const httpServer = ignitor.httpServer()
 
 		await httpServer.application.setup()
-		httpServer.application.registerProviders()
+		await httpServer.application.registerProviders()
 		await httpServer.application.bootProviders()
 
 		const server = httpServer.application.container.use('Adonis/Core/Server')
