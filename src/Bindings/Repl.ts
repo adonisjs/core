@@ -31,7 +31,11 @@ export function defineReplBindings(application: ApplicationContract, Repl: ReplC
   Repl.addMethod(
     'loadEncryption',
     (repl) => {
-      setupReplState(repl, 'Encryption', application.container.use('Adonis/Core/Encryption'))
+      setupReplState(
+        repl,
+        'Encryption',
+        application.container.resolveBinding('Adonis/Core/Encryption')
+      )
     },
     {
       description: 'Load encryption provider and save reference to the "Encryption" variable',
@@ -44,7 +48,7 @@ export function defineReplBindings(application: ApplicationContract, Repl: ReplC
   Repl.addMethod(
     'loadHash',
     (repl) => {
-      setupReplState(repl, 'Hash', application.container.use('Adonis/Core/Hash'))
+      setupReplState(repl, 'Hash', application.container.resolveBinding('Adonis/Core/Hash'))
     },
     {
       description: 'Load hash provider and save reference to the "Hash" variable',
@@ -57,7 +61,7 @@ export function defineReplBindings(application: ApplicationContract, Repl: ReplC
   Repl.addMethod(
     'loadEnv',
     (repl) => {
-      setupReplState(repl, 'Env', application.container.use('Adonis/Core/Env'))
+      setupReplState(repl, 'Env', application.container.resolveBinding('Adonis/Core/Env'))
     },
     {
       description: 'Load env provider and save reference to the "Env" variable',
@@ -70,7 +74,7 @@ export function defineReplBindings(application: ApplicationContract, Repl: ReplC
   Repl.addMethod(
     'loadRouter',
     (repl) => {
-      setupReplState(repl, 'Route', application.container.use('Adonis/Core/Route'))
+      setupReplState(repl, 'Route', application.container.resolveBinding('Adonis/Core/Route'))
     },
     {
       description: 'Load router and save reference to the "Route" variable',
@@ -83,7 +87,7 @@ export function defineReplBindings(application: ApplicationContract, Repl: ReplC
   Repl.addMethod(
     'loadConfig',
     (repl) => {
-      setupReplState(repl, 'Config', application.container.use('Adonis/Core/Config'))
+      setupReplState(repl, 'Config', application.container.resolveBinding('Adonis/Core/Config'))
     },
     {
       description: 'Load config and save reference to the "Config" variable',
@@ -96,7 +100,11 @@ export function defineReplBindings(application: ApplicationContract, Repl: ReplC
   Repl.addMethod(
     'loadValidator',
     (repl) => {
-      setupReplState(repl, 'Validator', application.container.use('Adonis/Core/Validator'))
+      setupReplState(
+        repl,
+        'Validator',
+        application.container.resolveBinding('Adonis/Core/Validator')
+      )
     },
     {
       description: 'Load validator and save reference to the "Validator" variable',
