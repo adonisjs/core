@@ -74,7 +74,7 @@
 
 <div align="center">
 
-[![appveyor-image]][appveyor-url] [![circleci-image]][circleci-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![audit-report-image]][audit-report-url]
+[![appveyor-image]][appveyor-url] [![circleci-image]][circleci-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![synk-image]][synk-url]
 
 </div>
 
@@ -112,5 +112,5 @@
 [license-url]: LICENSE.md
 [license-image]: https://img.shields.io/github/license/adonisjs/adonis-framework?style=for-the-badge
 
-[audit-report-image]: https://img.shields.io/badge/-Audit%20Report-blueviolet?style=for-the-badge
-[audit-report-url]: https://htmlpreview.github.io/?https://github.com/adonisjs/core/blob/develop/npm-audit.html "audit-report"
+[synk-image]: https://img.shields.io/snyk/vulnerabilities/github/adonisjs/core?label=Synk%20Vulnerabilities&style=for-the-badge
+[synk-url]: https://snyk.io/test/github/adonisjs/core?targetFile=package.json "synk"
