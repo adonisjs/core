@@ -325,6 +325,10 @@ export class App {
        */
       await this.kernel.handle(argv)
     } catch (error) {
+      if (!error) {
+        process.exit(1)
+        return
+      }
       new ErrorHandler(this.application).handleError(error).finally(() => process.exit(1))
     }
   }
