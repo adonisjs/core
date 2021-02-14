@@ -17,7 +17,17 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
  * file.
  */
 export class ServeStatic {
-  private serve = staticServer(this.publicPath, this.config)
+  private serve = staticServer(
+    this.publicPath,
+    Object.assign({}, this.config, {
+      setHeaders(res: any) {
+        const headers = res.parent.getHeaders()
+        Object.keys(headers).forEach((key) => {
+          res.setHeader(key, headers[key])
+        })
+      },
+    })
+  )
 
   constructor(private publicPath: string, private config: AssetsConfig) {}
 
@@ -30,6 +40,8 @@ export class ServeStatic {
         response.response.removeListener('finish', next)
         resolve()
       }
+
+      response.response['parent'] = response
 
       /**
        * Whether or not the file has been served by serve static, we

@@ -101,7 +101,7 @@
 		"@adonisjs/encryption": "^4.0.0",
 		"@adonisjs/events": "^6.0.0",
 		"@adonisjs/hash": "^7.0.0",
-		"@adonisjs/http-server": "^5.1.0",
+		"@adonisjs/http-server": "^5.1.1",
 		"@adonisjs/validator": "^9.0.0",
 		"@poppinss/cliui": "^2.2.0",
 		"@poppinss/utils": "^3.0.3",
