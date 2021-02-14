@@ -32,3 +32,4 @@ export {
 } from '@adonisjs/ace'
 
 export { Ignitor } from './src/Ignitor'
+export { Exception } from '@poppinss/utils'
