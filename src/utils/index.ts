@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { resolveFrom } from '@poppinss/utils'
+import { resolveFrom } from '@poppinss/utils/build/helpers'
 
 /**
  * Helper to know if error belongs to a missing module

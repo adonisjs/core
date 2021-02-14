@@ -69,8 +69,8 @@ export async function setupApp(additionalProviders?: string[]) {
 	await setupApplicationFiles(additionalProviders)
 	const app = new Application(fs.basePath, 'web')
 
-	app.setup()
-	app.registerProviders()
+	await app.setup()
+	await app.registerProviders()
 	await app.bootProviders()
 
 	return app

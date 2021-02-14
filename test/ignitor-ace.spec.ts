@@ -70,14 +70,18 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 
 		const aceManifest = await fs.fsExtra.readJson(join(fs.basePath, './ace-manifest.json'))
 		assert.deepEqual(aceManifest, {
-			foo: {
-				settings: {},
-				commandPath: './FooCommand',
-				commandName: 'foo',
-				description: '',
-				args: [],
-				flags: [],
+			commands: {
+				foo: {
+					settings: {},
+					aliases: [],
+					commandPath: './FooCommand',
+					commandName: 'foo',
+					description: '',
+					args: [],
+					flags: [],
+				},
 			},
+			aliases: {},
 		})
 
 		assert.equal(stripAnsi(output[0]).split('CREATE:')[1].trim(), 'ace-manifest.json file')

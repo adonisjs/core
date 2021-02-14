@@ -69,16 +69,19 @@ export default class AppProvider {
 		/**
 		 * Register the cors before hook with the server
 		 */
-		this.app.container.with(['Adonis/Core/Config', 'Adonis/Core/Server'], (Config, Server) => {
-			const config = Config.get('cors', {})
-			if (!config.enabled) {
-				return
-			}
+		this.app.container.withBindings(
+			['Adonis/Core/Config', 'Adonis/Core/Server'],
+			(Config, Server) => {
+				const config = Config.get('cors', {})
+				if (!config.enabled) {
+					return
+				}
 
-			const Cors = require('../src/Hooks/Cors').Cors
-			const cors = new Cors(config)
-			Server.hooks.before(cors.handle.bind(cors))
-		})
+				const Cors = require('../src/Hooks/Cors').Cors
+				const cors = new Cors(config)
+				Server.hooks.before(cors.handle.bind(cors))
+			}
+		)
 	}
 
 	/**
@@ -96,7 +99,7 @@ export default class AppProvider {
 		/**
 		 * Register the cors before hook with the server
 		 */
-		this.app.container.with(
+		this.app.container.withBindings(
 			['Adonis/Core/Config', 'Adonis/Core/Server', 'Adonis/Core/Application'],
 			(Config, Server, Application) => {
 				const config = Config.get('static', {})
@@ -123,7 +126,7 @@ export default class AppProvider {
 			return
 		}
 
-		this.app.container.with(['Adonis/Core/HealthCheck'], (healthCheck) => {
+		this.app.container.withBindings(['Adonis/Core/HealthCheck'], (healthCheck) => {
 			require('../src/HealthCheck/Checkers/Env').default(healthCheck)
 			require('../src/HealthCheck/Checkers/AppKey').default(healthCheck)
 		})
@@ -144,7 +147,7 @@ export default class AppProvider {
 		/**
 		 * Define REPL bindings
 		 */
-		this.app.container.with(['Adonis/Addons/Repl'], (Repl) => {
+		this.app.container.withBindings(['Adonis/Addons/Repl'], (Repl) => {
 			const { defineReplBindings } = require('../src/Bindings/Repl')
 			defineReplBindings(this.app, Repl)
 		})

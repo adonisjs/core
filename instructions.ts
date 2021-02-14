@@ -8,8 +8,8 @@
  */
 
 import { join } from 'path'
-import { randomString } from '@poppinss/utils'
 import * as sinkStatic from '@adonisjs/sink'
+import { string } from '@poppinss/utils/build/helpers'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 const ENV_VALIDATIONS_TEMPLATE_STUB = join(__dirname, './templates', 'env.txt')
@@ -73,7 +73,7 @@ export default async function instructions(
 	env.set('PORT', 3333)
 	env.set('HOST', '0.0.0.0')
 	env.set('NODE_ENV', 'development')
-	env.set('APP_KEY', randomString(32))
+	env.set('APP_KEY', string.generateRandom(32))
 	env.commit()
 	logger.action(env.exists() ? 'update' : 'create').succeeded('.env,.env.example')
 

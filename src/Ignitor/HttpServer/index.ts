@@ -58,12 +58,12 @@ export class HttpServer {
 		/**
 		 * Setting up the application.
 		 */
-		this.application.setup()
+		await this.application.setup()
 
 		/**
 		 * Registering providers
 		 */
-		this.application.registerProviders()
+		await this.application.registerProviders()
 
 		/**
 		 * Booting providers
@@ -73,7 +73,7 @@ export class HttpServer {
 		/**
 		 * Importing preloaded files
 		 */
-		this.application.requirePreloads()
+		await this.application.requirePreloads()
 	}
 
 	/**

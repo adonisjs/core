@@ -8,7 +8,7 @@
  */
 
 import { BaseCommand, flags } from '@adonisjs/ace'
-import type { RouterContract, RouteNode } from '@ioc:Adonis/Core/Route'
+import type { RouterContract } from '@ioc:Adonis/Core/Route'
 
 /**
  * A command to display a list of routes
@@ -28,35 +28,27 @@ export default class ListRoutes extends BaseCommand {
 	}
 
 	/**
-	 * Find route from the routes store. We expect it to always return a route
-	 */
-	private findRoute(
-		router: any,
-		domain: string,
-		methods: string[],
-		pattern: string
-	): RouteNode | undefined {
-		return router['store']['tree'].domains[domain][methods[0]].routes[pattern]
-	}
-
-	/**
 	 * Returns an array of routes as JSON
 	 */
 	private outputJSON(router: RouterContract) {
-		return router.toJSON().map((lookupRoute) => {
-			const route = this.findRoute(
-				router,
-				lookupRoute.domain,
-				lookupRoute.methods,
-				lookupRoute.pattern
-			)
+		const routes = router.toJSON()
 
-			let handler: string = 'Closure'
-			const middleware = route
-				? route.middleware.map((one) => (typeof one === 'function' ? 'Closure' : one))
-				: []
+		return Object.keys(routes).reduce<{
+			[domain: string]: {
+				methods: string[]
+				name: string
+				pattern: string
+				handler: string
+				middleware: string[]
+			}[]
+		}>((result, domain) => {
+			result[domain] = routes[domain].map((route) => {
+				let handler: string = 'Closure'
 
-			if (route) {
+				const middleware = route
+					? route.middleware.map((one) => (typeof one === 'function' ? 'Closure' : one))
+					: []
+
 				if (route.meta.resolvedHandler!.type !== 'function' && route.meta.namespace) {
 					handler = `${route.meta.resolvedHandler!['namespace']}.${
 						route.meta.resolvedHandler!['method']
@@ -66,36 +58,43 @@ export default class ListRoutes extends BaseCommand {
 					const routeHandler = route.handler as string
 					handler = `${routeHandler.replace(new RegExp(`.${method}$`), '')}.${method}`
 				}
-			} else if (typeof lookupRoute.handler === 'string') {
-				handler = lookupRoute.handler
-			}
 
-			return {
-				methods: lookupRoute.methods,
-				name: lookupRoute.name || '',
-				pattern: lookupRoute.pattern,
-				handler: handler,
-				domain: lookupRoute.domain === 'root' ? '' : lookupRoute.domain,
-				middleware: middleware,
-			}
-		})
+				return {
+					methods: route.methods,
+					name: route.name || '',
+					pattern: route.pattern,
+					handler: handler,
+					middleware: middleware,
+				}
+			})
+
+			return result
+		}, {})
 	}
 
 	/**
 	 * Output routes a table string
 	 */
 	private outputTable(router: RouterContract) {
-		const table = this.ui.table().head(['Route', 'Handler', 'Middleware', 'Name', 'Domain'])
+		const routes = this.outputJSON(router)
+		const domains = Object.keys(routes)
+		const showDomainHeadline = domains.length > 1 || domains[0] !== 'root'
+		const table = this.ui.table().head(['Method', 'Route', 'Handler', 'Middleware', 'Name'])
 
-		this.outputJSON(router).forEach((route) => {
-			const row = [
-				`${this.colors.dim(route.methods.join(','))} ${route.pattern}`,
-				typeof route.handler === 'function' ? 'Closure' : route.handler,
-				route.middleware.join(','),
-				route.name,
-				route.domain,
-			]
-			table.row(row)
+		domains.forEach((domain) => {
+			if (showDomainHeadline) {
+				table.row([{ colSpan: 5, content: `Domain ${this.colors.cyan(domain)}` }])
+			}
+
+			routes[domain].forEach((route) => {
+				table.row([
+					this.colors.dim(route.methods.join(', ')),
+					route.pattern,
+					typeof route.handler === 'function' ? 'Closure' : route.handler,
+					route.middleware.join(','),
+					route.name,
+				])
+			})
 		})
 
 		table.render()

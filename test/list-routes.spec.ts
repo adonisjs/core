@@ -49,24 +49,24 @@ test.group('Command | List Routes', (group) => {
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
 			[
-				[
-					{
-						methods: ['GET'],
-						name: '',
-						pattern: '/about',
-						handler: 'Closure',
-						middleware: [],
-						domain: '',
-					},
-					{
-						methods: ['GET'],
-						name: '',
-						pattern: '/contact',
-						handler: 'Closure',
-						middleware: [],
-						domain: '',
-					},
-				],
+				{
+					root: [
+						{
+							methods: ['HEAD', 'GET'],
+							name: '',
+							pattern: '/about',
+							handler: 'Closure',
+							middleware: [],
+						},
+						{
+							methods: ['HEAD', 'GET'],
+							name: '',
+							pattern: '/contact',
+							handler: 'Closure',
+							middleware: [],
+						},
+					],
+				},
 			]
 		)
 	})
@@ -89,24 +89,24 @@ test.group('Command | List Routes', (group) => {
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
 			[
-				[
-					{
-						methods: ['GET'],
-						name: '',
-						pattern: '/about',
-						handler: 'Closure',
-						middleware: [],
-						domain: '',
-					},
-					{
-						methods: ['GET'],
-						name: '',
-						pattern: '/contact',
-						handler: 'Closure',
-						middleware: ['auth', 'acl:admin'],
-						domain: '',
-					},
-				],
+				{
+					root: [
+						{
+							methods: ['HEAD', 'GET'],
+							name: '',
+							pattern: '/about',
+							handler: 'Closure',
+							middleware: [],
+						},
+						{
+							methods: ['HEAD', 'GET'],
+							name: '',
+							pattern: '/contact',
+							handler: 'Closure',
+							middleware: ['auth', 'acl:admin'],
+						},
+					],
+				},
 			]
 		)
 	})
@@ -132,24 +132,24 @@ test.group('Command | List Routes', (group) => {
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
 			[
-				[
-					{
-						methods: ['GET'],
-						pattern: '/about',
-						name: '',
-						handler: 'HomeController.index',
-						middleware: [],
-						domain: '',
-					},
-					{
-						methods: ['GET'],
-						pattern: '/contact',
-						name: '',
-						handler: 'ContactController.handle',
-						middleware: [],
-						domain: '',
-					},
-				],
+				{
+					root: [
+						{
+							methods: ['HEAD', 'GET'],
+							pattern: '/about',
+							name: '',
+							handler: 'HomeController.index',
+							middleware: [],
+						},
+						{
+							methods: ['HEAD', 'GET'],
+							pattern: '/contact',
+							name: '',
+							handler: 'ContactController.handle',
+							middleware: [],
+						},
+					],
+				},
 			]
 		)
 	})
@@ -175,24 +175,24 @@ test.group('Command | List Routes', (group) => {
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
 			[
-				[
-					{
-						methods: ['GET'],
-						pattern: '/about',
-						name: '',
-						handler: 'HomeController.index',
-						middleware: [],
-						domain: '',
-					},
-					{
-						methods: ['GET'],
-						pattern: '/contact',
-						name: '',
-						handler: 'App/Admin/ContactController.handle',
-						middleware: [],
-						domain: '',
-					},
-				],
+				{
+					root: [
+						{
+							methods: ['HEAD', 'GET'],
+							pattern: '/about',
+							name: '',
+							handler: 'HomeController.index',
+							middleware: [],
+						},
+						{
+							methods: ['HEAD', 'GET'],
+							pattern: '/contact',
+							name: '',
+							handler: 'App/Admin/ContactController.handle',
+							middleware: [],
+						},
+					],
+				},
 			]
 		)
 	})
@@ -215,16 +215,17 @@ test.group('Command | List Routes', (group) => {
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
 			[
-				[
-					{
-						methods: ['GET'],
-						pattern: '/about',
-						handler: 'Closure',
-						name: '',
-						middleware: [],
-						domain: 'blogger.com',
-					},
-				],
+				{
+					'blogger.com': [
+						{
+							methods: ['HEAD', 'GET'],
+							pattern: '/about',
+							handler: 'Closure',
+							name: '',
+							middleware: [],
+						},
+					],
+				},
 			]
 		)
 	})
@@ -251,16 +252,17 @@ test.group('Command | List Routes', (group) => {
 		assert.deepEqual(
 			testingRenderer.logs.map(({ message }) => JSON.parse(message)),
 			[
-				[
-					{
-						methods: ['GET'],
-						pattern: '/v1/about',
-						handler: 'Closure',
-						name: '',
-						middleware: [],
-						domain: 'blogger.com',
-					},
-				],
+				{
+					'blogger.com': [
+						{
+							methods: ['HEAD', 'GET'],
+							pattern: '/v1/about',
+							handler: 'Closure',
+							name: '',
+							middleware: [],
+						},
+					],
+				},
 			]
 		)
 	})

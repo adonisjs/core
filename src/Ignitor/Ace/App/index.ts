@@ -8,10 +8,10 @@
  */
 
 import { join } from 'path'
-import { resolveFrom } from '@poppinss/utils'
 import { sticker, logger } from '@poppinss/cliui'
 import { Application } from '@adonisjs/application'
 import { Kernel, ManifestLoader } from '@adonisjs/ace'
+import { resolveFrom } from '@poppinss/utils/build/helpers'
 
 import { ErrorHandler } from '../ErrorHandler'
 import { registerTsHook } from '../../../utils'
@@ -212,10 +212,10 @@ export class App {
 		/**
 		 * Do not change sequence
 		 */
-		this.application.setup()
-		this.application.registerProviders()
+		await this.application.setup()
+		await this.application.registerProviders()
 		await this.application.bootProviders()
-		this.application.requirePreloads()
+		await this.application.requirePreloads()
 	}
 
 	/**
