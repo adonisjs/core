@@ -14,22 +14,22 @@ import { GenerateManifest } from './GenerateManifest'
  * Exposes the API to execute ace commands.
  */
 export class Ace {
-	constructor(private appRoot: string) {}
+  constructor(private appRoot: string) {}
 
-	/**
-	 * Handles the ace command
-	 */
-	public async handle(argv: string[]) {
-		process.env.ADONIS_ACE_CWD = this.appRoot
+  /**
+   * Handles the ace command
+   */
+  public async handle(argv: string[]) {
+    process.env.ADONIS_ACE_CWD = this.appRoot
 
-		if (argv[0] === 'generate:manifest') {
-			await new GenerateManifest(this.appRoot).handle()
-			return
-		}
+    if (argv[0] === 'generate:manifest') {
+      await new GenerateManifest(this.appRoot).handle()
+      return
+    }
 
-		/**
-		 * Proxy over to application commands
-		 */
-		await new App(this.appRoot).handle(argv)
-	}
+    /**
+     * Proxy over to application commands
+     */
+    await new App(this.appRoot).handle(argv)
+  }
 }

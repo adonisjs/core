@@ -23,201 +23,201 @@ type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
  * server.
  */
 export class HttpServer {
-	/**
-	 * Reference to core http server.
-	 */
-	private server: ServerContract
+  /**
+   * Reference to core http server.
+   */
+  private server: ServerContract
 
-	/**
-	 * Whether or not the application has been wired.
-	 */
-	private wired: boolean = false
+  /**
+   * Whether or not the application has been wired.
+   */
+  private wired: boolean = false
 
-	/**
-	 * Reference to the application.
-	 */
-	public application = new Application(this.appRoot, 'web')
+  /**
+   * Reference to the application.
+   */
+  public application = new Application(this.appRoot, 'web')
 
-	/**
-	 * Listens for unix signals to kill long running
-	 * processes.
-	 */
-	private signalsListener = new SignalsListener(this.application)
+  /**
+   * Listens for unix signals to kill long running
+   * processes.
+   */
+  private signalsListener = new SignalsListener(this.application)
 
-	constructor(private appRoot: string) {}
+  constructor(private appRoot: string) {}
 
-	/**
-	 * Wires up everything, so that we are ready to kick start
-	 * the HTTP server.
-	 */
-	private async wire() {
-		if (this.wired) {
-			return
-		}
+  /**
+   * Wires up everything, so that we are ready to kick start
+   * the HTTP server.
+   */
+  private async wire() {
+    if (this.wired) {
+      return
+    }
 
-		/**
-		 * Setting up the application.
-		 */
-		await this.application.setup()
+    /**
+     * Setting up the application.
+     */
+    await this.application.setup()
 
-		/**
-		 * Registering providers
-		 */
-		await this.application.registerProviders()
+    /**
+     * Registering providers
+     */
+    await this.application.registerProviders()
 
-		/**
-		 * Booting providers
-		 */
-		await this.application.bootProviders()
+    /**
+     * Booting providers
+     */
+    await this.application.bootProviders()
 
-		/**
-		 * Importing preloaded files
-		 */
-		await this.application.requirePreloads()
-	}
+    /**
+     * Importing preloaded files
+     */
+    await this.application.requirePreloads()
+  }
 
-	/**
-	 * Sets the server reference
-	 */
-	private setServer() {
-		this.server = this.application.container.use('Adonis/Core/Server')
-	}
+  /**
+   * Sets the server reference
+   */
+  private setServer() {
+    this.server = this.application.container.use('Adonis/Core/Server')
+  }
 
-	/**
-	 * Closes the underlying HTTP server
-	 */
-	private closeHttpServer(): Promise<void> {
-		return new Promise((resolve) => this.server.instance!.close(() => resolve()))
-	}
+  /**
+   * Closes the underlying HTTP server
+   */
+  private closeHttpServer(): Promise<void> {
+    return new Promise((resolve) => this.server.instance!.close(() => resolve()))
+  }
 
-	/**
-	 * Monitors the HTTP server for close and error events, so that
-	 * we can perform a graceful shutdown
-	 */
-	private monitorHttpServer() {
-		this.server.instance!.on('close', async () => {
-			this.application.logger.trace('closing http server')
-			this.server.instance!.removeAllListeners()
-			this.application.isShuttingDown = true
-		})
+  /**
+   * Monitors the HTTP server for close and error events, so that
+   * we can perform a graceful shutdown
+   */
+  private monitorHttpServer() {
+    this.server.instance!.on('close', async () => {
+      this.application.logger.trace('closing http server')
+      this.server.instance!.removeAllListeners()
+      this.application.isShuttingDown = true
+    })
 
-		this.server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
-			if (error.code === 'EADDRINUSE') {
-				this.application.logger.error('Port in use, closing server')
-				process.exitCode = 1
-				return
-			}
+    this.server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE') {
+        this.application.logger.error('Port in use, closing server')
+        process.exitCode = 1
+        return
+      }
 
-			await this.kill(3000)
-		})
-	}
+      await this.kill(3000)
+    })
+  }
 
-	/**
-	 * Notify server is ready
-	 */
-	private notifyServerReady(host: string, port: number) {
-		this.application.logger.info('started server on %s:%s', host, port)
+  /**
+   * Notify server is ready
+   */
+  private notifyServerReady(host: string, port: number) {
+    this.application.logger.info('started server on %s:%s', host, port)
 
-		if (process.send) {
-			process.send({ origin: 'adonis-http-server', ready: true, port: port, host: host })
-		}
-	}
+    if (process.send) {
+      process.send({ origin: 'adonis-http-server', ready: true, port: port, host: host })
+    }
+  }
 
-	/**
-	 * Creates the HTTP server to handle incoming requests. The server is just
-	 * created but not listening on any port.
-	 */
-	public createServer(serverCallback?: CustomServerCallback) {
-		/**
-		 * Optimizing the server by pre-compiling routes and middleware
-		 */
-		this.application.logger.trace('optimizing http server handler')
-		this.server.optimize()
+  /**
+   * Creates the HTTP server to handle incoming requests. The server is just
+   * created but not listening on any port.
+   */
+  public createServer(serverCallback?: CustomServerCallback) {
+    /**
+     * Optimizing the server by pre-compiling routes and middleware
+     */
+    this.application.logger.trace('optimizing http server handler')
+    this.server.optimize()
 
-		/**
-		 * Bind exception handler to handle exceptions occured during HTTP requests.
-		 */
-		if (this.application.exceptionHandlerNamespace) {
-			this.application.logger.trace(
-				'binding %s exception handler',
-				this.application.exceptionHandlerNamespace
-			)
-			this.server.errorHandler(this.application.exceptionHandlerNamespace)
-		}
+    /**
+     * Bind exception handler to handle exceptions occured during HTTP requests.
+     */
+    if (this.application.exceptionHandlerNamespace) {
+      this.application.logger.trace(
+        'binding %s exception handler',
+        this.application.exceptionHandlerNamespace
+      )
+      this.server.errorHandler(this.application.exceptionHandlerNamespace)
+    }
 
-		const handler = this.server.handle.bind(this.server)
-		this.server.instance = serverCallback ? serverCallback(handler) : createServer(handler)
-	}
+    const handler = this.server.handle.bind(this.server)
+    this.server.instance = serverCallback ? serverCallback(handler) : createServer(handler)
+  }
 
-	/**
-	 * Starts the http server a given host and port
-	 */
-	public listen(): Promise<void> {
-		return new Promise(async (resolve, reject) => {
-			try {
-				await this.application.start()
+  /**
+   * Starts the http server a given host and port
+   */
+  public listen(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.application.start()
 
-				const host = this.application.env.get('HOST', '0.0.0.0')
-				const port = Number(this.application.env.get('PORT', '3333'))
+        const host = this.application.env.get('HOST', '0.0.0.0')
+        const port = Number(this.application.env.get('PORT', '3333'))
 
-				this.server.instance!.listen(port, host, () => {
-					this.notifyServerReady(host, port)
-					resolve()
-				})
-			} catch (error) {
-				reject(error)
-			}
-		})
-	}
+        this.server.instance!.listen(port, host, () => {
+          this.notifyServerReady(host, port)
+          resolve()
+        })
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
 
-	/**
-	 * Start the HTTP server by wiring up the application
-	 */
-	public async start(serverCallback?: CustomServerCallback) {
-		try {
-			await this.wire()
-			this.setServer()
-			this.createServer(serverCallback)
-			this.monitorHttpServer()
-			await this.listen()
-			this.signalsListener.listen(() => this.close())
-		} catch (error) {
-			await new ErrorHandler(this.application).handleError(error)
-		}
-	}
+  /**
+   * Start the HTTP server by wiring up the application
+   */
+  public async start(serverCallback?: CustomServerCallback) {
+    try {
+      await this.wire()
+      this.setServer()
+      this.createServer(serverCallback)
+      this.monitorHttpServer()
+      await this.listen()
+      this.signalsListener.listen(() => this.close())
+    } catch (error) {
+      await new ErrorHandler(this.application).handleError(error)
+    }
+  }
 
-	/**
-	 * Prepares the application for shutdown. This method will invoke `shutdown`
-	 * lifecycle method on the providers and closes the `httpServer`.
-	 */
-	public async close() {
-		/**
-		 * Close the HTTP server before excuting the `shutdown` hooks. This ensures that
-		 * we are not accepting any new request during cool off.
-		 */
-		await this.closeHttpServer()
-		this.signalsListener.cleanup()
-		await this.application.shutdown()
-	}
+  /**
+   * Prepares the application for shutdown. This method will invoke `shutdown`
+   * lifecycle method on the providers and closes the `httpServer`.
+   */
+  public async close() {
+    /**
+     * Close the HTTP server before excuting the `shutdown` hooks. This ensures that
+     * we are not accepting any new request during cool off.
+     */
+    await this.closeHttpServer()
+    this.signalsListener.cleanup()
+    await this.application.shutdown()
+  }
 
-	/**
-	 * Kills the http server process by attempting to perform a graceful
-	 * shutdown or killing the app forcefully as waiting for configured
-	 * seconds.
-	 */
-	public async kill(waitTimeout: number = 3000) {
-		this.application.logger.trace('forcefully killing http server')
+  /**
+   * Kills the http server process by attempting to perform a graceful
+   * shutdown or killing the app forcefully as waiting for configured
+   * seconds.
+   */
+  public async kill(waitTimeout: number = 3000) {
+    this.application.logger.trace('forcefully killing http server')
 
-		try {
-			await Promise.race([
-				this.close(),
-				new Promise((resolve) => {
-					setTimeout(resolve, waitTimeout)
-				}),
-			])
-			process.exit(0)
-		} catch (error) {
-			new ErrorHandler(this.application).handleError(error).finally(() => process.exit(1))
-		}
-	}
+    try {
+      await Promise.race([
+        this.close(),
+        new Promise((resolve) => {
+          setTimeout(resolve, waitTimeout)
+        }),
+      ])
+      process.exit(0)
+    } catch (error) {
+      new ErrorHandler(this.application).handleError(error).finally(() => process.exit(1))
+    }
+  }
 }

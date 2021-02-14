@@ -8,11 +8,11 @@
  */
 
 declare module '@ioc:Adonis/Core/Application' {
-	import { HealthCheckContract } from '@ioc:Adonis/Core/HealthCheck'
-	import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
+  import { HealthCheckContract } from '@ioc:Adonis/Core/HealthCheck'
+  import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
 
-	export interface ContainerBindings {
-		'Adonis/Core/HealthCheck': HealthCheckContract
-		'Adonis/Core/HttpExceptionHandler': typeof HttpExceptionHandler
-	}
+  export interface ContainerBindings {
+    'Adonis/Core/HealthCheck': HealthCheckContract
+    'Adonis/Core/HttpExceptionHandler': typeof HttpExceptionHandler
+  }
 }

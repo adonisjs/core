@@ -20,39 +20,39 @@ import { setupApplicationFiles, fs } from '../test-helpers'
 let processExit = process.exit
 
 test.group('Ignitor | Ace | Generate Manifest', (group) => {
-	group.beforeEach(() => {
-		// @ts-ignore
-		process.exit = function () {}
-	})
+  group.beforeEach(() => {
+    // @ts-ignore
+    process.exit = function () {}
+  })
 
-	group.after(async () => {
-		await fs.cleanup()
-	})
+  group.after(async () => {
+    await fs.cleanup()
+  })
 
-	group.afterEach(async () => {
-		process.exit = processExit
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    process.exit = processExit
+    await fs.cleanup()
+  })
 
-	test('generate manifest file', async (assert) => {
-		await setupApplicationFiles()
-		const { output, restore } = stdout.inspect()
+  test('generate manifest file', async (assert) => {
+    await setupApplicationFiles()
+    const { output, restore } = stdout.inspect()
 
-		/**
-		 * Overwriting .adonisrc.json
-		 */
-		await fs.add(
-			'.adonisrc.json',
-			JSON.stringify({
-				typescript: false,
-				commands: ['./FooCommand'],
-				providers: [join(__dirname, '../providers/AppProvider.ts')],
-			})
-		)
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add(
+      '.adonisrc.json',
+      JSON.stringify({
+        typescript: false,
+        commands: ['./FooCommand'],
+        providers: [join(__dirname, '../providers/AppProvider.ts')],
+      })
+    )
 
-		await fs.add(
-			'FooCommand.ts',
-			`
+    await fs.add(
+      'FooCommand.ts',
+      `
       const { BaseCommand } = require('@adonisjs/ace')
       module.exports = class FooCommand extends BaseCommand {
         static get commandName () {
@@ -62,50 +62,50 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
         run () {}
       }
     `
-		)
+    )
 
-		const ignitor = new Ignitor(fs.basePath)
-		await ignitor.ace().handle(['generate:manifest'])
-		restore()
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
+    restore()
 
-		const aceManifest = await fs.fsExtra.readJson(join(fs.basePath, './ace-manifest.json'))
-		assert.deepEqual(aceManifest, {
-			commands: {
-				foo: {
-					settings: {},
-					aliases: [],
-					commandPath: './FooCommand',
-					commandName: 'foo',
-					description: '',
-					args: [],
-					flags: [],
-				},
-			},
-			aliases: {},
-		})
+    const aceManifest = await fs.fsExtra.readJson(join(fs.basePath, './ace-manifest.json'))
+    assert.deepEqual(aceManifest, {
+      commands: {
+        foo: {
+          settings: {},
+          aliases: [],
+          commandPath: './FooCommand',
+          commandName: 'foo',
+          description: '',
+          args: [],
+          flags: [],
+        },
+      },
+      aliases: {},
+    })
 
-		assert.equal(stripAnsi(output[0]).split('CREATE:')[1].trim(), 'ace-manifest.json file')
-	})
+    assert.equal(stripAnsi(output[0]).split('CREATE:')[1].trim(), 'ace-manifest.json file')
+  })
 
-	test('print helpful error message when command is using ioc container imports', async (assert) => {
-		await setupApplicationFiles()
-		const { output, restore } = stderr.inspect()
+  test('print helpful error message when command is using ioc container imports', async (assert) => {
+    await setupApplicationFiles()
+    const { output, restore } = stderr.inspect()
 
-		/**
-		 * Overwriting .adonisrc.json
-		 */
-		await fs.add(
-			'.adonisrc.json',
-			JSON.stringify({
-				typescript: false,
-				commands: ['./FooCommand'],
-				providers: [join(__dirname, '../providers/AppProvider.ts')],
-			})
-		)
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add(
+      '.adonisrc.json',
+      JSON.stringify({
+        typescript: false,
+        commands: ['./FooCommand'],
+        providers: [join(__dirname, '../providers/AppProvider.ts')],
+      })
+    )
 
-		await fs.add(
-			'FooCommand.ts',
-			`
+    await fs.add(
+      'FooCommand.ts',
+      `
 			import { BaseCommand } from '@adonisjs/ace'
 			global[Symbol.for('ioc.use')]('Adonis/Core/Env').__esModule.get('')
 
@@ -117,71 +117,71 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
         run () {}
       }
     `
-		)
+    )
 
-		const ignitor = new Ignitor(fs.basePath)
-		await ignitor.ace().handle(['generate:manifest'])
-		restore()
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
+    restore()
 
-		const hasManifestFile = await fs.fsExtra.pathExists(join(fs.basePath, './ace-manifest.json'))
-		assert.isFalse(hasManifestFile)
+    const hasManifestFile = await fs.fsExtra.pathExists(join(fs.basePath, './ace-manifest.json'))
+    assert.isFalse(hasManifestFile)
 
-		assert.match(
-			stripAnsi(output[0]).trim(),
-			/Top level import for module "Adonis\/Core\/Env" is not allowed in commands/
-		)
-	})
+    assert.match(
+      stripAnsi(output[0]).trim(),
+      /Top level import for module "Adonis\/Core\/Env" is not allowed in commands/
+    )
+  })
 })
 
 test.group('Ignitor | Ace | Core Commands', (group) => {
-	group.beforeEach(() => {
-		// @ts-ignore
-		process.exit = function () {}
-	})
+  group.beforeEach(() => {
+    // @ts-ignore
+    process.exit = function () {}
+  })
 
-	group.after(async () => {
-		await fs.cleanup()
-	})
+  group.after(async () => {
+    await fs.cleanup()
+  })
 
-	group.afterEach(async () => {
-		process.exit = processExit
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    process.exit = processExit
+    await fs.cleanup()
+  })
 })
 
 test.group('Ignitor | Ace | Run Command', (group) => {
-	group.beforeEach(() => {
-		// @ts-ignore
-		process.exit = function () {}
-	})
+  group.beforeEach(() => {
+    // @ts-ignore
+    process.exit = function () {}
+  })
 
-	group.after(async () => {
-		await fs.cleanup()
-	})
+  group.after(async () => {
+    await fs.cleanup()
+  })
 
-	group.afterEach(async () => {
-		process.exit = processExit
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    process.exit = processExit
+    await fs.cleanup()
+  })
 
-	test('run command without loading the app', async (assert) => {
-		await setupApplicationFiles()
+  test('run command without loading the app', async (assert) => {
+    await setupApplicationFiles()
 
-		/**
-		 * Overwriting .adonisrc.json
-		 */
-		await fs.add(
-			'.adonisrc.json',
-			JSON.stringify({
-				typescript: false,
-				commands: ['./FooCommand'],
-				providers: [join(__dirname, '../providers/AppProvider.ts')],
-			})
-		)
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add(
+      '.adonisrc.json',
+      JSON.stringify({
+        typescript: false,
+        commands: ['./FooCommand'],
+        providers: [join(__dirname, '../providers/AppProvider.ts')],
+      })
+    )
 
-		await fs.add(
-			'FooCommand.ts',
-			`
+    await fs.add(
+      'FooCommand.ts',
+      `
       const { BaseCommand } = require('@adonisjs/ace')
       export default class FooCommand extends BaseCommand {
 				public static get settings() {
@@ -199,36 +199,36 @@ test.group('Ignitor | Ace | Run Command', (group) => {
         }
       }
     `
-		)
+    )
 
-		const ignitor = new Ignitor(fs.basePath)
-		await ignitor.ace().handle(['generate:manifest'])
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
 
-		const { output, restore } = stdout.inspect()
-		await ignitor.ace().handle(['foo'])
-		restore()
+    const { output, restore } = stdout.inspect()
+    await ignitor.ace().handle(['foo'])
+    restore()
 
-		assert.equal(output[0].trim(), 'is ready false')
-	})
+    assert.equal(output[0].trim(), 'is ready false')
+  })
 
-	test('load app when command setting loadApp is true', async (assert) => {
-		await setupApplicationFiles()
+  test('load app when command setting loadApp is true', async (assert) => {
+    await setupApplicationFiles()
 
-		/**
-		 * Overwriting .adonisrc.json
-		 */
-		await fs.add(
-			'.adonisrc.json',
-			JSON.stringify({
-				typescript: false,
-				commands: ['./FooCommand'],
-				providers: [join(__dirname, '../providers/AppProvider.ts')],
-			})
-		)
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add(
+      '.adonisrc.json',
+      JSON.stringify({
+        typescript: false,
+        commands: ['./FooCommand'],
+        providers: [join(__dirname, '../providers/AppProvider.ts')],
+      })
+    )
 
-		await fs.add(
-			'FooCommand.ts',
-			`
+    await fs.add(
+      'FooCommand.ts',
+      `
       const { BaseCommand } = require('@adonisjs/ace')
       export default class FooCommand extends BaseCommand {
         static get commandName () {
@@ -247,39 +247,39 @@ test.group('Ignitor | Ace | Run Command', (group) => {
         }
       }
     `
-		)
+    )
 
-		const ignitor = new Ignitor(fs.basePath)
-		await ignitor.ace().handle(['generate:manifest'])
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
 
-		const { output, restore } = stdout.inspect()
-		await ignitor.ace().handle(['foo'])
-		restore()
+    const { output, restore } = stdout.inspect()
+    await ignitor.ace().handle(['foo'])
+    restore()
 
-		assert.equal(output[0].trim(), 'is ready true')
-	})
+    assert.equal(output[0].trim(), 'is ready true')
+  })
 
-	test('print error when command is missing', async (assert) => {
-		await setupApplicationFiles()
+  test('print error when command is missing', async (assert) => {
+    await setupApplicationFiles()
 
-		/**
-		 * Overwriting .adonisrc.json
-		 */
-		await fs.add(
-			'.adonisrc.json',
-			JSON.stringify({
-				typescript: false,
-				providers: [join(__dirname, '../providers/AppProvider.ts')],
-			})
-		)
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add(
+      '.adonisrc.json',
+      JSON.stringify({
+        typescript: false,
+        providers: [join(__dirname, '../providers/AppProvider.ts')],
+      })
+    )
 
-		const ignitor = new Ignitor(fs.basePath)
-		await ignitor.ace().handle(['generate:manifest'])
+    const ignitor = new Ignitor(fs.basePath)
+    await ignitor.ace().handle(['generate:manifest'])
 
-		const { output, restore } = stderr.inspect()
-		await ignitor.ace().handle(['foo'])
-		restore()
+    const { output, restore } = stderr.inspect()
+    await ignitor.ace().handle(['foo'])
+    restore()
 
-		assert.match(output[0].trim(), /"foo" command not found/)
-	})
+    assert.match(output[0].trim(), /"foo" command not found/)
+  })
 })

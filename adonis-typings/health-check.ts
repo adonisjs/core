@@ -12,39 +12,39 @@
  * file.
  */
 declare module '@ioc:Adonis/Core/HealthCheck' {
-	export type Checker = string | (() => Promise<HealthReportEntry>)
+  export type Checker = string | (() => Promise<HealthReportEntry>)
 
-	/**
-	 * Shape of health report entry. Each checker must
-	 * return an object with similar shape.
-	 */
-	export type HealthReportEntry = {
-		displayName: string
-		health: {
-			healthy: boolean
-			message?: string
-		}
-		meta?: any
-	}
+  /**
+   * Shape of health report entry. Each checker must
+   * return an object with similar shape.
+   */
+  export type HealthReportEntry = {
+    displayName: string
+    health: {
+      healthy: boolean
+      message?: string
+    }
+    meta?: any
+  }
 
-	/**
-	 * The shape of entire report
-	 */
-	export type HealthReport = {
-		[service: string]: HealthReportEntry
-	}
+  /**
+   * The shape of entire report
+   */
+  export type HealthReport = {
+    [service: string]: HealthReportEntry
+  }
 
-	/**
-	 * Shape of health check contract
-	 */
-	export interface HealthCheckContract {
-		servicesList: string[]
-		addChecker(service: string, checker: Checker): void
-		isLive(): Promise<boolean>
-		isReady(): boolean
-		getReport(): Promise<{ healthy: boolean; report: HealthReport }>
-	}
+  /**
+   * Shape of health check contract
+   */
+  export interface HealthCheckContract {
+    servicesList: string[]
+    addChecker(service: string, checker: Checker): void
+    isLive(): Promise<boolean>
+    isReady(): boolean
+    getReport(): Promise<{ healthy: boolean; report: HealthReport }>
+  }
 
-	const HealthCheck: HealthCheckContract
-	export default HealthCheck
+  const HealthCheck: HealthCheckContract
+  export default HealthCheck
 }

@@ -14,17 +14,17 @@ import { string } from '@poppinss/utils/build/helpers'
  * A command to generate a secure app key
  */
 export default class GenerateKey extends BaseCommand {
-	public static commandName = 'generate:key'
-	public static description = 'Generate a new APP_KEY secret'
+  public static commandName = 'generate:key'
+  public static description = 'Generate a new APP_KEY secret'
 
-	public async run() {
-		const secret = string.generateRandom(32)
-		console.log(this.colors.green(secret))
+  public async run() {
+    const secret = string.generateRandom(32)
+    console.log(this.colors.green(secret))
 
-		console.log(
-			this.colors.gray(
-				'  > During development, you may want to set the above secret as APP_KEY inside the .env file'
-			)
-		)
-	}
+    console.log(
+      this.colors.gray(
+        '  > During development, you may want to set the above secret as APP_KEY inside the .env file'
+      )
+    )
+  }
 }

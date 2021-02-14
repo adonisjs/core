@@ -18,32 +18,32 @@ import { Ignitor } from '../src/Ignitor'
 import { setupApplicationFiles, fs } from '../test-helpers'
 
 test.group('Ignitor | Http', (group) => {
-	group.before(() => {
-		process.env.ENV_SILENT = 'true'
-	})
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
 
-	group.beforeEach(() => {
-		process.env.NODE_ENV = 'testing'
-	})
+  group.beforeEach(() => {
+    process.env.NODE_ENV = 'testing'
+  })
 
-	group.after(async () => {
-		await fs.cleanup()
-		delete process.env.ENV_SILENT
-		delete process.env.APP_KEY
-	})
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
 
-	group.afterEach(async () => {
-		process.removeAllListeners('SIGINT')
-		process.removeAllListeners('SIGTERM')
+  group.afterEach(async () => {
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
 
-		delete process.env.NODE_ENV
-		await fs.cleanup()
-	})
+    delete process.env.NODE_ENV
+    await fs.cleanup()
+  })
 
-	test('call ready hook on providers before starting the http server', async (assert, done) => {
-		await fs.add(
-			'providers/AppProvider.ts',
-			`
+  test('call ready hook on providers before starting the http server', async (assert, done) => {
+    await fs.add(
+      'providers/AppProvider.ts',
+      `
     export default class AppProvider {
 			constructor (protected $app) {}
 
@@ -54,55 +54,55 @@ test.group('Ignitor | Http', (group) => {
       }
     }
     `
-		)
+    )
 
-		await setupApplicationFiles(['./providers/AppProvider'])
+    await setupApplicationFiles(['./providers/AppProvider'])
 
-		const httpServer = new Ignitor(fs.basePath).httpServer()
-		await httpServer.start()
+    const httpServer = new Ignitor(fs.basePath).httpServer()
+    await httpServer.start()
 
-		const server = httpServer.application.container.use('Adonis/Core/Server')
-		server.instance!.close(() => {
-			done()
-		})
-		assert.isTrue(server['hookCalled'])
-	})
+    const server = httpServer.application.container.use('Adonis/Core/Server')
+    server.instance!.close(() => {
+      done()
+    })
+    assert.isTrue(server['hookCalled'])
+  })
 
-	test('start http server to accept incoming requests', async (assert, done) => {
-		await setupApplicationFiles()
+  test('start http server to accept incoming requests', async (assert, done) => {
+    await setupApplicationFiles()
 
-		const ignitor = new Ignitor(fs.basePath)
-		const httpServer = ignitor.httpServer()
+    const ignitor = new Ignitor(fs.basePath)
+    const httpServer = ignitor.httpServer()
 
-		await httpServer.application.setup()
-		await httpServer.application.registerProviders()
-		await httpServer.application.bootProviders()
+    await httpServer.application.setup()
+    await httpServer.application.registerProviders()
+    await httpServer.application.bootProviders()
 
-		/**
-		 * Define routes
-		 */
-		const server = httpServer.application.container.use('Adonis/Core/Server')
-		httpServer.application.container.use('Adonis/Core/Route').get('/', async () => 'handled')
+    /**
+     * Define routes
+     */
+    const server = httpServer.application.container.use('Adonis/Core/Server')
+    httpServer.application.container.use('Adonis/Core/Route').get('/', async () => 'handled')
 
-		await httpServer.start((handler) => createServer(handler))
-		assert.isTrue(httpServer.application.isReady)
+    await httpServer.start((handler) => createServer(handler))
+    assert.isTrue(httpServer.application.isReady)
 
-		const { text } = await supertest(server.instance).get('/').expect(200)
-		server.instance!.close()
+    const { text } = await supertest(server.instance).get('/').expect(200)
+    server.instance!.close()
 
-		setTimeout(() => {
-			assert.isFalse(httpServer.application.isReady)
-			assert.equal(text, 'handled')
-			done()
-		}, 100)
-	})
+    setTimeout(() => {
+      assert.isFalse(httpServer.application.isReady)
+      assert.equal(text, 'handled')
+      done()
+    }, 100)
+  })
 
-	test('forward errors to app error handler', async (assert, done) => {
-		await setupApplicationFiles()
+  test('forward errors to app error handler', async (assert, done) => {
+    await setupApplicationFiles()
 
-		await fs.add(
-			'app/Exceptions/Handler.ts',
-			`
+    await fs.add(
+      'app/Exceptions/Handler.ts',
+      `
 	      export default class Handler {
 	        async handle (error) {
 	          return \`handled \${error.message}\`
@@ -112,84 +112,84 @@ test.group('Ignitor | Http', (group) => {
 	        }
 	      }
 	    `
-		)
+    )
 
-		/**
-		 * Overwriting .adonisrc.json
-		 */
-		await fs.add(
-			'.adonisrc.json',
-			JSON.stringify({
-				typescript: true,
-				autoloads: {
-					App: './app',
-				},
-				providers: [join(__dirname, '../providers/AppProvider.ts')],
-				exceptionHandlerNamespace: 'App/Exceptions/Handler',
-			})
-		)
+    /**
+     * Overwriting .adonisrc.json
+     */
+    await fs.add(
+      '.adonisrc.json',
+      JSON.stringify({
+        typescript: true,
+        autoloads: {
+          App: './app',
+        },
+        providers: [join(__dirname, '../providers/AppProvider.ts')],
+        exceptionHandlerNamespace: 'App/Exceptions/Handler',
+      })
+    )
 
-		const ignitor = new Ignitor(fs.basePath)
-		const httpServer = ignitor.httpServer()
+    const ignitor = new Ignitor(fs.basePath)
+    const httpServer = ignitor.httpServer()
 
-		await httpServer.application.setup()
-		await httpServer.application.registerProviders()
-		await httpServer.application.bootProviders()
+    await httpServer.application.setup()
+    await httpServer.application.registerProviders()
+    await httpServer.application.bootProviders()
 
-		await httpServer.start((handler) => createServer(handler))
-		const server = httpServer.application.container.use('Adonis/Core/Server')
+    await httpServer.start((handler) => createServer(handler))
+    const server = httpServer.application.container.use('Adonis/Core/Server')
 
-		const { text } = await supertest(server.instance).get('/').expect(404)
-		server.instance!.close(() => {
-			done()
-		})
-		assert.equal(text, 'handled E_ROUTE_NOT_FOUND: Cannot GET:/')
-	})
+    const { text } = await supertest(server.instance).get('/').expect(404)
+    server.instance!.close(() => {
+      done()
+    })
+    assert.equal(text, 'handled E_ROUTE_NOT_FOUND: Cannot GET:/')
+  })
 
-	test('kill app when server receives error', async (assert) => {
-		assert.plan(1)
+  test('kill app when server receives error', async (assert) => {
+    assert.plan(1)
 
-		await setupApplicationFiles()
+    await setupApplicationFiles()
 
-		const ignitor = new Ignitor(fs.basePath)
-		const httpServer = ignitor.httpServer()
-		httpServer.application.setup()
-		httpServer.application.registerProviders()
-		await httpServer.application.bootProviders()
+    const ignitor = new Ignitor(fs.basePath)
+    const httpServer = ignitor.httpServer()
+    httpServer.application.setup()
+    httpServer.application.registerProviders()
+    await httpServer.application.bootProviders()
 
-		httpServer.kill = async function kill() {
-			assert.isTrue(true)
-			server.instance!.close()
-		}
+    httpServer.kill = async function kill() {
+      assert.isTrue(true)
+      server.instance!.close()
+    }
 
-		await httpServer.start((handler) => createServer(handler))
-		const server = httpServer.application.container.use('Adonis/Core/Server')
-		server.instance!.emit('error', new Error())
-	})
+    await httpServer.start((handler) => createServer(handler))
+    const server = httpServer.application.container.use('Adonis/Core/Server')
+    server.instance!.emit('error', new Error())
+  })
 
-	test('close http server gracefully when closing the app', async (assert, done) => {
-		assert.plan(2)
-		await setupApplicationFiles()
+  test('close http server gracefully when closing the app', async (assert, done) => {
+    assert.plan(2)
+    await setupApplicationFiles()
 
-		const ignitor = new Ignitor(fs.basePath)
-		const httpServer = ignitor.httpServer()
+    const ignitor = new Ignitor(fs.basePath)
+    const httpServer = ignitor.httpServer()
 
-		await httpServer.start((handler) => createServer(handler))
-		const server = httpServer.application.container.use('Adonis/Core/Server')
+    await httpServer.start((handler) => createServer(handler))
+    const server = httpServer.application.container.use('Adonis/Core/Server')
 
-		server.instance!.on('close', () => {
-			assert.isTrue(true)
-			assert.isFalse(httpServer.application.isReady)
-			done()
-		})
+    server.instance!.on('close', () => {
+      assert.isTrue(true)
+      assert.isFalse(httpServer.application.isReady)
+      done()
+    })
 
-		await httpServer.close()
-	})
+    await httpServer.close()
+  })
 
-	test('invoke shutdown method when gracefully closing the app', async (assert) => {
-		await fs.add(
-			'providers/AppProvider.ts',
-			`
+  test('invoke shutdown method when gracefully closing the app', async (assert) => {
+    await fs.add(
+      'providers/AppProvider.ts',
+      `
 	    export default class AppProvider {
 				constructor (protected $app) {}
 
@@ -200,183 +200,183 @@ test.group('Ignitor | Http', (group) => {
 	      }
 	    }
 	    `
-		)
+    )
 
-		await setupApplicationFiles(['./providers/AppProvider'])
+    await setupApplicationFiles(['./providers/AppProvider'])
 
-		const ignitor = new Ignitor(fs.basePath)
-		const httpServer = ignitor.httpServer()
+    const ignitor = new Ignitor(fs.basePath)
+    const httpServer = ignitor.httpServer()
 
-		await httpServer.start((handler) => createServer(handler))
-		const server = httpServer.application.container.use('Adonis/Core/Server')
+    await httpServer.start((handler) => createServer(handler))
+    const server = httpServer.application.container.use('Adonis/Core/Server')
 
-		await httpServer.close()
-		assert.isTrue(server['hookCalled'])
-	})
+    await httpServer.close()
+    assert.isTrue(server['hookCalled'])
+  })
 })
 
 test.group('Ignitor | HTTP | Static Assets', (group) => {
-	group.before(() => {
-		process.env.ENV_SILENT = 'true'
-	})
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
 
-	group.beforeEach(() => {
-		process.env.NODE_ENV = 'testing'
-	})
+  group.beforeEach(() => {
+    process.env.NODE_ENV = 'testing'
+  })
 
-	group.after(async () => {
-		await fs.cleanup()
-		delete process.env.ENV_SILENT
-		delete process.env.APP_KEY
-	})
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
 
-	group.afterEach(async () => {
-		process.removeAllListeners('SIGINT')
-		process.removeAllListeners('SIGTERM')
+  group.afterEach(async () => {
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
 
-		delete process.env.NODE_ENV
-		await fs.cleanup()
-	})
+    delete process.env.NODE_ENV
+    await fs.cleanup()
+  })
 
-	test('serve static files when static hooks is enabled', async (assert, done) => {
-		await setupApplicationFiles()
-		await fs.add(
-			'config/static.ts',
-			`
+  test('serve static files when static hooks is enabled', async (assert, done) => {
+    await setupApplicationFiles()
+    await fs.add(
+      'config/static.ts',
+      `
 	      export const enabled = true
 	    `
-		)
+    )
 
-		await fs.add('public/style.css', 'body { background: #000 }')
+    await fs.add('public/style.css', 'body { background: #000 }')
 
-		const ignitor = new Ignitor(fs.basePath)
-		const httpServer = ignitor.httpServer()
+    const ignitor = new Ignitor(fs.basePath)
+    const httpServer = ignitor.httpServer()
 
-		await httpServer.application.setup()
-		await httpServer.application.registerProviders()
-		await httpServer.application.bootProviders()
+    await httpServer.application.setup()
+    await httpServer.application.registerProviders()
+    await httpServer.application.bootProviders()
 
-		const server = httpServer.application.container.use('Adonis/Core/Server')
-		await httpServer.start((handler) => createServer(handler))
-		assert.isTrue(httpServer.application.isReady)
+    const server = httpServer.application.container.use('Adonis/Core/Server')
+    await httpServer.start((handler) => createServer(handler))
+    assert.isTrue(httpServer.application.isReady)
 
-		const { text } = await supertest(server.instance).get('/style.css').expect(200)
-		server.instance!.close()
+    const { text } = await supertest(server.instance).get('/style.css').expect(200)
+    server.instance!.close()
 
-		setTimeout(() => {
-			assert.isFalse(httpServer.application.isReady)
-			assert.equal(text, 'body { background: #000 }')
-			done()
-		}, 100)
-	})
+    setTimeout(() => {
+      assert.isFalse(httpServer.application.isReady)
+      assert.equal(text, 'body { background: #000 }')
+      done()
+    }, 100)
+  })
 
-	test('serve static files from a custom public path', async (assert, done) => {
-		await setupApplicationFiles()
-		await fs.add(
-			'config/static.ts',
-			`
+  test('serve static files from a custom public path', async (assert, done) => {
+    await setupApplicationFiles()
+    await fs.add(
+      'config/static.ts',
+      `
 	      export const enabled = true
 	    `
-		)
+    )
 
-		/**
-		 * Overwriting .adonisrc.json
-		 */
-		const existingContent = await fs.get('.adonisrc.json')
-		await fs.add(
-			'.adonisrc.json',
-			JSON.stringify(
-				Object.assign(JSON.parse(existingContent), {
-					directories: {
-						public: 'www',
-					},
-				})
-			)
-		)
+    /**
+     * Overwriting .adonisrc.json
+     */
+    const existingContent = await fs.get('.adonisrc.json')
+    await fs.add(
+      '.adonisrc.json',
+      JSON.stringify(
+        Object.assign(JSON.parse(existingContent), {
+          directories: {
+            public: 'www',
+          },
+        })
+      )
+    )
 
-		await fs.add('www/style.css', 'body { background: #000 }')
+    await fs.add('www/style.css', 'body { background: #000 }')
 
-		const ignitor = new Ignitor(fs.basePath)
-		const httpServer = ignitor.httpServer()
+    const ignitor = new Ignitor(fs.basePath)
+    const httpServer = ignitor.httpServer()
 
-		await httpServer.application.setup()
-		await httpServer.application.registerProviders()
-		await httpServer.application.bootProviders()
+    await httpServer.application.setup()
+    await httpServer.application.registerProviders()
+    await httpServer.application.bootProviders()
 
-		const server = httpServer.application.container.use('Adonis/Core/Server')
-		await httpServer.start((handler) => createServer(handler))
+    const server = httpServer.application.container.use('Adonis/Core/Server')
+    await httpServer.start((handler) => createServer(handler))
 
-		assert.isTrue(httpServer.application.isReady)
-		const { text } = await supertest(server.instance).get('/style.css').expect(200)
-		server.instance!.close()
+    assert.isTrue(httpServer.application.isReady)
+    const { text } = await supertest(server.instance).get('/style.css').expect(200)
+    server.instance!.close()
 
-		setTimeout(() => {
-			assert.isFalse(httpServer.application.isReady)
-			assert.equal(text, 'body { background: #000 }')
-			done()
-		}, 100)
-	})
+    setTimeout(() => {
+      assert.isFalse(httpServer.application.isReady)
+      assert.equal(text, 'body { background: #000 }')
+      done()
+    }, 100)
+  })
 })
 
 test.group('Ignitor | HTTP | CORS', (group) => {
-	group.before(() => {
-		process.env.ENV_SILENT = 'true'
-	})
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
 
-	group.beforeEach(() => {
-		process.env.NODE_ENV = 'testing'
-	})
+  group.beforeEach(() => {
+    process.env.NODE_ENV = 'testing'
+  })
 
-	group.after(async () => {
-		await fs.cleanup()
-		delete process.env.ENV_SILENT
-		delete process.env.APP_KEY
-	})
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
 
-	group.afterEach(async () => {
-		process.removeAllListeners('SIGINT')
-		process.removeAllListeners('SIGTERM')
-		delete process.env.NODE_ENV
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
+    delete process.env.NODE_ENV
+    await fs.cleanup()
+  })
 
-	test('respond to pre-flight requests when cors are enabled', async (assert, done) => {
-		await setupApplicationFiles()
-		await fs.add(
-			'config/cors.ts',
-			`
+  test('respond to pre-flight requests when cors are enabled', async (assert, done) => {
+    await setupApplicationFiles()
+    await fs.add(
+      'config/cors.ts',
+      `
 	      export const enabled = true
 	      export const exposeHeaders = []
 	      export const methods = ['GET']
 	      export const origin = true
 	      export const headers = true
 	    `
-		)
+    )
 
-		const ignitor = new Ignitor(fs.basePath)
-		const httpServer = ignitor.httpServer()
+    const ignitor = new Ignitor(fs.basePath)
+    const httpServer = ignitor.httpServer()
 
-		await httpServer.application.setup()
-		await httpServer.application.registerProviders()
-		await httpServer.application.bootProviders()
+    await httpServer.application.setup()
+    await httpServer.application.registerProviders()
+    await httpServer.application.bootProviders()
 
-		const server = httpServer.application.container.use('Adonis/Core/Server')
-		await httpServer.start((handler) => createServer(handler))
-		assert.isTrue(httpServer.application.isReady)
+    const server = httpServer.application.container.use('Adonis/Core/Server')
+    await httpServer.start((handler) => createServer(handler))
+    assert.isTrue(httpServer.application.isReady)
 
-		const { header } = await supertest(server.instance)
-			.options('/')
-			.set('origin', 'foo.com')
-			.set('Access-Control-Request-Method', 'GET')
-			.expect(204)
+    const { header } = await supertest(server.instance)
+      .options('/')
+      .set('origin', 'foo.com')
+      .set('Access-Control-Request-Method', 'GET')
+      .expect(204)
 
-		server.instance!.close()
+    server.instance!.close()
 
-		setTimeout(() => {
-			assert.isFalse(httpServer.application.isReady)
-			assert.equal(header['access-control-allow-origin'], 'foo.com')
-			assert.equal(header['access-control-allow-methods'], 'GET')
-			done()
-		}, 100)
-	})
+    setTimeout(() => {
+      assert.isFalse(httpServer.application.isReady)
+      assert.equal(header['access-control-allow-origin'], 'foo.com')
+      assert.equal(header['access-control-allow-methods'], 'GET')
+      done()
+    }, 100)
+  })
 })

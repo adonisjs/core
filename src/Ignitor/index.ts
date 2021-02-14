@@ -18,28 +18,28 @@ import { HttpServer } from './HttpServer'
  * the application.
  */
 export class Ignitor {
-	constructor(private appRoot: string) {}
+  constructor(private appRoot: string) {}
 
-	/**
-	 * Returns an instance of the application.
-	 */
-	public application(environment: AppEnvironments) {
-		return new Application(this.appRoot, environment)
-	}
+  /**
+   * Returns an instance of the application.
+   */
+  public application(environment: AppEnvironments) {
+    return new Application(this.appRoot, environment)
+  }
 
-	/**
-	 * Returns instance of server to start
-	 * the HTTP server
-	 */
-	public httpServer() {
-		return new HttpServer(this.appRoot)
-	}
+  /**
+   * Returns instance of server to start
+   * the HTTP server
+   */
+  public httpServer() {
+    return new HttpServer(this.appRoot)
+  }
 
-	/**
-	 * Returns instance of ace to handle console
-	 * commands
-	 */
-	public ace() {
-		return new Ace(this.appRoot)
-	}
+  /**
+   * Returns instance of ace to handle console
+   * commands
+   */
+  public ace() {
+    return new Ace(this.appRoot)
+  }
 }

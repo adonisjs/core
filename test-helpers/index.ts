@@ -18,32 +18,32 @@ export const fs = new Filesystem(join(__dirname, '__app'))
  * Setup application files for testing
  */
 export async function setupApplicationFiles(additionalProviders?: string[]) {
-	await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
+  await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
 
-	const providers = Array.isArray(additionalProviders)
-		? additionalProviders.concat(join(__dirname, '../providers/AppProvider.ts'))
-		: [join(__dirname, '../providers/AppProvider.ts')]
+  const providers = Array.isArray(additionalProviders)
+    ? additionalProviders.concat(join(__dirname, '../providers/AppProvider.ts'))
+    : [join(__dirname, '../providers/AppProvider.ts')]
 
-	await fs.add(
-		'.adonisrc.json',
-		JSON.stringify({
-			autoloads: {
-				App: './app',
-			},
-			providers: providers,
-		})
-	)
+  await fs.add(
+    '.adonisrc.json',
+    JSON.stringify({
+      autoloads: {
+        App: './app',
+      },
+      providers: providers,
+    })
+  )
 
-	await fs.add(
-		'app/Exceptions/Handler.ts',
-		`
+  await fs.add(
+    'app/Exceptions/Handler.ts',
+    `
   export default class ExceptionHandler {
   }`
-	)
+  )
 
-	await fs.add(
-		'config/app.ts',
-		`
+  await fs.add(
+    'config/app.ts',
+    `
     export const appKey = '${SECRET}'
     export const http = {
       trustProxy () {
@@ -57,21 +57,21 @@ export async function setupApplicationFiles(additionalProviders?: string[]) {
 			level: 'info',
 		}
   `
-	)
+  )
 
-	await fs.add('.env', `APP_KEY = ${SECRET}`)
+  await fs.add('.env', `APP_KEY = ${SECRET}`)
 }
 
 /**
  * Setup application for testing
  */
 export async function setupApp(additionalProviders?: string[]) {
-	await setupApplicationFiles(additionalProviders)
-	const app = new Application(fs.basePath, 'web')
+  await setupApplicationFiles(additionalProviders)
+  const app = new Application(fs.basePath, 'web')
 
-	await app.setup()
-	await app.registerProviders()
-	await app.bootProviders()
+  await app.setup()
+  await app.registerProviders()
+  await app.bootProviders()
 
-	return app
+  return app
 }

@@ -18,36 +18,36 @@ import { specFixtures } from './fixtures/cors'
 import { fs, setupApp } from '../test-helpers'
 
 test.group('Cors', (group) => {
-	group.afterEach(async () => {
-		process.removeAllListeners('SIGINT')
-		process.removeAllListeners('SIGTERM')
+  group.afterEach(async () => {
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
 
-		await fs.cleanup()
-	})
+    await fs.cleanup()
+  })
 
-	specFixtures.forEach((fixture) => {
-		test(fixture.title, async (assert) => {
-			const app = await setupApp()
+  specFixtures.forEach((fixture) => {
+    test(fixture.title, async (assert) => {
+      const app = await setupApp()
 
-			const server = createServer(async (req, res) => {
-				const cors = new Cors(fixture.configureOptions())
-				fixture.configureRequest(req)
+      const server = createServer(async (req, res) => {
+        const cors = new Cors(fixture.configureOptions())
+        fixture.configureRequest(req)
 
-				const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {}, req, res)
-				await cors.handle(ctx)
+        const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {}, req, res)
+        await cors.handle(ctx)
 
-				if (!ctx.response.hasLazyBody) {
-					ctx.response.send(null)
-				}
+        if (!ctx.response.hasLazyBody) {
+          ctx.response.send(null)
+        }
 
-				ctx.response.finish()
-			})
+        ctx.response.finish()
+      })
 
-			const res = await supertest(server).get('/')
-			fixture.assertNormal(assert, res)
+      const res = await supertest(server).get('/')
+      fixture.assertNormal(assert, res)
 
-			const resOptions = await supertest(server).options('/')
-			fixture.assertOptions(assert, resOptions)
-		})
-	})
+      const resOptions = await supertest(server).options('/')
+      fixture.assertOptions(assert, resOptions)
+    })
+  })
 })

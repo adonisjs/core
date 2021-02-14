@@ -18,7 +18,7 @@
 		"pretest": "npm run lint",
 		"test": "node japaFile.js",
 		"clean": "del build",
-		"compile": "npm run lint && npm run clean && tsc && copyfiles templates/**/* templates/* build",
+		"compile": "npm run lint && npm run clean && tsc",
 		"build": "npm run compile",
 		"commit": "git-cz",
 		"release": "np",

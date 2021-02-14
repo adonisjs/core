@@ -13,21 +13,21 @@ import { BaseCommand } from '@adonisjs/ace'
  * A command to display a list of routes
  */
 export default class DumpRcFile extends BaseCommand {
-	public static commandName = 'dump:rcfile'
-	public static description = 'Dump contents of .adonisrc.json file along with defaults'
+  public static commandName = 'dump:rcfile'
+  public static description = 'Dump contents of .adonisrc.json file along with defaults'
 
-	/**
-	 * Log message
-	 */
-	private log(message: string) {
-		if (this.application.environment === 'test') {
-			this.logger.log(message)
-		} else {
-			console.log(message)
-		}
-	}
+  /**
+   * Log message
+   */
+  private log(message: string) {
+    if (this.application.environment === 'test') {
+      this.logger.log(message)
+    } else {
+      console.log(message)
+    }
+  }
 
-	public async run() {
-		this.log(JSON.stringify(this.application.rcFile, null, 2))
-	}
+  public async run() {
+    this.log(JSON.stringify(this.application.rcFile, null, 2))
+  }
 }

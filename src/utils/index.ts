@@ -14,22 +14,22 @@ import { resolveFrom } from '@poppinss/utils/build/helpers'
  * error
  */
 export function isMissingModuleError(error: NodeJS.ErrnoException) {
-	return ['MODULE_NOT_FOUND', 'ENOENT'].includes(error.code!)
+  return ['MODULE_NOT_FOUND', 'ENOENT'].includes(error.code!)
 }
 
 /**
  * Registers the ts hook to compile typescript code within the memory
  */
 export function registerTsHook(appRoot: string) {
-	try {
-		require(resolveFrom(appRoot, '@adonisjs/assembler/build/src/requireHook')).default(appRoot)
-	} catch (error) {
-		if (isMissingModuleError(error)) {
-			throw new Error(
-				'AdonisJS requires "@adonisjs/assembler" in order to run typescript source directly'
-			)
-		}
+  try {
+    require(resolveFrom(appRoot, '@adonisjs/assembler/build/src/requireHook')).default(appRoot)
+  } catch (error) {
+    if (isMissingModuleError(error)) {
+      throw new Error(
+        'AdonisJS requires "@adonisjs/assembler" in order to run typescript source directly'
+      )
+    }
 
-		throw error
-	}
+    throw error
+  }
 }

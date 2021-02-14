@@ -14,115 +14,115 @@ import { Ignitor } from '../src/Ignitor'
 import { setupApplicationFiles, fs } from '../test-helpers'
 
 test.group('Ignitor | App Provider', (group) => {
-	group.before(() => {
-		process.env.ENV_SILENT = 'true'
-	})
+  group.before(() => {
+    process.env.ENV_SILENT = 'true'
+  })
 
-	group.beforeEach(() => {
-		process.env.NODE_ENV = 'testing'
-	})
+  group.beforeEach(() => {
+    process.env.NODE_ENV = 'testing'
+  })
 
-	group.after(async () => {
-		await fs.cleanup()
-		delete process.env.ENV_SILENT
-		delete process.env.APP_KEY
-	})
+  group.after(async () => {
+    await fs.cleanup()
+    delete process.env.ENV_SILENT
+    delete process.env.APP_KEY
+  })
 
-	group.afterEach(async () => {
-		process.removeAllListeners('SIGINT')
-		process.removeAllListeners('SIGTERM')
-		delete process.env.NODE_ENV
-		await fs.cleanup()
-	})
+  group.afterEach(async () => {
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
+    delete process.env.NODE_ENV
+    await fs.cleanup()
+  })
 
-	test('setup cors before hooks when enabled is set to true', async (assert) => {
-		await setupApplicationFiles()
+  test('setup cors before hooks when enabled is set to true', async (assert) => {
+    await setupApplicationFiles()
 
-		await fs.add(
-			'config/cors.ts',
-			`
+    await fs.add(
+      'config/cors.ts',
+      `
       export const enabled = true
       export const exposeHeaders = []
     `
-		)
+    )
 
-		const httpServer = new Ignitor(fs.basePath).httpServer()
-		await httpServer.start()
+    const httpServer = new Ignitor(fs.basePath).httpServer()
+    await httpServer.start()
 
-		const Server = httpServer.application.container.use('Adonis/Core/Server')
-		assert.lengthOf(Server.hooks['hooks'].before, 1)
+    const Server = httpServer.application.container.use('Adonis/Core/Server')
+    assert.lengthOf(Server.hooks['hooks'].before, 1)
 
-		await httpServer.close()
-	})
+    await httpServer.close()
+  })
 
-	test('setup cors before hooks when enabled is set to a function', async (assert) => {
-		await setupApplicationFiles()
+  test('setup cors before hooks when enabled is set to a function', async (assert) => {
+    await setupApplicationFiles()
 
-		await fs.add(
-			'config/cors.ts',
-			`
+    await fs.add(
+      'config/cors.ts',
+      `
       export const enabled = () => false
       export const exposeHeaders = []
     `
-		)
+    )
 
-		const httpServer = new Ignitor(fs.basePath).httpServer()
-		await httpServer.start()
+    const httpServer = new Ignitor(fs.basePath).httpServer()
+    await httpServer.start()
 
-		const Server = httpServer.application.container.use('Adonis/Core/Server')
-		assert.lengthOf(Server.hooks['hooks'].before, 1)
+    const Server = httpServer.application.container.use('Adonis/Core/Server')
+    assert.lengthOf(Server.hooks['hooks'].before, 1)
 
-		await httpServer.close()
-	})
+    await httpServer.close()
+  })
 
-	test('do not setup cors before hooks when enabled is set to false', async (assert) => {
-		await setupApplicationFiles()
+  test('do not setup cors before hooks when enabled is set to false', async (assert) => {
+    await setupApplicationFiles()
 
-		await fs.add(
-			'config/cors.ts',
-			`
+    await fs.add(
+      'config/cors.ts',
+      `
       export const enabled = false
       export const exposeHeaders = []
     `
-		)
+    )
 
-		const httpServer = new Ignitor(fs.basePath).httpServer()
-		await httpServer.start()
+    const httpServer = new Ignitor(fs.basePath).httpServer()
+    await httpServer.start()
 
-		const Server = httpServer.application.container.use('Adonis/Core/Server')
-		assert.lengthOf(Server.hooks['hooks'].before, 0)
+    const Server = httpServer.application.container.use('Adonis/Core/Server')
+    assert.lengthOf(Server.hooks['hooks'].before, 0)
 
-		await httpServer.close()
-	})
+    await httpServer.close()
+  })
 
-	test('setup static assets before hooks when enabled is set to true', async (assert) => {
-		await setupApplicationFiles()
+  test('setup static assets before hooks when enabled is set to true', async (assert) => {
+    await setupApplicationFiles()
 
-		await fs.add(
-			'config/static.ts',
-			`
+    await fs.add(
+      'config/static.ts',
+      `
       export const enabled = true
     `
-		)
+    )
 
-		const httpServer = new Ignitor(fs.basePath).httpServer()
-		await httpServer.start()
+    const httpServer = new Ignitor(fs.basePath).httpServer()
+    await httpServer.start()
 
-		const Server = httpServer.application.container.use('Adonis/Core/Server')
-		assert.lengthOf(Server.hooks['hooks'].before, 1)
+    const Server = httpServer.application.container.use('Adonis/Core/Server')
+    assert.lengthOf(Server.hooks['hooks'].before, 1)
 
-		await httpServer.close()
-	})
+    await httpServer.close()
+  })
 
-	test('register base health checkers', async (assert) => {
-		await setupApplicationFiles()
+  test('register base health checkers', async (assert) => {
+    await setupApplicationFiles()
 
-		const httpServer = new Ignitor(fs.basePath).httpServer()
-		await httpServer.start()
+    const httpServer = new Ignitor(fs.basePath).httpServer()
+    await httpServer.start()
 
-		const HealthCheck = httpServer.application.container.use('Adonis/Core/HealthCheck')
-		assert.deepEqual(HealthCheck.servicesList, ['env', 'appKey'])
+    const HealthCheck = httpServer.application.container.use('Adonis/Core/HealthCheck')
+    assert.deepEqual(HealthCheck.servicesList, ['env', 'appKey'])
 
-		await httpServer.close()
-	})
+    await httpServer.close()
+  })
 })

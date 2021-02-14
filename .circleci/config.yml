@@ -2,39 +2,41 @@ version: 2
 orbs:
   win: circleci/windows@2.2.0
 jobs:
-  build_12.18.2:
+  build_14.15.4:
     docker:
-      - image: 'circleci/node:12.18.2'
+      - image: circleci/node:14.15.4
     working_directory: ~/app
     steps:
       - checkout
       - restore_cache:
           keys:
-            - 'v1-dependencies-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}'
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run: npm install
       - save_cache:
           paths:
             - node_modules
-          key: 'v1-dependencies-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}'
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run: npm test
   build_latest:
     docker:
-      - image: 'circleci/node:latest'
+      - image: circleci/node:latest
     working_directory: ~/app
     steps:
       - checkout
       - restore_cache:
           keys:
-            - 'v1-dependencies-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}'
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run: npm install
       - save_cache:
           paths:
             - node_modules
-          key: 'v1-dependencies-{{ .Environment.CACHE_VERSION }}-{{ checksum "package.json" }}'
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run: npm test
 workflows:
   version: 2
   workflow:
     jobs:
-      - build_12.18.2
+      - build_14.15.4
       - build_latest
