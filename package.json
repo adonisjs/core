@@ -1,6 +1,6 @@
 {
 	"name": "@adonisjs/core",
-	"version": "5.0.5-canary-rc-1",
+	"version": "5.0.5-canary-rc-2",
 	"description": "Core of AdonisJS",
 	"main": "build/providers/AppProvider.js",
 	"files": [
