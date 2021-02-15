@@ -23,7 +23,7 @@ export default class GenerateKey extends BaseCommand {
 
     console.log(
       this.colors.gray(
-        '  > During development, you may want to set the above secret as APP_KEY inside the .env file'
+        '  > During development, you may want to set the above secret as "APP_KEY" inside the .env file'
       )
     )
   }

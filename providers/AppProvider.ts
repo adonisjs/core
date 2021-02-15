@@ -77,7 +77,7 @@ export default class AppProvider {
           return
         }
 
-        const Cors = require('../src/Hooks/Cors').Cors
+        const { Cors } = require('../src/Hooks/Cors')
         const cors = new Cors(config)
         Server.hooks.before(cors.handle.bind(cors))
       }
