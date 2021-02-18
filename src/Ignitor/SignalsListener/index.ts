@@ -11,22 +11,36 @@ import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 /**
  * Exposes the API to invoke a callback when `SIGTERM` or
- * `SIGINT (pm2 only)` signals are received.
+ * `SIGINT` signals are received.
  */
 export class SignalsListener {
   protected onCloseCallback?: () => Promise<void>
 
+  private isKilling = false
+
   /**
    * Invoke callback and exit process
    */
-  private kill = async function () {
-    try {
-      await this.onCloseCallback()
+  private kill = async () => {
+    if (!this.isKilling) {
+      // First attempt. Try to kill the process gracefully.
+      this.isKilling = true
+      if (process.stderr.isTTY) {
+        // If the process is running in a terminal, display a message to the user.
+        console.error('Gracefully shutting down the process... Press CTRL+C to force it')
+      }
+      try {
+        await this.onCloseCallback()
+        process.exit(0)
+      } catch (error) {
+        // TODO: log error?
+        process.exit(1)
+      }
+    } else {
+      // Second attempt. Force process termination.
       process.exit(0)
-    } catch (error) {
-      process.exit(1)
     }
-  }.bind(this)
+  }
 
   constructor(private application: ApplicationContract) {}
 
@@ -36,16 +50,13 @@ export class SignalsListener {
    */
   public listen(callback: () => Promise<void>) {
     this.onCloseCallback = callback
-    if (process.env.pm_id) {
-      process.once('SIGINT', this.kill)
-    }
-
-    process.once('SIGTERM', this.kill)
+    process.on('SIGINT', this.kill)
+    process.on('SIGTERM', this.kill)
 
     /**
      * Cleanup on uncaught exceptions.
      */
-    process.once('uncaughtException', (error) => {
+    process.on('uncaughtException', (error) => {
       if (this.application.environment === 'repl') {
         this.application.logger.fatal(error, '"uncaughtException" detected')
         return
