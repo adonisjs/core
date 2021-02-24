@@ -1,11 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Report a bug
-    url: https://github.com/adonisjs/core/issues/new?template=bug_report.md
-    about: Please use the given link to report a bug.
-  - name: Request a feature
-    url: https://github.com/adonisjs/core/issues/new?template=feature_request.md
-    about: Please use the given link to request for a new feature.
   - name: Patreon
     url: http://patreon.com/adonisframework
     about: Love AdonisJS? Please consider supporting us via Patreon.
