@@ -5,14 +5,14 @@ about: Report identified bugs
 
 <!-- CLICK "Preview" FOR INSTRUCTIONS IN A MORE READABLE FORMAT -->
 
-## Prerequisites
+The Github issues in AdonisJS are reserved for reporting confirmed bugs. If you open an issue that **does not conform to the requirements**, it will be closed immediately.
 
-We do our best to reply to all the issues on time. If you will follow the given guidelines, the turn around time will be faster.
+For usage questions, please use the following resources:
 
-- Lots of raised issues are directly not bugs but instead are design decisions taken by us.
-- Make use of our [forum](https://forum.adonisjs.com/), or [discord server](https://discord.me/adonisjs), if you are not sure that you are reporting a bug.
-- Ensure the issue isn't already reported.
-- Ensure you are reporting the bug in the correct repo.
+- Read the [docs](https://preview.adonisjs.com/guides/quick-start)
+- Ask your question on [Discord](https://discord.gg/vDcEjq6?)
+- Ask your question in [Github discussions forum](https://github.com/adonisjs/core/discussions)
+- Try searching existing discussion threads or issues.
 
 *Delete the above section and the instructions in the sections below before submitting*
 
@@ -23,6 +23,12 @@ We do our best to reply to all the issues on time. If you will follow the given 
 <!-- YOUR ANSWER -->
 
 ## Sample Code (to reproduce the issue)
+<!-- YOUR ANSWER -->
+
+## Excepted outcome
+<!-- YOUR ANSWER -->
+
+## Actual outcome
 <!-- YOUR ANSWER -->
 
 ## BONUS (a sample repo to reproduce the issue)
