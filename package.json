@@ -105,7 +105,9 @@
 		"@adonisjs/validator": "^9.0.0",
 		"@poppinss/cliui": "^2.2.0",
 		"@poppinss/utils": "^3.0.4",
-		"serve-static": "^1.14.1"
+		"fs-extra": "^9.1.0",
+		"serve-static": "^1.14.1",
+		"stringify-attributes": "^2.0.0"
 	},
 	"np": {
 		"contents": ".",

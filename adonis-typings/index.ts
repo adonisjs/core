@@ -19,3 +19,4 @@
 /// <reference path="./health-check.ts" />
 /// <reference path="./exception-handler.ts" />
 /// <reference path="./static.ts" />
+/// <reference path="./assets-manager.ts" />

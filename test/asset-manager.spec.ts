@@ -1,0 +1,142 @@
+/*
+ * @adonisjs/core
+ *
+ * (c) Harminder Virk <virk@adonisjs.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+import test from 'japa'
+import { join } from 'path'
+import { Application } from '@adonisjs/application'
+
+import { AssetsManager } from '../src/AssetsManager'
+import { EncoreDriver } from '../src/AssetsManager/Drivers/Encore'
+
+import { fs } from '../test-helpers'
+
+test.group('AssetsManager', (group) => {
+  group.beforeEach(async () => {
+    await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
+  })
+
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
+
+  test('get asset tag using the manager', async (assert) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager({}, app)
+
+    await fs.add(
+      'public/assets/entrypoints.json',
+      JSON.stringify({
+        entrypoints: {
+          app: {
+            js: ['./app.js'],
+          },
+        },
+      })
+    )
+
+    assert.equal(manager.entryPointScriptTags('app'), '<script src="./app.js"></script>')
+  })
+
+  test('apply custom attributes to the script tag', async (assert) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager(
+      {
+        script: {
+          attributes: {
+            defer: true,
+          },
+        },
+      },
+      app
+    )
+
+    await fs.add(
+      'public/assets/entrypoints.json',
+      JSON.stringify({
+        entrypoints: {
+          app: {
+            js: ['./app.js'],
+          },
+        },
+      })
+    )
+
+    assert.equal(manager.entryPointScriptTags('app'), '<script src="./app.js" defer></script>')
+  })
+
+  test('get style tag using the manager', async (assert) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager({}, app)
+
+    await fs.add(
+      'public/assets/entrypoints.json',
+      JSON.stringify({
+        entrypoints: {
+          app: {
+            css: ['./app.css'],
+          },
+        },
+      })
+    )
+
+    assert.equal(manager.entryPointStyleTags('app'), '<link rel="stylesheet" href="./app.css" />')
+  })
+
+  test('raise exception when using unknown driver', async (assert) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager({ driver: 'vite' }, app)
+
+    await fs.add(
+      'public/assets/entrypoints.json',
+      JSON.stringify({
+        entrypoints: {
+          app: {
+            css: ['./app.css'],
+          },
+        },
+      })
+    )
+
+    assert.throw(
+      () => manager.entryPointStyleTags('app'),
+      'Invalid asset driver "vite". Make sure to register the driver using the "AssetsManager.extend" method'
+    )
+  })
+
+  test('register custom driver', async (assert) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager({ driver: 'vite' }, app)
+    class ViteDriver extends EncoreDriver {
+      public entryPointJsFiles() {
+        return ['./vite-app.js']
+      }
+    }
+
+    manager.extend('vite', ($manager) => new ViteDriver($manager.application))
+
+    await fs.add(
+      'public/assets/entrypoints.json',
+      JSON.stringify({
+        entrypoints: {},
+      })
+    )
+
+    assert.equal(manager.entryPointScriptTags('app'), '<script src="./vite-app.js"></script>')
+  })
+})

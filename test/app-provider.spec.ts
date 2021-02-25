@@ -9,8 +9,8 @@
 
 import test from 'japa'
 
-import { HealthCheck } from '../src/HealthCheck'
 import { fs, setupApp } from '../test-helpers'
+import { HealthCheck } from '../src/HealthCheck'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 test.group('App Provider', (group) => {
@@ -36,6 +36,7 @@ test.group('App Provider', (group) => {
     assert.isTrue(app.container.hasBinding('Adonis/Core/Hash'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/BodyParserMiddleware'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Validator'))
+    assert.isTrue(app.container.hasBinding('Adonis/Core/AssetsManager'))
     assert.instanceOf(app.container.use('Adonis/Core/HealthCheck'), HealthCheck)
     assert.deepEqual(
       app.container.use('Adonis/Core/HttpExceptionHandler'),
