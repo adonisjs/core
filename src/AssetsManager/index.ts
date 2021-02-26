@@ -35,11 +35,13 @@ export class AssetsManager implements AssetsManagerContract {
    * Configured driver
    */
   private driver: AssetsDriverContract
+  private booted: boolean = false
 
   /**
    * Find if the configured driver supports entrypoints or not
    */
   public get hasEntrypoints() {
+    this.boot()
     return this.driver.hasEntrypoints
   }
 
@@ -48,7 +50,16 @@ export class AssetsManager implements AssetsManagerContract {
    * mutable
    */
   public get publicPath() {
+    this.boot()
     return this.driver.publicPath
+  }
+
+  /**
+   * Returns the current version of assets
+   */
+  public get version() {
+    this.boot()
+    return this.driver.version
   }
 
   constructor(private config: AssetsConfig, public application: ApplicationContract) {}
@@ -58,6 +69,11 @@ export class AssetsManager implements AssetsManagerContract {
    * in effect.
    */
   private boot() {
+    if (this.booted) {
+      return false
+    }
+
+    this.booted = true
     const driver = this.config.driver || 'encore'
 
     /**

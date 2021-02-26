@@ -43,6 +43,11 @@ declare module '@ioc:Adonis/Core/AssetsManager' {
     hasEntrypoints: boolean
 
     /**
+     * The current version of assets.
+     */
+    version?: string
+
+    /**
      * Path to the public output directory. The property must be
      * mutable
      */

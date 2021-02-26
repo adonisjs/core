@@ -8,6 +8,7 @@
  */
 
 import { join } from 'path'
+import { createHash } from 'crypto'
 import { readFileSync, pathExistsSync } from 'fs-extra'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { AssetsDriverContract } from '@ioc:Adonis/Core/AssetsManager'
@@ -57,6 +58,14 @@ export class EncoreDriver implements AssetsDriverContract {
    * Path to the output public dir. Defaults to `/public/assets`
    */
   public publicPath = this.application.publicPath('assets')
+
+  /**
+   * Returns the version of the assets by hashing the manifest file
+   * contents
+   */
+  public get version() {
+    return createHash('md5').update(this.manifest()).digest('hex').slice(0, 10)
+  }
 
   constructor(private application: ApplicationContract) {}
 
