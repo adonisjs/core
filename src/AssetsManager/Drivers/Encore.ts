@@ -49,6 +49,8 @@ export class EncoreDriver implements AssetsDriverContract {
   private manifestCache?: any
   private entrypointsCache?: any
 
+  public name = 'encore'
+
   /**
    * Encore driver has support for entrypoints
    */
@@ -64,7 +66,7 @@ export class EncoreDriver implements AssetsDriverContract {
    * contents
    */
   public get version() {
-    return createHash('md5').update(this.manifest()).digest('hex').slice(0, 10)
+    return createHash('md5').update(JSON.stringify(this.manifest())).digest('hex').slice(0, 10)
   }
 
   constructor(private application: ApplicationContract) {}

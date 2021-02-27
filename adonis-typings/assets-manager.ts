@@ -37,6 +37,8 @@ declare module '@ioc:Adonis/Core/AssetsManager' {
    * it
    */
   export interface AssetsDriverContract {
+    name: string
+
     /**
      * A boolean to know if entry points are supported or not
      */

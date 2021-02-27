@@ -62,6 +62,14 @@ export class AssetsManager implements AssetsManagerContract {
     return this.driver.version
   }
 
+  /**
+   * Returns the name of the driver currently in use
+   */
+  public get name() {
+    this.boot()
+    return this.driver.name
+  }
+
   constructor(private config: AssetsConfig, public application: ApplicationContract) {}
 
   /**
@@ -104,7 +112,9 @@ export class AssetsManager implements AssetsManagerContract {
    */
   private ensureHasEntryPoints() {
     if (!this.hasEntrypoints) {
-      throw new Error('')
+      throw new Error(
+        `Cannot reference entrypoints. The "${this.driver.name}" driver does not support entrypoints`
+      )
     }
   }
 

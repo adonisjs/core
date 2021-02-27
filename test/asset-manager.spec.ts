@@ -139,4 +139,46 @@ test.group('AssetsManager', (group) => {
 
     assert.equal(manager.entryPointScriptTags('app'), '<script src="./vite-app.js"></script>')
   })
+
+  test('get assets version', async (assert) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager(
+      {
+        script: {
+          attributes: {
+            defer: true,
+          },
+        },
+      },
+      app
+    )
+
+    await fs.add(
+      'public/assets/manifest.json',
+      JSON.stringify({
+        app: './app.js',
+      })
+    )
+
+    assert.equal(manager.version, 'c46a678581')
+  })
+
+  test("raise exception when using entrypoints and driver doesn't support it", async (assert) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager({ driver: 'vite' }, app)
+    class ViteDriver extends EncoreDriver {
+      public hasEntrypoints = false
+      public name = 'vite'
+    }
+
+    manager.extend('vite', ($manager) => new ViteDriver($manager.application))
+    assert.throw(
+      () => manager.entryPointScriptTags('app'),
+      'Cannot reference entrypoints. The "vite" driver does not support entrypoints'
+    )
+  })
 })
