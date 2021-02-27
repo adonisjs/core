@@ -25,7 +25,7 @@ For usage questions, please use the following resources:
 ## Sample Code (to reproduce the issue)
 <!-- YOUR ANSWER -->
 
-## Excepted outcome
+## Expected outcome
 <!-- YOUR ANSWER -->
 
 ## Actual outcome
