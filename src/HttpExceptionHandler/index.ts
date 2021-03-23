@@ -177,7 +177,7 @@ export abstract class HttpExceptionHandler {
     const loggerFn: keyof LoggerContract =
       error.status >= 500 ? 'error' : error.status >= 400 ? 'warn' : 'info'
 
-    this.logger[loggerFn](this.context(ctx), error.message)
+    ctx.logger[loggerFn](this.context(ctx), error.message)
   }
 
   /**
