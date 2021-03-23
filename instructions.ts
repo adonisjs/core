@@ -25,6 +25,7 @@ export default async function instructions(
   { logger, files }: typeof sinkStatic
 ) {
   const isApiBoilerplate = process.env['ADONIS_CREATE_APP_BOILERPLATE'] === 'api'
+  const assetsManager = process.env['ADONIS_CREATE_APP_ENCORE'] === 'true'
 
   /**
    * Create app config file
@@ -33,7 +34,7 @@ export default async function instructions(
   if (appConfig.exists()) {
     logger.action('create').skipped('config/app.ts', 'File already exists')
   } else {
-    appConfig.apply({ forceContentNegotiationToJSON: isApiBoilerplate }).commit()
+    appConfig.apply({ forceContentNegotiationToJSON: isApiBoilerplate, assetsManager }).commit()
     logger.action('create').succeeded('config/app.ts')
   }
 
