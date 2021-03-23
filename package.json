@@ -153,5 +153,9 @@
 		"providers": [
 			"@adonisjs/core"
 		]
-	}
+	},
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  }
 }
