@@ -1,6 +1,6 @@
 {
 	"name": "@adonisjs/core",
-	"version": "5.0.5-canary-rc-2",
+	"version": "5.1.0",
 	"description": "Core of AdonisJS",
 	"main": "build/providers/AppProvider.js",
 	"files": [
@@ -154,8 +154,8 @@
 			"@adonisjs/core"
 		]
 	},
-  "publishConfig": {
-    "access": "public",
-    "tag": "latest"
-  }
+	"publishConfig": {
+		"access": "public",
+		"tag": "latest"
+	}
 }
