@@ -44,18 +44,17 @@ test.group('HttpExceptionHandler', (group) => {
   test('report error when not inside ignore list', async (assert) => {
     const app = await setupApp()
     app.container.useProxies()
-    const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
-    app.container.fake('Adonis/Core/Logger', () => fakeLogger)
+    app.logger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
 
     class AppHandler extends HttpExceptionHandler {}
 
     const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {})
 
-    const handler = new AppHandler(fakeLogger)
+    const handler = new AppHandler(app.logger)
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
     assert.deepEqual(
-      fakeLogger.logs.map(({ level, msg }) => {
+      (ctx.logger as FakeLogger).logs.map(({ level, msg }) => {
         return { level, msg }
       }),
       [
@@ -70,8 +69,7 @@ test.group('HttpExceptionHandler', (group) => {
   test('ignore http status inside the ignore list', async (assert) => {
     const app = await setupApp()
     app.container.useProxies()
-    const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
-    app.container.fake('Adonis/Core/Logger', () => fakeLogger)
+    app.logger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
 
     class AppHandler extends HttpExceptionHandler {
       protected ignoreStatuses = [500]
@@ -80,16 +78,15 @@ test.group('HttpExceptionHandler', (group) => {
 
     const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {})
 
-    const handler = new AppHandler(fakeLogger)
+    const handler = new AppHandler(app.logger)
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
-    assert.deepEqual(fakeLogger.logs, [])
+    assert.deepEqual((app.logger as FakeLogger).logs, [])
   })
 
   test('report error with custom context', async (assert) => {
     const app = await setupApp()
     app.container.useProxies()
-    const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
-    app.container.fake('Adonis/Core/Logger', () => fakeLogger)
+    app.logger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
 
     class AppHandler extends HttpExceptionHandler {
       protected context() {
@@ -99,11 +96,11 @@ test.group('HttpExceptionHandler', (group) => {
 
     const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {})
 
-    const handler = new AppHandler(fakeLogger)
+    const handler = new AppHandler(app.logger)
     handler.report(new Exception('bad request', 500, 'E_BAD_REQUEST'), ctx)
 
     assert.deepEqual(
-      fakeLogger.logs.map(({ level, msg, username }) => {
+      (app.logger as FakeLogger).logs.map(({ level, msg, username }) => {
         return { level, msg, username }
       }),
       [
