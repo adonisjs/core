@@ -45,9 +45,9 @@
 	},
 	"homepage": "https://github.com/adonisjs/core#readme",
 	"devDependencies": {
-		"@adonisjs/assembler": "^4.0.1",
+		"@adonisjs/assembler": "^5.0.0",
 		"@adonisjs/mrm-preset": "^3.0.0",
-		"@adonisjs/repl": "^2.0.1",
+		"@adonisjs/repl": "^3.0.0",
 		"@adonisjs/require-ts": "^2.0.3",
 		"@adonisjs/sink": "^5.1.1",
 		"@poppinss/dev-utils": "^1.1.1",
@@ -73,7 +73,7 @@
 		"supertest": "^6.1.3",
 		"test-console": "^1.1.0",
 		"typescript": "^4.2.3",
-		"youch": "^2.2.0",
+		"youch": "^2.2.1",
 		"youch-terminal": "^1.1.0"
 	},
 	"nyc": {
@@ -96,7 +96,7 @@
 	},
 	"dependencies": {
 		"@adonisjs/ace": "^10.0.0",
-		"@adonisjs/application": "^5.0.0",
+		"@adonisjs/application": "^5.0.2",
 		"@adonisjs/bodyparser": "^7.0.0",
 		"@adonisjs/encryption": "^4.0.1",
 		"@adonisjs/events": "^7.0.0",
