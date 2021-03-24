@@ -12,7 +12,7 @@ import { ServerConfig } from '@ioc:Adonis/Core/Server'
 import { LoggerConfig } from '@ioc:Adonis/Core/Logger'
 import { ProfilerConfig } from '@ioc:Adonis/Core/Profiler'
 import { ValidatorConfig } from '@ioc:Adonis/Core/Validator'
-import { AssetsConfig } from '@ioc:Adonis/Core/AssetsManager'
+import { AssetsManagerConfig } from '@ioc:Adonis/Core/AssetsManager'
 
 /*
 |--------------------------------------------------------------------------
@@ -245,7 +245,7 @@ export const validator: ValidatorConfig = {
 | Configure the asset manager you are using to compile the frontend assets
 |
 */
-export const assets: AssetsConfig = {
+export const assets: AssetsManagerConfig = {
   /*
   |--------------------------------------------------------------------------
   | Driver

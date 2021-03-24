@@ -15,13 +15,13 @@ declare module '@ioc:Adonis/Core/AssetsManager' {
    */
   export type ExtendCallback = (
     manager: AssetsManagerContract,
-    config: AssetsConfig
+    config: AssetsManagerConfig
   ) => AssetsDriverContract
 
   /**
    * Configuration for the asset manager
    */
-  export type AssetsConfig = {
+  export type AssetsManagerConfig = {
     driver?: string
     publicPath?: string
     script?: {

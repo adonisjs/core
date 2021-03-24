@@ -11,8 +11,8 @@ import { Exception } from '@poppinss/utils'
 import stringifyAttributes from 'stringify-attributes'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import {
-  AssetsConfig,
   ExtendCallback,
+  AssetsManagerConfig,
   AssetsDriverContract,
   AssetsManagerContract,
 } from '@ioc:Adonis/Core/AssetsManager'
@@ -70,7 +70,7 @@ export class AssetsManager implements AssetsManagerContract {
     return this.driver.name
   }
 
-  constructor(private config: AssetsConfig, public application: ApplicationContract) {}
+  constructor(private config: AssetsManagerConfig, public application: ApplicationContract) {}
 
   /**
    * Boot the manager. Must be done lazily to allow `extend` method to takes
