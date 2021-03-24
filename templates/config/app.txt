@@ -7,12 +7,16 @@
 
 import proxyAddr from 'proxy-addr'
 import Env from '@ioc:Adonis/Core/Env'
+{{#assetsManager}}
 import Application from '@ioc:Adonis/Core/Application'
+{{/assetsManager}}
 import { ServerConfig } from '@ioc:Adonis/Core/Server'
 import { LoggerConfig } from '@ioc:Adonis/Core/Logger'
 import { ProfilerConfig } from '@ioc:Adonis/Core/Profiler'
 import { ValidatorConfig } from '@ioc:Adonis/Core/Validator'
+{{#assetsManager}}
 import { AssetsManagerConfig } from '@ioc:Adonis/Core/AssetsManager'
+{{/assetsManager}}
 
 /*
 |--------------------------------------------------------------------------
