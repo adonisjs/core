@@ -34,7 +34,7 @@ test.group('App Provider', (group) => {
     assert.isTrue(app.container.hasBinding('Adonis/Core/HttpContext'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Event'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Hash'))
-    assert.isTrue(app.container.hasBinding('Adonis/Core/BodyParserMiddleware'))
+    assert.isTrue(app.container.hasBinding('Adonis/Core/BodyParser'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Validator'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/AssetsManager'))
     assert.instanceOf(app.container.use('Adonis/Core/HealthCheck'), HealthCheck)
