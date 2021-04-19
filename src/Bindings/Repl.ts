@@ -21,7 +21,7 @@ function setupReplState(repl: any, key: string, value: any) {
 }
 
 /**
- * Defune repl bindings. The method must be invoked when application environment
+ * Define repl bindings. The method must be invoked when application environment
  * is set to repl.
  */
 export function defineReplBindings(application: ApplicationContract, Repl: ReplContract) {
