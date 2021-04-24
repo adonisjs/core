@@ -8,6 +8,8 @@
  */
 
 declare module '@ioc:Adonis/Core/Static' {
+  import { Stats } from 'fs'
+
   export type AssetsConfig = {
     enabled: boolean
     acceptRanges?: boolean
@@ -16,5 +18,6 @@ declare module '@ioc:Adonis/Core/Static' {
     etag?: boolean
     lastModified?: boolean
     maxAge?: number | string
+    headers?: (path: string, stats: Stats) => Record<string, any>
   }
 }

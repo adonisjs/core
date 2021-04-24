@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { Stats } from 'fs'
 import staticServer from 'serve-static'
 import { AssetsConfig } from '@ioc:Adonis/Core/Static'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
@@ -20,11 +21,21 @@ export class ServeStatic {
   private serve = staticServer(
     this.publicPath,
     Object.assign({}, this.config, {
-      setHeaders(res: any) {
+      setHeaders: (res: any, path: string, stats: Stats) => {
         const headers = res.parent.getHeaders()
         Object.keys(headers).forEach((key) => {
           res.setHeader(key, headers[key])
         })
+
+        /**
+         * Set user defined custom headers
+         */
+        if (typeof this.config.headers === 'function') {
+          const customHeaders = this.config.headers(path, stats)
+          Object.keys(customHeaders).forEach((key) => {
+            res.setHeader(key, customHeaders[key])
+          })
+        }
       },
     })
   )

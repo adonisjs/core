@@ -113,4 +113,38 @@ test.group('Serve Static', (group) => {
 
     await supertest(server).get('/').expect(404)
   })
+
+  test('allow user defined headers', async (assert) => {
+    await fs.add('public/style.css', 'body { background: #000 }')
+    const app = await setupApp()
+
+    const server = createServer(async (req, res) => {
+      const serveStatic = new ServeStatic(join(fs.basePath, 'public'), {
+        enabled: true,
+        headers(path) {
+          return {
+            'X-Custom-Path': path,
+          }
+        },
+      })
+      const ctx = app.container.use('Adonis/Core/HttpContext').create('/', {}, req, res)
+      ctx.response.header('x-powered-by', 'adonis')
+      await serveStatic.handle(ctx)
+
+      /**
+       * Showcasing that headers has already been flushed
+       */
+      ctx.response.removeHeader('x-powered-by')
+
+      assert.equal(ctx.response.response.listenerCount('finish'), 1)
+      assert.isTrue(ctx.response.finished)
+    })
+
+    const { text, headers } = await supertest(server).get('/style.css')
+    assert.property(headers, 'x-powered-by')
+    assert.property(headers, 'x-custom-path')
+    assert.equal(headers['x-powered-by'], 'adonis')
+    assert.equal(headers['x-custom-path'], join(fs.basePath, 'public', 'style.css'))
+    assert.equal(text, 'body { background: #000 }')
+  })
 })
