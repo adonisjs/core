@@ -100,7 +100,7 @@
 		"@adonisjs/bodyparser": "^7.1.0",
 		"@adonisjs/encryption": "^4.0.1",
 		"@adonisjs/events": "^7.0.0",
-		"@adonisjs/hash": "^7.0.3",
+		"@adonisjs/hash": "^7.0.4",
 		"@adonisjs/http-server": "^5.3.0",
 		"@adonisjs/validator": "^11.0.0",
 		"@poppinss/cliui": "^2.2.1",
