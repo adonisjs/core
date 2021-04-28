@@ -58,6 +58,14 @@
   <a href="https://appmasters.io" title="Expert in software development for small and medium sized companies">
   	<img src="assets/appmasters.jpg" width="100px">
   </a>
+
+  <a href="https://ably.com/?utm_source=adonisjs" title="Build realtime features you can trust to deliver at scale">
+  	<img src="assets/ably.jpeg" width="100px">
+  </a>
+
+  <a href="http://repzo.com/" title="Smartest CRM / SFA for your field teams powered by Blockchain">
+  	<img src="assets/repzo.jpeg" width="100px">
+  </a>
 </div>
 
 <hr>
