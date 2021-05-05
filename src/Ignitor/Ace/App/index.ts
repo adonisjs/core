@@ -16,6 +16,7 @@ import { resolveFrom } from '@poppinss/utils/build/helpers'
 import { ErrorHandler } from '../ErrorHandler'
 import { registerTsHook } from '../../../utils'
 import { SignalsListener } from '../../SignalsListener'
+import { GenerateManifest } from '../GenerateManifest'
 
 import { SerializedCommand } from '@adonisjs/ace/build/src/Contracts'
 
@@ -98,7 +99,7 @@ export class App {
       return
     }
 
-    this.kernel.printHelp(command)
+    this.kernel.printHelp(command, [GenerateManifest.getManifestJSON()])
     process.exit(0)
   }
 

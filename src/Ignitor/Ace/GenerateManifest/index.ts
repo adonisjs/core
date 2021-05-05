@@ -32,13 +32,13 @@ export class GenerateManifest {
    */
   public static getManifestJSON() {
     return {
-      'generate:manifest': {
-        commandName: 'generate:manifest',
-        description: 'Generate ace commands manifest file. Manifest file speeds up commands lookup',
-        args: [],
-        flags: [],
-        settings: {},
-      },
+      commandName: 'generate:manifest',
+      description: 'Generate ace commands manifest file. Manifest file speeds up commands lookup',
+      args: [],
+      flags: [],
+      settings: {},
+      aliases: [],
+      commandPath: '',
     }
   }
 

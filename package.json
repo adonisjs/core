@@ -49,7 +49,7 @@
 		"@adonisjs/mrm-preset": "^3.0.0",
 		"@adonisjs/repl": "^3.1.1",
 		"@adonisjs/require-ts": "^2.0.4",
-		"@adonisjs/sink": "^5.1.2",
+		"@adonisjs/sink": "^5.1.3",
 		"@poppinss/dev-utils": "^1.1.2",
 		"@types/node": "^15.0.2",
 		"@types/supertest": "^2.0.11",
@@ -95,7 +95,7 @@
 		}
 	},
 	"dependencies": {
-		"@adonisjs/ace": "^11.0.0",
+		"@adonisjs/ace": "^11.0.1",
 		"@adonisjs/application": "^5.1.2",
 		"@adonisjs/bodyparser": "^7.1.1",
 		"@adonisjs/encryption": "^4.0.2",

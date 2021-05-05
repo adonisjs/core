@@ -22,7 +22,7 @@ export class Ace {
   public async handle(argv: string[]) {
     process.env.ADONIS_ACE_CWD = this.appRoot
 
-    if (argv[0] === 'generate:manifest') {
+    if (argv[0] === 'generate:manifest' && !argv.includes('--help')) {
       await new GenerateManifest(this.appRoot).handle()
       return
     }
