@@ -92,7 +92,7 @@
       Website
     </a>
     <span> | </span>
-    <a href="https://adonisjs.com/docs">
+    <a href="https://docs.adonisjs.com">
       Guides
     </a>
     <span> | </span>
