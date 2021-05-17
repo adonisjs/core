@@ -6,12 +6,31 @@
 <hr>
 
 <div align="center">
-  <h3> Sponsored by </h3>
-  
-  <p>FOSS United is a non-profit foundation that aims at promoting and strengthening the Free and Open Source Software (FOSS) ecosystem in India.</p>
+  <h3>
+    <a href="https://www.patreon.com/adonisframework">
+      Business Sponsors
+    </a>
+  </h3>
 
+  <a href="https://www.pivale.co/?utm_source=adonisjs" title="Barry Fisher">
+    <img src="assets/pivale.png" width="100px">
+  </a>
 
-  [![FOSSUnited](http://fossunited.org/files/fossunited-badge.svg)](https://fossunited.org/)
+  <a href="https://cleaver.cloud/adonis/?utm_source=adonisjs" title="Cleaver">
+    <img src="assets/cleavr.png" width="100px">
+  </a>
+
+  <a href="https://bootcamp.cataline.io/?video=adonis&utm_source=adonisjs" title="Cataline">
+    <img src="assets/cataline.png" width="100px">
+  </a>
+
+  <a href="https://ably.com/?utm_source=adonisjs" title="Build realtime features you can trust to deliver at scale">
+    <img src="assets/ably.jpeg" width="100px">
+  </a>
+
+  <a href="https://fossunited.org/?utm_source=adonisjs">
+    <img src="assets/foss.png" width="100px">
+  </a>
 
 </div>
 
@@ -21,49 +40,31 @@
 <div align="center">
   <h3>
     <a href="https://www.patreon.com/adonisframework">
-      Patreon Supporters
+      Individual Supporters
     </a>
   </h3>
-
-  <p> Shout out to individuals and companies supporting the creator of the framework <p>
-
-  <a href="https://www.pivale.co/?utm_source=adonisjs" title="Barry Fisher">
-  	<img src="assets/pivale.png" width="100px">
-  </a>
-
-  <a href="https://cleaver.cloud/adonis/?utm_source=adonisjs" title="Cleaver">
-  	<img src="assets/cleaver.png" width="100px">
-  </a>
-
-  <a href="" title="Yung Silva">
-  	<img src="assets/yung-silva.png" width="100px">
-  </a>
 
   <a href="https://www.patreon.com/monace" title="Into music? Support Monace">
   	<img src="assets/monace.jpg" width="100px">
   </a>
 
-  <a href="" title="Bastien Crettenand">
+  <a title="Bastien Crettenand">
   	<img src="assets/bastien-crettenand.png" width="100px">
   </a>
 
-  <a href="https://www.pushengage.com/?utm_source=adonisjs" title="Ravi Trivedi">
-  	<img src="assets/ravi-trivedi.png" width="100px">
+  <a href="https://github.com/olaoluwa-98" title="Emmanuel Awotunde">
+    <img src="assets/emmanuel.png" width="100px">
   </a>
 
   <a href="https://mcsneaky.ap3k.pro/?utm_source=adonisjs" title="McSneaky">
   	<img src="assets/mc-sneaky.png" width="100px">
   </a>
 
-  <a href="https://appmasters.io" title="Expert in software development for small and medium sized companies">
+  <a href="https://appmasters.io?utm_source=adonisjs" title="Expert in software development for small and medium sized companies">
   	<img src="assets/appmasters.jpg" width="100px">
   </a>
 
-  <a href="https://ably.com/?utm_source=adonisjs" title="Build realtime features you can trust to deliver at scale">
-  	<img src="assets/ably.jpeg" width="100px">
-  </a>
-
-  <a href="http://repzo.com/" title="Smartest CRM / SFA for your field teams powered by Blockchain">
+  <a href="http://repzo.com?utm_source=adonisjs" title="Smartest CRM / SFA for your field teams powered by Blockchain">
   	<img src="assets/repzo.jpeg" width="100px">
   </a>
 </div>
@@ -82,7 +83,7 @@
 
 <div align="center">
 
-[![appveyor-image]][appveyor-url] [![circleci-image]][circleci-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![synk-image]][synk-url]
+[![appveyor-image]][appveyor-url] [![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![synk-image]][synk-url]
 
 </div>
 
@@ -109,8 +110,8 @@
 [appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/core/master.svg?style=for-the-badge&logo=appveyor
 [appveyor-url]: https://ci.appveyor.com/project/thetutlage/core "appveyor"
 
-[circleci-image]: https://img.shields.io/circleci/project/github/adonisjs/core/master.svg?style=for-the-badge&logo=circleci
-[circleci-url]: https://circleci.com/gh/adonisjs/core "circleci"
+[gh-workflow-image]: https://img.shields.io/github/workflow/status/adonisjs/core/test?style=for-the-badge
+[gh-workflow-url]: https://github.com/adonisjs/core/actions/workflows/test.yml "Github action"
 
 [npm-image]: https://img.shields.io/npm/v/@adonisjs/core/latest.svg?style=for-the-badge&logo=npm
 [npm-url]: https://www.npmjs.com/package/@adonisjs/core/v/latest "npm"

@@ -3,7 +3,7 @@
   "license": "MIT",
   "services": [
     "appveyor",
-    "circleci"
+    "github-actions"
   ],
   "appveyorUsername": "thetutlage",
   "minNodeVersion": "14.15.4",
