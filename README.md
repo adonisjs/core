@@ -52,6 +52,10 @@
   	<img src="assets/bastien-crettenand.png" width="100px">
   </a>
 
+  <a href="https://thebrowser.company/" title="The Browser Company">
+    <img src="assets/browser-company.png" width="100px">
+  </a>
+
   <a href="https://github.com/olaoluwa-98" title="Emmanuel Awotunde">
     <img src="assets/emmanuel.png" width="100px">
   </a>
