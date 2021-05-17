@@ -124,4 +124,17 @@ export function defineReplBindings(application: ApplicationContract, Repl: ReplC
       usage: `${Repl.colors.yellow('getContext')}${Repl.colors.gray('(route, params?)')}`,
     }
   )
+
+  /**
+   * Load the Helpers module
+   */
+  Repl.addMethod(
+    'loadHelpers',
+    (repl) => {
+      setupReplState(repl, 'Helpers', application.container.resolveBinding('Adonis/Core/Helpers'))
+    },
+    {
+      description: 'Load helpers provider and save reference to the "Helpers" variable',
+    }
+  )
 }
