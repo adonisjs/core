@@ -43,6 +43,6 @@ All of the security issues, must be reported via [email](mailto:virk@adonisjs.co
 
 ## Be a part of community
 
-We welcome you to participate in the [forum](https://forum.adonisjs.com/) and the AdonisJs [discord server](https://discord.gg/vDcEjq6?). You are free to ask your questions and share your work or contributions made to AdonisJs eco-system.
+We welcome you to participate in [GitHub Discussion](https://github.com/adonisjs/core/discussions) and the AdonisJs [discord server](https://discord.gg/vDcEjq6). You are free to ask your questions and share your work or contributions made to AdonisJs eco-system.
 
 We follow a strict [Code of Conduct](https://preview.adonisjs.com/code-of-conduct) to make sure everyone is respectful to each other.
