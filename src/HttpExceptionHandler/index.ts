@@ -145,7 +145,7 @@ export abstract class HttpExceptionHandler {
      * Render status pages
      */
     if (ctx['view'] && this.expandedStatusPages[error.status]) {
-      const html = ctx['view'].render(this.expandedStatusPages[error.status], { error })
+      const html = await ctx['view'].render(this.expandedStatusPages[error.status], { error })
       ctx.response.status(error.status).send(html)
       return
     }
