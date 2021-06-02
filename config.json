@@ -2,13 +2,12 @@
   "core": true,
   "license": "MIT",
   "services": [
-    "appveyor",
     "github-actions"
   ],
-  "appveyorUsername": "thetutlage",
   "minNodeVersion": "14.15.4",
   "probotApps": [
     "stale",
     "lock"
-  ]
+  ],
+  "runGhActionsOnWindows": true
 }

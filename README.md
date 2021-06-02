@@ -87,7 +87,7 @@
 
 <div align="center">
 
-[![appveyor-image]][appveyor-url] [![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![synk-image]][synk-url]
+[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![synk-image]][synk-url]
 
 </div>
 
@@ -110,9 +110,6 @@
 <div align="center">
   <sub>Built with ❤︎ by <a href="https://github.com/thetutlage">Harminder Virk</a>
 </div>
-
-[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/core/master.svg?style=for-the-badge&logo=appveyor
-[appveyor-url]: https://ci.appveyor.com/project/thetutlage/core "appveyor"
 
 [gh-workflow-image]: https://img.shields.io/github/workflow/status/adonisjs/core/test?style=for-the-badge
 [gh-workflow-url]: https://github.com/adonisjs/core/actions/workflows/test.yml "Github action"
