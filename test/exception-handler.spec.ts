@@ -351,7 +351,7 @@ test.group('HttpExceptionHandler', (group) => {
 
     const handler = new AppHandler(fakeLogger)
     ctx['view'] = {
-      render(view, data) {
+      async render(view, data) {
         assert.equal(view, '404.edge')
         assert.equal(data.error.message, 'E_INVALID_AUTH: bad request')
       },
@@ -389,7 +389,7 @@ test.group('HttpExceptionHandler', (group) => {
 
     const handler = new AppHandler(fakeLogger)
     ctx['view'] = {
-      render() {
+      async render() {
         throw new Error('Not expected')
       },
     }
@@ -430,7 +430,7 @@ test.group('HttpExceptionHandler', (group) => {
 
     const handler = new AppHandler(fakeLogger)
     ctx['view'] = {
-      render() {
+      async render() {
         throw new Error('Not expected')
       },
     }
@@ -472,7 +472,7 @@ test.group('HttpExceptionHandler', (group) => {
     ctx.request.request.headers = { accept: 'text/html' }
 
     ctx['view'] = {
-      render(view, data) {
+      async render(view, data) {
         assert.equal(view, '404.edge')
         assert.equal(data.error.message, 'E_INVALID_AUTH: bad request')
       },
