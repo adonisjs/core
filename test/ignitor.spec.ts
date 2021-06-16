@@ -10,6 +10,7 @@
 /// <reference path="../adonis-typings/index.ts" />
 
 import test from 'japa'
+import { pathToFileURL } from 'url'
 import { Ignitor } from '../src/Ignitor'
 import { setupApplicationFiles, fs } from '../test-helpers'
 
@@ -124,5 +125,15 @@ test.group('Ignitor | App Provider', (group) => {
     assert.deepEqual(HealthCheck.servicesList, ['env', 'appKey'])
 
     await httpServer.close()
+  })
+
+  test('construct ignitor with a file URL', async (assert) => {
+    await setupApplicationFiles()
+
+    const entryPoint = fs.basePath + '/ace.js'
+    const url = pathToFileURL(entryPoint).href
+    const httpServer = new Ignitor(url).httpServer()
+
+    assert.strictEqual(httpServer.application.appRoot, fs.basePath)
   })
 })

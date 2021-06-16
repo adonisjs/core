@@ -6,6 +6,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 import { Application } from '@adonisjs/application'
 import { AppEnvironments } from '@ioc:Adonis/Core/Application'
@@ -18,7 +20,12 @@ import { HttpServer } from './HttpServer'
  * the application.
  */
 export class Ignitor {
-  constructor(private appRoot: string) {}
+  private appRoot: string
+
+  constructor(appRoot: string) {
+    // In ESM, ignitor is constructed with `import.meta.url`. Normalize the file URL to an absolute directory path.
+    this.appRoot = appRoot.startsWith('file:') ? dirname(fileURLToPath(appRoot)) : appRoot
+  }
 
   /**
    * Returns an instance of the application.
