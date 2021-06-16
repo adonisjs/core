@@ -2,7 +2,12 @@
 	"name": "@adonisjs/core",
 	"version": "5.1.8",
 	"description": "Core of AdonisJS",
-	"main": "build/providers/AppProvider.js",
+	"exports": {
+		".": "./build/providers/AppProvider.js",
+		"./standalone": "./build/standalone.js",
+		"./Ignitor": "./build/src/Ignitor/index.js",
+		"./*": "./*"
+	},
 	"files": [
 		"build/adonis-typings",
 		"build/commands",
