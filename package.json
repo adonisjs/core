@@ -6,6 +6,16 @@
 		".": "./build/providers/AppProvider.js",
 		"./standalone": "./build/standalone.js",
 		"./Ignitor": "./build/src/Ignitor/index.js",
+		"./commands": "./build/commands/index.js",
+		"./commands/DumpRc": "./build/commands/DumpRc.js",
+		"./commands/ListRoutes": "./build/commands/ListRoutes.js",
+		"./commands/GenerateKey": "./build/commands/GenerateKey.js",
+		"./build/standalone": "./build/standalone.js",
+		"./build/src/Ignitor": "./build/src/Ignitor/index.js",
+		"./build/commands": "./build/commands/index.js",
+		"./build/commands/DumpRc": "./build/commands/DumpRc.js",
+		"./build/commands/ListRoutes": "./build/commands/ListRoutes.js",
+		"./build/commands/GenerateKey": "./build/commands/GenerateKey.js",
 		"./*": "./*"
 	},
 	"files": [
@@ -150,7 +160,7 @@
 			]
 		},
 		"commands": [
-			"@adonisjs/core/build/commands"
+			"@adonisjs/core/commands"
 		],
 		"types": "@adonisjs/core",
 		"providers": [
