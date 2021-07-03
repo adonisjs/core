@@ -120,7 +120,7 @@
 		"@poppinss/utils": "^3.1.3",
 		"fs-extra": "^10.0.0",
 		"serve-static": "^1.14.1",
-		"stringify-attributes": "^3.0.0"
+		"stringify-attributes": "^2.0.0"
 	},
 	"np": {
 		"contents": ".",
