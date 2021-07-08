@@ -40,7 +40,7 @@
 <div align="center">
   <h3>
     <a href="https://www.patreon.com/adonisframework">
-      Individual Supporters
+      Patreon Supporters
     </a>
   </h3>
 
@@ -70,6 +70,10 @@
 
   <a href="http://repzo.com?utm_source=adonisjs" title="Smartest CRM / SFA for your field teams powered by Blockchain">
   	<img src="assets/repzo.jpeg" width="100px">
+  </a>
+
+  <a href="https://doconchain.com/?utm_source=adonisjs.com" title="Boost your business today with doconchain.com">
+    <img src="assets/doconchain.jpeg" width="100px">
   </a>
 </div>
 
