@@ -174,10 +174,13 @@ export abstract class HttpExceptionHandler {
      * - `info` for rest. This should not happen, but technically it's possible for someone
      *    to raise with 200
      */
-    const loggerFn: keyof LoggerContract =
-      error.status >= 500 ? 'error' : error.status >= 400 ? 'warn' : 'info'
-
-    ctx.logger[loggerFn](this.context(ctx), error.message)
+    if (!error.status || error.status >= 500) {
+      ctx.logger.error({ err: error, ...this.context(ctx) }, error.message)
+    } else if (error.status >= 400) {
+      ctx.logger.warn(this.context(ctx), error.message)
+    } else {
+      ctx.logger.info(this.context(ctx), error.message)
+    }
   }
 
   /**
