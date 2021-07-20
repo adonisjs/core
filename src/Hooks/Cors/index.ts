@@ -30,7 +30,7 @@ const SIMPLE_EXPOSE_HEADERS = [
  * sure not to set request specific instance properties.
  */
 export class Cors {
-  private isEnabled: (request: HttpContextContract['request']) => boolean
+  private isEnabled: (request: HttpContextContract['request'], ctx: HttpContextContract) => boolean
 
   constructor(private options: CorsConfig) {
     this.normalizeOptions()
@@ -72,7 +72,7 @@ export class Cors {
    *
    * Origin match is always case sensitive
    */
-  private computeResponseOrigin(origin: string): string | null {
+  private computeResponseOrigin(origin: string, ctx: HttpContextContract): string | null {
     let allowedOrigins = this.options.origin
 
     /**
@@ -81,7 +81,7 @@ export class Cors {
      * new config value.
      */
     if (typeof allowedOrigins === 'function') {
-      allowedOrigins = allowedOrigins(origin)
+      allowedOrigins = allowedOrigins(origin, ctx)
     }
 
     /**
@@ -144,14 +144,14 @@ export class Cors {
    * The array items are casted to lowercase for case insensitive
    * match.
    */
-  private computedAllowedHeaders(headers: string[]): string[] {
+  private computedAllowedHeaders(headers: string[], ctx: HttpContextContract): string[] {
     let allowedHeaders = this.options.headers
 
     /**
      * Compute allowed headers by calling the config function.
      */
     if (typeof allowedHeaders === 'function') {
-      allowedHeaders = allowedHeaders(headers)
+      allowedHeaders = allowedHeaders(headers, ctx)
     }
 
     /**
@@ -241,16 +241,16 @@ export class Cors {
    * Handle HTTP request for CORS. This method is binded as a before hook
    * to the HTTP server.
    */
-  public async handle({ request, response }: HttpContextContract) {
+  public async handle(ctx: HttpContextContract) {
     /**
      * Return early when CORS is not enabled for the current request
      */
-    if (!this.isEnabled(request)) {
+    if (!this.isEnabled(ctx.request, ctx)) {
       return
     }
 
-    const origin = request.header('origin')
-    const isOptions = request.method() === 'OPTIONS'
+    const origin = ctx.request.header('origin')
+    const isOptions = ctx.request.method() === 'OPTIONS'
 
     /**
      * If their is no Origin header present, then let the user-agent handle
@@ -260,7 +260,7 @@ export class Cors {
       return
     }
 
-    const allowedOrigin = this.computeResponseOrigin(origin)
+    const allowedOrigin = this.computeResponseOrigin(origin, ctx)
 
     /**
      * If origin is not allowed, then we don't set any of the cors headers
@@ -270,7 +270,7 @@ export class Cors {
        * Also end the OPTIONS request right away
        */
       if (isOptions) {
-        this.endPreFlight(response)
+        this.endPreFlight(ctx.response)
       }
 
       return
@@ -280,16 +280,16 @@ export class Cors {
      * Set required headers for non options request.
      */
     if (!isOptions) {
-      this.setOrigin(response, allowedOrigin)
-      this.setCredentials(response)
-      this.setExposedHeaders(response)
+      this.setOrigin(ctx.response, allowedOrigin)
+      this.setCredentials(ctx.response)
+      this.setExposedHeaders(ctx.response)
       return
     }
 
     /**
      * Everything below is for pre-flight (aka OPTIONS) request
      */
-    const requestMethod = request.header('Access-Control-Request-Method')
+    const requestMethod = ctx.request.header('Access-Control-Request-Method')
 
     /**
      * End the request, when `Access-Control-Request-Method` is missing or isn't
@@ -297,7 +297,7 @@ export class Cors {
      * https://www.w3.org/TR/cors/#http-access-control-request-method
      */
     if (!requestMethod || this.options.methods.indexOf(requestMethod) === -1) {
-      this.endPreFlight(response)
+      this.endPreFlight(ctx.response)
       return
     }
 
@@ -306,7 +306,7 @@ export class Cors {
      * we subsitute that with an empty list.
      * https://www.w3.org/TR/cors/#http-access-control-request-headers
      */
-    let requestHeaders: unknown = request.header('Access-Control-Request-Headers')
+    let requestHeaders: unknown = ctx.request.header('Access-Control-Request-Headers')
     if (requestHeaders && requestHeaders !== '') {
       requestHeaders = (requestHeaders as string).split(',')
     } else {
@@ -316,7 +316,7 @@ export class Cors {
     /**
      * Computing allowed headers array from the user config
      */
-    const allowedHeaders = this.computedAllowedHeaders(requestHeaders as string[])
+    const allowedHeaders = this.computedAllowedHeaders(requestHeaders as string[], ctx)
 
     /**
      * Finding if all request `Access-Control-Request-Headers` falls under the
@@ -339,16 +339,16 @@ export class Cors {
      * https://www.w3.org/TR/cors/#http-access-control-request-headers
      */
     if (headersMatches === false) {
-      this.endPreFlight(response)
+      this.endPreFlight(ctx.response)
       return
     }
 
-    this.setOrigin(response, allowedOrigin)
-    this.setCredentials(response)
-    this.setExposedHeaders(response)
-    this.setAllowMethods(response)
-    this.setAllowHeaders(response, allowedHeaders)
-    this.setMaxAge(response)
-    this.endPreFlight(response)
+    this.setOrigin(ctx.response, allowedOrigin)
+    this.setCredentials(ctx.response)
+    this.setExposedHeaders(ctx.response)
+    this.setAllowMethods(ctx.response)
+    this.setAllowHeaders(ctx.response, allowedHeaders)
+    this.setMaxAge(ctx.response)
+    this.endPreFlight(ctx.response)
   }
 }
