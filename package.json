@@ -60,7 +60,7 @@
 	},
 	"homepage": "https://github.com/adonisjs/core#readme",
 	"devDependencies": {
-		"@adonisjs/assembler": "^5.3.3",
+		"@adonisjs/assembler": "^5.3.4",
 		"@adonisjs/mrm-preset": "^4.1.2",
 		"@adonisjs/repl": "^3.1.4",
 		"@adonisjs/require-ts": "^2.0.7",
