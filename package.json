@@ -52,7 +52,7 @@
     "co-compose": "^4.0.0",
     "debug": "^4.1.1",
     "dotenv": "^6.2.0",
-    "edge.js": "^1.1.4",
+    "edge.js": "^2.2.0",
     "eventemitter2": "^5.0.1",
     "haye": "^2.0.2",
     "lodash": "^4.17.11",
