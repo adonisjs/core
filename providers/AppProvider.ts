@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { DisksList, DriveConfig } from '@ioc:Adonis/Core/Drive'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 /**
@@ -52,6 +53,39 @@ export default class AppProvider {
       const { HealthCheck } = require('../src/HealthCheck')
       return new HealthCheck(this.app)
     })
+  }
+
+  /**
+   * Register drive with the container
+   */
+  protected registerDrive() {
+    this.app.container.singleton('Adonis/Core/Drive', () => {
+      const { DriveManager } = require('../src/Drive/DriveManager')
+      const Router = this.app.container.resolveBinding('Adonis/Core/Route')
+      const Config = this.app.container.resolveBinding('Adonis/Core/Config')
+
+      return new DriveManager(this.app, Router, Config.get('drive', {}))
+    })
+  }
+
+  /**
+   * Register routes for disks using "local" driver.
+   */
+  protected defineDriveRoutes() {
+    this.app.container.withBindings(
+      ['Adonis/Core/Config', 'Adonis/Core/Route', 'Adonis/Core/Drive'],
+      (Config, Router, Drive) => {
+        const driveConfig: DriveConfig = Config.get('drive', {})
+        const { LocalFileServer } = require('../src/Drive/LocalFileServer')
+
+        Object.keys(driveConfig.disks).forEach((diskName: keyof DisksList) => {
+          const disk = driveConfig.disks[diskName]
+          if (disk.driver === 'local' && disk.serveAssets) {
+            new LocalFileServer(diskName, disk, Drive.use(diskName), Router).registerRoute()
+          }
+        })
+      }
+    )
   }
 
   /**
@@ -171,6 +205,7 @@ export default class AppProvider {
     this.registerHttpExceptionHandler()
     this.registerHealthCheck()
     this.registerAssetsManager()
+    this.registerDrive()
   }
 
   /**
@@ -181,5 +216,6 @@ export default class AppProvider {
     this.registerStaticAssetsHook()
     this.registerHealthCheckers()
     this.defineReplBindings()
+    this.defineDriveRoutes()
   }
 }

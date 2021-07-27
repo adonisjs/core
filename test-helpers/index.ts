@@ -17,7 +17,10 @@ export const fs = new Filesystem(join(__dirname, '__app'))
 /**
  * Setup application files for testing
  */
-export async function setupApplicationFiles(additionalProviders?: string[]) {
+export async function setupApplicationFiles(
+  additionalProviders?: string[],
+  serveAssets: boolean = false
+) {
   await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
 
   const providers = Array.isArray(additionalProviders)
@@ -50,12 +53,31 @@ export async function setupApplicationFiles(additionalProviders?: string[]) {
         return true
       },
       cookie: {}
-		}
-		export const logger = {
-			enabled: true,
-			name: 'adonisjs',
-			level: 'info',
-		}
+    }
+    export const logger = {
+      enabled: true,
+      name: 'adonisjs',
+      level: 'info',
+    }
+  `
+  )
+
+  await fs.add(
+    'config/drive.ts',
+    `
+    const driveConfig = {
+      disk: 'local',
+      disks: {
+        local: {
+          driver: 'local',
+          serveAssets: ${serveAssets},
+          basePath: '/uploads',
+          root: '${fs.basePath}'
+        }
+      }
+    }
+
+    export default driveConfig
   `
   )
 
@@ -65,8 +87,8 @@ export async function setupApplicationFiles(additionalProviders?: string[]) {
 /**
  * Setup application for testing
  */
-export async function setupApp(additionalProviders?: string[]) {
-  await setupApplicationFiles(additionalProviders)
+export async function setupApp(additionalProviders?: string[], serveAssets: boolean = false) {
+  await setupApplicationFiles(additionalProviders, serveAssets)
   const app = new Application(fs.basePath, 'web')
 
   await app.setup()

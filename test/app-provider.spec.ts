@@ -11,6 +11,7 @@ import test from 'japa'
 
 import { fs, setupApp } from '../test-helpers'
 import { HealthCheck } from '../src/HealthCheck'
+import { DriveManager } from '../src/Drive/DriveManager'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 test.group('App Provider', (group) => {
@@ -21,7 +22,7 @@ test.group('App Provider', (group) => {
   })
 
   test('register app provider', async (assert) => {
-    const app = await setupApp()
+    const app = await setupApp([], true)
     assert.isTrue(app.container.hasBinding('Adonis/Core/Env'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Config'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Logger'))
@@ -38,9 +39,20 @@ test.group('App Provider', (group) => {
     assert.isTrue(app.container.hasBinding('Adonis/Core/Validator'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/AssetsManager'))
     assert.instanceOf(app.container.use('Adonis/Core/HealthCheck'), HealthCheck)
+    assert.instanceOf(app.container.use('Adonis/Core/Drive'), DriveManager)
     assert.deepEqual(
       app.container.use('Adonis/Core/HttpExceptionHandler'),
       HttpExceptionHandler as any
     )
+
+    /**
+     * Ensure drive routes are registerd
+     */
+    const router = app.container.use('Adonis/Core/Route')
+    router.commit()
+    const routes = router.toJSON()
+
+    assert.deepEqual(routes.root[0].name, 'drive.local.serve')
+    assert.deepEqual(routes.root[0].pattern, '/uploads/*')
   })
 })

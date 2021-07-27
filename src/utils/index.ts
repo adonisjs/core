@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { promisify } from 'util'
+import { pipeline } from 'stream'
 import { resolveFrom } from '@poppinss/utils/build/helpers'
 
 /**
@@ -33,3 +35,5 @@ export function registerTsHook(appRoot: string) {
     throw error
   }
 }
+
+export const pipelinePromise = promisify(pipeline)
