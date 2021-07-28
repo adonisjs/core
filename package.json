@@ -1,6 +1,6 @@
 {
 	"name": "@adonisjs/core",
-	"version": "5.1.11",
+	"version": "5.2.0",
 	"description": "Core of AdonisJS",
 	"exports": {
 		".": "./build/providers/AppProvider.js",
@@ -138,10 +138,10 @@
 					"src": "config/bodyparser.txt",
 					"dest": "bodyparser"
 				},
-        {
-          "src": "config/drive.txt",
-          "dest": "drive"
-        },
+				{
+					"src": "config/drive.txt",
+					"dest": "drive"
+				},
 				{
 					"src": "config/cors.txt",
 					"dest": "cors"
@@ -156,10 +156,10 @@
 					"src": "contracts/events.txt",
 					"dest": "events"
 				},
-        {
-          "src": "contracts/drive.txt",
-          "dest": "drive"
-        },
+				{
+					"src": "contracts/drive.txt",
+					"dest": "drive"
+				},
 				{
 					"src": "contracts/hash.txt",
 					"dest": "hash"
