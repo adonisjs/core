@@ -13,11 +13,13 @@ import { Manager } from '@poppinss/manager'
 import { RouterContract } from '@ioc:Adonis/Core/Route'
 import { ManagerConfigValidator } from '@poppinss/utils'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
+import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser'
 
 import {
   DisksList,
   Visibility,
   DriveConfig,
+  WriteOptions,
   DriverContract,
   LocalDriverConfig,
   DriveManagerContract,
@@ -148,6 +150,20 @@ export class DriveManager
    */
   public async put(location: string, contents: Buffer | string): Promise<void> {
     return this.use().put(location, contents)
+  }
+
+  /**
+   * Write string|buffer contents to a destination. The missing
+   * intermediate directories will be created (if required).
+   */
+  public async putFile(
+    source: MultipartFileContract,
+    destination: string,
+    options?: WriteOptions & {
+      name?: string
+    }
+  ): Promise<string> {
+    return this.use().putFile(source, destination, options)
   }
 
   /**

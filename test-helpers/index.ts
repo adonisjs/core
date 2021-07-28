@@ -8,8 +8,8 @@
  */
 
 import { join } from 'path'
-import { Application } from '@adonisjs/application'
 import { Filesystem } from '@poppinss/dev-utils'
+import { Application } from '@adonisjs/application'
 
 const SECRET = 'asecureandlongrandomsecret'
 export const fs = new Filesystem(join(__dirname, '__app'))
@@ -96,4 +96,33 @@ export async function setupApp(additionalProviders?: string[], serveAssets: bool
   await app.bootProviders()
 
   return app
+}
+
+export async function registerBodyParserMiddleware(app: Application) {
+  app.container.use('Adonis/Core/Server').middleware.clear()
+  app.container.use('Adonis/Core/Server').middleware.register([
+    async () => {
+      return {
+        default: app.container.use('Adonis/Core/BodyParser'),
+      }
+    },
+  ])
+
+  app.container.use('Adonis/Core/Config').set('bodyparser', {
+    whitelistedMethods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+    json: {
+      types: [],
+    },
+    form: {
+      types: [],
+    },
+    raw: {
+      types: [],
+    },
+    multipart: {
+      processManually: [],
+      autoProcess: true,
+      types: ['multipart/form-data'],
+    },
+  })
 }

@@ -11,6 +11,7 @@ declare module '@ioc:Adonis/Core/Drive' {
   import * as fsExtra from 'fs-extra'
   import { DirectoryJSON, vol } from 'memfs'
   import { ManagerContract } from '@poppinss/manager'
+  import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser'
   import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
   /**
@@ -77,6 +78,18 @@ declare module '@ioc:Adonis/Core/Drive' {
      * intermediate directories will be created (if required).
      */
     put(location: string, contents: Buffer | string, options?: WriteOptions): Promise<void>
+
+    /**
+     * Put a file from the local disk or the bodyparser file to the
+     * drive
+     */
+    putFile(
+      file: MultipartFileContract,
+      destination?: string,
+      options?: WriteOptions & {
+        name?: string
+      }
+    ): Promise<string>
 
     /**
      * Write a stream to a destination. The missing intermediate

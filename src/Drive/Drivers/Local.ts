@@ -11,8 +11,15 @@
 
 import * as fsExtra from 'fs-extra'
 import { dirname, join, isAbsolute } from 'path'
+import { cuid } from '@poppinss/utils/build/helpers'
 import { RouterContract } from '@ioc:Adonis/Core/Route'
-import { LocalDriverContract, LocalDriverConfig, Visibility } from '@ioc:Adonis/Core/Drive'
+import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser'
+import {
+  Visibility,
+  WriteOptions,
+  LocalDriverConfig,
+  LocalDriverContract,
+} from '@ioc:Adonis/Core/Drive'
 
 import { pipelinePromise } from '../../utils'
 import { LocalFileServer } from '../LocalFileServer'
@@ -126,6 +133,26 @@ export class LocalDriver implements LocalDriverContract {
    */
   public async put(location: string, contents: Buffer | string): Promise<void> {
     return this.adapter.outputFile(this.makePath(location), contents)
+  }
+
+  /**
+   * Put a file from the local disk or the bodyparser file to the
+   * drive
+   */
+  public async putFile(
+    file: MultipartFileContract,
+    destination?: string,
+    options?: WriteOptions & {
+      name?: string
+    }
+  ): Promise<string> {
+    const fileName = options?.name || `${cuid()}.${file.extname}`
+    const filePath = join(destination || './', fileName)
+    const absPath = this.makePath(filePath)
+
+    await this.adapter.move(file.tmpPath!, absPath)
+    file.markAsMoved(filePath, absPath)
+    return filePath
   }
 
   /**

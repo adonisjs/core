@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import 'reflect-metadata'
 import test from 'japa'
 import etag from 'etag'
 import { join } from 'path'
@@ -14,7 +15,7 @@ import { Readable } from 'stream'
 import supertest from 'supertest'
 import { createServer } from 'http'
 
-import { setupApp, fs } from '../test-helpers'
+import { setupApp, fs, registerBodyParserMiddleware } from '../test-helpers'
 import { MemoryDriver } from '../src/Drive/Drivers/Memory'
 import { LocalFileServer } from '../src/Drive/LocalFileServer'
 import { promisify } from 'util'
@@ -61,6 +62,67 @@ test.group('Memory driver | put', (group) => {
 
     const contents = await driver.get('foo.txt')
     assert.equal(contents.toString(), 'hello world')
+  })
+})
+
+test.group('Local driver | putFile', (group) => {
+  group.afterEach(async () => {
+    await fs.cleanup()
+  })
+
+  test('move file from outside the disk root to disk', async (assert) => {
+    const app = await setupApp()
+    const router = app.container.resolveBinding('Adonis/Core/Route')
+    const config = { driver: 'memory' as const, root: TEST_ROOT, visibility: 'public' as const }
+    const adonisServer = app.container.resolveBinding('Adonis/Core/Server')
+    const driver = new MemoryDriver('local', config, router)
+    const server = createServer(adonisServer.handle.bind(adonisServer))
+
+    router.post('/', async ({ request }) => {
+      await driver.putFile(request.file('file')!)
+      return request.file('file')
+    })
+
+    registerBodyParserMiddleware(app)
+    adonisServer.optimize()
+
+    await fs.add('foo.txt', 'hello world')
+
+    const { body } = await supertest(server)
+      .post('/')
+      .attach('file', join(fs.basePath, 'foo.txt'))
+      .expect(200)
+
+    assert.equal(body.state, 'moved')
+    assert.property(body, 'filePath')
+    assert.property(body, 'fileName')
+  })
+
+  test('create intermediate directories when missing', async (assert) => {
+    const app = await setupApp()
+    const router = app.container.resolveBinding('Adonis/Core/Route')
+    const config = { driver: 'memory' as const, root: TEST_ROOT, visibility: 'public' as const }
+    const adonisServer = app.container.resolveBinding('Adonis/Core/Server')
+    const driver = new MemoryDriver('local', config, router)
+    const server = createServer(adonisServer.handle.bind(adonisServer))
+
+    router.post('/', async ({ request }) => {
+      await driver.putFile(request.file('file')!, 'foo/bar')
+      return request.file('file')
+    })
+
+    registerBodyParserMiddleware(app)
+    adonisServer.optimize()
+
+    await fs.add('foo.txt', 'hello world')
+
+    const { body } = await supertest(server)
+      .post('/')
+      .attach('file', join(fs.basePath, 'foo.txt'))
+      .expect(200)
+
+    assert.equal(body.state, 'moved')
+    assert.match(body.fileName, /foo\/bar\/.*/)
   })
 })
 
@@ -615,7 +677,7 @@ test.group('Memory driver | getSignedUrl', (group) => {
     assert.equal(headers['content-type'], 'text/plain; charset=utf-8')
   })
 
-  test('do not generate etag for private files', async (assert) => {
+  test('generate etag for private files', async (assert) => {
     const app = await setupApp()
     const router = app.container.resolveBinding('Adonis/Core/Route')
     const adonisServer = app.container.resolveBinding('Adonis/Core/Server')
@@ -640,7 +702,7 @@ test.group('Memory driver | getSignedUrl', (group) => {
       .expect(200)
 
     assert.equal(text, 'hello world')
-    assert.notProperty(headers, 'etag')
+    assert.property(headers, 'etag')
   })
 
   test('serve public files from the signed url', async (assert) => {
@@ -668,6 +730,6 @@ test.group('Memory driver | getSignedUrl', (group) => {
       .expect(200)
 
     assert.equal(text, 'hello world')
-    assert.notProperty(headers, 'etag')
+    assert.property(headers, 'etag')
   })
 })

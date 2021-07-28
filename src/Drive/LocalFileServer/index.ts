@@ -93,7 +93,6 @@ export class LocalFileServer {
         try {
           const filePath = this.driver.makePath(location)
           const stats = await this.getFileStats(filePath)
-          const generateEtag = fileVisibility === 'public' && !request.input('signature')
 
           /**
            * Ignore requests for directories
@@ -103,18 +102,11 @@ export class LocalFileServer {
           }
 
           /**
-           * Set appropriate errors
+           * Set appropriate headers
            */
           response.header('Last-Modified', stats.mtime.toUTCString())
           response.type(extname(filePath))
-
-          /**
-           * Generate etag when file is public and the user is not
-           * using a signed url. Signed URLs shouldn't be cached
-           */
-          if (generateEtag) {
-            response.setEtag(stats, true)
-          }
+          response.setEtag(stats, true)
 
           /*
            * Do not stream files for HEAD request, but set the appropriate
@@ -131,10 +123,10 @@ export class LocalFileServer {
           }
 
           /*
-           * Regardless of request method, if we are using etags and
-           * cache is fresh, then we must respond with 304
+           * Regardless of request method, if cache is
+           * fresh, then we must respond with 304
            */
-          if (generateEtag && response.fresh()) {
+          if (response.fresh()) {
             response.status(304)
             return
           }

@@ -10,9 +10,18 @@
 /// <reference path="../../../adonis-typings/index.ts" />
 
 import { Volume } from 'memfs'
-import { isAbsolute, join, dirname } from 'path'
+import { createReadStream } from 'fs'
+import { dirname, join, isAbsolute } from 'path'
+import { cuid } from '@poppinss/utils/build/helpers'
 import { RouterContract } from '@ioc:Adonis/Core/Route'
-import { MemoryDriverContract, MemoryDriverConfig, Visibility } from '@ioc:Adonis/Core/Drive'
+import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser'
+
+import {
+  Visibility,
+  WriteOptions,
+  MemoryDriverConfig,
+  MemoryDriverContract,
+} from '@ioc:Adonis/Core/Drive'
 
 import { pipelinePromise } from '../../utils'
 import { LocalFileServer } from '../LocalFileServer'
@@ -170,6 +179,26 @@ export class MemoryDriver implements MemoryDriverContract {
         }
       })
     })
+  }
+
+  /**
+   * Put a file from the local disk or the bodyparser file to the
+   * drive
+   */
+  public async putFile(
+    file: MultipartFileContract,
+    destination?: string,
+    options?: WriteOptions & {
+      name?: string
+    }
+  ): Promise<string> {
+    const fileName = options?.name || `${cuid()}.${file.extname}`
+    const filePath = join(destination || './', fileName)
+    const absPath = this.makePath(filePath)
+
+    await this.putStream(absPath, createReadStream(file.tmpPath!))
+    file.markAsMoved(filePath, absPath)
+    return filePath
   }
 
   /**
