@@ -23,7 +23,7 @@ import {
   MemoryDriverContract,
 } from '@ioc:Adonis/Core/Drive'
 
-import { pipelinePromise } from '../../utils'
+import { pipelinePromise, slash } from '../../utils'
 import { LocalFileServer } from '../LocalFileServer'
 import { CannotGenerateUrlException } from '../../Exceptions/CannotGenerateUrlException'
 
@@ -194,11 +194,12 @@ export class MemoryDriver implements MemoryDriverContract {
   ): Promise<string> {
     const fileName = options?.name || `${cuid()}.${file.extname}`
     const filePath = join(destination || './', fileName)
+    const unixPath = slash(filePath)
     const absPath = this.makePath(filePath)
 
     await this.putStream(absPath, createReadStream(file.tmpPath!))
-    file.markAsMoved(filePath, absPath)
-    return filePath
+    file.markAsMoved(unixPath, absPath)
+    return unixPath
   }
 
   /**

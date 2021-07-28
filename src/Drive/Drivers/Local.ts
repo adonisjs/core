@@ -21,7 +21,7 @@ import {
   LocalDriverContract,
 } from '@ioc:Adonis/Core/Drive'
 
-import { pipelinePromise } from '../../utils'
+import { pipelinePromise, slash } from '../../utils'
 import { LocalFileServer } from '../LocalFileServer'
 import { CannotGenerateUrlException } from '../../Exceptions/CannotGenerateUrlException'
 
@@ -137,7 +137,7 @@ export class LocalDriver implements LocalDriverContract {
 
   /**
    * Put a file from the local disk or the bodyparser file to the
-   * drive
+   * drive. The return value is always a unix path.
    */
   public async putFile(
     file: MultipartFileContract,
@@ -148,11 +148,12 @@ export class LocalDriver implements LocalDriverContract {
   ): Promise<string> {
     const fileName = options?.name || `${cuid()}.${file.extname}`
     const filePath = join(destination || './', fileName)
+    const unixPath = slash(filePath)
     const absPath = this.makePath(filePath)
 
     await this.adapter.move(file.tmpPath!, absPath)
-    file.markAsMoved(filePath, absPath)
-    return filePath
+    file.markAsMoved(unixPath, absPath)
+    return unixPath
   }
 
   /**
