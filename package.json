@@ -138,6 +138,10 @@
 					"src": "config/bodyparser.txt",
 					"dest": "bodyparser"
 				},
+        {
+          "src": "config/drive.txt",
+          "dest": "drive"
+        },
 				{
 					"src": "config/cors.txt",
 					"dest": "cors"
@@ -152,6 +156,10 @@
 					"src": "contracts/events.txt",
 					"dest": "events"
 				},
+        {
+          "src": "contracts/drive.txt",
+          "dest": "drive"
+        },
 				{
 					"src": "contracts/hash.txt",
 					"dest": "hash"
