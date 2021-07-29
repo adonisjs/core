@@ -142,6 +142,27 @@ export class CannotGetMetaDataException extends Exception {
 }
 
 /**
+ * Unable to set visibility
+ */
+export class CannotSetVisibilityException extends Exception {
+  public location: string
+  public original: any
+
+  public static invoke(location: string, original: any) {
+    const error = new this(
+      `Unable to set visibility for file at location "${location}"`,
+      500,
+      'E_CANNOT_SET_VISIBILITY'
+    )
+
+    error.location = location
+    error.original = original
+
+    return error
+  }
+}
+
+/**
  * Unable to generate url for a file. The assets serving is disabled
  */
 export class CannotGenerateUrlException extends Exception {
