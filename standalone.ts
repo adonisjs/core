@@ -13,23 +13,24 @@ export { Emitter } from '@adonisjs/events/build/standalone'
 export { Encryption } from '@adonisjs/encryption/build/standalone'
 
 export {
-  HttpContext,
-  MiddlewareStore,
-  Request,
-  Response,
   Server,
   Router,
+  Request,
+  Response,
+  HttpContext,
+  MiddlewareStore,
 } from '@adonisjs/http-server/build/standalone'
 
 export {
-  Kernel,
-  BaseCommand,
-  ManifestGenerator,
-  ManifestLoader,
-  listDirectoryFiles,
   args,
   flags,
+  Kernel,
+  BaseCommand,
+  ManifestLoader,
+  ManifestGenerator,
+  listDirectoryFiles,
 } from '@adonisjs/ace'
 
+export * from './src/Drive/Exceptions'
 export { Ignitor } from './src/Ignitor'
 export { Exception } from '@poppinss/utils'

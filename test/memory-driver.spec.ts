@@ -312,7 +312,10 @@ test.group('Memory driver | copy', (group) => {
     try {
       await driver.copy('foo.txt', 'bar.txt')
     } catch (error) {
-      assert.match(error.message, /ENOENT: no such file or directory/)
+      assert.equal(
+        error.message,
+        'E_CANNOT_COPY_FILE: Cannot copy file from "foo.txt" to "bar.txt"'
+      )
     }
   })
 
@@ -375,7 +378,10 @@ test.group('Memory driver | move', (group) => {
     try {
       await driver.move('foo.txt', 'baz/bar.txt')
     } catch (error) {
-      assert.match(error.message, /ENOENT: no such file or directory/)
+      assert.equal(
+        error.message,
+        'E_CANNOT_MOVE_FILE: Cannot move file from "foo.txt" to "baz/bar.txt"'
+      )
     }
   })
 
@@ -442,7 +448,7 @@ test.group('Memory driver | get', (group) => {
     try {
       await driver.get('foo.txt')
     } catch (error) {
-      assert.match(error.message, /ENOENT: no such file or directory/)
+      assert.equal(error.message, 'E_CANNOT_READ_FILE: Cannot read file from location "foo.txt"')
     }
   })
 })
@@ -476,7 +482,10 @@ test.group('Memory driver | getStats', (group) => {
     try {
       await driver.getStats('foo.txt')
     } catch (error) {
-      assert.match(error.message, /ENOENT: no such file or directory/)
+      assert.equal(
+        error.message,
+        'E_CANNOT_GET_METADATA: Unable to retrieve the "stats" for file at location "foo.txt"'
+      )
     }
   })
 })

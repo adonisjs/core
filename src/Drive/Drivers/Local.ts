@@ -10,10 +10,12 @@
 /// <reference path="../../../adonis-typings/index.ts" />
 
 import * as fsExtra from 'fs-extra'
+import { slash } from '@poppinss/utils'
 import { dirname, join, isAbsolute } from 'path'
 import { cuid } from '@poppinss/utils/build/helpers'
 import { RouterContract } from '@ioc:Adonis/Core/Route'
 import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser'
+
 import {
   Visibility,
   WriteOptions,
@@ -22,9 +24,17 @@ import {
   LocalDriverContract,
 } from '@ioc:Adonis/Core/Drive'
 
-import { pipelinePromise, slash } from '../../utils'
+import { pipelinePromise } from '../../utils'
 import { LocalFileServer } from '../LocalFileServer'
-import { CannotGenerateUrlException } from '../../Exceptions/CannotGenerateUrlException'
+import {
+  CannotCopyFileException,
+  CannotMoveFileException,
+  CannotReadFileException,
+  CannotWriteFileException,
+  CannotGenerateUrlException,
+  CannotDeleteFileException,
+  CannotGetMetaDataException,
+} from '../Exceptions'
 
 /**
  * Local driver interacts with the local file system
@@ -62,21 +72,33 @@ export class LocalDriver implements LocalDriverContract {
    * converting the buffer to a string.
    */
   public async get(location: string): Promise<Buffer> {
-    return this.adapter.readFile(this.makePath(location))
+    try {
+      return await this.adapter.readFile(this.makePath(location))
+    } catch (error) {
+      throw CannotReadFileException.invoke(location, error)
+    }
   }
 
   /**
    * Returns the file contents as a stream
    */
   public async getStream(location: string): Promise<NodeJS.ReadableStream> {
-    return this.adapter.createReadStream(this.makePath(location))
+    try {
+      return this.adapter.createReadStream(this.makePath(location))
+    } catch (error) {
+      throw CannotReadFileException.invoke(location, error)
+    }
   }
 
   /**
    * A boolean to find if the location path exists or not
    */
-  public exists(location: string): Promise<boolean> {
-    return this.adapter.pathExists(this.makePath(location))
+  public async exists(location: string): Promise<boolean> {
+    try {
+      return await this.adapter.pathExists(this.makePath(location))
+    } catch (error) {
+      throw CannotGetMetaDataException.invoke(location, 'exists', error)
+    }
   }
 
   /**
@@ -90,10 +112,14 @@ export class LocalDriver implements LocalDriverContract {
    * Returns the file stats
    */
   public async getStats(location: string): Promise<{ size: number; modified: Date }> {
-    const stats = await this.adapter.stat(this.makePath(location))
-    return {
-      modified: stats.mtime,
-      size: stats.size,
+    try {
+      const stats = await this.adapter.stat(this.makePath(location))
+      return {
+        modified: stats.mtime,
+        size: stats.size,
+      }
+    } catch (error) {
+      throw CannotGetMetaDataException.invoke(location, 'stats', error)
     }
   }
 
@@ -135,7 +161,11 @@ export class LocalDriver implements LocalDriverContract {
    * intermediate directories will be created (if required).
    */
   public async put(location: string, contents: Buffer | string): Promise<void> {
-    return this.adapter.outputFile(this.makePath(location), contents)
+    try {
+      await this.adapter.outputFile(this.makePath(location), contents)
+    } catch (error) {
+      throw CannotWriteFileException.invoke(location, error)
+    }
   }
 
   /**
@@ -154,9 +184,13 @@ export class LocalDriver implements LocalDriverContract {
     const unixPath = slash(filePath)
     const absPath = this.makePath(filePath)
 
-    await this.adapter.move(file.tmpPath!, absPath)
-    file.markAsMoved(unixPath, absPath)
-    return unixPath
+    try {
+      await this.adapter.move(file.tmpPath!, absPath)
+      file.markAsMoved(unixPath, absPath)
+      return unixPath
+    } catch (error) {
+      throw CannotWriteFileException.invoke(unixPath, error)
+    }
   }
 
   /**
@@ -183,7 +217,11 @@ export class LocalDriver implements LocalDriverContract {
      * back unless we read the existing content in buffer, but then
      * we don't know how large the file is.
      */
-    await pipelinePromise(contents, writeStream)
+    try {
+      await pipelinePromise(contents, writeStream)
+    } catch (error) {
+      throw CannotWriteFileException.invoke(location, error)
+    }
   }
 
   /**
@@ -196,23 +234,39 @@ export class LocalDriver implements LocalDriverContract {
   /**
    * Remove a given location path
    */
-  public delete(location: string): Promise<void> {
-    return this.adapter.remove(this.makePath(location))
+  public async delete(location: string): Promise<void> {
+    try {
+      await this.adapter.remove(this.makePath(location))
+    } catch (error) {
+      throw CannotDeleteFileException.invoke(location, error)
+    }
   }
 
   /**
    * Copy a given location path from the source to the desination.
    * The missing intermediate directories will be created (if required)
    */
-  public copy(source: string, destination: string): Promise<void> {
-    return this.adapter.copy(this.makePath(source), this.makePath(destination), { overwrite: true })
+  public async copy(source: string, destination: string): Promise<void> {
+    try {
+      await this.adapter.copy(this.makePath(source), this.makePath(destination), {
+        overwrite: true,
+      })
+    } catch (error) {
+      throw CannotCopyFileException.invoke(source, destination, error)
+    }
   }
 
   /**
    * Move a given location path from the source to the desination.
    * The missing intermediate directories will be created (if required)
    */
-  public move(source: string, destination: string): Promise<void> {
-    return this.adapter.move(this.makePath(source), this.makePath(destination), { overwrite: true })
+  public async move(source: string, destination: string): Promise<void> {
+    try {
+      await this.adapter.move(this.makePath(source), this.makePath(destination), {
+        overwrite: true,
+      })
+    } catch (error) {
+      throw CannotMoveFileException.invoke(source, destination, error)
+    }
   }
 }

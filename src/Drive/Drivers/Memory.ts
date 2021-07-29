@@ -11,6 +11,7 @@
 
 import { Volume } from 'memfs'
 import { createReadStream } from 'fs'
+import { slash } from '@poppinss/utils'
 import { dirname, join, isAbsolute } from 'path'
 import { cuid } from '@poppinss/utils/build/helpers'
 import { RouterContract } from '@ioc:Adonis/Core/Route'
@@ -24,9 +25,18 @@ import {
   MemoryDriverContract,
 } from '@ioc:Adonis/Core/Drive'
 
-import { pipelinePromise, slash } from '../../utils'
+import { pipelinePromise } from '../../utils'
 import { LocalFileServer } from '../LocalFileServer'
-import { CannotGenerateUrlException } from '../../Exceptions/CannotGenerateUrlException'
+
+import {
+  CannotCopyFileException,
+  CannotMoveFileException,
+  CannotReadFileException,
+  CannotWriteFileException,
+  CannotGenerateUrlException,
+  CannotDeleteFileException,
+  CannotGetMetaDataException,
+} from '../Exceptions'
 
 /**
  * Memory driver is mainly used for testing
@@ -81,7 +91,7 @@ export class MemoryDriver implements MemoryDriverContract {
     return new Promise((resolve, reject) => {
       this.adapter.readFile(this.makePath(location), (error, data: Buffer) => {
         if (error) {
-          reject(error)
+          reject(CannotReadFileException.invoke(location, error))
         } else {
           resolve(data)
         }
@@ -121,7 +131,7 @@ export class MemoryDriver implements MemoryDriverContract {
     return new Promise((resolve, reject) => {
       this.adapter.stat(this.makePath(location), (error, stats) => {
         if (error) {
-          reject(error)
+          reject(CannotGetMetaDataException.invoke(location, 'stats', error))
         } else {
           resolve({
             modified: stats!.mtime,
@@ -176,7 +186,7 @@ export class MemoryDriver implements MemoryDriverContract {
     return new Promise((resolve, reject) => {
       this.adapter.writeFile(absolutePath, contents, (error) => {
         if (error) {
-          reject(error)
+          reject(CannotWriteFileException.invoke(location, error))
         } else {
           resolve()
         }
@@ -211,23 +221,27 @@ export class MemoryDriver implements MemoryDriverContract {
    */
   public async putStream(location: string, contents: NodeJS.ReadableStream): Promise<void> {
     const absolutePath = this.makePath(location)
-    await this.ensureDir(absolutePath)
+    try {
+      await this.ensureDir(absolutePath)
 
-    const writeStream = this.adapter.createWriteStream(absolutePath)
+      const writeStream = this.adapter.createWriteStream(absolutePath)
 
-    /**
-     * If streaming is interrupted, then the destination file will be
-     * created with partial or empty contents.
-     *
-     * Earlier we are cleaning up the empty file, which addresses one
-     * use case (no pre-existing file was there).
-     *
-     * However, in case there was already a file, it will be then emptied
-     * out. So basically there is no way to get the original contents
-     * back unless we read the existing content in buffer, but then
-     * we don't know how large the file is.
-     */
-    await pipelinePromise(contents, writeStream)
+      /**
+       * If streaming is interrupted, then the destination file will be
+       * created with partial or empty contents.
+       *
+       * Earlier we are cleaning up the empty file, which addresses one
+       * use case (no pre-existing file was there).
+       *
+       * However, in case there was already a file, it will be then emptied
+       * out. So basically there is no way to get the original contents
+       * back unless we read the existing content in buffer, but then
+       * we don't know how large the file is.
+       */
+      await pipelinePromise(contents, writeStream)
+    } catch (error) {
+      throw CannotWriteFileException.invoke(location, error)
+    }
   }
 
   /**
@@ -248,7 +262,7 @@ export class MemoryDriver implements MemoryDriverContract {
     return new Promise((resolve, reject) => {
       this.adapter.unlink(this.makePath(location), (error) => {
         if (error) {
-          reject(error)
+          reject(CannotDeleteFileException.invoke(location, error))
         } else {
           resolve()
         }
@@ -267,7 +281,7 @@ export class MemoryDriver implements MemoryDriverContract {
     return new Promise((resolve, reject) => {
       this.adapter.copyFile(this.makePath(source), desintationAbsolutePath, (error) => {
         if (error) {
-          reject(error)
+          reject(CannotCopyFileException.invoke(source, destination, error))
         } else {
           resolve()
         }
@@ -287,7 +301,7 @@ export class MemoryDriver implements MemoryDriverContract {
     return new Promise<void>((resolve, reject) => {
       this.adapter.copyFile(sourceAbsolutePath, desintationAbsolutePath, (error) => {
         if (error) {
-          reject(error)
+          reject(CannotMoveFileException.invoke(source, destination, error))
         } else {
           resolve()
         }
