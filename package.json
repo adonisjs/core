@@ -1,6 +1,6 @@
 {
 	"name": "@adonisjs/core",
-	"version": "5.2.1",
+	"version": "5.2.2",
 	"description": "Core of AdonisJS",
 	"exports": {
 		".": "./build/providers/AppProvider.js",
