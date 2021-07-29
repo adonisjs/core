@@ -19,6 +19,7 @@ import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser'
 import {
   Visibility,
   WriteOptions,
+  ContentHeaders,
   MemoryDriverConfig,
   MemoryDriverContract,
 } from '@ioc:Adonis/Core/Drive'
@@ -136,17 +137,19 @@ export class MemoryDriver implements MemoryDriverContract {
    */
   public async getSignedUrl(
     location: string,
-    options?: { expiresIn?: string | number }
+    options?: ContentHeaders & { expiresIn?: string | number }
   ): Promise<string> {
     if (!this.config.serveAssets) {
       throw CannotGenerateUrlException.invoke(location, this.diskName)
     }
 
+    const { expiresIn, ...qs } = options || {}
     return this.router.makeSignedUrl(
       this.routeName,
       { [LocalFileServer.filePathParamName]: [location] },
       {
-        expiresIn: options?.expiresIn,
+        expiresIn,
+        qs,
       }
     )
   }

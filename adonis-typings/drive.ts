@@ -15,12 +15,24 @@ declare module '@ioc:Adonis/Core/Drive' {
   import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
   /**
+   * Content options for files
+   */
+  export type ContentHeaders = {
+    contentType?: string
+    contentLanguage?: string
+    contentEncoding?: string
+    contentDisposition?: string
+    cacheControl?: string
+  }
+
+  /**
    * Options for writing, moving and copying
    * files
    */
   export type WriteOptions = {
     visibility?: string
-  }
+  } & ContentHeaders &
+    Record<string, any>
 
   /**
    * Available visibilities
@@ -66,7 +78,10 @@ declare module '@ioc:Adonis/Core/Drive' {
     /**
      * Returns a signed URL for a given location path
      */
-    getSignedUrl(location: string, options?: { expiresIn?: string | number }): Promise<string>
+    getSignedUrl(
+      location: string,
+      options?: ContentHeaders & { expiresIn?: string | number }
+    ): Promise<string>
 
     /**
      * Returns a URL for a given location path

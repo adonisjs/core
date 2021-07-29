@@ -81,14 +81,29 @@ export class LocalFileServer {
       .get(routePattern, async ({ response, request, logger }) => {
         const location = request.param(LocalFileServer.filePathParamName).join('/')
         const fileVisibility = await this.driver.getVisibility(location)
+        const usingSignature = !!request.input('signature')
 
         /**
-         * Ensure the signature is valid for private files
+         * Deny request when not using signature and file is "private"
          */
-        if (fileVisibility === 'private' && !request.hasValidSignature()) {
+        if (!usingSignature && fileVisibility === 'private') {
           response.unauthorized('Access denied')
           return
         }
+
+        /**
+         * Deny request when using signature but its invalid. File
+         * visibility doesn't play a role here.
+         */
+        if (usingSignature && !request.hasValidSignature()) {
+          response.unauthorized('Access denied')
+          return
+        }
+
+        /**
+         * Read https://datatracker.ietf.org/doc/html/rfc7234#section-4.3.5 for
+         * headers management
+         */
 
         try {
           const filePath = this.driver.makePath(location)
@@ -102,10 +117,44 @@ export class LocalFileServer {
           }
 
           /**
-           * Set appropriate headers
+           * Set Last-Modified or the Cache-Control header. We pick
+           * the cache control header from the query string only
+           * when a valid signature is presented.
            */
-          response.header('Last-Modified', stats.mtime.toUTCString())
-          response.type(extname(filePath))
+          if (usingSignature && request.input('cacheControl')) {
+            response.header('Cache-Control', request.input('cacheControl'))
+          } else {
+            response.header('Last-Modified', stats.mtime.toUTCString())
+          }
+
+          /**
+           * Set the Content-Type header. We pick the contentType header
+           * from the query string only when a valid signature
+           * is presented
+           */
+          if (usingSignature && request.input('contentType')) {
+            response.header('Content-Type', request.input('contentType'))
+          } else {
+            response.type(extname(filePath))
+          }
+
+          /**
+           * Set the following headers by reading the query string values. Must
+           * be done when a signature was presented.
+           */
+          if (usingSignature && request.input('contentDisposition')) {
+            response.header('Content-Disposition', request.input('contentDisposition'))
+          }
+          if (usingSignature && request.input('contentEncoding')) {
+            response.header('Content-Encoding', request.input('contentEncoding'))
+          }
+          if (usingSignature && request.input('contentLanguage')) {
+            response.header('Content-Language', request.input('contentLanguage'))
+          }
+
+          /**
+           * Always define etag
+           */
           response.setEtag(stats, true)
 
           /*

@@ -23,6 +23,7 @@ import {
   DriverContract,
   LocalDriverConfig,
   DriveManagerContract,
+  ContentHeaders,
 } from '@ioc:Adonis/Core/Drive'
 
 /**
@@ -132,7 +133,7 @@ export class DriveManager
    */
   public async getSignedUrl(
     location: string,
-    options?: { expiresIn?: number | string }
+    options?: ContentHeaders & { expiresIn?: number | string }
   ): Promise<string> {
     return this.use().getSignedUrl(location, options)
   }

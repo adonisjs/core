@@ -726,6 +726,69 @@ test.group('Local driver | getSignedUrl', (group) => {
     assert.equal(headers['content-type'], 'text/plain; charset=utf-8')
   })
 
+  test('use signed url content headers when defined', async (assert) => {
+    const app = await setupApp()
+    const router = app.container.resolveBinding('Adonis/Core/Route')
+    const adonisServer = app.container.resolveBinding('Adonis/Core/Server')
+
+    const config = {
+      driver: 'local' as const,
+      root: TEST_ROOT,
+      visibility: 'private' as const,
+      serveAssets: true,
+      basePath: '/uploads',
+    }
+
+    const driver = new LocalDriver('local', config, router)
+    new LocalFileServer('local', config, driver, router).registerRoute()
+    adonisServer.optimize()
+
+    const server = createServer(adonisServer.handle.bind(adonisServer))
+    await driver.put('foo.txt', '{"hello": "world"}')
+
+    const { body, headers } = await supertest(server)
+      .get(
+        await driver.getSignedUrl('foo.txt', {
+          contentType: 'application/json',
+          contentDisposition: 'attachment',
+        })
+      )
+      .expect(200)
+
+    assert.deepEqual(body, { hello: 'world' })
+    assert.equal(headers['content-length'], '{"hello": "world"}'.length)
+    assert.equal(headers['content-type'], 'application/json')
+    assert.equal(headers['content-disposition'], 'attachment')
+  })
+
+  test('do not use content headers on a public file when invalid signature', async (assert) => {
+    const app = await setupApp()
+    const router = app.container.resolveBinding('Adonis/Core/Route')
+    const adonisServer = app.container.resolveBinding('Adonis/Core/Server')
+
+    const config = {
+      driver: 'local' as const,
+      root: TEST_ROOT,
+      visibility: 'public' as const,
+      serveAssets: true,
+      basePath: '/uploads',
+    }
+
+    const driver = new LocalDriver('local', config, router)
+    new LocalFileServer('local', config, driver, router).registerRoute()
+    adonisServer.optimize()
+
+    const server = createServer(adonisServer.handle.bind(adonisServer))
+    await driver.put('foo.txt', '{"hello": "world"}')
+
+    const { text, headers } = await supertest(server)
+      .get(`${await driver.getUrl('foo.txt')}?signature=foo&content-type=image/png`)
+      .expect(401)
+
+    assert.deepEqual(text, 'Access denied')
+    assert.equal(headers['content-type'], 'text/plain; charset=utf-8')
+  })
+
   test('generate etag for private files', async (assert) => {
     const app = await setupApp()
     const router = app.container.resolveBinding('Adonis/Core/Route')
