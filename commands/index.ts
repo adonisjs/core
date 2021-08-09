@@ -8,7 +8,7 @@
  */
 
 export default [
-  '@adonisjs/core/commands/DumpRc',
-  '@adonisjs/core/commands/ListRoutes',
-  '@adonisjs/core/commands/GenerateKey',
+  '@adonisjs/core/build/commands/DumpRc.js',
+  '@adonisjs/core/build/commands/ListRoutes.js',
+  '@adonisjs/core/build/commands/GenerateKey.js',
 ]

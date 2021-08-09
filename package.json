@@ -160,7 +160,7 @@
 			]
 		},
 		"commands": [
-			"@adonisjs/core/commands"
+			"@adonisjs/core/build/commands/index.js"
 		],
 		"types": "@adonisjs/core",
 		"providers": [
