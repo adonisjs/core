@@ -11,7 +11,6 @@ import test from 'japa'
 
 import { fs, setupApp } from '../test-helpers'
 import { HealthCheck } from '../src/HealthCheck'
-import { DriveManager } from '../src/Drive/DriveManager'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 test.group('App Provider', (group) => {
@@ -39,7 +38,6 @@ test.group('App Provider', (group) => {
     assert.isTrue(app.container.hasBinding('Adonis/Core/Validator'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/AssetsManager'))
     assert.instanceOf(app.container.use('Adonis/Core/HealthCheck'), HealthCheck)
-    assert.instanceOf(app.container.use('Adonis/Core/Drive'), DriveManager)
     assert.deepEqual(
       app.container.use('Adonis/Core/HttpExceptionHandler'),
       HttpExceptionHandler as any

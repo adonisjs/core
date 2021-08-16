@@ -8,6 +8,7 @@
  */
 
 export * from '@adonisjs/application'
+export * from '@adonisjs/drive/build/standalone'
 export { Hash } from '@adonisjs/hash/build/standalone'
 export { Emitter } from '@adonisjs/events/build/standalone'
 export { Encryption } from '@adonisjs/encryption/build/standalone'
@@ -31,6 +32,5 @@ export {
   listDirectoryFiles,
 } from '@adonisjs/ace'
 
-export * from './src/Drive/Exceptions'
 export { Ignitor } from './src/Ignitor'
 export { Exception } from '@poppinss/utils'
