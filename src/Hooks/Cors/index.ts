@@ -72,16 +72,23 @@ export class Cors {
    *
    * Origin match is always case sensitive
    */
-  private computeResponseOrigin(origin: string, ctx: HttpContextContract): string | null {
+  private async computeResponseOrigin(
+    origin: string,
+    ctx: HttpContextContract
+  ): Promise<string | null> {
     let allowedOrigins = this.options.origin
 
     /**
      * If the `origin` value inside user config is a function, we
      * call that function and use the return value as the
      * new config value.
+     * This function shall be an asynchronous function to validate the domain
+     * white-listing from database, or any other 3rd party service.
+     * If the function is synchronous, we can simply use Promise.resolve to return
+     * the values.
      */
     if (typeof allowedOrigins === 'function') {
-      allowedOrigins = allowedOrigins(origin, ctx)
+      allowedOrigins = await allowedOrigins(origin, ctx)
     }
 
     /**
@@ -260,7 +267,7 @@ export class Cors {
       return
     }
 
-    const allowedOrigin = this.computeResponseOrigin(origin, ctx)
+    const allowedOrigin = await this.computeResponseOrigin(origin, ctx)
 
     /**
      * If origin is not allowed, then we don't set any of the cors headers
