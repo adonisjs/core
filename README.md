@@ -127,4 +127,4 @@
 [license-image]: https://img.shields.io/github/license/adonisjs/adonis-framework?style=for-the-badge
 
 [synk-image]: https://img.shields.io/snyk/vulnerabilities/github/adonisjs/core?label=Synk%20Vulnerabilities&style=for-the-badge
-[synk-url]: https://snyk.io/test/github/adonisjs/core?targetFile=package.json "synk"
+[synk-url]: https://snyk.io/test/github/adonisjs/core/badge.svg?targetFile=package.json "synk"
