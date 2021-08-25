@@ -42,10 +42,11 @@ const driveConfig: DriveConfig = {
     */
     local: {
       driver: 'local',
+      visibility: 'public',
 
       /*
       |--------------------------------------------------------------------------
-      | Storage root
+      | Storage root - Local driver only
       |--------------------------------------------------------------------------
       |
       | Define an absolute path to the storage directory from where to read the
@@ -56,19 +57,7 @@ const driveConfig: DriveConfig = {
 
       /*
       |--------------------------------------------------------------------------
-      | Visibility
-      |--------------------------------------------------------------------------
-      |
-      | Visibility decides if the files from this disk are publicly accessible
-      | or not. When set to "private" the files will be accessible only using
-      | a signed URL
-      |
-      */
-      visibility: 'public',
-
-      /*
-      |--------------------------------------------------------------------------
-      | Serve assets
+      | Serve assets - Local driver only
       |--------------------------------------------------------------------------
       |
       | When this is set to true, AdonisJS will configure an assets server to serve
@@ -80,7 +69,7 @@ const driveConfig: DriveConfig = {
 
       /*
       |--------------------------------------------------------------------------
-      | Base path
+      | Base path - Local driver only
       |--------------------------------------------------------------------------
       |
       | Base path is always required when "serveAssets = true". Also make sure
@@ -90,6 +79,69 @@ const driveConfig: DriveConfig = {
       */
       basePath: '/uploads',
     },
+
+    /*
+    |--------------------------------------------------------------------------
+    | S3 Driver
+    |--------------------------------------------------------------------------
+    |
+    | Uses the S3 cloud storage to manage files. Make sure to install the s3
+    | drive separately when using it.
+    |
+    |**************************************************************************
+    | npm i @adonisjs/drive-s3
+    |**************************************************************************
+    |
+    */
+    // s3: {
+    //   driver: 's3',
+    //   visibility: 'public',
+    //   key: Env.get('S3_KEY'),
+    //   secret: Env.get('S3_SECRET'),
+    //   region: Env.get('S3_REGION'),
+    //   bucket: Env.get('S3_BUCKET'),
+    //   endpoint: Env.get('S3_ENDPOINT'),
+    // },
+
+    /*
+    |--------------------------------------------------------------------------
+    | GCS Driver
+    |--------------------------------------------------------------------------
+    |
+    | Uses the Google cloud storage to manage files. Make sure to install the GCS
+    | drive separately when using it.
+    |
+    |**************************************************************************
+    | npm i @adonisjs/drive-gcs
+    |**************************************************************************
+    |
+    */
+    // gcs: {
+    //   driver: 'gcs',
+    //   visibility: 'public',
+    //   keyFilename: Env.get('GCS_KEY_FILENAME'),
+    //   bucket: Env.get('GCS_BUCKET'),
+
+      /*
+      |--------------------------------------------------------------------------
+      | Uniform ACL - Google cloud storage only
+      |--------------------------------------------------------------------------
+      |
+      | When using the Uniform ACL on the bucket, the "visibility" option is
+      | ignored. Since, the files ACL is managed by the google bucket policies
+      | directly.
+      |
+      |**************************************************************************
+      | Learn more: https://cloud.google.com/storage/docs/uniform-bucket-level-access
+      |**************************************************************************
+      |
+      | The following option just informs drive whether your bucket is using uniform
+      | ACL or not. The actual setting needs to be toggled within the Google cloud
+      | console.
+      |
+      */
+    //   usingUniformAcl: false
+    // },
   },
 }
 
