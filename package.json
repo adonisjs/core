@@ -111,8 +111,8 @@
 	"dependencies": {
 		"@adonisjs/ace": "^11.0.3",
 		"@adonisjs/application": "^5.1.6",
-		"@adonisjs/bodyparser": "^8.0.0",
-		"@adonisjs/drive": "^2.0.4",
+		"@adonisjs/bodyparser": "^8.0.1",
+		"@adonisjs/drive": "^2.0.5",
 		"@adonisjs/encryption": "^4.0.5",
 		"@adonisjs/events": "^7.1.2",
 		"@adonisjs/hash": "^7.0.8",
