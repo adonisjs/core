@@ -37,7 +37,7 @@ const driveConfig: DriveConfig = {
     |--------------------------------------------------------------------------
     |
     | Uses the local file system to manage files. Make sure to turn off serving
-    | assets when not using this disk.
+    | files when not using this disk.
     |
     */
     local: {
@@ -57,22 +57,22 @@ const driveConfig: DriveConfig = {
 
       /*
       |--------------------------------------------------------------------------
-      | Serve assets - Local driver only
+      | Serve files - Local driver only
       |--------------------------------------------------------------------------
       |
-      | When this is set to true, AdonisJS will configure an assets server to serve
+      | When this is set to true, AdonisJS will configure a files server to serve
       | files from the disk root. This is done to mimic the behavior of cloud
       | storage services that has inbuilt capabilities to serve files.
       |
       */
-      serveAssets: true,
+      serveFiles: true,
 
       /*
       |--------------------------------------------------------------------------
       | Base path - Local driver only
       |--------------------------------------------------------------------------
       |
-      | Base path is always required when "serveAssets = true". Also make sure
+      | Base path is always required when "serveFiles = true". Also make sure
       | the `basePath` is unique across all the disks using "local" driver and
       | you are not registering routes with this prefix.
       |
