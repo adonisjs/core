@@ -91,7 +91,7 @@
 
 <div align="center">
 
-[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![synk-image]][synk-url]
+[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![snyk-image]][snyk-url]
 
 </div>
 
@@ -126,5 +126,5 @@
 [license-url]: LICENSE.md
 [license-image]: https://img.shields.io/github/license/adonisjs/adonis-framework?style=for-the-badge
 
-[synk-image]: https://img.shields.io/snyk/vulnerabilities/github/adonisjs/core?label=Synk%20Vulnerabilities&style=for-the-badge
-[synk-url]: https://snyk.io/test/github/adonisjs/core?targetFile=package.json "synk"
+[snyk-image]: https://img.shields.io/snyk/vulnerabilities/github/adonisjs/core?label=Snyk%20Vulnerabilities&style=for-the-badge
+[snyk-url]: https://snyk.io/test/github/adonisjs/core?targetFile=package.json "snyk"
