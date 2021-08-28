@@ -19,7 +19,7 @@ export const fs = new Filesystem(join(__dirname, '__app'))
  */
 export async function setupApplicationFiles(
   additionalProviders?: string[],
-  serveAssets: boolean = false
+  serveFiles: boolean = false
 ) {
   await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
 
@@ -70,7 +70,7 @@ export async function setupApplicationFiles(
       disks: {
         local: {
           driver: 'local',
-          serveAssets: ${serveAssets},
+          serveFiles: ${serveFiles},
           basePath: '/uploads',
           root: '${fs.basePath}'
         }
