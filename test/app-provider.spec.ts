@@ -21,7 +21,7 @@ test.group('App Provider', (group) => {
   })
 
   test('register app provider', async (assert) => {
-    const app = await setupApp()
+    const app = await setupApp([], true)
     assert.isTrue(app.container.hasBinding('Adonis/Core/Env'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Config'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Logger'))
@@ -42,5 +42,15 @@ test.group('App Provider', (group) => {
       app.container.use('Adonis/Core/HttpExceptionHandler'),
       HttpExceptionHandler as any
     )
+
+    /**
+     * Ensure drive routes are registerd
+     */
+    const router = app.container.use('Adonis/Core/Route')
+    router.commit()
+    const routes = router.toJSON()
+
+    assert.deepEqual(routes.root[0].name, 'drive.local.serve')
+    assert.deepEqual(routes.root[0].pattern, '/uploads/*')
   })
 })

@@ -28,6 +28,7 @@ export default class AppProvider {
   public provides = [
     '@adonisjs/encryption',
     '@adonisjs/events',
+    '@adonisjs/drive',
     '@adonisjs/hash',
     '@adonisjs/http-server',
     '@adonisjs/bodyparser',

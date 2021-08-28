@@ -20,10 +20,6 @@
     <img src="assets/cleavr.png" width="100px">
   </a>
 
-  <a href="https://bootcamp.cataline.io/?video=adonis&utm_source=adonisjs" title="Cataline">
-    <img src="assets/cataline.png" width="100px">
-  </a>
-
   <a href="https://ably.com/?utm_source=adonisjs" title="Build realtime features you can trust to deliver at scale">
     <img src="assets/ably.jpeg" width="100px">
   </a>
@@ -44,16 +40,8 @@
     </a>
   </h3>
 
-  <a href="https://www.patreon.com/monace" title="Into music? Support Monace">
-  	<img src="assets/monace.jpg" width="100px">
-  </a>
-
   <a title="Bastien Crettenand">
   	<img src="assets/bastien-crettenand.png" width="100px">
-  </a>
-
-  <a href="https://thebrowser.company/" title="The Browser Company">
-    <img src="assets/browser-company.png" width="100px">
   </a>
 
   <a href="https://github.com/olaoluwa-98" title="Emmanuel Awotunde">

@@ -1,6 +1,6 @@
 {
 	"name": "@adonisjs/core",
-	"version": "5.1.11",
+	"version": "5.2.4",
 	"description": "Core of AdonisJS",
 	"exports": {
 		".": "./build/providers/AppProvider.js",
@@ -66,7 +66,7 @@
 		"@adonisjs/require-ts": "^2.0.7",
 		"@adonisjs/sink": "^5.1.5",
 		"@poppinss/dev-utils": "^1.1.5",
-		"@types/node": "^16.4.1",
+		"@types/node": "^16.7.2",
 		"@types/supertest": "^2.0.11",
 		"clear-module": "^4.1.1",
 		"copyfiles": "^2.4.1",
@@ -74,18 +74,19 @@
 		"eslint": "^7.31.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-adonis": "^1.3.3",
-		"eslint-plugin-prettier": "^3.4.0",
-		"github-label-sync": "^2.0.1",
-		"husky": "^7.0.1",
+		"eslint-plugin-prettier": "^3.4.1",
+		"etag": "^1.8.1",
+		"github-label-sync": "^2.0.2",
+		"husky": "^7.0.2",
 		"japa": "^3.1.1",
 		"mrm": "^3.0.5",
 		"np": "^7.5.0",
 		"prettier": "^2.3.2",
 		"reflect-metadata": "^0.1.13",
 		"strip-ansi": "^6.0.0",
-		"supertest": "^6.1.4",
+		"supertest": "^6.1.6",
 		"test-console": "^2.0.0",
-		"typescript": "^4.3.5",
+		"typescript": "^4.4.2",
 		"youch": "^2.2.2",
 		"youch-terminal": "^1.1.1"
 	},
@@ -110,15 +111,18 @@
 	"dependencies": {
 		"@adonisjs/ace": "^11.0.3",
 		"@adonisjs/application": "^5.1.6",
-		"@adonisjs/bodyparser": "^7.1.4",
+		"@adonisjs/bodyparser": "^8.0.1",
+		"@adonisjs/drive": "^2.0.6",
 		"@adonisjs/encryption": "^4.0.5",
 		"@adonisjs/events": "^7.1.2",
 		"@adonisjs/hash": "^7.0.8",
-		"@adonisjs/http-server": "^5.5.2",
-		"@adonisjs/validator": "^11.0.4",
+		"@adonisjs/http-server": "^5.5.6",
+		"@adonisjs/validator": "^12.0.0",
 		"@poppinss/cliui": "^2.2.5",
-		"@poppinss/utils": "^3.1.5",
+		"@poppinss/manager": "^4.0.4",
+		"@poppinss/utils": "^3.2.0",
 		"fs-extra": "^10.0.0",
+		"memfs": "^3.2.2",
 		"serve-static": "^1.14.1",
 		"stringify-attributes": "^2.0.0"
 	},
@@ -136,6 +140,10 @@
 					"dest": "bodyparser"
 				},
 				{
+					"src": "config/drive.txt",
+					"dest": "drive"
+				},
+				{
 					"src": "config/cors.txt",
 					"dest": "cors"
 				},
@@ -148,6 +156,10 @@
 				{
 					"src": "contracts/events.txt",
 					"dest": "events"
+				},
+				{
+					"src": "contracts/drive.txt",
+					"dest": "drive"
 				},
 				{
 					"src": "contracts/hash.txt",
@@ -169,6 +181,6 @@
 	},
 	"publishConfig": {
 		"access": "public",
-		"tag": "latest"
+		"tag": "next"
 	}
 }
