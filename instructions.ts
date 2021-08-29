@@ -75,6 +75,7 @@ export default async function instructions(
   env.set('HOST', '0.0.0.0')
   env.set('NODE_ENV', 'development')
   env.set('APP_KEY', string.generateRandom(32))
+  env.set('DRIVE_DISK', 'local')
   env.commit()
   logger.action(env.exists() ? 'update' : 'create').succeeded('.env,.env.example')
 
