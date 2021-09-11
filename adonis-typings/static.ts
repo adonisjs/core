@@ -18,6 +18,7 @@ declare module '@ioc:Adonis/Core/Static' {
     etag?: boolean
     lastModified?: boolean
     maxAge?: number | string
+    immutable?: boolean
     headers?: (path: string, stats: Stats) => Record<string, any>
   }
 }

@@ -59,6 +59,31 @@ const staticConfig: AssetsConfig = {
   |
   */
   lastModified: true,
+
+  /*
+  |--------------------------------------------------------------------------
+  | Max age
+  |--------------------------------------------------------------------------
+  |
+  | Set the value for the max-age directive. Set a higher value in production
+  | if you fingerprint your assets.
+  |
+  | Learn more: https://docs.adonisjs.com/guides/deployment#serving-static-assets
+  |
+  */
+  maxAge: 0,
+
+  /*
+  |--------------------------------------------------------------------------
+  | Immutable
+  |--------------------------------------------------------------------------
+  |
+  | Set the immutable directive. Set it to `true` if the assets are generated
+  | with a fingerprint. In others words the file name changes when the file
+  | contents change.
+  |
+  */
+  immutable: false,
 }
 
 export default staticConfig
