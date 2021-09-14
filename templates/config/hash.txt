@@ -23,7 +23,7 @@ const hashConfig: HashConfig = {
   | Default hasher
   |--------------------------------------------------------------------------
   |
-  | By default we make use of the bcrypt hasher to hash values. However, feel
+  | By default we make use of the argon hasher to hash values. However, feel
   | free to change the default value
   |
   */
