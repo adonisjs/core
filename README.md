@@ -12,10 +12,6 @@
     </a>
   </h3>
 
-  <a href="https://www.pivale.co/?utm_source=adonisjs" title="Barry Fisher">
-    <img src="assets/pivale.png" width="100px">
-  </a>
-
   <a href="https://cleaver.cloud/adonis/?utm_source=adonisjs" title="Cleaver">
     <img src="assets/cleavr.png" width="100px">
   </a>
