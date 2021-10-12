@@ -12,7 +12,7 @@
     </a>
   </h3>
 
-  <a href="https://cleaver.cloud/adonis/?utm_source=adonisjs" title="Cleaver">
+  <a href="https://cleavr.io/adonis/?utm_source=adonisjs" title="Cleaver">
     <img src="assets/cleavr.png" width="100px">
   </a>
 
