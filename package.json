@@ -1,12 +1,12 @@
 {
 	"name": "@adonisjs/core",
-	"version": "5.4.0",
+	"version": "5.4.1",
 	"description": "Core of AdonisJS",
 	"exports": {
-    ".": {
-      "types": "./build/adonis-typings/index.d.ts",
-      "require": "./build/providers/AppProvider.js"
-    },
+		".": {
+			"types": "./build/adonis-typings/index.d.ts",
+			"require": "./build/providers/AppProvider.js"
+		},
 		"./standalone": "./build/standalone.js",
 		"./Ignitor": "./build/src/Ignitor/index.js",
 		"./commands": "./build/commands/index.js",
