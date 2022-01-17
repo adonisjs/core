@@ -5,5 +5,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "files": ["./node_modules/@adonisjs/repl/build/adonis-typings/index.d.ts"]
+  "files": [
+    "./node_modules/@adonisjs/repl/build/adonis-typings/index.d.ts"
+  ]
 }

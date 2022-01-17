@@ -10,7 +10,7 @@ about: Report identified bugs
 We do our best to reply to all the issues on time. If you will follow the given guidelines, the turn around time will be faster.
 
 - Lots of raised issues are directly not bugs but instead are design decisions taken by us.
-- Make use of our [forum](https://forum.adonisjs.com/), or [discord server](https://discord.me/adonisjs), if you are not sure that you are reporting a bug.
+- Make use of our [GH discussions](https://github.com/adonisjs/core/discussions), or [discord server](https://discord.me/adonisjs), if you are not sure that you are reporting a bug.
 - Ensure the issue isn't already reported.
 - Ensure you are reporting the bug in the correct repo.
 
