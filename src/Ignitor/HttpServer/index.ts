@@ -102,13 +102,17 @@ export class HttpServer {
     })
 
     this.server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
+      this.application.logger.error(JSON.stringify(error))
+
       if (error.code === 'EADDRINUSE') {
         this.application.logger.error('Port in use, closing server')
         process.exitCode = 1
-        return
+      } else if (error.code === 'ENOTFOUND') {
+        this.application.logger.error('Host not found, closing server')
+        process.exitCode = 1
+      } else {
+        await this.kill(3000)
       }
-
-      await this.kill(3000)
     })
   }
 
