@@ -145,6 +145,20 @@ export default class AppProvider {
   }
 
   /**
+   * Register ace kernel to the container. When the process is started
+   * by running an ace command, then the "Adonis/Core/Ace" binding
+   * will already be in place and hence we do not overwrite it.
+   */
+  private registerAceKernel() {
+    if (!this.app.container.hasBinding('Adonis/Core/Ace')) {
+      this.app.container.singleton('Adonis/Core/Ace', () => {
+        const { Kernel } = require('@adonisjs/ace')
+        return new Kernel(this.app)
+      })
+    }
+  }
+
+  /**
    * Define repl bindings
    */
   protected defineReplBindings() {
@@ -172,6 +186,7 @@ export default class AppProvider {
     this.registerHttpExceptionHandler()
     this.registerHealthCheck()
     this.registerAssetsManager()
+    this.registerAceKernel()
   }
 
   /**

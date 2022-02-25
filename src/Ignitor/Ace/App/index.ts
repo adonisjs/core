@@ -9,16 +9,12 @@
 
 import { join } from 'path'
 import { sticker, logger } from '@poppinss/cliui'
-import { Application } from '@adonisjs/application'
 import { Kernel, ManifestLoader } from '@adonisjs/ace'
 import { resolveFrom } from '@poppinss/utils/build/helpers'
-
-import { ErrorHandler } from '../ErrorHandler'
-import { registerTsHook } from '../../../utils'
-import { SignalsListener } from '../../SignalsListener'
-import { GenerateManifest } from '../GenerateManifest'
-
 import { SerializedCommand } from '@adonisjs/ace/build/src/Contracts'
+
+import { AppKernel } from '../../Kernel'
+import { GenerateManifest } from '../GenerateManifest'
 
 /**
  * A local list of assembler commands. We need this, so that when assembler
@@ -60,30 +56,14 @@ export class App {
   }
 
   /**
-   * Whether or not the app was wired. App is only wired, when
-   * loadApp inside the command setting is true.
+   * Reference to the app kernel
    */
-  private wired = false
-
-  /**
-   * Reference to the application
-   */
-  private application = new Application(this.appRoot, 'console')
+  private kernel = new AppKernel(this.appRoot, 'console')
 
   /**
    * Reference to the ace kernel
    */
-  private kernel = new Kernel(this.application)
-
-  /**
-   * Signals listener to listen for exit signals and kill command
-   */
-  private signalsListener = new SignalsListener(this.application)
-
-  /**
-   * Find if TS hook has been registered or not
-   */
-  private registeredTsHook: boolean = false
+  private ace = new Kernel(this.kernel.application)
 
   /**
    * Source root always points to the compiled source
@@ -99,7 +79,7 @@ export class App {
       return
     }
 
-    this.kernel.printHelp(command, [GenerateManifest.getManifestJSON()])
+    this.ace.printHelp(command, [GenerateManifest.getManifestJSON()])
     process.exit(0)
   }
 
@@ -111,8 +91,8 @@ export class App {
       return
     }
 
-    const appVersion = this.application.version
-    const adonisVersion = this.application.adonisVersion
+    const appVersion = this.kernel.application.version
+    const adonisVersion = this.kernel.application.adonisVersion
 
     let assemblerVersion = 'Not Installed'
     try {
@@ -148,22 +128,32 @@ export class App {
      * - Is a typescript project
      * - Is not an assembler command
      */
-    if (!this.registeredTsHook && this.application.rcFile.typescript && !this.isAssemblerCommand) {
-      registerTsHook(this.application.appRoot)
-      this.registeredTsHook = true
+    if (!this.isAssemblerCommand) {
+      this.kernel.registerTsCompilerHook()
     }
 
     /**
-     * Wire application if not wired and "loadApp" is true
+     * Only main command can load the application or switch
+     * the environment.
+     *
+     * If a sub-command needs application, then the main command
+     * should set "loadApp" to true as well.
      */
-    if (!this.wired && command.settings.loadApp) {
+    if (command.commandName === this.commandName) {
       /**
        * Switch environment before wiring the app
        */
       if (command.settings.environment) {
-        this.application.switchEnvironment(command.settings.environment)
+        this.kernel.application.switchEnvironment(command.settings.environment)
       }
-      await this.wire()
+
+      if (command.settings.loadApp) {
+        /**
+         * Overwrite container binding and pass reference to self
+         */
+        this.kernel.application.container.singleton('Adonis/Core/Ace', () => this.ace)
+        await this.kernel.boot()
+      }
     }
   }
 
@@ -171,54 +161,37 @@ export class App {
    * Invoked before command is about to run.
    */
   private async onRun() {
-    if (this.wired) {
-      await this.application.start()
+    if (this.kernel.hasBooted) {
+      await this.kernel.start(async () => {
+        await this.kernel.close()
+      })
     }
   }
 
   /**
-   * Hooks into kernel lifecycle events to conditionally
+   * Hooks into ace lifecycle events to conditionally
    * load the app.
    */
-  private addKernelHooks() {
-    this.kernel.before('find', async (command) => this.onFind(command))
-    this.kernel.before('run', async () => this.onRun())
+  private registerAceHooks() {
+    this.ace.before('find', async (command) => this.onFind(command))
+    this.ace.before('run', async () => this.onRun())
   }
 
   /**
    * Adding flags
    */
-  private addKernelFlags() {
+  private registerAceFlags() {
     /**
      * Showing help including core commands
      */
-    this.kernel.flag('help', async (value, _, command) => this.printHelp(value, command), {
+    this.ace.flag('help', async (value, _, command) => this.printHelp(value, command), {
       alias: 'h',
     })
 
     /**
      * Showing app and AdonisJs version
      */
-    this.kernel.flag('version', async (value) => this.printVersion(value), { alias: 'v' })
-  }
-
-  /**
-   * Boot the application.
-   */
-  private async wire() {
-    if (this.wired) {
-      return
-    }
-
-    this.wired = true
-
-    /**
-     * Do not change sequence
-     */
-    await this.application.setup()
-    await this.application.registerProviders()
-    await this.application.bootProviders()
-    await this.application.requirePreloads()
+    this.ace.flag('version', async (value) => this.printVersion(value), { alias: 'v' })
   }
 
   /**
@@ -227,7 +200,7 @@ export class App {
   private getAssemblerManifest() {
     try {
       const manifestAbsPath = resolveFrom(
-        this.application.appRoot,
+        this.kernel.application.appRoot,
         '@adonisjs/assembler/build/ace-manifest.json'
       )
       const basePath = join(manifestAbsPath, '../')
@@ -247,8 +220,8 @@ export class App {
    */
   private getAppManifest() {
     try {
-      const manifestAbsPath = resolveFrom(this.application.appRoot, './ace-manifest.json')
-      const basePath = this.application.appRoot
+      const manifestAbsPath = resolveFrom(this.kernel.application.appRoot, './ace-manifest.json')
+      const basePath = this.kernel.application.appRoot
       return [
         {
           manifestAbsPath,
@@ -261,6 +234,16 @@ export class App {
   }
 
   /**
+   * Load commands using manifest loader
+   */
+  public async loadCommands() {
+    this.ace.useManifest(
+      new ManifestLoader(this.getAssemblerManifest().concat(this.getAppManifest()))
+    )
+    await this.ace.preloadManifest()
+  }
+
+  /**
    * Handle application command
    */
   public async handle(argv: string[]) {
@@ -268,25 +251,17 @@ export class App {
       /**
        * Manifest files to load
        */
-      this.kernel.useManifest(
-        new ManifestLoader(this.getAssemblerManifest().concat(this.getAppManifest()))
-      )
+      await this.loadCommands()
 
       /**
-       * Define kernel hooks to wire the application (if required)
+       * Define ace hooks to wire the application (if required)
        */
-      this.addKernelHooks()
+      this.registerAceHooks()
 
       /**
        * Define global flags
        */
-      this.addKernelFlags()
-
-      /**
-       * Preload manifest in advance. This way we can show the help
-       * when no args are defined
-       */
-      await this.kernel.preloadManifest()
+      this.registerAceFlags()
 
       /**
        * Print help when no arguments have been passed
@@ -304,34 +279,27 @@ export class App {
       this.commandName = argv[0]
 
       /**
-       * Listen for exit events and shutdown app
-       */
-      this.signalsListener.listen(async () => {
-        if (this.wired) {
-          await this.application.shutdown()
-        }
-      })
-
-      /**
        * Listen for the exit signal on ace kernel
        */
-      this.kernel.onExit(async () => {
-        if (this.kernel.error) {
-          await new ErrorHandler(this.application).handleError(this.kernel.error)
+      this.ace.onExit(async () => {
+        if (!this.ace.error) {
+          process.exit(this.ace.exitCode)
         }
 
-        process.exit(this.kernel.exitCode)
+        return this.kernel
+          .handleError(this.ace.error)
+          .finally(() => process.exit(this.ace.exitCode))
       })
 
       /**
        * Handle command
        */
-      await this.kernel.handle(argv)
+      await this.ace.handle(argv)
     } catch (error) {
       if (!error) {
         process.exit(1)
       }
-      new ErrorHandler(this.application).handleError(error).finally(() => process.exit(1))
+      this.kernel.handleError(error).finally(() => process.exit(1))
     }
   }
 }

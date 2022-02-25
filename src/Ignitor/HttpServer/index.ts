@@ -8,12 +8,10 @@
  */
 
 import { Server as HttpsServer } from 'https'
-import { Application } from '@adonisjs/application'
 import { ServerContract } from '@ioc:Adonis/Core/Server'
 import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
 
-import { ErrorHandler } from './ErrorHandler'
-import { SignalsListener } from '../SignalsListener'
+import { AppKernel } from '../Kernel'
 
 type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
 type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
@@ -21,67 +19,24 @@ type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
 /**
  * Exposes the API to setup the application for starting the HTTP
  * server.
+ *
+ * - Calling "kill" explicitly exists the process.
+ * - The "error" event emitted on the server instance explicitly exists the process.
+ * - SIGINT and in some case SIGTERM explicitly exists the process.
  */
 export class HttpServer {
   /**
-   * Reference to core http server.
+   * Reference to the HTTP server.
    */
   private server: ServerContract
 
   /**
-   * Whether or not the application has been wired.
+   * Reference to the app kernel
    */
-  private wired: boolean = false
-
-  /**
-   * Reference to the application.
-   */
-  public application = new Application(this.appRoot, 'web')
-
-  /**
-   * Listens for unix signals to kill long running
-   * processes.
-   */
-  private signalsListener = new SignalsListener(this.application)
+  public kernel = new AppKernel(this.appRoot, 'web')
+  public application = this.kernel.application
 
   constructor(private appRoot: string) {}
-
-  /**
-   * Wires up everything, so that we are ready to kick start
-   * the HTTP server.
-   */
-  private async wire() {
-    if (this.wired) {
-      return
-    }
-
-    /**
-     * Setting up the application.
-     */
-    await this.application.setup()
-
-    /**
-     * Registering providers
-     */
-    await this.application.registerProviders()
-
-    /**
-     * Booting providers
-     */
-    await this.application.bootProviders()
-
-    /**
-     * Importing preloaded files
-     */
-    await this.application.requirePreloads()
-  }
-
-  /**
-   * Sets the server reference
-   */
-  private setServer() {
-    this.server = this.application.container.use('Adonis/Core/Server')
-  }
 
   /**
    * Closes the underlying HTTP server
@@ -92,7 +47,7 @@ export class HttpServer {
 
   /**
    * Monitors the HTTP server for close and error events, so that
-   * we can perform a graceful shutdown
+   * we can perform a graceful shutdown.
    */
   private monitorHttpServer() {
     this.server.instance!.on('close', async () => {
@@ -102,25 +57,9 @@ export class HttpServer {
     })
 
     this.server.instance!.on('error', async (error: NodeJS.ErrnoException) => {
-      if (error.code === 'EADDRINUSE') {
-        this.application.logger.error('Port in use, closing server')
-        process.exitCode = 1
-        return
-      }
-
+      this.application.logger.error(error, error.message)
       await this.kill(3000)
     })
-  }
-
-  /**
-   * Notify server is ready
-   */
-  private notifyServerReady(host: string, port: number) {
-    this.application.logger.info('started server on %s:%s', host, port)
-
-    if (process.send) {
-      process.send({ origin: 'adonis-http-server', ready: true, port: port, host: host })
-    }
   }
 
   /**
@@ -128,6 +67,8 @@ export class HttpServer {
    * created but not listening on any port.
    */
   public createServer(serverCallback?: CustomServerCallback) {
+    this.server = this.application.container.use('Adonis/Core/Server')
+
     /**
      * Optimizing the server by pre-compiling routes and middleware
      */
@@ -155,13 +96,14 @@ export class HttpServer {
   public listen(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.application.start()
+        await this.kernel.start(() => this.kill(3000))
 
         const host = this.application.env.get('HOST', '0.0.0.0')
         const port = Number(this.application.env.get('PORT', '3333'))
 
         this.server.instance!.listen(port, host, () => {
-          this.notifyServerReady(host, port)
+          this.application.logger.info('started server on %s:%s', host, port)
+          this.kernel.ready({ port: port, host: host })
           resolve()
         })
       } catch (error) {
@@ -175,14 +117,12 @@ export class HttpServer {
    */
   public async start(serverCallback?: CustomServerCallback) {
     try {
-      await this.wire()
-      this.setServer()
+      await this.kernel.boot()
       this.createServer(serverCallback)
       this.monitorHttpServer()
       await this.listen()
-      this.signalsListener.listen(() => this.close())
     } catch (error) {
-      await new ErrorHandler(this.application).handleError(error)
+      await this.kernel.handleError(error)
     }
   }
 
@@ -196,8 +136,7 @@ export class HttpServer {
      * we are not accepting any new request during cool off.
      */
     await this.closeHttpServer()
-    this.signalsListener.cleanup()
-    await this.application.shutdown()
+    await this.kernel.close()
   }
 
   /**
@@ -217,7 +156,7 @@ export class HttpServer {
       ])
       process.exit(0)
     } catch (error) {
-      new ErrorHandler(this.application).handleError(error).finally(() => process.exit(1))
+      await this.kernel.handleError(error).finally(() => process.exit(1))
     }
   }
 }

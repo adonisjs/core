@@ -23,7 +23,10 @@ export class Ignitor {
   private appRoot: string
 
   constructor(appRoot: string) {
-    // In ESM, ignitor is constructed with `import.meta.url`. Normalize the file URL to an absolute directory path.
+    /**
+     * In ESM, ignitor is constructed with `import.meta.url`. Normalize
+     * the file URL to an absolute directory path.
+     */
     this.appRoot = appRoot.startsWith('file:') ? dirname(fileURLToPath(appRoot)) : appRoot
   }
 

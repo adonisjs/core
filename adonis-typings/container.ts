@@ -8,6 +8,7 @@
  */
 
 declare module '@ioc:Adonis/Core/Application' {
+  import Ace from '@ioc:Adonis/Core/Ace'
   import { HealthCheckContract } from '@ioc:Adonis/Core/HealthCheck'
   import { AssetsManagerContract } from '@ioc:Adonis/Core/AssetsManager'
   import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
@@ -16,5 +17,6 @@ declare module '@ioc:Adonis/Core/Application' {
     'Adonis/Core/HealthCheck': HealthCheckContract
     'Adonis/Core/AssetsManager': AssetsManagerContract
     'Adonis/Core/HttpExceptionHandler': typeof HttpExceptionHandler
+    'Adonis/Core/Ace': typeof Ace
   }
 }

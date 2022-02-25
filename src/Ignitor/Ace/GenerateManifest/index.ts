@@ -9,17 +9,15 @@
 
 import { logger } from '@poppinss/cliui'
 import { ManifestGenerator } from '@adonisjs/ace'
-import { Application } from '@adonisjs/application'
 
-import { ErrorHandler } from '../ErrorHandler'
-import { registerTsHook } from '../../../utils'
+import { AppKernel } from '../../Kernel'
 import { AceRuntimeException } from '../Exceptions'
 
 /**
  * Exposes the API to generate the manifest file
  */
 export class GenerateManifest {
-  private application = new Application(this.appRoot, 'console')
+  private kernel = new AppKernel(this.appRoot, 'console')
 
   /**
    * Source root always points to the compiled source
@@ -47,14 +45,9 @@ export class GenerateManifest {
    */
   public async handle() {
     try {
-      /**
-       * Register ts hook when running typescript code directly
-       */
-      if (this.application.rcFile.typescript) {
-        registerTsHook(this.application.appRoot)
-      }
+      this.kernel.registerTsCompilerHook()
 
-      const commands = this.application.rcFile.commands
+      const commands = this.kernel.application.rcFile.commands
 
       /**
        * Generating manifest requires us to import the command files to read their
@@ -62,9 +55,9 @@ export class GenerateManifest {
        * the application is not booted and hence top level IoC container
        * imports will break
        */
-      this.application.container.trap((namespace) => {
+      this.kernel.application.container.trap((namespace) => {
         if (namespace === 'Adonis/Core/Application') {
-          return this.application
+          return this.kernel.application
         }
 
         return {
@@ -73,7 +66,7 @@ export class GenerateManifest {
             {
               get(target) {
                 throw new AceRuntimeException(
-                  `Top level import for module "${target.namespace}" is not allowed in commands. Learn more https://preview.adonisjs.com/guides/ace/introduction`
+                  `Top level import for module "${target.namespace}" is not allowed in commands. Learn more https://docs.adonisjs.com/guides/ace-commandline#top-level-imports-are-not-allowed`
                 )
               },
             }
@@ -84,7 +77,7 @@ export class GenerateManifest {
       await new ManifestGenerator(this.appRoot, commands).generate()
       logger.action('create').succeeded('ace-manifest.json file')
     } catch (error) {
-      await new ErrorHandler(this.application).handleError(error)
+      await this.kernel.handleError(error).finally(() => process.exit(1))
     }
   }
 }
