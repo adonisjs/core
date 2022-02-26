@@ -76,7 +76,7 @@
 		"copyfiles": "^2.4.1",
 		"cz-conventional-changelog": "^3.3.0",
 		"del-cli": "^4.0.1",
-		"eslint": "^8.9.0",
+		"eslint": "^8.10.0",
 		"eslint-config-prettier": "^8.4.0",
 		"eslint-plugin-adonis": "^2.1.0",
 		"eslint-plugin-prettier": "^4.0.0",
@@ -115,7 +115,7 @@
 	},
 	"dependencies": {
 		"@adonisjs/ace": "^11.0.6",
-		"@adonisjs/application": "^5.1.10",
+		"@adonisjs/application": "^5.2.0",
 		"@adonisjs/bodyparser": "^8.1.0",
 		"@adonisjs/drive": "^2.0.9",
 		"@adonisjs/encryption": "^4.0.7",
