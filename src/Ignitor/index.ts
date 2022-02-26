@@ -14,6 +14,7 @@ import { AppEnvironments } from '@ioc:Adonis/Core/Application'
 
 import { Ace } from './Ace'
 import { HttpServer } from './HttpServer'
+import { AppKernel } from './Kernel'
 
 /**
  * Ignitor is used to wireup different pieces of AdonisJs to bootstrap
@@ -43,6 +44,14 @@ export class Ignitor {
    */
   public httpServer() {
     return new HttpServer(this.appRoot)
+  }
+
+  /**
+   * Returns instance of server to start
+   * the HTTP server
+   */
+  public kernel(environment: AppEnvironments) {
+    return new AppKernel(this.appRoot, environment)
   }
 
   /**
