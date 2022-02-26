@@ -15,6 +15,7 @@
 /// <reference path="../node_modules/@adonisjs/bodyparser/build/adonis-typings/index.d.ts" />
 /// <reference path="../node_modules/@adonisjs/validator/build/adonis-typings/index.d.ts" />
 /// <reference path="../node_modules/@adonisjs/drive/build/adonis-typings/index.d.ts" />
+/// <reference path="./ace.ts" />
 /// <reference path="./cors.ts" />
 /// <reference path="./health-check.ts" />
 /// <reference path="./exception-handler.ts" />
