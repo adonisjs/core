@@ -7,14 +7,11 @@
  * file that was distributed with this source code.
  */
 
-import { Server as HttpsServer } from 'https'
 import { ServerContract } from '@ioc:Adonis/Core/Server'
-import { IncomingMessage, ServerResponse, Server, createServer } from 'http'
+import { CustomServerCallback } from '@ioc:Adonis/Core/TestUtils'
 
 import { AppKernel } from '../Kernel'
-
-type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
-type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
+import { createHttpServer } from '../../utils'
 
 /**
  * Exposes the API to setup the application for starting the HTTP
@@ -68,26 +65,7 @@ export class HttpServer {
    */
   public createServer(serverCallback?: CustomServerCallback) {
     this.server = this.application.container.use('Adonis/Core/Server')
-
-    /**
-     * Optimizing the server by pre-compiling routes and middleware
-     */
-    this.application.logger.trace('optimizing http server handler')
-    this.server.optimize()
-
-    /**
-     * Bind exception handler to handle exceptions occured during HTTP requests.
-     */
-    if (this.application.exceptionHandlerNamespace) {
-      this.application.logger.trace(
-        'binding %s exception handler',
-        this.application.exceptionHandlerNamespace
-      )
-      this.server.errorHandler(this.application.exceptionHandlerNamespace)
-    }
-
-    const handler = this.server.handle.bind(this.server)
-    this.server.instance = serverCallback ? serverCallback(handler) : createServer(handler)
+    createHttpServer(this.application, this.server, serverCallback)
   }
 
   /**
@@ -96,7 +74,7 @@ export class HttpServer {
   public listen(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.kernel.start(() => this.kill(3000))
+        await this.kernel.start(() => this.close())
 
         const host = this.application.env.get('HOST', '0.0.0.0')
         const port = Number(this.application.env.get('PORT', '3333'))

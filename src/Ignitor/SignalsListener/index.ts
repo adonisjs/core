@@ -21,7 +21,12 @@ export class SignalsListener {
    */
   private kill = async function () {
     try {
-      await this.onCloseCallback()
+      await Promise.race([
+        this.onCloseCallback(),
+        new Promise((resolve) => {
+          setTimeout(resolve, 3000)
+        }),
+      ])
       process.exit(0)
     } catch (error) {
       process.exit(1)

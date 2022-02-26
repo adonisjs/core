@@ -7,13 +7,13 @@
  * file that was distributed with this source code.
  */
 
-import { join } from 'path'
+import { Kernel } from '@adonisjs/ace'
 import { sticker, logger } from '@poppinss/cliui'
-import { Kernel, ManifestLoader } from '@adonisjs/ace'
 import { resolveFrom } from '@poppinss/utils/build/helpers'
 import { SerializedCommand } from '@adonisjs/ace/build/src/Contracts'
 
 import { AppKernel } from '../../Kernel'
+import { loadAceCommands } from '../../../utils'
 import { GenerateManifest } from '../GenerateManifest'
 
 /**
@@ -149,7 +149,8 @@ export class App {
 
       if (command.settings.loadApp) {
         /**
-         * Overwrite container binding and pass reference to self
+         * Set ace instance within the container, so that the underlying
+         * commands or the app can access it from the container
          */
         this.kernel.application.container.singleton('Adonis/Core/Ace', () => this.ace)
         await this.kernel.boot()
@@ -162,9 +163,7 @@ export class App {
    */
   private async onRun() {
     if (this.kernel.hasBooted) {
-      await this.kernel.start(async () => {
-        await this.kernel.close()
-      })
+      await this.kernel.start()
     }
   }
 
@@ -195,52 +194,10 @@ export class App {
   }
 
   /**
-   * Returns manifest details for assembler
-   */
-  private getAssemblerManifest() {
-    try {
-      const manifestAbsPath = resolveFrom(
-        this.kernel.application.appRoot,
-        '@adonisjs/assembler/build/ace-manifest.json'
-      )
-      const basePath = join(manifestAbsPath, '../')
-      return [
-        {
-          manifestAbsPath,
-          basePath,
-        },
-      ]
-    } catch (error) {
-      return []
-    }
-  }
-
-  /**
-   * Returns manifest details for app
-   */
-  private getAppManifest() {
-    try {
-      const manifestAbsPath = resolveFrom(this.kernel.application.appRoot, './ace-manifest.json')
-      const basePath = this.kernel.application.appRoot
-      return [
-        {
-          manifestAbsPath,
-          basePath,
-        },
-      ]
-    } catch (error) {
-      return []
-    }
-  }
-
-  /**
    * Load commands using manifest loader
    */
   public async loadCommands() {
-    this.ace.useManifest(
-      new ManifestLoader(this.getAssemblerManifest().concat(this.getAppManifest()))
-    )
-    await this.ace.preloadManifest()
+    await loadAceCommands(this.kernel.application, this.ace)
   }
 
   /**

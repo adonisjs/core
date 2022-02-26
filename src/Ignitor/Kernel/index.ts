@@ -105,9 +105,10 @@ export class AppKernel {
    * Start the application. The callback is required to listen
    * for close signals
    */
-  public async start(shutdownCallback: () => Promise<void>) {
+  public async start(shutdownCallback?: () => Promise<void>) {
     await this.application.start()
-    this.signalsListener.listen(shutdownCallback)
+    this.signalsListener.listen(shutdownCallback || (() => this.close()))
+    return () => this.close()
   }
 
   /**

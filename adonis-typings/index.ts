@@ -21,3 +21,4 @@
 /// <reference path="./static.ts" />
 /// <reference path="./assets-manager.ts" />
 /// <reference path="./container.ts" />
+/// <reference path="./test-utils.ts" />

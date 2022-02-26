@@ -149,13 +149,23 @@ export default class AppProvider {
    * by running an ace command, then the "Adonis/Core/Ace" binding
    * will already be in place and hence we do not overwrite it.
    */
-  private registerAceKernel() {
+  protected registerAceKernel() {
     if (!this.app.container.hasBinding('Adonis/Core/Ace')) {
       this.app.container.singleton('Adonis/Core/Ace', () => {
         const { Kernel } = require('@adonisjs/ace')
         return new Kernel(this.app)
       })
     }
+  }
+
+  /**
+   * Register utilities object required during testing
+   */
+  protected registerTestUtils() {
+    this.app.container.singleton('Adonis/Core/TestUtils', () => {
+      const { TestUtils } = require('../src/TestUtils')
+      return new TestUtils(this.app)
+    })
   }
 
   /**
@@ -187,6 +197,7 @@ export default class AppProvider {
     this.registerHealthCheck()
     this.registerAssetsManager()
     this.registerAceKernel()
+    this.registerTestUtils()
   }
 
   /**
