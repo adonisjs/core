@@ -1,0 +1,71 @@
+/**
+ * File source: https://bit.ly/3BUZKtR
+ *
+ * Feel free to let us know via PR, if you find something broken in this contract
+ * file.
+ */
+
+import { assert } from '@japa/assert'
+import type { Suite } from '@japa/core'
+import { specReporter } from '@japa/spec-reporter'
+import TestUtils from '@ioc:Adonis/Core/TestUtils'
+import type { PluginFn, RunnerHooksHandler, TestContext, ReporterContract } from '@japa/runner'
+
+/*
+|--------------------------------------------------------------------------
+| Japa Plugins
+|--------------------------------------------------------------------------
+|
+| Japa plugins allows you to add additional features to Japa. By default
+| we register the assertion plugin.
+|
+| Feel free to remove existing plugins or add more.
+|
+*/
+export const plugins: PluginFn[] = [assert()]
+
+/*
+|--------------------------------------------------------------------------
+| Japa Reporters
+|--------------------------------------------------------------------------
+|
+| Japa reporters displays/saves the progress of tests as they are executed.
+| By default, we register the spec reporter to show a detailed report
+| of tests on the terminal.
+|
+*/
+export const reporters: ReporterContract[] = [specReporter()]
+
+/*
+|--------------------------------------------------------------------------
+| Runner hooks
+|--------------------------------------------------------------------------
+|
+| Runner hooks are executed after booting the AdonisJS app and
+| before the test files are imported.
+|
+| You can perform actions like starting the HTTP server or running migrations
+| within the runner hooks
+|
+*/
+export const runnerHooks: { setup: RunnerHooksHandler[]; teardown: RunnerHooksHandler[] } = {
+  setup: [() => TestUtils.ace().loadCommands()],
+  teardown: [],
+}
+
+/*
+|--------------------------------------------------------------------------
+| Configure individual suites
+|--------------------------------------------------------------------------
+|
+| The configureSuite method gets called for every test suite registered
+| within ".adonisrc.json" file.
+|
+| You can use this method to configure suites. For example: Only start
+| the HTTP server when it is a feature suite.
+*/
+export const configureSuite = (suite: Suite<TestContext>) => {
+  if (suite.name === 'feature') {
+    suite.setup(() => TestUtils.httpServer().start())
+  }
+}
