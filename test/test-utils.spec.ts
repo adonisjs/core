@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import supertest from 'supertest'
 import { createServer } from 'http'
@@ -18,11 +18,11 @@ import { TestUtils } from '../src/TestUtils'
 import { setupApplicationFiles, fs } from '../test-helpers'
 
 test.group('Test utils', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  test('start http server using test utils', async (assert) => {
+  test('start http server using test utils', async ({ assert }) => {
     await setupApplicationFiles()
 
     await fs.add(
@@ -48,7 +48,7 @@ test.group('Test utils', (group) => {
     assert.equal(text, 'handled')
   })
 
-  test('load ace commands using test utils', async (assert) => {
+  test('load ace commands using test utils', async ({ assert }) => {
     await setupApplicationFiles()
 
     /**
@@ -106,7 +106,7 @@ test.group('Test utils', (group) => {
     assert.equal(output[0].trim(), 'is ready true')
   })
 
-  test('add macros to test utils class', async (assert) => {
+  test('add macros to test utils class', async ({ assert }) => {
     await setupApplicationFiles()
 
     await fs.add(
@@ -126,7 +126,7 @@ test.group('Test utils', (group) => {
     assert.equal(testUtils['foo'](), 'bar')
   })
 
-  test('add getters to test utils class', async (assert) => {
+  test('add getters to test utils class', async ({ assert }) => {
     await setupApplicationFiles()
 
     await fs.add(

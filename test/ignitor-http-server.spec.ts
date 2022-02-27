@@ -9,7 +9,7 @@
 
 /// <reference path="../adonis-typings/index.ts" />
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import supertest from 'supertest'
 import { createServer } from 'http'
@@ -18,21 +18,21 @@ import { Ignitor } from '../src/Ignitor'
 import { setupApplicationFiles, fs } from '../test-helpers'
 
 test.group('Ignitor | Http', (group) => {
-  group.before(() => {
+  group.setup(() => {
     process.env.ENV_SILENT = 'true'
   })
 
-  group.beforeEach(() => {
+  group.each.setup(() => {
     process.env.NODE_ENV = 'testing'
   })
 
-  group.after(async () => {
+  group.teardown(async () => {
     await fs.cleanup()
     delete process.env.ENV_SILENT
     delete process.env.APP_KEY
   })
 
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
 
@@ -40,7 +40,7 @@ test.group('Ignitor | Http', (group) => {
     await fs.cleanup()
   })
 
-  test('call ready hook on providers before starting the http server', async (assert, done) => {
+  test('call ready hook on providers before starting the http server', async ({ assert }, done) => {
     await fs.add(
       'providers/AppProvider.ts',
       `
@@ -66,9 +66,9 @@ test.group('Ignitor | Http', (group) => {
       done()
     })
     assert.isTrue(server['hookCalled'])
-  })
+  }).waitForDone()
 
-  test('start http server to accept incoming requests', async (assert, done) => {
+  test('start http server to accept incoming requests', async ({ assert }, done) => {
     await setupApplicationFiles()
 
     const ignitor = new Ignitor(fs.basePath)
@@ -95,9 +95,9 @@ test.group('Ignitor | Http', (group) => {
       assert.equal(text, 'handled')
       done()
     }, 100)
-  })
+  }).waitForDone()
 
-  test('forward errors to app error handler', async (assert, done) => {
+  test('forward errors to app error handler', async ({ assert }, done) => {
     await setupApplicationFiles()
 
     await fs.add(
@@ -144,9 +144,9 @@ test.group('Ignitor | Http', (group) => {
       done()
     })
     assert.equal(text, 'handled E_ROUTE_NOT_FOUND: Cannot GET:/')
-  })
+  }).waitForDone()
 
-  test('kill app when server receives error', async (assert) => {
+  test('kill app when server receives error', async ({ assert }) => {
     assert.plan(1)
 
     await setupApplicationFiles()
@@ -167,7 +167,7 @@ test.group('Ignitor | Http', (group) => {
     server.instance!.emit('error', new Error())
   })
 
-  test('close http server gracefully when closing the app', async (assert, done) => {
+  test('close http server gracefully when closing the app', async ({ assert }, done) => {
     assert.plan(2)
     await setupApplicationFiles()
 
@@ -184,9 +184,9 @@ test.group('Ignitor | Http', (group) => {
     })
 
     await httpServer.close()
-  })
+  }).waitForDone()
 
-  test('invoke shutdown method when gracefully closing the app', async (assert) => {
+  test('invoke shutdown method when gracefully closing the app', async ({ assert }) => {
     await fs.add(
       'providers/AppProvider.ts',
       `
@@ -216,21 +216,21 @@ test.group('Ignitor | Http', (group) => {
 })
 
 test.group('Ignitor | HTTP | Static Assets', (group) => {
-  group.before(() => {
+  group.setup(() => {
     process.env.ENV_SILENT = 'true'
   })
 
-  group.beforeEach(() => {
+  group.each.setup(() => {
     process.env.NODE_ENV = 'testing'
   })
 
-  group.after(async () => {
+  group.teardown(async () => {
     await fs.cleanup()
     delete process.env.ENV_SILENT
     delete process.env.APP_KEY
   })
 
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
 
@@ -238,7 +238,7 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
     await fs.cleanup()
   })
 
-  test('serve static files when static hooks is enabled', async (assert, done) => {
+  test('serve static files when static hooks is enabled', async ({ assert }, done) => {
     await setupApplicationFiles()
     await fs.add(
       'config/static.ts',
@@ -268,9 +268,9 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
       assert.equal(text, 'body { background: #000 }')
       done()
     }, 100)
-  })
+  }).waitForDone()
 
-  test('serve static files from a custom public path', async (assert, done) => {
+  test('serve static files from a custom public path', async ({ assert }, done) => {
     await setupApplicationFiles()
     await fs.add(
       'config/static.ts',
@@ -315,32 +315,32 @@ test.group('Ignitor | HTTP | Static Assets', (group) => {
       assert.equal(text, 'body { background: #000 }')
       done()
     }, 100)
-  })
+  }).waitForDone()
 })
 
 test.group('Ignitor | HTTP | CORS', (group) => {
-  group.before(() => {
+  group.setup(() => {
     process.env.ENV_SILENT = 'true'
   })
 
-  group.beforeEach(() => {
+  group.each.setup(() => {
     process.env.NODE_ENV = 'testing'
   })
 
-  group.after(async () => {
+  group.teardown(async () => {
     await fs.cleanup()
     delete process.env.ENV_SILENT
     delete process.env.APP_KEY
   })
 
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
     delete process.env.NODE_ENV
     await fs.cleanup()
   })
 
-  test('respond to pre-flight requests when cors are enabled', async (assert, done) => {
+  test('respond to pre-flight requests when cors are enabled', async ({ assert }, done) => {
     await setupApplicationFiles()
     await fs.add(
       'config/cors.ts',
@@ -378,5 +378,5 @@ test.group('Ignitor | HTTP | CORS', (group) => {
       assert.equal(header['access-control-allow-methods'], 'GET')
       done()
     }, 100)
-  })
+  }).waitForDone()
 })

@@ -7,14 +7,14 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { Application } from '@adonisjs/application'
 
 import { HealthCheck } from '../src/HealthCheck'
 import appKeyHealthChecker from '../src/HealthCheck/Checkers/AppKey'
 
 test.group('Env Health Checker', () => {
-  test('fail when APP_KEY is not defined', async (assert) => {
+  test('fail when APP_KEY is not defined', async ({ assert }) => {
     const application = new Application(__dirname, 'console', {})
     const healthCheck = new HealthCheck(application)
     appKeyHealthChecker(healthCheck)
@@ -32,7 +32,7 @@ test.group('Env Health Checker', () => {
     })
   })
 
-  test('fail when APP_KEY is not secure', async (assert) => {
+  test('fail when APP_KEY is not secure', async ({ assert }) => {
     process.env.APP_KEY = '3910200'
     const application = new Application(__dirname, 'console', {})
     const healthCheck = new HealthCheck(application)
@@ -54,7 +54,7 @@ test.group('Env Health Checker', () => {
     delete process.env.APP_KEY
   })
 
-  test('work fine when APP_KEY is secure', async (assert) => {
+  test('work fine when APP_KEY is secure', async ({ assert }) => {
     process.env.APP_KEY = 'asecureandlongrandomsecret'
 
     const application = new Application(__dirname, 'console', {})

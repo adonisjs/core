@@ -45,11 +45,11 @@ export const specFixtures = [
     configureRequest() {},
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -68,11 +68,11 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -91,11 +91,11 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -114,11 +114,11 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -137,11 +137,11 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -160,7 +160,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -171,7 +171,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -190,7 +190,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -201,7 +201,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -220,7 +220,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -231,7 +231,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -250,7 +250,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -261,7 +261,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -280,7 +280,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -292,7 +292,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -312,7 +312,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return key !== 'access-control-allow-origin'
@@ -322,7 +322,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -342,7 +342,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -360,7 +360,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -380,7 +380,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -391,7 +391,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return ['access-control-expose-headers'].indexOf(key) > -1
@@ -416,7 +416,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -427,7 +427,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -449,7 +449,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -460,7 +460,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -482,7 +482,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -493,7 +493,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
   {
@@ -515,7 +515,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -526,7 +526,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return ['access-control-expose-headers'].indexOf(key) > -1
@@ -555,7 +555,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -566,7 +566,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return ['access-control-expose-headers'].indexOf(key) > -1
@@ -595,7 +595,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -606,7 +606,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return ['access-control-expose-headers'].indexOf(key) > -1
@@ -635,7 +635,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -646,7 +646,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return ['access-control-expose-headers'].indexOf(key) > -1
@@ -675,7 +675,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -686,7 +686,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return ['access-control-expose-headers'].indexOf(key) > -1
@@ -715,7 +715,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -726,7 +726,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return ['access-control-expose-headers'].indexOf(key) > -1
@@ -756,7 +756,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -767,7 +767,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return ['access-control-expose-headers'].indexOf(key) > -1
@@ -798,7 +798,7 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(
+      assert.notAnyProperties(
         res.headers,
         CORS_HEADERS.filter((key) => {
           return (
@@ -813,7 +813,7 @@ export const specFixtures = [
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.containsAllKeys(res.headers, CORS_HEADERS)
+      assert.properties(res.headers, CORS_HEADERS)
       assert.equal(res.headers['access-control-expose-headers'], 'x-response-time')
     },
   },
@@ -833,11 +833,11 @@ export const specFixtures = [
     },
 
     assertNormal(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
 
     assertOptions(assert: Assert, res: any) {
-      assert.doesNotHaveAnyKeys(res.headers, CORS_HEADERS)
+      assert.notAnyProperties(res.headers, CORS_HEADERS)
     },
   },
 ]

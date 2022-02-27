@@ -7,20 +7,20 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 
 import { fs, setupApp } from '../test-helpers'
 import { HealthCheck } from '../src/HealthCheck'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 test.group('App Provider', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
     await fs.cleanup()
   })
 
-  test('register app provider', async (assert) => {
+  test('register app provider', async ({ assert }) => {
     const app = await setupApp([], true)
     assert.isTrue(app.container.hasBinding('Adonis/Core/Env'))
     assert.isTrue(app.container.hasBinding('Adonis/Core/Config'))

@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import 'reflect-metadata'
 import { Ioc } from '@adonisjs/fold'
 import { Kernel } from '@adonisjs/ace'
@@ -27,11 +27,11 @@ const precompiler = new PreCompiler(ioc, {
 } as any)
 
 test.group('Command | List Routes', (group) => {
-  group.afterEach(() => {
+  group.each.teardown(() => {
     testingRenderer.logs = []
   })
 
-  test('list routes in the order they are register', async (assert) => {
+  test('list routes in the order they are register', async ({ assert }) => {
     const app = new Application(__dirname, 'test', {})
 
     const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
@@ -71,7 +71,7 @@ test.group('Command | List Routes', (group) => {
     )
   })
 
-  test('list routes with assigned middleware', async (assert) => {
+  test('list routes with assigned middleware', async ({ assert }) => {
     const app = new Application(__dirname, 'test', {})
 
     const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
@@ -111,7 +111,7 @@ test.group('Command | List Routes', (group) => {
     )
   })
 
-  test('list routes with controller handlers', async (assert) => {
+  test('list routes with controller handlers', async ({ assert }) => {
     const app = new Application(__dirname, 'test', {})
 
     ioc.bind('App/Controllers/Http/HomeController', () => {})
@@ -154,7 +154,7 @@ test.group('Command | List Routes', (group) => {
     )
   })
 
-  test('output complete controller namespace when using a custom namespace', async (assert) => {
+  test('output complete controller namespace when using a custom namespace', async ({ assert }) => {
     const app = new Application(__dirname, 'test', {})
 
     const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
@@ -197,7 +197,7 @@ test.group('Command | List Routes', (group) => {
     )
   })
 
-  test('output route custom domain', async (assert) => {
+  test('output route custom domain', async ({ assert }) => {
     const app = new Application(__dirname, 'test', {})
 
     const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
@@ -230,7 +230,7 @@ test.group('Command | List Routes', (group) => {
     )
   })
 
-  test('prefix route group pattern', async (assert) => {
+  test('prefix route group pattern', async ({ assert }) => {
     const app = new Application(__dirname, 'test', {})
 
     const router = new Router({} as any, precompiler.compileRoute.bind(precompiler))
