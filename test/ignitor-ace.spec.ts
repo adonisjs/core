@@ -9,7 +9,7 @@
 
 /// <reference path="../adonis-typings/index.ts" />
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import stripAnsi from 'strip-ansi'
 import { stdout, stderr } from 'test-console'
@@ -20,21 +20,21 @@ import { setupApplicationFiles, fs } from '../test-helpers'
 let processExit = process.exit
 
 test.group('Ignitor | Ace | Generate Manifest', (group) => {
-  group.beforeEach(() => {
+  group.each.setup(() => {
     // @ts-ignore
     process.exit = function () {}
   })
 
-  group.after(async () => {
+  group.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.exit = processExit
     await fs.cleanup()
   })
 
-  test('generate manifest file', async (assert) => {
+  test('generate manifest file', async ({ assert }) => {
     await setupApplicationFiles()
     const { output, restore } = stdout.inspect()
 
@@ -87,7 +87,9 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
     assert.equal(stripAnsi(output[0]).split('CREATE:')[1].trim(), 'ace-manifest.json file')
   })
 
-  test('print helpful error message when command is using ioc container imports', async (assert) => {
+  test('print helpful error message when command is using ioc container imports', async ({
+    assert,
+  }) => {
     await setupApplicationFiles()
     const { output, restore } = stderr.inspect()
 
@@ -134,37 +136,37 @@ test.group('Ignitor | Ace | Generate Manifest', (group) => {
 })
 
 test.group('Ignitor | Ace | Core Commands', (group) => {
-  group.beforeEach(() => {
+  group.each.setup(() => {
     // @ts-ignore
     process.exit = function () {}
   })
 
-  group.after(async () => {
+  group.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.exit = processExit
     await fs.cleanup()
   })
 })
 
 test.group('Ignitor | Ace | Run Command', (group) => {
-  group.beforeEach(() => {
+  group.each.setup(() => {
     // @ts-ignore
     process.exit = function () {}
   })
 
-  group.after(async () => {
+  group.teardown(async () => {
     await fs.cleanup()
   })
 
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.exit = processExit
     await fs.cleanup()
   })
 
-  test('run command without loading the app', async (assert) => {
+  test('run command without loading the app', async ({ assert }) => {
     await setupApplicationFiles()
 
     /**
@@ -211,7 +213,7 @@ test.group('Ignitor | Ace | Run Command', (group) => {
     assert.equal(output[0].trim(), 'is ready false')
   })
 
-  test('load app when command setting loadApp is true', async (assert) => {
+  test('load app when command setting loadApp is true', async ({ assert }) => {
     await setupApplicationFiles()
 
     /**
@@ -259,7 +261,7 @@ test.group('Ignitor | Ace | Run Command', (group) => {
     assert.equal(output[0].trim(), 'is ready true')
   })
 
-  test('print error when command is missing', async (assert) => {
+  test('print error when command is missing', async ({ assert }) => {
     await setupApplicationFiles()
 
     /**

@@ -9,7 +9,7 @@
 
 /// <reference path="../adonis-typings/index.ts" />
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import supertest from 'supertest'
 import { createServer } from 'http'
 
@@ -18,7 +18,7 @@ import { specFixtures } from './fixtures/cors'
 import { fs, setupApp } from '../test-helpers'
 
 test.group('Cors', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
 
@@ -26,7 +26,7 @@ test.group('Cors', (group) => {
   })
 
   specFixtures.forEach((fixture) => {
-    test(fixture.title, async (assert) => {
+    test(fixture.title, async ({ assert }) => {
       const app = await setupApp()
 
       const server = createServer(async (req, res) => {

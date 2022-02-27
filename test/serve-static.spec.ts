@@ -9,7 +9,7 @@
 
 /// <reference path="../adonis-typings/index.ts" />
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import supertest from 'supertest'
 import { createServer } from 'http'
@@ -18,14 +18,14 @@ import { setupApp, fs } from '../test-helpers'
 import { ServeStatic } from '../src/Hooks/Static'
 
 test.group('Serve Static', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
 
     await fs.cleanup()
   })
 
-  test('serve static file when it exists', async (assert) => {
+  test('serve static file when it exists', async ({ assert }) => {
     await fs.add('public/style.css', 'body { background: #000 }')
     const app = await setupApp()
 
@@ -44,7 +44,7 @@ test.group('Serve Static', (group) => {
     assert.equal(text, 'body { background: #000 }')
   })
 
-  test('flush headers set before the static files hook', async (assert) => {
+  test('flush headers set before the static files hook', async ({ assert }) => {
     await fs.add('public/style.css', 'body { background: #000 }')
     const app = await setupApp()
 
@@ -71,7 +71,7 @@ test.group('Serve Static', (group) => {
     assert.equal(text, 'body { background: #000 }')
   })
 
-  test('do not flush headers when response is a 404', async (assert) => {
+  test('do not flush headers when response is a 404', async ({ assert }) => {
     const app = await setupApp()
 
     const server = createServer(async (req, res) => {
@@ -93,7 +93,7 @@ test.group('Serve Static', (group) => {
     assert.notProperty(headers, 'x-powered-by')
   })
 
-  test('pass through when unable to lookup file', async (assert) => {
+  test('pass through when unable to lookup file', async ({ assert }) => {
     await fs.add('public/style.css', 'body { background: #000 }')
     const app = await setupApp()
 
@@ -114,7 +114,7 @@ test.group('Serve Static', (group) => {
     await supertest(server).get('/').expect(404)
   })
 
-  test('allow user defined headers', async (assert) => {
+  test('allow user defined headers', async ({ assert }) => {
     await fs.add('public/style.css', 'body { background: #000 }')
     const app = await setupApp()
 

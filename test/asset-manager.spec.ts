@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { join } from 'path'
 import { Application } from '@adonisjs/application'
 
@@ -17,15 +17,15 @@ import { EncoreDriver } from '../src/AssetsManager/Drivers/Encore'
 import { fs } from '../test-helpers'
 
 test.group('AssetsManager', (group) => {
-  group.beforeEach(async () => {
+  group.each.setup(async () => {
     await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
   })
 
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     await fs.cleanup()
   })
 
-  test('get asset tag using the manager', async (assert) => {
+  test('get asset tag using the manager', async ({ assert }) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
@@ -45,7 +45,7 @@ test.group('AssetsManager', (group) => {
     assert.equal(manager.entryPointScriptTags('app'), '<script src="./app.js"></script>')
   })
 
-  test('apply custom attributes to the script tag', async (assert) => {
+  test('apply custom attributes to the script tag', async ({ assert }) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
@@ -74,7 +74,7 @@ test.group('AssetsManager', (group) => {
     assert.equal(manager.entryPointScriptTags('app'), '<script src="./app.js" defer></script>')
   })
 
-  test('get style tag using the manager', async (assert) => {
+  test('get style tag using the manager', async ({ assert }) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
@@ -94,7 +94,7 @@ test.group('AssetsManager', (group) => {
     assert.equal(manager.entryPointStyleTags('app'), '<link rel="stylesheet" href="./app.css" />')
   })
 
-  test('raise exception when using unknown driver', async (assert) => {
+  test('raise exception when using unknown driver', async ({ assert }) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
@@ -111,13 +111,13 @@ test.group('AssetsManager', (group) => {
       })
     )
 
-    assert.throw(
+    assert.throws(
       () => manager.entryPointStyleTags('app'),
       'Invalid asset driver "vite". Make sure to register the driver using the "AssetsManager.extend" method'
     )
   })
 
-  test('register custom driver', async (assert) => {
+  test('register custom driver', async ({ assert }) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
@@ -140,7 +140,7 @@ test.group('AssetsManager', (group) => {
     assert.equal(manager.entryPointScriptTags('app'), '<script src="./vite-app.js"></script>')
   })
 
-  test('get assets version', async (assert) => {
+  test('get assets version', async ({ assert }) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
@@ -165,7 +165,9 @@ test.group('AssetsManager', (group) => {
     assert.equal(manager.version, 'c46a678581')
   })
 
-  test("raise exception when using entrypoints and driver doesn't support it", async (assert) => {
+  test("raise exception when using entrypoints and driver doesn't support it", async ({
+    assert,
+  }) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
@@ -176,7 +178,7 @@ test.group('AssetsManager', (group) => {
     }
 
     manager.extend('vite', ($manager) => new ViteDriver($manager.application))
-    assert.throw(
+    assert.throws(
       () => manager.entryPointScriptTags('app'),
       'Cannot reference entrypoints. The "vite" driver does not support entrypoints'
     )

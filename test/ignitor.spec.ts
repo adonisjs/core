@@ -9,34 +9,34 @@
 
 /// <reference path="../adonis-typings/index.ts" />
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { pathToFileURL } from 'url'
 import { Ignitor } from '../src/Ignitor'
 import { setupApplicationFiles, fs } from '../test-helpers'
 
 test.group('Ignitor | App Provider', (group) => {
-  group.before(() => {
+  group.setup(() => {
     process.env.ENV_SILENT = 'true'
   })
 
-  group.beforeEach(() => {
+  group.each.setup(() => {
     process.env.NODE_ENV = 'testing'
   })
 
-  group.after(async () => {
+  group.teardown(async () => {
     await fs.cleanup()
     delete process.env.ENV_SILENT
     delete process.env.APP_KEY
   })
 
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
     delete process.env.NODE_ENV
     await fs.cleanup()
   })
 
-  test('setup cors before hooks when enabled is set to true', async (assert) => {
+  test('setup cors before hooks when enabled is set to true', async ({ assert }) => {
     await setupApplicationFiles()
 
     await fs.add(
@@ -56,7 +56,7 @@ test.group('Ignitor | App Provider', (group) => {
     await httpServer.close()
   })
 
-  test('setup cors before hooks when enabled is set to a function', async (assert) => {
+  test('setup cors before hooks when enabled is set to a function', async ({ assert }) => {
     await setupApplicationFiles()
 
     await fs.add(
@@ -76,7 +76,7 @@ test.group('Ignitor | App Provider', (group) => {
     await httpServer.close()
   })
 
-  test('do not setup cors before hooks when enabled is set to false', async (assert) => {
+  test('do not setup cors before hooks when enabled is set to false', async ({ assert }) => {
     await setupApplicationFiles()
 
     await fs.add(
@@ -96,7 +96,7 @@ test.group('Ignitor | App Provider', (group) => {
     await httpServer.close()
   })
 
-  test('setup static assets before hooks when enabled is set to true', async (assert) => {
+  test('setup static assets before hooks when enabled is set to true', async ({ assert }) => {
     await setupApplicationFiles()
 
     await fs.add(
@@ -115,7 +115,7 @@ test.group('Ignitor | App Provider', (group) => {
     await httpServer.close()
   })
 
-  test('register base health checkers', async (assert) => {
+  test('register base health checkers', async ({ assert }) => {
     await setupApplicationFiles()
 
     const httpServer = new Ignitor(fs.basePath).httpServer()
@@ -127,7 +127,7 @@ test.group('Ignitor | App Provider', (group) => {
     await httpServer.close()
   })
 
-  test('construct ignitor with a file URL', async (assert) => {
+  test('construct ignitor with a file URL', async ({ assert }) => {
     await setupApplicationFiles()
 
     const entryPoint = fs.basePath + '/ace.js'

@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { FakeLogger } from '@adonisjs/logger'
 import { Exception } from '@poppinss/utils'
 
@@ -15,7 +15,7 @@ import { fs, setupApp } from '../test-helpers'
 import { HttpExceptionHandler } from '../src/HttpExceptionHandler'
 
 test.group('HttpExceptionHandler', (group) => {
-  group.afterEach(async () => {
+  group.each.teardown(async () => {
     process.removeAllListeners('SIGINT')
     process.removeAllListeners('SIGTERM')
 
@@ -23,7 +23,7 @@ test.group('HttpExceptionHandler', (group) => {
     delete process.env.NODE_ENV
   })
 
-  test('do not report error if error code is in ignore list', async (assert) => {
+  test('do not report error if error code is in ignore list', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -41,7 +41,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.deepEqual(fakeLogger.logs, [])
   })
 
-  test('report error when not inside ignore list', async (assert) => {
+  test('report error when not inside ignore list', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     app.logger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -66,7 +66,7 @@ test.group('HttpExceptionHandler', (group) => {
     )
   })
 
-  test('ignore http status inside the ignore list', async (assert) => {
+  test('ignore http status inside the ignore list', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     app.logger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -83,7 +83,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.deepEqual((app.logger as FakeLogger).logs, [])
   })
 
-  test('report error with custom context', async (assert) => {
+  test('report error with custom context', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     app.logger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -113,7 +113,7 @@ test.group('HttpExceptionHandler', (group) => {
     )
   })
 
-  test('call error report method if it exists', async (assert) => {
+  test('call error report method if it exists', async ({ assert }) => {
     assert.plan(1)
 
     const app = await setupApp()
@@ -139,7 +139,7 @@ test.group('HttpExceptionHandler', (group) => {
     handler.report(new InvalidAuth('bad request'), ctx)
   })
 
-  test('handle exception by returning html', async (assert) => {
+  test('handle exception by returning html', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -162,7 +162,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.deepEqual(ctx.response.lazyBody, ['<h1> bad request </h1>', undefined])
   })
 
-  test('handle exception by returning json', async (assert) => {
+  test('handle exception by returning json', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -185,7 +185,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.deepEqual(ctx.response.lazyBody, [{ message: 'bad request' }, undefined])
   })
 
-  test('handle exception by returning json api response', async (assert) => {
+  test('handle exception by returning json api response', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -219,7 +219,7 @@ test.group('HttpExceptionHandler', (group) => {
     ])
   })
 
-  test('return stack trace when NODE_ENV=development', async (assert) => {
+  test('return stack trace when NODE_ENV=development', async ({ assert }) => {
     process.env.NODE_ENV = 'development'
 
     const app = await setupApp()
@@ -243,7 +243,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.exists(ctx.response.lazyBody[0].stack)
   })
 
-  test('print youch html in development', async (assert) => {
+  test('print youch html in development', async ({ assert }) => {
     process.env.NODE_ENV = 'development'
 
     const app = await setupApp()
@@ -268,7 +268,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.isTrue(/youch/.test(ctx.response.lazyBody![0]))
   })
 
-  test('call handle on actual exception when method exists', async (assert) => {
+  test('call handle on actual exception when method exists', async ({ assert }) => {
     assert.plan(1)
 
     const app = await setupApp()
@@ -295,7 +295,7 @@ test.group('HttpExceptionHandler', (group) => {
     await handler.handle(new InvalidAuth('bad request'), ctx)
   })
 
-  test('use return value of exception handle method', async (assert) => {
+  test('use return value of exception handle method', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -322,7 +322,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.equal(response, 'foo')
   })
 
-  test('render status page when defined', async (assert) => {
+  test('render status page when defined', async ({ assert }) => {
     assert.plan(3)
 
     const app = await setupApp()
@@ -362,7 +362,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.equal(ctx.response.response.statusCode, 404)
   })
 
-  test('do not render status page when content negotiation passes for json', async (assert) => {
+  test('do not render status page when content negotiation passes for json', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -399,7 +399,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.equal(ctx.response.response.statusCode, 404)
   })
 
-  test('do not render status page when disabled for development mode', async (assert) => {
+  test('do not render status page when disabled for development mode', async ({ assert }) => {
     process.env.NODE_ENV = 'development'
 
     const app = await setupApp()
@@ -441,7 +441,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.equal(ctx.response.response.statusCode, 404)
   })
 
-  test('always render status page when in production mode', async (assert) => {
+  test('always render status page when in production mode', async ({ assert }) => {
     assert.plan(3)
     process.env.NODE_ENV = 'production'
 
@@ -484,7 +484,7 @@ test.group('HttpExceptionHandler', (group) => {
     assert.equal(ctx.response.response.statusCode, 404)
   })
 
-  test('compute status pages from expression', async (assert) => {
+  test('compute status pages from expression', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })
@@ -516,7 +516,7 @@ test.group('HttpExceptionHandler', (group) => {
     })
   })
 
-  test('ensure expandedStatusPages is a singleton', async (assert) => {
+  test('ensure expandedStatusPages is a singleton', async ({ assert }) => {
     const app = await setupApp()
     app.container.useProxies()
     const fakeLogger = new FakeLogger({ enabled: true, name: 'adonisjs', level: 'info' })

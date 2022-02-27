@@ -9,12 +9,12 @@
 
 /// <reference path="../adonis-typings/index.ts" />
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { Application } from '@adonisjs/application'
 import { HealthCheck } from '../src/HealthCheck'
 
 test.group('HealthCheck', () => {
-  test('use application isReady state to find if application is ready', (assert) => {
+  test('use application isReady state to find if application is ready', ({ assert }) => {
     const application = new Application(__dirname, 'web', {})
     const healthCheck = new HealthCheck(application)
 
@@ -27,7 +27,7 @@ test.group('HealthCheck', () => {
     assert.isFalse(healthCheck.isReady())
   })
 
-  test('get health checks report', async (assert) => {
+  test('get health checks report', async ({ assert }) => {
     const application = new Application(__dirname, 'web', {})
     const healthCheck = new HealthCheck(application)
 
@@ -54,7 +54,7 @@ test.group('HealthCheck', () => {
     })
   })
 
-  test('handle exceptions raised within the checker', async (assert) => {
+  test('handle exceptions raised within the checker', async ({ assert }) => {
     const application = new Application(__dirname, 'web', {})
     const healthCheck = new HealthCheck(application)
 
@@ -80,7 +80,7 @@ test.group('HealthCheck', () => {
     })
   })
 
-  test('set healthy to false when any of the checker fails', async (assert) => {
+  test('set healthy to false when any of the checker fails', async ({ assert }) => {
     const application = new Application(__dirname, 'web', {})
     const healthCheck = new HealthCheck(application)
 
@@ -121,7 +121,7 @@ test.group('HealthCheck', () => {
     })
   })
 
-  test('define checker as IoC container binding', async (assert) => {
+  test('define checker as IoC container binding', async ({ assert }) => {
     const application = new Application(__dirname, 'web', {})
     const healthCheck = new HealthCheck(application)
 
