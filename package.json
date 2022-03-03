@@ -34,7 +34,7 @@
 	"scripts": {
 		"mrm": "mrm --preset=@adonisjs/mrm-preset",
 		"pretest": "npm run lint",
-		"test": "node -r ts-node/register/transpile-only .bin/test.ts",
+		"test": "node -r ts-node/register/transpile-only bin/test.ts",
 		"clean": "del-cli build",
 		"compile": "npm run lint && npm run clean && tsc && copyfiles templates/**/* templates/* build",
 		"build": "npm run compile",
