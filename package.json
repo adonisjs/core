@@ -133,7 +133,7 @@
 		"macroable": "^6.0.1",
 		"memfs": "^3.4.1",
 		"serve-static": "^1.14.2",
-		"stringify-attributes": "^2.0.0"
+		"stringify-attributes": "^3.0.0"
 	},
 	"np": {
 		"contents": ".",
