@@ -239,6 +239,10 @@ export class App {
        * Listen for the exit signal on ace kernel
        */
       this.ace.onExit(async () => {
+        if (this.kernel.hasBooted) {
+          await this.kernel.close()
+        }
+
         if (!this.ace.error) {
           process.exit(this.ace.exitCode)
         }
