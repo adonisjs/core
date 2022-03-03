@@ -34,7 +34,7 @@
 	"scripts": {
 		"mrm": "mrm --preset=@adonisjs/mrm-preset",
 		"pretest": "npm run lint",
-		"test": "node -r ts-node/register/transpile-only bin/test.ts",
+		"test": "node -r @adonisjs/require-ts/build/register bin/test.ts",
 		"clean": "del-cli build",
 		"compile": "npm run lint && npm run clean && tsc && copyfiles templates/**/* templates/* build",
 		"build": "npm run compile",
@@ -94,7 +94,6 @@
 		"strip-ansi": "^6.0.0",
 		"supertest": "^6.2.2",
 		"test-console": "^2.0.0",
-		"ts-node": "^10.6.0",
 		"typescript": "^4.6.2",
 		"youch": "^3.1.1",
 		"youch-terminal": "^2.1.3"
