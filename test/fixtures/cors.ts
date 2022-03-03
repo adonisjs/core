@@ -7,10 +7,10 @@
  * file that was distributed with this source code.
  */
 
-import { IncomingMessage } from 'http'
-import { Assert } from 'japa/build/src/Assert'
+import type { IncomingMessage } from 'http'
+import type { Assert } from '@japa/assert'
 
-import { CorsConfig } from '@ioc:Adonis/Core/Cors'
+import type { CorsConfig } from '@ioc:Adonis/Core/Cors'
 const corsConfig = {
   enabled: true,
   origin: true,
