@@ -5,11 +5,9 @@
  * file.
  */
 
-import { assert } from '@japa/assert'
-import type { Suite } from '@japa/core'
-import { specReporter } from '@japa/spec-reporter'
+import type { Config } from '@japa/runner'
 import TestUtils from '@ioc:Adonis/Core/TestUtils'
-import type { PluginFn, RunnerHooksHandler, TestContext, ReporterContract } from '@japa/runner'
+import { assert, runFailedTests, specReporter } from '@japa/preset-adonis'
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +20,7 @@ import type { PluginFn, RunnerHooksHandler, TestContext, ReporterContract } from
 | Feel free to remove existing plugins or add more.
 |
 */
-export const plugins: PluginFn[] = [assert()]
+export const plugins: Config['plugins'] = [assert(), runFailedTests()]
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +32,7 @@ export const plugins: PluginFn[] = [assert()]
 | of tests on the terminal.
 |
 */
-export const reporters: ReporterContract[] = [specReporter()]
+export const reporters: Config['reporters'] = [specReporter()]
 
 /*
 |--------------------------------------------------------------------------
@@ -48,8 +46,8 @@ export const reporters: ReporterContract[] = [specReporter()]
 | within the runner hooks
 |
 */
-export const runnerHooks: { setup: RunnerHooksHandler[]; teardown: RunnerHooksHandler[] } = {
-  setup: [() => TestUtils.ace().loadCommands()],
+export const runnerHooks: Required<Pick<Config, 'setup' | 'teardown'>> = {
+  setup: [() => TestUtils.ace().loadCommands(), () => TestUtils.db().migrate()],
   teardown: [],
 }
 
@@ -62,10 +60,10 @@ export const runnerHooks: { setup: RunnerHooksHandler[]; teardown: RunnerHooksHa
 | within ".adonisrc.json" file.
 |
 | You can use this method to configure suites. For example: Only start
-| the HTTP server when it is a feature suite.
+| the HTTP server when it is a functional suite.
 */
-export const configureSuite = (suite: Suite<TestContext>) => {
-  if (suite.name === 'feature') {
+export const configureSuite: Config['configureSuite'] = (suite) => {
+  if (suite.name === 'functional') {
     suite.setup(() => TestUtils.httpServer().start())
   }
 }
