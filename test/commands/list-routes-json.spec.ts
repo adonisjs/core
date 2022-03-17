@@ -16,7 +16,7 @@ import { Application } from '@adonisjs/application'
 import { Router } from '@adonisjs/http-server/build/src/Router'
 import { PreCompiler } from '@adonisjs/http-server/build/src/Server/PreCompiler/index'
 
-import ListRoutes from '../commands/ListRoutes'
+import ListRoutes from '../../commands/ListRoutes/ListRoutes'
 
 const ioc = new Ioc()
 const precompiler = new PreCompiler(ioc, {
@@ -26,7 +26,7 @@ const precompiler = new PreCompiler(ioc, {
   },
 } as any)
 
-test.group('Command | List Routes', (group) => {
+test.group('Command | List Routes Json', (group) => {
   group.each.teardown(() => {
     testingRenderer.logs = []
   })
