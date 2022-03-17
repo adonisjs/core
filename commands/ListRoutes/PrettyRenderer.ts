@@ -1,28 +1,37 @@
+/*
+ * @adonisjs/core
+ *
+ * (c) AdonisJS
+ *
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
+ */
+
 import { BaseCommand } from '@adonisjs/ace'
-import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { SerializedRouter } from './ListRoutes'
+import type { SerializedRoute } from './ListRoutes'
 
 export class RoutesPrettyRenderer {
-  constructor(
-    private terminalWidth: number,
-    private application: ApplicationContract,
-    private colors: BaseCommand['colors'],
-    private logger: BaseCommand['logger'],
-    private verbose: boolean
-  ) {}
+  constructor(private command: BaseCommand, private verbose: boolean, private maxWidth?: string) {}
+
+  /**
+   * Returns the terminal width
+   */
+  private getTerminalWidth() {
+    return this.maxWidth || process.stdout.columns || 80
+  }
 
   /**
    * The colors associated with each HTTP method
    */
-  private methodColors = {
-    ANY: this.colors.red.bind(this.colors),
-    GET: this.colors.blue.bind(this.colors),
-    HEAD: this.colors.white.bind(this.colors),
-    OPTIONS: this.colors.white.bind(this.colors),
-    POST: this.colors.yellow.bind(this.colors),
-    PUT: this.colors.yellow.bind(this.colors),
-    PATCH: this.colors.yellow.bind(this.colors),
-    DELETE: this.colors.red.bind(this.colors),
+  private methodColors: Record<string, keyof BaseCommand['colors']> = {
+    ANY: 'red',
+    GET: 'blue',
+    HEAD: 'white',
+    OPTIONS: 'white',
+    POST: 'yellow',
+    PUT: 'yellow',
+    PATCH: 'yellow',
+    DELETE: 'red',
   }
 
   /**
@@ -37,12 +46,15 @@ export class RoutesPrettyRenderer {
     middlewares: string
   ) {
     const methodsOutput = methods
-      .map((method) => this.methodColors[method.toUpperCase()](method))
+      .map((method) => {
+        const methodColor = this.methodColors[method.toUpperCase()]
+        return this.command.colors[methodColor](method)
+      })
       .join('|')
 
-    const patternOutput = pattern.replace(/:([^/]+)/gm, `${this.colors.yellow('$&')}`)
-    const nameAndHandlerOutput = this.colors.grey(nameAndHandler)
-    const dotsOutput = this.colors.grey(dots)
+    const patternOutput = pattern.replace(/:([^/]+)/gm, `${this.command.colors.yellow('$&')}`)
+    const nameAndHandlerOutput = this.command.colors.grey(nameAndHandler)
+    const dotsOutput = this.command.colors.grey(dots)
 
     this.log(methodsOutput + spaces + patternOutput + dotsOutput + nameAndHandlerOutput)
 
@@ -55,8 +67,8 @@ export class RoutesPrettyRenderer {
    * Log message
    */
   private log(message: string) {
-    if (this.application.environment === 'test') {
-      this.logger.log(message)
+    if (this.command.application.environment === 'test') {
+      this.command.logger.log(message)
     } else {
       console.log(message)
     }
@@ -65,16 +77,12 @@ export class RoutesPrettyRenderer {
   /**
    * Render the serialized routes to the console
    */
-  public render(serializedRouter: SerializedRouter) {
-    /**
-     * Let's flatten routes splitted in different domains
-     * in one single array with domain along each route
-     */
-    let routes = Object.entries(serializedRouter)
-      .map(([domain, domainRoutes]) => domainRoutes.map((route) => ({ ...route, domain })))
+  public render(serializedRoutes: Record<string, SerializedRoute[]>) {
+    const routes = Object.keys(serializedRoutes)
+      .map((domain) => serializedRoutes[domain])
       .flat()
 
-    const termWidth = this.terminalWidth
+    const termWidth = this.getTerminalWidth()
     const maxMethodsLength = Math.max(...routes.map((route) => route.methods.join('|').length)) - 1
 
     routes.forEach((route) => {
@@ -104,7 +112,7 @@ export class RoutesPrettyRenderer {
       const middlewares = route.middleware
         .map((middleware) => {
           const startSpace = ' '.repeat(maxMethodsLength + 5)
-          return this.colors.grey(`${startSpace}⇂ ${middleware}`)
+          return this.command.colors.grey(`${startSpace}⇂ ${middleware}`)
         })
         .join('\n')
 

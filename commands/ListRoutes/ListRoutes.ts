@@ -1,9 +1,9 @@
 /*
  * @adonisjs/core
  *
- * (c) Harminder Virk <virk@adonisjs.com>
+ * (c) AdonisJS
  *
- * For the full copyright and license information, please view the LICENSE
+ * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
  */
 
@@ -12,18 +12,15 @@ import type { RouterContract } from '@ioc:Adonis/Core/Route'
 import { RoutesPrettyRenderer } from './PrettyRenderer'
 import { RoutesTableRenderer } from './TableRenderer'
 
-export interface SerializedRouter {
-  [domain: string]: SerializedRoute[]
-}
-
 /**
  * Shape of a route serialized by the ListRoute JSON serializer
  */
-export interface SerializedRoute {
-  methods: string[]
+export type SerializedRoute = {
+  domain: string
   name: string
   pattern: string
   handler: string
+  methods: string[]
   middleware: string[]
 }
 
@@ -55,6 +52,9 @@ export default class ListRoutes extends BaseCommand {
   @flags.boolean({ description: 'Output as Table' })
   public table: boolean
 
+  @flags.string({ description: 'Specify maximum rendering width. Ignored for JSON Output' })
+  public maxWidth: string
+
   /**
    * Load application
    */
@@ -66,10 +66,10 @@ export default class ListRoutes extends BaseCommand {
    * Returns an array of routes as JSON, filtered according to the
    * flags passed to the command
    */
-  private serializeRouter(router: RouterContract) {
+  private serializeRoutes(router: RouterContract) {
     const routes = router.toJSON()
 
-    return Object.keys(routes).reduce<SerializedRouter>((result, domain) => {
+    return Object.keys(routes).reduce<Record<string, SerializedRoute[]>>((result, domain) => {
       let domainRoutes = routes[domain].map((route) => {
         let handler: string = 'Closure'
 
@@ -88,9 +88,10 @@ export default class ListRoutes extends BaseCommand {
         }
 
         return {
-          methods: route.methods,
+          domain,
           name: route.name || '',
           pattern: route.pattern,
+          methods: route.methods,
           handler: handler,
           middleware: middleware,
         }
@@ -122,7 +123,6 @@ export default class ListRoutes extends BaseCommand {
       }
 
       result[domain] = domainRoutes
-
       return result
     }, {})
   }
@@ -138,30 +138,17 @@ export default class ListRoutes extends BaseCommand {
     }
   }
 
-  /**
-   * Returns the terminal width
-   */
-  private getTerminalWidth() {
-    return process.stdout.columns || 80
-  }
-
   public async run() {
     const Router = this.application.container.use('Adonis/Core/Route')
-    const tableRenderer = new RoutesTableRenderer(this.ui, this.colors)
-    const prettyRenderer = new RoutesPrettyRenderer(
-      this.getTerminalWidth(),
-      this.application,
-      this.colors,
-      this.logger,
-      this.verbose
-    )
+    const tableRenderer = new RoutesTableRenderer(this)
+    const prettyRenderer = new RoutesPrettyRenderer(this, this.verbose, this.maxWidth)
 
     /**
      * Commit routes before we can read them
      */
     Router.commit()
 
-    const serializedRoutes = this.serializeRouter(Router)
+    const serializedRoutes = this.serializeRoutes(Router)
 
     if (this.json) {
       this.log(JSON.stringify(serializedRoutes, null, 2))
