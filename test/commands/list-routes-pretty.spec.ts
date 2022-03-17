@@ -42,7 +42,7 @@ test.group('Command | List Routes Pretty', (group) => {
     listRoutes = new ListRoutes(app, new Kernel(app))
     listRoutes.logger.useRenderer(testingRenderer)
     // @ts-ignore
-    listRoutes.getTerminalWidth = () => 50
+    listRoutes.maxWidth = 50
   })
 
   group.each.teardown(() => {

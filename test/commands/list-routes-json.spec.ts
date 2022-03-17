@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { test } from '@japa/runner'
 import 'reflect-metadata'
+import { test } from '@japa/runner'
 import { Ioc } from '@adonisjs/fold'
 import { Kernel } from '@adonisjs/ace'
 import { testingRenderer } from '@poppinss/cliui'
@@ -52,6 +52,7 @@ test.group('Command | List Routes Json', (group) => {
         {
           root: [
             {
+              domain: 'root',
               methods: ['HEAD', 'GET'],
               name: '',
               pattern: '/about',
@@ -59,6 +60,7 @@ test.group('Command | List Routes Json', (group) => {
               middleware: [],
             },
             {
+              domain: 'root',
               methods: ['HEAD', 'GET'],
               name: '',
               pattern: '/contact',
@@ -92,6 +94,7 @@ test.group('Command | List Routes Json', (group) => {
         {
           root: [
             {
+              domain: 'root',
               methods: ['HEAD', 'GET'],
               name: '',
               pattern: '/about',
@@ -99,6 +102,7 @@ test.group('Command | List Routes Json', (group) => {
               middleware: [],
             },
             {
+              domain: 'root',
               methods: ['HEAD', 'GET'],
               name: '',
               pattern: '/contact',
@@ -135,6 +139,7 @@ test.group('Command | List Routes Json', (group) => {
         {
           root: [
             {
+              domain: 'root',
               methods: ['HEAD', 'GET'],
               pattern: '/about',
               name: '',
@@ -142,6 +147,7 @@ test.group('Command | List Routes Json', (group) => {
               middleware: [],
             },
             {
+              domain: 'root',
               methods: ['HEAD', 'GET'],
               pattern: '/contact',
               name: '',
@@ -178,6 +184,7 @@ test.group('Command | List Routes Json', (group) => {
         {
           root: [
             {
+              domain: 'root',
               methods: ['HEAD', 'GET'],
               pattern: '/about',
               name: '',
@@ -185,6 +192,7 @@ test.group('Command | List Routes Json', (group) => {
               middleware: [],
             },
             {
+              domain: 'root',
               methods: ['HEAD', 'GET'],
               pattern: '/contact',
               name: '',
@@ -218,6 +226,7 @@ test.group('Command | List Routes Json', (group) => {
         {
           'blogger.com': [
             {
+              domain: 'blogger.com',
               methods: ['HEAD', 'GET'],
               pattern: '/about',
               handler: 'Closure',
@@ -255,6 +264,7 @@ test.group('Command | List Routes Json', (group) => {
         {
           'blogger.com': [
             {
+              domain: 'blogger.com',
               methods: ['HEAD', 'GET'],
               pattern: '/v1/about',
               handler: 'Closure',
