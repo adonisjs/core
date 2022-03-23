@@ -53,4 +53,11 @@ test.group('App Provider', (group) => {
     assert.deepEqual(routes.root[0].name, 'drive.local.serve')
     assert.deepEqual(routes.root[0].pattern, '/uploads/*')
   })
+
+  test('extend Japa ApiRequest', async ({ assert }) => {
+    const app = await setupApp(['@japa/preset-adonis/TestsProvider'], true)
+    const ApiRequest = app.container.use('Japa/Preset/ApiRequest')
+    assert.isTrue(ApiRequest.hasMacro('encryptedCookie'))
+    assert.isTrue(ApiRequest.hasMacro('plainCookie'))
+  })
 })
