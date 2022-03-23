@@ -11,7 +11,7 @@ import { BaseCommand } from '@adonisjs/ace'
 import type { SerializedRoute } from './ListRoutes'
 
 export class RoutesPrettyRenderer {
-  constructor(private command: BaseCommand, private verbose: boolean, private maxWidth?: string) {}
+  constructor(private command: BaseCommand, private verbose: boolean, private maxWidth?: number) {}
 
   /**
    * Returns the terminal width

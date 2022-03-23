@@ -52,8 +52,8 @@ export default class ListRoutes extends BaseCommand {
   @flags.boolean({ description: 'Output as Table' })
   public table: boolean
 
-  @flags.string({ description: 'Specify maximum rendering width. Ignored for JSON Output' })
-  public maxWidth: string
+  @flags.number({ description: 'Specify maximum rendering width. Ignored for JSON Output' })
+  public maxWidth: number
 
   /**
    * Load application
