@@ -12,6 +12,7 @@ import { TestUtilsContract } from '@ioc:Adonis/Core/TestUtils'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 import { loadAceCommands } from '../utils'
+import { apiClientConfig } from './ApiClient'
 import { TestHttpServer } from './HttpServer'
 
 /**
@@ -45,5 +46,14 @@ export class TestUtils extends Macroable implements Omit<TestUtilsContract, 'con
    */
   public httpServer() {
     return new TestHttpServer(this.application)
+  }
+
+  /**
+   * Returns config for the api-client plugin
+   */
+  public apiClient() {
+    return {
+      config: () => apiClientConfig(this.application),
+    }
   }
 }

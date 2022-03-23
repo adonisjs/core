@@ -8,6 +8,7 @@
  */
 
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
+import { defineTestsBindings } from '../src/Bindings/Tests'
 
 /**
  * The application provider that sticks all core components
@@ -190,6 +191,18 @@ export default class AppProvider {
   }
 
   /**
+   * Define bindings for japa tests
+   */
+  protected defineTestsBindings() {
+    this.app.container.withBindings(
+      ['Japa/Preset/ApiRequest', 'Adonis/Core/CookieClient'],
+      (ApiRequest, CookieClient) => {
+        defineTestsBindings(ApiRequest, CookieClient)
+      }
+    )
+  }
+
+  /**
    * Registering all required bindings to the container
    */
   public register() {
@@ -208,5 +221,6 @@ export default class AppProvider {
     this.registerStaticAssetsHook()
     this.registerHealthCheckers()
     this.defineReplBindings()
+    this.defineTestsBindings()
   }
 }

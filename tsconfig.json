@@ -3,7 +3,11 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
-  },
-  "files": ["./node_modules/@adonisjs/repl/build/adonis-typings/index.d.ts"]
+    "emitDecoratorMetadata": true,
+    "types": [
+      "@types/node",
+      "@adonisjs/repl",
+      "@japa/preset-adonis/build/adonis-typings/index"
+    ]
+  }
 }
