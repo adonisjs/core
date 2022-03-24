@@ -23,17 +23,6 @@ declare module '@ioc:Adonis/Core/TestUtils' {
     httpServer(): {
       start(serverCallback?: CustomServerCallback): Promise<() => Promise<void>>
     }
-    apiClient(): {
-      config(): {
-        baseUrl: string
-        serializers: {
-          cookie: {
-            prepare(key: string, value: any): string
-            process(key: string, value: any): any
-          }
-        }
-      }
-    }
   }
 
   /**

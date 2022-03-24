@@ -15,8 +15,30 @@ import { CookieClientContract } from '@ioc:Adonis/Core/CookieClient'
  */
 export function defineTestsBindings(
   ApiRequest: ContainerBindings['Japa/Preset/ApiRequest'],
+  ApiClient: ContainerBindings['Japa/Preset/ApiClient'],
   CookieClient: CookieClientContract
 ) {
+  /**
+   * Serializing for parsing response cookies
+   */
+  ApiClient.cookiesSerializer({
+    /**
+     * The methods on the Request class encrypts and signs cookies.
+     * Therefore, the prepare method returns the value as it is
+     */
+    prepare(_: string, value: any) {
+      return value
+    },
+
+    /**
+     * Process the server response and convert cookie value to a
+     * plain string
+     */
+    process(key: string, value: any) {
+      return CookieClient.parse(key, value)
+    },
+  })
+
   /**
    * Define cookie
    */

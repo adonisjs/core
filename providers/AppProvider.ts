@@ -8,7 +8,6 @@
  */
 
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { defineTestsBindings } from '../src/Bindings/Tests'
 
 /**
  * The application provider that sticks all core components
@@ -195,9 +194,10 @@ export default class AppProvider {
    */
   protected defineTestsBindings() {
     this.app.container.withBindings(
-      ['Japa/Preset/ApiRequest', 'Adonis/Core/CookieClient'],
-      (ApiRequest, CookieClient) => {
-        defineTestsBindings(ApiRequest, CookieClient)
+      ['Japa/Preset/ApiRequest', 'Japa/Preset/ApiClient', 'Adonis/Core/CookieClient'],
+      (ApiRequest, ApiClient, CookieClient) => {
+        const { defineTestsBindings } = require('../src/Bindings/Tests')
+        defineTestsBindings(ApiRequest, ApiClient, CookieClient)
       }
     )
   }

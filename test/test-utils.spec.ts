@@ -148,27 +148,4 @@ test.group('Test utils', (group) => {
 
     assert.equal(testUtils['bar'], 'bar')
   })
-
-  test('provide config for the api-client', async ({ assert }) => {
-    await setupApplicationFiles()
-
-    await fs.add(
-      'config/cors.ts',
-      `
-      export const enabled = true
-      export const exposeHeaders = []
-    `
-    )
-
-    const kernel = new Ignitor(fs.basePath).kernel('test')
-    await kernel.boot()
-
-    const testUtils = kernel.application.container.resolveBinding('Adonis/Core/TestUtils')
-    const config = testUtils.apiClient().config()
-    assert.property(config, 'baseUrl')
-    assert.property(config, 'serializers')
-    assert.property(config.serializers, 'cookie')
-    assert.isFunction(config.serializers.cookie.prepare)
-    assert.isFunction(config.serializers.cookie.process)
-  })
 })
