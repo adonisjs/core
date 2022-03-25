@@ -8,8 +8,13 @@
  */
 
 import { BaseCommand } from '@adonisjs/ace'
-import type { SerializedRoute } from './ListRoutes'
+import type { SerializedRoute } from './index'
 
+const ALL_METHODS = ['HEAD', 'OPTIONS', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+
+/**
+ * Renders the routes as a pretty list
+ */
 export class RoutesPrettyRenderer {
   constructor(private command: BaseCommand, private verbose: boolean, private maxWidth?: number) {}
 
@@ -24,37 +29,40 @@ export class RoutesPrettyRenderer {
    * The colors associated with each HTTP method
    */
   private methodColors: Record<string, keyof BaseCommand['colors']> = {
-    ANY: 'red',
-    GET: 'blue',
-    HEAD: 'white',
-    OPTIONS: 'white',
-    POST: 'yellow',
+    GET: 'cyan',
+    POST: 'green',
     PUT: 'yellow',
     PATCH: 'yellow',
     DELETE: 'red',
+    HEAD: 'gray',
   }
 
   /**
    * Render a single route by concatenating and colorizing each part of it
    */
   private outputRoute(
-    methods: string[],
+    route: SerializedRoute,
     spaces: string,
     pattern: string,
     dots: string,
     nameAndHandler: string,
     middlewares: string
   ) {
-    const methodsOutput = methods
-      .map((method) => {
-        const methodColor = this.methodColors[method.toUpperCase()]
-        return this.command.colors[methodColor](method)
-      })
-      .join('|')
+    const methodsOutput = this.hasAllMethods(route)
+      ? this.command.colors.cyan('ANY')
+      : route.methods
+          .map((method) => {
+            const methodColor = this.methodColors[method.toUpperCase()]
+            return methodColor ? this.command.colors[methodColor](method) : method
+          })
+          .join(this.command.colors.gray('|'))
 
-    const patternOutput = pattern.replace(/:([^/]+)/gm, `${this.command.colors.yellow('$&')}`)
-    const nameAndHandlerOutput = this.command.colors.grey(nameAndHandler)
-    const dotsOutput = this.command.colors.grey(dots)
+    const patternOutput = pattern
+      .replace(/:([^/]+)/gm, `${this.command.colors.yellow('$&')}`)
+      .replace(/\*/gm, `${this.command.colors.red('$&')}`)
+
+    const nameAndHandlerOutput = this.command.colors.gray(nameAndHandler)
+    const dotsOutput = this.command.colors.gray(dots)
 
     this.log(methodsOutput + spaces + patternOutput + dotsOutput + nameAndHandlerOutput)
 
@@ -75,6 +83,14 @@ export class RoutesPrettyRenderer {
   }
 
   /**
+   * Returns true when the route methods has all the methods
+   * defined by "Route.any" method.
+   */
+  private hasAllMethods(route: SerializedRoute): boolean {
+    return ALL_METHODS.every((method) => route.methods.includes(method))
+  }
+
+  /**
    * Render the serialized routes to the console
    */
   public render(serializedRoutes: Record<string, SerializedRoute[]>) {
@@ -83,12 +99,17 @@ export class RoutesPrettyRenderer {
       .flat()
 
     const termWidth = this.getTerminalWidth()
-    const maxMethodsLength = Math.max(...routes.map((route) => route.methods.join('|').length)) - 1
+    const maxMethodsLength =
+      Math.max(
+        ...routes.map((route) => {
+          return this.hasAllMethods(route) ? 'ANY'.length : route.methods.join('|').length
+        })
+      ) - 1
 
     routes.forEach((route) => {
-      const methods = route.methods.join('|')
+      const methods = this.hasAllMethods(route) ? 'ANY' : route.methods.join('|')
       const pattern = route.domain !== 'root' ? `${route.domain}${route.pattern}` : route.pattern
-      let nameAndHandler = route.name ? ` ${route.name} ⇒ ${route.handler}` : ` ${route.handler}`
+      let nameAndHandler = route.name ? ` ${route.name} › ${route.handler}` : ` ${route.handler}`
 
       /**
        * Spaces needed to align the start of route patterns
@@ -107,16 +128,16 @@ export class RoutesPrettyRenderer {
       /**
        * How many dots we need to align the handlers
        */
-      const dots = ' ' + '.'.repeat(Math.max(termWidth - totalLength, 0))
+      const dots = ' ' + '─'.repeat(Math.max(termWidth - totalLength, 0))
 
       const middlewares = route.middleware
         .map((middleware) => {
           const startSpace = ' '.repeat(maxMethodsLength + 5)
-          return this.command.colors.grey(`${startSpace}⇂ ${middleware}`)
+          return this.command.colors.gray(`${startSpace}├── ${middleware}`)
         })
         .join('\n')
 
-      this.outputRoute(route.methods, spaces, pattern, dots, nameAndHandler, middlewares)
+      this.outputRoute(route, spaces, pattern, dots, nameAndHandler, middlewares)
     })
   }
 }

@@ -7,19 +7,19 @@
  * file that was distributed with this source code.
  */
 
-import { test } from '@japa/runner'
 import 'reflect-metadata'
+import stripAnsi from 'strip-ansi'
+import { test } from '@japa/runner'
 import { Ioc } from '@adonisjs/fold'
 import { Kernel } from '@adonisjs/ace'
 import { testingRenderer } from '@poppinss/cliui'
 import { Application } from '@adonisjs/application'
-import { Router } from '@adonisjs/http-server/build/src/Router'
-import { PreCompiler } from '@adonisjs/http-server/build/src/Server/PreCompiler/index'
-import stripAnsi from 'strip-ansi'
-
-import ListRoutes from '../../commands/ListRoutes/ListRoutes'
-import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import { RouterContract } from '@ioc:Adonis/Core/Route'
+import { Router } from '@adonisjs/http-server/build/src/Router'
+import { ApplicationContract } from '@ioc:Adonis/Core/Application'
+import { PreCompiler } from '@adonisjs/http-server/build/src/Server/PreCompiler/index'
+
+import ListRoutes from '../../commands/ListRoutes'
 
 const ioc = new Ioc()
 const precompiler = new PreCompiler(ioc, {

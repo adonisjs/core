@@ -16,7 +16,7 @@ import { Application } from '@adonisjs/application'
 import { Router } from '@adonisjs/http-server/build/src/Router'
 import { PreCompiler } from '@adonisjs/http-server/build/src/Server/PreCompiler/index'
 
-import ListRoutes from '../../commands/ListRoutes/ListRoutes'
+import ListRoutes from '../../commands/ListRoutes'
 
 const ioc = new Ioc()
 const precompiler = new PreCompiler(ioc, {
