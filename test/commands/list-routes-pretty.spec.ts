@@ -58,8 +58,8 @@ test.group('Command | List Routes Pretty', (group) => {
 
     const output = testingRenderer.logs.map(({ message }) => stripAnsi(message))
     assert.deepEqual(output, [
-      'HEAD|GET    /about ....................... Closure',
-      'POST        /contact ..................... Closure',
+      'GET|HEAD    /about ─────────────────────── Closure',
+      'POST        /contact ───────────────────── Closure',
     ])
   })
 
@@ -77,10 +77,10 @@ test.group('Command | List Routes Pretty', (group) => {
 
     const output = testingRenderer.logs.map(({ message }) => stripAnsi(message))
     assert.deepEqual(output, [
-      'HEAD|GET    /about ....................... Closure',
-      'POST        /contact ......... TestController.test',
+      'GET|HEAD    /about ─────────────────────── Closure',
+      'POST        /contact ───────── TestController.test',
       'POST        /my-super-long-route-name  AdonisTest…',
-      'POST        /end .. AdonisTestControllerTest.index',
+      'POST        /end ── AdonisTestControllerTest.index',
     ])
   })
 
@@ -99,12 +99,12 @@ test.group('Command | List Routes Pretty', (group) => {
 
     const output = testingRenderer.logs.map(({ message }) => stripAnsi(message))
     assert.deepEqual(output, [
-      'HEAD|GET    /about ....................... Closure',
-      'POST        /contact ......... TestController.test',
-      '            ⇂ throttle:10,1',
+      'GET|HEAD    /about ─────────────────────── Closure',
+      'POST        /contact ───────── TestController.test',
+      '             ├── throttle:10,1',
       'POST        /my-super-long-route-name  AdonisTest…',
-      'POST        /end .. AdonisTestControllerTest.index',
-      '            ⇂ auth',
+      'POST        /end ── AdonisTestControllerTest.index',
+      '             ├── auth',
     ])
   })
 })
