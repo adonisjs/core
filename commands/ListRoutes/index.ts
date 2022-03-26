@@ -38,14 +38,14 @@ export default class ListRoutes extends BaseCommand {
   @flags.boolean({ alias: 'r', name: 'reverse', description: 'Reverse routes display' })
   public reverse: boolean
 
-  @flags.string({ alias: 'm', name: 'method', description: 'Filter routes by method' })
-  public methodFilter: string
+  @flags.array({ alias: 'm', name: 'methods', description: 'Filter routes by method' })
+  public methodsFilter: string[]
 
-  @flags.string({ alias: 'p', name: 'pattern', description: 'Filter routes by the route pattern' })
-  public patternFilter: string
+  @flags.array({ alias: 'p', name: 'patterns', description: 'Filter routes by the route pattern' })
+  public patternsFilter: string[]
 
-  @flags.string({ alias: 'n', name: 'name', description: 'Filter routes by name' })
-  public nameFilter: string
+  @flags.array({ alias: 'n', name: 'names', description: 'Filter routes by route name' })
+  public namesFilter: string[]
 
   @flags.boolean({ description: 'Output as JSON' })
   public json: boolean
@@ -84,21 +84,33 @@ export default class ListRoutes extends BaseCommand {
    * Apply the method filter on the route
    */
   private hasPassedMethodFilter(route: SerializedRoute): boolean {
-    return this.methodFilter ? route.methods.includes(this.methodFilter.toUpperCase()) : true
+    if (!this.methodsFilter || !this.methodsFilter.length) {
+      return true
+    }
+
+    return !!this.methodsFilter.find((filter) => route.methods.includes(filter.toUpperCase()))
   }
 
   /**
    * Apply the pattern filter on the route
    */
   private hasPassedPatternFilter(route: SerializedRoute): boolean {
-    return this.patternFilter ? route.pattern.includes(this.patternFilter) : true
+    if (!this.patternsFilter || !this.patternsFilter.length) {
+      return true
+    }
+
+    return !!this.patternsFilter.find((filter) => route.pattern.includes(filter))
   }
 
   /**
    * Apply the name filter on the route
    */
   private hasPassedNameFilter(route: SerializedRoute): boolean {
-    return this.nameFilter ? route.name.includes(this.nameFilter) : true
+    if (!this.namesFilter || !this.namesFilter.length) {
+      return true
+    }
+
+    return !!this.namesFilter.find((filter) => route.name.includes(filter))
   }
 
   /**

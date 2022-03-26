@@ -335,7 +335,7 @@ test.group('Command | List Routes Json', (group) => {
     const listRoutes = new ListRoutes(app, new Kernel(app))
     listRoutes.logger.useRenderer(testingRenderer)
     listRoutes.json = true
-    listRoutes.methodFilter = 'GET'
+    listRoutes.methodsFilter = ['GET']
     await listRoutes.run()
 
     assert.deepEqual(
@@ -370,7 +370,7 @@ test.group('Command | List Routes Json', (group) => {
     const listRoutes = new ListRoutes(app, new Kernel(app))
     listRoutes.logger.useRenderer(testingRenderer)
     listRoutes.json = true
-    listRoutes.nameFilter = 'contactUs'
+    listRoutes.namesFilter = ['contactUs']
     await listRoutes.run()
 
     assert.deepEqual(
@@ -405,7 +405,7 @@ test.group('Command | List Routes Json', (group) => {
     const listRoutes = new ListRoutes(app, new Kernel(app))
     listRoutes.logger.useRenderer(testingRenderer)
     listRoutes.json = true
-    listRoutes.patternFilter = '/ab'
+    listRoutes.patternsFilter = ['/ab']
     await listRoutes.run()
 
     assert.deepEqual(
@@ -442,9 +442,9 @@ test.group('Command | List Routes Json', (group) => {
     const listRoutes = new ListRoutes(app, new Kernel(app))
     listRoutes.logger.useRenderer(testingRenderer)
     listRoutes.json = true
-    listRoutes.patternFilter = '/ab'
-    listRoutes.methodFilter = 'GET'
-    listRoutes.nameFilter = 'editDetails'
+    listRoutes.patternsFilter = ['/ab']
+    listRoutes.methodsFilter = ['GET']
+    listRoutes.namesFilter = ['editDetails']
     await listRoutes.run()
 
     assert.deepEqual(
