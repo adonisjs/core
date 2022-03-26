@@ -1,6 +1,6 @@
 {
 	"name": "@adonisjs/core",
-	"version": "5.5.3",
+	"version": "5.6.0",
 	"description": "Core of AdonisJS",
 	"exports": {
 		".": {
