@@ -17,7 +17,7 @@
 		"./build/src/Ignitor": "./build/src/Ignitor/index.js",
 		"./build/commands": "./build/commands/index.js",
 		"./build/commands/DumpRc": "./build/commands/DumpRc.js",
-		"./build/commands/ListRoutes": "./build/commands/ListRoutes.js",
+		"./build/commands/ListRoutes/*": "./build/commands/ListRoutes/*.js",
 		"./build/commands/GenerateKey": "./build/commands/GenerateKey.js",
 		"./*": "./*"
 	},
