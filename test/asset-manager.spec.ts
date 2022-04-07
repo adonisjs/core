@@ -16,7 +16,7 @@ import { EncoreDriver } from '../src/AssetsManager/Drivers/Encore'
 
 import { fs } from '../test-helpers'
 
-test.group('AssetsManager', (group) => {
+test.group('AssetsManager | Encore', (group) => {
   group.each.setup(async () => {
     await fs.fsExtra.ensureDir(join(fs.basePath, 'config'))
   })
@@ -182,5 +182,71 @@ test.group('AssetsManager', (group) => {
       () => manager.entryPointScriptTags('app'),
       'Cannot reference entrypoints. The "vite" driver does not support entrypoints'
     )
+  })
+
+  test('return empty string for script tags when using the fake driver', async ({ assert }) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager({ driver: 'fake' }, app)
+
+    await fs.add(
+      'public/assets/entrypoints.json',
+      JSON.stringify({
+        entrypoints: {
+          app: {
+            js: ['./app.js'],
+          },
+        },
+      })
+    )
+
+    assert.equal(manager.entryPointScriptTags('app'), '')
+  })
+
+  test('return empty string for script tag when using the fake driver', async ({ assert }) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager({ driver: 'fake' }, app)
+
+    await fs.add(
+      'public/assets/entrypoints.json',
+      JSON.stringify({
+        entrypoints: {
+          app: {
+            css: ['./app.css'],
+          },
+        },
+      })
+    )
+
+    assert.equal(manager.entryPointStyleTags('app'), '')
+  })
+
+  test('return empty string for the version when using fake driver', async ({ assert }) => {
+    const app = new Application(fs.basePath, 'test', {})
+    await app.setup()
+
+    const manager = new AssetsManager(
+      {
+        driver: 'fake',
+        script: {
+          attributes: {
+            defer: true,
+          },
+        },
+      },
+      app
+    )
+
+    await fs.add(
+      'public/assets/manifest.json',
+      JSON.stringify({
+        app: './app.js',
+      })
+    )
+
+    assert.equal(manager.version, '')
   })
 })

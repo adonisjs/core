@@ -83,6 +83,7 @@ export default async function instructions(
    * Create env.ts file for performing environment variable validations
    */
   const envTsFile = new files.MustacheFile(projectRoot, 'env.ts', ENV_VALIDATIONS_TEMPLATE_STUB)
+  envTsFile.apply({ assetsManager })
   if (envTsFile.exists()) {
     logger.action('create').skipped('env.ts')
   } else {

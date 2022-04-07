@@ -17,6 +17,7 @@ import {
   AssetsManagerContract,
 } from '@ioc:Adonis/Core/AssetsManager'
 
+import { FakeDriver } from './Drivers/Fake'
 import { EncoreDriver } from './Drivers/Encore'
 
 /**
@@ -29,6 +30,7 @@ import { EncoreDriver } from './Drivers/Encore'
 export class AssetsManager implements AssetsManagerContract {
   private drivers: Record<string, ExtendCallback> = {
     encore: () => new EncoreDriver(this.application),
+    fake: () => new FakeDriver(this.application),
   }
 
   /**
