@@ -194,6 +194,14 @@ export abstract class HttpExceptionHandler {
     }
 
     /**
+     * Send stack in the response when in test environment and
+     * there is a fatal error.
+     */
+    if (error.status >= 500 && error.stack && process.env.NODE_ENV === 'test') {
+      return ctx.response.status(error.status).send(error.stack)
+    }
+
+    /**
      * Attempt to find the best error reporter for validation
      */
     switch (ctx.request.accepts(['html', 'application/vnd.api+json', 'json'])) {
