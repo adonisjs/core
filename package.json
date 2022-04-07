@@ -69,7 +69,7 @@
 		"@adonisjs/require-ts": "^2.0.11",
 		"@adonisjs/sink": "^5.2.2",
 		"@japa/assert": "^1.3.3",
-		"@japa/preset-adonis": "^1.0.11",
+		"@japa/preset-adonis": "^1.0.12",
 		"@japa/run-failed-tests": "^1.0.7",
 		"@japa/runner": "^2.0.6",
 		"@japa/spec-reporter": "^1.1.12",
