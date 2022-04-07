@@ -121,7 +121,7 @@
 		"@adonisjs/ace": "^11.2.2",
 		"@adonisjs/application": "^5.2.1",
 		"@adonisjs/bodyparser": "^8.1.2",
-		"@adonisjs/drive": "^2.0.11",
+		"@adonisjs/drive": "^2.1.0",
 		"@adonisjs/encryption": "^4.0.8",
 		"@adonisjs/events": "^7.2.0",
 		"@adonisjs/hash": "^7.0.11",
