@@ -175,7 +175,9 @@ export abstract class HttpExceptionHandler {
      *    to raise with 200
      */
     if (!error.status || error.status >= 500) {
-      ctx.logger.error({ err: error, ...this.context(ctx) }, error.message)
+      if (process.env.NODE_ENV !== 'test') {
+        ctx.logger.error({ err: error, ...this.context(ctx) }, error.message)
+      }
     } else if (error.status >= 400) {
       ctx.logger.warn(this.context(ctx), error.message)
     } else {
