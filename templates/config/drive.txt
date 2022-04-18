@@ -140,7 +140,7 @@ const driveConfig: DriveConfig = {
       | console.
       |
       */
-    //   usingUniformAcl: false
+    //   usingUniformAcl: false,
     // },
   },
 }
