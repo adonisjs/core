@@ -61,6 +61,7 @@ export default class ListRoutes extends BaseCommand {
    */
   public static settings = {
     loadApp: true,
+    stayAlive: true,
   }
 
   /**
@@ -175,5 +176,7 @@ export default class ListRoutes extends BaseCommand {
     } else {
       new RoutesPrettyRenderer(this).render()
     }
+    
+    await this.application.shutdown()
   }
 }
