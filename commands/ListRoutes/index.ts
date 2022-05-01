@@ -176,7 +176,7 @@ export default class ListRoutes extends BaseCommand {
     } else {
       new RoutesPrettyRenderer(this).render()
     }
-    
+
     await this.application.shutdown()
   }
 }
