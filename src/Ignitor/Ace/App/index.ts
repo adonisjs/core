@@ -139,7 +139,7 @@ export class App {
      * If a sub-command needs application, then the main command
      * should set "loadApp" to true as well.
      */
-    if (command.commandName === this.commandName) {
+    if (command.commandName === this.commandName || command.aliases.includes(this.commandName)) {
       /**
        * Switch environment before wiring the app
        */
