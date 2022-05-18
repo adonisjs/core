@@ -126,7 +126,7 @@
 		"@adonisjs/drive": "^2.2.0",
 		"@adonisjs/encryption": "^4.0.8",
 		"@adonisjs/events": "^7.2.1",
-		"@adonisjs/hash": "^7.1.0",
+		"@adonisjs/hash": "^7.1.1",
 		"@adonisjs/http-server": "^5.9.0",
 		"@adonisjs/validator": "^12.3.2",
 		"@poppinss/cliui": "^3.0.2",
