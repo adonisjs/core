@@ -30,6 +30,8 @@
 		"build/providers",
 		"build/src",
 		"build/instructions.js",
+		"build/config.js",
+		"build/config.d.ts",
 		"build/standalone.js",
 		"build/standalone.d.ts"
 	],
