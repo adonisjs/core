@@ -6,7 +6,7 @@
  */
 
 import Env from '@ioc:Adonis/Core/Env'
-import { HashConfig } from '@ioc:Adonis/Core/Hash'
+import { hashConfig } from '@adonisjs/core/config'
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +17,7 @@ import { HashConfig } from '@ioc:Adonis/Core/Hash'
 | defined inside `contracts` directory.
 |
 */
-const hashConfig: HashConfig = {
+export default hashConfig({
   /*
   |--------------------------------------------------------------------------
   | Default hasher
@@ -70,6 +70,4 @@ const hashConfig: HashConfig = {
       rounds: 10,
     },
   },
-}
-
-export default hashConfig
+})
