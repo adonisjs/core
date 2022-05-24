@@ -68,6 +68,8 @@
 	"homepage": "https://github.com/adonisjs/core#readme",
 	"devDependencies": {
 		"@adonisjs/assembler": "^5.6.2",
+		"@adonisjs/fold": "^8.1.10",
+		"@adonisjs/logger": "^4.1.4",
 		"@adonisjs/mrm-preset": "^5.0.3",
 		"@adonisjs/repl": "^3.1.10",
 		"@adonisjs/require-ts": "^2.0.11",
