@@ -5,73 +5,9 @@
 <br />
 <hr>
 
-<div align="center">
-  <h3>
-    <a href="https://www.patreon.com/adonisframework">
-      Business Sponsors
-    </a>
-  </h3>
-
-  <a href="https://cleavr.io/adonis/?utm_source=adonisjs" title="Cleaver">
-    <img src="assets/cleavr.png" width="100px">
-  </a>
-
-  <a href="https://ably.com/?utm_source=adonisjs" title="Build realtime features you can trust to deliver at scale">
-    <img src="assets/ably.jpeg" width="100px">
-  </a>
-
-  <a href="https://fossunited.org/?utm_source=adonisjs">
-    <img src="assets/foss.png" width="100px">
-  </a>
-
-</div>
-
-<br />
-<hr>
-
-<div align="center">
-  <h3>
-    <a href="https://www.patreon.com/adonisframework">
-      Patreon Supporters
-    </a>
-  </h3>
-
-  <a title="Bastien Crettenand">
-  	<img src="assets/bastien-crettenand.png" width="100px">
-  </a>
-
-  <a href="https://github.com/olaoluwa-98" title="Emmanuel Awotunde">
-    <img src="assets/emmanuel.png" width="100px">
-  </a>
-
-  <a href="https://mcsneaky.ap3k.pro/?utm_source=adonisjs" title="McSneaky">
-  	<img src="assets/mc-sneaky.png" width="100px">
-  </a>
-
-  <a href="https://appmasters.io?utm_source=adonisjs" title="Expert in software development for small and medium sized companies">
-  	<img src="assets/appmasters.jpg" width="100px">
-  </a>
-
-  <a href="http://repzo.com?utm_source=adonisjs" title="Smartest CRM / SFA for your field teams powered by Blockchain">
-  	<img src="assets/repzo.jpeg" width="100px">
-  </a>
-
-  <a href="https://doconchain.com/?utm_source=adonisjs.com" title="Boost your business today with doconchain.com">
-    <img src="assets/doconchain.jpeg" width="100px">
-  </a>
-
-  <a href="https://bitkidd.dev/?utm_source=adonisjs.com" title="Chirill Ceban">
-    <img src="assets/bitkidd.jpeg" width="100px">
-  </a>
-
-  <a href="https://github.com/usagar80/?utm_source=adonisjs.com" title="Sagar Upadhyay">
-    <img src="assets/usagar80.jpeg" width="100px">
-  </a>
-</div>
+![](./sponsorkit/sponsors.png)
 
 <hr>
-
-
 <br />
 
 <div align="center">
