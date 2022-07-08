@@ -5,7 +5,7 @@
 <br />
 <hr>
 
-![](./sponsorkit/sponsors.png)
+![](https://cdn.jsdelivr.net/gh/thetutlage/static/sponsorkit/sponsors.png)
 
 <hr>
 <br />
