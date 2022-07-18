@@ -8,6 +8,7 @@
  */
 
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
+import { setApp } from '../services/base'
 
 /**
  * The application provider that sticks all core components
@@ -206,6 +207,7 @@ export default class AppProvider {
    * Registering all required bindings to the container
    */
   public register() {
+    setApp(this.app)
     this.registerHttpExceptionHandler()
     this.registerHealthCheck()
     this.registerAssetsManager()

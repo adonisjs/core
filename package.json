@@ -28,6 +28,7 @@
 		"build/commands",
 		"build/templates",
 		"build/providers",
+    "build/services",
 		"build/src",
 		"build/instructions.js",
 		"build/config.js",
