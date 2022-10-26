@@ -138,4 +138,34 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
 
     return entrypoints.filter((entrypoint: string) => entrypoint.endsWith('.css'))
   }
+
+  /**
+   * Returns the script needed for the HMR working with React
+   */
+  public getReactHmrScript(): string {
+    if (!this.application.inDev) {
+      return ''
+    }
+
+    return `
+    <script type="module">
+      import RefreshRuntime from '${this.getDevServerUrl()}/@react-refresh'
+      RefreshRuntime.injectIntoGlobalHook(window)
+      window.$RefreshReg$ = () => {}
+      window.$RefreshSig$ = () => (type) => type
+      window.__vite_plugin_react_preamble_installed__ = true
+    </script>
+    `
+  }
+
+  /**
+   * Returns the script needed for the HMR working with Vite
+   */
+  public getViteHmrScript(): string {
+    if (!this.application.inDev) {
+      return ''
+    }
+
+    return `<script type="module" src="${this.getDevServerUrl()}/@vite/client"></script>`
+  }
 }
