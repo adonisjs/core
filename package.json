@@ -17,6 +17,7 @@
 		"./build/standalone": "./build/standalone.js",
 		"./build/config": "./build/config.js",
 		"./build/src/Ignitor": "./build/src/Ignitor/index.js",
+    "./build/src/HttpExceptionHandler": "./build/src/HttpExceptionHandler/index.js",
 		"./build/commands": "./build/commands/index.js",
 		"./build/commands/DumpRc": "./build/commands/DumpRc.js",
 		"./build/commands/ListRoutes/*": "./build/commands/ListRoutes/*.js",
