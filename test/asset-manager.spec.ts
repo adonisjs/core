@@ -98,7 +98,7 @@ test.group('AssetsManager | Encore', (group) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
-    const manager = new AssetsManager({ driver: 'vite' }, app)
+    const manager = new AssetsManager({ driver: 'turbopack' }, app)
 
     await fs.add(
       'public/assets/entrypoints.json',
@@ -113,7 +113,7 @@ test.group('AssetsManager | Encore', (group) => {
 
     assert.throws(
       () => manager.entryPointStyleTags('app'),
-      'Invalid asset driver "vite". Make sure to register the driver using the "AssetsManager.extend" method'
+      'Invalid asset driver "turbopack". Make sure to register the driver using the "AssetsManager.extend" method'
     )
   })
 

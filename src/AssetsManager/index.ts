@@ -19,6 +19,7 @@ import {
 
 import { FakeDriver } from './Drivers/Fake'
 import { EncoreDriver } from './Drivers/Encore'
+import { ViteDriver } from './Drivers/Vite'
 
 /**
  * Assets manager exposes the API to make link and HTML fragments
@@ -29,9 +30,15 @@ import { EncoreDriver } from './Drivers/Encore'
  */
 export class AssetsManager implements AssetsManagerContract {
   private drivers: Record<string, ExtendCallback> = {
+    vite: () => new ViteDriver(this.application),
     encore: () => new EncoreDriver(this.application),
     fake: () => new FakeDriver(this.application),
   }
+
+  /**
+   * Attributes to apply to the script tag
+   */
+  public scriptAttributes: Record<string, any> = {}
 
   /**
    * Configured driver
@@ -171,10 +178,16 @@ export class AssetsManager implements AssetsManagerContract {
    */
   public entryPointScriptTags(name: string): string {
     const scripts = this.entryPointJsFiles(name)
-    const scriptAttributes = this.config.script ? this.config.script.attributes || {} : {}
+    const configDefinedAttributes = this.config.script?.attributes || {}
+    const driverDefinedAttributes = this.driver.scriptAttributes || {}
+
+    const mergedAttributes = {
+      ...configDefinedAttributes,
+      ...driverDefinedAttributes,
+    }
 
     return scripts
-      .map((url) => `<script src="${url}"${stringifyAttributes(scriptAttributes)}></script>`)
+      .map((url) => `<script src="${url}"${stringifyAttributes(mergedAttributes)}></script>`)
       .join('\n')
   }
 
@@ -184,7 +197,7 @@ export class AssetsManager implements AssetsManagerContract {
    */
   public entryPointStyleTags(name: string): string {
     const links = this.entryPointCssFiles(name)
-    const styleAttributes = this.config.style ? this.config.style.attributes || {} : {}
+    const styleAttributes = this.config.style?.attributes || {}
 
     return links
       .map(

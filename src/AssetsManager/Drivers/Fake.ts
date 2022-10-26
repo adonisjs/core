@@ -21,6 +21,7 @@ export class FakeDriver implements AssetsDriverContract {
   public name = 'fake'
   public hasEntrypoints = true
   public publicPath = this.application.publicPath('assets')
+  public scriptAttributes: Record<string, any> = {}
   public get version() {
     return ''
   }
