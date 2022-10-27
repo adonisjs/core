@@ -28,11 +28,9 @@ import { BaseDriver } from './Base'
  *    "url": "url"
  *    "entrypoints": {
  *      "entryPointName": {
- *         "file": [
- *           "path",
- *           "path",
- *         ]
- *       }
+ *         "js": ["url", "url"],
+ *         "css": ["url", "url"],
+ *      }
  *    }
  *  }
  * ```
@@ -61,9 +59,9 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
   }
 
   /**
-   * Get the dev server url from the entrypoints.json file
+   * Get the assets url from the entrypoints.json file
    */
-  private getDevServerUrl() {
+  private getAssetUrl() {
     return this.readFileAsJSON(join(this.publicPath, 'entrypoints.json')).url
   }
 
@@ -72,7 +70,7 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
    */
   public assetPath(filename: string): string {
     if (!this.shouldUseManifest()) {
-      return `${this.getDevServerUrl()}/${filename}`
+      return `${this.getAssetUrl()}/${filename}`
     }
 
     const manifest = this.manifest()
@@ -80,7 +78,7 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
       throw new Error(`Cannot find "${filename}" asset in the manifest file`)
     }
 
-    return manifest[filename].file
+    return `${this.getAssetUrl()}/${manifest[filename].file}`
   }
 
   /**
@@ -109,8 +107,7 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
       )
     }
 
-    const jsExtensions = ['.js', '.mjs', '.ts', '.tsx', '.jsx']
-    return entrypoints[name].files.filter((file) => jsExtensions.some((ext) => file.endsWith(ext)))
+    return entrypoints[name].js
   }
 
   /**
@@ -125,8 +122,7 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
       )
     }
 
-    const cssExtensions = ['.css', '.scss', '.sass', '.less', '.styl', '.pcss', '.postcss']
-    return entrypoints[name].files.filter((file) => cssExtensions.some((ext) => file.endsWith(ext)))
+    return entrypoints[name].css
   }
 
   /**
@@ -139,7 +135,7 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
 
     return `
     <script type="module">
-      import RefreshRuntime from '${this.getDevServerUrl()}/@react-refresh'
+      import RefreshRuntime from '${this.getAssetUrl()}/@react-refresh'
       RefreshRuntime.injectIntoGlobalHook(window)
       window.$RefreshReg$ = () => {}
       window.$RefreshSig$ = () => (type) => type
@@ -156,6 +152,6 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
       return ''
     }
 
-    return `<script type="module" src="${this.getDevServerUrl()}/@vite/client"></script>`
+    return `<script type="module" src="${this.getAssetUrl()}/@vite/client"></script>`
   }
 }
