@@ -27,8 +27,12 @@ import { BaseDriver } from './Base'
  *  {
  *    "url": "url"
  *    "entrypoints": {
- *      "__entrypoint_name_idx__": "path",
- *      "__entrypoint_name_idx__": "path"
+ *      "entryPointName": {
+ *         "file": [
+ *           "path",
+ *           "path",
+ *         ]
+ *       }
  *    }
  *  }
  * ```
@@ -61,22 +65,6 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
    */
   private getDevServerUrl() {
     return this.readFileAsJSON(join(this.publicPath, 'entrypoints.json')).url
-  }
-
-  /**
-   * Get all the files for a given entry point
-   *
-   * Vite doesn't have a concept of multiples files for a given entrypoint.
-   * That's why the entries are formatted like this. Read vite plugin
-   * documentation for more details.
-   */
-  private getEntryPointGroup(name: string) {
-    const entrypoints = this.entryPoints()
-
-    const regex = new RegExp(`^__entrypoint_${name}_\\d+__$`)
-    const entrypointKeys = Object.keys(entrypoints).filter((key) => regex.test(key))
-
-    return entrypointKeys.map((key) => entrypoints[key])
   }
 
   /**
@@ -113,30 +101,32 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
    * Returns list for all the javascript files for a given entry point
    */
   public entryPointJsFiles(name: string): string[] {
-    const entrypoints = this.getEntryPointGroup(name)
+    const entrypoints = this.entryPoints()
 
-    if (!entrypoints) {
+    if (!entrypoints[name]) {
       throw new Error(
         `Cannot find assets for "${name}" entrypoint. Make sure to define it inside the "entryPoints" vite config`
       )
     }
 
-    return entrypoints.filter((file) => file.endsWith('.js') || file.endsWith('.ts'))
+    const jsExtensions = ['.js', '.mjs', '.ts', '.tsx', '.jsx']
+    return entrypoints[name].files.filter((file) => jsExtensions.some((ext) => file.endsWith(ext)))
   }
 
   /**
    * Returns list for all the css files for a given entry point
    */
   public entryPointCssFiles(name: string): string[] {
-    const entrypoints = this.getEntryPointGroup(name)
+    const entrypoints = this.entryPoints()
 
-    if (!entrypoints) {
+    if (!entrypoints[name]) {
       throw new Error(
         `Cannot find assets for "${name}" entrypoint. Make sure to define it inside the "entryPoints" vite config`
       )
     }
 
-    return entrypoints.filter((entrypoint: string) => entrypoint.endsWith('.css'))
+    const cssExtensions = ['.css', '.scss', '.sass', '.less', '.styl', '.pcss', '.postcss']
+    return entrypoints[name].files.filter((file) => cssExtensions.some((ext) => file.endsWith(ext)))
   }
 
   /**
