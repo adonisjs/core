@@ -137,7 +137,6 @@
 		"@poppinss/cliui": "^3.0.4",
 		"@poppinss/manager": "^5.0.2",
 		"@poppinss/utils": "^5.0.0",
-		"defu": "^6.1.0",
 		"fs-extra": "^10.1.0",
 		"macroable": "^7.0.2",
 		"memfs": "^3.4.7",
