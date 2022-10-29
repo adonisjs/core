@@ -89,7 +89,7 @@ export class ViteDriver extends BaseDriver implements AssetsDriverContract {
    */
   public override manifest() {
     if (!this.shouldUseManifest()) {
-      throw new Error('Cannot use manifest in development')
+      throw new Error('Cannot use manifest when not in production')
     }
 
     return super.manifest()

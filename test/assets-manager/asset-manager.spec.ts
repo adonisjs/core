@@ -11,10 +11,10 @@ import { test } from '@japa/runner'
 import { join } from 'path'
 import { Application } from '@adonisjs/application'
 
-import { AssetsManager } from '../src/AssetsManager'
-import { EncoreDriver } from '../src/AssetsManager/Drivers/Encore'
+import { AssetsManager } from '../../src/AssetsManager'
+import { EncoreDriver } from '../../src/AssetsManager/Drivers/Encore'
 
-import { fs } from '../test-helpers'
+import { fs } from '../../test-helpers'
 
 test.group('AssetsManager | Encore', (group) => {
   group.each.setup(async () => {
