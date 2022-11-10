@@ -35,7 +35,12 @@ export default hashConfig({
     | scrypt
     |--------------------------------------------------------------------------
     |
-    | scrypt mappings uses the Node.js `crypto.scrypt` method to hash values.
+    | Scrypt mapping uses the Node.js inbuilt crypto module for creating
+    | hashes.
+    |
+    | We are using the default configuration recommended within the Node.js
+    | documentation.
+    | https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback
     |
     */
     scrypt: {
