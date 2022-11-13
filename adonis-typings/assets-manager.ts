@@ -45,6 +45,11 @@ declare module '@ioc:Adonis/Core/AssetsManager' {
     hasEntrypoints: boolean
 
     /**
+     * Attributes to apply to the script tag
+     */
+    scriptAttributes: Record<string, any>
+
+    /**
      * The current version of assets.
      */
     version?: string

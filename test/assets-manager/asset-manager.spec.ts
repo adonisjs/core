@@ -11,10 +11,10 @@ import { test } from '@japa/runner'
 import { join } from 'path'
 import { Application } from '@adonisjs/application'
 
-import { AssetsManager } from '../src/AssetsManager'
-import { EncoreDriver } from '../src/AssetsManager/Drivers/Encore'
+import { AssetsManager } from '../../src/AssetsManager'
+import { EncoreDriver } from '../../src/AssetsManager/Drivers/Encore'
 
-import { fs } from '../test-helpers'
+import { fs } from '../../test-helpers'
 
 test.group('AssetsManager | Encore', (group) => {
   group.each.setup(async () => {
@@ -98,7 +98,7 @@ test.group('AssetsManager | Encore', (group) => {
     const app = new Application(fs.basePath, 'test', {})
     await app.setup()
 
-    const manager = new AssetsManager({ driver: 'vite' }, app)
+    const manager = new AssetsManager({ driver: 'turbopack' }, app)
 
     await fs.add(
       'public/assets/entrypoints.json',
@@ -113,7 +113,7 @@ test.group('AssetsManager | Encore', (group) => {
 
     assert.throws(
       () => manager.entryPointStyleTags('app'),
-      'Invalid asset driver "vite". Make sure to register the driver using the "AssetsManager.extend" method'
+      'Invalid asset driver "turbopack". Make sure to register the driver using the "AssetsManager.extend" method'
     )
   })
 

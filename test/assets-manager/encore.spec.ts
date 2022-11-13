@@ -10,9 +10,9 @@
 import { test } from '@japa/runner'
 import { join } from 'path'
 import { Application } from '@adonisjs/application'
-import { EncoreDriver } from '../src/AssetsManager/Drivers/Encore'
+import { EncoreDriver } from '../../src/AssetsManager/Drivers/Encore'
 
-import { fs } from '../test-helpers'
+import { fs } from '../../test-helpers'
 
 test.group('Encore Driver', (group) => {
   group.each.setup(async () => {
