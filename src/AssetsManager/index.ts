@@ -38,7 +38,9 @@ export class AssetsManager implements AssetsManagerContract {
   /**
    * Attributes to apply to the script tag
    */
-  public scriptAttributes: Record<string, any> = {}
+  public get scriptAttributes(): Record<string, any> {
+    return this.driver.scriptAttributes
+  }
 
   /**
    * Configured driver
