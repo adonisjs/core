@@ -20,7 +20,6 @@ import {
 import { FakeDriver } from './Drivers/Fake'
 import { EncoreDriver } from './Drivers/Encore'
 import { ViteDriver } from './Drivers/Vite'
-import Env from '@ioc:Adonis/Core/Env'
 
 /**
  * Assets manager exposes the API to make link and HTML fragments
@@ -100,7 +99,7 @@ export class AssetsManager implements AssetsManagerContract {
      * Checks for using 'fake' driver
      */
     // TODO: Must be removed in v6
-    if (Env.get('ASSETS_DRIVER') === 'fake') {
+    if (this.application.env.get('ASSETS_DRIVER') === 'fake') {
       driver = 'fake'
 
       this.application.logger.warn(
@@ -108,7 +107,7 @@ export class AssetsManager implements AssetsManagerContract {
       )
     }
 
-    if (Env.get('NO_ASSETS_DRIVER') === 'true') {
+    if (this.application.env.get('NO_ASSETS_DRIVER') === 'true') {
       driver = 'fake'
     }
 
