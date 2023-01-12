@@ -10,13 +10,13 @@
 import app from './app.js'
 import type { ApplicationService } from '../src/types.js'
 
-let config: ApplicationService['config']
+let logger: ApplicationService['logger']
 
 /**
- * The config service uses the config instance from the app service
+ * Returns a reference of logger from the app service
  */
-await app.booted(() => {
-  config = app.config
+await app.booted(async () => {
+  logger = app.logger
 })
 
-export { config as default }
+export { logger as default }

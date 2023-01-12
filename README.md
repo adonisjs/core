@@ -44,15 +44,11 @@
 </div>
 
 [gh-workflow-image]: https://img.shields.io/github/workflow/status/adonisjs/core/test?style=for-the-badge
-[gh-workflow-url]: https://github.com/adonisjs/core/actions/workflows/test.yml "Github action"
-
+[gh-workflow-url]: https://github.com/adonisjs/core/actions/workflows/test.yml 'Github action'
 [npm-image]: https://img.shields.io/npm/v/@adonisjs/core/latest.svg?style=for-the-badge&logo=npm
-[npm-url]: https://www.npmjs.com/package/@adonisjs/core/v/latest "npm"
-
+[npm-url]: https://www.npmjs.com/package/@adonisjs/core/v/latest 'npm'
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
-
 [license-url]: LICENSE.md
 [license-image]: https://img.shields.io/github/license/adonisjs/adonis-framework?style=for-the-badge
-
 [snyk-image]: https://img.shields.io/snyk/vulnerabilities/github/adonisjs/core?label=Snyk%20Vulnerabilities&style=for-the-badge
-[snyk-url]: https://snyk.io/test/github/adonisjs/core?targetFile=package.json "snyk"
+[snyk-url]: https://snyk.io/test/github/adonisjs/core?targetFile=package.json 'snyk'
