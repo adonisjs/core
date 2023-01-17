@@ -11,7 +11,7 @@ import type { Server as NodeHttpsServer } from 'node:https'
 import { IncomingMessage, ServerResponse, Server as NodeHttpServer, createServer } from 'node:http'
 
 import debug from '../debug.js'
-import type { ApplicationService } from '../types.js'
+import type { ApplicationService, EmitterService, LoggerService } from '../types.js'
 
 /**
  * The HTTP server process is used to start the application in the
@@ -36,7 +36,7 @@ export class HttpServerProcess {
    * Monitors the app and the server to close the HTTP server when
    * either one of them goes down
    */
-  #monitorAppAndServer() {
+  #monitorAppAndServer(logger: LoggerService) {
     if (!this.#nodeHttpServer) {
       return
     }
@@ -55,7 +55,7 @@ export class HttpServerProcess {
      */
     this.#nodeHttpServer.on('error', (error: NodeJS.ErrnoException) => {
       debug('http server crashed with error "%O"', error)
-      this.#application.logger.fatal({ err: error }, error.message)
+      logger.fatal({ err: error }, error.message)
       this.#application.terminate()
     })
   }
@@ -63,7 +63,7 @@ export class HttpServerProcess {
   /**
    * Starts the http server a given host and port
    */
-  #listen(): Promise<void> {
+  #listen(logger: LoggerService, emitter: EmitterService): Promise<void> {
     return new Promise((resolve) => {
       if (!this.#nodeHttpServer) {
         return resolve()
@@ -73,8 +73,21 @@ export class HttpServerProcess {
       const port = Number(process.env.PORT || '3333')
 
       this.#nodeHttpServer.listen(port, host, () => {
-        this.#application.logger.info('started HTTP server on %s:%s', host, port)
-        this.#application.notify({ port: port, host: host })
+        /**
+         * Visual notification
+         */
+        logger.info('started HTTP server on %s:%s', host, port)
+
+        /**
+         * Notify parent process
+         */
+        this.#application.notify({ isAdonisJS: true, port: port, host: host })
+
+        /**
+         * Notify app
+         */
+        emitter.emit('http:server_ready', { port: port, host: host })
+
         resolve()
       })
     })
@@ -108,13 +121,16 @@ export class HttpServerProcess {
      */
     await this.#application.start(async () => {
       const server = await this.#application.container.make('server')
+      const logger = await this.#application.container.make('logger')
+      const emitter = await this.#application.container.make('emitter')
+
       await server.boot()
 
       this.#nodeHttpServer = createHTTPServer(server.handle.bind(server))
       server.setNodeServer(this.#nodeHttpServer)
 
-      await this.#listen()
-      this.#monitorAppAndServer()
+      await this.#listen(logger, emitter)
+      this.#monitorAppAndServer(logger)
     })
   }
 
@@ -127,7 +143,7 @@ export class HttpServerProcess {
         return resolve()
       }
 
-      this.#application.logger.info('closing HTTP server')
+      debug('close http server process')
       this.#nodeHttpServer.close(() => resolve())
     })
   }

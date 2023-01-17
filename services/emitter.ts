@@ -10,15 +10,16 @@
 import app from './app.js'
 import { Emitter } from '../modules/events.js'
 import type { EmitterService } from '../src/types.js'
+import { AbstractConstructor } from '@adonisjs/fold/types'
 
-let events: EmitterService
+let emitter: EmitterService
 
 /**
  * Returns a singleton instance of the emitter class
  * from the container
  */
 await app.booted(async () => {
-  events = await app.container.make(Emitter)
+  emitter = await app.container.make<AbstractConstructor<EmitterService>>(Emitter)
 })
 
-export { events as default }
+export { emitter as default }

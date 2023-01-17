@@ -8,8 +8,8 @@
  */
 
 import app from './app.js'
-import { HashManager } from '../modules/hash.js'
 import type { HashService } from '../src/types.js'
+import { HashManager } from '../modules/hash/main.js'
 
 let hash: HashService
 

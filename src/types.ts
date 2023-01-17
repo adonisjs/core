@@ -9,11 +9,29 @@
 
 import type { Emitter } from '../modules/events.js'
 import type { Application } from '../modules/app.js'
-import type { HashManager } from '../modules/hash.js'
 import type { Router, Server } from '../modules/http.js'
+import type { LoggerManager } from '../modules/logger.js'
 import type { Encryption } from '../modules/encryption.js'
+import type { HttpRequestFinishedPayload } from '../types/http.js'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.js'
-import type { HashManagerConfig, ManagerDriversConfig } from '../types/hash.js'
+import type { Argon, Bcrypt, HashManager, Scrypt } from '../modules/hash/main.js'
+import type {
+  ArgonConfig,
+  BcryptConfig,
+  ScryptConfig,
+  ManagerDriverFactory,
+} from '../types/hash.js'
+import type hashDriversCollection from '../modules/hash/drivers_collection.js'
+
+/**
+ * A list of known events. The interface must be extended in
+ * user land code or packages to register events and their
+ * types.
+ */
+export interface EventsList {
+  'http:request_handled': HttpRequestFinishedPayload
+  'http:server_ready': { port: number; host: string }
+}
 
 /**
  * The loggers list inferred from the user application
@@ -23,17 +41,19 @@ export interface LoggersList {}
 export type InferLoggers<T extends LoggerManagerConfig<any>> = T['loggers']
 
 /**
- * A list of known events. The interface must be extended in
- * user land code or packages to register events and their
- * types.
+ * A list of globally available hash drivers
  */
-export interface EventsList {}
+export interface HashDriversList {
+  bcrypt: (config: BcryptConfig) => Bcrypt
+  argon: (config: ArgonConfig) => Argon
+  scrypt: (config: ScryptConfig) => Scrypt
+}
 
 /**
  * A list of known hashers inferred from the user config
  */
 export interface HashersList {}
-export type InferHashers<T extends HashManagerConfig<any>> = T['list']
+export type InferHashers<T extends { list: Record<string, ManagerDriverFactory> }> = T['list']
 
 /**
  * ----------------------------------------------------------------
@@ -50,10 +70,14 @@ export type InferHashers<T extends HashManagerConfig<any>> = T['list']
  * the container
  */
 export interface ApplicationService
-  extends Application<
-    ContainerBindings extends Record<any, any> ? ContainerBindings : never,
-    LoggersList extends Record<string, LoggerConfig> ? LoggersList : never
-  > {}
+  extends Application<ContainerBindings extends Record<any, any> ? ContainerBindings : never> {}
+
+/**
+ * Logger service is a singleton logger instance registered
+ * to the container.
+ */
+export interface LoggerService
+  extends LoggerManager<LoggersList extends Record<string, LoggerConfig> ? LoggersList : never> {}
 
 /**
  * Emitter service is a singleton emitter instance registered
@@ -83,7 +107,7 @@ export interface HttpRouterService extends Router {}
  */
 export interface HashService
   extends HashManager<
-    HashersList extends Record<string, ManagerDriversConfig> ? HashersList : never
+    HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
   > {}
 
 /**
@@ -91,11 +115,12 @@ export interface HashService
  */
 export interface ContainerBindings {
   app: ApplicationService
-  logger: ApplicationService['logger']
+  logger: LoggerService
   config: ApplicationService['config']
   emitter: EmitterService
   encryption: EncryptionService
   hash: HashService
+  hashDrivers: typeof hashDriversCollection
   server: HttpServerService
   router: HttpRouterService
 }

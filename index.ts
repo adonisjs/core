@@ -9,6 +9,7 @@
 
 export { inject } from './modules/container.js'
 export { Ignitor } from './src/ignitor/main.js'
+import { errors as appErrors } from '@adonisjs/application'
 import { errors as encryptionErrors } from '@adonisjs/encryption'
 import { errors as httpServerErrors } from '@adonisjs/http-server'
 
@@ -19,4 +20,5 @@ import { errors as httpServerErrors } from '@adonisjs/http-server'
 export const errors = {
   ...encryptionErrors,
   ...httpServerErrors,
+  ...appErrors,
 }

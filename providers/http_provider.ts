@@ -25,7 +25,9 @@ export default class HttpServiceProvider {
     this.app.container.singleton(Server, async (resolver) => {
       const encryption = await resolver.make('encryption')
       const emitter = await resolver.make('emitter')
-      return new Server(this.app, encryption, emitter, this.app.config.get('http', {}))
+      const logger = await resolver.make('logger')
+      const config = this.app.config.get<any>('app.http')
+      return new Server(this.app, encryption, emitter, logger, config)
     })
 
     this.app.container.alias('server', Server)
@@ -48,10 +50,14 @@ export default class HttpServiceProvider {
    */
   protected registerBodyParserMiddleware() {
     this.app.container.bind(BodyParserMiddleware, () => {
-      return new BodyParserMiddleware(this.app.config.get('bodyparser', {}))
+      const config = this.app.config.get<any>('bodyparser')
+      return new BodyParserMiddleware(config)
     })
   }
 
+  /**
+   * Registers bindings
+   */
   register() {
     this.registerServer()
     this.registerRouter()

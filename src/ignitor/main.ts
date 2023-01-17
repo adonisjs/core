@@ -11,6 +11,7 @@ import { HttpServerProcess } from './http.js'
 import { setApp } from '../../services/app.js'
 import { Application } from '../../modules/app.js'
 import type { ApplicationService } from '../types.js'
+import debug from '../debug.js'
 
 /**
  * Ignitor is used to instantiate an AdonisJS application in different
@@ -44,6 +45,7 @@ export class Ignitor {
    * the web environment and runs the tap callbacks.
    */
   httpServer() {
+    debug('creating application instance')
     const application: ApplicationService = new Application(this.#appRoot, {
       environment: 'web',
     })
