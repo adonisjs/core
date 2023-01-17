@@ -45,7 +45,7 @@ export type InferLoggers<T extends LoggerManagerConfig<any>> = T['loggers']
  */
 export interface HashDriversList {
   bcrypt: (config: BcryptConfig) => Bcrypt
-  argon: (config: ArgonConfig) => Argon
+  argon2: (config: ArgonConfig) => Argon
   scrypt: (config: ScryptConfig) => Scrypt
 }
 

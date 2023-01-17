@@ -44,7 +44,7 @@ export default class AppServiceProvider {
   protected registerLoggerManager() {
     const LoggerServiceManager = LoggerManager as unknown as AbstractConstructor<LoggerService>
     this.app.container.singleton(LoggerServiceManager, () => {
-      const config = this.app.config.get<any>('app.logger')
+      const config = this.app.config.get<any>('logger')
       return new LoggerManager(config) as LoggerService
     })
     this.app.container.alias('logger', LoggerServiceManager)

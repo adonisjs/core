@@ -16,6 +16,7 @@
  * regular usage and specific to AdonisJS container flow.
  */
 
+import { Argon, Bcrypt, Scrypt } from './main.js'
 import { RuntimeException } from '@poppinss/utils'
 import type { HashDriversList } from '../../src/types.js'
 
@@ -26,7 +27,11 @@ class HashDriversCollection {
   /**
    * List of registered drivers
    */
-  list: Partial<HashDriversList> = {}
+  list: Partial<HashDriversList> = {
+    bcrypt: (config) => new Bcrypt(config),
+    argon2: (config) => new Argon(config),
+    scrypt: (config) => new Scrypt(config),
+  }
 
   /**
    * Extend drivers collection and add a custom
