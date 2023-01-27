@@ -16,6 +16,8 @@
     "forceConsistentCasingInFileNames": true,
     "strictPropertyInitialization": true,
     "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "noImplicitThis": true,

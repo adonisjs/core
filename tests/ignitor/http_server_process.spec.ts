@@ -1,0 +1,165 @@
+/*
+ * @adonisjs/core
+ *
+ * (c) AdonisJS
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+import getPort from 'get-port'
+import supertest from 'supertest'
+import { test } from '@japa/runner'
+import { createServer } from 'node:http'
+
+import type { ApplicationService } from '../../src/types.js'
+import { IgnitorFactory } from '../../test_factories/ignitor.js'
+
+const BASE_URL = new URL('./tmp/', import.meta.url)
+
+test.group('Ignitor | Http server process', () => {
+  test('start http server using the http server process', async ({ assert, cleanup }) => {
+    cleanup(async () => {
+      delete process.env.HOST
+      delete process.env.PORT
+      await ignitor.terminate()
+    })
+
+    process.env.HOST = 'localhost'
+    process.env.PORT = String(await getPort())
+    const serverURL = `http://${process.env.HOST}:${process.env.PORT}`
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../../providers/app_provider.js',
+            '../../providers/hash_provider.js',
+            '../../providers/http_provider.js',
+          ],
+        },
+      })
+      .withCoreConfig()
+      .preload(async (app) => {
+        const router = await app.container.make('router')
+        router.get('/', () => {
+          return 'hello world'
+        })
+      })
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    await ignitor.httpServer().start()
+
+    const { text } = await supertest(serverURL).get('/')
+    assert.equal(text, 'hello world')
+  })
+
+  test('shutdown server when app terminates', async ({ assert, cleanup }) => {
+    let app: ApplicationService
+
+    cleanup(async () => {
+      delete process.env.HOST
+      delete process.env.PORT
+    })
+
+    process.env.HOST = 'localhost'
+    process.env.PORT = String(await getPort())
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../../providers/app_provider.js',
+            '../../providers/hash_provider.js',
+            '../../providers/http_provider.js',
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    ignitor.tap((application) => {
+      app = application
+    })
+
+    await ignitor.httpServer().start()
+    const server = await app!.container.make('server')
+    assert.isTrue(server.getNodeServer()!.listening)
+
+    await ignitor.terminate()
+    assert.isFalse(server.getNodeServer()!.listening)
+  })
+
+  test('throw error if port is already in use', async ({ assert, cleanup }) => {
+    const nodeServer = createServer(() => {})
+
+    cleanup(async () => {
+      delete process.env.HOST
+      delete process.env.PORT
+      nodeServer.close()
+    })
+
+    process.env.HOST = 'localhost'
+    process.env.PORT = String(await getPort())
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../../providers/app_provider.js',
+            '../../providers/hash_provider.js',
+            '../../providers/http_provider.js',
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    await new Promise<void>((resolve) => {
+      nodeServer.listen(Number(process.env.PORT), process.env.HOST, () => {
+        resolve()
+      })
+    })
+
+    await assert.rejects(
+      () => ignitor.httpServer().start(),
+      /listen EADDRINUSE: address already in use/
+    )
+  })
+
+  test('terminate app if server crashes after starting', async ({ cleanup }, done) => {
+    let app: ApplicationService
+    cleanup(async () => {
+      delete process.env.HOST
+      delete process.env.PORT
+    })
+
+    process.env.HOST = 'localhost'
+    process.env.PORT = String(await getPort())
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../../providers/app_provider.js',
+            '../../providers/hash_provider.js',
+            '../../providers/http_provider.js',
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    ignitor.tap((application) => {
+      app = application
+    })
+
+    await ignitor.httpServer().start()
+    app!.terminating(() => {
+      done()
+    })
+
+    const server = await app!.container.make('server')
+    server.getNodeServer()!.emit('error', new Error('crash'))
+  }).waitForDone()
+})

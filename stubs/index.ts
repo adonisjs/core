@@ -7,4 +7,6 @@
  * file that was distributed with this source code.
  */
 
-export * from '@adonisjs/application/helpers/string_builder'
+import { getDirname } from '@poppinss/utils'
+
+export const stubsRoot = getDirname(import.meta.url)

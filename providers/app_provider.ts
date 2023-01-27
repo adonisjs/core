@@ -15,11 +15,21 @@ import type { AbstractConstructor } from '../types/container.js'
 import type { ApplicationService, EmitterService, LoggerService } from '../src/types.js'
 
 /**
- * The Application Service provider registers all the base line features required
- * to run the framework.
+ * The Application Service provider registers all the baseline
+ * features required to run the framework.
  */
 export default class AppServiceProvider {
   constructor(protected app: ApplicationService) {}
+
+  /**
+   * Registers ace with the container
+   */
+  protected registerAce() {
+    this.app.container.singleton('ace', async () => {
+      const { createAceKernel } = await import('../modules/ace/create_kernel.js')
+      return createAceKernel(this.app)
+    })
+  }
 
   /**
    * Registers the application to the container
@@ -85,6 +95,7 @@ export default class AppServiceProvider {
    */
   register() {
     this.registerApp()
+    this.registerAce()
     this.registerLoggerManager()
     this.registerLogger()
     this.registerConfig()

@@ -7,13 +7,16 @@
  * file that was distributed with this source code.
  */
 
+import type { Importer } from '../types/app.js'
 import type { Emitter } from '../modules/events.js'
+import type { Kernel } from '../modules/ace/main.js'
 import type { Application } from '../modules/app.js'
 import type { Router, Server } from '../modules/http.js'
 import type { LoggerManager } from '../modules/logger.js'
 import type { Encryption } from '../modules/encryption.js'
 import type { HttpRequestFinishedPayload } from '../types/http.js'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.js'
+import type hashDriversCollection from '../modules/hash/drivers_collection.js'
 import type { Argon, Bcrypt, HashManager, Scrypt } from '../modules/hash/main.js'
 import type {
   ArgonConfig,
@@ -21,7 +24,11 @@ import type {
   ScryptConfig,
   ManagerDriverFactory,
 } from '../types/hash.js'
-import type hashDriversCollection from '../modules/hash/drivers_collection.js'
+
+/**
+ * Options accepted by ignitor
+ */
+export type IgnitorOptions = { importer: Importer }
 
 /**
  * A list of known events. The interface must be extended in
@@ -103,7 +110,7 @@ export interface HttpRouterService extends Router {}
 
 /**
  * Hash service is a singleton instance of the HashManager
- * registered to the container
+ * registered in the container
  */
 export interface HashService
   extends HashManager<
@@ -114,6 +121,7 @@ export interface HashService
  * A list of known container bindings.
  */
 export interface ContainerBindings {
+  ace: Kernel
   app: ApplicationService
   logger: LoggerService
   config: ApplicationService['config']

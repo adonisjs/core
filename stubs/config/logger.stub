@@ -1,0 +1,35 @@
+---
+to: {{ app.configPath('logger.ts') }}
+---
+import env from '#start/env'
+import app from '@adonisjs/core/services/app'
+import { defineConfig, targets } from '@adonisjs/core/logger'
+
+export default defineConfig({
+  default: 'app',
+
+  /**
+   * The loggers object can be used to define multiple loggers.
+   * By default, we configure only the "app" logger.
+   */
+  loggers: {
+    app: {
+      enabled: true,
+      name: env.get('APP_NAME'),
+      level: env.get('LOG_LEVEL'),
+      transport: {
+        targets: targets()
+          /**
+           * Using the "pino-pretty" target during development
+           */
+          .if(app.inDev, targets.pretty())
+
+          /**
+           * Writing logs to stdout in production
+           */
+          .if(app.inProduction, targets.file({ destination: 1 }))
+          .toArray(),
+      },
+    },
+  },
+})

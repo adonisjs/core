@@ -7,4 +7,5 @@
  * file that was distributed with this source code.
  */
 
-export * from '@adonisjs/application/helpers/is'
+import is from '@sindresorhus/is'
+export default is

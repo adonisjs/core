@@ -7,16 +7,13 @@
  * file that was distributed with this source code.
  */
 
-export { inject } from './modules/container.js'
-export { Ignitor } from './src/ignitor/main.js'
 import { errors as appErrors } from '@adonisjs/application'
 import { errors as encryptionErrors } from '@adonisjs/encryption'
 import { errors as httpServerErrors } from '@adonisjs/http-server'
 
-/**
- * Exporting a collection of errors from all the
- * installed packages
- */
+export { inject } from './modules/container.js'
+export { Ignitor } from './src/ignitor/main.js'
+
 export const errors = {
   ...encryptionErrors,
   ...httpServerErrors,

@@ -1,7 +1,7 @@
 /*
  * @adonisjs/core
  *
- * (c) Harminder Virk <virk@adonisjs.com>
+ * (c) AdonisJS
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,6 +11,7 @@ import type { Server as NodeHttpsServer } from 'node:https'
 import { IncomingMessage, ServerResponse, Server as NodeHttpServer, createServer } from 'node:http'
 
 import debug from '../debug.js'
+import { Ignitor } from './main.js'
 import type { ApplicationService, EmitterService, LoggerService } from '../types.js'
 
 /**
@@ -19,78 +20,98 @@ import type { ApplicationService, EmitterService, LoggerService } from '../types
  */
 export class HttpServerProcess {
   /**
-   * Access to the currently running application
+   * Ignitor reference
    */
-  #application: ApplicationService
+  #ignitor: Ignitor
+
+  constructor(ignitor: Ignitor) {
+    this.#ignitor = ignitor
+  }
 
   /**
-   * Reference to the underlying HTTP server
+   * Calling this method closes the underlying HTTP server
    */
-  #nodeHttpServer?: NodeHttpsServer | NodeHttpServer
-
-  constructor(application: ApplicationService) {
-    this.#application = application
+  #close(nodeHttpServer: NodeHttpsServer | NodeHttpServer): Promise<void> {
+    return new Promise((resolve) => {
+      debug('closing http server process')
+      nodeHttpServer.close(() => resolve())
+    })
   }
 
   /**
    * Monitors the app and the server to close the HTTP server when
    * either one of them goes down
    */
-  #monitorAppAndServer(logger: LoggerService) {
-    if (!this.#nodeHttpServer) {
-      return
-    }
-
+  #monitorAppAndServer(
+    nodeHttpServer: NodeHttpsServer | NodeHttpServer,
+    app: ApplicationService,
+    logger: LoggerService
+  ) {
     /**
      * Close the HTTP server when the application begins to
      * terminate
      */
-    this.#application.terminating(async () => {
+    app.terminating(async () => {
       debug('terminating signal received')
-      await this.close()
+      await this.#close(nodeHttpServer)
     })
 
     /**
      * Terminate the app when the HTTP server crashes
      */
-    this.#nodeHttpServer.on('error', (error: NodeJS.ErrnoException) => {
+    nodeHttpServer.once('error', (error: NodeJS.ErrnoException) => {
       debug('http server crashed with error "%O"', error)
       logger.fatal({ err: error }, error.message)
-      this.#application.terminate()
+      process.exitCode = 1
+      app.terminate()
     })
   }
 
   /**
    * Starts the http server a given host and port
    */
-  #listen(logger: LoggerService, emitter: EmitterService): Promise<void> {
-    return new Promise((resolve) => {
-      if (!this.#nodeHttpServer) {
-        return resolve()
-      }
-
+  #listen(
+    nodeHttpServer: NodeHttpsServer | NodeHttpServer
+  ): Promise<{ port: number; host: string }> {
+    return new Promise((resolve, reject) => {
       const host = process.env.HOST || '0.0.0.0'
       const port = Number(process.env.PORT || '3333')
 
-      this.#nodeHttpServer.listen(port, host, () => {
-        /**
-         * Visual notification
-         */
-        logger.info('started HTTP server on %s:%s', host, port)
+      nodeHttpServer.listen(port, host)
+      nodeHttpServer.once('listening', () => {
+        resolve({ port, host })
+      })
 
-        /**
-         * Notify parent process
-         */
-        this.#application.notify({ isAdonisJS: true, port: port, host: host })
-
-        /**
-         * Notify app
-         */
-        emitter.emit('http:server_ready', { port: port, host: host })
-
-        resolve()
+      nodeHttpServer.once('error', (error: NodeJS.ErrnoException) => {
+        reject(error)
       })
     })
+  }
+
+  /**
+   * Notifies the app and the parent process that the
+   * HTTP server is ready
+   */
+  #notifyServerHasStarted(
+    app: ApplicationService,
+    logger: LoggerService,
+    emitter: EmitterService,
+    payload: { host: string; port: number }
+  ) {
+    /**
+     * Notify parent process
+     */
+    app.notify({ isAdonisJS: true, environment: 'web', ...payload })
+
+    /**
+     * Visual notification
+     */
+    logger.info('started HTTP server on %s:%s', payload.host, payload.port)
+
+    /**
+     * Notify app
+     */
+    emitter.emit('http:server_ready', payload)
   }
 
   /**
@@ -105,46 +126,41 @@ export class HttpServerProcess {
      * Method to create the HTTP server
      */
     const createHTTPServer = serverCallback || createServer
+    const app = this.#ignitor.createApp('web')
 
-    /**
-     * Initiate the app
-     */
-    await this.#application.init()
-
-    /**
-     * Boot the application
-     */
-    await this.#application.boot()
-
-    /**
-     * Start application by starting the HTTP server
-     */
-    await this.#application.start(async () => {
-      const server = await this.#application.container.make('server')
-      const logger = await this.#application.container.make('logger')
-      const emitter = await this.#application.container.make('emitter')
-
+    await app.init()
+    await app.boot()
+    await app.start(async () => {
+      /**
+       * Resolve and boot the AdonisJS HTTP server
+       */
+      const server = await app.container.make('server')
       await server.boot()
 
-      this.#nodeHttpServer = createHTTPServer(server.handle.bind(server))
-      server.setNodeServer(this.#nodeHttpServer)
+      /**
+       * Create Node.js HTTP server instance and share it with the
+       * AdonisJS HTTP server
+       */
+      const httpServer = createHTTPServer(server.handle.bind(server))
+      server.setNodeServer(httpServer)
 
-      await this.#listen(logger, emitter)
-      this.#monitorAppAndServer(logger)
-    })
-  }
+      const logger = await app.container.make('logger')
+      const emitter = await app.container.make('emitter')
 
-  /**
-   * Calling this method closes the underlying HTTP server
-   */
-  close(): Promise<void> {
-    return new Promise((resolve) => {
-      if (!this.#nodeHttpServer) {
-        return resolve()
-      }
+      /**
+       * Start the server by listening on a port of host
+       */
+      const payload = await this.#listen(httpServer)
 
-      debug('close http server process')
-      this.#nodeHttpServer.close(() => resolve())
+      /**
+       * Notify
+       */
+      this.#notifyServerHasStarted(app, logger, emitter, payload)
+
+      /**
+       * Monitor app and the server (after the server is listening)
+       */
+      this.#monitorAppAndServer(httpServer, app, logger)
     })
   }
 }

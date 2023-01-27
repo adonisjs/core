@@ -9,7 +9,7 @@
 
 import { Router, Server } from '../modules/http.js'
 import type { ApplicationService } from '../src/types.js'
-import BodyParserMiddleware from '../modules/bodyparser_middleware.js'
+import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
 
 /**
  * Http Service provider binds the router and the HTTP server to

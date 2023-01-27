@@ -1,0 +1,7 @@
+{{#var listenerName = generators.listenerName(entity.name)}}
+{{#var listenerFileName = generators.listenerFileName(entity.name)}}
+---
+to: {{ app.listenersPath(entity.path, listenerFileName) }}
+---
+export default class {{ listenerName }} {
+}

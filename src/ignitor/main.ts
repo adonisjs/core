@@ -7,11 +7,14 @@
  * file that was distributed with this source code.
  */
 
+import debug from '../debug.js'
+import { AceProcess } from './ace.js'
+import { TestRunnerProcess } from './test.js'
 import { HttpServerProcess } from './http.js'
 import { setApp } from '../../services/app.js'
 import { Application } from '../../modules/app.js'
-import type { ApplicationService } from '../types.js'
-import debug from '../debug.js'
+import type { AppEnvironments } from '../../types/app.js'
+import type { ApplicationService, IgnitorOptions } from '../types.js'
 
 /**
  * Ignitor is used to instantiate an AdonisJS application in different
@@ -19,17 +22,61 @@ import debug from '../debug.js'
  */
 export class Ignitor {
   /**
+   * Ignitor options
+   */
+  #options: IgnitorOptions
+
+  /**
    * Application root URL
    */
   #appRoot: URL
+
+  /**
+   * Reference to the application instance created using
+   * the "createApp" method.
+   *
+   * We store the output of the last call made to "createApp" method
+   * and assume that in one process only one entrypoint will
+   * call this method.
+   */
+  #app?: ApplicationService
 
   /**
    * Reference to the created application
    */
   #tapCallbacks: Set<(app: ApplicationService) => void> = new Set()
 
-  constructor(appRoot: URL) {
+  constructor(appRoot: URL, options: IgnitorOptions) {
     this.#appRoot = appRoot
+    this.#options = options
+  }
+
+  /**
+   * Runs all the tap callbacks
+   */
+  #runTapCallbacks(app: ApplicationService) {
+    this.#tapCallbacks.forEach((tapCallback) => tapCallback(app))
+  }
+
+  /**
+   * Get access to the application instance created
+   * by either the http server process or the ace
+   * process
+   */
+  getApp() {
+    return this.#app
+  }
+
+  /**
+   * Create an instance of AdonisJS application
+   */
+  createApp(environment: AppEnvironments) {
+    debug('creating application instance')
+    this.#app = new Application(this.#appRoot, { environment, importer: this.#options.importer })
+
+    setApp(this.#app)
+    this.#runTapCallbacks(this.#app)
+    return this.#app
   }
 
   /**
@@ -41,19 +88,31 @@ export class Ignitor {
   }
 
   /**
-   * Get instance of the HTTP server. Calling this method create an in
-   * the web environment and runs the tap callbacks.
+   * Get instance of the HTTPServerProcess
    */
   httpServer() {
-    debug('creating application instance')
-    const application: ApplicationService = new Application(this.#appRoot, {
-      environment: 'web',
-    })
-    setApp(application)
+    return new HttpServerProcess(this)
+  }
 
-    this.#tapCallbacks.forEach((callback) => callback(application))
-    this.#tapCallbacks.clear()
+  /**
+   * Get an instance of the AceProcess class
+   */
+  ace() {
+    return new AceProcess(this)
+  }
 
-    return new HttpServerProcess(application)
+  /**
+   * Get an instance of the TestRunnerProcess class
+   */
+  testRunner() {
+    return new TestRunnerProcess(this)
+  }
+
+  /**
+   * Terminates the app by calling the "app.terminate"
+   * method
+   */
+  async terminate() {
+    await this.#app?.terminate()
   }
 }

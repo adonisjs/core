@@ -1,5 +1,5 @@
 /*
- * @adonisjs/core
+ * @adonisjs/ace
  *
  * (c) AdonisJS
  *
@@ -7,4 +7,4 @@
  * file that was distributed with this source code.
  */
 
-export * from '@adonisjs/application/helpers/types'
+export * from '@adonisjs/bodyparser/types'

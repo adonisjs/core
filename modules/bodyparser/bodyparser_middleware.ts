@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { BodyParserMiddleware } from './bodyparser.js'
+import { BodyParserMiddleware } from '@adonisjs/bodyparser/bodyparser_middleware'
 
 /**
  * Default export allows lazy importing middleware with
