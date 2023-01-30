@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { errors as aceErrors } from '@adonisjs/ace'
+import { errors as envErrors } from '@adonisjs/env'
 import { errors as appErrors } from '@adonisjs/application'
 import { errors as encryptionErrors } from '@adonisjs/encryption'
 import { errors as httpServerErrors } from '@adonisjs/http-server'
@@ -18,4 +20,6 @@ export const errors = {
   ...encryptionErrors,
   ...httpServerErrors,
   ...appErrors,
+  ...aceErrors,
+  ...envErrors,
 }
