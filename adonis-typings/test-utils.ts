@@ -11,6 +11,7 @@ declare module '@ioc:Adonis/Core/TestUtils' {
   import type { Server as HttpsServer } from 'https'
   import type { MacroableConstructorContract } from 'macroable'
   import type { IncomingMessage, ServerResponse, Server } from 'http'
+  import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
   export type ServerHandler = (req: IncomingMessage, res: ServerResponse) => any
   export type CustomServerCallback = (handler: ServerHandler) => Server | HttpsServer
@@ -21,7 +22,9 @@ declare module '@ioc:Adonis/Core/TestUtils' {
       loadCommands(): Promise<void>
     }
     httpServer(): {
+      application: ApplicationContract
       start(serverCallback?: CustomServerCallback): Promise<() => Promise<void>>
+      close(): Promise<void>
     }
   }
 
