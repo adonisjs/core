@@ -13,6 +13,7 @@ import { Config } from '../modules/config.js'
 import { Emitter } from '../modules/events.js'
 import { Kernel } from '../modules/ace/kernel.js'
 import { Router, Server } from '../modules/http.js'
+import { TestUtils } from '../src/test_utils/main.js'
 import { Encryption } from '../modules/encryption.js'
 import { Hash, HashManager } from '../modules/hash/main.js'
 import { Logger, LoggerManager } from '../modules/logger.js'
@@ -49,6 +50,7 @@ test.group('Providers', () => {
     assert.isTrue(app.container.hasBinding('hashDrivers'))
     assert.isTrue(app.container.hasBinding('server'))
     assert.isTrue(app.container.hasBinding('router'))
+    assert.isTrue(app.container.hasBinding('testUtils'))
   })
 
   test('ensure services can resolve bindings using container', async ({ assert }) => {
@@ -78,6 +80,7 @@ test.group('Providers', () => {
     const { default: routerService } = await import('../services/router.js')
     const { default: serverService } = await import('../services/server.js')
     const { default: aceService } = await import('../services/ace.js')
+    const { default: testUtils } = await import('../services/test_utils.js')
 
     assert.instanceOf(aceService, Kernel)
     assert.strictEqual(app, appService)
@@ -88,6 +91,7 @@ test.group('Providers', () => {
     assert.instanceOf(loggerService, LoggerManager)
     assert.instanceOf(routerService, Router)
     assert.instanceOf(serverService, Server)
+    assert.instanceOf(testUtils, TestUtils)
   })
 
   test('construct bodyparser middleware using the container', async ({ assert }) => {

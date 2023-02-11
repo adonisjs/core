@@ -11,6 +11,7 @@ import type { Importer } from '../types/app.js'
 import type { Emitter } from '../modules/events.js'
 import type { Kernel } from '../modules/ace/main.js'
 import type { Application } from '../modules/app.js'
+import type { TestUtils } from './test_utils/main.js'
 import type { Router, Server } from '../modules/http.js'
 import type { LoggerManager } from '../modules/logger.js'
 import type { Encryption } from '../modules/encryption.js'
@@ -131,4 +132,5 @@ export interface ContainerBindings {
   hashDrivers: typeof hashDriversCollection
   server: HttpServerService
   router: HttpRouterService
+  testUtils: TestUtils
 }

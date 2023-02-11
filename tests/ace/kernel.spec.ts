@@ -32,6 +32,7 @@ test.group('Kernel', () => {
         required: false,
         type: 'boolean',
         showNegatedVariantInHelp: true,
+        description: 'Force enable or disable colorful output',
       },
       {
         name: 'help',

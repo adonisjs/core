@@ -54,6 +54,38 @@ test.group('Ignitor | Http server process', () => {
     assert.equal(text, 'hello world')
   })
 
+  test('use port 3333 when PORT env variable is not defined', async ({ assert, cleanup }) => {
+    cleanup(async () => {
+      await ignitor.terminate()
+    })
+
+    const serverURL = 'http://127.0.0.1:3333'
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../../providers/app_provider.js',
+            '../../providers/hash_provider.js',
+            '../../providers/http_provider.js',
+          ],
+        },
+      })
+      .withCoreConfig()
+      .preload(async (app) => {
+        const router = await app.container.make('router')
+        router.get('/', () => {
+          return 'hello world'
+        })
+      })
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    await ignitor.httpServer().start()
+
+    const { text } = await supertest(serverURL).get('/')
+    assert.equal(text, 'hello world')
+  })
+
   test('shutdown server when app terminates', async ({ assert, cleanup }) => {
     let app: ApplicationService
 

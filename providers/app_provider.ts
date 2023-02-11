@@ -22,6 +22,16 @@ export default class AppServiceProvider {
   constructor(protected app: ApplicationService) {}
 
   /**
+   * Registers test utils with the container
+   */
+  protected registerTestUtils() {
+    this.app.container.singleton('testUtils', async () => {
+      const { TestUtils } = await import('../src/test_utils/main.js')
+      return new TestUtils(this.app)
+    })
+  }
+
+  /**
    * Registers ace with the container
    */
   protected registerAce() {
@@ -101,5 +111,6 @@ export default class AppServiceProvider {
     this.registerConfig()
     this.registerEmitter()
     this.registerEncryption()
+    this.registerTestUtils()
   }
 }

@@ -79,6 +79,7 @@ export class HttpServerProcess {
 
       nodeHttpServer.listen(port, host)
       nodeHttpServer.once('listening', () => {
+        debug('listening to http server, host :%s, port: %s', host, port)
         resolve({ port, host })
       })
 

@@ -13,6 +13,7 @@ import { errors as appErrors } from '@adonisjs/application'
 import { errors as encryptionErrors } from '@adonisjs/encryption'
 import { errors as httpServerErrors } from '@adonisjs/http-server'
 
+export { stubsRoot } from './stubs/index.js'
 export { inject } from './modules/container.js'
 export { Ignitor } from './src/ignitor/main.js'
 

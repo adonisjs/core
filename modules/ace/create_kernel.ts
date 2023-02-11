@@ -35,7 +35,12 @@ export function createAceKernel(app: ApplicationService) {
   /**
    * Custom global flags
    */
-  kernel.defineFlag('ansi', { type: 'boolean', showNegatedVariantInHelp: true })
+  kernel.defineFlag('ansi', {
+    type: 'boolean',
+    showNegatedVariantInHelp: true,
+    description: 'Force enable or disable colorful output',
+  })
+
   kernel.defineFlag('help', {
     type: 'boolean',
     description: HelpCommand.description,

@@ -66,6 +66,8 @@ export class BaseCommand extends AceBaseCommand {
    * Executes the command
    */
   async exec() {
+    this.hydrate()
+
     try {
       /**
        * Executing the template methods
