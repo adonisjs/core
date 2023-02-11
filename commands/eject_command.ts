@@ -15,7 +15,7 @@ import { args, BaseCommand, flags } from '../modules/ace/main.js'
  */
 export default class EjectCommand extends BaseCommand {
   static commandName = 'eject'
-  static description = 'Eject stub to your application codebase'
+  static description = 'Eject scaffolding stubs to your application root'
 
   @args.string({ description: 'Path to the stubs directory or a single stub file' })
   declare stubPath: string

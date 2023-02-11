@@ -15,7 +15,7 @@ import { args, flags } from '../../modules/ace/main.js'
  * listener
  */
 export default class MakeListenerCommand extends BaseCommand {
-  static commandName = 'make:event'
+  static commandName = 'make:listener'
   static description = 'Create a new event listener class'
 
   @args.string({ description: 'Name of the listener' })
