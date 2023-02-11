@@ -8,8 +8,11 @@
  */
 
 import getPort from 'get-port'
+import { Socket } from 'node:net'
 import { test } from '@japa/runner'
-import { createServer } from 'node:http'
+import { createServer, IncomingMessage, ServerResponse } from 'node:http'
+
+import { HttpContext } from '../../modules/http.js'
 import { TestUtilsFactory } from '../../test_factories/test_utils.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
@@ -110,5 +113,35 @@ test.group('Test utils | Http', () => {
 
     await closeServer()
     await assert.rejects(() => closeServer(), 'Server is not running.')
+  })
+
+  test('create HTTP context', async ({ assert }) => {
+    const testUtils = new TestUtilsFactory().create(BASE_URL, {
+      importer: (filePath) => import(filePath),
+    })
+    await testUtils.app.init()
+    await testUtils.app.boot()
+    await testUtils.boot()
+
+    const context = await testUtils.createHttpContext()
+    assert.instanceOf(context, HttpContext)
+  })
+
+  test('create HTTP context with custom req and res object', async ({ assert }) => {
+    const testUtils = new TestUtilsFactory().create(BASE_URL, {
+      importer: (filePath) => import(filePath),
+    })
+    await testUtils.app.init()
+    await testUtils.app.boot()
+    await testUtils.boot()
+
+    const req = new IncomingMessage(new Socket())
+    const res = new ServerResponse(req)
+
+    req.url = '/users/1'
+
+    const context = await testUtils.createHttpContext({ req, res })
+    assert.instanceOf(context, HttpContext)
+    assert.equal(context.request.url(), '/users/1')
   })
 })

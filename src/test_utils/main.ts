@@ -7,11 +7,13 @@
  * file that was distributed with this source code.
  */
 
+import { Socket } from 'node:net'
 import Macroable from '@poppinss/macroable'
-import { CookieClient } from '@adonisjs/http-server'
+import { IncomingMessage, ServerResponse } from 'node:http'
 
 import { HttpServerUtils } from './http.js'
 import type { ApplicationService } from '../types.js'
+import { CookieClient } from '../../modules/http.js'
 
 /**
  * Test utils has a collection of helper methods to make testing
@@ -50,5 +52,18 @@ export class TestUtils extends Macroable {
    */
   httpServer() {
     return new HttpServerUtils(this)
+  }
+
+  /**
+   * Create an instance of HTTP context for testing
+   */
+  async createHttpContext(options: { req?: IncomingMessage; res?: ServerResponse } = {}) {
+    const req = options.req || new IncomingMessage(new Socket())
+    const res = options.res || new ServerResponse(req)
+    const server = await this.app.container.make('server')
+
+    const request = server.createRequest(req, res)
+    const response = server.createResponse(req, res)
+    return server.createHttpContext(request, response, this.app.container.createResolver())
   }
 }
