@@ -140,6 +140,18 @@
     "he": "^1.2.0",
     "pretty-hrtime": "^1.0.3"
   },
+  "peerDependencies": {
+    "argon2": "^0.30.3",
+    "bcrypt": "^5.0.1"
+  },
+  "peerDependenciesMeta": {
+    "argon2": {
+      "optional": true
+    },
+    "bcrypt": {
+      "optional": true
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adonisjs/core.git"
