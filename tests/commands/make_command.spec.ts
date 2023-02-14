@@ -8,30 +8,30 @@
  */
 
 import { test } from '@japa/runner'
+import MakeCommand from '../../commands/make/command.js'
 import { AceFactory } from '../../test_factories/ace.js'
 import { StubsFactory } from '../../test_factories/stubs.js'
-import MakeEventCommand from '../../commands/make/event.js'
 
-test.group('Make event', () => {
-  test('create event class', async ({ assert, fs }) => {
+test.group('Make command', () => {
+  test('create command class', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(MakeEventCommand, ['orderShipped'])
+    const command = await ace.create(MakeCommand, ['listRoutes'])
     await command.exec()
 
-    const { contents } = await new StubsFactory().prepare('make/event/main.stub', {
-      entity: ace.app.generators.createEntity('orderShipped'),
+    const { contents } = await new StubsFactory().prepare('make/command/main.stub', {
+      entity: ace.app.generators.createEntity('listRoutes'),
     })
 
-    await assert.fileEquals('app/events/order_shipped.ts', contents)
+    await assert.fileEquals('commands/list_routes.ts', contents)
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
-        message: 'green(DONE:)    create app/events/order_shipped.ts',
+        message: 'green(DONE:)    create commands/list_routes.ts',
         stream: 'stdout',
       },
     ])

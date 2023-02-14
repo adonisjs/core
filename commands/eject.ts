@@ -13,7 +13,7 @@ import { args, BaseCommand, flags } from '../modules/ace/main.js'
  * The eject command is used to eject templates to the user
  * application codebase for customizing them
  */
-export default class EjectCommand extends BaseCommand {
+export default class Eject extends BaseCommand {
   static commandName = 'eject'
   static description = 'Eject scaffolding stubs to your application root'
 

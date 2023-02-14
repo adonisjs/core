@@ -10,28 +10,28 @@
 import { test } from '@japa/runner'
 import { AceFactory } from '../../test_factories/ace.js'
 import { StubsFactory } from '../../test_factories/stubs.js'
-import MakeEventCommand from '../../commands/make/event.js'
+import MakeMiddleware from '../../commands/make/middleware.js'
 
-test.group('Make event', () => {
-  test('create event class', async ({ assert, fs }) => {
+test.group('Make middleware', () => {
+  test('create middleware class', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(MakeEventCommand, ['orderShipped'])
+    const command = await ace.create(MakeMiddleware, ['auth'])
     await command.exec()
 
-    const { contents } = await new StubsFactory().prepare('make/event/main.stub', {
-      entity: ace.app.generators.createEntity('orderShipped'),
+    const { contents } = await new StubsFactory().prepare('make/middleware/main.stub', {
+      entity: ace.app.generators.createEntity('auth'),
     })
 
-    await assert.fileEquals('app/events/order_shipped.ts', contents)
+    await assert.fileEquals('app/middleware/auth_middleware.ts', contents)
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
-        message: 'green(DONE:)    create app/events/order_shipped.ts',
+        message: 'green(DONE:)    create app/middleware/auth_middleware.ts',
         stream: 'stdout',
       },
     ])

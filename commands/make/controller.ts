@@ -7,13 +7,13 @@
  * file that was distributed with this source code.
  */
 
-import BaseCommand from './_base_command.js'
+import BaseCommand from './_base.js'
 import { args, flags } from '../../modules/ace/main.js'
 
 /**
  * The make controller command to create an HTTP controller
  */
-export default class MakeControllerCommand extends BaseCommand {
+export default class MakeController extends BaseCommand {
   static commandName = 'make:controller'
   static description = 'Create a new HTTP controller class'
 

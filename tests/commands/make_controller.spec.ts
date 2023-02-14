@@ -10,7 +10,7 @@
 import { test } from '@japa/runner'
 import { AceFactory } from '../../test_factories/ace.js'
 import { StubsFactory } from '../../test_factories/stubs.js'
-import MakeControllerCommand from '../../commands/make/controller_command.js'
+import MakeControllerCommand from '../../commands/make/controller.js'
 
 test.group('Make controller', () => {
   test('create controller', async ({ assert, fs }) => {

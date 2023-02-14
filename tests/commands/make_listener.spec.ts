@@ -11,8 +11,8 @@ import { test } from '@japa/runner'
 import { ListLoader } from '../../modules/ace/main.js'
 import { AceFactory } from '../../test_factories/ace.js'
 import { StubsFactory } from '../../test_factories/stubs.js'
-import MakeEventCommand from '../../commands/make/event_command.js'
-import MakeListenerCommand from '../../commands/make/listener_command.js'
+import MakeEventCommand from '../../commands/make/event.js'
+import MakeListenerCommand from '../../commands/make/listener.js'
 
 test.group('Make listener', () => {
   test('create listener class', async ({ assert, fs }) => {

@@ -23,7 +23,9 @@ test.group('Test utils | Http', () => {
     cleanup(() => server.close())
 
     const testUtils = new TestUtilsFactory().create(BASE_URL, {
-      importer: (filePath) => import(filePath),
+      importer: (filePath) => {
+        return import(new URL(filePath, new URL('../../', import.meta.url)).href)
+      },
     })
     await testUtils.app.init()
     await testUtils.app.boot()
@@ -38,7 +40,9 @@ test.group('Test utils | Http', () => {
     cleanup(() => server.close())
 
     const testUtils = new TestUtilsFactory().create(BASE_URL, {
-      importer: (filePath) => import(filePath),
+      importer: (filePath) => {
+        return import(new URL(filePath, new URL('../../', import.meta.url)).href)
+      },
     })
     await testUtils.app.init()
     await testUtils.app.boot()
@@ -53,7 +57,9 @@ test.group('Test utils | Http', () => {
 
   test('share HTTP server instance with AdonisJS server class', async ({ assert }) => {
     const testUtils = new TestUtilsFactory().create(BASE_URL, {
-      importer: (filePath) => import(filePath),
+      importer: (filePath) => {
+        return import(new URL(filePath, new URL('../../', import.meta.url)).href)
+      },
     })
     await testUtils.app.init()
     await testUtils.app.boot()
@@ -80,7 +86,9 @@ test.group('Test utils | Http', () => {
     process.env.PORT = String(await getPort())
 
     const testUtils = new TestUtilsFactory().create(BASE_URL, {
-      importer: (filePath) => import(filePath),
+      importer: (filePath) => {
+        return import(new URL(filePath, new URL('../../', import.meta.url)).href)
+      },
     })
     await testUtils.app.init()
     await testUtils.app.boot()
@@ -102,7 +110,9 @@ test.group('Test utils | Http', () => {
     cleanup(() => server.close())
 
     const testUtils = new TestUtilsFactory().create(BASE_URL, {
-      importer: (filePath) => import(filePath),
+      importer: (filePath) => {
+        return import(new URL(filePath, new URL('../../', import.meta.url)).href)
+      },
     })
     await testUtils.app.init()
     await testUtils.app.boot()
@@ -117,7 +127,9 @@ test.group('Test utils | Http', () => {
 
   test('create HTTP context', async ({ assert }) => {
     const testUtils = new TestUtilsFactory().create(BASE_URL, {
-      importer: (filePath) => import(filePath),
+      importer: (filePath) => {
+        return import(new URL(filePath, new URL('../../', import.meta.url)).href)
+      },
     })
     await testUtils.app.init()
     await testUtils.app.boot()
@@ -129,7 +141,9 @@ test.group('Test utils | Http', () => {
 
   test('create HTTP context with custom req and res object', async ({ assert }) => {
     const testUtils = new TestUtilsFactory().create(BASE_URL, {
-      importer: (filePath) => import(filePath),
+      importer: (filePath) => {
+        return import(new URL(filePath, new URL('../../', import.meta.url)).href)
+      },
     })
     await testUtils.app.init()
     await testUtils.app.boot()

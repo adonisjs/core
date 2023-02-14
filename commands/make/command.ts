@@ -7,23 +7,23 @@
  * file that was distributed with this source code.
  */
 
-import BaseCommand from './_base_command.js'
+import BaseCommand from './_base.js'
 import { args } from '../../modules/ace/main.js'
 
 /**
- * The make event command to create a class based event
+ * Make a new ace command
  */
-export default class MakeEventCommand extends BaseCommand {
-  static commandName = 'make:event'
-  static description = 'Create a new event class'
+export default class MakeCommand extends BaseCommand {
+  static commandName = 'make:command'
+  static description = 'Create a new ace command class'
 
-  @args.string({ description: 'Name of the event' })
+  @args.string({ description: 'Name of the command' })
   declare name: string
 
   /**
-   * The stub to use for generating the event
+   * The stub to use for generating the command class
    */
-  protected stubPath: string = 'make/event/main.stub'
+  protected stubPath: string = 'make/command/main.stub'
 
   async run() {
     await this.generate(this.stubPath, {

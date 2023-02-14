@@ -9,6 +9,7 @@
 
 import { Config } from '../modules/config.js'
 import { Emitter } from '../modules/events.js'
+import { validator } from '../legacy/validator.js'
 import { Encryption } from '../modules/encryption.js'
 import { Logger, LoggerManager } from '../modules/logger.js'
 import type { AbstractConstructor } from '../types/container.js'
@@ -101,6 +102,14 @@ export default class AppServiceProvider {
   }
 
   /**
+   * Configure the validator
+   */
+  protected async configureValidator() {
+    const config = await this.app.container.make('config')
+    validator.configure(config.get('validator', {}))
+  }
+
+  /**
    * Registers bindings
    */
   register() {
@@ -112,5 +121,9 @@ export default class AppServiceProvider {
     this.registerEmitter()
     this.registerEncryption()
     this.registerTestUtils()
+  }
+
+  async boot() {
+    await this.configureValidator()
   }
 }

@@ -24,3 +24,16 @@ export const errors = {
   ...aceErrors,
   ...envErrors,
 }
+
+/**
+ * Pretty prints an error with colorful output using
+ * Youch terminal
+ */
+export async function prettyPrintError(error: any) {
+  // @ts-expect-error
+  const { default: youchTerminal } = await import('youch-terminal')
+  const { default: Youch } = await import('youch')
+
+  const youch = new Youch(error, {})
+  console.log(youchTerminal(await youch.toJSON(), { displayShortPath: true }))
+}

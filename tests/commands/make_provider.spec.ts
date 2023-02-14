@@ -9,29 +9,29 @@
 
 import { test } from '@japa/runner'
 import { AceFactory } from '../../test_factories/ace.js'
+import MakeProvider from '../../commands/make/provider.js'
 import { StubsFactory } from '../../test_factories/stubs.js'
-import MakeEventCommand from '../../commands/make/event.js'
 
-test.group('Make event', () => {
-  test('create event class', async ({ assert, fs }) => {
+test.group('Make provider', () => {
+  test('create provider class', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(MakeEventCommand, ['orderShipped'])
+    const command = await ace.create(MakeProvider, ['app'])
     await command.exec()
 
-    const { contents } = await new StubsFactory().prepare('make/event/main.stub', {
-      entity: ace.app.generators.createEntity('orderShipped'),
+    const { contents } = await new StubsFactory().prepare('make/provider/main.stub', {
+      entity: ace.app.generators.createEntity('app'),
     })
 
-    await assert.fileEquals('app/events/order_shipped.ts', contents)
+    await assert.fileEquals('providers/app_provider.ts', contents)
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
-        message: 'green(DONE:)    create app/events/order_shipped.ts',
+        message: 'green(DONE:)    create providers/app_provider.ts',
         stream: 'stdout',
       },
     ])

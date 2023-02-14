@@ -44,9 +44,9 @@ export class IgnitorFactory {
    */
   #mergeCoreProviders(providers?: string[]) {
     return [
-      '@adonisjs/core/providers/app_provider',
-      '@adonisjs/core/providers/hash_provider',
-      '@adonisjs/core/providers/http_provider',
+      './providers/app_provider.js',
+      './providers/hash_provider.js',
+      './providers/http_provider.js',
     ].concat(providers || [])
   }
 
@@ -87,6 +87,7 @@ export class IgnitorFactory {
           appKey: 'averylongrandomsecretkey',
           http: defineHttpConfig({}),
         },
+        validator: {},
         bodyparser: defineBodyParserConfig({}),
         hash: defineHashConfig({
           default: 'scrypt',

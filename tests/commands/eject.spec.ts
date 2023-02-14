@@ -8,8 +8,8 @@
  */
 
 import { test } from '@japa/runner'
+import EjectCommand from '../../commands/eject.js'
 import { AceFactory } from '../../test_factories/ace.js'
-import EjectCommand from '../../commands/eject_command.js'
 
 test.group('Eject', () => {
   test('eject a single stub', async ({ assert, fs }) => {

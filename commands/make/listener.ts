@@ -7,14 +7,14 @@
  * file that was distributed with this source code.
  */
 
-import BaseCommand from './_base_command.js'
+import BaseCommand from './_base.js'
 import { args, flags } from '../../modules/ace/main.js'
 
 /**
  * The make listener command to create a class based event
  * listener
  */
-export default class MakeListenerCommand extends BaseCommand {
+export default class MakeListener extends BaseCommand {
   static commandName = 'make:listener'
   static description = 'Create a new event listener class'
 

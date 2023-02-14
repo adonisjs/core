@@ -1,0 +1,19 @@
+{{#var commandName = generators.commandName(entity.name)}}
+{{#var commandTerminalName = generators.commandTerminalName(entity.name)}}
+{{#var commandFileName = generators.commandFileName(entity.name)}}
+---
+to: {{ app.commandsPath(entity.path, commandFileName) }}
+---
+import { BaseCommand } from '@adonisjs/core/ace'
+import { CommandOptions } from '@adonisjs/core/types'
+
+export default class {{ commandName }} extends BaseCommand {
+  static commandName = '{{ commandTerminalName }}'
+  static description = ''
+
+  static options: CommandOptions = {}
+
+  async run() {
+    this.info('Hello world from "{{ commandName }}"')
+  }
+}
