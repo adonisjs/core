@@ -43,7 +43,7 @@
   <sub>Built with ❤︎ by <a href="https://github.com/thetutlage">Harminder Virk</a>
 </div>
 
-[gh-workflow-image]: https://img.shields.io/github/workflow/status/adonisjs/core/test?style=for-the-badge
+[gh-workflow-image]: https://img.shields.io/github/actions/workflow/status/adonisjs/core/test.yml?branch=develop&label=Tests&style=for-the-badge
 [gh-workflow-url]: https://github.com/adonisjs/core/actions/workflows/test.yml "Github action"
 
 [npm-image]: https://img.shields.io/npm/v/@adonisjs/core/latest.svg?style=for-the-badge&logo=npm
