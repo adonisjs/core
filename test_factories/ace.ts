@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { Ignitor } from '../index.js'
 import { IgnitorFactory } from './ignitor.js'
+import { Ignitor } from '../src/ignitor/main.js'
 import type { IgnitorOptions } from '../src/types.js'
 import type { Kernel } from '../modules/ace/kernel.js'
 import { createAceKernel } from '../modules/ace/create_kernel.js'

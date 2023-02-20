@@ -19,7 +19,10 @@ test.group('Eject', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(EjectCommand, ['make/controller/main.stub'])
+    const command = await ace.create(EjectCommand, [
+      'make/controller/main.stub',
+      '--pkg="../../index.js"',
+    ])
     await command.exec()
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
@@ -39,14 +42,8 @@ test.group('Eject', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(EjectCommand, ['make/controller'])
+    const command = await ace.create(EjectCommand, ['make/controller', '--pkg="../../index.js"'])
     await command.exec()
-
-    await assert.hasFiles([
-      'stubs/make/controller/main.stub',
-      'stubs/make/controller/api.stub',
-      'stubs/make/controller/resource.stub',
-    ])
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
@@ -61,6 +58,12 @@ test.group('Eject', () => {
         message: '[ green(success) ] eject stubs/make/controller/resource.stub',
         stream: 'stdout',
       },
+    ])
+
+    await assert.hasFiles([
+      'stubs/make/controller/main.stub',
+      'stubs/make/controller/api.stub',
+      'stubs/make/controller/resource.stub',
     ])
   })
 })
