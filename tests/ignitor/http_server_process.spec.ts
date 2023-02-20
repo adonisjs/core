@@ -159,9 +159,10 @@ test.group('Ignitor | Http server process', () => {
     )
   })
 
-  test('terminate app if server crashes after starting', async ({ cleanup }, done) => {
+  test('terminate app if server crashes after starting', async ({ cleanup, assert }, done) => {
     let app: ApplicationService
     cleanup(async () => {
+      process.exitCode = undefined
       delete process.env.HOST
       delete process.env.PORT
     })
@@ -193,5 +194,6 @@ test.group('Ignitor | Http server process', () => {
 
     const server = await app!.container.make('server')
     server.getNodeServer()!.emit('error', new Error('crash'))
+    assert.equal(process.exitCode, 1)
   }).waitForDone()
 })

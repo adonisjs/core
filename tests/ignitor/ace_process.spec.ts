@@ -102,6 +102,7 @@ test.group('Ignitor | Ace process', () => {
 
   test('exit with status = 1 when command raises an exception', async ({ cleanup, assert }) => {
     cleanup(async () => {
+      process.exitCode = undefined
       await ignitor.terminate()
     })
 
@@ -138,6 +139,7 @@ test.group('Ignitor | Ace process', () => {
 
   test('exit with status = 1 when command exitCode = 1', async ({ cleanup, assert }) => {
     cleanup(async () => {
+      process.exitCode = undefined
       await ignitor.terminate()
     })
 
