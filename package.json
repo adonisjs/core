@@ -20,6 +20,7 @@
   "exports": {
     ".": "./build/index.js",
     "./commands": "./build/commands/main.js",
+    "./commands/*": "./build/commands/*.js",
     "./factories": "./build/factories/core/main.js",
     "./factories/app": "./build/factories/app.js",
     "./factories/bodyparser": "./build/factories/bodyparser.js",

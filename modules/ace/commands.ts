@@ -74,11 +74,12 @@ export class BaseCommand extends AceBaseCommand {
        */
       this.prepare && (await this.app.container.call<any, 'prepare'>(this, 'prepare'))
       this.interact && (await this.app.container.call<any, 'interact'>(this, 'interact'))
-      this.result = await this.app.container.call<BaseCommand, 'run'>(this, 'run')
+      const result = await this.app.container.call<BaseCommand, 'run'>(this, 'run')
 
       /**
        * Set exit code
        */
+      this.result = this.result === undefined ? result : this.result
       this.exitCode = this.exitCode ?? 0
     } catch (error) {
       this.error = error
