@@ -22,14 +22,14 @@ test.group('Eject', () => {
     const command = await ace.create(EjectCommand, ['make/controller/main.stub'])
     await command.exec()
 
-    await assert.hasFiles(['stubs/make/controller/main.stub'])
-
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
         message: '[ green(success) ] eject stubs/make/controller/main.stub',
         stream: 'stdout',
       },
     ])
+
+    await assert.hasFiles(['stubs/make/controller/main.stub'])
   })
 
   test('eject a directory', async ({ assert, fs }) => {
