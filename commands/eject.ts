@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { slash } from '@poppinss/utils'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
 
 /**
@@ -32,7 +33,7 @@ export default class Eject extends BaseCommand {
     })
 
     copied.forEach((stubPath) => {
-      this.logger.success(`eject ${this.app.relativePath(stubPath)}`)
+      this.logger.success(`eject ${slash(this.app.relativePath(stubPath))}`)
     })
   }
 }

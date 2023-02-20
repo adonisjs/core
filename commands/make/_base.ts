@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { slash } from '@poppinss/utils'
 import { stubsRoot } from '../../stubs/index.js'
 import { BaseCommand } from '../../modules/ace/main.js'
 import type { CommandOptions } from '../../types/ace.js'
@@ -36,7 +37,7 @@ export default abstract class extends BaseCommand {
       )
     )
 
-    const entityFileName = this.app.relativePath(output.destination)
+    const entityFileName = slash(this.app.relativePath(output.destination))
     if (output.status === 'skipped') {
       return this.logger.action(`create ${entityFileName}`).skipped(output.skipReason)
     }
