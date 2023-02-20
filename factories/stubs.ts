@@ -17,7 +17,8 @@ type FactoryParameters = {
 }
 
 /**
- * Prepares stubs from "@adonisjs/core" package.
+ * Prepares stubs from "@adonisjs/core" package. We do not publish this class as it
+ * is for internal testing only using the "stubsRoot" of the core package
  */
 export class StubsFactory {
   #parameters: Partial<FactoryParameters> = {}
