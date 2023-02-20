@@ -9,7 +9,7 @@
 
 import { test } from '@japa/runner'
 import EjectCommand from '../../commands/eject.js'
-import { AceFactory } from '../../test_factories/ace.js'
+import { AceFactory } from '../../factories/core/ace.js'
 
 test.group('Eject', () => {
   test('eject a single stub', async ({ assert, fs }) => {

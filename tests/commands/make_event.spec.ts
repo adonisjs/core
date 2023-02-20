@@ -8,8 +8,8 @@
  */
 
 import { test } from '@japa/runner'
-import { AceFactory } from '../../test_factories/ace.js'
-import { StubsFactory } from '../../test_factories/stubs.js'
+import { AceFactory } from '../../factories/core/ace.js'
+import { StubsFactory } from '../../factories/stubs.js'
 import MakeEventCommand from '../../commands/make/event.js'
 
 test.group('Make event', () => {

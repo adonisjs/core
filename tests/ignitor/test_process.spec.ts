@@ -8,7 +8,7 @@
  */
 
 import { test } from '@japa/runner'
-import { IgnitorFactory } from '../../test_factories/ignitor.js'
+import { IgnitorFactory } from '../../factories/core/ignitor.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

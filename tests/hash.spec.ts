@@ -9,7 +9,7 @@
 
 import { test } from '@japa/runner'
 import { HashDriverContract } from '../types/hash.js'
-import { IgnitorFactory } from '../test_factories/ignitor.js'
+import { IgnitorFactory } from '../factories/core/ignitor.js'
 import { Argon, Bcrypt, defineConfig, Hash, HashManager, Scrypt } from '../modules/hash/main.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)

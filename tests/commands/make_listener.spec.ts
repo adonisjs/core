@@ -9,8 +9,8 @@
 
 import { test } from '@japa/runner'
 import { ListLoader } from '../../modules/ace/main.js'
-import { AceFactory } from '../../test_factories/ace.js'
-import { StubsFactory } from '../../test_factories/stubs.js'
+import { AceFactory } from '../../factories/core/ace.js'
+import { StubsFactory } from '../../factories/stubs.js'
 import MakeEventCommand from '../../commands/make/event.js'
 import MakeListenerCommand from '../../commands/make/listener.js'
 

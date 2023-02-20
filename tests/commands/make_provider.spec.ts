@@ -8,9 +8,9 @@
  */
 
 import { test } from '@japa/runner'
-import { AceFactory } from '../../test_factories/ace.js'
+import { AceFactory } from '../../factories/core/ace.js'
 import MakeProvider from '../../commands/make/provider.js'
-import { StubsFactory } from '../../test_factories/stubs.js'
+import { StubsFactory } from '../../factories/stubs.js'
 
 test.group('Make provider', () => {
   test('create provider class', async ({ assert, fs }) => {

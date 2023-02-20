@@ -13,7 +13,7 @@ import { test } from '@japa/runner'
 import { createServer } from 'node:http'
 
 import type { ApplicationService } from '../../src/types.js'
-import { IgnitorFactory } from '../../test_factories/ignitor.js'
+import { IgnitorFactory } from '../../factories/core/ignitor.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

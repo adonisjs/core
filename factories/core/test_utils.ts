@@ -7,10 +7,10 @@
  * file that was distributed with this source code.
  */
 
-import { Ignitor } from '../index.js'
+import { Ignitor } from '../../index.js'
 import { IgnitorFactory } from './ignitor.js'
-import type { IgnitorOptions } from '../src/types.js'
-import { TestUtils } from '../src/test_utils/main.js'
+import type { IgnitorOptions } from '../../src/types.js'
+import { TestUtils } from '../../src/test_utils/main.js'
 
 /**
  * Creates an instance of TestUtils class

@@ -10,6 +10,7 @@
     "build/legacy",
     "build/providers",
     "build/services",
+    "build/factories",
     "build/types",
     "build/src",
     "build/stubs",
@@ -19,6 +20,14 @@
   "exports": {
     ".": "./build/index.js",
     "./commands": "./build/commands/main.js",
+    "./factories": "./build/factories/core/main.js",
+    "./factories/app": "./build/factories/app.js",
+    "./factories/bodyparser": "./build/factories/bodyparser.js",
+    "./factories/encryption": "./build/factories/encryption.js",
+    "./factories/events": "./build/factories/events.js",
+    "./factories/hash": "./build/factories/hash.js",
+    "./factories/http": "./build/factories/http.js",
+    "./factories/logger": "./build/factories/logger.js",
     "./types": "./build/src/types.js",
     "./types/ace": "./build/types/ace.js",
     "./types/app": "./build/types/app.js",
@@ -221,7 +230,7 @@
     "exclude": [
       "tests/**",
       "build/**",
-      "test_factories/**",
+      "factories/**",
       ".yalc/**"
     ]
   }

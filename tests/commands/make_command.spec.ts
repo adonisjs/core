@@ -9,8 +9,8 @@
 
 import { test } from '@japa/runner'
 import MakeCommand from '../../commands/make/command.js'
-import { AceFactory } from '../../test_factories/ace.js'
-import { StubsFactory } from '../../test_factories/stubs.js'
+import { AceFactory } from '../../factories/core/ace.js'
+import { StubsFactory } from '../../factories/stubs.js'
 
 test.group('Make command', () => {
   test('create command class', async ({ assert, fs }) => {

@@ -11,7 +11,7 @@ import { test } from '@japa/runner'
 import { ListLoader } from '../../modules/ace/main.js'
 import type { CommandOptions } from '../../types/ace.js'
 import { BaseCommand } from '../../modules/ace/commands.js'
-import { IgnitorFactory } from '../../test_factories/ignitor.js'
+import { IgnitorFactory } from '../../factories/core/ignitor.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

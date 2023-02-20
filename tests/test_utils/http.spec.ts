@@ -13,7 +13,7 @@ import { test } from '@japa/runner'
 import { createServer, IncomingMessage, ServerResponse } from 'node:http'
 
 import { HttpContext } from '../../modules/http.js'
-import { TestUtilsFactory } from '../../test_factories/test_utils.js'
+import { TestUtilsFactory } from '../../factories/core/test_utils.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

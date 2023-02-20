@@ -18,7 +18,7 @@ import { TestUtils } from '../src/test_utils/main.js'
 import { Encryption } from '../modules/encryption.js'
 import { Hash, HashManager } from '../modules/hash/main.js'
 import { Logger, LoggerManager } from '../modules/logger.js'
-import { IgnitorFactory } from '../test_factories/ignitor.js'
+import { IgnitorFactory } from '../factories/core/ignitor.js'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
