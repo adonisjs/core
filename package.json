@@ -102,6 +102,7 @@
     "@types/pretty-hrtime": "^1.0.1",
     "@types/sinon": "^10.0.13",
     "@types/supertest": "^2.0.12",
+    "@types/test-console": "^2.0.0",
     "c8": "^7.13.0",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
@@ -119,6 +120,7 @@
     "reflect-metadata": "^0.1.13",
     "sinon": "^15.0.1",
     "supertest": "^6.3.3",
+    "test-console": "^2.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   },

@@ -35,5 +35,5 @@ export async function prettyPrintError(error: any) {
   const { default: Youch } = await import('youch')
 
   const youch = new Youch(error, {})
-  console.log(youchTerminal(await youch.toJSON(), { displayShortPath: true }))
+  console.error(youchTerminal(await youch.toJSON(), { displayShortPath: true }))
 }
