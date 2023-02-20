@@ -8,4 +8,4 @@
  */
 
 export { default as cuid } from 'cuid'
-export { safeEqual, compose, base64, fsImportAll, fsReadAll } from '@poppinss/utils'
+export { safeEqual, compose, base64, fsImportAll, fsReadAll, slash } from '@poppinss/utils'
