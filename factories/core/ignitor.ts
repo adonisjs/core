@@ -44,9 +44,9 @@ export class IgnitorFactory {
    */
   #mergeCoreProviders(providers?: string[]) {
     return [
-      './providers/app_provider.js',
-      './providers/hash_provider.js',
-      './providers/http_provider.js',
+      '@adonisjs/core/providers/app_provider',
+      '@adonisjs/core/providers/hash_provider',
+      '@adonisjs/core/providers/http_provider',
     ].concat(providers || [])
   }
 

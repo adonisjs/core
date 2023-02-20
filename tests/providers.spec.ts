@@ -25,11 +25,21 @@ const BASE_URL = new URL('./tmp/', import.meta.url)
 
 test.group('Providers', () => {
   test('ensure all providers have been registered', async ({ assert }) => {
-    const ignitor = new IgnitorFactory().withCoreProviders().create(BASE_URL, {
-      importer: (filePath) => {
-        return import(new URL(filePath, new URL('../', import.meta.url)).href)
-      },
-    })
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            './providers/app_provider.js',
+            './providers/hash_provider.js',
+            './providers/http_provider.js',
+          ],
+        },
+      })
+      .create(BASE_URL, {
+        importer: (filePath) => {
+          return import(new URL(filePath, new URL('../', import.meta.url)).href)
+        },
+      })
 
     const app = ignitor.createApp('web')
     await app.init()
@@ -50,7 +60,15 @@ test.group('Providers', () => {
 
   test('ensure services can resolve bindings using container', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
+      .merge({
+        rcFileContents: {
+          providers: [
+            './providers/app_provider.js',
+            './providers/hash_provider.js',
+            './providers/http_provider.js',
+          ],
+        },
+      })
       .withCoreConfig()
       .create(BASE_URL, {
         importer: (filePath) => {
@@ -87,7 +105,15 @@ test.group('Providers', () => {
 
   test('construct bodyparser middleware using the container', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
+      .merge({
+        rcFileContents: {
+          providers: [
+            './providers/app_provider.js',
+            './providers/hash_provider.js',
+            './providers/http_provider.js',
+          ],
+        },
+      })
       .withCoreConfig()
       .create(BASE_URL, {
         importer: (filePath) => {
@@ -105,7 +131,15 @@ test.group('Providers', () => {
 
   test('construct Hash class using the container', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
+      .merge({
+        rcFileContents: {
+          providers: [
+            './providers/app_provider.js',
+            './providers/hash_provider.js',
+            './providers/http_provider.js',
+          ],
+        },
+      })
       .withCoreConfig()
       .create(BASE_URL, {
         importer: (filePath) => {
@@ -126,7 +160,15 @@ test.group('Providers', () => {
 
   test('construct Logger class using the container', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
+      .merge({
+        rcFileContents: {
+          providers: [
+            './providers/app_provider.js',
+            './providers/hash_provider.js',
+            './providers/http_provider.js',
+          ],
+        },
+      })
       .withCoreConfig()
       .create(BASE_URL, {
         importer: (filePath) => {
@@ -148,7 +190,15 @@ test.group('Providers', () => {
   test('configure validator', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
-      .withCoreProviders()
+      .merge({
+        rcFileContents: {
+          providers: [
+            './providers/app_provider.js',
+            './providers/hash_provider.js',
+            './providers/http_provider.js',
+          ],
+        },
+      })
       .merge({
         config: {
           validator: {
