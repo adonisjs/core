@@ -48,6 +48,7 @@
     "./services/logger": "./build/services/logger.js",
     "./services/router": "./build/services/router.js",
     "./services/server": "./build/services/server.js",
+    "./services/test_utils": "./build/services/test_utils.js",
     "./providers/app_provider": "./build/providers/app_provider.js",
     "./providers/hash_provider": "./build/providers/hash_provider.js",
     "./providers/http_provider": "./build/providers/http_provider.js",
