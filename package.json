@@ -1,6 +1,6 @@
 {
   "name": "@adonisjs/core",
-  "version": "6.1.1-0",
+  "version": "6.1.2-0",
   "description": "Core of AdonisJS",
   "main": "build/index.js",
   "type": "module",
