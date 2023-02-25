@@ -2,11 +2,11 @@
 
 AdonisJS is a community driven project. You are free to contribute in any of the following ways.
 
-- [Coding style](coding-style)
-- [Fix bugs by creating PR's](fix-bugs-by-creating-prs)
-- [Share an RFC for new features or big changes](share-an-rfc-for-new-features-or-big-changes)
-- [Report security issues](report-security-issues)
-- [Be a part of the community](be-a-part-of-community)
+- [Coding style](#coding-style)
+- [Fix bugs by creating PR's](#fix-bugs-by-creating-prs)
+- [Share an RFC for new features or big changes](#share-an-rfc-for-new-features-or-big-changes)
+- [Report security issues](#report-security-issues)
+- [Be a part of the community](#be-a-part-of-community)
 
 ## Coding style
 
