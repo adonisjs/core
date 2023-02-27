@@ -8,5 +8,6 @@
  */
 
 export { Kernel } from './kernel.js'
+export { aceShell } from './shell.js'
 export { BaseCommand, ListCommand } from './commands.js'
 export { args, flags, errors, Parser, FsLoader, ListLoader, HelpCommand } from '@adonisjs/ace'

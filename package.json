@@ -153,6 +153,7 @@
     "@sindresorhus/is": "^5.3.0",
     "@types/he": "^1.2.0",
     "cuid": "^3.0.0",
+    "execa": "^7.0.0",
     "he": "^1.2.0",
     "pretty-hrtime": "^1.0.3",
     "youch": "^3.2.3",
