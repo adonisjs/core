@@ -5,7 +5,7 @@
 to: {{ app.commandsPath(entity.path, commandFileName) }}
 ---
 import { BaseCommand } from '@adonisjs/core/ace'
-import { CommandOptions } from '@adonisjs/core/types'
+import { CommandOptions } from '@adonisjs/core/types/ace'
 
 export default class {{ commandName }} extends BaseCommand {
   static commandName = '{{ commandTerminalName }}'
@@ -14,6 +14,6 @@ export default class {{ commandName }} extends BaseCommand {
   static options: CommandOptions = {}
 
   async run() {
-    this.info('Hello world from "{{ commandName }}"')
+    this.logger.info('Hello world from "{{ commandName }}"')
   }
 }
