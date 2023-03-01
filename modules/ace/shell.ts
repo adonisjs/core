@@ -38,15 +38,13 @@ export function aceShell(cwd: URL) {
         stdio: 'inherit',
       })
 
-      childProcess.on('close', (exitCode) => {
-        if (exitCode) {
-          process.exitCode = exitCode
-        }
-      })
-
-      childProcess.on('error', (error) => {
+      try {
+        const result = await childProcess
+        process.exitCode = result.exitCode
+      } catch (error) {
         console.error(error)
-      })
+        process.exitCode = 1
+      }
     },
   }
 }
