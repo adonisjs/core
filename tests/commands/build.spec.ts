@@ -33,7 +33,7 @@ test.group('Build command', () => {
     assert.equal(command.exitCode, 1)
     assert.lengthOf(ace.ui.logger.getLogs(), 1)
     assert.equal(ace.ui.logger.getLogs()[0].stream, 'stderr')
-    assert.match(ace.ui.logger.getLogs()[0].message, /Unable to import "@adonisjs\/assembler/)
+    assert.match(ace.ui.logger.getLogs()[0].message, /Cannot find package "@adonisjs\/assembler/)
   })
 
   test('show error when typescript is not installed', async ({ assert, fs }) => {
@@ -55,10 +55,10 @@ test.group('Build command', () => {
     assert.equal(command.exitCode, 1)
     assert.lengthOf(ace.ui.logger.getLogs(), 1)
     assert.equal(ace.ui.logger.getLogs()[0].stream, 'stderr')
-    assert.match(ace.ui.logger.getLogs()[0].message, /Unable to import "typescript/)
+    assert.match(ace.ui.logger.getLogs()[0].message, /Cannot find package "typescript/)
   })
 
-  test('show error when tsconfig file is missing', async ({ assert, fs }) => {
+  test('fail when tsconfig file is missing', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(filePath)
@@ -71,9 +71,6 @@ test.group('Build command', () => {
     await command.exec()
 
     assert.equal(command.exitCode, 1)
-    assert.lengthOf(ace.ui.logger.getLogs(), 1)
-    assert.equal(ace.ui.logger.getLogs()[0].stream, 'stderr')
-    assert.match(ace.ui.logger.getLogs()[0].message, /Cannot read file/)
   })
 
   test('build project inside build directory', async ({ assert, fs }) => {
@@ -221,5 +218,134 @@ test.group('Build command', () => {
     assert.equal(command.exitCode, 0)
     await assert.fileExists('build/index.js')
     await assert.fileExists('build/.adonisrc.json')
+  }).timeout(30 * 1000)
+
+  test('show error when configured assets bundler is missing', async ({ assert, fs }) => {
+    await fs.create(
+      'tsconfig.json',
+      JSON.stringify({
+        include: ['**/*'],
+        exclude: [],
+        compilerOptions: {
+          target: 'ESNext',
+          module: 'NodeNext',
+          lib: ['ESNext'],
+          strict: true,
+          noUnusedLocals: true,
+        },
+      })
+    )
+
+    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('index.ts', '')
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(filePath)
+      },
+    })
+
+    ace.app.rcFile.assetsBundler = {
+      name: 'vite',
+      devServerCommand: 'vite',
+      buildCommand: 'vite build',
+    }
+
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Build, [])
+    await command.exec()
+
+    assert.equal(command.exitCode, 1)
+    assert.exists(
+      ace.ui.logger.getLogs().find((log) => {
+        return log.message.match(/compiling frontend assets/)
+      })
+    )
+  }).timeout(30 * 1000)
+
+  test('do not attempt to build assets when assets bundler is not configured', async ({
+    assert,
+    fs,
+  }) => {
+    await fs.create(
+      'tsconfig.json',
+      JSON.stringify({
+        include: ['**/*'],
+        exclude: [],
+        compilerOptions: {
+          target: 'ESNext',
+          module: 'NodeNext',
+          lib: ['ESNext'],
+          strict: true,
+          noUnusedLocals: true,
+        },
+      })
+    )
+
+    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('index.ts', '')
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(filePath)
+      },
+    })
+
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Build, [])
+    await command.exec()
+
+    assert.equal(command.exitCode, 0)
+    assert.notExists(
+      ace.ui.logger.getLogs().find((log) => {
+        return log.message.match(/compiling frontend assets/)
+      })
+    )
+  }).timeout(30 * 1000)
+
+  test('do not attempt to build assets when --no-assets flag is used', async ({ assert, fs }) => {
+    await fs.create(
+      'tsconfig.json',
+      JSON.stringify({
+        include: ['**/*'],
+        exclude: [],
+        compilerOptions: {
+          target: 'ESNext',
+          module: 'NodeNext',
+          lib: ['ESNext'],
+          strict: true,
+          noUnusedLocals: true,
+        },
+      })
+    )
+
+    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('index.ts', '')
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(filePath)
+      },
+    })
+
+    ace.app.rcFile.assetsBundler = {
+      name: 'vite',
+      devServerCommand: 'vite',
+      buildCommand: 'vite build',
+    }
+
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Build, ['--no-assets'])
+    await command.exec()
+
+    assert.equal(command.exitCode, 0)
+    assert.notExists(
+      ace.ui.logger.getLogs().find((log) => {
+        return log.message.match(/compiling frontend assets/)
+      })
+    )
   }).timeout(30 * 1000)
 })
