@@ -9,4 +9,13 @@
 
 export { Kernel } from './kernel.js'
 export { BaseCommand, ListCommand } from './commands.js'
-export { args, flags, errors, Parser, FsLoader, ListLoader, HelpCommand } from '@adonisjs/ace'
+export {
+  args,
+  flags,
+  errors,
+  Parser,
+  FsLoader,
+  ListLoader,
+  HelpCommand,
+  IndexGenerator,
+} from '@adonisjs/ace'

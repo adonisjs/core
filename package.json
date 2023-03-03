@@ -11,12 +11,16 @@
     "build/providers",
     "build/services",
     "build/factories",
+    "build/toolkit",
     "build/types",
     "build/src",
     "build/stubs",
     "build/index.d.ts",
     "build/index.js"
   ],
+  "bin": {
+    "toolkit": "./build/toolkit/main.js"
+  },
   "exports": {
     ".": "./build/index.js",
     "./commands": "./build/commands/main.js",
@@ -89,7 +93,7 @@
     "format": "prettier --write .",
     "sync-labels": "github-label-sync --labels .github/labels.json adonisjs/core",
     "vscode:test": "node --loader=ts-node/esm --experimental-import-meta-resolve bin/test.ts",
-    "index:commands": "ace-toolkit index build/commands"
+    "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
   "keywords": [
     "adonisjs",
