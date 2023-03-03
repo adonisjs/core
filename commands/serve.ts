@@ -7,8 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import type { CommandOptions } from '../types/ace.js'
 import { BaseCommand, flags } from '../modules/ace/main.js'
-import { CommandOptions } from '../types/ace.js'
+import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
 
 /**
  * Serve command is used to run the AdonisJS HTTP server during development. The
@@ -30,58 +31,52 @@ export default class Serve extends BaseCommand {
   @flags.boolean({ description: 'Use polling to detect filesystem changes' })
   declare poll?: boolean
 
-  /**
-   * Imports assembler and displays a human readable debugging message
-   */
-  async #importAssembler(): Promise<typeof import('@adonisjs/assembler') | undefined> {
-    try {
-      return await this.app.import('@adonisjs/assembler')
-    } catch {
-      this.logger.error(
-        [
-          'Unable to import "@adonisjs/assembler"',
-          '',
-          'The "@adonisjs/assembler" package is a development dependency and therefore you should use the serve command during development only.',
-          '',
-          'If you are running your application in production, then use "node bin/server.js" command to start the HTTP server',
-        ].join('\n')
-      )
-      this.exitCode = 1
-    }
-  }
+  @flags.boolean({
+    description: 'Start assets bundler dev server',
+    showNegatedVariantInHelp: true,
+    default: true,
+  })
+  declare assets?: boolean
 
   /**
-   * Imports typescript and displays a human readable debugging message
+   * Log a development dependency is missing
    */
-  async #importTypeScript() {
-    try {
-      return await this.app.import('typescript')
-    } catch {
-      this.logger.error(
-        [
-          'Unable to import "typescript"',
-          '',
-          'The "typescript" package is a development dependency and therefore you should use the serve command during development only.',
-          '',
-          'If you are running your application in production, then use "node bin/server.js" command to start the HTTP server',
-        ].join('\n')
-      )
-      this.exitCode = 1
-    }
+  #logMissingDevelopmentDependency(dependency: string) {
+    this.logger.error(
+      [
+        `Cannot find package "${dependency}"`,
+        '',
+        `The "${dependency}" package is a development dependency and therefore you should use the serve command during development only.`,
+        '',
+        'If you are running your application in production, then use "node bin/server.js" command to start the HTTP server',
+      ].join('\n')
+    )
   }
 
   /**
    * Runs the HTTP server
    */
   async run() {
-    const assembler = await this.#importAssembler()
+    const assembler = await importAssembler(this.app)
     if (!assembler) {
+      this.#logMissingDevelopmentDependency('@adonisjs/assembler')
+      this.exitCode = 1
       return
     }
 
+    const assetsBundler = await detectAssetsBundler(this.app)
     const devServer = new assembler.DevServer(this.app.appRoot, {
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: [],
+      assets: assetsBundler
+        ? {
+            serve: this.assets === false ? false : true,
+            driver: assetsBundler.name,
+            cmd: assetsBundler.devServerCommand,
+          }
+        : {
+            serve: false,
+          },
       metaFiles: this.app.rcFile.metaFiles,
     })
 
@@ -109,11 +104,14 @@ export default class Serve extends BaseCommand {
      * Start the development server
      */
     if (this.watch) {
-      const ts = await this.#importTypeScript()
+      const ts = await importTypeScript(this.app)
       if (!ts) {
+        this.#logMissingDevelopmentDependency('typescript')
+        this.exitCode = 1
         return
       }
-      await devServer.startAndWatch(ts.default, { poll: this.poll || false })
+
+      await devServer.startAndWatch(ts, { poll: this.poll || false })
     } else {
       await devServer.start()
     }

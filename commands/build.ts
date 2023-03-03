@@ -8,6 +8,7 @@
  */
 
 import { BaseCommand, flags } from '../modules/ace/main.js'
+import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
 
 /**
  * Serve command is used to run the AdonisJS HTTP server during development. The
@@ -30,57 +31,59 @@ export default class Build extends BaseCommand {
   })
   declare packageManager?: 'npm' | 'pnpm' | 'yarn'
 
-  /**
-   * Imports assembler and displays a human readable debugging message
-   */
-  async #importAssembler(): Promise<typeof import('@adonisjs/assembler') | undefined> {
-    try {
-      return await this.app.import('@adonisjs/assembler')
-    } catch {
-      this.logger.error(
-        [
-          'Unable to import "@adonisjs/assembler"',
-          '',
-          'The "@adonisjs/assembler" package is a development dependency and therefore you should use the build command during development only.',
-          '',
-          'If you are using the build command inside a CI or with a deployment platform, make sure the NODE_ENV is set to "development"',
-        ].join('\n')
-      )
-      this.exitCode = 1
-    }
-  }
+  @flags.boolean({
+    description: 'Build frontend assets',
+    showNegatedVariantInHelp: true,
+    default: true,
+  })
+  declare assets?: boolean
 
   /**
-   * Imports typescript and displays a human readable debugging message
+   * Log a development dependency is missing
    */
-  async #importTypeScript() {
-    try {
-      return await this.app.import('typescript')
-    } catch {
-      this.logger.error(
-        [
-          'Unable to import "typescript"',
-          '',
-          'The "typescript" package is a development dependency and therefore you should use the build command during development only.',
-          '',
-          'If you are using the build command inside a CI or with a deployment platform, make sure the NODE_ENV is set to "development"',
-        ].join('\n')
-      )
-      this.exitCode = 1
-    }
+  #logMissingDevelopmentDependency(dependency: string) {
+    this.logger.error(
+      [
+        `Cannot find package "${dependency}"`,
+        '',
+        `The "${dependency}" package is a development dependency and therefore you should use the serve command during development only.`,
+        '',
+        'If you are using the build command inside a CI or with a deployment platform, make sure the NODE_ENV is set to "development"',
+      ].join('\n')
+    )
   }
 
   /**
    * Build application
    */
   async run() {
-    const assembler = await this.#importAssembler()
-    const ts = await this.#importTypeScript()
-    if (!assembler || !ts) {
+    const assembler = await importAssembler(this.app)
+    if (!assembler) {
+      this.#logMissingDevelopmentDependency('@adonisjs/assembler')
+      this.exitCode = 1
       return
     }
 
-    const bundler = new assembler.Bundler(this.app.appRoot, ts.default, {})
+    const ts = await importTypeScript(this.app)
+    if (!ts) {
+      this.#logMissingDevelopmentDependency('typescript')
+      this.exitCode = 1
+      return
+    }
+
+    const assetsBundler = await detectAssetsBundler(this.app)
+    const bundler = new assembler.Bundler(this.app.appRoot, ts, {
+      assets: assetsBundler
+        ? {
+            serve: this.assets === false ? false : true,
+            driver: assetsBundler.name,
+            cmd: assetsBundler.devServerCommand,
+          }
+        : {
+            serve: false,
+          },
+      metaFiles: this.app.rcFile.metaFiles,
+    })
 
     /**
      * Share command logger with assembler, so that CLI flags like --no-ansi has

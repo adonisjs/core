@@ -42,7 +42,6 @@ export function aceShell(cwd: URL) {
         const result = await childProcess
         process.exitCode = result.exitCode
       } catch (error) {
-        console.error(error)
         process.exitCode = 1
       }
     },
