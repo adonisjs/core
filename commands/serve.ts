@@ -32,6 +32,13 @@ export default class Serve extends BaseCommand {
   declare poll?: boolean
 
   @flags.boolean({
+    description: 'Clear the terminal for new logs after file change',
+    showNegatedVariantInHelp: true,
+    default: true,
+  })
+  declare clear?: boolean
+
+  @flags.boolean({
     description: 'Start assets bundler dev server',
     showNegatedVariantInHelp: true,
     default: true,
@@ -66,6 +73,7 @@ export default class Serve extends BaseCommand {
 
     const assetsBundler = await detectAssetsBundler(this.app)
     const devServer = new assembler.DevServer(this.app.appRoot, {
+      clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: [],
       assets: assetsBundler
