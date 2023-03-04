@@ -14,7 +14,10 @@ let testUtils: TestUtils
 
 /**
  * Returns a singleton instance of the TestUtils class
- * from the container
+ * from the container.
+ *
+ * testUtils service is an instance of the "TestUtils" exported from
+ * the "src/test_utils/main.ts" file.
  */
 await app.booted(async () => {
   testUtils = await app.container.make('testUtils')

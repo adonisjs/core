@@ -14,7 +14,10 @@ let ace: Kernel
 
 /**
  * Returns a singleton instance of the ace kernel
- * from the container
+ * from the container.
+ *
+ * ace service is an instance of the "Kernel" class stored inside
+ * the "modules/ace/kernel.ts" file
  */
 await app.booted(async () => {
   ace = await app.container.make('ace')

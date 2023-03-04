@@ -15,6 +15,9 @@ let app: ApplicationService
  * Set the application instance the app service should
  * be using. Other services relies on the same app
  * instance as well.
+ *
+ * app service is an instance of the "Application" exported from
+ * the "modules/app.ts" file.
  */
 export function setApp(appService: ApplicationService) {
   app = appService
