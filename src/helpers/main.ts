@@ -7,5 +7,5 @@
  * file that was distributed with this source code.
  */
 
-export { default as cuid } from 'cuid'
+export { createId as cuid } from '@paralleldrive/cuid2'
 export { safeEqual, compose, base64, fsImportAll, fsReadAll, slash } from '@poppinss/utils'
