@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import fs from 'fs-extra'
+import fs from 'node:fs'
 import { ApplicationService } from './types.js'
 
 /**
@@ -41,7 +41,7 @@ export async function detectAssetsBundler(app: ApplicationService) {
     return app.rcFile.assetsBundler
   }
 
-  if (await fs.exists(app.makePath('vite.config.js'))) {
+  if (fs.existsSync(app.makePath('vite.config.js'))) {
     return {
       name: 'vite',
       devServerCommand: 'vite',
@@ -49,7 +49,7 @@ export async function detectAssetsBundler(app: ApplicationService) {
     }
   }
 
-  if (await fs.exists(app.makePath('webpack.config.js'))) {
+  if (fs.existsSync(app.makePath('webpack.config.js'))) {
     return {
       name: 'encore',
       devServerCommand: 'encore dev-server',
