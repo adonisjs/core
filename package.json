@@ -103,7 +103,7 @@
   "author": "virk,adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/assembler": "^6.1.3-2",
+    "@adonisjs/assembler": "^6.1.3-3",
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
     "@japa/assert": "^1.4.1",
