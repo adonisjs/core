@@ -16,6 +16,7 @@ export {
   Parser,
   FsLoader,
   ListLoader,
+  cliHelpers,
   HelpCommand,
   IndexGenerator,
 } from '@adonisjs/ace'
