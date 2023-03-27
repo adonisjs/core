@@ -21,6 +21,7 @@
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "noImplicitThis": true,
+    "declarationMap": true,
     "skipLibCheck": true,
     "types": ["@types/node"]
   },
