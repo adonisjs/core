@@ -8,7 +8,6 @@
  */
 
 import app from './app.js'
-import { Router } from '../modules/http.js'
 import type { HttpRouterService } from '../src/types.js'
 
 let router: HttpRouterService
@@ -18,7 +17,7 @@ let router: HttpRouterService
  * the container
  */
 await app.booted(async () => {
-  router = await app.container.make(Router)
+  router = await app.container.make('router')
 })
 
 export { router as default }

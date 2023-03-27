@@ -8,7 +8,6 @@
  */
 
 import app from './app.js'
-import { Server } from '../modules/http.js'
 import type { HttpServerService } from '../src/types.js'
 
 let server: HttpServerService
@@ -18,7 +17,7 @@ let server: HttpServerService
  * from the container
  */
 await app.booted(async () => {
-  server = await app.container.make(Server)
+  server = await app.container.make('server')
 })
 
 export { server as default }

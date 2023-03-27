@@ -8,7 +8,6 @@
  */
 
 import app from './app.js'
-import { Encryption } from '../modules/encryption.js'
 import type { EncryptionService } from '../src/types.js'
 
 let encryption: EncryptionService
@@ -18,7 +17,7 @@ let encryption: EncryptionService
  * from the container
  */
 await app.booted(async () => {
-  encryption = await app.container.make(Encryption)
+  encryption = await app.container.make('encryption')
 })
 
 export { encryption as default }

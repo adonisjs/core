@@ -7,9 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { Hash, HashManager } from '../modules/hash/main.js'
-import type { AbstractConstructor } from '../types/container.js'
-import type { ApplicationService, HashService } from '../src/types.js'
+import { Hash } from '../modules/hash/main.js'
+import type { ApplicationService } from '../src/types.js'
 import hashDriversCollection from '../modules/hash/drivers_collection.js'
 
 /**
@@ -41,11 +40,11 @@ export default class HashServiceProvider {
    * Registers the hash manager with the container
    */
   protected registerHashManager() {
-    this.app.container.singleton<AbstractConstructor<HashService>>(HashManager, async () => {
+    this.app.container.singleton('hash', async () => {
+      const { HashManager } = await import('../modules/hash/main.js')
       const config = this.app.config.get<any>('hash')
       return new HashManager(config)
     })
-    this.app.container.alias('hash', HashManager)
   }
 
   /**

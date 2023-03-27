@@ -9,7 +9,6 @@
 
 import app from './app.js'
 import type { HashService } from '../src/types.js'
-import { HashManager } from '../modules/hash/main.js'
 
 let hash: HashService
 
@@ -18,7 +17,7 @@ let hash: HashService
  * container
  */
 await app.booted(async () => {
-  hash = await app.container.make(HashManager)
+  hash = await app.container.make('hash')
 })
 
 export { hash as default }

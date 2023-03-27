@@ -8,7 +8,6 @@
  */
 
 import app from './app.js'
-import { LoggerManager } from '@adonisjs/logger'
 import type { LoggerService } from '../src/types.js'
 
 let logger: LoggerService
@@ -18,7 +17,7 @@ let logger: LoggerService
  * from the container
  */
 await app.booted(async () => {
-  logger = (await app.container.make(LoggerManager)) as LoggerService
+  logger = await app.container.make('logger')
 })
 
 export { logger as default }
