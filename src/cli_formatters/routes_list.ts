@@ -39,7 +39,7 @@ export class RoutesListFormatter {
   #table: UIPrimitives['table']
 
   /**
-   * Max width for pretty printing routes
+   * Options for printing routes
    */
   #options: {
     displayHeadRoutes?: boolean
