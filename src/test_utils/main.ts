@@ -12,8 +12,8 @@ import Macroable from '@poppinss/macroable'
 import { IncomingMessage, ServerResponse } from 'node:http'
 
 import { HttpServerUtils } from './http.js'
-import type { ApplicationService } from '../types.js'
 import { CookieClient } from '../../modules/http.js'
+import type { ApplicationService } from '../types.js'
 
 /**
  * Test utils has a collection of helper methods to make testing

@@ -7,9 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { Hash } from '../modules/hash/main.js'
 import type { ApplicationService } from '../src/types.js'
-import hashDriversCollection from '../modules/hash/drivers_collection.js'
+import { Argon, Bcrypt, Hash, Scrypt, driversList } from '../modules/hash/main.js'
 
 /**
  * Registers the passwords hasher with the container
@@ -18,11 +17,12 @@ export default class HashServiceProvider {
   constructor(protected app: ApplicationService) {}
 
   /**
-   * Registers the hash drivers collection to the container. The
-   * collection can be extended to add custom drivers.
+   * Registering bundled drivers with the driversList collection
    */
   protected registerHashDrivers() {
-    this.app.container.singleton('hashDrivers', () => hashDriversCollection)
+    driversList.extend('bcrypt', (config) => new Bcrypt(config))
+    driversList.extend('scrypt', (config) => new Scrypt(config))
+    driversList.extend('argon2', (config) => new Argon(config))
   }
 
   /**
@@ -51,8 +51,8 @@ export default class HashServiceProvider {
    * Registers bindings
    */
   register() {
-    this.registerHashManager()
     this.registerHashDrivers()
+    this.registerHashManager()
     this.registerHash()
   }
 }

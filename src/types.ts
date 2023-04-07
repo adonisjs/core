@@ -17,7 +17,6 @@ import type { LoggerManager } from '../modules/logger.js'
 import type { Encryption } from '../modules/encryption.js'
 import type { HttpRequestFinishedPayload } from '../types/http.js'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.js'
-import type hashDriversCollection from '../modules/hash/drivers_collection.js'
 import type { Argon, Bcrypt, HashManager, Scrypt } from '../modules/hash/main.js'
 import type {
   ArgonConfig,
@@ -129,7 +128,6 @@ export interface ContainerBindings {
   emitter: EmitterService
   encryption: EncryptionService
   hash: HashService
-  hashDrivers: typeof hashDriversCollection
   server: HttpServerService
   router: HttpRouterService
   testUtils: TestUtils

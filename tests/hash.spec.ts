@@ -10,7 +10,15 @@
 import { test } from '@japa/runner'
 import { HashDriverContract } from '../types/hash.js'
 import { IgnitorFactory } from '../factories/core/ignitor.js'
-import { Argon, Bcrypt, defineConfig, Hash, HashManager, Scrypt } from '../modules/hash/main.js'
+import {
+  Hash,
+  Argon,
+  Bcrypt,
+  Scrypt,
+  HashManager,
+  driversList,
+  defineConfig,
+} from '../modules/hash/main.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
@@ -26,6 +34,8 @@ test.group('Hash', () => {
         },
       },
     })
+
+    driversList.extend('scrypt', (scryptConfig) => new Scrypt(scryptConfig))
 
     const hash = new HashManager(config)
     assert.instanceOf(hash.use('scrypt'), Hash)
@@ -65,11 +75,10 @@ test.group('Hash', () => {
     const app = ignitor.createApp('web')
     await app.init()
     await app.boot()
-    const hashDrivers = await app.container.make('hashDrivers')
 
-    assert.instanceOf(hashDrivers.create('bcrypt', {}), Bcrypt)
-    assert.instanceOf(hashDrivers.create('scrypt', {}), Scrypt)
-    assert.instanceOf(hashDrivers.create('argon2', {}), Argon)
+    assert.instanceOf(driversList.create('bcrypt', {}), Bcrypt)
+    assert.instanceOf(driversList.create('scrypt', {}), Scrypt)
+    assert.instanceOf(driversList.create('argon2', {}), Argon)
   })
 
   test('raise error when trying to create unknown hash driver', async ({ assert }) => {
@@ -89,10 +98,9 @@ test.group('Hash', () => {
     await app.init()
     await app.boot()
 
-    const hashDrivers = await app.container.make('hashDrivers')
     assert.throws(
       // @ts-expect-error
-      () => hashDrivers.create('foo', {}),
+      () => driversList.create('foo', {}),
       'Unknown hash driver "foo". Make sure the driver is registered'
     )
   })
@@ -132,12 +140,11 @@ test.group('Hash', () => {
       }
     }
 
-    const hashDrivers = await app.container.make('hashDrivers')
     // @ts-expect-error
-    hashDrivers.extend('fake', () => new FakeHash())
+    driversList.extend('fake', () => new FakeHash())
 
     // @ts-expect-error
-    const fakeDriver = hashDrivers.create('fake')
+    const fakeDriver = driversList.create('fake')
     assert.instanceOf(fakeDriver, FakeHash)
   })
 })
