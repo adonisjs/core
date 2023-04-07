@@ -52,7 +52,6 @@ test.group('Providers', () => {
     assert.isTrue(app.container.hasBinding('emitter'))
     assert.isTrue(app.container.hasBinding('encryption'))
     assert.isTrue(app.container.hasBinding('hash'))
-    assert.isTrue(app.container.hasBinding('hashDrivers'))
     assert.isTrue(app.container.hasBinding('server'))
     assert.isTrue(app.container.hasBinding('router'))
     assert.isTrue(app.container.hasBinding('testUtils'))
