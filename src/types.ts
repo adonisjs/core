@@ -16,6 +16,7 @@ import type { Router, Server } from '../modules/http.js'
 import type { LoggerManager } from '../modules/logger.js'
 import type { Encryption } from '../modules/encryption.js'
 import type { HttpRequestFinishedPayload } from '../types/http.js'
+import type { ContainerResolveEventData } from '../types/container.js'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.js'
 import type { Argon, Bcrypt, HashManager, Scrypt } from '../modules/hash/main.js'
 import type {
@@ -36,6 +37,7 @@ export type IgnitorOptions = { importer: Importer }
  * types.
  */
 export interface EventsList {
+  'container:resolved': ContainerResolveEventData<ContainerBindings>
   'http:request_handled': HttpRequestFinishedPayload
   'http:server_ready': { port: number; host: string }
 }
