@@ -71,7 +71,6 @@
     "./helpers/is": "./build/src/helpers/is.js",
     "./helpers/types": "./build/src/helpers/types.js",
     "./helpers/string": "./build/src/helpers/string.js",
-    "./helpers/string_builder": "./build/src/helpers/string_builder.js",
     "./ace/shell": "./build/modules/ace/shell.js",
     "./ace": "./build/modules/ace/main.js",
     "./bodyparser": "./build/modules/bodyparser/main.js",

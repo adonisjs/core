@@ -9,6 +9,7 @@
 
 import { test } from '@japa/runner'
 import stringHelpers from '../src/helpers/string.js'
+import { StringBuilder } from '../src/helpers/string_builder.js'
 import { parseBindingReference } from '../src/helpers/main.js'
 
 test.group('String helpers', () => {
@@ -34,6 +35,10 @@ test.group('String helpers', () => {
     const endTime = process.hrtime(startTime)
 
     assert.match(stringHelpers.prettyHrTime(endTime), /^\d(\.\d+)? s$/)
+  })
+
+  test('create string builder instance', async ({ assert }) => {
+    assert.instanceOf(stringHelpers.create('foo'), StringBuilder)
   })
 })
 

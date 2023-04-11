@@ -10,11 +10,17 @@
 import he, { EncodeOptions } from 'he'
 import prettyHrTime from 'pretty-hrtime'
 import string from '@poppinss/utils/string'
+import { StringBuilder } from './string_builder.js'
 
 /**
  * Collection of string helpers to transform a string value.
  */
 const stringHelpers: typeof string & {
+  /**
+   * Creates an instance of the string builder
+   */
+  create(value: string | StringBuilder): StringBuilder
+
   ordinalize: (typeof string)['ordinal']
 
   /**
@@ -54,6 +60,10 @@ const stringHelpers: typeof string & {
   toSentence: string.sentence,
   ordinalize: string.ordinal,
   generateRandom: string.random,
+
+  create(value: string | StringBuilder): StringBuilder {
+    return new StringBuilder(value)
+  },
 
   prettyHrTime(time, options) {
     return prettyHrTime(time, options)
