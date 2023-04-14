@@ -26,8 +26,18 @@ export default class MakeProvider extends BaseCommand {
   protected stubPath: string = 'make/provider/main.stub'
 
   async run() {
-    await this.generate(this.stubPath, {
+    const output = await this.generate(this.stubPath, {
       entity: this.app.generators.createEntity(this.name),
     })
+
+    /**
+     * Registering the provider with the `.adonisrc.json` file. We register
+     * the relative path, since we cannot be sure about aliases to exist.
+     */
+    const providerImportPath = `./${this.app
+      .relativePath(output.destination)
+      .replace(/(\.js|\.ts)$/, '')}.js`
+
+    await this.app.rcFileEditor.addProvider(providerImportPath).save()
   }
 }

@@ -35,5 +35,7 @@ test.group('Make provider', () => {
         stream: 'stdout',
       },
     ])
+
+    await assert.fileContains('.adonisrc.json', /"\.\/providers\/app_provider\.js"/)
   })
 })
