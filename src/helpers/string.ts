@@ -10,7 +10,7 @@
 import he, { EncodeOptions } from 'he'
 import prettyHrTime from 'pretty-hrtime'
 import string from '@poppinss/utils/string'
-import { StringBuilder } from './string_builder.js'
+import StringBuilder from '@poppinss/utils/string_builder'
 
 /**
  * Collection of string helpers to transform a string value.

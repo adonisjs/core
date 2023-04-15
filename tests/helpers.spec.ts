@@ -8,8 +8,9 @@
  */
 
 import { test } from '@japa/runner'
+import StringBuilder from '@poppinss/utils/string_builder'
+
 import stringHelpers from '../src/helpers/string.js'
-import { StringBuilder } from '../src/helpers/string_builder.js'
 import { parseBindingReference } from '../src/helpers/main.js'
 
 test.group('String helpers', () => {
