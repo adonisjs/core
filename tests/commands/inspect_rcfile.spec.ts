@@ -10,7 +10,7 @@
 import { test } from '@japa/runner'
 import lodash from '@poppinss/utils/lodash'
 import { AceFactory } from '../../factories/core/ace.js'
-import InspectRCFile from '../../commands/dump_rcfile.js'
+import InspectRCFile from '../../commands/inspect_rcfile.js'
 
 test.group('Inspect RCFile', () => {
   test('inspect rcfile contents', async ({ assert, fs }) => {
