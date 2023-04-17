@@ -89,7 +89,6 @@ export default class Test extends BaseCommand {
    * Runs tests
    */
   async run() {
-    console.log(this.app.rcFile.tests)
     const assembler = await importAssembler(this.app)
     if (!assembler) {
       this.#logMissingDevelopmentDependency('@adonisjs/assembler')
