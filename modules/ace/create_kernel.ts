@@ -23,6 +23,7 @@ import { FsLoader, HelpCommand } from '../../modules/ace/main.js'
 export function createAceKernel(app: ApplicationService) {
   const kernel = new Kernel(app)
   kernel.addLoader(new FsLoader(app.commandsPath()))
+  kernel.info.set('binary', 'node ace')
 
   /**
    * Lazy import commands mentioned in the "commands" array
