@@ -88,7 +88,7 @@
   },
   "scripts": {
     "pretest": "npm run lint",
-    "test": "cross-env NODE_DEBUG=adonisjs:core c8 npm run vscode:test",
+    "test": "cross-env NODE_DEBUG=adonisjs:core c8 npm run quick:test",
     "clean": "del-cli build",
     "copy:templates": "copyfiles \"stubs/**/**/*.stub\" build",
     "precompile": "npm run lint",
@@ -101,7 +101,7 @@
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",
     "sync-labels": "github-label-sync --labels .github/labels.json adonisjs/core",
-    "vscode:test": "node --loader=ts-node/esm --experimental-import-meta-resolve bin/test.ts",
+    "quick:test": "node --loader=ts-node/esm --experimental-import-meta-resolve bin/test.ts",
     "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
   "keywords": [

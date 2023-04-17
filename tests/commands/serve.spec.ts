@@ -27,7 +27,7 @@ test.group('Serve command', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, [])
+    const command = await ace.create(Serve, ['--no-clear'])
     await command.exec()
     await sleep(100)
 
@@ -50,7 +50,7 @@ test.group('Serve command', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, [])
+    const command = await ace.create(Serve, ['--no-clear'])
     await command.exec()
 
     await sleep(100)
@@ -76,7 +76,7 @@ test.group('Serve command', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, [])
+    const command = await ace.create(Serve, ['--no-clear'])
     command.watch = true
     await command.exec()
 
@@ -97,7 +97,7 @@ test.group('Serve command', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, [])
+    const command = await ace.create(Serve, ['--no-clear'])
     command.watch = true
     await command.exec()
 
@@ -130,7 +130,7 @@ test.group('Serve command', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, [])
+    const command = await ace.create(Serve, ['--no-clear'])
     command.watch = true
     await command.exec()
 
@@ -171,7 +171,7 @@ test.group('Serve command', () => {
 
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, [])
+    const command = await ace.create(Serve, ['--no-clear'])
     await command.exec()
     await sleep(100)
 
@@ -211,7 +211,7 @@ test.group('Serve command', () => {
 
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, [])
+    const command = await ace.create(Serve, ['--no-clear'])
     await command.exec()
     await sleep(100)
 
@@ -249,7 +249,7 @@ test.group('Serve command', () => {
 
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, ['--no-assets'])
+    const command = await ace.create(Serve, ['--no-assets', '--no-clear'])
     await command.exec()
     await sleep(100)
 
