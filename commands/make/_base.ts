@@ -40,10 +40,16 @@ export default abstract class extends BaseCommand {
     const entityFileName = slash(this.app.relativePath(output.destination))
     if (output.status === 'skipped') {
       this.logger.action(`create ${entityFileName}`).skipped(output.skipReason)
-      return output
+      return {
+        ...output,
+        relativeFileName: entityFileName,
+      }
     }
 
     this.logger.action(`create ${entityFileName}`).succeeded()
-    return output
+    return {
+      ...output,
+      relativeFileName: entityFileName,
+    }
   }
 }

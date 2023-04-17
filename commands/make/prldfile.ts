@@ -34,10 +34,7 @@ export default class MakePreloadFile extends BaseCommand {
      * Registering the preload file with the `.adonisrc.json` file. We register
      * the relative path, since we cannot be sure about aliases to exist.
      */
-    const preloadImportPath = `./${this.app
-      .relativePath(output.destination)
-      .replace(/(\.js|\.ts)$/, '')}.js`
-
+    const preloadImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
     await this.app.rcFileEditor.addPreloadFile(preloadImportPath).save()
   }
 }
