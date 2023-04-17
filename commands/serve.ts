@@ -21,6 +21,19 @@ export default class Serve extends BaseCommand {
   static description =
     'Start the development HTTP server along with the file watcher to perform restarts on file change'
 
+  static help = [
+    'Start the development server with file watcher using the following command.',
+    '```',
+    '{{ binaryName }} serve --watch',
+    '```',
+    '',
+    'The assets bundler dev server runs automatically after detecting vite config or webpack config files',
+    'You may pass vite CLI args using the --assets-args command line flag.',
+    '```',
+    '{{ binaryName }} serve --assets-args="--debug --base=/public"',
+    '```',
+  ]
+
   static options: CommandOptions = {
     staysAlive: true,
   }
@@ -44,6 +57,11 @@ export default class Serve extends BaseCommand {
     default: true,
   })
   declare assets?: boolean
+
+  @flags.array({
+    description: 'Define CLI arguments to pass to the assets bundler',
+  })
+  declare assetsArgs?: string[]
 
   /**
    * Log a development dependency is missing
@@ -81,6 +99,7 @@ export default class Serve extends BaseCommand {
             serve: this.assets === false ? false : true,
             driver: assetsBundler.name,
             cmd: assetsBundler.devServerCommand,
+            args: this.assetsArgs || [],
           }
         : {
             serve: false,

@@ -20,6 +20,19 @@ export default class Build extends BaseCommand {
   static description =
     'Build application for production by compiling frontend assets and TypeScript source to JavaScript'
 
+  static help = [
+    'Create the production build using the following command.',
+    '```',
+    '{{ binaryName }} build',
+    '```',
+    '',
+    'The assets bundler dev server runs automatically after detecting vite config or webpack config files',
+    'You may pass vite CLI args using the --assets-args command line flag.',
+    '```',
+    '{{ binaryName }} build --assets-args="--debug --base=/public"',
+    '```',
+  ]
+
   @flags.boolean({ description: 'Watch filesystem and restart the HTTP server on file change' })
   declare watch?: boolean
 
@@ -38,6 +51,11 @@ export default class Build extends BaseCommand {
   })
   declare assets?: boolean
 
+  @flags.array({
+    description: 'Define CLI arguments to pass to the assets bundler',
+  })
+  declare assetsArgs?: string[]
+
   /**
    * Log a development dependency is missing
    */
@@ -46,7 +64,7 @@ export default class Build extends BaseCommand {
       [
         `Cannot find package "${dependency}"`,
         '',
-        `The "${dependency}" package is a development dependency and therefore you should use the serve command during development only.`,
+        `The "${dependency}" package is a development dependency and therefore you should use the build command with development dependencies installed.`,
         '',
         'If you are using the build command inside a CI or with a deployment platform, make sure the NODE_ENV is set to "development"',
       ].join('\n')
@@ -78,6 +96,7 @@ export default class Build extends BaseCommand {
             serve: this.assets === false ? false : true,
             driver: assetsBundler.name,
             cmd: assetsBundler.buildCommand,
+            args: this.assetsArgs || [],
           }
         : {
             serve: false,
