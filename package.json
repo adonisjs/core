@@ -112,7 +112,7 @@
   "author": "virk,adonisjs",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/assembler": "^6.1.3-5",
+    "@adonisjs/assembler": "^6.1.3-6",
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.6.1",
     "@japa/assert": "^1.4.1",
