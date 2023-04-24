@@ -64,7 +64,7 @@ export async function detectAssetsBundler(app: ApplicationService) {
     return {
       name: 'encore',
       devServerCommand: 'encore dev-server',
-      buildCommand: 'encore',
+      buildCommand: 'encore production',
     }
   }
 }
