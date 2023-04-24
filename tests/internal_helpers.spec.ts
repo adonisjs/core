@@ -47,7 +47,7 @@ test.group('Internal helpers | detect package manager', () => {
     await fs.create('webpack.config.js', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'encore',
-      buildCommand: 'encore',
+      buildCommand: 'encore production',
       devServerCommand: 'encore dev-server',
     })
     await fs.remove('webpack.config.js')
@@ -55,7 +55,7 @@ test.group('Internal helpers | detect package manager', () => {
     await fs.create('webpack.config.cjs', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'encore',
-      buildCommand: 'encore',
+      buildCommand: 'encore production',
       devServerCommand: 'encore dev-server',
     })
   })
