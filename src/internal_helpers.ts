@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import fs from 'node:fs'
+import { existsSync } from 'node:fs'
 import { ApplicationService } from './types.js'
 
 /**
@@ -33,6 +33,15 @@ export async function importTypeScript(
 }
 
 /**
+ * Generates an array of filenames with different JavaScript
+ * extensions for the given filename
+ */
+function generateJsFilenames(filename: string) {
+  const extensions = ['.js', '.ts', '.cjs', '.mjs', '.cts', '.mts']
+  return extensions.map((extension) => filename + extension)
+}
+
+/**
  * Detects the assets bundler in use. The rcFile.assetsBundler is
  * used when exists.
  */
@@ -41,7 +50,8 @@ export async function detectAssetsBundler(app: ApplicationService) {
     return app.rcFile.assetsBundler
   }
 
-  if (fs.existsSync(app.makePath('vite.config.js'))) {
+  const possibleViteConfigFiles = generateJsFilenames('vite.config')
+  if (possibleViteConfigFiles.some((config) => existsSync(app.makePath(config)))) {
     return {
       name: 'vite',
       devServerCommand: 'vite',
@@ -49,11 +59,12 @@ export async function detectAssetsBundler(app: ApplicationService) {
     }
   }
 
-  if (fs.existsSync(app.makePath('webpack.config.js'))) {
+  const possibleEncoreConfigFiles = generateJsFilenames('webpack.config')
+  if (possibleEncoreConfigFiles.some((config) => existsSync(app.makePath(config)))) {
     return {
       name: 'encore',
       devServerCommand: 'encore dev-server',
-      buildCommand: 'encore',
+      buildCommand: 'encore production',
     }
   }
 }
