@@ -78,6 +78,7 @@ test.group('Build command', () => {
       'tsconfig.json',
       JSON.stringify({
         include: ['**/*'],
+        compilerOptions: { skipLibCheck: true },
         exclude: [],
       })
     )
