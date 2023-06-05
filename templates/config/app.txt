@@ -39,7 +39,7 @@ export const appKey: string = Env.get('APP_KEY')
 |--------------------------------------------------------------------------
 |
 | The configuration for the HTTP(s) server. Make sure to go through all
-| the config properties to make keep server secure.
+| the config properties to ensure the server's security.
 |
 */
 export const http: ServerConfig = {
