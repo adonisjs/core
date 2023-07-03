@@ -5,3 +5,9 @@ on:
 jobs:
   test:
     uses: adonisjs/.github/.github/workflows/test.yml@main
+
+  lint:
+    uses: adonisjs/.github/.github/workflows/lint.yml@main
+
+  typecheck:
+    uses: adonisjs/.github/.github/workflows/typecheck.yml@main
