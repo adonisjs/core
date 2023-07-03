@@ -8,15 +8,6 @@
   "main": "build/index.js",
   "type": "module",
   "files": [
-    "modules",
-    "commands",
-    "legacy",
-    "providers",
-    "services",
-    "factories",
-    "types",
-    "src",
-    "index.ts",
     "build/modules",
     "build/commands",
     "build/legacy",
@@ -28,7 +19,6 @@
     "build/src",
     "build/stubs",
     "build/index.d.ts",
-    "build/index.d.ts.map",
     "build/index.js"
   ],
   "bin": {
