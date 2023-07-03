@@ -21,7 +21,7 @@ const BASE_URL = new URL('./tmp/', import.meta.url)
 test.group('Test utils | Http', () => {
   test('start HTTP server using test utils', async ({ assert, cleanup }) => {
     const server = createServer()
-    cleanup(() => server.close())
+    cleanup(() => { server.close() })
 
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
@@ -51,7 +51,7 @@ test.group('Test utils | Http', () => {
 
   test('close HTTP server using the cleanup function', async ({ assert, cleanup }) => {
     const server = createServer()
-    cleanup(() => server.close())
+    cleanup(() => { server.close() })
 
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
@@ -160,7 +160,7 @@ test.group('Test utils | Http', () => {
 
   test('raise error when closing an already closed server', async ({ assert, cleanup }) => {
     const server = createServer()
-    cleanup(() => server.close())
+    cleanup(() => { server.close() })
 
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
