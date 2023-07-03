@@ -130,7 +130,7 @@
     "cross-env": "^7.0.3",
     "del-cli": "^5.0.0",
     "eslint": "^8.44.0",
-    "get-port": "^6.1.2",
+    "get-port": "^7.0.0",
     "github-label-sync": "^2.3.1",
     "husky": "^8.0.3",
     "np": "^8.0.4",
@@ -163,7 +163,7 @@
     "he": "^1.2.0",
     "parse-imports": "^1.1.0",
     "pretty-hrtime": "^1.0.3",
-    "string-width": "^5.1.2",
+    "string-width": "^6.1.0",
     "youch": "^3.2.3",
     "youch-terminal": "^2.2.0"
   },
