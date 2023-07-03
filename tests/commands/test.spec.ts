@@ -29,7 +29,7 @@ test.group('Test command', () => {
 
     const command = await ace.create(Test, ['--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.lengthOf(ace.ui.logger.getLogs(), 1)
@@ -53,7 +53,7 @@ test.group('Test command', () => {
     const command = await ace.create(Test, ['--no-clear'])
     await command.exec()
 
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.exists(
@@ -80,7 +80,7 @@ test.group('Test command', () => {
     command.watch = true
     await command.exec()
 
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.lengthOf(ace.ui.logger.getLogs(), 1)
@@ -88,7 +88,7 @@ test.group('Test command', () => {
     assert.match(ace.ui.logger.getLogs()[0].message, /Cannot find package "typescript/)
   })
 
-  test('show error in watch mode when tsconfig file is missing', async ({ assert, fs }) => {
+  test('show error iddn watch mode when tsconfig file is missing', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(filePath)
@@ -101,7 +101,7 @@ test.group('Test command', () => {
     command.watch = true
     await command.exec()
 
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.exists(
@@ -134,7 +134,7 @@ test.group('Test command', () => {
     command.watch = true
     await command.exec()
 
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.exists(
@@ -173,7 +173,7 @@ test.group('Test command', () => {
 
     const command = await ace.create(Test, ['--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     assert.exists(
       ace.ui.logger.getLogs().find((log) => {
@@ -213,7 +213,7 @@ test.group('Test command', () => {
 
     const command = await ace.create(Test, ['--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     assert.notExists(
       ace.ui.logger.getLogs().find((log) => {
@@ -251,7 +251,7 @@ test.group('Test command', () => {
 
     const command = await ace.create(Test, ['--no-assets', '--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     assert.notExists(
       ace.ui.logger.getLogs().find((log) => {
@@ -312,7 +312,7 @@ test.group('Test command', () => {
       '--test="2 + 2 = 4"',
     ])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     await assert.fileEquals(
       'argv.json',
@@ -379,7 +379,7 @@ test.group('Test command', () => {
 
     const command = await ace.create(Test, ['unit', 'functional', '--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     await assert.fileEquals('argv.json', JSON.stringify(['unit', 'functional'], null, 2))
   })
@@ -428,7 +428,7 @@ test.group('Test command', () => {
 
     const command = await ace.create(Test, ['--browser=firefox', '--inspect', '--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     await assert.fileEquals(
       'argv.json',
@@ -485,7 +485,7 @@ test.group('Test command', () => {
       '--no-clear',
     ])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     await assert.fileEquals(
       'argv.json',

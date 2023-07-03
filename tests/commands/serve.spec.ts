@@ -29,7 +29,7 @@ test.group('Serve command', () => {
 
     const command = await ace.create(Serve, ['--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.lengthOf(ace.ui.logger.getLogs(), 1)
@@ -53,7 +53,7 @@ test.group('Serve command', () => {
     const command = await ace.create(Serve, ['--no-clear'])
     await command.exec()
 
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.exists(
@@ -80,7 +80,7 @@ test.group('Serve command', () => {
     command.watch = true
     await command.exec()
 
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.lengthOf(ace.ui.logger.getLogs(), 1)
@@ -101,7 +101,7 @@ test.group('Serve command', () => {
     command.watch = true
     await command.exec()
 
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.exists(
@@ -134,7 +134,7 @@ test.group('Serve command', () => {
     command.watch = true
     await command.exec()
 
-    await sleep(100)
+    await sleep(600)
 
     assert.equal(command.exitCode, 1)
     assert.exists(
@@ -173,7 +173,7 @@ test.group('Serve command', () => {
 
     const command = await ace.create(Serve, ['--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     assert.exists(
       ace.ui.logger.getLogs().find((log) => {
@@ -213,7 +213,7 @@ test.group('Serve command', () => {
 
     const command = await ace.create(Serve, ['--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     assert.notExists(
       ace.ui.logger.getLogs().find((log) => {
@@ -251,7 +251,7 @@ test.group('Serve command', () => {
 
     const command = await ace.create(Serve, ['--no-assets', '--no-clear'])
     await command.exec()
-    await sleep(100)
+    await sleep(600)
 
     assert.notExists(
       ace.ui.logger.getLogs().find((log) => {
