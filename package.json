@@ -1,12 +1,12 @@
 {
   "name": "@adonisjs/core",
-  "version": "6.1.5-4",
   "description": "Core of AdonisJS",
-  "main": "build/index.js",
-  "type": "module",
+  "version": "6.1.5-4",
   "engines": {
     "node": ">=18.16.0"
   },
+  "main": "build/index.js",
+  "type": "module",
   "files": [
     "modules",
     "commands",
@@ -108,13 +108,6 @@
     "quick:test": "node --loader=ts-node/esm --enable-source-maps --experimental-import-meta-resolve bin/test.ts",
     "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
-  "keywords": [
-    "adonisjs",
-    "framework",
-    "mvc"
-  ],
-  "author": "virk,adonisjs",
-  "license": "MIT",
   "devDependencies": {
     "@adonisjs/assembler": "^6.1.3-6",
     "@adonisjs/eslint-config": "^1.1.7",
@@ -190,6 +183,9 @@
       "optional": true
     }
   },
+  "author": "virk,adonisjs",
+  "license": "MIT",
+  "homepage": "https://github.com/adonisjs/core#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adonisjs/core.git"
@@ -197,16 +193,20 @@
   "bugs": {
     "url": "https://github.com/adonisjs/core/issues"
   },
-  "homepage": "https://github.com/adonisjs/core#readme",
+  "keywords": [
+    "adonisjs",
+    "framework",
+    "mvc"
+  ],
+  "eslintConfig": {
+    "extends": "@adonisjs/eslint-config/package"
+  },
+  "prettier": "@adonisjs/prettier-config",
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
     ]
   },
-  "eslintConfig": {
-    "extends": "@adonisjs/eslint-config/package"
-  },
-  "prettier": "@adonisjs/prettier-config",
   "publishConfig": {
     "access": "public",
     "tag": "next"
