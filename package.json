@@ -4,6 +4,9 @@
   "description": "Core of AdonisJS",
   "main": "build/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=18.16.0"
+  },
   "files": [
     "modules",
     "commands",
