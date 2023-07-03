@@ -248,8 +248,8 @@ test.group('Build command', () => {
 
     ace.app.rcFile.assetsBundler = {
       name: 'vite',
-      devServerCommand: 'vite',
-      buildCommand: 'vite build',
+      devServer: { command: 'vite' },
+      build: { command: 'vite build' },
     }
 
     ace.ui.switchMode('raw')
@@ -333,11 +333,11 @@ test.group('Build command', () => {
 
     ace.app.rcFile.assetsBundler = {
       name: 'vite',
-      devServerCommand: 'vite',
-      buildCommand: 'vite build',
+      devServer: { command: 'vite' },
+      build: { command: 'vite build' },
     }
 
-    ace.ui.switchMode('raw')
+    ace.ui.switchMode('normal')
 
     const command = await ace.create(Build, ['--no-assets'])
     await command.exec()

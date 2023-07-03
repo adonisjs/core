@@ -54,8 +54,8 @@ export async function detectAssetsBundler(app: ApplicationService) {
   if (possibleViteConfigFiles.some((config) => existsSync(app.makePath(config)))) {
     return {
       name: 'vite',
-      devServerCommand: 'vite',
-      buildCommand: 'vite build',
+      devServer: { command: 'vite' },
+      build: { command: 'vite build' },
     }
   }
 
@@ -63,8 +63,8 @@ export async function detectAssetsBundler(app: ApplicationService) {
   if (possibleEncoreConfigFiles.some((config) => existsSync(app.makePath(config)))) {
     return {
       name: 'encore',
-      devServerCommand: 'encore dev-server',
-      buildCommand: 'encore production',
+      devServer: { command: 'encore dev-server' },
+      build: { command: 'encore production' },
     }
   }
 }

@@ -23,16 +23,16 @@ test.group('Internal helpers | detect package manager', () => {
     await fs.create('vite.config.js', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'vite',
-      buildCommand: 'vite build',
-      devServerCommand: 'vite',
+      devServer: { command: 'vite' },
+      build: { command: 'vite build' },
     })
     await fs.remove('vite.config.js')
 
     await fs.create('vite.config.ts', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'vite',
-      buildCommand: 'vite build',
-      devServerCommand: 'vite',
+      devServer: { command: 'vite' },
+      build: { command: 'vite build' },
     })
   })
 
@@ -47,16 +47,16 @@ test.group('Internal helpers | detect package manager', () => {
     await fs.create('webpack.config.js', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'encore',
-      buildCommand: 'encore production',
-      devServerCommand: 'encore dev-server',
+      devServer: { command: 'encore dev-server' },
+      build: { command: 'encore production' },
     })
     await fs.remove('webpack.config.js')
 
     await fs.create('webpack.config.cjs', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'encore',
-      buildCommand: 'encore production',
-      devServerCommand: 'encore dev-server',
+      devServer: { command: 'encore dev-server' },
+      build: { command: 'encore production' },
     })
   })
 
@@ -81,8 +81,8 @@ test.group('Internal helpers | detect package manager', () => {
     app.rcContents({
       assetsBundler: {
         name: 'webpack',
-        buildCommand: 'webpack',
-        devServerCommand: 'webpack dev-server',
+        build: { command: 'webpack' },
+        devServer: { command: 'webpack dev-server' },
       },
     })
     await app.init()
@@ -90,8 +90,8 @@ test.group('Internal helpers | detect package manager', () => {
     await fs.create('webpack.config.js', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'webpack',
-      buildCommand: 'webpack',
-      devServerCommand: 'webpack dev-server',
+      build: { command: 'webpack' },
+      devServer: { command: 'webpack dev-server' },
     })
   })
 })

@@ -95,7 +95,7 @@ export default class Build extends BaseCommand {
         ? {
             serve: this.assets === false ? false : true,
             driver: assetsBundler.name,
-            cmd: assetsBundler.buildCommand,
+            cmd: assetsBundler.build.command,
             args: this.assetsArgs || [],
           }
         : {
