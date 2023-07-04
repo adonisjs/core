@@ -9,6 +9,7 @@
 
 import { existsSync } from 'node:fs'
 import { ApplicationService } from './types.js'
+import { RcFile } from '@adonisjs/application/types'
 
 /**
  * Imports assembler optionally
@@ -45,7 +46,9 @@ function generateJsFilenames(filename: string) {
  * Detects the assets bundler in use. The rcFile.assetsBundler is
  * used when exists.
  */
-export async function detectAssetsBundler(app: ApplicationService) {
+export async function detectAssetsBundler(
+  app: ApplicationService
+): Promise<RcFile['assetsBundler']> {
   if (app.rcFile.assetsBundler) {
     return app.rcFile.assetsBundler
   }
@@ -55,7 +58,7 @@ export async function detectAssetsBundler(app: ApplicationService) {
     return {
       name: 'vite',
       devServer: { command: 'vite' },
-      build: { command: 'vite build' },
+      build: { command: 'vite', args: ['build'] },
     }
   }
 
@@ -63,8 +66,8 @@ export async function detectAssetsBundler(app: ApplicationService) {
   if (possibleEncoreConfigFiles.some((config) => existsSync(app.makePath(config)))) {
     return {
       name: 'encore',
-      devServer: { command: 'encore dev-server' },
-      build: { command: 'encore production' },
+      devServer: { command: 'encore', args: ['dev-server'] },
+      build: { command: 'encore', args: ['production'] },
     }
   }
 }
