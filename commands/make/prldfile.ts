@@ -24,7 +24,7 @@ export default class MakePreloadFile extends BaseCommand {
   declare name: string
 
   @flags.array({
-    description: `Define the preload file environment. Accepted values "${ALLOWED_ENVIRONMENTS}"`,
+    description: `Define the preload file's environment. Accepted values are "${ALLOWED_ENVIRONMENTS}"`,
   })
   declare environments: AppEnvironments[]
 
