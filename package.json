@@ -98,7 +98,7 @@
     "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^6.1.3-7",
+    "@adonisjs/assembler": "^6.1.3-8",
     "@adonisjs/eslint-config": "^1.1.7",
     "@adonisjs/prettier-config": "^1.1.7",
     "@adonisjs/tsconfig": "^1.1.7",
@@ -108,7 +108,7 @@
     "@japa/expect-type": "2.0.0-0",
     "@japa/file-system": "2.0.0-1",
     "@japa/runner": "3.0.0-3",
-    "@swc/core": "^1.3.67",
+    "@swc/core": "^1.3.68",
     "@types/node": "^20.3.3",
     "@types/pretty-hrtime": "^1.0.1",
     "@types/sinon": "^10.0.15",
@@ -131,7 +131,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@adonisjs/ace": "^12.3.1-7",
+    "@adonisjs/ace": "^12.3.1-8",
     "@adonisjs/application": "^7.1.2-6",
     "@adonisjs/bodyparser": "^9.3.2-6",
     "@adonisjs/config": "^4.2.1-2",
@@ -153,7 +153,7 @@
     "pretty-hrtime": "^1.0.3",
     "string-width": "^6.1.0",
     "youch": "^3.2.3",
-    "youch-terminal": "^2.2.0"
+    "youch-terminal": "^2.2.2"
   },
   "peerDependencies": {
     "@adonisjs/assembler": "^6.1.3-6",
