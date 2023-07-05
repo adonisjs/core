@@ -37,7 +37,7 @@ test.group('Test command', () => {
     assert.match(ace.ui.logger.getLogs()[0].message, /Cannot find package "@adonisjs\/assembler/)
   })
 
-  test('show error when bin/test.js file is missing', async ({ assert, fs }) => {
+  test('fail when bin/test.js file is missing', async ({ assert, fs, cleanup }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         if (filePath === 'typescript') {
@@ -51,19 +51,14 @@ test.group('Test command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Test, ['--no-clear'])
+    cleanup(() => command.testsRunner.close())
     await command.exec()
 
     await sleep(600)
-
     assert.equal(command.exitCode, 1)
-    assert.exists(
-      ace.ui.logger.getLogs().find(({ message }) => {
-        return message === '[ yellow(warn) ] unable to run test script "bin/test.js"'
-      })
-    )
   })
 
-  test('show error in watch mode when typescript is not installed', async ({ assert, fs }) => {
+  test('fail in watch mode when typescript is not installed', async ({ assert, fs, cleanup }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         if (filePath === 'typescript') {
@@ -77,6 +72,7 @@ test.group('Test command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Test, ['--no-clear'])
+    cleanup(() => command.testsRunner.close())
     command.watch = true
     await command.exec()
 
@@ -88,7 +84,11 @@ test.group('Test command', () => {
     assert.match(ace.ui.logger.getLogs()[0].message, /Cannot find package "typescript/)
   })
 
-  test('show error iddn watch mode when tsconfig file is missing', async ({ assert, fs }) => {
+  test('show error in watch mode when tsconfig file is missing', async ({
+    assert,
+    fs,
+    cleanup,
+  }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(filePath)
@@ -98,20 +98,16 @@ test.group('Test command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Test, ['--no-clear'])
+    cleanup(() => command.testsRunner.close())
     command.watch = true
     await command.exec()
 
     await sleep(600)
 
     assert.equal(command.exitCode, 1)
-    assert.exists(
-      ace.ui.logger.getLogs().find(({ message }) => {
-        return message === '[ yellow(warn) ] unable to run test script "bin/test.js"'
-      })
-    )
   })
 
-  test('show error in watch mode when ts-node is missing', async ({ assert, fs }) => {
+  test('do not fail in watch mode when ts-node is missing', async ({ assert, fs, cleanup }) => {
     await fs.create(
       'tsconfig.json',
       JSON.stringify({
@@ -131,20 +127,15 @@ test.group('Test command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Test, ['--no-clear'])
+    cleanup(() => command.testsRunner.close())
     command.watch = true
     await command.exec()
 
     await sleep(600)
-
-    assert.equal(command.exitCode, 1)
-    assert.exists(
-      ace.ui.logger.getLogs().find(({ message }) => {
-        return message === '[ yellow(warn) ] unable to run test script "bin/test.js"'
-      })
-    )
+    assert.equal(command.exitCode, 0)
   })
 
-  test('show error when configured assets bundler is missing', async ({ assert, fs }) => {
+  test('show error when configured assets bundler is missing', async ({ assert, fs, cleanup }) => {
     await fs.create('bin/server.js', '')
     await fs.create(
       'node_modules/ts-node/package.json',
@@ -172,6 +163,7 @@ test.group('Test command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Test, ['--no-clear'])
+    cleanup(() => command.testsRunner.close())
     await command.exec()
     await sleep(600)
 
@@ -190,6 +182,7 @@ test.group('Test command', () => {
   test('do not attempt to serve assets when assets bundler is not configured', async ({
     assert,
     fs,
+    cleanup,
   }) => {
     await fs.create('bin/test.js', '')
     await fs.create(
@@ -212,6 +205,7 @@ test.group('Test command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Test, ['--no-clear'])
+    cleanup(() => command.testsRunner.close())
     await command.exec()
     await sleep(600)
 
@@ -222,7 +216,11 @@ test.group('Test command', () => {
     )
   })
 
-  test('do not attempt to serve assets when --no-assets flag is used', async ({ assert, fs }) => {
+  test('do not attempt to serve assets when --no-assets flag is used', async ({
+    assert,
+    fs,
+    cleanup,
+  }) => {
     await fs.create('bin/test.js', '')
     await fs.create(
       'node_modules/ts-node/package.json',
@@ -250,6 +248,7 @@ test.group('Test command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Test, ['--no-assets', '--no-clear'])
+    cleanup(() => command.testsRunner.close())
     await command.exec()
     await sleep(600)
 
@@ -260,7 +259,7 @@ test.group('Test command', () => {
     )
   })
 
-  test('pass filters to bin/test.js script', async ({ assert, fs }) => {
+  test('pass filters to bin/test.js script', async ({ assert, fs, cleanup }) => {
     await fs.create(
       'package.json',
       JSON.stringify({
@@ -311,6 +310,7 @@ test.group('Test command', () => {
       '--ignore-tags=baz',
       '--test="2 + 2 = 4"',
     ])
+    cleanup(() => command.testsRunner.close())
     await command.exec()
     await sleep(600)
 
@@ -335,7 +335,7 @@ test.group('Test command', () => {
     )
   })
 
-  test('pass suites to bin/test.js script', async ({ assert, fs }) => {
+  test('pass suites to bin/test.js script', async ({ assert, fs, cleanup }) => {
     await fs.create(
       'package.json',
       JSON.stringify({
@@ -378,13 +378,14 @@ test.group('Test command', () => {
     ]
 
     const command = await ace.create(Test, ['unit', 'functional', '--no-clear'])
+    cleanup(() => command.testsRunner.close())
     await command.exec()
     await sleep(600)
 
     await assert.fileEquals('argv.json', JSON.stringify(['unit', 'functional'], null, 2))
   })
 
-  test('pass unknown flags to bin/test.js script', async ({ assert, fs }) => {
+  test('pass unknown flags to bin/test.js script', async ({ assert, fs, cleanup }) => {
     await fs.create(
       'package.json',
       JSON.stringify({
@@ -427,6 +428,7 @@ test.group('Test command', () => {
     ]
 
     const command = await ace.create(Test, ['--browser=firefox', '--inspect', '--no-clear'])
+    cleanup(() => command.testsRunner.close())
     await command.exec()
     await sleep(600)
 
@@ -436,7 +438,11 @@ test.group('Test command', () => {
     )
   })
 
-  test('pass unknown flags with array values to bin/test.js script', async ({ assert, fs }) => {
+  test('pass unknown flags with array values to bin/test.js script', async ({
+    assert,
+    fs,
+    cleanup,
+  }) => {
     await fs.create(
       'package.json',
       JSON.stringify({
@@ -485,6 +491,7 @@ test.group('Test command', () => {
       '--no-clear',
     ])
     await command.exec()
+    cleanup(() => command.testsRunner.close())
     await sleep(600)
 
     await assert.fileEquals(

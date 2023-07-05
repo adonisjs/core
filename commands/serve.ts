@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import type { DevServer } from '@adonisjs/assembler'
 import type { CommandOptions } from '../types/ace.js'
 import { BaseCommand, flags } from '../modules/ace/main.js'
 import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
@@ -37,6 +38,8 @@ export default class Serve extends BaseCommand {
   static options: CommandOptions = {
     staysAlive: true,
   }
+
+  declare devServer: DevServer
 
   @flags.boolean({ description: 'Watch filesystem and restart the HTTP server on file change' })
   declare watch?: boolean
@@ -90,7 +93,7 @@ export default class Serve extends BaseCommand {
     }
 
     const assetsBundler = await detectAssetsBundler(this.app)
-    const devServer = new assembler.DevServer(this.app.appRoot, {
+    this.devServer = new assembler.DevServer(this.app.appRoot, {
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: [],
@@ -111,19 +114,19 @@ export default class Serve extends BaseCommand {
      * Share command logger with assembler, so that CLI flags like --no-ansi has
      * similar impact for assembler logs as well.
      */
-    devServer.setLogger(this.logger)
+    this.devServer.setLogger(this.logger)
 
     /**
      * Exit command when the dev server is closed
      */
-    devServer.onClose((exitCode) => {
+    this.devServer.onClose((exitCode) => {
       this.exitCode = exitCode
     })
 
     /**
      * Exit command when the dev server crashes
      */
-    devServer.onError(() => {
+    this.devServer.onError(() => {
       this.exitCode = 1
     })
 
@@ -138,9 +141,9 @@ export default class Serve extends BaseCommand {
         return
       }
 
-      await devServer.startAndWatch(ts, { poll: this.poll || false })
+      await this.devServer.startAndWatch(ts, { poll: this.poll || false })
     } else {
-      await devServer.start()
+      await this.devServer.start()
     }
   }
 }

@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import type { TestRunner } from '@adonisjs/assembler'
+
 import type { CommandOptions } from '../types/ace.js'
 import { BaseCommand, flags, args } from '../modules/ace/main.js'
 import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
@@ -23,6 +25,8 @@ export default class Test extends BaseCommand {
     allowUnknownFlags: true,
     staysAlive: true,
   }
+
+  declare testsRunner: TestRunner
 
   @args.spread({
     description: 'Mention suite names to run tests for selected suites',
@@ -98,7 +102,7 @@ export default class Test extends BaseCommand {
 
     const assetsBundler = await detectAssetsBundler(this.app)
 
-    const testRunner = new assembler.TestRunner(this.app.appRoot, {
+    this.testsRunner = new assembler.TestRunner(this.app.appRoot, {
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: this.parsed.unknownFlags
@@ -153,19 +157,19 @@ export default class Test extends BaseCommand {
      * Share command logger with assembler, so that CLI flags like --no-ansi has
      * similar impact for assembler logs as well.
      */
-    testRunner.setLogger(this.logger)
+    this.testsRunner.setLogger(this.logger)
 
     /**
      * Exit command when the test runner is closed
      */
-    testRunner.onClose((exitCode) => {
+    this.testsRunner.onClose((exitCode) => {
       this.exitCode = exitCode
     })
 
     /**
      * Exit command when the dev server crashes
      */
-    testRunner.onError(() => {
+    this.testsRunner.onError(() => {
       this.exitCode = 1
     })
 
@@ -180,9 +184,9 @@ export default class Test extends BaseCommand {
         return
       }
 
-      await testRunner.runAndWatch(ts, { poll: this.poll || false })
+      await this.testsRunner.runAndWatch(ts, { poll: this.poll || false })
     } else {
-      await testRunner.run()
+      await this.testsRunner.run()
     }
   }
 }
