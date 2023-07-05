@@ -40,9 +40,6 @@ export default class Test extends BaseCommand {
   @flags.array({ description: 'Filter tests by tags' })
   declare tags?: string[]
 
-  @flags.array({ description: 'Run tests that does not have mentioned tags' })
-  declare ignoreTags?: string[]
-
   @flags.array({ description: 'Filter tests by parent group title' })
   declare groups?: string[]
 
@@ -131,7 +128,7 @@ export default class Test extends BaseCommand {
             serve: this.assets === false ? false : true,
             driver: assetsBundler.name,
             cmd: assetsBundler.devServer.command,
-            args: this.assetsArgs || [],
+            args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
           }
         : {
             serve: false,
@@ -141,7 +138,6 @@ export default class Test extends BaseCommand {
         files: this.files,
         groups: this.groups,
         tags: this.tags,
-        ignoreTags: this.ignoreTags,
         tests: this.tests,
       },
       suites: this.app.rcFile.tests.suites.map((suite) => {
