@@ -102,7 +102,7 @@ export default class Serve extends BaseCommand {
             serve: this.assets === false ? false : true,
             driver: assetsBundler.name,
             cmd: assetsBundler.devServer.command,
-            args: this.assetsArgs || [],
+            args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
           }
         : {
             serve: false,
