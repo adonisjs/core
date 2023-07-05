@@ -145,7 +145,7 @@
     "@adonisjs/hash": "^8.3.1-2",
     "@adonisjs/http-server": "^6.8.2-6",
     "@adonisjs/logger": "^5.4.2-1",
-    "@adonisjs/repl": "^4.0.0-2",
+    "@adonisjs/repl": "^4.0.0-3",
     "@adonisjs/validator": "^13.0.2-2",
     "@paralleldrive/cuid2": "^2.2.0",
     "@poppinss/macroable": "^1.0.0-6",
