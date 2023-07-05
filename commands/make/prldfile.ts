@@ -9,7 +9,7 @@
 
 import BaseCommand from './_base.js'
 import { args, flags } from '../../modules/ace/main.js'
-import { AppEnvironments } from '@adonisjs/application/types'
+import type { AppEnvironments } from '@adonisjs/application/types'
 
 const ALLOWED_ENVIRONMENTS: AppEnvironments[] = ['web', 'console', 'test', 'repl']
 
