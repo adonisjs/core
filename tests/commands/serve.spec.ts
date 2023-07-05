@@ -37,7 +37,7 @@ test.group('Serve command', () => {
     assert.match(ace.ui.logger.getLogs()[0].message, /Cannot find package "@adonisjs\/assembler/)
   })
 
-  test('show error when bin/server.js file is missing', async ({ assert, fs }) => {
+  test('fail when bin/server.js file is missing', async ({ assert, fs, cleanup }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         if (filePath === 'typescript') {
@@ -51,19 +51,19 @@ test.group('Serve command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
     await command.exec()
 
     await sleep(600)
 
     assert.equal(command.exitCode, 1)
-    assert.exists(
-      ace.ui.logger.getLogs().find(({ message }) => {
-        return message === '[ yellow(warn) ] unable to connect to underlying HTTP server process'
-      })
-    )
   })
 
-  test('show error in watch mode when typescript is not installed', async ({ assert, fs }) => {
+  test('show error in watch mode when typescript is not installed', async ({
+    assert,
+    fs,
+    cleanup,
+  }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         if (filePath === 'typescript') {
@@ -77,6 +77,7 @@ test.group('Serve command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
     command.watch = true
     await command.exec()
 
@@ -88,7 +89,7 @@ test.group('Serve command', () => {
     assert.match(ace.ui.logger.getLogs()[0].message, /Cannot find package "typescript/)
   })
 
-  test('show error in watch mode when tsconfig file is missing', async ({ assert, fs }) => {
+  test('fail in watch mode when tsconfig file is missing', async ({ assert, fs, cleanup }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(filePath)
@@ -98,20 +99,16 @@ test.group('Serve command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
     command.watch = true
     await command.exec()
 
     await sleep(600)
 
     assert.equal(command.exitCode, 1)
-    assert.exists(
-      ace.ui.logger.getLogs().find(({ message }) => {
-        return message === '[ yellow(warn) ] unable to connect to underlying HTTP server process'
-      })
-    )
   })
 
-  test('show error in watch mode when ts-node is missing', async ({ assert, fs }) => {
+  test('do not fail in watch mode when ts-node is missing', async ({ assert, fs, cleanup }) => {
     await fs.create(
       'tsconfig.json',
       JSON.stringify({
@@ -131,20 +128,20 @@ test.group('Serve command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
     command.watch = true
     await command.exec()
 
     await sleep(600)
 
-    assert.equal(command.exitCode, 1)
-    assert.exists(
-      ace.ui.logger.getLogs().find(({ message }) => {
-        return message === '[ yellow(warn) ] unable to connect to underlying HTTP server process'
-      })
-    )
+    /**
+     * In watch mode, we wait for errors to be fixed and then
+     * re-start the process
+     */
+    assert.equal(command.exitCode, 0)
   })
 
-  test('show error when configured assets bundler is missing', async ({ assert, fs }) => {
+  test('show error when configured assets bundler is missing', async ({ assert, fs, cleanup }) => {
     await fs.create('bin/server.js', '')
     await fs.create(
       'node_modules/ts-node/package.json',
@@ -172,6 +169,7 @@ test.group('Serve command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
     await command.exec()
     await sleep(600)
 
@@ -190,6 +188,7 @@ test.group('Serve command', () => {
   test('do not attempt to serve assets when assets bundler is not configured', async ({
     assert,
     fs,
+    cleanup,
   }) => {
     await fs.create('bin/server.js', '')
     await fs.create(
@@ -212,6 +211,7 @@ test.group('Serve command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
     await command.exec()
     await sleep(600)
 
@@ -222,7 +222,11 @@ test.group('Serve command', () => {
     )
   })
 
-  test('do not attempt to serve assets when --no-assets flag is used', async ({ assert, fs }) => {
+  test('do not attempt to serve assets when --no-assets flag is used', async ({
+    assert,
+    fs,
+    cleanup,
+  }) => {
     await fs.create('bin/server.js', '')
     await fs.create(
       'node_modules/ts-node/package.json',
@@ -250,6 +254,7 @@ test.group('Serve command', () => {
     ace.ui.switchMode('raw')
 
     const command = await ace.create(Serve, ['--no-assets', '--no-clear'])
+    cleanup(() => command.devServer.close())
     await command.exec()
     await sleep(600)
 

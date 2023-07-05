@@ -74,17 +74,17 @@ export class AceProcess {
     await kernel.handle(argv)
 
     /**
-     * Update the process exit code
-     */
-    process.exitCode = kernel.exitCode
-
-    /**
      * Terminate the app when the command does not want to
      * hold a long running process
      */
     const mainCommand = kernel.getMainCommand()
     if (!mainCommand || !mainCommand.staysAlive) {
+      process.exitCode = kernel.exitCode
       await app.terminate()
+    } else {
+      app.terminating(() => {
+        process.exitCode = mainCommand.exitCode
+      })
     }
   }
 }

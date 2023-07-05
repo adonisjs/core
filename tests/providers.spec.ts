@@ -12,7 +12,6 @@ import { test } from '@japa/runner'
 import { Config } from '../modules/config.js'
 import { Emitter } from '../modules/events.js'
 import { Kernel } from '../modules/ace/kernel.js'
-import { validator } from '../legacy/validator.js'
 import { Router, Server } from '../modules/http.js'
 import { TestUtils } from '../src/test_utils/main.js'
 import { Encryption } from '../modules/encryption.js'
@@ -184,37 +183,5 @@ test.group('Providers', () => {
     const logger = await app.container.make(Logger)
     assert.instanceOf(logger, Logger)
     assert.strictEqual(logger, loggerService.use())
-  })
-
-  test('configure validator', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
-        },
-      })
-      .merge({
-        config: {
-          validator: {
-            reporter: validator.reporters.jsonapi,
-          },
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
-
-    const app = ignitor.createApp('web')
-    await app.init()
-    await app.boot()
-
-    assert.deepEqual(validator.config.reporter, validator.reporters.jsonapi)
   })
 })

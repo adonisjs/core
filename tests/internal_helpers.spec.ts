@@ -24,7 +24,7 @@ test.group('Internal helpers | detect package manager', () => {
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'vite',
       devServer: { command: 'vite' },
-      build: { command: 'vite build' },
+      build: { command: 'vite', args: ['build'] },
     })
     await fs.remove('vite.config.js')
 
@@ -32,7 +32,7 @@ test.group('Internal helpers | detect package manager', () => {
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'vite',
       devServer: { command: 'vite' },
-      build: { command: 'vite build' },
+      build: { command: 'vite', args: ['build'] },
     })
   })
 
@@ -47,16 +47,16 @@ test.group('Internal helpers | detect package manager', () => {
     await fs.create('webpack.config.js', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'encore',
-      devServer: { command: 'encore dev-server' },
-      build: { command: 'encore production' },
+      devServer: { command: 'encore', args: ['dev-server'] },
+      build: { command: 'encore', args: ['production'] },
     })
     await fs.remove('webpack.config.js')
 
     await fs.create('webpack.config.cjs', '')
     assert.deepEqual(await detectAssetsBundler(app), {
       name: 'encore',
-      devServer: { command: 'encore dev-server' },
-      build: { command: 'encore production' },
+      devServer: { command: 'encore', args: ['dev-server'] },
+      build: { command: 'encore', args: ['production'] },
     })
   })
 

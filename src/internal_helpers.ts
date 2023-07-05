@@ -9,6 +9,7 @@
 
 import { existsSync } from 'node:fs'
 import { ApplicationService, RunNodeOptions } from './types.js'
+import { RcFile } from '@adonisjs/application/types'
 
 const DEFAULT_NODE_ARGS = [
   // Use ts-node/esm loader. The project must install it
@@ -17,6 +18,8 @@ const DEFAULT_NODE_ARGS = [
   '--no-warnings',
   // Enable expiremental meta resolve for cases where someone uses magic import string
   '--experimental-import-meta-resolve',
+  // Enable source maps, since TSNode source maps are broken
+  '--enable-source-maps',
 ]
 
 /**
@@ -92,7 +95,9 @@ function generateJsFilenames(filename: string) {
  * Detects the assets bundler in use. The rcFile.assetsBundler is
  * used when exists.
  */
-export async function detectAssetsBundler(app: ApplicationService) {
+export async function detectAssetsBundler(
+  app: ApplicationService
+): Promise<RcFile['assetsBundler']> {
   if (app.rcFile.assetsBundler) {
     return app.rcFile.assetsBundler
   }
@@ -102,7 +107,7 @@ export async function detectAssetsBundler(app: ApplicationService) {
     return {
       name: 'vite',
       devServer: { command: 'vite' },
-      build: { command: 'vite build' },
+      build: { command: 'vite', args: ['build'] },
     }
   }
 
@@ -110,8 +115,8 @@ export async function detectAssetsBundler(app: ApplicationService) {
   if (possibleEncoreConfigFiles.some((config) => existsSync(app.makePath(config)))) {
     return {
       name: 'encore',
-      devServer: { command: 'encore dev-server' },
-      build: { command: 'encore production' },
+      devServer: { command: 'encore', args: ['dev-server'] },
+      build: { command: 'encore', args: ['production'] },
     }
   }
 }
