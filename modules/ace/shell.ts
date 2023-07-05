@@ -14,6 +14,8 @@ const DEFAULT_NODE_ARGS = [
   '--no-warnings',
   // Enable expiremental meta resolve for cases where someone uses magic import string
   '--experimental-import-meta-resolve',
+  // Enable source maps, since TSNode source maps are broken
+  '--enable-source-maps',
 ]
 
 /**
