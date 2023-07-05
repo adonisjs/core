@@ -132,7 +132,7 @@
   },
   "dependencies": {
     "@adonisjs/ace": "^12.3.1-8",
-    "@adonisjs/application": "^7.1.2-6",
+    "@adonisjs/application": "^7.1.2-7",
     "@adonisjs/bodyparser": "^9.3.2-6",
     "@adonisjs/config": "^4.2.1-2",
     "@adonisjs/encryption": "^5.1.2-2",
