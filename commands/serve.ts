@@ -121,6 +121,7 @@ export default class Serve extends BaseCommand {
      */
     this.devServer.onClose((exitCode) => {
       this.exitCode = exitCode
+      this.terminate()
     })
 
     /**
@@ -128,6 +129,7 @@ export default class Serve extends BaseCommand {
      */
     this.devServer.onError(() => {
       this.exitCode = 1
+      this.terminate()
     })
 
     /**

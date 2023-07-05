@@ -160,6 +160,7 @@ export default class Test extends BaseCommand {
      */
     this.testsRunner.onClose((exitCode) => {
       this.exitCode = exitCode
+      this.terminate()
     })
 
     /**
@@ -167,6 +168,7 @@ export default class Test extends BaseCommand {
      */
     this.testsRunner.onError(() => {
       this.exitCode = 1
+      this.terminate()
     })
 
     /**
