@@ -20,7 +20,7 @@ test.group('Make preload file', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(MakePreloadFile, ['app'])
+    const command = await ace.create(MakePreloadFile, ['app', '--environments=web'])
     await command.exec()
 
     const { contents } = await new StubsFactory().prepare('make/preload_file/main.stub', {
@@ -36,5 +36,43 @@ test.group('Make preload file', () => {
     ])
 
     await assert.fileContains('.adonisrc.json', /"\.\/start\/app\.js"/)
+  })
+
+  test('create preload file for specific environments', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakePreloadFile, ['app'])
+    command.prompt
+      .trap('Select the environment(s) in which you want to load this file')
+      .replyWith(['web', 'repl'])
+
+    await command.exec()
+
+    const rcFile = await fs.contentsJson('.adonisrc.json')
+
+    assert.deepEqual(rcFile.preloads, [{ file: './start/app.js', environment: ['web', 'repl'] }])
+  })
+
+  test('create preload file for all environments', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakePreloadFile, ['app'])
+    command.prompt
+      .trap('Select the environment(s) in which you want to load this file')
+      .replyWith(['all'])
+
+    await command.exec()
+
+    const rcFile = await fs.contentsJson('.adonisrc.json')
+
+    assert.deepEqual(rcFile.preloads, ['./start/app.js'])
   })
 })
