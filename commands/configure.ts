@@ -11,6 +11,8 @@ import { slash } from '@poppinss/utils'
 import { EnvEditor } from '../modules/env.js'
 import type { ApplicationService } from '../src/types.js'
 import { args, BaseCommand } from '../modules/ace/main.js'
+import { installPackage, detectPackageManager } from '@antfu/install-pkg'
+import { fileURLToPath } from 'node:url'
 
 /**
  * The configure command is used to configure packages after installation
@@ -109,6 +111,40 @@ export default class Configure extends BaseCommand {
     await callback(this.app.rcFileEditor)
     await this.app.rcFileEditor.save()
     this.logger.action('update .adonisrc.json file').succeeded()
+  }
+
+  /**
+   * Install packages using the correct package manager
+   * You can specify version of each package by setting it in the
+   * name like :
+   *
+   * ```
+   * installPackages(['@adonisjs/lucid@next', '@adonisjs/auth@3.0.0'])
+   * ```
+   */
+  async installPackages(packages: { name: string; isDevDependency: boolean }[]) {
+    const appPath = fileURLToPath(this.app.appRoot)
+
+    const devDeps = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
+    const deps = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
+
+    const packageManager = await detectPackageManager(appPath)
+    let spinner = this.logger
+      .await(`installing dependencies using ${packageManager || 'npm'}`)
+      .start()
+
+    try {
+      await installPackage(deps, { cwd: appPath, silent: true })
+      await installPackage(devDeps, { dev: true, cwd: appPath, silent: true })
+
+      spinner.stop()
+      this.logger.success('dependencies installed')
+      this.logger.log(devDeps.map((dep) => `      ${this.colors.dim('dev')} ${dep}`).join('\n'))
+      this.logger.log(deps.map((dep) => `      ${this.colors.dim('prod')} ${dep}`).join('\n'))
+    } catch (error) {
+      spinner.stop()
+      this.logger.error(`unable to install dependencies :\n   ${this.colors.red(error.message)}`)
+    }
   }
 
   /**

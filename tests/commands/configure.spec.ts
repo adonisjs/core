@@ -400,4 +400,141 @@ test.group('Configure command | run', (group) => {
     await command.exec()
     assert.equal(command.result, 'configured')
   })
+
+  test('install packages', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(new URL(filePath, fs.baseUrl).href)
+      },
+    })
+
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.create('pnpm-lock.yaml', '')
+    await fs.createJson('package.json', { type: 'module' })
+    await fs.create(
+      'dummy-pkg.js',
+      `
+      export const stubsRoot = './'
+      export async function configure (command) {
+        await command.installPackages([
+          { name: 'is-odd@2.0.0', isDevDependency: true },
+          { name: 'is-even@1.0.0', isDevDependency: false }
+        ])
+      }
+    `
+    )
+
+    const command = await ace.create(Configure, ['./dummy-pkg.js?v=3'])
+    await command.exec()
+
+    const packageJson = await fs.contentsJson('package.json')
+    assert.deepEqual(packageJson.dependencies, { 'is-even': '1.0.0' })
+    assert.deepEqual(packageJson.devDependencies, { 'is-odd': '2.0.0' })
+  }).timeout(5000)
+
+  test('install packages and detect pnpm', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(new URL(filePath, fs.baseUrl).href)
+      },
+    })
+
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.create('pnpm-lock.yaml', '')
+    await fs.createJson('package.json', { type: 'module' })
+    await fs.create(
+      'dummy-pkg.js',
+      `
+      export const stubsRoot = './'
+      export async function configure (command) {
+        await command.installPackages([
+          { name: 'is-odd@2.0.0', isDevDependency: true, },
+        ])
+      }
+    `
+    )
+
+    const command = await ace.create(Configure, ['./dummy-pkg.js?v=4'])
+    await command.exec()
+
+    const logs = ace.ui.logger.getLogs()
+    assert.deepInclude(logs, {
+      message: '[ cyan(wait) ] installing dependencies using pnpm .  ',
+      stream: 'stdout',
+    })
+  }).timeout(5000)
+
+  test('install packages and detect npm', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(new URL(filePath, fs.baseUrl).href)
+      },
+    })
+
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('package-lock.json', {})
+    await fs.createJson('package.json', { type: 'module' })
+    await fs.create(
+      'dummy-pkg.js',
+      `
+      export const stubsRoot = './'
+      export async function configure (command) {
+        await command.installPackages([
+          { name: 'is-odd@2.0.0', isDevDependency: true, },
+        ])
+      }
+    `
+    )
+
+    const command = await ace.create(Configure, ['./dummy-pkg.js?v=5'])
+    await command.exec()
+
+    const logs = ace.ui.logger.getLogs()
+
+    assert.deepInclude(logs, {
+      message: '[ cyan(wait) ] installing dependencies using npm .  ',
+      stream: 'stdout',
+    })
+  }).timeout(5000)
+
+  test('display error when installing packages', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(new URL(filePath, fs.baseUrl).href)
+      },
+    })
+
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('package-lock.json', {})
+    await fs.createJson('package.json', { type: 'module' })
+    await fs.create(
+      'dummy-pkg.js',
+      `
+      export const stubsRoot = './'
+      export async function configure (command) {
+        await command.installPackages([
+          { name: 'is-odd@15.0.0', isDevDependency: true, },
+        ])
+      }
+    `
+    )
+
+    const command = await ace.create(Configure, ['./dummy-pkg.js?v=6'])
+    await command.exec()
+
+    const logs = ace.ui.logger.getLogs()
+    assert.deepInclude(logs, {
+      message:
+        '[ red(error) ] unable to install dependencies :\n   red(Command failed with exit code 1: npm install -D is-odd@15.0.0)',
+      stream: 'stderr',
+    })
+  }).timeout(5000)
 })
