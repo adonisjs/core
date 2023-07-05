@@ -8,7 +8,54 @@
  */
 
 import { existsSync } from 'node:fs'
-import { ApplicationService } from './types.js'
+import { ApplicationService, RunNodeOptions } from './types.js'
+
+const DEFAULT_NODE_ARGS = [
+  // Use ts-node/esm loader. The project must install it
+  '--loader=ts-node/esm',
+  // Disable annonying warnings
+  '--no-warnings',
+  // Enable expiremental meta resolve for cases where someone uses magic import string
+  '--experimental-import-meta-resolve',
+]
+
+/**
+ * Runs a Node.js script as a child process and inherits the stdio streams
+ *
+ * We must pass execaNode as an argument, so we can import it dynamically
+ */
+export function runNode(
+  execaNode: typeof import('execa').execaNode,
+  cwd: string | URL,
+  options: RunNodeOptions
+) {
+  const childProcess = execaNode(options.script, options.scriptArgs, {
+    nodeOptions: DEFAULT_NODE_ARGS.concat(options.nodeArgs || []),
+    preferLocal: true,
+    windowsHide: false,
+    localDir: cwd,
+    cwd,
+    buffer: false,
+    stdio: options.stdio || 'inherit',
+    env: {
+      ...(options.stdio === 'pipe' ? { FORCE_COLOR: 'true' } : {}),
+      ...options.env,
+    },
+  })
+
+  return childProcess
+}
+
+/**
+ * Imports ts-node optionally
+ */
+export async function importTsNode(
+  app: ApplicationService
+): Promise<typeof import('ts-node') | undefined> {
+  try {
+    return await app.importDefault('ts-node')
+  } catch {}
+}
 
 /**
  * Imports assembler optionally

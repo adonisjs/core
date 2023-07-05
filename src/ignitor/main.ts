@@ -13,6 +13,7 @@ import { TestRunnerProcess } from './test.js'
 import { HttpServerProcess } from './http.js'
 import { setApp } from '../../services/app.js'
 import { Application } from '../../modules/app.js'
+import { ReplProcess } from './repl.js'
 import type { AppEnvironments } from '../../types/app.js'
 import type { ApplicationService, IgnitorOptions } from '../types.js'
 
@@ -106,6 +107,13 @@ export class Ignitor {
    */
   testRunner() {
     return new TestRunnerProcess(this)
+  }
+
+  /**
+   * Get an instance of the ReplProcess class
+   */
+  repl() {
+    return new ReplProcess(this)
   }
 
   /**

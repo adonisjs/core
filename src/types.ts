@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import type { Repl } from '../modules/repl.js'
 import type { Importer } from '../types/app.js'
 import type { Emitter } from '../modules/events.js'
 import type { Kernel } from '../modules/ace/main.js'
@@ -25,6 +26,17 @@ import type {
   ScryptConfig,
   ManagerDriverFactory,
 } from '../types/hash.js'
+
+/**
+ * Options needed to run a script file
+ */
+export type RunNodeOptions = {
+  script: string
+  scriptArgs: string[]
+  nodeArgs?: string[]
+  stdio?: 'pipe' | 'inherit'
+  env?: NodeJS.ProcessEnv
+}
 
 /**
  * Options accepted by ignitor
@@ -133,4 +145,5 @@ export interface ContainerBindings {
   server: HttpServerService
   router: HttpRouterService
   testUtils: TestUtils
+  repl: Repl
 }

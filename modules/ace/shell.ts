@@ -7,14 +7,7 @@
  * file that was distributed with this source code.
  */
 
-const DEFAULT_NODE_ARGS = [
-  // Use ts-node/esm loader. The project must install it
-  '--loader=ts-node/esm',
-  // Disable annonying warnings
-  '--no-warnings',
-  // Enable expiremental meta resolve for cases where someone uses magic import string
-  '--experimental-import-meta-resolve',
-]
+import { runNode } from '../../src/internal_helpers.js'
 
 /**
  * Ace shell is used to run the ace commands inside a TypeScript project
@@ -28,14 +21,9 @@ export function aceShell(cwd: URL) {
   return {
     async handle(argv: string[]) {
       const { execaNode } = await import('execa')
-      const childProcess = execaNode('bin/console.js', argv, {
-        nodeOptions: DEFAULT_NODE_ARGS,
-        preferLocal: true,
-        windowsHide: false,
-        localDir: cwd,
-        cwd,
-        buffer: false,
-        stdio: 'inherit',
+      const childProcess = runNode(execaNode, cwd, {
+        script: 'bin/console.ts',
+        scriptArgs: argv,
       })
 
       try {
