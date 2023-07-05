@@ -98,7 +98,7 @@
     "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "file:../../devtools/assembler",
+    "@adonisjs/assembler": "^6.1.3-9",
     "@adonisjs/eslint-config": "^1.1.7",
     "@adonisjs/prettier-config": "^1.1.7",
     "@adonisjs/tsconfig": "^1.1.7",
