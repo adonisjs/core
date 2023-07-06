@@ -13,7 +13,9 @@ import { test } from '@japa/runner'
 import Build from '../../commands/build.js'
 import { AceFactory } from '../../factories/core/ace.js'
 
-test.group('Build command', () => {
+test.group('Build command', (group) => {
+  group.tap((t) => t.timeout(30 * 1000))
+
   test('show error when assembler is not installed', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -116,7 +118,7 @@ test.group('Build command', () => {
 
     await assert.fileExists('build/index.js')
     await assert.fileExists('build/.adonisrc.json')
-  }).timeout(30 * 1000)
+  })
 
   test('do not output when typescript build has errors', async ({ assert, fs }) => {
     await fs.create(
@@ -165,7 +167,7 @@ test.group('Build command', () => {
 
     assert.equal(command.exitCode, 1)
     await assert.fileNotExists('build/index.js')
-  }).timeout(30 * 1000)
+  })
 
   test('output with --ignore-ts-errors flags when typescript build has errors', async ({
     assert,
@@ -219,7 +221,7 @@ test.group('Build command', () => {
     assert.equal(command.exitCode, 0)
     await assert.fileExists('build/index.js')
     await assert.fileExists('build/.adonisrc.json')
-  }).timeout(30 * 1000)
+  })
 
   test('show error when configured assets bundler is missing', async ({ assert, fs }) => {
     await fs.create(
@@ -263,7 +265,7 @@ test.group('Build command', () => {
         return log.message.match(/compiling frontend assets/)
       })
     )
-  }).timeout(30 * 1000)
+  })
 
   test('do not attempt to build assets when assets bundler is not configured', async ({
     assert,
@@ -304,7 +306,7 @@ test.group('Build command', () => {
         return log.message.match(/compiling frontend assets/)
       })
     )
-  }).timeout(30 * 1000)
+  })
 
   test('do not attempt to build assets when --no-assets flag is used', async ({ assert, fs }) => {
     await fs.create(
@@ -348,5 +350,5 @@ test.group('Build command', () => {
         return log.message.match(/compiling frontend assets/)
       })
     )
-  }).timeout(30 * 1000)
+  })
 })
