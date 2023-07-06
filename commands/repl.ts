@@ -28,5 +28,8 @@ export default class ReplCommand extends BaseCommand {
   async run() {
     const repl = await this.app.container.make('repl')
     repl.start()
+    repl.server!.on('exit', async () => {
+      await this.terminate()
+    })
   }
 }
