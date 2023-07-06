@@ -123,7 +123,7 @@ export default class Configure extends BaseCommand {
    * ```
    */
   async installPackages(packages: { name: string; isDevDependency: boolean }[]) {
-    const appPath = fileURLToPath(this.app.appRoot)
+    const appPath = this.app.makePath()
 
     const devDeps = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
     const deps = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
@@ -142,8 +142,9 @@ export default class Configure extends BaseCommand {
       this.logger.log(devDeps.map((dep) => `      ${this.colors.dim('dev')} ${dep}`).join('\n'))
       this.logger.log(deps.map((dep) => `      ${this.colors.dim('prod')} ${dep}`).join('\n'))
     } catch (error) {
+      spinner.update('unable to install dependencies')
       spinner.stop()
-      this.logger.error(`unable to install dependencies :\n   ${this.colors.red(error.message)}`)
+      this.logger.fatal(error)
     }
   }
 

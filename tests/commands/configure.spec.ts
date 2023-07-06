@@ -532,9 +532,14 @@ test.group('Configure command | run', (group) => {
 
     const logs = ace.ui.logger.getLogs()
     assert.deepInclude(logs, {
-      message:
-        '[ red(error) ] unable to install dependencies :\n   red(Command failed with exit code 1: npm install -D is-odd@15.0.0)',
-      stream: 'stderr',
+      message: '[ cyan(wait) ] unable to install dependencies ...',
+      stream: 'stdout',
     })
+
+    const lastLog = logs[logs.length - 1]
+    assert.deepInclude(
+      lastLog.message,
+      '[ red(error) ] Command failed with exit code 1: npm install -D is-odd@15.0.0'
+    )
   }).timeout(5000)
 })
