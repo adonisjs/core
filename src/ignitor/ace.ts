@@ -61,6 +61,9 @@ export class AceProcess {
      */
     kernel.loading(async (metaData) => {
       if (metaData.options.startApp && !app.isReady) {
+        if (metaData.commandName === 'repl') {
+          app.setEnvironment('repl')
+        }
         await app.boot()
         await app.start(() => {})
       }

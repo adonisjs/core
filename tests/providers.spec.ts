@@ -9,6 +9,7 @@
 
 import { test } from '@japa/runner'
 
+import { Repl } from '../modules/repl.js'
 import { Config } from '../modules/config.js'
 import { Emitter } from '../modules/events.js'
 import { Kernel } from '../modules/ace/kernel.js'
@@ -31,6 +32,7 @@ test.group('Providers', () => {
             './providers/app_provider.js',
             './providers/hash_provider.js',
             './providers/http_provider.js',
+            './providers/repl_provider.js',
           ],
         },
       })
@@ -54,6 +56,7 @@ test.group('Providers', () => {
     assert.isTrue(app.container.hasBinding('server'))
     assert.isTrue(app.container.hasBinding('router'))
     assert.isTrue(app.container.hasBinding('testUtils'))
+    assert.isTrue(app.container.hasBinding('repl'))
   })
 
   test('ensure services can resolve bindings using container', async ({ assert }) => {
@@ -64,6 +67,7 @@ test.group('Providers', () => {
             './providers/app_provider.js',
             './providers/hash_provider.js',
             './providers/http_provider.js',
+            './providers/repl_provider.js',
           ],
         },
       })
@@ -88,6 +92,7 @@ test.group('Providers', () => {
     const { default: serverService } = await import('../services/server.js')
     const { default: aceService } = await import('../services/ace.js')
     const { default: testUtils } = await import('../services/test_utils.js')
+    const { default: repl } = await import('../services/repl.js')
 
     assert.instanceOf(aceService, Kernel)
     assert.strictEqual(app, appService)
@@ -99,6 +104,7 @@ test.group('Providers', () => {
     assert.instanceOf(routerService, Router)
     assert.instanceOf(serverService, Server)
     assert.instanceOf(testUtils, TestUtils)
+    assert.instanceOf(repl, Repl)
   })
 
   test('construct bodyparser middleware using the container', async ({ assert }) => {
@@ -183,5 +189,76 @@ test.group('Providers', () => {
     const logger = await app.container.make(Logger)
     assert.instanceOf(logger, Logger)
     assert.strictEqual(logger, loggerService.use())
+  })
+
+  test('register repl methods in repl environment', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            './providers/app_provider.js',
+            './providers/hash_provider.js',
+            './providers/http_provider.js',
+            './providers/repl_provider.js',
+          ],
+        },
+      })
+      .create(BASE_URL, {
+        importer: (filePath) => {
+          return import(new URL(filePath, new URL('../', import.meta.url)).href)
+        },
+      })
+
+    const app = ignitor.createApp('repl')
+    await app.init()
+    await app.boot()
+
+    const repl = await app.container.make('repl')
+    assert.properties(repl.getMethods(), [
+      'importDefault',
+      'loadApp',
+      'loadConfig',
+      'loadEncryption',
+      'loadHash',
+      'loadHelpers',
+      'loadRouter',
+      'loadTestUtils',
+    ])
+  })
+
+  test('do not register repl methods in non-repl environment', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            './providers/app_provider.js',
+            './providers/hash_provider.js',
+            './providers/http_provider.js',
+            './providers/repl_provider.js',
+          ],
+        },
+      })
+      .create(BASE_URL, {
+        importer: (filePath) => {
+          return import(new URL(filePath, new URL('../', import.meta.url)).href)
+        },
+      })
+
+    const app = ignitor.createApp('web')
+    await app.init()
+    await app.boot()
+
+    const repl = await app.container.make('repl')
+    assert.notAnyProperties(repl.getMethods(), [
+      'importDefault',
+      'make',
+      'loadApp',
+      'loadConfig',
+      'loadEncryption',
+      'loadHash',
+      'loadHelpers',
+      'loadRouter',
+      'loadTestUtils',
+    ])
   })
 })
