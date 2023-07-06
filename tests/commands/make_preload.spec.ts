@@ -10,7 +10,7 @@
 import { test } from '@japa/runner'
 import { StubsFactory } from '../../factories/stubs.js'
 import { AceFactory } from '../../factories/core/ace.js'
-import MakePreloadFile from '../../commands/make/preload_file.js'
+import MakePreload from '../../commands/make/preload.js'
 
 test.group('Make preload file', () => {
   test('create preload file', async ({ assert, fs }) => {
@@ -20,7 +20,7 @@ test.group('Make preload file', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(MakePreloadFile, ['app', '--environments=web'])
+    const command = await ace.create(MakePreload, ['app', '--environments=web'])
     await command.exec()
 
     const { contents } = await new StubsFactory().prepare('make/preload_file/main.stub', {
@@ -45,7 +45,7 @@ test.group('Make preload file', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(MakePreloadFile, ['app'])
+    const command = await ace.create(MakePreload, ['app'])
     command.prompt
       .trap('Select the environment(s) in which you want to load this file')
       .replyWith(['web', 'repl'])
@@ -64,7 +64,7 @@ test.group('Make preload file', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(MakePreloadFile, ['app'])
+    const command = await ace.create(MakePreload, ['app'])
     command.prompt
       .trap('Select the environment(s) in which you want to load this file')
       .replyWith(['all'])

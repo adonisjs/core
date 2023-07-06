@@ -16,8 +16,8 @@ const ALLOWED_ENVIRONMENTS: AppEnvironments[] = ['web', 'console', 'test', 'repl
 /**
  * Make a new preload file
  */
-export default class MakePreloadFile extends BaseCommand {
-  static commandName = 'make:preload-file'
+export default class MakePreload extends BaseCommand {
+  static commandName = 'make:preload'
   static description = 'Create a new preload file inside the start directory'
 
   @args.string({ description: 'Name of the preload file' })
