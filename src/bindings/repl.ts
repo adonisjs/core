@@ -49,24 +49,60 @@ export function defineReplBindings(app: ApplicationService, repl: Repl) {
       description: 'Make class instance using "container.make" method',
     }
   )
-  repl.addMethod('loadApp', () => resolveBindingForRepl(app, repl, 'app'), {
-    description: 'Load "app" service in the REPL context',
-  })
-  repl.addMethod('loadEncryption', () => resolveBindingForRepl(app, repl, 'encryption'), {
-    description: 'Load "encryption" service in the REPL context',
-  })
-  repl.addMethod('loadHash', () => resolveBindingForRepl(app, repl, 'hash'), {
-    description: 'Load "hash" service in the REPL context',
-  })
-  repl.addMethod('loadRouter', () => resolveBindingForRepl(app, repl, 'router'), {
-    description: 'Load "router" service in the REPL context',
-  })
-  repl.addMethod('loadConfig', () => resolveBindingForRepl(app, repl, 'config'), {
-    description: 'Load "config" service in the REPL context',
-  })
-  repl.addMethod('loadTestUtils', () => resolveBindingForRepl(app, repl, 'testUtils'), {
-    description: 'Load "testUtils" service in the REPL context',
-  })
+  repl.addMethod(
+    'loadApp',
+    () => {
+      resolveBindingForRepl(app, repl, 'app')
+    },
+    {
+      description: 'Load "app" service in the REPL context',
+    }
+  )
+  repl.addMethod(
+    'loadEncryption',
+    () => {
+      resolveBindingForRepl(app, repl, 'encryption')
+    },
+    {
+      description: 'Load "encryption" service in the REPL context',
+    }
+  )
+  repl.addMethod(
+    'loadHash',
+    () => {
+      resolveBindingForRepl(app, repl, 'hash')
+    },
+    {
+      description: 'Load "hash" service in the REPL context',
+    }
+  )
+  repl.addMethod(
+    'loadRouter',
+    () => {
+      resolveBindingForRepl(app, repl, 'router')
+    },
+    {
+      description: 'Load "router" service in the REPL context',
+    }
+  )
+  repl.addMethod(
+    'loadConfig',
+    () => {
+      resolveBindingForRepl(app, repl, 'config')
+    },
+    {
+      description: 'Load "config" service in the REPL context',
+    }
+  )
+  repl.addMethod(
+    'loadTestUtils',
+    () => {
+      resolveBindingForRepl(app, repl, 'testUtils')
+    },
+    {
+      description: 'Load "testUtils" service in the REPL context',
+    }
+  )
   repl.addMethod(
     'loadHelpers',
     async () => {
