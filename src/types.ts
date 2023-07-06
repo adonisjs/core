@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import type { Repl } from '../modules/repl.js'
 import type { Importer } from '../types/app.js'
 import type { Emitter } from '../modules/events.js'
 import type { Kernel } from '../modules/ace/main.js'
@@ -133,4 +134,5 @@ export interface ContainerBindings {
   server: HttpServerService
   router: HttpRouterService
   testUtils: TestUtils
+  repl: Repl
 }

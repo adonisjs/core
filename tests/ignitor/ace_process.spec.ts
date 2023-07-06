@@ -15,7 +15,13 @@ import { IgnitorFactory } from '../../factories/core/ignitor.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
-test.group('Ignitor | Ace process', () => {
+test.group('Ignitor | Ace process', (group) => {
+  group.each.setup(() => {
+    return () => {
+      process.exitCode = undefined
+    }
+  })
+
   test('run command', async ({ cleanup, assert }) => {
     cleanup(async () => {
       await ignitor.terminate()
@@ -53,7 +59,7 @@ test.group('Ignitor | Ace process', () => {
     assert.isTrue(greetCommandExecuted)
     assert.equal(process.exitCode, 0)
     assert.equal(ignitor.getApp()?.getEnvironment(), 'console')
-    assert.equal(ignitor.getApp()?.getState(), 'initiated')
+    assert.equal(ignitor.getApp()?.getState(), 'terminated')
   })
 
   test('start app when command needs app', async ({ cleanup, assert }) => {
@@ -172,5 +178,107 @@ test.group('Ignitor | Ace process', () => {
       .handle(['greet'])
 
     assert.equal(process.exitCode, 1)
+  })
+
+  test('wait for command to terminate in stayAlive mode', async ({ cleanup, assert }) => {
+    cleanup(async () => {
+      await ignitor.terminate()
+    })
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../../providers/app_provider.js',
+            '../../providers/hash_provider.js',
+            '../../providers/http_provider.js',
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    let greetCommandExecuted = false
+    class Greet extends BaseCommand {
+      static commandName: string = 'greet'
+      static options = {
+        staysAlive: true,
+      }
+
+      async run() {
+        greetCommandExecuted = true
+      }
+    }
+
+    await ignitor
+      .ace()
+      .configure(async (app) => {
+        const kernel = await app.container.make('ace')
+        kernel.addLoader(new ListLoader([Greet]))
+      })
+      .handle(['greet'])
+
+    assert.isTrue(greetCommandExecuted)
+    assert.equal(ignitor.getApp()?.getEnvironment(), 'console')
+    assert.isUndefined(process.exitCode)
+    assert.equal(ignitor.getApp()?.getState(), 'initiated')
+
+    const kernel = await ignitor.getApp()!.container.make('ace')
+    await kernel.getMainCommand()?.terminate()
+
+    assert.equal(process.exitCode, 0)
+    assert.equal(ignitor.getApp()?.getState(), 'terminated')
+  })
+
+  test('fail when command exits with an error in staysAlive mode', async ({ cleanup, assert }) => {
+    cleanup(async () => {
+      await ignitor.terminate()
+    })
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../../providers/app_provider.js',
+            '../../providers/hash_provider.js',
+            '../../providers/http_provider.js',
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    let greetCommandExecuted = false
+    class Greet extends BaseCommand {
+      static commandName: string = 'greet'
+      static options = {
+        staysAlive: true,
+      }
+
+      async run() {
+        greetCommandExecuted = true
+      }
+    }
+
+    await ignitor
+      .ace()
+      .configure(async (app) => {
+        const kernel = await app.container.make('ace')
+        kernel.addLoader(new ListLoader([Greet]))
+      })
+      .handle(['greet'])
+
+    assert.isTrue(greetCommandExecuted)
+    assert.equal(ignitor.getApp()?.getEnvironment(), 'console')
+    assert.isUndefined(process.exitCode)
+    assert.equal(ignitor.getApp()?.getState(), 'initiated')
+
+    const kernel = await ignitor.getApp()!.container.make('ace')
+    const mainCommand = kernel.getMainCommand()!
+    mainCommand.exitCode = 1
+    await mainCommand.terminate()
+
+    assert.equal(process.exitCode, 1)
+    assert.equal(ignitor.getApp()?.getState(), 'terminated')
   })
 })
