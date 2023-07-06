@@ -10,7 +10,7 @@
 import { test } from '@japa/runner'
 import { StubsFactory } from '../../factories/stubs.js'
 import { AceFactory } from '../../factories/core/ace.js'
-import MakePreloadFile from '../../commands/make/prldfile.js'
+import MakePreloadFile from '../../commands/make/preload_file.js'
 
 test.group('Make preload file', () => {
   test('create preload file', async ({ assert, fs }) => {
