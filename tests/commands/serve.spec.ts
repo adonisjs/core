@@ -173,6 +173,8 @@ test.group('Serve command', () => {
     await command.exec()
     await sleep(600)
 
+    console.log(ace.ui.logger.getLogs())
+
     assert.exists(
       ace.ui.logger.getLogs().find((log) => {
         return log.message.match(/starting "vite" dev server/)
