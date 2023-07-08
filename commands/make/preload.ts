@@ -11,7 +11,8 @@ import BaseCommand from './_base.js'
 import { args, flags } from '../../modules/ace/main.js'
 import type { AppEnvironments } from '@adonisjs/application/types'
 
-const ALLOWED_ENVIRONMENTS: AppEnvironments[] = ['web', 'console', 'test', 'repl']
+const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnvironments[]
+type AllowedAppEnvironments = typeof ALLOWED_ENVIRONMENTS
 
 /**
  * Make a new preload file
@@ -26,7 +27,7 @@ export default class MakePreload extends BaseCommand {
   @flags.array({
     description: `Define the preload file's environment. Accepted values are "${ALLOWED_ENVIRONMENTS}"`,
   })
-  declare environments: AppEnvironments[]
+  declare environments: AllowedAppEnvironments
 
   /**
    * The stub to use for generating the preload file
@@ -36,7 +37,7 @@ export default class MakePreload extends BaseCommand {
   /**
    * Check if the mentioned environments are valid
    */
-  #isValidEnvironment(environment: string[]): environment is AppEnvironments[] {
+  #isValidEnvironment(environment: string[]): environment is AllowedAppEnvironments {
     return !environment.find((one) => !ALLOWED_ENVIRONMENTS.includes(one as any))
   }
 
@@ -54,7 +55,7 @@ export default class MakePreload extends BaseCommand {
   /**
    * Prompt for the environments
    */
-  async #promptForEnvironments(): Promise<AppEnvironments[]> {
+  async #promptForEnvironments(): Promise<AllowedAppEnvironments> {
     const selectedEnvironments = await this.prompt.multiple(
       'Select the environment(s) in which you want to load this file',
       [
@@ -70,14 +71,14 @@ export default class MakePreload extends BaseCommand {
       return ['web', 'console', 'test', 'repl']
     }
 
-    return selectedEnvironments as AppEnvironments[]
+    return selectedEnvironments as AllowedAppEnvironments
   }
 
   /**
    * Run command
    */
   async run() {
-    let environments: AppEnvironments[] = this.environments
+    let environments: AllowedAppEnvironments = this.environments
 
     /**
      * Ensure the environments are valid when provided via flag
@@ -105,8 +106,6 @@ export default class MakePreload extends BaseCommand {
      * the relative path, since we cannot be sure about aliases to exist.
      */
     const preloadImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
-    await this.app.rcFileEditor
-      .addPreloadFile(preloadImportPath, environments as Exclude<AppEnvironments, 'unknown'>[])
-      .save()
+    await this.app.rcFileEditor.addPreloadFile(preloadImportPath, environments).save()
   }
 }
