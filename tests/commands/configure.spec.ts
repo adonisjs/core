@@ -427,10 +427,10 @@ test.group('Configure command | run', (group) => {
     )
 
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=3'])
+    command.verbose = true
     await command.exec()
 
     const packageJson = await fs.contentsJson('package.json')
-    console.log(packageJson)
     assert.deepEqual(packageJson.dependencies, { 'is-even': '1.0.0' })
     assert.deepEqual(packageJson.devDependencies, { 'is-odd': '2.0.0' })
   }).timeout(5000)

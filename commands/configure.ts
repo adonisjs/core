@@ -12,7 +12,7 @@ import { installPackage, detectPackageManager } from '@antfu/install-pkg'
 
 import { EnvEditor } from '../modules/env.js'
 import type { ApplicationService } from '../src/types.js'
-import { args, BaseCommand } from '../modules/ace/main.js'
+import { args, BaseCommand, flags } from '../modules/ace/main.js'
 
 /**
  * The configure command is used to configure packages after installation
@@ -23,6 +23,9 @@ export default class Configure extends BaseCommand {
 
   @args.string({ description: 'Package name' })
   declare name: string
+
+  @flags.boolean({ description: 'Display logs in verbose mode' })
+  declare verbose?: boolean
 
   /**
    * The root of the stubs directory. The value is defined after we import
@@ -124,18 +127,19 @@ export default class Configure extends BaseCommand {
    */
   async installPackages(packages: { name: string; isDevDependency: boolean }[]) {
     const appPath = this.app.makePath()
+    const silent = this.verbose === true ? false : true
 
     const devDeps = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
     const deps = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
-
     const packageManager = await detectPackageManager(appPath)
+
     let spinner = this.logger
       .await(`installing dependencies using ${packageManager || 'npm'}`)
       .start()
 
     try {
-      await installPackage(deps, { cwd: appPath, silent: true })
-      await installPackage(devDeps, { dev: true, cwd: appPath, silent: true })
+      await installPackage(deps, { cwd: appPath, silent })
+      await installPackage(devDeps, { dev: true, cwd: appPath, silent })
 
       spinner.stop()
       this.logger.success('dependencies installed')
@@ -144,6 +148,7 @@ export default class Configure extends BaseCommand {
     } catch (error) {
       spinner.update('unable to install dependencies')
       spinner.stop()
+      this.exitCode = 1
       this.logger.fatal(error)
     }
   }
