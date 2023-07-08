@@ -430,11 +430,12 @@ test.group('Configure command | run', (group) => {
     await command.exec()
 
     const packageJson = await fs.contentsJson('package.json')
+    console.log(packageJson)
     assert.deepEqual(packageJson.dependencies, { 'is-even': '1.0.0' })
     assert.deepEqual(packageJson.devDependencies, { 'is-odd': '2.0.0' })
   }).timeout(5000)
 
-  test('install packages and detect pnpm', async ({ assert, fs }) => {
+  test('install packages using pnpm when pnpm-lock file exists', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(new URL(filePath, fs.baseUrl).href)
@@ -468,7 +469,7 @@ test.group('Configure command | run', (group) => {
     })
   }).timeout(5000)
 
-  test('install packages and detect npm', async ({ assert, fs }) => {
+  test('install packages using npm when package-lock file exists', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(new URL(filePath, fs.baseUrl).href)
