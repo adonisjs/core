@@ -46,11 +46,23 @@ export default class Test extends BaseCommand {
   @flags.array({ description: 'Filter tests by test title' })
   declare tests?: string[]
 
+  @flags.array({ description: 'Activate one or more test reporters' })
+  declare reporters?: string[]
+
   @flags.boolean({ description: 'Watch filesystem and re-run tests on file change' })
   declare watch?: boolean
 
   @flags.boolean({ description: 'Use polling to detect filesystem changes' })
   declare poll?: boolean
+
+  @flags.number({ description: 'Define default timeout for all tests' })
+  declare timeout?: number
+
+  @flags.number({ description: 'Define default retries for all tests' })
+  declare retries?: number
+
+  @flags.boolean({ description: 'Execute tests failed during the last run' })
+  declare failed?: boolean
 
   @flags.boolean({
     description: 'Clear the terminal for new logs after file change',
@@ -87,6 +99,50 @@ export default class Test extends BaseCommand {
   }
 
   /**
+   * Collection of unknown flags to pass to Japa
+   */
+  #getPassthroughFlags(): string[] {
+    return this.parsed.unknownFlags
+      .map((flag) => {
+        const value = this.parsed.flags[flag]
+
+        /**
+         * Not mentioning value when value is "true"
+         */
+        if (value === true) {
+          return [`--${flag}`] as string[]
+        }
+
+        /**
+         * Repeating flag multiple times when value is an array
+         */
+        if (Array.isArray(value)) {
+          return value.map((v) => [`--${flag}`, v]) as string[][]
+        }
+
+        return [`--${flag}`, value] as string[]
+      })
+      .flat(2)
+  }
+
+  /**
+   * Returns the assets bundler config
+   */
+  async #getAssetsBundlerConfig() {
+    const assetsBundler = await detectAssetsBundler(this.app)
+    return assetsBundler
+      ? {
+          serve: this.assets === false ? false : true,
+          driver: assetsBundler.name,
+          cmd: assetsBundler.devServer.command,
+          args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
+        }
+      : {
+          serve: false as const,
+        }
+  }
+
+  /**
    * Runs tests
    */
   async run() {
@@ -97,42 +153,11 @@ export default class Test extends BaseCommand {
       return
     }
 
-    const assetsBundler = await detectAssetsBundler(this.app)
-
     this.testsRunner = new assembler.TestRunner(this.app.appRoot, {
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
-      scriptArgs: this.parsed.unknownFlags
-        .map((flag) => {
-          const value = this.parsed.flags[flag]
-
-          /**
-           * Not mentioning value when value is "true"
-           */
-          if (value === true) {
-            return [`--${flag}`] as string[]
-          }
-
-          /**
-           * Repeating flag multiple times when value is an array
-           */
-          if (Array.isArray(value)) {
-            return value.map((v) => [`--${flag}`, v]) as string[][]
-          }
-
-          return [`--${flag}`, value] as string[]
-        })
-        .flat(2),
-      assets: assetsBundler
-        ? {
-            serve: this.assets === false ? false : true,
-            driver: assetsBundler.name,
-            cmd: assetsBundler.devServer.command,
-            args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
-          }
-        : {
-            serve: false,
-          },
+      scriptArgs: this.#getPassthroughFlags(),
+      assets: await this.#getAssetsBundlerConfig(),
       filters: {
         suites: this.suites,
         files: this.files,
@@ -140,10 +165,14 @@ export default class Test extends BaseCommand {
         tags: this.tags,
         tests: this.tests,
       },
+      failed: this.failed,
+      retries: this.retries,
+      timeout: this.timeout,
+      reporters: this.reporters,
       suites: this.app.rcFile.tests.suites.map((suite) => {
         return {
           name: suite.name,
-          files: Array.isArray(suite.files) ? suite.files : [suite.files],
+          files: suite.files,
         }
       }),
       metaFiles: this.app.rcFile.metaFiles,

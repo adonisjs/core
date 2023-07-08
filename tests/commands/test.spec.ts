@@ -307,8 +307,7 @@ test.group('Test command', () => {
       '--files=math.spec',
       '--groups=foo',
       '--tags=bar',
-      '--ignore-tags=baz',
-      '--test="2 + 2 = 4"',
+      '--tests="2 + 2 = 4"',
     ])
     cleanup(() => command.testsRunner.close())
     await command.exec()
@@ -317,18 +316,7 @@ test.group('Test command', () => {
     await assert.fileEquals(
       'argv.json',
       JSON.stringify(
-        [
-          '--files',
-          'math.spec',
-          '--groups',
-          'foo',
-          '--tags',
-          'bar',
-          '--ignore-tags',
-          'baz',
-          '--test',
-          '2 + 2 = 4',
-        ],
+        ['--files', 'math.spec', '--groups', 'foo', '--tags', 'bar', '--tests', '2 + 2 = 4'],
         null,
         2
       )
@@ -497,6 +485,70 @@ test.group('Test command', () => {
     await assert.fileEquals(
       'argv.json',
       JSON.stringify(['--browser', 'firefox', '--browser', 'chrome', '--inspect'], null, 2)
+    )
+  })
+
+  test('pass all japa flags to the script', async ({ assert, fs, cleanup }) => {
+    await fs.create(
+      'package.json',
+      JSON.stringify({
+        type: 'module',
+      })
+    )
+
+    await fs.create(
+      'bin/test.js',
+      `
+      import { writeFile } from 'node:fs/promises'
+      await writeFile('argv.json', JSON.stringify(process.argv.splice(2), null, 2))
+    `
+    )
+
+    await fs.create(
+      'node_modules/ts-node/package.json',
+      JSON.stringify({
+        name: 'ts-node',
+        exports: {
+          './esm': './esm.js',
+        },
+      })
+    )
+
+    await fs.create('node_modules/ts-node/esm.js', '')
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(filePath)
+      },
+    })
+
+    ace.ui.switchMode('raw')
+    ace.app.rcFile.tests.suites = [
+      {
+        name: 'unit',
+        files: ['tests/unit/**/*.spec(.js|.ts)'],
+        directories: ['tests/unit'],
+      },
+    ]
+
+    const command = await ace.create(Test, [
+      '--no-clear',
+      '--reporters=ndjson,spec',
+      '--failed',
+      '--retries=2',
+      '--timeout=3000',
+    ])
+    cleanup(() => command.testsRunner.close())
+    await command.exec()
+    await sleep(600)
+
+    await assert.fileEquals(
+      'argv.json',
+      JSON.stringify(
+        ['--reporters', 'ndjson,spec', '--timeout', '3000', '--failed', '--retries', '2'],
+        null,
+        2
+      )
     )
   })
 })
