@@ -26,7 +26,6 @@
   },
   "exports": {
     ".": "./build/index.js",
-    "./commands": "./build/commands/main.js",
     "./commands/*": "./build/commands/*.js",
     "./factories": "./build/factories/core/main.js",
     "./factories/*": "./build/factories/*.js",
@@ -49,7 +48,9 @@
     "./events": "./build/modules/events.js",
     "./http": "./build/modules/http.js",
     "./logger": "./build/modules/logger.js",
-    "./package.json": "./package.json"
+    "./repl": "./build/modules/repl.js",
+    "./package.json": "./package.json",
+    "./exceptions": "./build/src/exceptions.js"
   },
   "scripts": {
     "pretest": "npm run lint",
