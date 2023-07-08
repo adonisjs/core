@@ -21,8 +21,8 @@ export class AceProcess {
   #ignitor: Ignitor
 
   /**
-   * The callback that configures the tests runner. This callback
-   * runs at the time of starting the app.
+   * The callback that configures the ace instance before the
+   * handle method is called
    */
   #configureCallback: (app: ApplicationService) => Promise<void> | void = () => {}
 
@@ -31,8 +31,8 @@ export class AceProcess {
   }
 
   /**
-   * Register a callback that runs after booting the AdonisJS app
-   * and just before the provider's ready hook
+   * Register a callback that can be used to configure the ace
+   * kernel before the handle method is called
    */
   configure(callback: (app: ApplicationService) => Promise<void> | void): this {
     this.#configureCallback = callback

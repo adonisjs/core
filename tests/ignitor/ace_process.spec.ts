@@ -281,4 +281,44 @@ test.group('Ignitor | Ace process', (group) => {
     assert.equal(process.exitCode, 1)
     assert.equal(ignitor.getApp()?.getState(), 'terminated')
   })
+
+  test('switch app environment to repl when running repl command', async ({ cleanup, assert }) => {
+    cleanup(async () => {
+      await ignitor.terminate()
+    })
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../../providers/app_provider.js',
+            '../../providers/hash_provider.js',
+            '../../providers/http_provider.js',
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    class CustomRepl extends BaseCommand {
+      static commandName: string = 'repl'
+      static options = {
+        startApp: true,
+      }
+
+      async run() {}
+    }
+
+    await ignitor
+      .ace()
+      .configure(async (app) => {
+        const kernel = await app.container.make('ace')
+        kernel.addLoader(new ListLoader([CustomRepl]))
+      })
+      .handle(['repl'])
+
+    assert.equal(process.exitCode, 0)
+    assert.equal(ignitor.getApp()?.getEnvironment(), 'repl')
+    assert.equal(ignitor.getApp()?.getState(), 'terminated')
+  })
 })
