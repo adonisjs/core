@@ -411,7 +411,6 @@ test.group('Configure command | run', (group) => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    await fs.create('pnpm-lock.yaml', '')
     await fs.createJson('package.json', { type: 'module' })
     await fs.create(
       'dummy-pkg.js',
@@ -460,6 +459,7 @@ test.group('Configure command | run', (group) => {
     )
 
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=4'])
+    command.verbose = true
     await command.exec()
 
     const logs = ace.ui.logger.getLogs()
@@ -494,6 +494,7 @@ test.group('Configure command | run', (group) => {
     )
 
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=5'])
+    command.verbose = true
     await command.exec()
 
     const logs = ace.ui.logger.getLogs()
@@ -529,6 +530,7 @@ test.group('Configure command | run', (group) => {
     )
 
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=6'])
+    command.verbose = true
     await command.exec()
 
     const logs = ace.ui.logger.getLogs()
