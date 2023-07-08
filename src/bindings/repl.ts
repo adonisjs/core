@@ -52,7 +52,7 @@ export function defineReplBindings(app: ApplicationService, repl: Repl) {
   repl.addMethod(
     'loadApp',
     () => {
-      resolveBindingForRepl(app, repl, 'app')
+      return resolveBindingForRepl(app, repl, 'app')
     },
     {
       description: 'Load "app" service in the REPL context',
@@ -61,7 +61,7 @@ export function defineReplBindings(app: ApplicationService, repl: Repl) {
   repl.addMethod(
     'loadEncryption',
     () => {
-      resolveBindingForRepl(app, repl, 'encryption')
+      return resolveBindingForRepl(app, repl, 'encryption')
     },
     {
       description: 'Load "encryption" service in the REPL context',
@@ -70,7 +70,7 @@ export function defineReplBindings(app: ApplicationService, repl: Repl) {
   repl.addMethod(
     'loadHash',
     () => {
-      resolveBindingForRepl(app, repl, 'hash')
+      return resolveBindingForRepl(app, repl, 'hash')
     },
     {
       description: 'Load "hash" service in the REPL context',
@@ -79,7 +79,7 @@ export function defineReplBindings(app: ApplicationService, repl: Repl) {
   repl.addMethod(
     'loadRouter',
     () => {
-      resolveBindingForRepl(app, repl, 'router')
+      return resolveBindingForRepl(app, repl, 'router')
     },
     {
       description: 'Load "router" service in the REPL context',
@@ -88,7 +88,7 @@ export function defineReplBindings(app: ApplicationService, repl: Repl) {
   repl.addMethod(
     'loadConfig',
     () => {
-      resolveBindingForRepl(app, repl, 'config')
+      return resolveBindingForRepl(app, repl, 'config')
     },
     {
       description: 'Load "config" service in the REPL context',
@@ -97,7 +97,7 @@ export function defineReplBindings(app: ApplicationService, repl: Repl) {
   repl.addMethod(
     'loadTestUtils',
     () => {
-      resolveBindingForRepl(app, repl, 'testUtils')
+      return resolveBindingForRepl(app, repl, 'testUtils')
     },
     {
       description: 'Load "testUtils" service in the REPL context',
