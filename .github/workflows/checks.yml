@@ -5,6 +5,8 @@ on:
 jobs:
   test:
     uses: adonisjs/core/.github/workflows/test.yml@next
+    with:
+      install-pnpm: true
 
   lint:
     uses: adonisjs/.github/.github/workflows/lint.yml@main
