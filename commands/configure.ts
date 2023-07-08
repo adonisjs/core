@@ -8,11 +8,11 @@
  */
 
 import { slash } from '@poppinss/utils'
+import { installPackage, detectPackageManager } from '@antfu/install-pkg'
+
 import { EnvEditor } from '../modules/env.js'
 import type { ApplicationService } from '../src/types.js'
 import { args, BaseCommand } from '../modules/ace/main.js'
-import { installPackage, detectPackageManager } from '@antfu/install-pkg'
-import { fileURLToPath } from 'node:url'
 
 /**
  * The configure command is used to configure packages after installation
