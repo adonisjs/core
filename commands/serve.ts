@@ -82,6 +82,23 @@ export default class Serve extends BaseCommand {
   }
 
   /**
+   * Returns the assets bundler config
+   */
+  async #getAssetsBundlerConfig() {
+    const assetsBundler = await detectAssetsBundler(this.app)
+    return assetsBundler
+      ? {
+          serve: this.assets === false ? false : true,
+          driver: assetsBundler.name,
+          cmd: assetsBundler.devServer.command,
+          args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
+        }
+      : {
+          serve: false as const,
+        }
+  }
+
+  /**
    * Runs the HTTP server
    */
   async run() {
@@ -92,21 +109,11 @@ export default class Serve extends BaseCommand {
       return
     }
 
-    const assetsBundler = await detectAssetsBundler(this.app)
     this.devServer = new assembler.DevServer(this.app.appRoot, {
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: [],
-      assets: assetsBundler
-        ? {
-            serve: this.assets === false ? false : true,
-            driver: assetsBundler.name,
-            cmd: assetsBundler.devServer.command,
-            args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
-          }
-        : {
-            serve: false,
-          },
+      assets: await this.#getAssetsBundlerConfig(),
       metaFiles: this.app.rcFile.metaFiles,
     })
 

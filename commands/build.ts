@@ -72,6 +72,23 @@ export default class Build extends BaseCommand {
   }
 
   /**
+   * Returns the assets bundler config
+   */
+  async #getAssetsBundlerConfig() {
+    const assetsBundler = await detectAssetsBundler(this.app)
+    return assetsBundler
+      ? {
+          serve: this.assets === false ? false : true,
+          driver: assetsBundler.name,
+          cmd: assetsBundler.build.command,
+          args: (assetsBundler.build.args || []).concat(this.assetsArgs || []),
+        }
+      : {
+          serve: false as const,
+        }
+  }
+
+  /**
    * Build application
    */
   async run() {
@@ -89,18 +106,8 @@ export default class Build extends BaseCommand {
       return
     }
 
-    const assetsBundler = await detectAssetsBundler(this.app)
     const bundler = new assembler.Bundler(this.app.appRoot, ts, {
-      assets: assetsBundler
-        ? {
-            serve: this.assets === false ? false : true,
-            driver: assetsBundler.name,
-            cmd: assetsBundler.build.command,
-            args: (assetsBundler.build.args || []).concat(this.assetsArgs || []),
-          }
-        : {
-            serve: false,
-          },
+      assets: await this.#getAssetsBundlerConfig(),
       metaFiles: this.app.rcFile.metaFiles,
     })
 
