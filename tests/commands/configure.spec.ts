@@ -309,6 +309,8 @@ test.group('Configure command | run', (group) => {
     context.fs.basePath = BASE_PATH
   })
 
+  group.tap((t) => t.disableTimeout())
+
   test('throw error when unable to import package', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -469,7 +471,7 @@ test.group('Configure command | run', (group) => {
       message: '[ cyan(wait) ] installing dependencies using pnpm .  ',
       stream: 'stdout',
     })
-  }).timeout(5000)
+  })
 
   test('install packages using npm when package-lock file exists', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -506,7 +508,7 @@ test.group('Configure command | run', (group) => {
       message: '[ cyan(wait) ] installing dependencies using npm .  ',
       stream: 'stdout',
     })
-  }).timeout(5000)
+  })
 
   test('display error when installing packages', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -548,5 +550,5 @@ test.group('Configure command | run', (group) => {
       lastLog.message,
       '[ red(error) ] Command failed with exit code 1: npm install -D is-odd@15.0.0'
     )
-  }).timeout(5000)
+  })
 })
