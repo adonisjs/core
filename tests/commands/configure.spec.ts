@@ -429,9 +429,10 @@ test.group('Configure command | run', (group) => {
     command.verbose = true
     await command.exec()
 
+    assert.equal(command.exitCode, 0)
     const packageJson = await fs.contentsJson('package.json')
-    assert.deepEqual(packageJson.dependencies, { 'is-even': '1.0.0' })
-    assert.deepEqual(packageJson.devDependencies, { 'is-odd': '2.0.0' })
+    assert.deepEqual(packageJson.dependencies, { 'is-even': '^1.0.0' })
+    assert.deepEqual(packageJson.devDependencies, { 'is-odd': '^2.0.0' })
   }).timeout(5000)
 
   test('install packages using pnpm when pnpm-lock file exists', async ({ assert, fs }) => {
@@ -463,6 +464,7 @@ test.group('Configure command | run', (group) => {
     await command.exec()
 
     const logs = ace.ui.logger.getLogs()
+    assert.equal(command.exitCode, 0)
     assert.deepInclude(logs, {
       message: '[ cyan(wait) ] installing dependencies using pnpm .  ',
       stream: 'stdout',
@@ -499,6 +501,7 @@ test.group('Configure command | run', (group) => {
 
     const logs = ace.ui.logger.getLogs()
 
+    assert.equal(command.exitCode, 0)
     assert.deepInclude(logs, {
       message: '[ cyan(wait) ] installing dependencies using npm .  ',
       stream: 'stdout',
@@ -540,6 +543,7 @@ test.group('Configure command | run', (group) => {
     })
 
     const lastLog = logs[logs.length - 1]
+    assert.equal(command.exitCode, 1)
     assert.deepInclude(
       lastLog.message,
       '[ red(error) ] Command failed with exit code 1: npm install -D is-odd@15.0.0'
