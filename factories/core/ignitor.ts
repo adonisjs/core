@@ -47,6 +47,7 @@ export class IgnitorFactory {
       '@adonisjs/core/providers/app_provider',
       '@adonisjs/core/providers/hash_provider',
       '@adonisjs/core/providers/http_provider',
+      '@adonisjs/core/providers/repl_provider',
     ].concat(providers || [])
   }
 
