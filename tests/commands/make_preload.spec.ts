@@ -75,4 +75,38 @@ test.group('Make preload file', () => {
 
     assert.deepEqual(rcFile.preloads, ['./start/app.js'])
   })
+
+  test('use environment flag to make preload file in a specific env', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakePreload, ['app'])
+    command.environments = ['web', 'repl']
+
+    await command.exec()
+
+    const rcFile = await fs.contentsJson('.adonisrc.json')
+
+    assert.deepEqual(rcFile.preloads, [{ file: './start/app.js', environment: ['web', 'repl'] }])
+  })
+
+  test('display error when defined environment is not allowee', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakePreload, ['app'])
+    command.environments = ['foo' as any]
+    await command.exec()
+
+    await assert.fileNotExists('.adonisrc.json')
+    command.assertLog(
+      '[ red(error) ] Invalid environment(s) "foo". Only "web,console,test,repl" are allowed'
+    )
+  })
 })
