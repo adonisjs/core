@@ -22,7 +22,7 @@ export function defineConfig<
     {
       [K in keyof HashDriversList]: { driver: K } & Parameters<HashDriversList[K]>[0]
     }[keyof HashDriversList]
-  >
+  >,
 >(config: {
   default?: keyof KnownHashers
   list: KnownHashers
@@ -51,11 +51,14 @@ export function defineConfig<
   /**
    * Converting list config to a collection that hash manager can use
    */
-  const managerHashers = Object.keys(config.list).reduce((result, disk: keyof KnownHashers) => {
-    const hasherConfig = config.list[disk]
-    result[disk] = () => driversCollection.create(hasherConfig.driver, hasherConfig)
-    return result
-  }, {} as { [K in keyof KnownHashers]: ManagerDriverFactory })
+  const managerHashers = Object.keys(config.list).reduce(
+    (result, disk: keyof KnownHashers) => {
+      const hasherConfig = config.list[disk]
+      result[disk] = () => driversCollection.create(hasherConfig.driver, hasherConfig)
+      return result
+    },
+    {} as { [K in keyof KnownHashers]: ManagerDriverFactory }
+  )
 
   return {
     default: config.default,
