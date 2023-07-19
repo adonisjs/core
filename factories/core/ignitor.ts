@@ -8,7 +8,7 @@
  */
 
 import { Ignitor } from '../../src/ignitor/main.js'
-import { defineConfig as defineHttpConfig } from '../../modules/http.js'
+import { defineConfig as defineHttpConfig } from '../../modules/http/main.js'
 import type { ApplicationService, IgnitorOptions } from '../../src/types.js'
 import { defineConfig as defineLoggerConfig } from '../../modules/logger.js'
 import { defineConfig as defineHashConfig } from '../../modules/hash/main.js'

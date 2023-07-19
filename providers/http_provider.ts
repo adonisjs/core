@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { Router, Server } from '../modules/http.js'
+import { Router, Server } from '../modules/http/main.js'
 import type { ApplicationService } from '../src/types.js'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
 

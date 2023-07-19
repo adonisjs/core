@@ -12,7 +12,7 @@ import Macroable from '@poppinss/macroable'
 import { IncomingMessage, ServerResponse } from 'node:http'
 
 import { HttpServerUtils } from './http.js'
-import { CookieClient } from '../../modules/http.js'
+import { CookieClient } from '../../modules/http/main.js'
 import type { ApplicationService } from '../types.js'
 
 /**

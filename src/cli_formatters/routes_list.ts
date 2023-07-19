@@ -8,10 +8,10 @@
  */
 
 import stringWidth from 'string-width'
-import { type Router } from '../../modules/http.js'
 import type { RouteJSON } from '../../types/http.js'
 import type { UIPrimitives } from '../../types/ace.js'
 import { cliHelpers } from '../../modules/ace/main.js'
+import { type Router } from '../../modules/http/main.js'
 import { parseBindingReference } from '../../src/helpers/main.js'
 
 /**
