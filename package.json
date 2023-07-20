@@ -36,6 +36,7 @@
     "./providers/*": "./build/providers/*.js",
     "./helpers": "./build/src/helpers/main.js",
     "./helpers/*": "./build/src/helpers/*.js",
+    "./vinejs/extensions": "./build/src/vinejs/extensions/main.js",
     "./ace": "./build/modules/ace/main.js",
     "./ace/shell": "./build/modules/ace/shell.js",
     "./bodyparser": "./build/modules/bodyparser/main.js",
