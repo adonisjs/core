@@ -48,7 +48,7 @@
     "./encryption": "./build/modules/encryption.js",
     "./env": "./build/modules/env.js",
     "./events": "./build/modules/events.js",
-    "./http": "./build/modules/http.js",
+    "./http": "./build/modules/http/main.js",
     "./logger": "./build/modules/logger.js",
     "./repl": "./build/modules/repl.js",
     "./package.json": "./package.json",
