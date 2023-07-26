@@ -10,6 +10,7 @@
 import BaseCommand from './_base.js'
 import { args, flags } from '../../modules/ace/main.js'
 import type { AppEnvironments } from '@adonisjs/application/types'
+import { RcFileEditor } from '@adonisjs/application/rc_file_editor'
 
 const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnvironments[]
 type AllowedAppEnvironments = typeof ALLOWED_ENVIRONMENTS
@@ -106,6 +107,7 @@ export default class MakePreload extends BaseCommand {
      * the relative path, since we cannot be sure about aliases to exist.
      */
     const preloadImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
-    await this.app.rcFileEditor.addPreloadFile(preloadImportPath, environments).save()
+    const rcFileEditor = new RcFileEditor(this.app.makeURL('.adonisrc.json'), this.app.rcFile.raw)
+    await rcFileEditor.addPreloadFile(preloadImportPath, environments).save()
   }
 }

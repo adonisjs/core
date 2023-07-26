@@ -14,18 +14,22 @@ import type { Kernel } from '../modules/ace/main.js'
 import type { Application } from '../modules/app.js'
 import type { TestUtils } from './test_utils/main.js'
 import type { LoggerManager } from '../modules/logger.js'
+import type { HashManager } from '../modules/hash/main.js'
 import type { Encryption } from '../modules/encryption.js'
 import type { Router, Server } from '../modules/http/main.js'
 import type { HttpRequestFinishedPayload } from '../types/http.js'
 import type { ContainerResolveEventData } from '../types/container.js'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.js'
-import type { Argon, Bcrypt, HashManager, Scrypt } from '../modules/hash/main.js'
 import type {
   ArgonConfig,
   BcryptConfig,
   ScryptConfig,
   ManagerDriverFactory,
 } from '../types/hash.js'
+
+import type { Argon } from '../modules/hash/drivers/argon.js'
+import type { Bcrypt } from '../modules/hash/drivers/bcrypt.js'
+import type { Scrypt } from '../modules/hash/drivers/scrypt.js'
 
 /**
  * Options accepted by ignitor

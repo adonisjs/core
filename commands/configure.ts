@@ -10,9 +10,9 @@
 import { slash } from '@poppinss/utils'
 import { installPackage, detectPackageManager } from '@antfu/install-pkg'
 
-import { EnvEditor } from '../modules/env.js'
-import type { ApplicationService } from '../src/types.js'
+import { EnvEditor } from '@adonisjs/env/editor'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
+import { RcFileEditor } from '@adonisjs/application/rc_file_editor'
 
 /**
  * The configure command is used to configure packages after installation
@@ -69,7 +69,8 @@ export default class Configure extends BaseCommand {
    * Publish a stub file to the user project
    */
   async publishStub(stubPath: string, stubData?: Record<string, any>) {
-    const stub = await this.app.stubs.build(stubPath, {
+    const stubs = await this.app.stubs.create()
+    const stub = await stubs.build(stubPath, {
       source: this.stubsRoot,
     })
 
@@ -108,11 +109,10 @@ export default class Configure extends BaseCommand {
   /**
    * Update rcFile
    */
-  async updateRcFile(
-    callback: (rcFileEditor: ApplicationService['rcFileEditor']) => Promise<void> | void
-  ) {
-    await callback(this.app.rcFileEditor)
-    await this.app.rcFileEditor.save()
+  async updateRcFile(callback: (rcFileEditor: RcFileEditor) => Promise<void> | void) {
+    const rcFileEditor = new RcFileEditor(this.app.makeURL('.adonisrc.json'), this.app.rcFile.raw)
+    await callback(rcFileEditor)
+    await rcFileEditor.save()
     this.logger.action('update .adonisrc.json file').succeeded()
   }
 

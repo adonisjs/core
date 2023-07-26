@@ -9,6 +9,7 @@
 
 import BaseCommand from './_base.js'
 import { args } from '../../modules/ace/main.js'
+import { RcFileEditor } from '@adonisjs/application/rc_file_editor'
 
 /**
  * Make a new provider class
@@ -35,6 +36,7 @@ export default class MakeProvider extends BaseCommand {
      * the relative path, since we cannot be sure about aliases to exist.
      */
     const providerImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
-    await this.app.rcFileEditor.addProvider(providerImportPath).save()
+    const rcFileEditor = new RcFileEditor(this.app.makeURL('.adonisrc.json'), this.app.rcFile.raw)
+    await rcFileEditor.addProvider(providerImportPath).save()
   }
 }

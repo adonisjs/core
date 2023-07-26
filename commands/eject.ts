@@ -28,7 +28,8 @@ export default class Eject extends BaseCommand {
   declare pkg: string
 
   async run() {
-    const copied = await this.app.stubs.copy(this.stubPath, {
+    const stubs = await this.app.stubs.create()
+    const copied = await stubs.copy(this.stubPath, {
       pkg: this.pkg,
     })
 

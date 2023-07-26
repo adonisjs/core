@@ -45,7 +45,8 @@ export class StubsFactory {
     const app = this.#getApp()
     await app.init()
 
-    const stub = await app.stubs.build(stubPath, {
+    const stubs = await app.stubs.create()
+    const stub = await stubs.build(stubPath, {
       source: stubsRoot,
     })
     return stub.prepare(data)

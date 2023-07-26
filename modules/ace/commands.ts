@@ -27,8 +27,12 @@ class StubGenerator {
     this.#flags = flags
   }
 
+  /**
+   * Generats the stub
+   */
   async generate(stubsRoot: string, stubPath: string, stubState: Record<string, any>) {
-    const stub = await this.#command.app.stubs.build(stubPath, { source: stubsRoot })
+    const stubs = await this.#command.app.stubs.create()
+    const stub = await stubs.build(stubPath, { source: stubsRoot })
     const output = await stub.generate(Object.assign({ flags: this.#flags }, stubState))
 
     const entityFileName = slash(this.#command.app.relativePath(output.destination))

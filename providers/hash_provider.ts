@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import type { ApplicationService } from '../src/types.js'
-import { Argon, Bcrypt, Hash, Scrypt, driversList } from '../modules/hash/main.js'
+import { Hash, driversList } from '../modules/hash/main.js'
+import type { ApplicationService, HashDriversList } from '../src/types.js'
 
 /**
  * Registers the passwords hasher with the container
@@ -17,12 +17,23 @@ export default class HashServiceProvider {
   constructor(protected app: ApplicationService) {}
 
   /**
-   * Registering bundled drivers with the driversList collection
+   * Lazily registers a hash driver with the driversList collection
    */
-  protected registerHashDrivers() {
-    driversList.extend('bcrypt', (config) => new Bcrypt(config))
-    driversList.extend('scrypt', (config) => new Scrypt(config))
-    driversList.extend('argon2', (config) => new Argon(config))
+  protected async registerHashDrivers(driversInUse: Set<keyof HashDriversList>) {
+    if (driversInUse.has('bcrypt')) {
+      const { Bcrypt } = await import('../modules/hash/drivers/bcrypt.js')
+      driversList.extend('bcrypt', (config) => new Bcrypt(config))
+    }
+
+    if (driversInUse.has('scrypt')) {
+      const { Scrypt } = await import('../modules/hash/drivers/scrypt.js')
+      driversList.extend('scrypt', (config) => new Scrypt(config))
+    }
+
+    if (driversInUse.has('argon2')) {
+      const { Argon } = await import('../modules/hash/drivers/argon.js')
+      driversList.extend('argon2', (config) => new Argon(config))
+    }
   }
 
   /**
@@ -41,8 +52,8 @@ export default class HashServiceProvider {
    */
   protected registerHashManager() {
     this.app.container.singleton('hash', async () => {
-      const { HashManager } = await import('../modules/hash/main.js')
       const config = this.app.config.get<any>('hash')
+      const { HashManager } = await import('../modules/hash/main.js')
       return new HashManager(config)
     })
   }
@@ -51,8 +62,17 @@ export default class HashServiceProvider {
    * Registers bindings
    */
   register() {
-    this.registerHashDrivers()
     this.registerHashManager()
     this.registerHash()
+  }
+
+  /**
+   * Register drivers based upon hash config
+   */
+  boot() {
+    this.app.container.resolving('hash', async () => {
+      const config = this.app.config.get<any>('hash')
+      await this.registerHashDrivers(config.driversInUse)
+    })
   }
 }

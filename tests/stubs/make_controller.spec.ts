@@ -22,7 +22,9 @@ test.group('Make controller', () => {
     const app = new AppFactory().create(BASE_URL, () => {})
     await app.init()
 
-    const stub = await app.stubs.build('make/controller/main.stub', {
+    const stubs = await app.stubs.create()
+
+    const stub = await stubs.build('make/controller/main.stub', {
       source: stubsRoot,
     })
     const { contents, destination } = await stub.prepare({
@@ -38,7 +40,9 @@ test.group('Make controller', () => {
     const app = new AppFactory().create(BASE_URL, () => {})
     await app.init()
 
-    const stub = await app.stubs.build('make/controller/resource.stub', {
+    const stubs = await app.stubs.create()
+
+    const stub = await stubs.build('make/controller/resource.stub', {
       source: stubsRoot,
     })
     const { contents, destination } = await stub.prepare({
@@ -61,7 +65,9 @@ test.group('Make controller', () => {
     const app = new AppFactory().create(BASE_URL, () => {})
     await app.init()
 
-    const stub = await app.stubs.build('make/controller/api.stub', {
+    const stubs = await app.stubs.create()
+
+    const stub = await stubs.build('make/controller/api.stub', {
       source: stubsRoot,
     })
     const { contents, destination } = await stub.prepare({

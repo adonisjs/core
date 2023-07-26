@@ -9,20 +9,19 @@
 
 import { test } from '@japa/runner'
 import { HashDriverContract } from '../types/hash.js'
+import { Argon } from '../modules/hash/drivers/argon.js'
+import { Bcrypt } from '../modules/hash/drivers/bcrypt.js'
+import { Scrypt } from '../modules/hash/drivers/scrypt.js'
 import { IgnitorFactory } from '../factories/core/ignitor.js'
-import {
-  Hash,
-  Argon,
-  Bcrypt,
-  Scrypt,
-  HashManager,
-  driversList,
-  defineConfig,
-} from '../modules/hash/main.js'
+import { Hash, HashManager, driversList, defineConfig } from '../modules/hash/main.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
-test.group('Hash', () => {
+test.group('Hash', (group) => {
+  group.each.teardown(() => {
+    driversList.list = {}
+  })
+
   test('process hash config and make it work with hash manager', async ({
     assert,
     expectTypeOf,
@@ -59,7 +58,7 @@ test.group('Hash', () => {
     )
   })
 
-  test('create instance of pre-defined driver', async ({ assert }) => {
+  test('create instance of drivers registered in config file', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
@@ -70,11 +69,75 @@ test.group('Hash', () => {
           ],
         },
       })
+      .merge({
+        config: {
+          hash: defineConfig({
+            default: 'bcrypt',
+            list: {
+              bcrypt: {
+                driver: 'bcrypt',
+                rounds: 10,
+              },
+            },
+          }),
+        },
+      })
       .create(BASE_URL, { importer: (filePath) => import(filePath) })
 
     const app = ignitor.createApp('web')
     await app.init()
     await app.boot()
+
+    await app.container.make('hash')
+
+    assert.instanceOf(driversList.create('bcrypt', {}), Bcrypt)
+    assert.throws(
+      () => driversList.create('scrypt', {}),
+      'Unknown hash driver "scrypt". Make sure the driver is registered'
+    )
+    assert.throws(
+      () => driversList.create('argon2', {}),
+      'Unknown hash driver "argon2". Make sure the driver is registered'
+    )
+  })
+
+  test('register all drivers', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            '../providers/app_provider.js',
+            '../providers/hash_provider.js',
+            '../providers/http_provider.js',
+          ],
+        },
+      })
+      .merge({
+        config: {
+          hash: defineConfig({
+            default: 'bcrypt',
+            list: {
+              bcrypt: {
+                driver: 'bcrypt',
+                rounds: 10,
+              },
+              argon: {
+                driver: 'argon2',
+              },
+              scrypt: {
+                driver: 'scrypt',
+              },
+            },
+          }),
+        },
+      })
+      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+
+    const app = ignitor.createApp('web')
+    await app.init()
+    await app.boot()
+
+    await app.container.make('hash')
 
     assert.instanceOf(driversList.create('bcrypt', {}), Bcrypt)
     assert.instanceOf(driversList.create('scrypt', {}), Scrypt)

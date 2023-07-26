@@ -22,7 +22,8 @@ test.group('Make listener', () => {
     const app = new AppFactory().create(BASE_URL, () => {})
     await app.init()
 
-    const stub = await app.stubs.build('make/listener/main.stub', {
+    const stubs = await app.stubs.create()
+    const stub = await stubs.build('make/listener/main.stub', {
       source: stubsRoot,
     })
     const { contents, destination } = await stub.prepare({
@@ -37,7 +38,8 @@ test.group('Make listener', () => {
     const app = new AppFactory().create(BASE_URL, () => {})
     await app.init()
 
-    const stub = await app.stubs.build('make/listener/for_event.stub', {
+    const stubs = await app.stubs.create()
+    const stub = await stubs.build('make/listener/for_event.stub', {
       source: stubsRoot,
     })
     const { contents, destination } = await stub.prepare({

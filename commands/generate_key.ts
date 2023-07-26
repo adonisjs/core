@@ -8,7 +8,7 @@
  */
 
 import string from '@poppinss/utils/string'
-import { EnvEditor } from '../modules/env.js'
+import { EnvEditor } from '@adonisjs/env/editor'
 import { BaseCommand, flags } from '../modules/ace/main.js'
 
 /**

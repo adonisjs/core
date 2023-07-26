@@ -22,7 +22,8 @@ test.group('Make validator', () => {
     const app = new AppFactory().create(BASE_URL, () => {})
     await app.init()
 
-    const stub = await app.stubs.build('make/validator/main.stub', {
+    const stubs = await app.stubs.create()
+    const stub = await stubs.build('make/validator/main.stub', {
       source: stubsRoot,
     })
     const { contents, destination } = await stub.prepare({
