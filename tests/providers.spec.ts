@@ -191,7 +191,7 @@ test.group('Providers', () => {
     assert.strictEqual(logger, loggerService.use())
   })
 
-  test('register repl methods in repl environment', async ({ assert }) => {
+  test('register repl methods when repl provider is imported', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
@@ -216,42 +216,6 @@ test.group('Providers', () => {
     const repl = await app.container.make('repl')
     assert.properties(repl.getMethods(), [
       'importDefault',
-      'loadApp',
-      'loadConfig',
-      'loadEncryption',
-      'loadHash',
-      'loadHelpers',
-      'loadRouter',
-      'loadTestUtils',
-    ])
-  })
-
-  test('do not register repl methods in non-repl environment', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-            './providers/repl_provider.js',
-          ],
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
-
-    const app = ignitor.createApp('web')
-    await app.init()
-    await app.boot()
-
-    const repl = await app.container.make('repl')
-    assert.notAnyProperties(repl.getMethods(), [
-      'importDefault',
-      'make',
       'loadApp',
       'loadConfig',
       'loadEncryption',

@@ -30,10 +30,8 @@ export default class ReplServiceProvider {
    * Registering REPL bindings during provider boot
    */
   async boot() {
-    if (this.app.getEnvironment() === 'repl') {
-      const repl = await this.app.container.make('repl')
-      const { defineReplBindings } = await import('../src/bindings/repl.js')
-      defineReplBindings(this.app, repl)
-    }
+    const repl = await this.app.container.make('repl')
+    const { defineReplBindings } = await import('../src/bindings/repl.js')
+    defineReplBindings(this.app, repl)
   }
 }
