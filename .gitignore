@@ -4,11 +4,13 @@ coverage
 .nyc_output
 .idea
 .vscode/
+.yalc
 *.sublime-project
 *.sublime-workspace
 *.log
 build
 dist
+yalc.lock
 yarn.lock
 shrinkwrap.yaml
 package-lock.json

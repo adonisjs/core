@@ -14,9 +14,9 @@ import { Config } from '../modules/config.js'
 import { Emitter } from '../modules/events.js'
 import { Kernel } from '../modules/ace/kernel.js'
 import { TestUtils } from '../src/test_utils/main.js'
-import { Encryption } from '../modules/encryption.js'
 import { Router, Server } from '../modules/http/main.js'
 import { Hash, HashManager } from '../modules/hash/main.js'
+import { EncryptionManager } from '../modules/encryption/main.js'
 import { Logger, LoggerManager } from '../modules/logger.js'
 import { IgnitorFactory } from '../factories/core/ignitor.js'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
@@ -66,6 +66,7 @@ test.group('Providers', () => {
           providers: [
             './providers/app_provider.js',
             './providers/hash_provider.js',
+            './providers/encryption_provider.js',
             './providers/http_provider.js',
             './providers/repl_provider.js',
           ],
@@ -98,7 +99,7 @@ test.group('Providers', () => {
     assert.strictEqual(app, appService)
     assert.instanceOf(configService, Config)
     assert.instanceOf(emitterService, Emitter)
-    assert.instanceOf(encryptionService, Encryption)
+    assert.instanceOf(encryptionService, EncryptionManager)
     assert.instanceOf(hashService, HashManager)
     assert.instanceOf(loggerService, LoggerManager)
     assert.instanceOf(routerService, Router)

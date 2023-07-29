@@ -26,6 +26,7 @@ test.group('Repl | bindings', () => {
           providers: [
             '../providers/app_provider.js',
             '../providers/hash_provider.js',
+            '../providers/encryption_provider.js',
             '../providers/http_provider.js',
           ],
         },

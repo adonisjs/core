@@ -9,7 +9,6 @@
 
 import { Config } from '../modules/config.js'
 import { Logger } from '../modules/logger.js'
-import { Encryption } from '../modules/encryption.js'
 import type { ApplicationService, LoggerService } from '../src/types.js'
 
 /**
@@ -86,17 +85,6 @@ export default class AppServiceProvider {
   }
 
   /**
-   * Register the encryption service to the container
-   */
-  protected registerEncryption() {
-    this.app.container.singleton(Encryption, () => {
-      const appKey = this.app.config.get<string>('app.appKey')
-      return new Encryption({ secret: appKey })
-    })
-    this.app.container.alias('encryption', Encryption)
-  }
-
-  /**
    * Registers bindings
    */
   register() {
@@ -106,7 +94,6 @@ export default class AppServiceProvider {
     this.registerLogger()
     this.registerConfig()
     this.registerEmitter()
-    this.registerEncryption()
     this.registerTestUtils()
   }
 }

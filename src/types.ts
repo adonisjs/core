@@ -15,7 +15,7 @@ import type { Application } from '../modules/app.js'
 import type { TestUtils } from './test_utils/main.js'
 import type { LoggerManager } from '../modules/logger.js'
 import type { HashManager } from '../modules/hash/main.js'
-import type { Encryption } from '../modules/encryption.js'
+import { EncryptionManager } from '../modules/encryption/main.js'
 import type { Router, Server } from '../modules/http/main.js'
 import type { HttpRequestFinishedPayload } from '../types/http.js'
 import type { ContainerResolveEventData } from '../types/container.js'
@@ -24,12 +24,17 @@ import type {
   ArgonConfig,
   BcryptConfig,
   ScryptConfig,
-  ManagerDriverFactory,
+  ManagerDriverFactory as HashManagerDriverFactory,
 } from '../types/hash.js'
+import type {
+  LegacyConfig,
+  ManagerDriverFactory as EncryptionManagerDriverFactory,
+} from '../types/encryption.js'
 
 import type { Argon } from '../modules/hash/drivers/argon.js'
 import type { Bcrypt } from '../modules/hash/drivers/bcrypt.js'
 import type { Scrypt } from '../modules/hash/drivers/scrypt.js'
+import type { Legacy } from '../modules/encryption/drivers/legacy.js'
 
 /**
  * Options accepted by ignitor
@@ -55,6 +60,20 @@ export interface LoggersList {}
 export type InferLoggers<T extends LoggerManagerConfig<any>> = T['loggers']
 
 /**
+ * A list of globally available encryption drivers
+ */
+export interface EncryptionDriversList {
+  legacy: (config: LegacyConfig) => Legacy
+}
+
+/**
+ * A list of known encrypters inferred from the user config
+ */
+export interface EncryptersList {}
+export type InferEncrypters<T extends { list: Record<string, EncryptionManagerDriverFactory> }> =
+  T['list']
+
+/**
  * A list of globally available hash drivers
  */
 export interface HashDriversList {
@@ -67,7 +86,7 @@ export interface HashDriversList {
  * A list of known hashers inferred from the user config
  */
 export interface HashersList {}
-export type InferHashers<T extends { list: Record<string, ManagerDriverFactory> }> = T['list']
+export type InferHashers<T extends { list: Record<string, HashManagerDriverFactory> }> = T['list']
 
 /**
  * ----------------------------------------------------------------
@@ -100,10 +119,13 @@ export interface LoggerService
 export interface EmitterService extends Emitter<EventsList> {}
 
 /**
- * Encryption service is a singleton Encryption class instance
+ * Encryption service is a singleton instance of the EncryptionManager
  * registered to the container.
  */
-export interface EncryptionService extends Encryption {}
+export interface EncryptionService
+  extends EncryptionManager<
+    EncryptersList extends Record<string, EncryptionManagerDriverFactory> ? EncryptersList : never
+  > {}
 
 /**
  * Http server service added to the container as a singleton
@@ -121,7 +143,7 @@ export interface HttpRouterService extends Router {}
  */
 export interface HashService
   extends HashManager<
-    HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
+    HashersList extends Record<string, HashManagerDriverFactory> ? HashersList : never
   > {}
 
 /**
