@@ -8,4 +8,3 @@
  */
 
 export * from '@adonisjs/http-server'
-export { RequestValidator } from './request_validator.js'

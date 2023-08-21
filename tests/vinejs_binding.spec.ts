@@ -11,7 +11,7 @@ import vine from '@vinejs/vine'
 import { test } from '@japa/runner'
 
 import { MultipartFileFactory } from '../factories/bodyparser.js'
-import '../src/vinejs/extensions/main.js'
+import '../src/bindings/vinejs.js'
 
 test.group('VineJS extensions | Validates files', () => {
   test('clone schema type', async ({ assert }) => {
