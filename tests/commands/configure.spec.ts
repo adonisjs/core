@@ -109,13 +109,6 @@ test.group('Configure command | environment variables', () => {
         message: 'green(DONE:)    update .env file',
         stream: 'stdout',
       },
-      {
-        message: [
-          '               dim(CORS_MODE=strict)',
-          '               dim(CORS_ENABLED=true)',
-        ].join('\n'),
-        stream: 'stdout',
-      },
     ])
 
     await assert.fileContains('.env', 'CORS_MODE=strict')
@@ -138,16 +131,42 @@ test.group('Configure command | environment variables', () => {
         message: 'green(DONE:)    update .env file',
         stream: 'stdout',
       },
+    ])
+
+    await assert.fileNotExists('.env')
+  })
+
+  test('define env variables validations', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+
+    /**
+     * Creating .env file so that we can update it.
+     */
+    await fs.create('start/env.ts', `export default Env.create(new URL('./'), {})`)
+
+    const command = await ace.create(Configure, ['../dummy-pkg.js'])
+    command.stubsRoot = join(fs.basePath, 'stubs')
+
+    await command.defineEnvValidations({
+      variables: {
+        CORS_MODE: 'Env.schema.string()',
+      },
+    })
+
+    assert.deepEqual(command.ui.logger.getLogs(), [
       {
-        message: [
-          '               dim(CORS_MODE=strict)',
-          '               dim(CORS_ENABLED=true)',
-        ].join('\n'),
+        message: 'green(DONE:)    update start/env.ts file',
         stream: 'stdout',
       },
     ])
 
-    await assert.fileNotExists('.env')
+    await assert.fileContains('start/env.ts', 'CORS_MODE: Env.schema.string()')
   })
 })
 
@@ -159,21 +178,53 @@ test.group('Configure command | rcFile', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', 'export default defineConfig({})')
+
     const command = await ace.create(Configure, ['../dummy-pkg.js'])
     command.stubsRoot = join(fs.basePath, 'stubs')
 
     await command.updateRcFile((rcFile) => {
       rcFile.addProvider('@adonisjs/core')
+      rcFile.addCommand('@adonisjs/core/commands')
     })
 
     assert.deepEqual(command.ui.logger.getLogs(), [
       {
-        message: 'green(DONE:)    update .adonisrc.json file',
+        message: 'green(DONE:)    update adonisrc.ts file',
         stream: 'stdout',
       },
     ])
 
-    await assert.fileContains('.adonisrc.json', '@adonisjs/core')
+    await assert.fileContains('adonisrc.ts', '@adonisjs/core')
+    await assert.fileContains('adonisrc.ts', '@adonisjs/core/commands')
+  })
+})
+
+test.group('Configure command | registerMiddleware', () => {
+  test('register middleware', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('start/kernel.ts', 'router.use([])')
+
+    const command = await ace.create(Configure, ['../dummy-pkg.js'])
+    command.stubsRoot = join(fs.basePath, 'stubs')
+
+    await command.registerMiddleware('router', [{ path: '@adonisjs/core/bodyparser_middleware' }])
+
+    assert.deepEqual(command.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update start/kernel.ts file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('start/kernel.ts', '@adonisjs/core/bodyparser_middleware')
   })
 })
 
