@@ -1,0 +1,4 @@
+{{#var viewFileName = generators.viewFileName(entity.name)}}
+---
+to: {{ app.viewsPath(entity.path, viewFileName) }}
+---
