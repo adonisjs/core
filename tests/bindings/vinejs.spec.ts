@@ -10,10 +10,10 @@
 import vine from '@vinejs/vine'
 import { test } from '@japa/runner'
 
-import { MultipartFileFactory } from '../factories/bodyparser.js'
-import '../src/bindings/vinejs.js'
+import { MultipartFileFactory } from '../../factories/bodyparser.js'
+import '../../src/bindings/vinejs.js'
 
-test.group('VineJS extensions | Validates files', () => {
+test.group('Bindings | VineJS', () => {
   test('clone schema type', async ({ assert }) => {
     const file = vine.file()
     assert.notStrictEqual(file, file.clone())

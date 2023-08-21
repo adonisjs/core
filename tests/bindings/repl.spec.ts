@@ -18,7 +18,7 @@ import AppServiceProvider from '../../providers/app_provider.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
-test.group('Repl | bindings', () => {
+test.group('Bindings | Repl', () => {
   test('load services to REPL context', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
       .merge({
