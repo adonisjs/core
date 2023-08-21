@@ -603,3 +603,55 @@ test.group('Configure command | run', (group) => {
     )
   })
 })
+
+test.group('Configure command | vinejs', () => {
+  test('register vinejs provider', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', 'export default defineConfig({})')
+
+    const command = await ace.create(Configure, ['vinejs'])
+    command.stubsRoot = join(fs.basePath, 'stubs')
+
+    await command.run()
+
+    assert.deepEqual(command.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update adonisrc.ts file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('adonisrc.ts', '@adonisjs/core/providers/vinejs_provider')
+  })
+
+  test('register edge provider', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', 'export default defineConfig({})')
+
+    const command = await ace.create(Configure, ['edge'])
+    command.stubsRoot = join(fs.basePath, 'stubs')
+
+    await command.run()
+
+    assert.deepEqual(command.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update adonisrc.ts file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('adonisrc.ts', '@adonisjs/core/providers/edge_provider')
+  })
+})

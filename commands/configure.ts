@@ -88,6 +88,24 @@ export default class Configure extends BaseCommand {
   }
 
   /**
+   * Registers VineJS provider
+   */
+  async #configureVineJS() {
+    await this.updateRcFile((rcFile) => {
+      rcFile.addProvider('@adonisjs/core/providers/vinejs_provider')
+    })
+  }
+
+  /**
+   * Registers Edge provider
+   */
+  async #configureEdge() {
+    await this.updateRcFile((rcFile) => {
+      rcFile.addProvider('@adonisjs/core/providers/edge_provider')
+    })
+  }
+
+  /**
    * Publish a stub file to the user project
    */
   async publishStub(stubPath: string, stubData?: Record<string, any>) {
@@ -263,6 +281,13 @@ export default class Configure extends BaseCommand {
    * Run method is invoked by ace automatically
    */
   async run() {
+    if (this.name === 'vinejs') {
+      return this.#configureVineJS()
+    }
+    if (this.name === 'edge') {
+      return this.#configureEdge()
+    }
+
     const packageExports = await this.#getPackageSource(this.name)
 
     /**
