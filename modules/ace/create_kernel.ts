@@ -30,7 +30,9 @@ export function createAceKernel(app: ApplicationService) {
    * of rcFile
    */
   app.rcFile.commands.forEach((commandModule) => {
-    kernel.addLoader(() => app.import(commandModule))
+    kernel.addLoader(() =>
+      typeof commandModule === 'function' ? commandModule() : app.import(commandModule)
+    )
   })
 
   /**
