@@ -8,6 +8,7 @@
  */
 
 import type { ApplicationService } from '../src/types.js'
+import { bridgeEdgeAdonisJS } from '../src/bindings/edge.js'
 
 export default class EdgeServiceProvider {
   constructor(protected app: ApplicationService) {}
@@ -16,7 +17,6 @@ export default class EdgeServiceProvider {
    * Bridge AdonisJS and Edge
    */
   async boot() {
-    const { bridgeEdgeAdonisJS } = await import('../src/bindings/edge.js')
     bridgeEdgeAdonisJS(this.app, await this.app.container.make('router'))
   }
 }

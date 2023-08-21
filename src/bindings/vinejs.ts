@@ -12,6 +12,15 @@ import type { FieldContext, FieldOptions, Validation } from '@vinejs/vine/types'
 import type { MultipartFile, FileValidationOptions } from '@adonisjs/bodyparser/types'
 
 /**
+ * Notifying TypeScript
+ */
+declare module '@vinejs/vine' {
+  interface Vine {
+    file(options?: ValidationOptions): VineMultipartFile
+  }
+}
+
+/**
  * Checks if the value is an instance of multipart file
  * from bodyparser.
  */
@@ -100,12 +109,3 @@ class VineMultipartFile extends BaseLiteralType<MultipartFile, MultipartFile> {
 Vine.macro('file', function (this: Vine, options) {
   return new VineMultipartFile(options)
 })
-
-/**
- * Notifying TypeScript
- */
-declare module '@vinejs/vine' {
-  interface Vine {
-    file(options?: ValidationOptions): VineMultipartFile
-  }
-}

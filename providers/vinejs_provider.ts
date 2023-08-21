@@ -9,14 +9,9 @@
 
 import type { ApplicationService } from '../src/types.js'
 
+import '../src/bindings/vinejs.js'
+import '../modules/http/request_validator.js'
+
 export default class VineJSServiceProvider {
   constructor(protected app: ApplicationService) {}
-
-  /**
-   * Registering AdonisJS specific VineJS rules
-   */
-  async boot() {
-    await import('../modules/http/request_validator.js')
-    await import('../src/bindings/vinejs.js')
-  }
 }

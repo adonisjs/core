@@ -17,6 +17,10 @@ import type {
 } from '@vinejs/vine/types'
 import { type HttpContext, Request } from '@adonisjs/http-server'
 
+declare module '@adonisjs/http-server' {
+  interface Request extends RequestValidator {}
+}
+
 /**
  * Request validation options with custom data as well
  */
@@ -101,6 +105,3 @@ export class RequestValidator {
 Request.macro('validateUsing', function (this: Request, ...args) {
   return new RequestValidator(this.ctx!).validateUsing(...args)
 })
-declare module '@adonisjs/http-server' {
-  interface Request extends RequestValidator {}
-}
