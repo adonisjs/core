@@ -12,9 +12,9 @@ import { test } from '@japa/runner'
 import is from '../../src/helpers/is.js'
 import { Repl } from '../../modules/repl.js'
 import stringHelpers from '../../src/helpers/string.js'
-import { defineReplBindings } from '../../src/bindings/repl.js'
 import { IgnitorFactory } from '../../factories/core/ignitor.js'
 import AppServiceProvider from '../../providers/app_provider.js'
+import ReplServiceProvider from '../../providers/repl_provider.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
@@ -52,10 +52,12 @@ test.group('Bindings | Repl', () => {
       displayPrompt() {},
     } as any
 
+    app.container.singleton('repl', () => repl)
+
     /**
      * Define REPL bindings
      */
-    defineReplBindings(app, repl)
+    await new ReplServiceProvider(app).boot()
     const methods = repl.getMethods()
 
     await methods.loadEncryption.handler(repl)
