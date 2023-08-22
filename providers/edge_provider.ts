@@ -75,11 +75,15 @@ export default class EdgeServiceProvider {
     /**
      * Creating a isolated instance of edge renderer
      */
-    HttpContext.getter('view', function (this: HttpContext) {
-      return edge.createRenderer().share({
-        request: this.request,
-      })
-    })
+    HttpContext.getter(
+      'view',
+      function (this: HttpContext) {
+        return edge.createRenderer().share({
+          request: this.request,
+        })
+      },
+      true
+    )
 
     /**
      * Adding brisk route to render templates without an
