@@ -93,7 +93,7 @@ const isMultipartFile = vine.createRule<FileRuleValidationOptions>((file, option
  * Represents a multipart file uploaded via multipart/form-data HTTP
  * request.
  */
-export class VineMultipartFile extends BaseLiteralType<MultipartFile, MultipartFile> {
+class VineMultipartFile extends BaseLiteralType<MultipartFile, MultipartFile> {
   #validationOptions?: FileRuleValidationOptions
 
   constructor(

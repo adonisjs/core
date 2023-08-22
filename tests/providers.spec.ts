@@ -20,6 +20,7 @@ import { Hash, HashManager } from '../modules/hash/main.js'
 import { Logger, LoggerManager } from '../modules/logger.js'
 import { IgnitorFactory } from '../factories/core/ignitor.js'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
+import { defineConfig } from '@adonisjs/application'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
@@ -29,10 +30,10 @@ test.group('Providers', () => {
       .merge({
         rcFileContents: {
           providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-            './providers/repl_provider.js',
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/http_provider.js'),
+            () => import('../providers/repl_provider.js'),
           ],
         },
       })
@@ -64,10 +65,10 @@ test.group('Providers', () => {
       .merge({
         rcFileContents: {
           providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-            './providers/repl_provider.js',
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/http_provider.js'),
+            () => import('../providers/repl_provider.js'),
           ],
         },
       })
@@ -112,9 +113,10 @@ test.group('Providers', () => {
       .merge({
         rcFileContents: {
           providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/http_provider.js'),
+            () => import('../providers/repl_provider.js'),
           ],
         },
       })
@@ -138,9 +140,10 @@ test.group('Providers', () => {
       .merge({
         rcFileContents: {
           providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/http_provider.js'),
+            () => import('../providers/repl_provider.js'),
           ],
         },
       })
@@ -167,9 +170,10 @@ test.group('Providers', () => {
       .merge({
         rcFileContents: {
           providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/http_provider.js'),
+            () => import('../providers/repl_provider.js'),
           ],
         },
       })
@@ -196,10 +200,10 @@ test.group('Providers', () => {
       .merge({
         rcFileContents: {
           providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-            './providers/repl_provider.js',
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/http_provider.js'),
+            () => import('../providers/repl_provider.js'),
           ],
         },
       })
@@ -224,5 +228,31 @@ test.group('Providers', () => {
       'loadRouter',
       'loadTestUtils',
     ])
+  })
+
+  test('register providers with side-effects', async () => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: defineConfig({
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/http_provider.js'),
+            () => import('../providers/repl_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+            () => import('../providers/edge_provider.js'),
+          ],
+        }),
+      })
+      .withCoreConfig()
+      .create(BASE_URL, {
+        importer: (filePath) => {
+          return import(new URL(filePath, new URL('../', import.meta.url)).href)
+        },
+      })
+
+    const app = ignitor.createApp('repl')
+    await app.init()
+    await app.boot()
   })
 })
