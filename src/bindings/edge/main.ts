@@ -49,8 +49,10 @@ export function bridgeEdgeAdonisJS(app: ApplicationService, router: Router) {
   /**
    * Creating a isolated instance of edge renderer
    */
-  HttpContext.getter('view', function () {
-    return edge.createRenderer()
+  HttpContext.getter('view', function (this: HttpContext) {
+    return edge.createRenderer().share({
+      request: this.request,
+    })
   })
 
   /**
