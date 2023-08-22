@@ -85,7 +85,7 @@ test.group('Build command', (group) => {
       })
     )
 
-    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('adonisrc.ts', `export default {}`)
     await fs.create('index.ts', '')
     await fs.create(
       'package.json',
@@ -117,7 +117,7 @@ test.group('Build command', (group) => {
     assert.equal(command.exitCode, 0)
 
     await assert.fileExists('build/index.js')
-    await assert.fileExists('build/.adonisrc.json')
+    await assert.fileExists('build/adonisrc.js')
   })
 
   test('do not output when typescript build has errors', async ({ assert, fs }) => {
@@ -136,7 +136,7 @@ test.group('Build command', (group) => {
       })
     )
 
-    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('adonisrc.ts', `export default {}`)
     await fs.create('index.ts', 'const foo = `a`')
     await fs.create(
       'package.json',
@@ -188,7 +188,7 @@ test.group('Build command', (group) => {
       })
     )
 
-    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('adonisrc.ts', `export default {}`)
     await fs.create('index.ts', 'const foo = `a`')
     await fs.create(
       'package.json',
@@ -220,7 +220,7 @@ test.group('Build command', (group) => {
 
     assert.equal(command.exitCode, 0)
     await assert.fileExists('build/index.js')
-    await assert.fileExists('build/.adonisrc.json')
+    await assert.fileExists('build/adonisrc.js')
   })
 
   test('show error when configured assets bundler is missing', async ({ assert, fs }) => {
@@ -239,7 +239,7 @@ test.group('Build command', (group) => {
       })
     )
 
-    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('adonisrc.ts', `export default {}`)
     await fs.create('index.ts', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -286,7 +286,7 @@ test.group('Build command', (group) => {
       })
     )
 
-    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('adonisrc.ts', `export default {}`)
     await fs.create('index.ts', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -324,7 +324,7 @@ test.group('Build command', (group) => {
       })
     )
 
-    await fs.create('.adonisrc.json', JSON.stringify({}))
+    await fs.create('adonisrc.ts', `export default {}`)
     await fs.create('index.ts', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
