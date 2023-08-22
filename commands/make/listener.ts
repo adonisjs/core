@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import BaseCommand from './_base.js'
-import { args, flags } from '../../modules/ace/main.js'
+import { stubsRoot } from '../../stubs/main.js'
+import { args, flags, BaseCommand } from '../../modules/ace/main.js'
 
 /**
  * The make listener command to create a class based event
@@ -39,6 +39,8 @@ export default class MakeListener extends BaseCommand {
   }
 
   async run() {
+    const codemods = await this.createCodemods()
+
     if (this.event) {
       const { exitCode } = await this.kernel.exec('make:event', [this.event])
 
@@ -47,16 +49,18 @@ export default class MakeListener extends BaseCommand {
        */
       if (exitCode === 0) {
         const eventEntity = this.app.generators.createEntity(this.event)
-        await this.generate(this.stubPath, {
-          entity: this.app.generators.createEntity(this.name),
+        await codemods.makeUsingStub(stubsRoot, this.stubPath, {
           event: eventEntity,
+          flags: this.parsed.flags,
+          entity: this.app.generators.createEntity(this.name),
         })
       }
 
       return
     }
 
-    await this.generate(this.stubPath, {
+    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+      flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
     })
   }

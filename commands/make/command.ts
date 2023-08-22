@@ -7,8 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import BaseCommand from './_base.js'
+import { stubsRoot } from '../../stubs/main.js'
 import { args } from '../../modules/ace/main.js'
+import { BaseCommand } from '../../modules/ace/main.js'
 
 /**
  * Make a new ace command
@@ -26,7 +27,9 @@ export default class MakeCommand extends BaseCommand {
   protected stubPath: string = 'make/command/main.stub'
 
   async run() {
-    await this.generate(this.stubPath, {
+    const codemods = await this.createCodemods()
+    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+      flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
     })
   }

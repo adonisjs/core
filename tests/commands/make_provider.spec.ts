@@ -14,6 +14,9 @@ import { StubsFactory } from '../../factories/stubs.js'
 
 test.group('Make provider', () => {
   test('create provider class', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
@@ -34,8 +37,12 @@ test.group('Make provider', () => {
         message: 'green(DONE:)    create providers/app_provider.ts',
         stream: 'stdout',
       },
+      {
+        message: 'green(DONE:)    update adonisrc.ts file',
+        stream: 'stdout',
+      },
     ])
 
-    await assert.fileContains('.adonisrc.json', /"\.\/providers\/app_provider\.js"/)
+    await assert.fileContains('adonisrc.ts', `() => import('./providers/app_provider.js')`)
   })
 })

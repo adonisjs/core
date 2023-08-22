@@ -8,11 +8,7 @@
  */
 
 import { slash } from '@poppinss/utils'
-import { EnvEditor } from '@adonisjs/env/editor'
-import type { AddMiddlewareEntry, EnvValidationDefinition } from '@adonisjs/assembler/types'
 import { installPackage, detectPackageManager } from '@antfu/install-pkg'
-import type { CodeTransformer } from '@adonisjs/assembler/code_transformer'
-
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
 
 /**
@@ -33,17 +29,6 @@ export default class Configure extends BaseCommand {
    * the package
    */
   declare stubsRoot: string
-
-  /**
-   * Flag to know if assembler is installed as a
-   * peer dependency or not.
-   */
-  #isAssemblerInstalled?: boolean
-
-  /**
-   * Reference to lazily imported assembler code transformer
-   */
-  #codeTransformer?: typeof import('@adonisjs/assembler/code_transformer')
 
   /**
    * Returns the package main exports
@@ -78,20 +63,11 @@ export default class Configure extends BaseCommand {
   }
 
   /**
-   * Lazily installs assembler
-   */
-  async #installAssembler() {
-    if (this.#isAssemblerInstalled === undefined) {
-      this.#codeTransformer = await import('@adonisjs/assembler/code_transformer')
-      this.#isAssemblerInstalled = !!this.#codeTransformer
-    }
-  }
-
-  /**
    * Registers VineJS provider
    */
   async #configureVineJS() {
-    await this.updateRcFile((rcFile) => {
+    const codemods = await this.createCodemods()
+    await codemods.updateRcFile((rcFile) => {
       rcFile.addProvider('@adonisjs/core/providers/vinejs_provider')
     })
   }
@@ -100,7 +76,8 @@ export default class Configure extends BaseCommand {
    * Registers Edge provider
    */
   async #configureEdge() {
-    await this.updateRcFile((rcFile) => {
+    const codemods = await this.createCodemods()
+    await codemods.updateRcFile((rcFile) => {
       rcFile.addProvider('@adonisjs/core/providers/edge_provider')
     })
   }
@@ -125,88 +102,6 @@ export default class Configure extends BaseCommand {
     }
 
     this.logger.action(`create ${entityFileName}`).succeeded()
-  }
-
-  /**
-   * Define one or more environment variables
-   */
-  async defineEnvVariables(environmentVariables: Record<string, number | string | boolean>) {
-    const editor = new EnvEditor(this.app.appRoot)
-    await editor.load()
-
-    Object.keys(environmentVariables).forEach((key) => {
-      const value = environmentVariables[key]
-      editor.add(key, value)
-    })
-
-    await editor.save()
-    this.logger.action('update .env file').succeeded()
-  }
-
-  /**
-   * Define validations for the environment variables
-   */
-  async defineEnvValidations(validations: EnvValidationDefinition) {
-    await this.#installAssembler()
-    if (!this.#codeTransformer) {
-      this.logger.warning(
-        'Cannot update "start/env.ts" file. Install "@adonisjs/assembler" to modify source files'
-      )
-      return
-    }
-
-    const transformer = new this.#codeTransformer.CodeTransformer(this.app.appRoot)
-    const action = this.logger.action('update start/env.ts file')
-    try {
-      await transformer.defineEnvValidations(validations)
-      action.succeeded()
-    } catch (error) {
-      action.failed(error.message)
-    }
-  }
-
-  /**
-   * Define validations for the environment variables
-   */
-  async registerMiddleware(stack: 'server' | 'router' | 'named', middleware: AddMiddlewareEntry[]) {
-    await this.#installAssembler()
-    if (!this.#codeTransformer) {
-      this.logger.warning(
-        'Cannot update "start/kernel.ts" file. Install "@adonisjs/assembler" to modify source files'
-      )
-      return
-    }
-
-    const transformer = new this.#codeTransformer.CodeTransformer(this.app.appRoot)
-    const action = this.logger.action('update start/kernel.ts file')
-
-    try {
-      await transformer.addMiddlewareToStack(stack, middleware)
-      action.succeeded()
-    } catch (error) {
-      action.failed(error.message)
-    }
-  }
-
-  /**
-   * Update rcFile
-   */
-  async updateRcFile(...params: Parameters<CodeTransformer['updateRcFile']>) {
-    await this.#installAssembler()
-    if (!this.#codeTransformer) {
-      this.logger.warning(
-        'Cannot update "adonisrc.ts" file. Install "@adonisjs/assembler" to modify source files'
-      )
-      return
-    }
-
-    const action = this.logger.action('update adonisrc.ts file')
-    try {
-      await new this.#codeTransformer.CodeTransformer(this.app.appRoot).updateRcFile(...params)
-      action.succeeded()
-    } catch (error) {
-      action.failed(error.message)
-    }
   }
 
   /**

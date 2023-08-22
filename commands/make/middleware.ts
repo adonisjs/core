@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import BaseCommand from './_base.js'
-import { args } from '../../modules/ace/main.js'
+import { stubsRoot } from '../../stubs/main.js'
+import { args, BaseCommand } from '../../modules/ace/main.js'
 
 /**
  * The make middleware command to create a new middleware
@@ -27,7 +27,9 @@ export default class MakeMiddleware extends BaseCommand {
   protected stubPath: string = 'make/middleware/main.stub'
 
   async run() {
-    await this.generate(this.stubPath, {
+    const codemods = await this.createCodemods()
+    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+      flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
     })
   }

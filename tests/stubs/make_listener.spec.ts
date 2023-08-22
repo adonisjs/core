@@ -12,7 +12,7 @@ import { test } from '@japa/runner'
 import { fileURLToPath } from 'node:url'
 import { AppFactory } from '@adonisjs/application/factories'
 
-import { stubsRoot } from '../../stubs/index.js'
+import { stubsRoot } from '../../stubs/main.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 const BASE_PATH = fileURLToPath(BASE_URL)

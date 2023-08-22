@@ -14,6 +14,9 @@ import MakePreload from '../../commands/make/preload.js'
 
 test.group('Make preload file', () => {
   test('create preload file', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
@@ -33,12 +36,19 @@ test.group('Make preload file', () => {
         message: 'green(DONE:)    create start/app.ts',
         stream: 'stdout',
       },
+      {
+        message: 'green(DONE:)    update adonisrc.ts file',
+        stream: 'stdout',
+      },
     ])
 
-    await assert.fileContains('.adonisrc.json', /"\.\/start\/app\.js"/)
+    await assert.fileContains('adonisrc.ts', `() => import('./start/app.js')`)
   })
 
   test('create preload file for specific environments', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
@@ -52,12 +62,14 @@ test.group('Make preload file', () => {
 
     await command.exec()
 
-    const rcFile = await fs.contentsJson('.adonisrc.json')
-
-    assert.deepEqual(rcFile.preloads, [{ file: './start/app.js', environment: ['web', 'repl'] }])
+    await assert.fileContains('adonisrc.ts', `() => import('./start/app.js')`)
+    await assert.fileContains('adonisrc.ts', `environment: ['web', 'repl']`)
   })
 
   test('create preload file for all environments', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
@@ -71,12 +83,13 @@ test.group('Make preload file', () => {
 
     await command.exec()
 
-    const rcFile = await fs.contentsJson('.adonisrc.json')
-
-    assert.deepEqual(rcFile.preloads, ['./start/app.js'])
+    await assert.fileContains('adonisrc.ts', `() => import('./start/app.js')`)
   })
 
   test('use environment flag to make preload file in a specific env', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
@@ -88,12 +101,14 @@ test.group('Make preload file', () => {
 
     await command.exec()
 
-    const rcFile = await fs.contentsJson('.adonisrc.json')
-
-    assert.deepEqual(rcFile.preloads, [{ file: './start/app.js', environment: ['web', 'repl'] }])
+    await assert.fileContains('adonisrc.ts', `() => import('./start/app.js')`)
+    await assert.fileContains('adonisrc.ts', `environment: ['web', 'repl']`)
   })
 
-  test('display error when defined environment is not allowee', async ({ assert, fs }) => {
+  test('display error when defined environment is not allowed', async ({ fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
@@ -104,7 +119,6 @@ test.group('Make preload file', () => {
     command.environments = ['foo' as any]
     await command.exec()
 
-    await assert.fileNotExists('.adonisrc.json')
     command.assertLog(
       '[ red(error) ] Invalid environment(s) "foo". Only "web,console,test,repl" are allowed'
     )

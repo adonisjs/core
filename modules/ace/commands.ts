@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { slash } from '@poppinss/utils'
 import { BaseCommand as AceBaseCommand, ListCommand as AceListCommand } from '@adonisjs/ace'
 
 import { Kernel } from './kernel.js'
@@ -15,46 +14,10 @@ import type { ApplicationService } from '../../src/types.js'
 import type { CommandOptions, ParsedOutput, UIPrimitives } from '../../types/ace.js'
 
 /**
- * Wrapper around the stub generation logic.
- * Allow commands to easily generate files from given stubs
- */
-class StubGenerator {
-  #command: BaseCommand | ListCommand
-  #flags: Record<string, any>
-
-  constructor(command: BaseCommand, flags: Record<string, any>) {
-    this.#command = command
-    this.#flags = flags
-  }
-
-  /**
-   * Generats the stub
-   */
-  async generate(stubsRoot: string, stubPath: string, stubState: Record<string, any>) {
-    const stubs = await this.#command.app.stubs.create()
-    const stub = await stubs.build(stubPath, { source: stubsRoot })
-    const output = await stub.generate(Object.assign({ flags: this.#flags }, stubState))
-
-    const entityFileName = slash(this.#command.app.relativePath(output.destination))
-    const result = { ...output, relativeFileName: entityFileName }
-
-    if (output.status === 'skipped') {
-      this.#command.logger.action(`create ${entityFileName}`).skipped(output.skipReason)
-      return result
-    }
-
-    this.#command.logger.action(`create ${entityFileName}`).succeeded()
-    return result
-  }
-}
-
-/**
  * The base command to create custom ace commands. The AdonisJS base commands
  * receives the application instance
  */
 export class BaseCommand extends AceBaseCommand {
-  stubGenerator: StubGenerator = new StubGenerator(this, this.parsed?.flags || {})
-
   static options: CommandOptions = {}
 
   get staysAlive() {
@@ -73,6 +36,14 @@ export class BaseCommand extends AceBaseCommand {
     prompt: Kernel['prompt']
   ) {
     super(kernel, parsed, ui, prompt)
+  }
+
+  /**
+   * Creates the codemods module to modify source files
+   */
+  async createCodemods() {
+    const { Codemods } = await import('./codemods.js')
+    return new Codemods(this.app, this.logger)
   }
 
   /**
@@ -98,13 +69,6 @@ export class BaseCommand extends AceBaseCommand {
    * reporting to the kernel layer.
    */
   completed?(..._: any[]): any
-
-  /**
-   * Make a new file using the given stub
-   */
-  async makeUsingStub(stubPath: string, stubState: Record<string, any>, stubsRoot: string) {
-    return this.stubGenerator.generate(stubsRoot, stubPath, stubState)
-  }
 
   /**
    * Executes the command
@@ -162,7 +126,6 @@ export class BaseCommand extends AceBaseCommand {
  * The List command is used to display a list of commands
  */
 export class ListCommand extends AceListCommand implements BaseCommand {
-  stubGenerator: StubGenerator = new StubGenerator(this, this.parsed?.flags || {})
   static options: CommandOptions = {}
 
   get staysAlive() {
@@ -184,10 +147,11 @@ export class ListCommand extends AceListCommand implements BaseCommand {
   }
 
   /**
-   * Make a new file using the given stub
+   * Creates the codemods module to modify source files
    */
-  async makeUsingStub(stubPath: string, stubState: Record<string, any>, stubsRoot: string) {
-    return this.stubGenerator.generate(stubsRoot, stubPath, stubState)
+  async createCodemods() {
+    const { Codemods } = await import('./codemods.js')
+    return new Codemods(this.app, this.logger)
   }
 
   /**

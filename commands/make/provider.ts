@@ -7,9 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import BaseCommand from './_base.js'
-import { args } from '../../modules/ace/main.js'
-import { RcFileEditor } from '@adonisjs/application/rc_file_editor'
+import { stubsRoot } from '../../stubs/main.js'
+import { args, BaseCommand } from '../../modules/ace/main.js'
 
 /**
  * Make a new provider class
@@ -27,7 +26,9 @@ export default class MakeProvider extends BaseCommand {
   protected stubPath: string = 'make/provider/main.stub'
 
   async run() {
-    const output = await this.generate(this.stubPath, {
+    const codemods = await this.createCodemods()
+    const output = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+      flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
     })
 
@@ -36,7 +37,8 @@ export default class MakeProvider extends BaseCommand {
      * the relative path, since we cannot be sure about aliases to exist.
      */
     const providerImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
-    const rcFileEditor = new RcFileEditor(this.app.makeURL('.adonisrc.json'), this.app.rcFile.raw)
-    await rcFileEditor.addProvider(providerImportPath).save()
+    await codemods.updateRcFile((rcFile) => {
+      rcFile.addProvider(providerImportPath)
+    })
   }
 }

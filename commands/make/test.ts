@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import BaseCommand from './_base.js'
-import { args, flags } from '../../modules/ace/main.js'
+import { stubsRoot } from '../../stubs/main.js'
+import { args, flags, BaseCommand } from '../../modules/ace/main.js'
 
 /**
  * Make a new test file
@@ -105,7 +105,9 @@ export default class MakeTest extends BaseCommand {
     /**
      * Generate entity
      */
-    await this.generate(this.stubPath, {
+    const codemods = await this.createCodemods()
+    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+      flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
       suite: {
         directory: await this.#getSuiteDirectory(suite.directories),

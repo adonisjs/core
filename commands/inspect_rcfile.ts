@@ -18,6 +18,26 @@ export default class InspectRCFile extends BaseCommand {
   static description = 'Inspect the RC file with its default values'
 
   async run() {
-    this.logger.log(JSON.stringify(lodash.omit(this.app.rcFile, ['raw']), null, 2))
+    const rcContents = lodash.omit(this.app.rcFile, ['raw'])
+
+    rcContents.providers = rcContents.providers?.map((provider) => {
+      return {
+        ...provider,
+        file: provider.file.toString(),
+      }
+    })
+
+    rcContents.preloads = rcContents.preloads?.map((preload) => {
+      return {
+        ...preload,
+        file: preload.file.toString(),
+      }
+    })
+
+    rcContents.commands = rcContents.commands?.map((command) => {
+      return command.toString()
+    })
+
+    this.logger.log(JSON.stringify(rcContents, null, 2))
   }
 }
