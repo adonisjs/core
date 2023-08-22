@@ -7,8 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import '../src/bindings/edge/types.js'
 import type { ApplicationService } from '../src/types.js'
-import { bridgeEdgeAdonisJS } from '../src/bindings/edge.js'
+import { bridgeEdgeAdonisJS } from '../src/bindings/edge/main.js'
 
 export default class EdgeServiceProvider {
   constructor(protected app: ApplicationService) {}

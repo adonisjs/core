@@ -10,7 +10,7 @@
 import edge from 'edge.js'
 import { test } from '@japa/runner'
 
-import '../../src/bindings/edge.js'
+import '../../src/bindings/edge/main.js'
 import { HttpContextFactory } from '../../factories/http.js'
 import { IgnitorFactory } from '../../factories/core/ignitor.js'
 

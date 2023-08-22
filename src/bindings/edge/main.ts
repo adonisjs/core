@@ -7,27 +7,11 @@
  * file that was distributed with this source code.
  */
 
-import edge, { type Edge } from 'edge.js'
+import edge from 'edge.js'
 
-import type { ApplicationService } from '../types.js'
-import { HttpContext, BriskRoute, Route, type Router } from '../../modules/http/main.js'
-
-declare module '@adonisjs/http-server' {
-  interface HttpContext {
-    /**
-     * Reference to the edge renderer to render templates
-     * during an HTTP request
-     */
-    view: ReturnType<Edge['createRenderer']>
-  }
-  interface BriskRoute {
-    /**
-     * Render an edge template without defining an
-     * explicit route handler
-     */
-    render(template: string, data?: Record<string, any>): Route
-  }
-}
+import './types.js'
+import type { ApplicationService } from '../../types.js'
+import { HttpContext, BriskRoute, type Router } from '../../../modules/http/main.js'
 
 /**
  * Bridges AdonisJS with Edge

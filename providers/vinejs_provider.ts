@@ -7,7 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import '../src/bindings/vinejs.js'
+import '../src/bindings/vinejs/main.js'
+import '../src/bindings/vinejs/types.js'
 import '../modules/http/request_validator.js'
 
 export default class VineJSServiceProvider {}

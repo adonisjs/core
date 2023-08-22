@@ -8,17 +8,10 @@
  */
 
 import vine, { BaseLiteralType, Vine } from '@vinejs/vine'
-import type { FieldContext, FieldOptions, Validation } from '@vinejs/vine/types'
-import type { MultipartFile, FileValidationOptions } from '@adonisjs/bodyparser/types'
+import type { MultipartFile } from '@adonisjs/bodyparser/types'
+import type { FieldOptions, Validation } from '@vinejs/vine/types'
 
-/**
- * Notifying TypeScript
- */
-declare module '@vinejs/vine' {
-  interface Vine {
-    file(options?: ValidationOptions): VineMultipartFile
-  }
-}
+import type { ValidationOptions } from './types.js'
 
 /**
  * Checks if the value is an instance of multipart file
@@ -27,10 +20,6 @@ declare module '@vinejs/vine' {
 function isBodyParserFile(file: unknown): file is MultipartFile {
   return !!(file && typeof file === 'object' && 'isMultipartFile' in file)
 }
-
-type ValidationOptions =
-  | Partial<FileValidationOptions>
-  | ((field: FieldContext) => Partial<FileValidationOptions>)
 
 /**
  * VineJS validation rule that validates the file to be an
@@ -81,7 +70,7 @@ const isMultipartFile = vine.createRule<ValidationOptions>((file, options, field
  * Represents a multipart file uploaded via multipart/form-data HTTP
  * request.
  */
-class VineMultipartFile extends BaseLiteralType<MultipartFile, MultipartFile> {
+export class VineMultipartFile extends BaseLiteralType<MultipartFile, MultipartFile> {
   #validationOptions?: ValidationOptions
 
   constructor(
