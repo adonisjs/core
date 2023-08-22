@@ -11,16 +11,27 @@ import type { FieldContext } from '@vinejs/vine/types'
 import type { FileValidationOptions } from '@adonisjs/bodyparser/types'
 
 import type { VineMultipartFile } from './main.js'
+import type { RequestValidator } from '../../../modules/http/main.js'
 
-export type ValidationOptions =
+/**
+ * Validation options accepted by the "file" rule
+ */
+export type FileRuleValidationOptions =
   | Partial<FileValidationOptions>
   | ((field: FieldContext) => Partial<FileValidationOptions>)
 
 /**
- * Notifying TypeScript
+ * Extend VineJS
  */
 declare module '@vinejs/vine' {
   interface Vine {
-    file(options?: ValidationOptions): VineMultipartFile
+    file(options?: FileRuleValidationOptions): VineMultipartFile
   }
+}
+
+/**
+ * Extend HTTP request class
+ */
+declare module '@adonisjs/core/http' {
+  interface Request extends RequestValidator {}
 }

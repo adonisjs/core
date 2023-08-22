@@ -9,6 +9,6 @@
 
 import '../src/bindings/vinejs/main.js'
 import '../src/bindings/vinejs/types.js'
-import '../modules/http/request_validator.js'
+import '../src/bindings/vinejs/request_validator.js'
 
 export default class VineJSServiceProvider {}

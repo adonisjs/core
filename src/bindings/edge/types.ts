@@ -10,7 +10,7 @@
 import { type Edge } from 'edge.js'
 import type { Route } from '../../../modules/http/main.js'
 
-declare module '@adonisjs/http-server' {
+declare module '@adonisjs/core/http' {
   interface HttpContext {
     /**
      * Reference to the edge renderer to render templates

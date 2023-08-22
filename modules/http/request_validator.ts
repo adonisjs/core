@@ -7,25 +7,16 @@
  * file that was distributed with this source code.
  */
 
-import { type VineValidator } from '@vinejs/vine'
+import type { VineValidator } from '@vinejs/vine'
 import type {
   Infer,
   SchemaTypes,
-  ValidationOptions,
   ErrorReporterContract,
   MessagesProviderContact,
 } from '@vinejs/vine/types'
-import { type HttpContext, Request } from '@adonisjs/http-server'
 
-declare module '@adonisjs/http-server' {
-  interface Request extends RequestValidator {}
-}
-
-/**
- * Request validation options with custom data as well
- */
-type RequestValidationOptions<MetaData extends undefined | Record<string, any>> =
-  ValidationOptions<MetaData> & { data?: any }
+import type { HttpContext } from './main.js'
+import type { RequestValidationOptions } from '../../types/http.js'
 
 /**
  * Request validator is used validate HTTP request data using
@@ -34,6 +25,7 @@ type RequestValidationOptions<MetaData extends undefined | Record<string, any>> 
  */
 export class RequestValidator {
   #ctx: HttpContext
+
   constructor(ctx: HttpContext) {
     this.#ctx = ctx
   }
@@ -97,11 +89,3 @@ export class RequestValidator {
     return validator.validate(data, validatorOptions as any)
   }
 }
-
-/**
- * The validate method can be used to validate the request
- * data for the current request using VineJS validators
- */
-Request.macro('validateUsing', function (this: Request, ...args) {
-  return new RequestValidator(this.ctx!).validateUsing(...args)
-})

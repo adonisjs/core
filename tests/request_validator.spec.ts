@@ -8,12 +8,12 @@
  */
 
 import { test } from '@japa/runner'
+import { FieldContext } from '@vinejs/vine/types'
 import vine, { SimpleErrorReporter, SimpleMessagesProvider } from '@vinejs/vine'
 
+import { RequestValidator } from '../modules/http/main.js'
 import { IgnitorFactory } from '../factories/core/ignitor.js'
 import { TestUtilsFactory } from '../factories/core/test_utils.js'
-import { RequestValidator } from '../modules/http/request_validator.js'
-import { FieldContext } from '@vinejs/vine/types'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

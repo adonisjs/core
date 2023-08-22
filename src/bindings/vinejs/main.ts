@@ -9,9 +9,10 @@
 
 import vine, { BaseLiteralType, Vine } from '@vinejs/vine'
 import type { MultipartFile } from '@adonisjs/bodyparser/types'
-import type { FieldOptions, Validation } from '@vinejs/vine/types'
+import type { Validation, FieldOptions } from '@vinejs/vine/types'
 
-import type { ValidationOptions } from './types.js'
+import type { FileRuleValidationOptions } from './types.js'
+import { Request, RequestValidator } from '../../../modules/http/main.js'
 
 /**
  * Checks if the value is an instance of multipart file
@@ -25,7 +26,7 @@ function isBodyParserFile(file: unknown): file is MultipartFile {
  * VineJS validation rule that validates the file to be an
  * instance of BodyParser MultipartFile class.
  */
-const isMultipartFile = vine.createRule<ValidationOptions>((file, options, field) => {
+const isMultipartFile = vine.createRule<FileRuleValidationOptions>((file, options, field) => {
   /**
    * Report error when value is not a field multipart
    * file object
@@ -71,10 +72,10 @@ const isMultipartFile = vine.createRule<ValidationOptions>((file, options, field
  * request.
  */
 export class VineMultipartFile extends BaseLiteralType<MultipartFile, MultipartFile> {
-  #validationOptions?: ValidationOptions
+  #validationOptions?: FileRuleValidationOptions
 
   constructor(
-    validationOptions?: ValidationOptions,
+    validationOptions?: FileRuleValidationOptions,
     options?: FieldOptions,
     validations?: Validation<any>[]
   ) {
@@ -97,4 +98,12 @@ export class VineMultipartFile extends BaseLiteralType<MultipartFile, MultipartF
  */
 Vine.macro('file', function (this: Vine, options) {
   return new VineMultipartFile(options)
+})
+
+/**
+ * The validate method can be used to validate the request
+ * data for the current request using VineJS validators
+ */
+Request.macro('validateUsing', function (this: Request, ...args) {
+  return new RequestValidator(this.ctx!).validateUsing(...args)
 })
