@@ -95,9 +95,7 @@ export default class MakeTest extends BaseCommand {
      * Show error when mentioned/selected suite does not exist
      */
     if (!suite) {
-      this.logger.error(
-        `The "${this.suite}" suite is not configured inside the .adonisrc.json file`
-      )
+      this.logger.error(`The "${this.suite}" suite is not configured inside the "adonisrc.js" file`)
       this.exitCode = 1
       return
     }

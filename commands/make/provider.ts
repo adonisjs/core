@@ -33,7 +33,7 @@ export default class MakeProvider extends BaseCommand {
     })
 
     /**
-     * Registering the provider with the `.adonisrc.json` file. We register
+     * Registering the provider with the `adonisrc.js` file. We register
      * the relative path, since we cannot be sure about aliases to exist.
      */
     const providerImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`

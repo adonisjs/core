@@ -73,7 +73,7 @@ test.group('Make test', () => {
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
         message:
-          '[ red(error) ] The "functional" suite is not configured inside the .adonisrc.json file',
+          '[ red(error) ] The "functional" suite is not configured inside the "adonisrc.js" file',
         stream: 'stderr',
       },
     ])
