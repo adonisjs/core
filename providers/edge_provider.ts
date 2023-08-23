@@ -11,7 +11,7 @@ import edge, { type Edge } from 'edge.js'
 import type { ApplicationService } from '../src/types.js'
 import { BriskRoute, HttpContext, type Route, type Router } from '../modules/http/main.js'
 
-declare module '@adonisjs/core/http' {
+declare module '@adonisjs/http-server' {
   interface HttpContext {
     /**
      * Reference to the edge renderer to render templates

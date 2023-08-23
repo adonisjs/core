@@ -32,7 +32,7 @@ declare module '@vinejs/vine' {
 /**
  * Extend HTTP request class
  */
-declare module '@adonisjs/core/http' {
+declare module '@adonisjs/http-server' {
   interface Request extends RequestValidator {}
 }
 
