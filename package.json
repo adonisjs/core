@@ -113,7 +113,7 @@
   },
   "dependencies": {
     "@adonisjs/ace": "^12.3.1-12",
-    "@adonisjs/application": "^7.1.2-15",
+    "@adonisjs/application": "^7.1.2-16",
     "@adonisjs/bodyparser": "^9.3.2-8",
     "@adonisjs/config": "^4.2.1-4",
     "@adonisjs/encryption": "^5.1.2-2",
@@ -121,7 +121,7 @@
     "@adonisjs/events": "^8.4.9-5",
     "@adonisjs/fold": "^9.9.3-8",
     "@adonisjs/hash": "^8.3.1-6",
-    "@adonisjs/http-server": "^6.8.2-13",
+    "@adonisjs/http-server": "^6.8.2-14",
     "@adonisjs/logger": "^5.4.2-5",
     "@adonisjs/repl": "^4.0.0-7",
     "@antfu/install-pkg": "^0.1.1",
