@@ -135,7 +135,7 @@
     "parse-imports": "^1.1.2",
     "pretty-hrtime": "^1.0.3",
     "string-width": "^6.1.0",
-    "youch": "^3.2.3",
+    "youch": "^3.3.1",
     "youch-terminal": "^2.2.2"
   },
   "peerDependencies": {
