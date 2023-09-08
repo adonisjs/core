@@ -63,7 +63,7 @@ export class RequestValidator {
     /**
      * Assign request specific error reporter
      */
-    if (RequestValidator.errorReporter) {
+    if (RequestValidator.errorReporter && !validatorOptions.errorReporter) {
       const errorReporter = RequestValidator.errorReporter(this.#ctx)
       validatorOptions.errorReporter = () => errorReporter
     }
@@ -71,7 +71,7 @@ export class RequestValidator {
     /**
      * Assign request specific messages provider
      */
-    if (RequestValidator.messagesProvider) {
+    if (RequestValidator.messagesProvider && !validatorOptions.messagesProvider) {
       validatorOptions.messagesProvider = RequestValidator.messagesProvider(this.#ctx)
     }
 
