@@ -6,7 +6,7 @@
 ---
 to: {{ app.listenersPath(entity.path, listenerFileName) }}
 ---
-import {{ eventName }} from '{{ eventImportPath }}'
+import type {{ eventName }} from '{{ eventImportPath }}'
 
 export default class {{ listenerName }} {
   async handle(event: {{ eventName }}) {}

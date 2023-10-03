@@ -3,7 +3,7 @@
 ---
 to: {{ app.providersPath(entity.path, providerFileName) }}
 ---
-import { ApplicationService } from '@adonisjs/core/types'
+import type { ApplicationService } from '@adonisjs/core/types'
 
 export default class {{ providerName }} {
   constructor(protected app: ApplicationService) {}
