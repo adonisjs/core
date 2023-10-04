@@ -32,7 +32,10 @@ test.group('Make provider', () => {
 
     assert.equal(destination, join(BASE_PATH, 'providers/app_provider.ts'))
     assert.match(contents, new RegExp('export default class AppProvider {'))
-    assert.match(contents, new RegExp("import { ApplicationService } from '@adonisjs/core/types'"))
+    assert.match(
+      contents,
+      new RegExp("import type { ApplicationService } from '@adonisjs/core/types'")
+    )
     assert.match(contents, new RegExp('constructor\\(protected app: ApplicationService\\) {}'))
     assert.match(contents, new RegExp('register\\(\\)'))
     assert.match(contents, new RegExp('async boot\\(\\)'))

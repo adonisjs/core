@@ -51,7 +51,7 @@ test.group('Make listener', () => {
     assert.match(contents, new RegExp('export default class SendEmail {'))
     assert.match(
       contents,
-      new RegExp("import UserRegistered from '#events/users/user_registered.ts'")
+      new RegExp("import type UserRegistered from '#events/users/user_registered.ts'")
     )
     assert.match(contents, new RegExp('async handle\\(event: UserRegistered\\) {'))
   })
