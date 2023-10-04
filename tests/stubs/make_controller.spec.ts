@@ -33,7 +33,7 @@ test.group('Make controller', () => {
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
     assert.match(contents, /export default class UsersController {/)
-    assert.match(contents, new RegExp("// import { HttpContext } from '@adonisjs/core/http'"))
+    assert.match(contents, new RegExp("// import type { HttpContext } from '@adonisjs/core/http'"))
   })
 
   test('prepare resourceful controller stub', async ({ assert }) => {
@@ -51,7 +51,7 @@ test.group('Make controller', () => {
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
     assert.match(contents, /export default class UsersController {/)
-    assert.match(contents, new RegExp("import { HttpContext } from '@adonisjs/core/http'"))
+    assert.match(contents, new RegExp("import type { HttpContext } from '@adonisjs/core/http'"))
     assert.match(contents, new RegExp('async index\\({}: HttpContext\\) {}'))
     assert.match(contents, new RegExp('async create\\({}: HttpContext\\) {}'))
     assert.match(contents, new RegExp('async store\\({ request }: HttpContext\\) {}'))
@@ -76,7 +76,7 @@ test.group('Make controller', () => {
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
     assert.match(contents, /export default class UsersController {/)
-    assert.match(contents, new RegExp("import { HttpContext } from '@adonisjs/core/http'"))
+    assert.match(contents, new RegExp("import type { HttpContext } from '@adonisjs/core/http'"))
     assert.match(contents, new RegExp('async index\\({}: HttpContext\\) {}'))
     assert.notMatch(contents, new RegExp('async create\\({}: HttpContext\\) {}'))
     assert.match(contents, new RegExp('async store\\({ request }: HttpContext\\) {}'))

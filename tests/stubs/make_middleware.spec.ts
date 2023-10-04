@@ -32,8 +32,8 @@ test.group('Make middleware', () => {
 
     assert.equal(destination, join(BASE_PATH, 'app/middleware/auth_middleware.ts'))
     assert.match(contents, new RegExp('export default class AuthMiddleware {'))
-    assert.match(contents, new RegExp("import { HttpContext } from '@adonisjs/core/http'"))
-    assert.match(contents, new RegExp("import { NextFn } from '@adonisjs/core/types/http'"))
+    assert.match(contents, new RegExp("import type { HttpContext } from '@adonisjs/core/http'"))
+    assert.match(contents, new RegExp("import type { NextFn } from '@adonisjs/core/types/http'"))
     assert.match(contents, new RegExp('export default class AuthMiddleware {'))
     assert.match(contents, new RegExp('async handle\\(ctx: HttpContext, next: NextFn\\) {'))
   })
