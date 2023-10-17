@@ -103,11 +103,7 @@ test.group('Formatters | List routes | toJSON', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -250,11 +246,7 @@ test.group('Formatters | List routes | toJSON', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -402,11 +394,7 @@ test.group('Formatters | List routes | toJSON', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -465,11 +453,7 @@ test.group('Formatters | List routes | toJSON', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -546,11 +530,7 @@ test.group('Formatters | List routes | filters', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -625,11 +605,7 @@ test.group('Formatters | List routes | filters', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -747,11 +723,7 @@ test.group('Formatters | List routes | filters', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -815,11 +787,7 @@ test.group('Formatters | List routes | filters', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -873,11 +841,7 @@ test.group('Formatters | List routes | filters', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -931,11 +895,7 @@ test.group('Formatters | List routes | filters', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {
@@ -1000,11 +960,7 @@ test.group('Formatters | List routes | filters', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            './providers/app_provider.js',
-            './providers/hash_provider.js',
-            './providers/http_provider.js',
-          ],
+          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
         },
       })
       .create(fs.baseUrl, {

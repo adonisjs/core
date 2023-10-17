@@ -43,7 +43,7 @@ export default class HashServiceProvider {
       const config = await configProvider.resolve<any>(this.app, hashConfigProvider)
       if (!config) {
         throw new RuntimeException(
-          'Invalid "config/hash.ts" file. Make sure you using the "defineConfig" method'
+          'Invalid "config/hash.ts" file. Make sure you are using the "defineConfig" method'
         )
       }
 

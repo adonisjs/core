@@ -29,11 +29,7 @@ test.group('Test utils | Http', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../../providers/app_provider.js',
-            '../../../providers/hash_provider.js',
-            '../../../providers/http_provider.js',
-          ],
+          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
         },
       })
       .create(BASE_URL, {
@@ -61,11 +57,7 @@ test.group('Test utils | Http', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../../providers/app_provider.js',
-            '../../../providers/hash_provider.js',
-            '../../../providers/http_provider.js',
-          ],
+          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
         },
       })
       .create(BASE_URL, {
@@ -91,11 +83,7 @@ test.group('Test utils | Http', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../../providers/app_provider.js',
-            '../../../providers/hash_provider.js',
-            '../../../providers/http_provider.js',
-          ],
+          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
         },
       })
       .create(BASE_URL, {
@@ -133,11 +121,7 @@ test.group('Test utils | Http', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../../providers/app_provider.js',
-            '../../../providers/hash_provider.js',
-            '../../../providers/http_provider.js',
-          ],
+          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
         },
       })
       .create(BASE_URL, {
@@ -172,11 +156,7 @@ test.group('Test utils | Http', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../../providers/app_provider.js',
-            '../../../providers/hash_provider.js',
-            '../../../providers/http_provider.js',
-          ],
+          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
         },
       })
       .create(BASE_URL, {
@@ -202,11 +182,7 @@ test.group('Test utils | Http', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../../providers/app_provider.js',
-            '../../../providers/hash_provider.js',
-            '../../../providers/http_provider.js',
-          ],
+          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
         },
       })
       .create(BASE_URL, {
@@ -229,11 +205,7 @@ test.group('Test utils | Http', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../../providers/app_provider.js',
-            '../../../providers/hash_provider.js',
-            '../../../providers/http_provider.js',
-          ],
+          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
         },
       })
       .create(BASE_URL, {

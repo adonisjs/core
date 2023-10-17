@@ -32,7 +32,6 @@ test.group('Providers', () => {
           providers: [
             () => import('../providers/app_provider.js'),
             () => import('../providers/hash_provider.js'),
-            () => import('../providers/http_provider.js'),
             () => import('../providers/repl_provider.js'),
           ],
         },
@@ -67,7 +66,6 @@ test.group('Providers', () => {
           providers: [
             () => import('../providers/app_provider.js'),
             () => import('../providers/hash_provider.js'),
-            () => import('../providers/http_provider.js'),
             () => import('../providers/repl_provider.js'),
           ],
         },
@@ -115,7 +113,6 @@ test.group('Providers', () => {
           providers: [
             () => import('../providers/app_provider.js'),
             () => import('../providers/hash_provider.js'),
-            () => import('../providers/http_provider.js'),
             () => import('../providers/repl_provider.js'),
           ],
         },
@@ -142,7 +139,6 @@ test.group('Providers', () => {
           providers: [
             () => import('../providers/app_provider.js'),
             () => import('../providers/hash_provider.js'),
-            () => import('../providers/http_provider.js'),
             () => import('../providers/repl_provider.js'),
           ],
         },
@@ -172,7 +168,6 @@ test.group('Providers', () => {
           providers: [
             () => import('../providers/app_provider.js'),
             () => import('../providers/hash_provider.js'),
-            () => import('../providers/http_provider.js'),
             () => import('../providers/repl_provider.js'),
           ],
         },
@@ -202,7 +197,6 @@ test.group('Providers', () => {
           providers: [
             () => import('../providers/app_provider.js'),
             () => import('../providers/hash_provider.js'),
-            () => import('../providers/http_provider.js'),
             () => import('../providers/repl_provider.js'),
           ],
         },
@@ -237,7 +231,6 @@ test.group('Providers', () => {
           providers: [
             () => import('../providers/app_provider.js'),
             () => import('../providers/hash_provider.js'),
-            () => import('../providers/http_provider.js'),
             () => import('../providers/repl_provider.js'),
             () => import('../providers/vinejs_provider.js'),
             () => import('../providers/edge_provider.js'),

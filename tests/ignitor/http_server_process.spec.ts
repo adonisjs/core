@@ -32,11 +32,7 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../providers/app_provider.js',
-            '../../providers/hash_provider.js',
-            '../../providers/http_provider.js',
-          ],
+          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
         },
       })
       .withCoreConfig()
@@ -64,11 +60,7 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../providers/app_provider.js',
-            '../../providers/hash_provider.js',
-            '../../providers/http_provider.js',
-          ],
+          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
         },
       })
       .withCoreConfig()
@@ -100,11 +92,7 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../providers/app_provider.js',
-            '../../providers/hash_provider.js',
-            '../../providers/http_provider.js',
-          ],
+          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
         },
       })
       .withCoreConfig()
@@ -137,11 +125,7 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../providers/app_provider.js',
-            '../../providers/hash_provider.js',
-            '../../providers/http_provider.js',
-          ],
+          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
         },
       })
       .withCoreConfig()
@@ -173,11 +157,7 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [
-            '../../providers/app_provider.js',
-            '../../providers/hash_provider.js',
-            '../../providers/http_provider.js',
-          ],
+          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
         },
       })
       .withCoreConfig()

@@ -24,7 +24,6 @@ test.group('Bindings | Edge', () => {
           providers: [
             '../providers/app_provider.js',
             '../providers/hash_provider.js',
-            '../providers/http_provider.js',
             '../providers/edge_provider.js',
           ],
         },
@@ -60,7 +59,7 @@ test.group('Bindings | Edge', () => {
           providers: [
             '../providers/app_provider.js',
             '../providers/hash_provider.js',
-            '../providers/http_provider.js',
+
             '../providers/edge_provider.js',
           ],
         },
