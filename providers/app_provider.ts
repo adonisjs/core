@@ -9,6 +9,7 @@
 
 import { Config } from '../modules/config.js'
 import { Logger } from '../modules/logger.js'
+import { BaseEvent } from '../modules/events.js'
 import { Encryption } from '../modules/encryption.js'
 import { Router, Server } from '../modules/http/main.js'
 import type { ApplicationService, LoggerService } from '../src/types.js'
@@ -150,5 +151,9 @@ export default class AppServiceProvider {
     this.registerServer()
     this.registerRouter()
     this.registerBodyParserMiddleware()
+  }
+
+  async boot() {
+    BaseEvent.useEmitter(await this.app.container.make('emitter'))
   }
 }
