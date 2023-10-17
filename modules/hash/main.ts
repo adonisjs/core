@@ -8,4 +8,4 @@
  */
 
 export * from '@adonisjs/hash'
-export { defineConfig } from './define_config.js'
+export { defineConfig, drivers } from './define_config.js'
