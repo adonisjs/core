@@ -16,20 +16,21 @@ import type { TestUtils } from './test_utils/main.js'
 import type { LoggerManager } from '../modules/logger.js'
 import type { HashManager } from '../modules/hash/main.js'
 import type { Encryption } from '../modules/encryption.js'
+import type { ManagerDriverFactory } from '../types/hash.js'
 import type { Router, Server } from '../modules/http/main.js'
 import type { HttpRequestFinishedPayload } from '../types/http.js'
 import type { ContainerResolveEventData } from '../types/container.js'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.js'
-import type {
-  ArgonConfig,
-  BcryptConfig,
-  ScryptConfig,
-  ManagerDriverFactory,
-} from '../types/hash.js'
 
-import type { Argon } from '../modules/hash/drivers/argon.js'
-import type { Bcrypt } from '../modules/hash/drivers/bcrypt.js'
-import type { Scrypt } from '../modules/hash/drivers/scrypt.js'
+/**
+ * A config provider waits for the application to get booted
+ * and then resolves the config. It receives an instance
+ * of the application service.
+ */
+export type ConfigProvider<T> = {
+  type: 'provider'
+  resolver: (app: ApplicationService) => Promise<T>
+}
 
 /**
  * Options accepted by ignitor
@@ -55,19 +56,11 @@ export interface LoggersList {}
 export type InferLoggers<T extends LoggerManagerConfig<any>> = T['loggers']
 
 /**
- * A list of globally available hash drivers
- */
-export interface HashDriversList {
-  bcrypt: (config: BcryptConfig) => Bcrypt
-  argon2: (config: ArgonConfig) => Argon
-  scrypt: (config: ScryptConfig) => Scrypt
-}
-
-/**
  * A list of known hashers inferred from the user config
  */
 export interface HashersList {}
-export type InferHashers<T extends { list: Record<string, ManagerDriverFactory> }> = T['list']
+export type InferHashers<T extends ConfigProvider<{ list: Record<string, ManagerDriverFactory> }>> =
+  Awaited<ReturnType<T['resolver']>>['list']
 
 /**
  * ----------------------------------------------------------------

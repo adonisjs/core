@@ -9,4 +9,3 @@
 
 export * from '@adonisjs/hash'
 export { defineConfig } from './define_config.js'
-export { default as driversList } from './drivers_collection.js'

@@ -8,6 +8,7 @@
  */
 
 import { test } from '@japa/runner'
+import { defineConfig } from '@adonisjs/application'
 
 import { Repl } from '../modules/repl.js'
 import { Config } from '../modules/config.js'
@@ -20,7 +21,6 @@ import { Hash, HashManager } from '../modules/hash/main.js'
 import { Logger, LoggerManager } from '../modules/logger.js'
 import { IgnitorFactory } from '../factories/core/ignitor.js'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
-import { defineConfig } from '@adonisjs/application'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

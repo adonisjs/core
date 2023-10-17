@@ -7,34 +7,17 @@
  * file that was distributed with this source code.
  */
 
-import { Hash, driversList } from '../modules/hash/main.js'
-import type { ApplicationService, HashDriversList } from '../src/types.js'
+import { RuntimeException } from '@poppinss/utils'
+
+import { Hash } from '../modules/hash/main.js'
+import { configProvider } from '../src/config_provider.js'
+import type { ApplicationService } from '../src/types.js'
 
 /**
  * Registers the passwords hasher with the container
  */
 export default class HashServiceProvider {
   constructor(protected app: ApplicationService) {}
-
-  /**
-   * Lazily registers a hash driver with the driversList collection
-   */
-  protected async registerHashDrivers(driversInUse: Set<keyof HashDriversList>) {
-    if (driversInUse.has('bcrypt')) {
-      const { Bcrypt } = await import('../modules/hash/drivers/bcrypt.js')
-      driversList.extend('bcrypt', (config) => new Bcrypt(config))
-    }
-
-    if (driversInUse.has('scrypt')) {
-      const { Scrypt } = await import('../modules/hash/drivers/scrypt.js')
-      driversList.extend('scrypt', (config) => new Scrypt(config))
-    }
-
-    if (driversInUse.has('argon2')) {
-      const { Argon } = await import('../modules/hash/drivers/argon.js')
-      driversList.extend('argon2', (config) => new Argon(config))
-    }
-  }
 
   /**
    * Registering the hash class to resolve an instance with the
@@ -52,7 +35,18 @@ export default class HashServiceProvider {
    */
   protected registerHashManager() {
     this.app.container.singleton('hash', async () => {
-      const config = this.app.config.get<any>('hash')
+      const hashConfigProvider = this.app.config.get('hash')
+
+      /**
+       * Resolve config from the provider
+       */
+      const config = await configProvider.resolve<any>(this.app, hashConfigProvider)
+      if (!config) {
+        throw new RuntimeException(
+          'Invalid "config/hash.ts" file. Make sure you using the "defineConfig" method'
+        )
+      }
+
       const { HashManager } = await import('../modules/hash/main.js')
       return new HashManager(config)
     })
@@ -64,15 +58,5 @@ export default class HashServiceProvider {
   register() {
     this.registerHashManager()
     this.registerHash()
-  }
-
-  /**
-   * Register drivers based upon hash config
-   */
-  boot() {
-    this.app.container.resolving('hash', async () => {
-      const config = this.app.config.get<any>('hash')
-      await this.registerHashDrivers(config.driversInUse)
-    })
   }
 }

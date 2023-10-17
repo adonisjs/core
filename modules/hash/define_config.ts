@@ -9,28 +9,41 @@
 
 import { InvalidArgumentsException } from '@poppinss/utils'
 
-import driversCollection from './drivers_collection.js'
-import type { HashDriversList } from '../../src/types.js'
-import type { ManagerDriverFactory } from '../../types/hash.js'
+import debug from '../../src/debug.js'
+import type { Argon } from './drivers/argon.js'
+import type { Scrypt } from './drivers/scrypt.js'
+import type { Bcrypt } from './drivers/bcrypt.js'
+import type { ConfigProvider } from '../../src/types.js'
+import { configProvider } from '../../src/config_provider.js'
+import type {
+  ArgonConfig,
+  BcryptConfig,
+  ScryptConfig,
+  ManagerDriverFactory,
+} from '../../types/hash.js'
+
+/**
+ * Resolved config from the config provider will be
+ * the config accepted by the hash manager
+ */
+type ResolvedConfig<
+  KnownHashers extends Record<string, ManagerDriverFactory | ConfigProvider<ManagerDriverFactory>>,
+> = {
+  default?: keyof KnownHashers
+  list: {
+    [K in keyof KnownHashers]: KnownHashers[K] extends ConfigProvider<infer A> ? A : KnownHashers[K]
+  }
+}
 
 /**
  * Define config for the hash service.
  */
 export function defineConfig<
-  KnownHashers extends Record<
-    string,
-    {
-      [K in keyof HashDriversList]: { driver: K } & Parameters<HashDriversList[K]>[0]
-    }[keyof HashDriversList]
-  >,
+  KnownHashers extends Record<string, ManagerDriverFactory | ConfigProvider<ManagerDriverFactory>>,
 >(config: {
   default?: keyof KnownHashers
   list: KnownHashers
-}): {
-  default?: keyof KnownHashers
-  driversInUse: Set<keyof HashDriversList>
-  list: { [K in keyof KnownHashers]: ManagerDriverFactory }
-} {
+}): ConfigProvider<ResolvedConfig<KnownHashers>> {
   /**
    * Hashers list should always be provided
    */
@@ -50,22 +63,62 @@ export function defineConfig<
   }
 
   /**
-   * Converting list config to a collection that hash manager can use
+   * Config provider to lazily import drivers as they are used inside
+   * the user application
    */
-  const driversInUse: Set<keyof HashDriversList> = new Set()
-  const managerHashers = Object.keys(config.list).reduce(
-    (result, disk: keyof KnownHashers) => {
-      const hasherConfig = config.list[disk]
-      driversInUse.add(hasherConfig.driver)
-      result[disk] = () => driversCollection.create(hasherConfig.driver, hasherConfig)
-      return result
-    },
-    {} as { [K in keyof KnownHashers]: ManagerDriverFactory }
-  )
+  return configProvider.create<ResolvedConfig<KnownHashers>>(async (app) => {
+    debug('resolving hash config')
 
-  return {
-    driversInUse,
-    default: config.default,
-    list: managerHashers,
-  }
+    const hashersList = Object.keys(config.list)
+    const hashers = {} as Record<
+      string,
+      ManagerDriverFactory | ConfigProvider<ManagerDriverFactory>
+    >
+
+    for (let hasherName of hashersList) {
+      const hasher = config.list[hasherName]
+      if (typeof hasher === 'function') {
+        hashers[hasherName] = hasher
+      } else {
+        hashers[hasherName] = await hasher.resolver(app)
+      }
+    }
+
+    return {
+      default: config.default,
+      list: hashers as ResolvedConfig<KnownHashers>['list'],
+    }
+  })
+}
+
+/**
+ * Helpers to configure drivers inside the config file. The
+ * drivers will be imported and constructed lazily.
+ *
+ * - Import happens when you first use the hash module
+ * - Construction of drivers happens when you first use a driver
+ */
+export const drivers: {
+  argon2: (config: ArgonConfig) => ConfigProvider<() => Argon>
+  bcrypt: (config: BcryptConfig) => ConfigProvider<() => Bcrypt>
+  scrypt: (config: ScryptConfig) => ConfigProvider<() => Scrypt>
+} = {
+  argon2: (config) => {
+    return configProvider.create(async () => {
+      const { Argon } = await import('./drivers/argon.js')
+      return () => new Argon(config)
+    })
+  },
+  bcrypt: (config) => {
+    return configProvider.create(async () => {
+      const { Bcrypt } = await import('./drivers/bcrypt.js')
+      return () => new Bcrypt(config)
+    })
+  },
+  scrypt: (config) => {
+    return configProvider.create(async () => {
+      const { Scrypt } = await import('./drivers/scrypt.js')
+      return () => new Scrypt(config)
+    })
+  },
 }

@@ -8,6 +8,7 @@
  */
 
 import { Ignitor } from '../../src/ignitor/main.js'
+import { drivers } from '../../modules/hash/define_config.js'
 import { defineConfig as defineHttpConfig } from '../../modules/http/main.js'
 import type { ApplicationService, IgnitorOptions } from '../../src/types.js'
 import { defineConfig as defineLoggerConfig } from '../../modules/logger.js'
@@ -93,9 +94,7 @@ export class IgnitorFactory {
         hash: defineHashConfig({
           default: 'scrypt',
           list: {
-            scrypt: {
-              driver: 'scrypt',
-            },
+            scrypt: drivers.scrypt({}),
           },
         }),
         logger: defineLoggerConfig({

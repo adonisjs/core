@@ -8,33 +8,57 @@
  */
 
 import { test } from '@japa/runner'
-import { HashDriverContract } from '../types/hash.js'
+
 import { Argon } from '../modules/hash/drivers/argon.js'
+import type { ApplicationService } from '../src/types.js'
 import { Bcrypt } from '../modules/hash/drivers/bcrypt.js'
+import { drivers } from '../modules/hash/define_config.js'
 import { Scrypt } from '../modules/hash/drivers/scrypt.js'
 import { IgnitorFactory } from '../factories/core/ignitor.js'
-import { Hash, HashManager, driversList, defineConfig } from '../modules/hash/main.js'
+import { Hash, HashManager, defineConfig } from '../modules/hash/main.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
-test.group('Hash', (group) => {
-  group.each.teardown(() => {
-    driversList.list = {}
-  })
+test.group('Hash | drivers', () => {
+  test('define driver provider', async ({ assert, expectTypeOf }) => {
+    const scryptProvider = drivers.scrypt({})
+    const scryptFactory = await scryptProvider.resolver({} as ApplicationService)
 
-  test('process hash config and make it work with hash manager', async ({
-    assert,
-    expectTypeOf,
-  }) => {
-    const config = defineConfig({
+    assert.isFunction(scryptFactory)
+    assert.instanceOf(scryptFactory(), Scrypt)
+    expectTypeOf(scryptFactory).returns.toMatchTypeOf<Scrypt>()
+
+    const bcryptProvider = drivers.bcrypt({})
+    const bcryptFactory = await bcryptProvider.resolver({} as ApplicationService)
+
+    assert.isFunction(bcryptFactory)
+    assert.instanceOf(bcryptFactory(), Bcrypt)
+    expectTypeOf(bcryptFactory).returns.toMatchTypeOf<Bcrypt>()
+
+    const argonProvider = drivers.argon2({})
+    const argonFactory = await argonProvider.resolver({} as ApplicationService)
+
+    assert.isFunction(argonFactory)
+    assert.instanceOf(argonFactory(), Argon)
+    expectTypeOf(argonFactory).returns.toMatchTypeOf<Argon>()
+  })
+})
+
+test.group('Hash | defineConfig', () => {
+  test('defineConfig to lazily register hash drivers', async ({ assert, expectTypeOf }) => {
+    const configProvider = defineConfig({
       list: {
-        scrypt: {
-          driver: 'scrypt',
-        },
+        scrypt: drivers.scrypt({}),
       },
     })
 
-    driversList.extend('scrypt', (scryptConfig) => new Scrypt(scryptConfig))
+    const config = await configProvider.resolver({} as ApplicationService)
+    expectTypeOf(config).toMatchTypeOf<{
+      default?: 'scrypt'
+      list: {
+        scrypt: () => Scrypt
+      }
+    }>()
 
     const hash = new HashManager(config)
     assert.instanceOf(hash.use('scrypt'), Hash)
@@ -57,7 +81,9 @@ test.group('Hash', (group) => {
       'Missing "list.scrypt" in hash config. It is referenced by the "default" property'
     )
   })
+})
 
+test.group('Hash | provider', () => {
   test('create instance of drivers registered in config file', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
       .merge({
@@ -74,10 +100,7 @@ test.group('Hash', (group) => {
           hash: defineConfig({
             default: 'bcrypt',
             list: {
-              bcrypt: {
-                driver: 'bcrypt',
-                rounds: 10,
-              },
+              bcrypt: drivers.bcrypt({}),
             },
           }),
         },
@@ -88,126 +111,10 @@ test.group('Hash', (group) => {
     await app.init()
     await app.boot()
 
-    await app.container.make('hash')
+    const hash = await app.container.make('hash')
 
-    assert.instanceOf(driversList.create('bcrypt', {}), Bcrypt)
-    assert.throws(
-      () => driversList.create('scrypt', {}),
-      'Unknown hash driver "scrypt". Make sure the driver is registered'
-    )
-    assert.throws(
-      () => driversList.create('argon2', {}),
-      'Unknown hash driver "argon2". Make sure the driver is registered'
-    )
-  })
-
-  test('register all drivers', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-            '../providers/http_provider.js',
-          ],
-        },
-      })
-      .merge({
-        config: {
-          hash: defineConfig({
-            default: 'bcrypt',
-            list: {
-              bcrypt: {
-                driver: 'bcrypt',
-                rounds: 10,
-              },
-              argon: {
-                driver: 'argon2',
-              },
-              scrypt: {
-                driver: 'scrypt',
-              },
-            },
-          }),
-        },
-      })
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
-
-    const app = ignitor.createApp('web')
-    await app.init()
-    await app.boot()
-
-    await app.container.make('hash')
-
-    assert.instanceOf(driversList.create('bcrypt', {}), Bcrypt)
-    assert.instanceOf(driversList.create('scrypt', {}), Scrypt)
-    assert.instanceOf(driversList.create('argon2', {}), Argon)
-  })
-
-  test('raise error when trying to create unknown hash driver', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-            '../providers/http_provider.js',
-          ],
-        },
-      })
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
-
-    const app = ignitor.createApp('web')
-    await app.init()
-    await app.boot()
-
-    assert.throws(
-      // @ts-expect-error
-      () => driversList.create('foo', {}),
-      'Unknown hash driver "foo". Make sure the driver is registered'
-    )
-  })
-
-  test('add drivers to hash drivers collection', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-            '../providers/http_provider.js',
-          ],
-        },
-      })
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
-
-    const app = ignitor.createApp('web')
-    await app.init()
-    await app.boot()
-
-    class FakeHash implements HashDriverContract {
-      async make(value: string) {
-        return value
-      }
-
-      async verify(hashedValue: string, plainValue: string) {
-        return hashedValue === plainValue
-      }
-
-      needsReHash(_: string) {
-        return false
-      }
-
-      isValidHash(_: string) {
-        return false
-      }
-    }
-
-    // @ts-expect-error
-    driversList.extend('fake', () => new FakeHash())
-
-    // @ts-expect-error
-    const fakeDriver = driversList.create('fake')
-    assert.instanceOf(fakeDriver, FakeHash)
+    assert.instanceOf(hash.use('bcrypt'), Hash)
+    assert.throws(() => hash.use('scrypt'), 'factory is not a function')
+    assert.throws(() => hash.use('argon2'), 'factory is not a function')
   })
 })

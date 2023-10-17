@@ -16,8 +16,16 @@ import { errors as httpServerErrors } from '@adonisjs/http-server'
 export { stubsRoot } from './stubs/main.js'
 export { inject } from './modules/container.js'
 export { Ignitor } from './src/ignitor/main.js'
+export { configProvider } from './src/config_provider.js'
 
-export const errors = {
+/**
+ * Aggregated errors from all modules.
+ */
+export const errors: typeof encryptionErrors &
+  typeof httpServerErrors &
+  typeof appErrors &
+  typeof aceErrors &
+  typeof envErrors = {
   ...encryptionErrors,
   ...httpServerErrors,
   ...appErrors,
