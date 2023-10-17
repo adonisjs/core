@@ -40,6 +40,7 @@
     "./bodyparser": "./build/modules/bodyparser/main.js",
     "./bodyparser_middleware": "./build/modules/bodyparser/bodyparser_middleware.js",
     "./hash": "./build/modules/hash/main.js",
+    "./hash/phc_formatter": "./build/modules/hash/phc_formatter.js",
     "./hash/drivers/argon": "./build/modules/hash/drivers/argon.js",
     "./hash/drivers/bcrypt": "./build/modules/hash/drivers/bcrypt.js",
     "./hash/drivers/scrypt": "./build/modules/hash/drivers/scrypt.js",
