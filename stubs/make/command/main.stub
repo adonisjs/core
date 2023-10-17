@@ -1,9 +1,11 @@
 {{#var commandName = generators.commandName(entity.name)}}
 {{#var commandTerminalName = generators.commandTerminalName(entity.name)}}
 {{#var commandFileName = generators.commandFileName(entity.name)}}
----
-to: {{ app.commandsPath(entity.path, commandFileName) }}
----
+{{{
+  exports({
+    to: app.commandsPath(entity.path, commandFileName)
+  })
+}}}
 import { BaseCommand } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 

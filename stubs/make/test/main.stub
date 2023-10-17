@@ -1,8 +1,10 @@
 {{#var testGroupName = generators.testGroupName(entity)}}
 {{#var testFileName = generators.testFileName(entity.name)}}
----
-to: {{ app.makePath(suite.directory, entity.path, testFileName) }}
----
+{{{
+  exports({
+    to: app.makePath(suite.directory, entity.path, testFileName)
+  })
+}}}
 import { test } from '@japa/runner'
 
 test.group('{{ testGroupName }}', () => {

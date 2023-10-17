@@ -1,4 +1,6 @@
 {{#var viewFileName = generators.viewFileName(entity.name)}}
----
-to: {{ app.viewsPath(entity.path, viewFileName) }}
----
+{{{
+  exports({
+    to: app.viewsPath(entity.path, viewFileName)
+  })
+}}}

@@ -29,9 +29,12 @@ test.group('Configure command | stubs', () => {
      */
     await fs.create(
       'stubs/cors/config.stub',
-      ['---', "to: {{ app.configPath('cors.ts') }}", '---', 'export default { cors: true }'].join(
-        '\n'
-      )
+      [
+        '{{{',
+        "exports({ to: app.configPath('cors.ts') })",
+        '}}}',
+        'export default { cors: true }',
+      ].join('\n')
     )
 
     const command = await ace.create(Configure, ['../dummy-pkg.js'])
@@ -63,9 +66,12 @@ test.group('Configure command | stubs', () => {
      */
     await fs.create(
       'stubs/cors/config.stub',
-      ['---', "to: {{ app.configPath('cors.ts') }}", '---', 'export default { cors: true }'].join(
-        '\n'
-      )
+      [
+        '{{{',
+        "exports({ to: app.configPath('cors.ts') })",
+        '}}}',
+        'export default { cors: true }',
+      ].join('\n')
     )
 
     await fs.create('config/cors.ts', 'export default { cors: true }')

@@ -1,8 +1,10 @@
 {{#var middlewareName = generators.middlewareName(entity.name)}}
 {{#var middlewareFileName = generators.middlewareFileName(entity.name)}}
----
-to: {{ app.middlewarePath(entity.path, middlewareFileName) }}
----
+{{{
+  exports({
+    to: app.middlewarePath(entity.path, middlewareFileName)
+  })
+}}}
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 

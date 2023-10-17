@@ -3,9 +3,11 @@
 {{#var eventName = generators.eventName(event.name)}}
 {{#var eventFileName = generators.eventFileName(event.name)}}
 {{#var eventImportPath = generators.importPath('#events', event.path, eventFileName)}}
----
-to: {{ app.listenersPath(entity.path, listenerFileName) }}
----
+{{{
+  exports({
+    to: app.listenersPath(entity.path, listenerFileName)
+  })
+}}}
 import type {{ eventName }} from '{{ eventImportPath }}'
 
 export default class {{ listenerName }} {

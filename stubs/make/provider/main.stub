@@ -1,8 +1,10 @@
 {{#var providerName = generators.providerName(entity.name)}}
 {{#var providerFileName = generators.providerFileName(entity.name)}}
----
-to: {{ app.providersPath(entity.path, providerFileName) }}
----
+{{{
+  exports({
+    to: app.providersPath(entity.path, providerFileName)
+  })
+}}}
 import type { ApplicationService } from '@adonisjs/core/types'
 
 export default class {{ providerName }} {

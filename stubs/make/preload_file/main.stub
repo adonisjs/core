@@ -1,4 +1,6 @@
 {{#var preloadFileName = string(entity.name).snakeCase().removeExtension().ext('.ts').toString()}}
----
-to: {{ app.startPath(entity.path, preloadFileName) }}
----
+{{{
+  exports({
+    to: app.startPath(entity.path, preloadFileName)
+  })
+}}}
