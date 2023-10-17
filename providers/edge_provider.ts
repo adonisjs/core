@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import '@adonisjs/http-server'
 import edge, { type Edge } from 'edge.js'
 import type { ApplicationService } from '../src/types.js'
 import { BriskRoute, HttpContext, type Route, type Router } from '../modules/http/main.js'

@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import '@adonisjs/http-server'
 import vine, { BaseLiteralType, Vine } from '@vinejs/vine'
 import type { Validation, FieldContext, FieldOptions } from '@vinejs/vine/types'
 import type { MultipartFile, FileValidationOptions } from '@adonisjs/bodyparser/types'
