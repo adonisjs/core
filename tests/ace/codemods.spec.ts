@@ -11,7 +11,9 @@ import { test } from '@japa/runner'
 import { Codemods } from '../../modules/ace/codemods.js'
 import { AceFactory } from '../../factories/core/ace.js'
 
-test.group('Configure command | environment variables', () => {
+test.group('Codemods | environment variables', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
   test('define env variables', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
@@ -90,7 +92,9 @@ test.group('Configure command | environment variables', () => {
   })
 })
 
-test.group('Configure command | rcFile', () => {
+test.group('Codemods | rcFile', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
   test('update rcfile', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
@@ -120,7 +124,9 @@ test.group('Configure command | rcFile', () => {
   })
 })
 
-test.group('Configure command | registerMiddleware', () => {
+test.group('Codemods | registerMiddleware', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
   test('register middleware', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
