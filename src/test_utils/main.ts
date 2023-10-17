@@ -12,8 +12,8 @@ import Macroable from '@poppinss/macroable'
 import { IncomingMessage, ServerResponse } from 'node:http'
 
 import { HttpServerUtils } from './http.js'
-import { CookieClient } from '../../modules/http/main.js'
 import type { ApplicationService } from '../types.js'
+import { CookieClient, type HttpContext } from '../../modules/http/main.js'
 
 /**
  * Test utils has a collection of helper methods to make testing
@@ -57,7 +57,9 @@ export class TestUtils extends Macroable {
   /**
    * Create an instance of HTTP context for testing
    */
-  async createHttpContext(options: { req?: IncomingMessage; res?: ServerResponse } = {}) {
+  async createHttpContext(
+    options: { req?: IncomingMessage; res?: ServerResponse } = {}
+  ): Promise<HttpContext> {
     const req = options.req || new IncomingMessage(new Socket())
     const res = options.res || new ServerResponse(req)
     const server = await this.app.container.make('server')
