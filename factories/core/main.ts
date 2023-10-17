@@ -8,6 +8,5 @@
  */
 
 export { AceFactory } from './ace.js'
-export { StubsFactory } from '../stubs.js'
 export { IgnitorFactory } from './ignitor.js'
 export { TestUtilsFactory } from './test_utils.js'
