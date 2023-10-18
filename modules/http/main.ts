@@ -7,5 +7,7 @@
  * file that was distributed with this source code.
  */
 
+/// <reference types="@adonisjs/bodyparser/bodyparser_middleware" />
+
 export * from '@adonisjs/http-server'
 export { RequestValidator } from './request_validator.js'

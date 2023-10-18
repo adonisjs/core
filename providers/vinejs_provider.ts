@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import '@adonisjs/http-server'
 import vine, { BaseLiteralType, Vine } from '@vinejs/vine'
 import type { Validation, FieldContext, FieldOptions } from '@vinejs/vine/types'
 import type { MultipartFile, FileValidationOptions } from '@adonisjs/bodyparser/types'
@@ -33,7 +32,7 @@ declare module '@vinejs/vine' {
 /**
  * Extend HTTP request class
  */
-declare module '@adonisjs/http-server' {
+declare module '@adonisjs/core/http' {
   interface Request extends RequestValidator {}
 }
 
