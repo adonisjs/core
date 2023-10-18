@@ -351,7 +351,7 @@ test.group('Configure command | run', (group) => {
     const packageJson = await fs.contentsJson('package.json')
     assert.deepEqual(packageJson.dependencies, { 'is-even': '^1.0.0' })
     assert.deepEqual(packageJson.devDependencies, { 'is-odd': '^2.0.0' })
-  }).timeout(5000)
+  }).timeout(60 * 1000)
 
   test('install packages using pnpm when pnpm-lock file exists', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -387,7 +387,7 @@ test.group('Configure command | run', (group) => {
       message: '[ cyan(wait) ] installing dependencies using pnpm .  ',
       stream: 'stdout',
     })
-  })
+  }).timeout(60 * 1000)
 
   test('install packages using npm when package-lock file exists', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -424,7 +424,7 @@ test.group('Configure command | run', (group) => {
       message: '[ cyan(wait) ] installing dependencies using npm .  ',
       stream: 'stdout',
     })
-  })
+  }).timeout(60 * 1000)
 
   test('display error when installing packages', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
