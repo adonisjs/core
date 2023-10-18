@@ -518,5 +518,12 @@ test.group('Configure command | vinejs', () => {
     ])
 
     await assert.fileContains('adonisrc.ts', '@adonisjs/core/providers/edge_provider')
+    await assert.fileContains(
+      'adonisrc.ts',
+      `metaFiles: [{
+    pattern: 'resources/views/**/*.edge',
+    reloadServer: false,
+  }]`
+    )
   })
 })

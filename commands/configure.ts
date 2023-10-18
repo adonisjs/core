@@ -79,6 +79,7 @@ export default class Configure extends BaseCommand {
     const codemods = await this.createCodemods()
     await codemods.updateRcFile((rcFile) => {
       rcFile.addProvider('@adonisjs/core/providers/edge_provider')
+      rcFile.addMetaFile('resources/views/**/*.edge', false)
     })
   }
 
