@@ -116,7 +116,7 @@
   "dependencies": {
     "@adonisjs/ace": "^12.3.2-0",
     "@adonisjs/application": "^8.0.0-0",
-    "@adonisjs/bodyparser": "^10.0.0-0",
+    "@adonisjs/bodyparser": "^10.0.0-1",
     "@adonisjs/config": "^4.2.1-5",
     "@adonisjs/encryption": "^5.1.2-3",
     "@adonisjs/env": "^4.2.0-6",
