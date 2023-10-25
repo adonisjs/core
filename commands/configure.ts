@@ -10,6 +10,7 @@
 import { slash } from '@poppinss/utils'
 import { installPackage, detectPackageManager } from '@antfu/install-pkg'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
+import { CommandOptions } from '../types/ace.js'
 
 /**
  * The configure command is used to configure packages after installation
@@ -17,6 +18,17 @@ import { args, BaseCommand, flags } from '../modules/ace/main.js'
 export default class Configure extends BaseCommand {
   static commandName = 'configure'
   static description = 'Configure a package post installation'
+  static options: CommandOptions = {
+    allowUnknownFlags: true,
+  }
+
+  get parsedFlags() {
+    return this.parsed.flags
+  }
+
+  get parsedArgs() {
+    return this.parsed._
+  }
 
   @args.string({ description: 'Package name' })
   declare name: string
