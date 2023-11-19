@@ -351,4 +351,42 @@ test.group('Build command', (group) => {
       })
     )
   })
+
+  test('detect correct package manager', async ({ fs }) => {
+    await fs.create(
+      'tsconfig.json',
+      JSON.stringify({
+        include: ['**/*'],
+        compilerOptions: { skipLibCheck: true },
+        exclude: [],
+      })
+    )
+
+    await fs.create('adonisrc.ts', `export default {}`)
+    await fs.create('index.ts', '')
+    await fs.create(
+      'package.json',
+      JSON.stringify({
+        name: 'app',
+        dependencies: { typescript: ts.version },
+      })
+    )
+
+    await execa('pnpm', ['install'], {
+      cwd: fs.basePath,
+      stdio: 'inherit',
+    })
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Build, [])
+    await command.exec()
+
+    command.assertLogMatches(/pnpm i --prod/)
+  })
 })

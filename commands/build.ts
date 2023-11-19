@@ -9,6 +9,9 @@
 
 import { BaseCommand, flags } from '../modules/ace/main.js'
 import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
+import { detectPackageManager } from '@antfu/install-pkg'
+
+type SupportedPackageManager = 'npm' | 'pnpm' | 'yarn'
 
 /**
  * Serve command is used to run the AdonisJS HTTP server during development. The
@@ -42,7 +45,7 @@ export default class Build extends BaseCommand {
   @flags.string({
     description: 'Select the package manager you want to use to install production dependencies',
   })
-  declare packageManager?: 'npm' | 'pnpm' | 'yarn'
+  declare packageManager?: SupportedPackageManager
 
   @flags.boolean({
     description: 'Build frontend assets',
@@ -89,6 +92,22 @@ export default class Build extends BaseCommand {
   }
 
   /**
+   * Returns the package manager used
+   */
+  async #getPackageManager(): Promise<SupportedPackageManager> {
+    if (this.packageManager) return this.packageManager
+
+    const supportedPackageManagers = ['npm', 'pnpm', 'yarn']
+    const packageManager = await detectPackageManager(this.app.makePath())
+
+    if (packageManager && supportedPackageManagers.includes(packageManager)) {
+      return packageManager as SupportedPackageManager
+    }
+
+    return 'npm'
+  }
+
+  /**
    * Build application
    */
   async run() {
@@ -106,6 +125,7 @@ export default class Build extends BaseCommand {
       return
     }
 
+    this.packageManager = await this.#getPackageManager()
     const bundler = new assembler.Bundler(this.app.appRoot, ts, {
       assets: await this.#getAssetsBundlerConfig(),
       metaFiles: this.app.rcFile.metaFiles,
