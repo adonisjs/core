@@ -48,8 +48,10 @@ export class AceProcess {
     await app.init()
 
     const { createAceKernel } = await import('../../modules/ace/create_kernel.js')
+    const commandNameIndex = argv.findIndex((value) => !value.startsWith('-'))
+    const commandName = argv[commandNameIndex]
 
-    const kernel = createAceKernel(app)
+    const kernel = createAceKernel(app, commandName)
     app.container.bindValue('ace', kernel)
 
     /**

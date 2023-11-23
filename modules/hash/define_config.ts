@@ -106,18 +106,21 @@ export const drivers: {
   argon2: (config) => {
     return configProvider.create(async () => {
       const { Argon } = await import('./drivers/argon.js')
+      debug('configuring argon driver')
       return () => new Argon(config)
     })
   },
   bcrypt: (config) => {
     return configProvider.create(async () => {
       const { Bcrypt } = await import('./drivers/bcrypt.js')
+      debug('configuring bcrypt driver')
       return () => new Bcrypt(config)
     })
   },
   scrypt: (config) => {
     return configProvider.create(async () => {
       const { Scrypt } = await import('./drivers/scrypt.js')
+      debug('configuring scrypt driver')
       return () => new Scrypt(config)
     })
   },

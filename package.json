@@ -114,7 +114,7 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "@adonisjs/ace": "^12.3.2-1",
+    "@adonisjs/ace": "^12.3.2-2",
     "@adonisjs/application": "^8.0.0-2",
     "@adonisjs/bodyparser": "^10.0.0-2",
     "@adonisjs/config": "^4.2.1-6",

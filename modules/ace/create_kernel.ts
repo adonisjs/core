@@ -9,7 +9,7 @@
 
 import { Kernel } from './main.js'
 import type { ApplicationService } from '../../src/types.js'
-import { FsLoader, HelpCommand } from '../../modules/ace/main.js'
+import { FsLoader, HelpCommand, type BaseCommand } from '../../modules/ace/main.js'
 
 /**
  * We abstract the logic for creating the ace kernel in this
@@ -20,9 +20,8 @@ import { FsLoader, HelpCommand } from '../../modules/ace/main.js'
  * - In other environments, ace can be pulled from the container to
  * run commands
  */
-export function createAceKernel(app: ApplicationService) {
+export function createAceKernel(app: ApplicationService, commandName?: string) {
   const kernel = new Kernel(app)
-  kernel.addLoader(new FsLoader(app.commandsPath()))
   kernel.info.set('binary', 'node ace')
 
   /**
@@ -33,6 +32,24 @@ export function createAceKernel(app: ApplicationService) {
     kernel.addLoader(() =>
       typeof commandModule === 'function' ? commandModule() : app.import(commandModule)
     )
+  })
+
+  /**
+   * When we know the command we are running ahead of time, then we
+   * defer loading the application commands if the command has
+   * already been registered by other loaders.
+   */
+  const fsLoader = new FsLoader<typeof BaseCommand>(app.commandsPath())
+  kernel.addLoader({
+    async getMetaData() {
+      if (!commandName || !kernel.getCommand(commandName)) {
+        return fsLoader.getMetaData()
+      }
+      return []
+    },
+    getCommand(command) {
+      return fsLoader.getCommand(command)
+    },
   })
 
   /**

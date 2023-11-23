@@ -110,7 +110,7 @@ test.group('Hash | provider', () => {
     const hash = await app.container.make('hash')
 
     assert.instanceOf(hash.use('bcrypt'), Hash)
-    assert.throws(() => hash.use('scrypt'), 'factory is not a function')
-    assert.throws(() => hash.use('argon2'), 'factory is not a function')
+    assert.throws(() => hash.use('scrypt'), 'driverFactory is not a function')
+    assert.throws(() => hash.use('argon2'), 'driverFactory is not a function')
   })
 })
