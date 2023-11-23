@@ -11,6 +11,7 @@ import vine, { BaseLiteralType, Vine } from '@vinejs/vine'
 import type { Validation, FieldContext, FieldOptions } from '@vinejs/vine/types'
 import type { MultipartFile, FileValidationOptions } from '@adonisjs/bodyparser/types'
 
+import type { ApplicationService } from '../src/types.js'
 import { Request, RequestValidator } from '../modules/http/main.js'
 
 /**
@@ -115,17 +116,29 @@ class VineMultipartFile extends BaseLiteralType<MultipartFile, MultipartFile> {
 }
 
 /**
- * The file method is used to validate a field to be a valid
- * multipart file.
+ * The Edge service provider configures Edge to work within
+ * an AdonisJS application environment
  */
-Vine.macro('file', function (this: Vine, options) {
-  return new VineMultipartFile(options)
-})
+export default class VineJSServiceProvider {
+  constructor(protected app: ApplicationService) {
+    this.app.usingVineJS = true
+  }
 
-/**
- * The validate method can be used to validate the request
- * data for the current request using VineJS validators
- */
-Request.macro('validateUsing', function (this: Request, ...args) {
-  return new RequestValidator(this.ctx!).validateUsing(...args)
-})
+  boot() {
+    /**
+     * The file method is used to validate a field to be a valid
+     * multipart file.
+     */
+    Vine.macro('file', function (this: Vine, options) {
+      return new VineMultipartFile(options)
+    })
+
+    /**
+     * The validate method can be used to validate the request
+     * data for the current request using VineJS validators
+     */
+    Request.macro('validateUsing', function (this: Request, ...args) {
+      return new RequestValidator(this.ctx!).validateUsing(...args)
+    })
+  }
+}

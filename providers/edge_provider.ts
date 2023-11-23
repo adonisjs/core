@@ -34,7 +34,9 @@ declare module '@adonisjs/core/http' {
  * an AdonisJS application environment
  */
 export default class EdgeServiceProvider {
-  constructor(protected app: ApplicationService) {}
+  constructor(protected app: ApplicationService) {
+    this.app.usingEdgeJS = true
+  }
 
   /**
    * Bridge AdonisJS and Edge
