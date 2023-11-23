@@ -85,4 +85,26 @@ test.group('Make controller', () => {
     assert.match(contents, new RegExp('async update\\({ params, request }: HttpContext\\) {}'))
     assert.match(contents, new RegExp('async destroy\\({ params }: HttpContext\\) {}'))
   })
+
+  test('prepare actions controller stub', async ({ assert }) => {
+    const app = new AppFactory().create(BASE_URL, () => {})
+    await app.init()
+
+    const stubs = await app.stubs.create()
+
+    const stub = await stubs.build('make/controller/actions.stub', {
+      source: stubsRoot,
+    })
+    const { contents, destination } = await stub.prepare({
+      entity: app.generators.createEntity('user'),
+      actions: ['index', 'show', 'deleteProfile'],
+    })
+
+    assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
+    assert.match(contents, /export default class UsersController {/)
+    assert.match(contents, new RegExp("import type { HttpContext } from '@adonisjs/core/http'"))
+    assert.match(contents, new RegExp('async index\\({}: HttpContext\\) {}'))
+    assert.match(contents, new RegExp('async show\\({}: HttpContext\\) {}'))
+    assert.match(contents, new RegExp('async deleteProfile\\({}: HttpContext\\) {}'))
+  })
 })
