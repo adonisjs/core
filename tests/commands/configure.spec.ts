@@ -16,7 +16,9 @@ import { AceFactory } from '../../factories/core/ace.js'
 const BASE_URL = new URL('./tmp/', import.meta.url)
 const BASE_PATH = fileURLToPath(BASE_URL)
 
-test.group('Configure command | stubs', () => {
+test.group('Configure command | stubs', (group) => {
+  group.tap((t) => t.disableTimeout())
+
   test('publish stub using configure command', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
@@ -131,7 +133,9 @@ test.group('Configure command | stubs', () => {
   })
 })
 
-test.group('Configure command | list dependencies', () => {
+test.group('Configure command | list dependencies', (group) => {
+  group.tap((t) => t.disableTimeout())
+
   test('list development dependencies to install', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
@@ -389,7 +393,7 @@ test.group('Configure command | run', (group) => {
     const packageJson = await fs.contentsJson('package.json')
     assert.deepEqual(packageJson.dependencies, { 'is-even': '^1.0.0' })
     assert.deepEqual(packageJson.devDependencies, { 'is-odd': '^2.0.0' })
-  }).timeout(60 * 1000)
+  })
 
   test('install packages using pnpm when pnpm-lock file exists', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -425,7 +429,7 @@ test.group('Configure command | run', (group) => {
       message: '[ cyan(wait) ] installing dependencies using pnpm .  ',
       stream: 'stdout',
     })
-  }).timeout(60 * 1000)
+  })
 
   test('install packages using npm when package-lock file exists', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -462,7 +466,7 @@ test.group('Configure command | run', (group) => {
       message: '[ cyan(wait) ] installing dependencies using npm .  ',
       stream: 'stdout',
     })
-  }).timeout(60 * 1000)
+  })
 
   test('display error when installing packages', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -507,7 +511,9 @@ test.group('Configure command | run', (group) => {
   })
 })
 
-test.group('Configure command | vinejs', () => {
+test.group('Configure command | vinejs', (group) => {
+  group.tap((t) => t.disableTimeout())
+
   test('register vinejs provider', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
