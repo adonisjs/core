@@ -91,6 +91,44 @@ test.group('Configure command | stubs', () => {
       },
     ])
   })
+
+  test('force publish when file already exists', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    /**
+     * Creating a dummy config stub
+     */
+    await fs.create(
+      'stubs/cors/config.stub',
+      [
+        '{{{',
+        "exports({ to: app.configPath('cors.ts') })",
+        '}}}',
+        'export default { cors: true }',
+      ].join('\n')
+    )
+
+    await fs.create('config/cors.ts', 'export default { cors: true }')
+
+    const command = await ace.create(Configure, ['../dummy-pkg.js', '--force'])
+    command.stubsRoot = join(fs.basePath, 'stubs')
+
+    /**
+     * Publishing the stub
+     */
+    await command.publishStub('cors/config.stub')
+
+    assert.deepEqual(command.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create config/cors.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
 })
 
 test.group('Configure command | list dependencies', () => {

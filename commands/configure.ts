@@ -36,6 +36,9 @@ export default class Configure extends BaseCommand {
   @flags.boolean({ description: 'Display logs in verbose mode' })
   declare verbose?: boolean
 
+  @flags.boolean({ description: 'Forcefully overwrite existing files' })
+  declare force?: boolean
+
   /**
    * The root of the stubs directory. The value is defined after we import
    * the package
@@ -104,7 +107,14 @@ export default class Configure extends BaseCommand {
       source: this.stubsRoot,
     })
 
-    const output = await stub.generate(stubData || {})
+    const output = await stub.generate(
+      Object.assign(
+        {
+          force: this.force,
+        },
+        stubData
+      )
+    )
 
     /**
      * Log message
