@@ -97,7 +97,7 @@ export class HttpServerProcess {
     app: ApplicationService,
     logger: LoggerService,
     emitter: EmitterService,
-    payload: { host: string; port: number }
+    payload: { host: string; port: number; duration?: [number, number] }
   ) {
     /**
      * Notify parent process
@@ -123,6 +123,8 @@ export class HttpServerProcess {
       handler: (req: IncomingMessage, res: ServerResponse) => any
     ) => NodeHttpsServer | NodeHttpServer
   ) {
+    const startTime = process.hrtime()
+
     /**
      * Method to create the HTTP server
      */
@@ -156,7 +158,10 @@ export class HttpServerProcess {
       /**
        * Notify
        */
-      this.#notifyServerHasStarted(app, logger, emitter, payload)
+      this.#notifyServerHasStarted(app, logger, emitter, {
+        ...payload,
+        duration: process.hrtime(startTime),
+      })
 
       /**
        * Monitor app and the server (after the server is listening)

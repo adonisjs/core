@@ -10,11 +10,9 @@
 import { test } from '@japa/runner'
 
 import is from '../../src/helpers/is.js'
-import { Repl } from '../../modules/repl.js'
 import stringHelpers from '../../src/helpers/string.js'
 import { IgnitorFactory } from '../../factories/core/ignitor.js'
 import AppServiceProvider from '../../providers/app_provider.js'
-import ReplServiceProvider from '../../providers/repl_provider.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
@@ -23,7 +21,11 @@ test.group('Bindings | Repl', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../providers/app_provider.js', '../providers/hash_provider.js'],
+          providers: [
+            '../providers/app_provider.js',
+            '../providers/hash_provider.js',
+            '../providers/repl_provider.js',
+          ],
         },
       })
       .withCoreConfig()
@@ -42,18 +44,16 @@ test.group('Bindings | Repl', () => {
      * Setting up REPL with fake server
      * and context
      */
-    const repl = new Repl()
+    const repl = await app.container.make('repl')
     repl.server = {
       context: {},
       displayPrompt() {},
     } as any
 
-    app.container.singleton('repl', () => repl)
-
     /**
      * Define REPL bindings
      */
-    await new ReplServiceProvider(app).boot()
+    // await new ReplServiceProvider(app).boot()
     const methods = repl.getMethods()
 
     await methods.loadEncryption.handler(repl)

@@ -47,6 +47,10 @@ test.group('Eject', () => {
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
+        message: '[ green(success) ] eject stubs/make/controller/actions.stub',
+        stream: 'stdout',
+      },
+      {
         message: '[ green(success) ] eject stubs/make/controller/api.stub',
         stream: 'stdout',
       },
