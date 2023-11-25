@@ -1,5 +1,5 @@
 /*
- * @adonisjs/ace
+ * @adonisjs/core
  *
  * (c) AdonisJS
  *
