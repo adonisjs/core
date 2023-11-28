@@ -130,7 +130,7 @@
     "@antfu/install-pkg": "^0.2.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@poppinss/macroable": "^1.0.0-7",
-    "@poppinss/utils": "^6.5.1",
+    "@poppinss/utils": "^6.6.0",
     "@sindresorhus/is": "^6.0.1",
     "@types/he": "^1.2.3",
     "execa": "^8.0.1",

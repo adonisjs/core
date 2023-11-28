@@ -10,7 +10,7 @@
 export { default as parseImports } from 'parse-imports'
 export { createId as cuid } from '@paralleldrive/cuid2'
 export {
-  // join, // See https://github.com/poppinss/utils/pull/38
+  join,
   slash,
   base64,
   compose,
