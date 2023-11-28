@@ -20,12 +20,31 @@ test.group('Inspect RCFile', () => {
     await ace.app.init()
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(InspectRCFile, [])
-    await command.exec()
+    const inspect = await ace.create(InspectRCFile, [])
+    await inspect.exec()
+
+    const rcContents = lodash.omit(ace.app.rcFile, ['raw'])
+    rcContents.providers = rcContents.providers?.map((provider) => {
+      return {
+        ...provider,
+        file: provider.file.toString(),
+      }
+    })
+
+    rcContents.preloads = rcContents.preloads?.map((preload) => {
+      return {
+        ...preload,
+        file: preload.file.toString(),
+      }
+    })
+
+    rcContents.commands = rcContents.commands?.map((command) => {
+      return command.toString()
+    })
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
-        message: JSON.stringify(lodash.omit(ace.app.rcFile, ['raw']), null, 2),
+        message: JSON.stringify(rcContents, null, 2),
         stream: 'stdout',
       },
     ])
