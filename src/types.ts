@@ -44,7 +44,7 @@ export type IgnitorOptions = { importer: Importer }
  */
 export interface EventsList {
   'container:resolved': ContainerResolveEventData<ContainerBindings>
-  'http:request_handled': HttpRequestFinishedPayload
+  'http:request_finished': HttpRequestFinishedPayload
   'http:server_ready': { port: number; host: string }
 }
 
