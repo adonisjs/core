@@ -8,9 +8,8 @@
  */
 
 import { slash } from '@poppinss/utils'
-import { installPackage, detectPackageManager } from '@antfu/install-pkg'
+import type { CommandOptions } from '../types/ace.js'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
-import { CommandOptions } from '../types/ace.js'
 
 /**
  * The configure command is used to configure packages after installation
@@ -22,20 +21,35 @@ export default class Configure extends BaseCommand {
     allowUnknownFlags: true,
   }
 
+  /**
+   * Exposing all flags from the protected property "parsed"
+   */
   get parsedFlags() {
     return this.parsed.flags
   }
 
+  /**
+   * Exposing all args from the protected property "parsed"
+   */
   get parsedArgs() {
     return this.parsed._
   }
 
+  /**
+   * Name of the package to configure
+   */
   @args.string({ description: 'Package name' })
   declare name: string
 
+  /**
+   * Turn on verbose mode for packages installation
+   */
   @flags.boolean({ description: 'Display logs in verbose mode' })
   declare verbose?: boolean
 
+  /**
+   * Forcefully overwrite existing files.
+   */
   @flags.boolean({ description: 'Forcefully overwrite existing files' })
   declare force?: boolean
 
@@ -50,31 +64,6 @@ export default class Configure extends BaseCommand {
    */
   #getPackageSource(packageName: string) {
     return this.app.import(packageName)
-  }
-
-  /**
-   * Returns the installation command for different
-   * package managers
-   */
-  #getInstallationCommands(
-    packages: string[],
-    packageManager: 'npm' | 'pnpm' | 'yarn',
-    isDev: boolean
-  ) {
-    if (!packages.length) {
-      return ''
-    }
-
-    const devFlag = isDev ? ' -D' : ''
-
-    switch (packageManager) {
-      case 'npm':
-        return `${this.colors.yellow(`npm i${devFlag}`)} ${packages.join(' ')}`
-      case 'yarn':
-        return `${this.colors.yellow(`yarn add${devFlag}`)} ${packages.join(' ')}`
-      case 'pnpm':
-        return `${this.colors.yellow(`pnpm add${devFlag}`)} ${packages.join(' ')}`
-    }
   }
 
   /**
@@ -96,6 +85,16 @@ export default class Configure extends BaseCommand {
       rcFile.addProvider('@adonisjs/core/providers/edge_provider')
       rcFile.addMetaFile('resources/views/**/*.edge', false)
     })
+  }
+
+  /**
+   * Creates codemods as per configure command options
+   */
+  async createCodemods() {
+    const codemods = await super.createCodemods()
+    codemods.overwriteExisting = this.force === true
+    codemods.verboseInstallOutput = this.verbose === true
+    return codemods
   }
 
   /**
@@ -128,74 +127,6 @@ export default class Configure extends BaseCommand {
   }
 
   /**
-   * Install packages using the correct package manager
-   * You can specify version of each package by setting it in the
-   * name like :
-   *
-   * ```
-   * installPackages(['@adonisjs/lucid@next', '@adonisjs/auth@3.0.0'])
-   * ```
-   */
-  async installPackages(packages: { name: string; isDevDependency: boolean }[]) {
-    const appPath = this.app.makePath()
-    const silent = this.verbose === true ? false : true
-
-    const devDeps = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
-    const deps = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
-    const packageManager = await detectPackageManager(appPath)
-
-    let spinner = this.logger
-      .await(`installing dependencies using ${packageManager || 'npm'}`)
-      .start()
-
-    try {
-      await installPackage(deps, { cwd: appPath, silent })
-      await installPackage(devDeps, { dev: true, cwd: appPath, silent })
-
-      spinner.stop()
-      this.logger.success('dependencies installed')
-      this.logger.log(devDeps.map((dep) => `      ${this.colors.dim('dev')} ${dep}`).join('\n'))
-      this.logger.log(deps.map((dep) => `      ${this.colors.dim('prod')} ${dep}`).join('\n'))
-    } catch (error) {
-      spinner.update('unable to install dependencies')
-      spinner.stop()
-      this.exitCode = 1
-      this.logger.fatal(error)
-    }
-  }
-
-  /**
-   * List the packages one should install before using the packages
-   */
-  listPackagesToInstall(packages: { name: string; isDevDependency: boolean }[]) {
-    const devDependencies = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
-    const prodDependencies = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
-    const instructions = this.ui.sticker().heading('Please install following packages')
-
-    ;[
-      this.colors.dim('# npm'),
-      this.#getInstallationCommands(devDependencies, 'npm', true),
-      this.#getInstallationCommands(prodDependencies, 'npm', false),
-      ' ',
-    ]
-      .concat([
-        this.colors.dim('# yarn'),
-        this.#getInstallationCommands(devDependencies, 'yarn', true),
-        this.#getInstallationCommands(prodDependencies, 'yarn', false),
-        ' ',
-      ])
-      .concat([
-        this.colors.dim('# pnpm'),
-        this.#getInstallationCommands(devDependencies, 'pnpm', true),
-        this.#getInstallationCommands(prodDependencies, 'pnpm', false),
-      ])
-      .filter((line) => line.length)
-      .forEach((line) => instructions.add(line))
-
-    instructions.render()
-  }
-
-  /**
    * Run method is invoked by ace automatically
    */
   async run() {
@@ -219,17 +150,11 @@ export default class Configure extends BaseCommand {
     }
 
     /**
-     * Instructions needs stubs root
+     * Set stubsRoot property when package exports it
      */
-    if (!packageExports.stubsRoot) {
-      this.logger.error(
-        `Missing "stubsRoot" export from "${this.name}" package. The stubsRoot variable is required to lookup package stubs`
-      )
-      this.exitCode = 1
-      return
+    if (packageExports.stubsRoot) {
+      this.stubsRoot = packageExports.stubsRoot
     }
-
-    this.stubsRoot = packageExports.stubsRoot
 
     /**
      * Run instructions

@@ -8,10 +8,12 @@
  */
 
 import { slash } from '@poppinss/utils'
+import { EventEmitter } from 'node:events'
 import type { Logger } from '@poppinss/cliui'
 import { EnvEditor } from '@adonisjs/env/editor'
 import type { CodeTransformer } from '@adonisjs/assembler/code_transformer'
 import type { AddMiddlewareEntry, EnvValidationDefinition } from '@adonisjs/assembler/types'
+
 import type { Application } from '../app.js'
 
 /**
@@ -19,7 +21,7 @@ import type { Application } from '../app.js'
  * "@adonisjs/assembler" package and it must be installed as a dependency
  * inside user application.
  */
-export class Codemods {
+export class Codemods extends EventEmitter {
   /**
    * Flag to know if assembler is installed as a
    * peer dependency or not.
@@ -41,7 +43,19 @@ export class Codemods {
    */
   #cliLogger: Logger
 
+  /**
+   * Overwrite existing files when generating files
+   * from stubs
+   */
+  overwriteExisting = false
+
+  /**
+   * Display verbose logs for package installation
+   */
+  verboseInstallOutput = false
+
   constructor(app: Application<any>, cliLogger: Logger) {
+    super()
     this.#app = app
     this.#cliLogger = cliLogger
   }
@@ -53,6 +67,29 @@ export class Codemods {
     if (this.#isAssemblerInstalled === undefined) {
       this.#codeTransformer = await import('@adonisjs/assembler/code_transformer')
       this.#isAssemblerInstalled = !!this.#codeTransformer
+    }
+  }
+
+  /**
+   * Returns the installation command for different
+   * package managers
+   */
+  #getInstallationCommands(packages: string[], packageManager: string, isDev: boolean) {
+    if (!packages.length) {
+      return ''
+    }
+
+    const colors = this.#cliLogger.getColors()
+    const devFlag = isDev ? ' -D' : ''
+
+    switch (packageManager) {
+      case 'yarn':
+        return `${colors.yellow(`yarn add${devFlag}`)} ${packages.join(' ')}`
+      case 'pnpm':
+        return `${colors.yellow(`pnpm add${devFlag}`)} ${packages.join(' ')}`
+      case 'npm':
+      default:
+        return `${colors.yellow(`npm i${devFlag}`)} ${packages.join(' ')}`
     }
   }
 
@@ -91,6 +128,7 @@ export class Codemods {
       await transformer.defineEnvValidations(validations)
       action.succeeded()
     } catch (error) {
+      this.emit('error', error)
       action.failed(error.message)
     }
   }
@@ -114,6 +152,7 @@ export class Codemods {
       await transformer.addMiddlewareToStack(stack, middleware)
       action.succeeded()
     } catch (error) {
+      this.emit('error', error)
       action.failed(error.message)
     }
   }
@@ -136,6 +175,7 @@ export class Codemods {
       await transformer.updateRcFile(...params)
       action.succeeded()
     } catch (error) {
+      this.emit('error', error)
       action.failed(error.message)
     }
   }
@@ -146,7 +186,7 @@ export class Codemods {
   async makeUsingStub(stubsRoot: string, stubPath: string, stubState: Record<string, any>) {
     const stubs = await this.#app.stubs.create()
     const stub = await stubs.build(stubPath, { source: stubsRoot })
-    const output = await stub.generate(stubState)
+    const output = await stub.generate({ force: this.overwriteExisting, ...stubState })
 
     const entityFileName = slash(this.#app.relativePath(output.destination))
     const result = { ...output, relativeFileName: entityFileName }
@@ -158,5 +198,85 @@ export class Codemods {
 
     this.#cliLogger.action(`create ${entityFileName}`).succeeded()
     return result
+  }
+
+  /**
+   * Install packages using the correct package manager
+   * You can specify version of each package by setting it in the
+   * name like :
+   *
+   * ```
+   * this.installPackages(['@adonisjs/lucid@next', '@adonisjs/auth@3.0.0'])
+   * ```
+   */
+  async installPackages(packages: { name: string; isDevDependency: boolean }[]) {
+    await this.#importAssembler()
+    const appPath = this.#app.makePath()
+    const colors = this.#cliLogger.getColors()
+    const devDependencies = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
+    const dependencies = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
+
+    if (!this.#codeTransformer) {
+      this.#cliLogger.warning(
+        'Cannot install packages. Install "@adonisjs/assembler" or manually install following packages'
+      )
+      this.#cliLogger.log(`devDependencies: ${devDependencies.join(',')}`)
+      this.#cliLogger.log(`dependencies: ${dependencies.join(',')}`)
+      return
+    }
+
+    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
+    const packageManager = await transformer.detectPackageManager(appPath)
+
+    let spinner = this.#cliLogger
+      .await(`installing dependencies using ${packageManager || 'npm'} `)
+      .start()
+
+    try {
+      await transformer.installPackage(dependencies, {
+        cwd: appPath,
+        silent: !this.verboseInstallOutput,
+      })
+      await transformer.installPackage(devDependencies, {
+        dev: true,
+        cwd: appPath,
+        silent: !this.verboseInstallOutput,
+      })
+
+      spinner.stop()
+      this.#cliLogger.success('Packages installed')
+      this.#cliLogger.log(
+        devDependencies.map((dependency) => `    ${colors.dim('dev')} ${dependency} `).join('\n')
+      )
+      this.#cliLogger.log(
+        dependencies.map((dependency) => `    ${colors.dim('prod')} ${dependency} `).join('\n')
+      )
+    } catch (error) {
+      spinner.update('unable to install dependencies')
+      spinner.stop()
+      this.#cliLogger.fatal(error)
+      this.emit('error', error)
+    }
+  }
+
+  /**
+   * List the packages one should install before using the packages
+   */
+  async listPackagesToInstall(packages: { name: string; isDevDependency: boolean }[]) {
+    const appPath = this.#app.makePath()
+    const devDependencies = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
+    const dependencies = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
+
+    let packageManager: string | null = null
+    if (this.#codeTransformer) {
+      const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
+      packageManager = await transformer.detectPackageManager(appPath)
+    }
+
+    this.#cliLogger.log('Please install following packages')
+    this.#cliLogger.log(
+      this.#getInstallationCommands(devDependencies, packageManager || 'npm', true)
+    )
+    this.#cliLogger.log(this.#getInstallationCommands(dependencies, packageManager || 'npm', false))
   }
 }

@@ -146,7 +146,8 @@ test.group('Configure command | list dependencies', (group) => {
     const command = await ace.create(Configure, ['../dummy-pkg.js'])
     command.stubsRoot = join(fs.basePath, 'stubs')
 
-    command.listPackagesToInstall([
+    const codemods = await command.createCodemods()
+    await codemods.listPackagesToInstall([
       {
         name: '@japa/runner',
         isDevDependency: true,
@@ -163,17 +164,15 @@ test.group('Configure command | list dependencies', (group) => {
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
-        message: [
-          'Please install following packages',
-          'dim(# npm)',
-          'yellow(npm i -D) @japa/runner @japa/preset-adonis playwright',
-          ' ',
-          'dim(# yarn)',
-          'yellow(yarn add -D) @japa/runner @japa/preset-adonis playwright',
-          ' ',
-          'dim(# pnpm)',
-          'yellow(pnpm add -D) @japa/runner @japa/preset-adonis playwright',
-        ].join('\n'),
+        message: ['Please install following packages'].join('\n'),
+        stream: 'stdout',
+      },
+      {
+        message: ['yellow(npm i -D) @japa/runner @japa/preset-adonis playwright'].join('\n'),
+        stream: 'stdout',
+      },
+      {
+        message: [''].join('\n'),
         stream: 'stdout',
       },
     ])
@@ -189,7 +188,8 @@ test.group('Configure command | list dependencies', (group) => {
     const command = await ace.create(Configure, ['../dummy-pkg.js'])
     command.stubsRoot = join(fs.basePath, 'stubs')
 
-    command.listPackagesToInstall([
+    const codemods = await command.createCodemods()
+    await codemods.listPackagesToInstall([
       {
         name: '@japa/runner',
         isDevDependency: true,
@@ -206,20 +206,15 @@ test.group('Configure command | list dependencies', (group) => {
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
-        message: [
-          'Please install following packages',
-          'dim(# npm)',
-          'yellow(npm i -D) @japa/runner @japa/preset-adonis',
-          'yellow(npm i) playwright',
-          ' ',
-          'dim(# yarn)',
-          'yellow(yarn add -D) @japa/runner @japa/preset-adonis',
-          'yellow(yarn add) playwright',
-          ' ',
-          'dim(# pnpm)',
-          'yellow(pnpm add -D) @japa/runner @japa/preset-adonis',
-          'yellow(pnpm add) playwright',
-        ].join('\n'),
+        message: ['Please install following packages'].join('\n'),
+        stream: 'stdout',
+      },
+      {
+        message: ['yellow(npm i -D) @japa/runner @japa/preset-adonis'].join('\n'),
+        stream: 'stdout',
+      },
+      {
+        message: ['yellow(npm i) playwright'].join('\n'),
         stream: 'stdout',
       },
     ])
@@ -235,7 +230,8 @@ test.group('Configure command | list dependencies', (group) => {
     const command = await ace.create(Configure, ['../dummy-pkg.js'])
     command.stubsRoot = join(fs.basePath, 'stubs')
 
-    command.listPackagesToInstall([
+    const codemods = await command.createCodemods()
+    await codemods.listPackagesToInstall([
       {
         name: 'playwright',
         isDevDependency: false,
@@ -244,17 +240,15 @@ test.group('Configure command | list dependencies', (group) => {
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
-        message: [
-          'Please install following packages',
-          'dim(# npm)',
-          'yellow(npm i) playwright',
-          ' ',
-          'dim(# yarn)',
-          'yellow(yarn add) playwright',
-          ' ',
-          'dim(# pnpm)',
-          'yellow(pnpm add) playwright',
-        ].join('\n'),
+        message: ['Please install following packages'].join('\n'),
+        stream: 'stdout',
+      },
+      {
+        message: [].join('\n'),
+        stream: 'stdout',
+      },
+      {
+        message: ['yellow(npm i) playwright'].join('\n'),
         stream: 'stdout',
       },
     ])
@@ -284,31 +278,6 @@ test.group('Configure command | run', (group) => {
 
     assert.match(command.error.message, /Cannot find module/)
     assert.equal(command.exitCode, 1)
-  })
-
-  test('fail when package has configure method but not the stubsRoot', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(new URL(filePath, fs.baseUrl).href)
-      },
-    })
-
-    await ace.app.init()
-    ace.ui.switchMode('raw')
-
-    await fs.create('dummy-pkg.js', `export function configure() {}`)
-
-    const command = await ace.create(Configure, ['./dummy-pkg.js'])
-    await command.exec()
-
-    assert.equal(command.exitCode, 1)
-    assert.deepEqual(ace.ui.logger.getLogs(), [
-      {
-        message:
-          '[ red(error) ] Missing "stubsRoot" export from "./dummy-pkg.js" package. The stubsRoot variable is required to lookup package stubs',
-        stream: 'stderr',
-      },
-    ])
   })
 
   test('warn when package cannot be configured', async ({ assert, fs }) => {
@@ -372,12 +341,14 @@ test.group('Configure command | run', (group) => {
     ace.ui.switchMode('raw')
 
     await fs.createJson('package.json', { type: 'module' })
+    await fs.createJson('tsconfig.json', {})
     await fs.create(
       'dummy-pkg.js',
       `
       export const stubsRoot = './'
       export async function configure (command) {
-        await command.installPackages([
+        const codemods = await command.createCodemods()
+        await codemods.installPackages([
           { name: 'is-odd@2.0.0', isDevDependency: true },
           { name: 'is-even@1.0.0', isDevDependency: false }
         ])
@@ -395,7 +366,7 @@ test.group('Configure command | run', (group) => {
     assert.deepEqual(packageJson.devDependencies, { 'is-odd': '^2.0.0' })
   })
 
-  test('install packages using pnpm when pnpm-lock file exists', async ({ assert, fs }) => {
+  test('install packages using pnpm when pnpm-lock file exists', async ({ fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(new URL(filePath, fs.baseUrl).href)
@@ -406,13 +377,15 @@ test.group('Configure command | run', (group) => {
     ace.ui.switchMode('raw')
 
     await fs.create('pnpm-lock.yaml', '')
+    await fs.createJson('tsconfig.json', {})
     await fs.createJson('package.json', { type: 'module' })
     await fs.create(
       'dummy-pkg.js',
       `
       export const stubsRoot = './'
       export async function configure (command) {
-        await command.installPackages([
+        const codemods = await command.createCodemods()
+        await codemods.installPackages([
           { name: 'is-odd@2.0.0', isDevDependency: true, },
         ])
       }
@@ -423,15 +396,11 @@ test.group('Configure command | run', (group) => {
     command.verbose = true
     await command.exec()
 
-    const logs = ace.ui.logger.getLogs()
-    assert.equal(command.exitCode, 0)
-    assert.deepInclude(logs, {
-      message: '[ cyan(wait) ] installing dependencies using pnpm .  ',
-      stream: 'stdout',
-    })
+    command.assertSucceeded()
+    command.assertLog('[ cyan(wait) ] installing dependencies using pnpm  .  ')
   })
 
-  test('install packages using npm when package-lock file exists', async ({ assert, fs }) => {
+  test('install packages using npm when package-lock file exists', async ({ fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(new URL(filePath, fs.baseUrl).href)
@@ -442,13 +411,15 @@ test.group('Configure command | run', (group) => {
     ace.ui.switchMode('raw')
 
     await fs.createJson('package-lock.json', {})
+    await fs.createJson('tsconfig.json', {})
     await fs.createJson('package.json', { type: 'module' })
     await fs.create(
       'dummy-pkg.js',
       `
       export const stubsRoot = './'
       export async function configure (command) {
-        await command.installPackages([
+        const codemods = await command.createCodemods()
+        await codemods.installPackages([
           { name: 'is-odd@2.0.0', isDevDependency: true, },
         ])
       }
@@ -459,16 +430,11 @@ test.group('Configure command | run', (group) => {
     command.verbose = true
     await command.exec()
 
-    const logs = ace.ui.logger.getLogs()
-
-    assert.equal(command.exitCode, 0)
-    assert.deepInclude(logs, {
-      message: '[ cyan(wait) ] installing dependencies using npm .  ',
-      stream: 'stdout',
-    })
+    command.assertSucceeded()
+    command.assertLog('[ cyan(wait) ] installing dependencies using npm  .  ')
   })
 
-  test('display error when installing packages', async ({ assert, fs }) => {
+  test('display error when installation fails', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(new URL(filePath, fs.baseUrl).href)
@@ -479,13 +445,15 @@ test.group('Configure command | run', (group) => {
     ace.ui.switchMode('raw')
 
     await fs.createJson('package-lock.json', {})
+    await fs.createJson('tsconfig.json', {})
     await fs.createJson('package.json', { type: 'module' })
     await fs.create(
       'dummy-pkg.js',
       `
       export const stubsRoot = './'
       export async function configure (command) {
-        await command.installPackages([
+        const codemods = await command.createCodemods()
+        await codemods.installPackages([
           { name: 'is-odd@15.0.0', isDevDependency: true, },
         ])
       }
@@ -495,6 +463,8 @@ test.group('Configure command | run', (group) => {
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=6'])
     command.verbose = true
     await command.exec()
+
+    command.assertFailed()
 
     const logs = ace.ui.logger.getLogs()
     assert.deepInclude(logs, {

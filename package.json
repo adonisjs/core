@@ -78,7 +78,7 @@
     "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^6.1.3-28",
+    "@adonisjs/assembler": "^6.1.3-30",
     "@adonisjs/eslint-config": "^1.2.0",
     "@adonisjs/prettier-config": "^1.2.0",
     "@adonisjs/tsconfig": "^1.2.0",
@@ -127,7 +127,6 @@
     "@adonisjs/http-server": "^7.0.0-4",
     "@adonisjs/logger": "^5.4.2-8",
     "@adonisjs/repl": "^4.0.0-10",
-    "@antfu/install-pkg": "^0.3.1",
     "@paralleldrive/cuid2": "^2.2.2",
     "@poppinss/macroable": "^1.0.1",
     "@poppinss/utils": "^6.7.0",
