@@ -17,7 +17,7 @@ const BASE_URL = new URL('./tmp/', import.meta.url)
 const BASE_PATH = fileURLToPath(BASE_URL)
 
 test.group('Configure command | stubs', (group) => {
-  group.tap((t) => t.disableTimeout())
+  group.each.disableTimeout()
 
   test('publish stub using configure command', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -134,7 +134,7 @@ test.group('Configure command | stubs', (group) => {
 })
 
 test.group('Configure command | list dependencies', (group) => {
-  group.tap((t) => t.disableTimeout())
+  group.each.disableTimeout()
 
   test('list development dependencies to install', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -261,7 +261,7 @@ test.group('Configure command | run', (group) => {
     context.fs.basePath = BASE_PATH
   })
 
-  group.tap((t) => t.disableTimeout())
+  group.each.disableTimeout()
 
   test('throw error when unable to import package', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -482,7 +482,7 @@ test.group('Configure command | run', (group) => {
 })
 
 test.group('Configure command | vinejs', (group) => {
-  group.tap((t) => t.disableTimeout())
+  group.each.disableTimeout()
 
   test('register vinejs provider', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
@@ -508,6 +508,10 @@ test.group('Configure command | vinejs', (group) => {
 
     await assert.fileContains('adonisrc.ts', '@adonisjs/core/providers/vinejs_provider')
   })
+})
+
+test.group('Configure command | edge', (group) => {
+  group.each.disableTimeout()
 
   test('register edge provider', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
