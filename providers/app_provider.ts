@@ -66,7 +66,7 @@ export default class AppServiceProvider {
     this.app.container.singleton('logger', async () => {
       const { LoggerManager } = await import('../modules/logger.js')
       const config = this.app.config.get<any>('logger')
-      return new LoggerManager(config) as LoggerService
+      return new LoggerManager<any>(config) as LoggerService
     })
   }
 
