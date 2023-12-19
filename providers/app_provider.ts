@@ -9,7 +9,8 @@
 
 import { Config } from '../modules/config.js'
 import { Logger } from '../modules/logger.js'
-import { BaseEvent } from '../modules/events.js'
+import { Application } from '../modules/app.js'
+import { BaseEvent, Emitter } from '../modules/events.js'
 import { Encryption } from '../modules/encryption.js'
 import { Router, Server } from '../modules/http/main.js'
 import type { ApplicationService, LoggerService } from '../src/types.js'
@@ -46,7 +47,8 @@ export default class AppServiceProvider {
    * Registers the application to the container
    */
   protected registerApp() {
-    this.app.container.singleton('app', () => this.app)
+    this.app.container.singleton(Application, () => this.app)
+    this.app.container.alias('app', Application)
   }
 
   /**
@@ -82,10 +84,10 @@ export default class AppServiceProvider {
    * Registers emitter service to the container
    */
   protected registerEmitter() {
-    this.app.container.singleton('emitter', async () => {
-      const { Emitter } = await import('../modules/events.js')
-      return new Emitter(this.app)
+    this.app.container.singleton(Emitter, async () => {
+      return new Emitter(this.app) as Emitter<any>
     })
+    this.app.container.alias('emitter', Emitter)
   }
 
   /**
