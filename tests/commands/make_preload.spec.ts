@@ -26,7 +26,7 @@ test.group('Make preload file', () => {
     const command = await ace.create(MakePreload, ['app', '--environments=web'])
     await command.exec()
 
-    const { contents } = await new StubsFactory().prepare('make/preload_file/main.stub', {
+    const { contents } = await new StubsFactory().prepare('make/preload/main.stub', {
       entity: ace.app.generators.createEntity('app'),
     })
     await assert.fileEquals('start/app.ts', contents)

@@ -23,7 +23,7 @@ test.group('Make preload file', () => {
     await app.init()
 
     const stubs = await app.stubs.create()
-    const stub = await stubs.build('make/preload_file/main.stub', {
+    const stub = await stubs.build('make/preload/main.stub', {
       source: stubsRoot,
     })
     const { destination } = await stub.prepare({

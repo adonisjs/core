@@ -33,7 +33,7 @@ export default class MakePreload extends BaseCommand {
   /**
    * The stub to use for generating the preload file
    */
-  protected stubPath: string = 'make/preload_file/main.stub'
+  protected stubPath: string = 'make/preload/main.stub'
 
   /**
    * Check if the mentioned environments are valid
