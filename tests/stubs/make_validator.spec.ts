@@ -30,7 +30,31 @@ test.group('Make validator', () => {
       entity: app.generators.createEntity('posts'),
     })
 
-    assert.equal(destination, join(BASE_PATH, 'app/validators/post_validator.ts'))
+    assert.equal(destination, join(BASE_PATH, 'app/validators/post.ts'))
     assert.match(contents, new RegExp("import vine from '@vinejs/vine'"))
+  })
+
+  test('prepare validator stub for a resource', async ({ assert }) => {
+    const app = new AppFactory().create(BASE_URL, () => {})
+    await app.init()
+
+    const stubs = await app.stubs.create()
+    const stub = await stubs.build('make/validator/resource.stub', {
+      source: stubsRoot,
+    })
+    const { contents, destination } = await stub.prepare({
+      entity: app.generators.createEntity('posts'),
+    })
+
+    assert.equal(destination, join(BASE_PATH, 'app/validators/post.ts'))
+    assert.match(contents, new RegExp("import vine from '@vinejs/vine'"))
+    assert.includeMembers(contents.split('\n'), [
+      `export const createPostValidator = vine.compile(`,
+      `  vine.object({})`,
+      `)`,
+      `export const updatePostValidator = vine.compile(`,
+      `  vine.object({})`,
+      `)`,
+    ])
   })
 })

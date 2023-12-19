@@ -27,11 +27,35 @@ test.group('Make validator', () => {
       entity: ace.app.generators.createEntity('invoice'),
     })
 
-    await assert.fileEquals('app/validators/invoice_validator.ts', contents)
+    await assert.fileEquals('app/validators/invoice.ts', contents)
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
-        message: 'green(DONE:)    create app/validators/invoice_validator.ts',
+        message: 'green(DONE:)    create app/validators/invoice.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('create validator file for a resource', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakeValidator, ['invoice', '--resource'])
+    await command.exec()
+
+    const { contents } = await new StubsFactory().prepare('make/validator/resource.stub', {
+      entity: ace.app.generators.createEntity('invoice'),
+    })
+
+    await assert.fileEquals('app/validators/invoice.ts', contents)
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/validators/invoice.ts',
         stream: 'stdout',
       },
     ])

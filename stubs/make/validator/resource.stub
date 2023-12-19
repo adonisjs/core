@@ -1,4 +1,7 @@
+{{#var validatorName = string(generators.validatorName(entity.name)).noCase()}}
 {{#var validatorFileName = generators.validatorFileName(entity.name)}}
+{{#var createAction = generators.validatorActionName(entity.name, 'create')}}
+{{#var updateAction = generators.validatorActionName(entity.name, 'update')}}
 {{{
   exports({
     to: app.validatorsPath(entity.path, validatorFileName)
@@ -8,16 +11,16 @@ import vine from '@vinejs/vine'
 
 /**
  * Validator to validate the payload when creating
- * a new {{ entity.name }}.
+ * a new {{ validatorName }}.
  */
-export const create{{ entity.name }}Validator = vine.compile(
+export const {{ createAction }} = vine.compile(
   vine.object({})
 )
 
 /**
  * Validator to validate the payload when updating
- * an existing {{ entity.name }}.
+ * an existing {{ validatorName }}.
  */
-export const update{{ entity.name }}Validator = vine.compile(
+export const {{ updateAction }} = vine.compile(
   vine.object({})
 )

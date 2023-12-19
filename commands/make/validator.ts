@@ -8,7 +8,7 @@
  */
 
 import { stubsRoot } from '../../stubs/main.js'
-import { args, BaseCommand } from '../../modules/ace/main.js'
+import { args, flags, BaseCommand } from '../../modules/ace/main.js'
 
 /**
  * Make a new VineJS validator
@@ -20,10 +20,25 @@ export default class MakeValidator extends BaseCommand {
   @args.string({ description: 'Name of the validator' })
   declare name: string
 
+  @flags.boolean({ description: 'Define actions to validate CRUD operations' })
+  declare resource: boolean
+
   /**
    * The stub to use for generating the validator
    */
   protected stubPath: string = 'make/validator/main.stub'
+
+  /**
+   * Preparing the command state
+   */
+  async prepare() {
+    /**
+     * Use resource stub
+     */
+    if (this.resource) {
+      this.stubPath = 'make/validator/resource.stub'
+    }
+  }
 
   async run() {
     const codemods = await this.createCodemods()
