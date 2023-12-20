@@ -78,13 +78,13 @@ export default class Build extends BaseCommand {
     const assetsBundler = await detectAssetsBundler(this.app)
     return assetsBundler
       ? {
-          serve: this.assets === false ? false : true,
+          enabled: this.assets === false ? false : true,
           driver: assetsBundler.name,
           cmd: assetsBundler.build.command,
           args: (assetsBundler.build.args || []).concat(this.assetsArgs || []),
         }
       : {
-          serve: false as const,
+          enabled: false as const,
         }
   }
 

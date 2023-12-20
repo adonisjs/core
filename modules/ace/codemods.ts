@@ -12,7 +12,7 @@ import { EventEmitter } from 'node:events'
 import type { Logger } from '@poppinss/cliui'
 import { EnvEditor } from '@adonisjs/env/editor'
 import type { CodeTransformer } from '@adonisjs/assembler/code_transformer'
-import type { AddMiddlewareEntry, EnvValidationDefinition } from '@adonisjs/assembler/types'
+import type { MiddlewareNode, EnvValidationNode } from '@adonisjs/assembler/types'
 
 import type { Application } from '../app.js'
 
@@ -112,7 +112,7 @@ export class Codemods extends EventEmitter {
   /**
    * Define validations for the environment variables
    */
-  async defineEnvValidations(validations: EnvValidationDefinition) {
+  async defineEnvValidations(validations: EnvValidationNode) {
     await this.#importAssembler()
     if (!this.#codeTransformer) {
       this.#cliLogger.warning(
@@ -136,7 +136,7 @@ export class Codemods extends EventEmitter {
   /**
    * Define validations for the environment variables
    */
-  async registerMiddleware(stack: 'server' | 'router' | 'named', middleware: AddMiddlewareEntry[]) {
+  async registerMiddleware(stack: 'server' | 'router' | 'named', middleware: MiddlewareNode[]) {
     await this.#importAssembler()
     if (!this.#codeTransformer) {
       this.#cliLogger.warning(
