@@ -16,7 +16,7 @@ import { args, BaseCommand, flags } from '../modules/ace/main.js'
  */
 export default class Configure extends BaseCommand {
   static commandName = 'configure'
-  static description = 'Configure a package post installation'
+  static description = 'Configure a package after it has been installed'
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
@@ -44,13 +44,13 @@ export default class Configure extends BaseCommand {
   /**
    * Turn on verbose mode for packages installation
    */
-  @flags.boolean({ description: 'Display logs in verbose mode' })
+  @flags.boolean({ description: 'Display logs in verbose mode', alias: 'v' })
   declare verbose?: boolean
 
   /**
    * Forcefully overwrite existing files.
    */
-  @flags.boolean({ description: 'Forcefully overwrite existing files' })
+  @flags.boolean({ description: 'Forcefully overwrite existing files', alias: 'f' })
   declare force?: boolean
 
   /**

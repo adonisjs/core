@@ -11,9 +11,8 @@ import { BaseCommand, flags } from '../modules/ace/main.js'
 import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
 
 /**
- * Serve command is used to run the AdonisJS HTTP server during development. The
- * command under the hood runs the "bin/server.ts" file and watches for file
- * system changes
+ * Create the production build by compiling TypeScript source and the
+ * frontend assets
  */
 export default class Build extends BaseCommand {
   static commandName = 'build'
@@ -33,16 +32,13 @@ export default class Build extends BaseCommand {
     '```',
   ]
 
-  @flags.boolean({ description: 'Watch filesystem and restart the HTTP server on file change' })
-  declare watch?: boolean
-
   @flags.boolean({ description: 'Ignore TypeScript errors and continue with the build process' })
   declare ignoreTsErrors?: boolean
 
   @flags.string({
-    description: 'Select the package manager you want to use to install production dependencies',
+    description: 'Define the package manager to copy the appropriate lock file',
   })
-  declare packageManager?: 'npm' | 'pnpm' | 'yarn'
+  declare packageManager?: 'npm' | 'pnpm' | 'yarn' | 'bun'
 
   @flags.boolean({
     description: 'Build frontend assets',

@@ -41,10 +41,13 @@ export default class Serve extends BaseCommand {
 
   declare devServer: DevServer
 
-  @flags.boolean({ description: 'Watch filesystem and restart the HTTP server on file change' })
+  @flags.boolean({
+    description: 'Watch filesystem and restart the HTTP server on file change',
+    alias: 'w',
+  })
   declare watch?: boolean
 
-  @flags.boolean({ description: 'Use polling to detect filesystem changes' })
+  @flags.boolean({ description: 'Use polling to detect filesystem changes', alias: 'p' })
   declare poll?: boolean
 
   @flags.boolean({

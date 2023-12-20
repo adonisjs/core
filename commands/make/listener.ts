@@ -18,7 +18,7 @@ export default class MakeListener extends BaseCommand {
   static commandName = 'make:listener'
   static description = 'Create a new event listener class'
 
-  @args.string({ description: 'Name of the listener' })
+  @args.string({ description: 'Name of the event listener' })
   declare name: string
 
   @flags.string({

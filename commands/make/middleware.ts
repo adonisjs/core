@@ -19,12 +19,12 @@ import { args, BaseCommand, flags } from '../../modules/ace/main.js'
  */
 export default class MakeMiddleware extends BaseCommand {
   static commandName = 'make:middleware'
-  static description = 'Create a new middleware class'
+  static description = 'Create a new middleware class for HTTP requests'
 
   @args.string({ description: 'Name of the middleware' })
   declare name: string
 
-  @flags.string({ description: 'The stack in which to register the middleware' })
+  @flags.string({ description: 'The stack in which to register the middleware', alias: 's' })
   declare stack?: 'server' | 'named' | 'router'
 
   /**

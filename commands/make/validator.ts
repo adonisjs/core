@@ -15,12 +15,14 @@ import { args, flags, BaseCommand } from '../../modules/ace/main.js'
  */
 export default class MakeValidator extends BaseCommand {
   static commandName = 'make:validator'
-  static description = 'Create a new VineJS validator'
+  static description = 'Create a new file to define VineJS validators'
 
-  @args.string({ description: 'Name of the validator' })
+  @args.string({ description: 'Name of the validator file' })
   declare name: string
 
-  @flags.boolean({ description: 'Define actions to validate CRUD operations' })
+  @flags.boolean({
+    description: 'Create a file with pre-defined validators for create and update actions',
+  })
   declare resource: boolean
 
   /**
