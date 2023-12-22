@@ -12,6 +12,7 @@ import { homedir } from 'node:os'
 
 import { Repl } from '../modules/repl.js'
 import type { ApplicationService, ContainerBindings } from '../src/types.js'
+import { fsImportAll } from '@poppinss/utils'
 
 /**
  * Resolves a container binding and sets it on the REPL
@@ -57,6 +58,18 @@ export default class ReplServiceProvider {
         },
         {
           description: 'Returns the default export for a module',
+        }
+      )
+
+      repl.addMethod(
+        'importAll',
+        (_, dirPath: string) => {
+          return fsImportAll(this.app.makeURL(dirPath), {
+            ignoreMissingRoot: false,
+          })
+        },
+        {
+          description: 'Import all files from a directory and assign them to a variable',
         }
       )
 
