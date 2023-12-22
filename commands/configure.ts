@@ -62,8 +62,19 @@ export default class Configure extends BaseCommand {
   /**
    * Returns the package main exports
    */
-  #getPackageSource(packageName: string) {
-    return this.app.import(packageName)
+  async #getPackageSource(packageName: string) {
+    try {
+      const packageExports = await this.app.import(packageName)
+      return packageExports
+    } catch (error) {
+      if (
+        (error.code && error.code === 'ERR_MODULE_NOT_FOUND') ||
+        error.message.startsWith('Cannot find module')
+      ) {
+        return null
+      }
+      throw error
+    }
   }
 
   /**
@@ -138,14 +149,20 @@ export default class Configure extends BaseCommand {
     }
 
     const packageExports = await this.#getPackageSource(this.name)
+    if (!packageExports) {
+      this.logger.error(`Cannot find module "${this.name}". Make sure to install it`)
+      this.exitCode = 1
+      return
+    }
 
     /**
      * Warn, there are not instructions to run
      */
     if (!packageExports.configure) {
-      this.logger.warning(
-        `Cannot configure "${this.name}" package. The package does not export the configure hook`
+      this.logger.error(
+        `Cannot configure module "${this.name}". The module does not export the configure hook`
       )
+      this.exitCode = 1
       return
     }
 

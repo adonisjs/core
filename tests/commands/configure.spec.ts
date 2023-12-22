@@ -263,10 +263,10 @@ test.group('Configure command | run', (group) => {
 
   group.each.disableTimeout()
 
-  test('throw error when unable to import package', async ({ assert, fs }) => {
+  test('error when unable to import package', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
+      importer: async (filePath) => {
+        await import(filePath)
       },
     })
 
@@ -276,11 +276,11 @@ test.group('Configure command | run', (group) => {
     const command = await ace.create(Configure, ['./dummy-pkg.js'])
     await command.exec()
 
-    assert.match(command.error.message, /Cannot find module/)
+    command.assertLog('[ red(error) ] Cannot find module "./dummy-pkg.js". Make sure to install it')
     assert.equal(command.exitCode, 1)
   })
 
-  test('warn when package cannot be configured', async ({ assert, fs }) => {
+  test('error when package cannot be configured', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
         return import(new URL(filePath, fs.baseUrl).href)
@@ -295,14 +295,10 @@ test.group('Configure command | run', (group) => {
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=1'])
     await command.exec()
 
-    assert.equal(command.exitCode, 0)
-    assert.deepEqual(ace.ui.logger.getLogs(), [
-      {
-        message:
-          '[ yellow(warn) ] Cannot configure "./dummy-pkg.js?v=1" package. The package does not export the configure hook',
-        stream: 'stdout',
-      },
-    ])
+    command.assertLog(
+      '[ red(error) ] Cannot configure module "./dummy-pkg.js?v=1". The module does not export the configure hook'
+    )
+    assert.equal(command.exitCode, 1)
   })
 
   test('run package configure method', async ({ assert, fs }) => {
