@@ -14,6 +14,7 @@ import type { ApplicationService, IgnitorOptions } from '../../src/types.js'
 import { defineConfig as defineLoggerConfig } from '../../modules/logger.js'
 import { defineConfig as defineHashConfig } from '../../modules/hash/main.js'
 import { defineConfig as defineBodyParserConfig } from '../../modules/bodyparser/main.js'
+import { ProviderNode } from '@adonisjs/application/types'
 
 type FactoryParameters = {
   rcFileContents: Record<string, any>
@@ -43,12 +44,14 @@ export class IgnitorFactory {
   /**
    * Merge core providers with user defined providers
    */
-  #mergeCoreProviders(providers?: string[]) {
-    return [
-      '@adonisjs/core/providers/app_provider',
-      '@adonisjs/core/providers/hash_provider',
-      '@adonisjs/core/providers/repl_provider',
-    ].concat(providers || [])
+  #mergeCoreProviders(providers?: ProviderNode['file'][]): ProviderNode['file'][] {
+    const coreProviders: ProviderNode['file'][] = [
+      () => import('@adonisjs/core/providers/app_provider'),
+      () => import('@adonisjs/core/providers/hash_provider'),
+      () => import('@adonisjs/core/providers/repl_provider'),
+    ]
+
+    return coreProviders.concat(providers || [])
   }
 
   /**

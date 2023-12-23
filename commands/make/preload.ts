@@ -27,20 +27,14 @@ export default class MakePreload extends BaseCommand {
 
   @flags.array({
     description: `Define the preload file's environment. Accepted values are "${ALLOWED_ENVIRONMENTS}"`,
+    alias: 'e',
   })
-  declare environments: AllowedAppEnvironments
+  declare environments?: AllowedAppEnvironments
 
   /**
    * The stub to use for generating the preload file
    */
-  protected stubPath: string = 'make/preload_file/main.stub'
-
-  /**
-   * Check if the mentioned environments are valid
-   */
-  #isValidEnvironment(environment: string[]): environment is AllowedAppEnvironments {
-    return !environment.find((one) => !ALLOWED_ENVIRONMENTS.includes(one as any))
-  }
+  protected stubPath: string = 'make/preload/main.stub'
 
   /**
    * Validate the environments flag passed by the user
@@ -50,37 +44,13 @@ export default class MakePreload extends BaseCommand {
       return true
     }
 
-    return this.#isValidEnvironment(this.environments)
-  }
-
-  /**
-   * Prompt for the environments
-   */
-  async #promptForEnvironments(): Promise<AllowedAppEnvironments> {
-    const selectedEnvironments = await this.prompt.multiple(
-      'Select the environment(s) in which you want to load this file',
-      [
-        { name: 'all', message: 'Load file in all environments' },
-        { name: 'console', message: 'Environment for ace commands' },
-        { name: 'repl', message: 'Environment for the REPL session' },
-        { name: 'web', message: 'Environment for HTTP requests' },
-        { name: 'test', message: 'Environment for the test process' },
-      ] as const
-    )
-
-    if (selectedEnvironments.includes('all')) {
-      return ['web', 'console', 'test', 'repl']
-    }
-
-    return selectedEnvironments as AllowedAppEnvironments
+    return this.environments.every((one) => ALLOWED_ENVIRONMENTS.includes(one))
   }
 
   /**
    * Run command
    */
   async run() {
-    let environments: AllowedAppEnvironments = this.environments
-
     /**
      * Ensure the environments are valid when provided via flag
      */
@@ -91,13 +61,6 @@ export default class MakePreload extends BaseCommand {
       return
     }
 
-    /**
-     * Prompt for the environments when not defined
-     */
-    if (!environments) {
-      environments = await this.#promptForEnvironments()
-    }
-
     const codemods = await this.createCodemods()
     const output = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
       flags: this.parsed.flags,
@@ -105,12 +68,18 @@ export default class MakePreload extends BaseCommand {
     })
 
     /**
-     * Registering the preload file with the `adonisrc.js` file. We register
+     * Registering the preload file with the `adonisrc.ts` file. We register
      * the relative path, since we cannot be sure about aliases to exist.
      */
-    const preloadImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
-    await codemods.updateRcFile((rcFile) => {
-      rcFile.addPreloadFile(preloadImportPath, environments)
-    })
+    try {
+      const preloadImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
+      await codemods.updateRcFile((rcFile) => {
+        rcFile.addPreloadFile(preloadImportPath, this.environments)
+      })
+    } catch (_) {
+      this.logger.warning(
+        'Unable to register preload file inside the adonisrc.ts file. Make sure to manually register it'
+      )
+    }
   }
 }

@@ -15,7 +15,7 @@ import { args, BaseCommand } from '../../modules/ace/main.js'
  */
 export default class MakeException extends BaseCommand {
   static commandName = 'make:exception'
-  static description = 'Create a new ace exception class'
+  static description = 'Create a new custom exception class'
 
   @args.string({ description: 'Name of the exception' })
   declare name: string

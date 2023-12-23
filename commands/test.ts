@@ -132,13 +132,13 @@ export default class Test extends BaseCommand {
     const assetsBundler = await detectAssetsBundler(this.app)
     return assetsBundler
       ? {
-          serve: this.assets === false ? false : true,
+          enabled: this.assets === false ? false : true,
           driver: assetsBundler.name,
           cmd: assetsBundler.devServer.command,
           args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
         }
       : {
-          serve: false as const,
+          enabled: false as const,
         }
   }
 

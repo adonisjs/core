@@ -41,10 +41,13 @@ export default class Serve extends BaseCommand {
 
   declare devServer: DevServer
 
-  @flags.boolean({ description: 'Watch filesystem and restart the HTTP server on file change' })
+  @flags.boolean({
+    description: 'Watch filesystem and restart the HTTP server on file change',
+    alias: 'w',
+  })
   declare watch?: boolean
 
-  @flags.boolean({ description: 'Use polling to detect filesystem changes' })
+  @flags.boolean({ description: 'Use polling to detect filesystem changes', alias: 'p' })
   declare poll?: boolean
 
   @flags.boolean({
@@ -88,13 +91,13 @@ export default class Serve extends BaseCommand {
     const assetsBundler = await detectAssetsBundler(this.app)
     return assetsBundler
       ? {
-          serve: this.assets === false ? false : true,
+          enabled: this.assets === false ? false : true,
           driver: assetsBundler.name,
           cmd: assetsBundler.devServer.command,
           args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
         }
       : {
-          serve: false as const,
+          enabled: false as const,
         }
   }
 

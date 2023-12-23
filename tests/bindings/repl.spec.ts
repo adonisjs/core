@@ -83,5 +83,17 @@ test.group('Bindings | Repl', () => {
 
     const router = await methods.make.handler(repl, 'router')
     assert.deepEqual(router, await app.container.make('router'))
+
+    const exportedMods = await methods.importAll.handler(repl, '../../../factories')
+    assert.properties(exportedMods, [
+      'core',
+      'app',
+      'bodyparser',
+      'encryption',
+      'events',
+      'hash',
+      'logger',
+      'http',
+    ])
   })
 })

@@ -43,7 +43,12 @@ export class BaseCommand extends AceBaseCommand {
    */
   async createCodemods() {
     const { Codemods } = await import('./codemods.js')
-    return new Codemods(this.app, this.logger)
+    const codemods = new Codemods(this.app, this.logger)
+    codemods.on('error', () => {
+      this.exitCode = 1
+    })
+
+    return codemods
   }
 
   /**

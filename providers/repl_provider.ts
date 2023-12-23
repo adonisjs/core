@@ -10,8 +10,9 @@
 import { join } from 'node:path'
 import { homedir } from 'node:os'
 
-import type { Repl } from '../modules/repl.js'
+import { Repl } from '../modules/repl.js'
 import type { ApplicationService, ContainerBindings } from '../src/types.js'
+import { fsImportAll } from '@poppinss/utils'
 
 /**
  * Resolves a container binding and sets it on the REPL
@@ -37,12 +38,12 @@ export default class ReplServiceProvider {
    * Registers the REPL binding
    */
   register() {
-    this.app.container.singleton('repl', async () => {
-      const { Repl } = await import('../modules/repl.js')
+    this.app.container.singleton(Repl, async () => {
       return new Repl({
         historyFilePath: join(homedir(), '.adonisjs_v6_repl_history'),
       })
     })
+    this.app.container.alias('repl', Repl)
   }
 
   /**
@@ -57,6 +58,18 @@ export default class ReplServiceProvider {
         },
         {
           description: 'Returns the default export for a module',
+        }
+      )
+
+      repl.addMethod(
+        'importAll',
+        (_, dirPath: string) => {
+          return fsImportAll(this.app.makeURL(dirPath), {
+            ignoreMissingRoot: false,
+          })
+        },
+        {
+          description: 'Import all files from a directory and assign them to a variable',
         }
       )
 

@@ -7,8 +7,11 @@
  * file that was distributed with this source code.
  */
 
+import string from '@poppinss/utils/string'
+import { basename, extname } from 'node:path'
+
 import { stubsRoot } from '../../stubs/main.js'
-import { args, BaseCommand } from '../../modules/ace/main.js'
+import { args, BaseCommand, flags } from '../../modules/ace/main.js'
 
 /**
  * The make middleware command to create a new middleware
@@ -16,10 +19,13 @@ import { args, BaseCommand } from '../../modules/ace/main.js'
  */
 export default class MakeMiddleware extends BaseCommand {
   static commandName = 'make:middleware'
-  static description = 'Create a new middleware class'
+  static description = 'Create a new middleware class for HTTP requests'
 
   @args.string({ description: 'Name of the middleware' })
   declare name: string
+
+  @flags.string({ description: 'The stack in which to register the middleware', alias: 's' })
+  declare stack?: 'server' | 'named' | 'router'
 
   /**
    * The stub to use for generating the middleware
@@ -27,10 +33,50 @@ export default class MakeMiddleware extends BaseCommand {
   protected stubPath: string = 'make/middleware/main.stub'
 
   async run() {
+    const stackChoices = ['server', 'router', 'named']
+
+    /**
+     * Prompt to select the stack under which to register
+     * the middleware
+     */
+    if (!this.stack) {
+      this.stack = await this.prompt.choice(
+        'Under which stack you want to register the middleware?',
+        stackChoices
+      )
+    }
+
+    /**
+     * Error out when mentioned stack is invalid
+     */
+    if (!stackChoices.includes(this.stack)) {
+      this.exitCode = 1
+      this.logger.error(
+        `Invalid middleware stack "${this.stack}". Select from "${stackChoices.join(', ')}"`
+      )
+      return
+    }
+
+    /**
+     * Create middleware
+     */
     const codemods = await this.createCodemods()
-    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+    const { relativeFileName } = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
       flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
     })
+
+    /**
+     * Register middleware
+     */
+    const middlewareFileName = basename(relativeFileName).replace(extname(relativeFileName), '')
+    const importPath = `#middleware/${middlewareFileName}`
+    const namedReference = string.camelCase(middlewareFileName.replace(/_middleware$/, ''))
+    await codemods.registerMiddleware(this.stack, [
+      {
+        name: namedReference,
+        path: importPath,
+      },
+    ])
   }
 }
