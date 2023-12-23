@@ -10,10 +10,10 @@
 export { default as parseImports } from 'parse-imports'
 export { createId as cuid, isCuid } from '@paralleldrive/cuid2'
 export {
-  join,
   slash,
   base64,
   compose,
+  joinToURL,
   fsReadAll,
   safeEqual,
   getDirname,
