@@ -87,6 +87,42 @@ test.group('Make middleware', (group) => {
     )
   })
 
+  test('create nested middleware', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('start/kernel.ts', 'export const middleware = router.named({})')
+
+    const command = await ace.create(MakeMiddleware, ['blog/auth', '--stack=named'])
+    await command.exec()
+
+    const { contents } = await new StubsFactory().prepare('make/middleware/main.stub', {
+      entity: ace.app.generators.createEntity('auth'),
+    })
+
+    await assert.fileEquals('app/middleware/blog/auth_middleware.ts', contents)
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/middleware/blog/auth_middleware.ts',
+        stream: 'stdout',
+      },
+      {
+        message: 'green(DONE:)    update start/kernel.ts file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains(
+      'start/kernel.ts',
+      `auth: () => import('#middleware/blog/auth_middleware')`
+    )
+  })
+
   test('show error when selected middleware stack is invalid', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),

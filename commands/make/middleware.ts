@@ -8,7 +8,7 @@
  */
 
 import string from '@poppinss/utils/string'
-import { basename, extname } from 'node:path'
+import { basename, extname, relative } from 'node:path'
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, BaseCommand, flags } from '../../modules/ace/main.js'
@@ -61,21 +61,33 @@ export default class MakeMiddleware extends BaseCommand {
      * Create middleware
      */
     const codemods = await this.createCodemods()
-    const { relativeFileName } = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+    const { destination } = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
       flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
     })
 
     /**
+     * Creative relative path for the middleware file from
+     * the "./app/middleware" directory
+     */
+    const middlewareRelativePath = relative(this.app.middlewarePath(), destination).replace(
+      extname(destination),
+      ''
+    )
+
+    /**
+     * Take the middleware relative path, remove `_middleware` prefix from it
+     * and convert everything to camelcase
+     */
+    const name = string.camelCase(basename(middlewareRelativePath).replace(/_middleware$/, ''))
+
+    /**
      * Register middleware
      */
-    const middlewareFileName = basename(relativeFileName).replace(extname(relativeFileName), '')
-    const importPath = `#middleware/${middlewareFileName}`
-    const namedReference = string.camelCase(middlewareFileName.replace(/_middleware$/, ''))
     await codemods.registerMiddleware(this.stack, [
       {
-        name: namedReference,
-        path: importPath,
+        name: name,
+        path: `#middleware/${middlewareRelativePath}`,
       },
     ])
   }
