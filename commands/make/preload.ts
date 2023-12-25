@@ -11,6 +11,7 @@ import type { AppEnvironments } from '@adonisjs/application/types'
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, flags, BaseCommand } from '../../modules/ace/main.js'
+import { extname, relative } from 'node:path'
 
 const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnvironments[]
 type AllowedAppEnvironments = typeof ALLOWED_ENVIRONMENTS
@@ -24,6 +25,13 @@ export default class MakePreload extends BaseCommand {
 
   @args.string({ description: 'Name of the preload file' })
   declare name: string
+
+  @flags.boolean({
+    description: 'Auto register the preload file inside the .adonisrc.ts file',
+    showNegatedVariantInHelp: true,
+    alias: 'r',
+  })
+  declare register?: boolean
 
   @flags.array({
     description: `Define the preload file's environment. Accepted values are "${ALLOWED_ENVIRONMENTS}"`,
@@ -61,25 +69,41 @@ export default class MakePreload extends BaseCommand {
       return
     }
 
+    /**
+     * Display prompt to know if we should register the preload
+     * file inside the ".adonisrc.ts" file.
+     */
+    if (this.register === undefined) {
+      this.register = await this.prompt.confirm(
+        'Do you want to register the preload file in .adonisrc.ts file?'
+      )
+    }
+
     const codemods = await this.createCodemods()
-    const output = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+    const { destination } = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
       flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
     })
 
     /**
-     * Registering the preload file with the `adonisrc.ts` file. We register
-     * the relative path, since we cannot be sure about aliases to exist.
+     * Do not register when prompt has been denied or "--no-register"
+     * flag was used
      */
-    try {
-      const preloadImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
-      await codemods.updateRcFile((rcFile) => {
-        rcFile.addPreloadFile(preloadImportPath, this.environments)
-      })
-    } catch (_) {
-      this.logger.warning(
-        'Unable to register preload file inside the adonisrc.ts file. Make sure to manually register it'
-      )
+    if (!this.register) {
+      return
     }
+
+    /**
+     * Creative relative path for the preload file from
+     * the "./start" directory
+     */
+    const preloadFileRelativePath = relative(this.app.startPath(), destination).replace(
+      extname(destination),
+      ''
+    )
+
+    await codemods.updateRcFile((rcFile) => {
+      rcFile.addPreloadFile(`#start/${preloadFileRelativePath}`, this.environments)
+    })
   }
 }
