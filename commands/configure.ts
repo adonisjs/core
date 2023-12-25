@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { slash } from '@poppinss/utils'
 import type { CommandOptions } from '../types/ace.js'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
 

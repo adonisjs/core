@@ -12,7 +12,11 @@ import { EventEmitter } from 'node:events'
 import type { Logger } from '@poppinss/cliui'
 import { EnvEditor } from '@adonisjs/env/editor'
 import type { CodeTransformer } from '@adonisjs/assembler/code_transformer'
-import type { MiddlewareNode, EnvValidationNode } from '@adonisjs/assembler/types'
+import type {
+  MiddlewareNode,
+  EnvValidationNode,
+  BouncerPolicyNode,
+} from '@adonisjs/assembler/types'
 
 import type { Application } from '../app.js'
 
@@ -150,6 +154,32 @@ export class Codemods extends EventEmitter {
 
     try {
       await transformer.addMiddlewareToStack(stack, middleware)
+      action.succeeded()
+    } catch (error) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
+  }
+
+  /**
+   * Register bouncer policies to the list of policies
+   * collection exported from the "app/policies/main.ts"
+   * file.
+   */
+  async registerPolicies(policies: BouncerPolicyNode[]) {
+    await this.#importAssembler()
+    if (!this.#codeTransformer) {
+      this.#cliLogger.warning(
+        'Cannot update "app/policies/main.ts" file. Install "@adonisjs/assembler" to modify source files'
+      )
+      return
+    }
+
+    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
+    const action = this.#cliLogger.action('update app/policies/main.ts file')
+
+    try {
+      await transformer.addPolicies(policies)
       action.succeeded()
     } catch (error) {
       this.emit('error', error)

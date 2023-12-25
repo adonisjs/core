@@ -150,3 +150,30 @@ test.group('Codemods | registerMiddleware', (group) => {
     await assert.fileContains('start/kernel.ts', '@adonisjs/core/bodyparser_middleware')
   })
 })
+
+test.group('Codemods | registerPolicies', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('register bouncer policies', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('app/policies/main.ts', 'export const policies = {}')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.registerPolicies([{ name: 'PostPolicy', path: '#policies/post_policy' }])
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update app/policies/main.ts file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('app/policies/main.ts', '#policies/post_policy')
+  })
+})
