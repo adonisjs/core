@@ -103,7 +103,7 @@ test.group('Make preload file', () => {
       },
     ])
 
-    await assert.fileContains('adonisrc.ts', ``)
+    await assert.fileEquals('adonisrc.ts', `export default defineConfig({})`)
   })
 
   test('use environment flag to make preload file in a specific env', async ({ assert, fs }) => {
@@ -142,6 +142,7 @@ test.group('Make preload file', () => {
 
     const command = await ace.create(MakePreload, ['app'])
     command.environments = ['foo' as any]
+    command.prompt.trap('Do you want to register the preload file in .adonisrc.ts file?').accept()
     await command.exec()
 
     command.assertLog(

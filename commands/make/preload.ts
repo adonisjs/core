@@ -7,11 +7,11 @@
  * file that was distributed with this source code.
  */
 
+import { extname, relative } from 'node:path'
 import type { AppEnvironments } from '@adonisjs/application/types'
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, flags, BaseCommand } from '../../modules/ace/main.js'
-import { extname, relative } from 'node:path'
 
 const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnvironments[]
 type AllowedAppEnvironments = typeof ALLOWED_ENVIRONMENTS
