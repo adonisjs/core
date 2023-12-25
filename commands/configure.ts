@@ -109,35 +109,6 @@ export default class Configure extends BaseCommand {
   }
 
   /**
-   * Publish a stub file to the user project
-   */
-  async publishStub(stubPath: string, stubData?: Record<string, any>) {
-    const stubs = await this.app.stubs.create()
-    const stub = await stubs.build(stubPath, {
-      source: this.stubsRoot,
-    })
-
-    const output = await stub.generate(
-      Object.assign(
-        {
-          force: this.force,
-        },
-        stubData
-      )
-    )
-
-    /**
-     * Log message
-     */
-    const entityFileName = slash(this.app.relativePath(output.destination))
-    if (output.status === 'skipped') {
-      return this.logger.action(`create ${entityFileName}`).skipped(output.skipReason)
-    }
-
-    this.logger.action(`create ${entityFileName}`).succeeded()
-  }
-
-  /**
    * Run method is invoked by ace automatically
    */
   async run() {
