@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { slash } from '@poppinss/utils'
 import { extname, relative } from 'node:path'
 import type { AppEnvironments } from '@adonisjs/application/types'
 
@@ -97,9 +98,8 @@ export default class MakePreload extends BaseCommand {
      * Creative relative path for the preload file from
      * the "./start" directory
      */
-    const preloadFileRelativePath = relative(this.app.startPath(), destination).replace(
-      extname(destination),
-      ''
+    const preloadFileRelativePath = slash(
+      relative(this.app.startPath(), destination).replace(extname(destination), '')
     )
 
     await codemods.updateRcFile((rcFile) => {

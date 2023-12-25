@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { slash } from '@poppinss/utils'
 import { extname, relative } from 'node:path'
 
 import { stubsRoot } from '../../stubs/main.js'
@@ -93,9 +94,8 @@ export default class MakeProvider extends BaseCommand {
      * Creative relative path for the provider file from
      * the "./start" directory
      */
-    const providerRelativePath = relative(this.app.providersPath(), destination).replace(
-      extname(destination),
-      ''
+    const providerRelativePath = slash(
+      relative(this.app.providersPath(), destination).replace(extname(destination), '')
     )
 
     await codemods.updateRcFile((rcFile) => {

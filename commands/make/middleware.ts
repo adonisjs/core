@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { slash } from '@poppinss/utils'
 import string from '@poppinss/utils/string'
 import { basename, extname, relative } from 'node:path'
 
@@ -70,9 +71,8 @@ export default class MakeMiddleware extends BaseCommand {
      * Creative relative path for the middleware file from
      * the "./app/middleware" directory
      */
-    const middlewareRelativePath = relative(this.app.middlewarePath(), destination).replace(
-      extname(destination),
-      ''
+    const middlewareRelativePath = slash(
+      relative(this.app.middlewarePath(), destination).replace(extname(destination), '')
     )
 
     /**
