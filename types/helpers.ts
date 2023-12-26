@@ -7,4 +7,4 @@
  * file that was distributed with this source code.
  */
 
-export * from '@adonisjs/bodyparser/types'
+export type { Opaque } from '@poppinss/utils/types'

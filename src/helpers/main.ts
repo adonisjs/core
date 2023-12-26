@@ -13,9 +13,14 @@ export {
   slash,
   base64,
   compose,
+  joinToURL,
   fsReadAll,
   safeEqual,
+  getDirname,
+  getFilename,
   fsImportAll,
   MessageBuilder,
 } from '@poppinss/utils'
+export { assert, assertNotNull, assertUnreachable } from '@poppinss/utils/assert'
+
 export { parseBindingReference } from './parse_binding_reference.js'
