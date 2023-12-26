@@ -13,6 +13,7 @@ export {
   slash,
   base64,
   compose,
+  Secret,
   joinToURL,
   fsReadAll,
   safeEqual,
