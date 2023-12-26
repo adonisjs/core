@@ -177,3 +177,40 @@ test.group('Codemods | registerPolicies', (group) => {
     await assert.fileContains('app/policies/main.ts', '#policies/post_policy')
   })
 })
+
+test.group('Codemods | install packages', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('install packages', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.createJson('package.json', {})
+    await fs.create('app/policies/main.ts', 'export const policies = {}')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.installPackages([{ name: '@adonisjs/assembler@next', isDevDependency: true }])
+
+    await assert.dirExists('node_modules/@adonisjs/assembler')
+  })
+
+  test('install packages in verbose mode', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+    await ace.app.init()
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.createJson('package.json', {})
+    await fs.create('app/policies/main.ts', 'export const policies = {}')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    codemods.verboseInstallOutput = true
+    await codemods.installPackages([{ name: '@adonisjs/assembler@next', isDevDependency: true }])
+
+    await assert.dirExists('node_modules/@adonisjs/assembler')
+  })
+})

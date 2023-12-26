@@ -258,22 +258,30 @@ export class Codemods extends EventEmitter {
     const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
     const packageManager = await transformer.detectPackageManager(appPath)
 
-    let spinner = this.#cliLogger
-      .await(`installing dependencies using ${packageManager || 'npm'} `)
-      .start()
+    const spinner = this.#cliLogger.await(
+      `installing dependencies using ${packageManager || 'npm'} `
+    )
+
+    const silentLogs = !this.verboseInstallOutput
+    if (silentLogs) {
+      spinner.start()
+    }
 
     try {
       await transformer.installPackage(dependencies, {
         cwd: appPath,
-        silent: !this.verboseInstallOutput,
+        silent: silentLogs,
       })
       await transformer.installPackage(devDependencies, {
         dev: true,
         cwd: appPath,
-        silent: !this.verboseInstallOutput,
+        silent: silentLogs,
       })
 
-      spinner.stop()
+      if (silentLogs) {
+        spinner.stop()
+      }
+
       this.#cliLogger.success('Packages installed')
       this.#cliLogger.log(
         devDependencies.map((dependency) => `    ${colors.dim('dev')} ${dependency} `).join('\n')
@@ -282,8 +290,10 @@ export class Codemods extends EventEmitter {
         dependencies.map((dependency) => `    ${colors.dim('prod')} ${dependency} `).join('\n')
       )
     } catch (error) {
-      spinner.update('unable to install dependencies')
-      spinner.stop()
+      if (silentLogs) {
+        spinner.update('unable to install dependencies')
+        spinner.stop()
+      }
       this.#cliLogger.fatal(error)
       this.emit('error', error)
     }
