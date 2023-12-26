@@ -22,10 +22,4 @@ export {
   fsImportAll,
   MessageBuilder,
 } from '@poppinss/utils'
-export {
-  assertExists,
-  assertNotNull,
-  assertIsDefined,
-  assertUnreachable,
-} from '@poppinss/utils/assert'
 export { parseBindingReference } from './parse_binding_reference.js'
