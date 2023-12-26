@@ -272,7 +272,6 @@ test.group('Configure command | run', (group) => {
     )
 
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=4'])
-    command.verbose = true
     await command.exec()
 
     command.assertSucceeded()
@@ -306,7 +305,6 @@ test.group('Configure command | run', (group) => {
     )
 
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=5'])
-    command.verbose = true
     await command.exec()
 
     command.assertSucceeded()
@@ -340,7 +338,6 @@ test.group('Configure command | run', (group) => {
     )
 
     const command = await ace.create(Configure, ['./dummy-pkg.js?v=6'])
-    command.verbose = true
     await command.exec()
 
     command.assertFailed()
