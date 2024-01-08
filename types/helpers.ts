@@ -7,4 +7,9 @@
  * file that was distributed with this source code.
  */
 
-export type { Opaque } from '@poppinss/utils/types'
+export type {
+  Opaque,
+  ReadAllFilesOptions,
+  NormalizeConstructor,
+  ImportAllFilesOptions,
+} from '@poppinss/utils/types'
