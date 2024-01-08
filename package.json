@@ -140,11 +140,11 @@
     "youch-terminal": "^2.2.3"
   },
   "peerDependencies": {
-    "@adonisjs/assembler": "^7.0.0-0",
+    "@adonisjs/assembler": "^7.0.0",
     "@vinejs/vine": "^1.7.0",
     "argon2": "^0.31.1",
     "bcrypt": "^5.1.1",
-    "edge.js": "^6.0.0"
+    "edge.js": "^6.0.1"
   },
   "peerDependenciesMeta": {
     "argon2": {
@@ -189,11 +189,11 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "next"
+    "tag": "latest"
   },
   "np": {
     "message": "chore(release): %s",
-    "tag": "next",
+    "tag": "latest",
     "branch": "main",
     "anyBranch": false
   },
