@@ -36,7 +36,6 @@
     "./helpers": "./build/src/helpers/main.js",
     "./helpers/*": "./build/src/helpers/*.js",
     "./ace": "./build/modules/ace/main.js",
-    "./ace/shell": "./build/modules/ace/shell.js",
     "./ace/codemods": "./build/modules/ace/codemods.js",
     "./bodyparser": "./build/modules/bodyparser/main.js",
     "./bodyparser_middleware": "./build/modules/bodyparser/bodyparser_middleware.js",
