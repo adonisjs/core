@@ -9,8 +9,8 @@
 
 import { slash } from '@poppinss/utils'
 import { EventEmitter } from 'node:events'
-import type { Logger } from '@poppinss/cliui'
 import { EnvEditor } from '@adonisjs/env/editor'
+import type { UIPrimitives } from '@adonisjs/ace/types'
 import type { CodeTransformer } from '@adonisjs/assembler/code_transformer'
 import type {
   MiddlewareNode,
@@ -45,7 +45,7 @@ export class Codemods extends EventEmitter {
   /**
    * Reference to CLI logger to write logs
    */
-  #cliLogger: Logger
+  #cliLogger: UIPrimitives['logger']
 
   /**
    * Overwrite existing files when generating files
@@ -58,7 +58,7 @@ export class Codemods extends EventEmitter {
    */
   verboseInstallOutput = false
 
-  constructor(app: Application<any>, cliLogger: Logger) {
+  constructor(app: Application<any>, cliLogger: UIPrimitives['logger']) {
     super()
     this.#app = app
     this.#cliLogger = cliLogger
