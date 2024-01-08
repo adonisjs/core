@@ -95,7 +95,7 @@ test.group('Kernel', () => {
     execMock.verify()
   })
 
-  test('load commands from a package', async ({ assert }) => {
+  test('load commands from a module identifier', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
       .merge({
