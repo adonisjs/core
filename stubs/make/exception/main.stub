@@ -1,0 +1,12 @@
+{{#var exceptionName = generators.exceptionName(entity.name)}}
+{{#var exceptionFileName = generators.exceptionFileName(entity.name)}}
+{{{
+  exports({
+    to: app.exceptionsPath(entity.path, exceptionFileName)
+  })
+}}}
+import { Exception } from '@adonisjs/core/exceptions'
+
+export default class {{ exceptionName }} extends Exception {
+  static status = 500
+}

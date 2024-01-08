@@ -1,0 +1,15 @@
+name: checks
+on:
+  - push
+  - pull_request
+jobs:
+  test:
+    uses: adonisjs/core/.github/workflows/test.yml@next
+    with:
+      install-pnpm: true
+
+  lint:
+    uses: adonisjs/.github/.github/workflows/lint.yml@main
+
+  typecheck:
+    uses: adonisjs/.github/.github/workflows/typecheck.yml@main

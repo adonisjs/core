@@ -1,0 +1,15 @@
+{{#var listenerName = generators.listenerName(entity.name)}}
+{{#var listenerFileName = generators.listenerFileName(entity.name)}}
+{{#var eventName = generators.eventName(event.name)}}
+{{#var eventFileName = generators.eventFileName(event.name)}}
+{{#var eventImportPath = generators.importPath('#events', event.path, eventFileName)}}
+{{{
+  exports({
+    to: app.listenersPath(entity.path, listenerFileName)
+  })
+}}}
+import type {{ eventName }} from '{{ eventImportPath }}'
+
+export default class {{ listenerName }} {
+  async handle(event: {{ eventName }}) {}
+}

@@ -1,0 +1,17 @@
+{{#var eventName = generators.eventName(entity.name)}}
+{{#var eventFileName = generators.eventFileName(entity.name)}}
+{{{
+  exports({
+    to: app.eventsPath(entity.path, eventFileName)
+  })
+}}}
+import { BaseEvent } from '@adonisjs/core/events'
+
+export default class {{ eventName }} extends BaseEvent {
+  /**
+   * Accept event data as constructor parameters
+   */
+  constructor() {
+    super()
+  }
+}

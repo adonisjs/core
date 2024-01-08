@@ -1,0 +1,170 @@
+[
+  {
+    "name": "Priority: Critical",
+    "color": "ea0056",
+    "description": "The issue needs urgent attention",
+    "aliases": []
+  },
+  {
+    "name": "Priority: High",
+    "color": "5666ed",
+    "description": "Look into this issue before picking up any new work",
+    "aliases": []
+  },
+  {
+    "name": "Priority: Medium",
+    "color": "f4ff61",
+    "description": "Try to fix the issue for the next patch/minor release",
+    "aliases": []
+  },
+  {
+    "name": "Priority: Low",
+    "color": "87dfd6",
+    "description": "Something worth considering, but not a top priority for the team",
+    "aliases": []
+  },
+  {
+    "name": "Semver: Alpha",
+    "color": "008480",
+    "description": "Will make it's way to the next alpha version of the package",
+    "aliases": []
+  },
+  {
+    "name": "Semver: Major",
+    "color": "ea0056",
+    "description": "Has breaking changes",
+    "aliases": []
+  },
+  {
+    "name": "Semver: Minor",
+    "color": "fbe555",
+    "description": "Mainly new features and improvements",
+    "aliases": []
+  },
+  {
+    "name": "Semver: Next",
+    "color": "5666ed",
+    "description": "Will make it's way to the bleeding edge version of the package",
+    "aliases": []
+  },
+  {
+    "name": "Semver: Patch",
+    "color": "87dfd6",
+    "description": "A bug fix",
+    "aliases": []
+  },
+  {
+    "name": "Status: Abandoned",
+    "color": "ffffff",
+    "description": "Dropped and not into consideration",
+    "aliases": ["wontfix"]
+  },
+  {
+    "name": "Status: Accepted",
+    "color": "e5fbf2",
+    "description": "The proposal or the feature has been accepted for the future versions",
+    "aliases": []
+  },
+  {
+    "name": "Status: Blocked",
+    "color": "ea0056",
+    "description": "The work on the issue or the PR is blocked. Check comments for reasoning",
+    "aliases": []
+  },
+  {
+    "name": "Status: Completed",
+    "color": "008672",
+    "description": "The work has been completed, but not released yet",
+    "aliases": []
+  },
+  {
+    "name": "Status: In Progress",
+    "color": "73dbc4",
+    "description": "Still banging the keyboard",
+    "aliases": ["in progress"]
+  },
+  {
+    "name": "Status: On Hold",
+    "color": "f4ff61",
+    "description": "The work was started earlier, but is on hold now. Check comments for reasoning",
+    "aliases": ["On Hold"]
+  },
+  {
+    "name": "Status: Review Needed",
+    "color": "fbe555",
+    "description": "Review from the core team is required before moving forward",
+    "aliases": []
+  },
+  {
+    "name": "Status: Awaiting More Information",
+    "color": "89f8ce",
+    "description": "Waiting on the issue reporter or PR author to provide more information",
+    "aliases": []
+  },
+  {
+    "name": "Status: Need Contributors",
+    "color": "7057ff",
+    "description": "Looking for contributors to help us move forward with this issue or PR",
+    "aliases": []
+  },
+  {
+    "name": "Type: Bug",
+    "color": "ea0056",
+    "description": "The issue has indentified a bug",
+    "aliases": ["bug"]
+  },
+  {
+    "name": "Type: Security",
+    "color": "ea0056",
+    "description": "Spotted security vulnerability and is a top priority for the core team",
+    "aliases": []
+  },
+  {
+    "name": "Type: Duplicate",
+    "color": "00837e",
+    "description": "Already answered or fixed previously",
+    "aliases": ["duplicate"]
+  },
+  {
+    "name": "Type: Enhancement",
+    "color": "89f8ce",
+    "description": "Improving an existing feature",
+    "aliases": ["enhancement"]
+  },
+  {
+    "name": "Type: Feature Request",
+    "color": "483add",
+    "description": "Request to add a new feature to the package",
+    "aliases": []
+  },
+  {
+    "name": "Type: Invalid",
+    "color": "dbdbdb",
+    "description": "Doesn't really belong here. Maybe use discussion threads?",
+    "aliases": ["invalid"]
+  },
+  {
+    "name": "Type: Question",
+    "color": "eceafc",
+    "description": "Needs clarification",
+    "aliases": ["help wanted", "question"]
+  },
+  {
+    "name": "Type: Documentation Change",
+    "color": "7057ff",
+    "description": "Documentation needs some improvements",
+    "aliases": ["documentation"]
+  },
+  {
+    "name": "Type: Dependencies Update",
+    "color": "00837e",
+    "description": "Bump dependencies",
+    "aliases": ["dependencies"]
+  },
+  {
+    "name": "Good First Issue",
+    "color": "008480",
+    "description": "Want to contribute? Just filter by this label",
+    "aliases": ["good first issue"]
+  }
+]

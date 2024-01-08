@@ -1,0 +1,6 @@
+{{#var serviceFileName = generators.serviceFileName(entity.name)}}
+{{{
+  exports({
+    to: app.servicesPath(entity.path, serviceFileName)
+  })
+}}}

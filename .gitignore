@@ -14,3 +14,4 @@ shrinkwrap.yaml
 package-lock.json
 test/__app
 .env
+backup

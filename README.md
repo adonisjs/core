@@ -1,11 +1,6 @@
-<div align="center">
-  <img src="https://res.cloudinary.com/adonisjs/image/upload/q_100/v1558612869/adonis-readme_zscycu.jpg" width="600px">
-</div>
+# @adonisjs/core
 
-<br />
-<hr>
-
-![](https://cdn.jsdelivr.net/gh/thetutlage/static/sponsorkit/sponsors.png)
+![](https://github.com/thetutlage/static/blob/main/sponsorkit/sponsors.png?raw=true)
 
 <hr>
 <br />
@@ -19,7 +14,7 @@
 
 <div align="center">
 
-[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![snyk-image]][snyk-url]
+[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url]
 
 </div>
 
@@ -43,16 +38,10 @@
   <sub>Built with ❤︎ by <a href="https://github.com/thetutlage">Harminder Virk</a>
 </div>
 
-[gh-workflow-image]: https://img.shields.io/github/actions/workflow/status/adonisjs/core/test.yml?branch=develop&label=Tests&style=for-the-badge
-[gh-workflow-url]: https://github.com/adonisjs/core/actions/workflows/test.yml "Github action"
-
+[gh-workflow-image]: https://img.shields.io/github/actions/workflow/status/adonisjs/core/checks.yml?branch=develop&label=Tests&style=for-the-badge
+[gh-workflow-url]: https://github.com/adonisjs/core/actions/workflows/checks.yml 'Github action'
 [npm-image]: https://img.shields.io/npm/v/@adonisjs/core/latest.svg?style=for-the-badge&logo=npm
-[npm-url]: https://www.npmjs.com/package/@adonisjs/core/v/latest "npm"
-
+[npm-url]: https://www.npmjs.com/package/@adonisjs/core/v/latest 'npm'
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
-
 [license-url]: LICENSE.md
 [license-image]: https://img.shields.io/github/license/adonisjs/adonis-framework?style=for-the-badge
-
-[snyk-image]: https://img.shields.io/snyk/vulnerabilities/github/adonisjs/core?label=Snyk%20Vulnerabilities&style=for-the-badge
-[snyk-url]: https://snyk.io/test/github/adonisjs/core?targetFile=package.json "snyk"

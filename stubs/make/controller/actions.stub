@@ -1,0 +1,14 @@
+{{#var controllerName = generators.controllerName(entity.name)}}
+{{#var controllerFileName = generators.controllerFileName(entity.name)}}
+{{{
+  exports({
+    to: app.httpControllersPath(entity.path, controllerFileName)
+  })
+}}}
+import type { HttpContext } from '@adonisjs/core/http'
+
+export default class {{ controllerName }} {
+  {{#each actions as action}}
+  async {{action}}({}: HttpContext) {}
+  {{/each}}
+}

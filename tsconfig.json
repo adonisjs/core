@@ -1,13 +1,7 @@
 {
-  "extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
+  "extends": "@adonisjs/tsconfig/tsconfig.package.json",
   "compilerOptions": {
-    "skipLibCheck": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "types": [
-      "@types/node",
-      "@adonisjs/repl",
-      "@japa/preset-adonis/build/adonis-typings/index"
-    ]
+    "rootDir": "./",
+    "outDir": "./build"
   }
 }
