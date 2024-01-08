@@ -18,7 +18,14 @@ test.group('Ignitor | Test process', () => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
     await ignitor.testRunner().run(() => {})
     assert.equal(ignitor.getApp()?.getEnvironment(), 'test')
     assert.equal(ignitor.getApp()?.getState(), 'ready')
@@ -29,7 +36,14 @@ test.group('Ignitor | Test process', () => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
 
     await ignitor
       .testRunner()

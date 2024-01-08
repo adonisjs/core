@@ -30,7 +30,11 @@ test.group('Ignitor | Http server process', () => {
     const serverURL = `http://${process.env.HOST}:${process.env.PORT}`
 
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
       .withCoreConfig()
       .preload(async (app) => {
         const router = await app.container.make('router')
@@ -54,7 +58,11 @@ test.group('Ignitor | Http server process', () => {
     const serverURL = 'http://127.0.0.1:3333'
 
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
       .withCoreConfig()
       .preload(async (app) => {
         const router = await app.container.make('router')
@@ -81,7 +89,14 @@ test.group('Ignitor | Http server process', () => {
     process.env.HOST = 'localhost'
     process.env.PORT = String(await getPort())
 
-    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
 
     ignitor.tap((application) => {
       app = application
@@ -107,7 +122,14 @@ test.group('Ignitor | Http server process', () => {
     process.env.HOST = 'localhost'
     process.env.PORT = String(await getPort())
 
-    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
 
     await new Promise<void>((resolve) => {
       nodeServer.listen(Number(process.env.PORT), process.env.HOST, () => {
@@ -132,7 +154,14 @@ test.group('Ignitor | Http server process', () => {
     process.env.HOST = 'localhost'
     process.env.PORT = String(await getPort())
 
-    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
 
     ignitor.tap((application) => {
       app = application

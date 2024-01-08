@@ -21,10 +21,12 @@ test.group('Bindings | Edge', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [() => import('../../providers/edge_provider.js')],
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
+          ],
         },
       })
-      .withCoreProviders()
       .withCoreConfig()
       .create(BASE_URL)
 
@@ -49,10 +51,12 @@ test.group('Bindings | Edge', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [() => import('../../providers/edge_provider.js')],
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
+          ],
         },
       })
-      .withCoreProviders()
       .withCoreConfig()
       .create(BASE_URL)
 

@@ -86,7 +86,6 @@ test.group('Hash | defineConfig', () => {
 test.group('Hash | provider', () => {
   test('create instance of drivers registered in config file', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
       .merge({
         config: {
           hash: defineConfig({
@@ -95,6 +94,12 @@ test.group('Hash | provider', () => {
               bcrypt: drivers.bcrypt({}),
             },
           }),
+        },
+        rcFileContents: {
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+          ],
         },
       })
       .create(BASE_URL)
