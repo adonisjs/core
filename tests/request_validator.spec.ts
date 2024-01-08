@@ -25,7 +25,10 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
       .create(BASE_URL, {
@@ -66,7 +69,10 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
       .create(BASE_URL, {
@@ -100,7 +106,10 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
       .create(BASE_URL, {
@@ -133,7 +142,10 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
       .create(BASE_URL, {
@@ -173,7 +185,10 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
       .create(BASE_URL, {
@@ -221,7 +236,10 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
       .create(BASE_URL, {
@@ -274,7 +292,10 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
       .create(BASE_URL, {

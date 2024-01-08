@@ -14,9 +14,7 @@ import { StubsFactory } from '../../factories/stubs.js'
 
 test.group('Make command', () => {
   test('create command class', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

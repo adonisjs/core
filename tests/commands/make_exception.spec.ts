@@ -14,9 +14,7 @@ import MakeException from '../../commands/make/exception.js'
 
 test.group('Make exception command', () => {
   test('create exception class', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

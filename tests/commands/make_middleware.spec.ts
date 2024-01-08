@@ -16,9 +16,7 @@ test.group('Make middleware', (group) => {
   group.tap((t) => t.disableTimeout())
 
   test('create middleware class', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -52,9 +50,7 @@ test.group('Make middleware', (group) => {
   })
 
   test('register middleware under named stack', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -88,9 +84,7 @@ test.group('Make middleware', (group) => {
   })
 
   test('create nested middleware', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -124,9 +118,7 @@ test.group('Make middleware', (group) => {
   })
 
   test('show error when selected middleware stack is invalid', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

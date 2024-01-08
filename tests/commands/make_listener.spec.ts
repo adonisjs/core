@@ -16,9 +16,7 @@ import MakeListenerCommand from '../../commands/make/listener.js'
 
 test.group('Make listener', () => {
   test('create listener class', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -40,9 +38,7 @@ test.group('Make listener', () => {
   })
 
   test('create a listener with an event class', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
 
     ace.addLoader(new ListLoader([MakeEventCommand]))
     await ace.app.init()

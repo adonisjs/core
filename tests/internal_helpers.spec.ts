@@ -13,11 +13,7 @@ import { detectAssetsBundler } from '../src/internal_helpers.js'
 
 test.group('Internal helpers | detect package manager', () => {
   test('return "vite" when vite.config.* file exists', async ({ fs, assert }) => {
-    const app = new IgnitorFactory()
-      .create(fs.baseUrl, {
-        importer: () => {},
-      })
-      .createApp('web')
+    const app = new IgnitorFactory().create(fs.baseUrl).createApp('web')
 
     await app.init()
     await fs.create('vite.config.js', '')
@@ -37,11 +33,7 @@ test.group('Internal helpers | detect package manager', () => {
   })
 
   test('return "encore" when webpack.config.* file exists', async ({ fs, assert }) => {
-    const app = new IgnitorFactory()
-      .create(fs.baseUrl, {
-        importer: () => {},
-      })
-      .createApp('web')
+    const app = new IgnitorFactory().create(fs.baseUrl).createApp('web')
 
     await app.init()
     await fs.create('webpack.config.js', '')
@@ -61,22 +53,14 @@ test.group('Internal helpers | detect package manager', () => {
   })
 
   test('return undefined when unable to detect', async ({ fs, assert }) => {
-    const app = new IgnitorFactory()
-      .create(fs.baseUrl, {
-        importer: () => {},
-      })
-      .createApp('web')
+    const app = new IgnitorFactory().create(fs.baseUrl).createApp('web')
 
     await app.init()
     assert.isUndefined(await detectAssetsBundler(app))
   })
 
   test('use explicit assetsBundler over detection', async ({ fs, assert }) => {
-    const app = new IgnitorFactory()
-      .create(fs.baseUrl, {
-        importer: () => {},
-      })
-      .createApp('web')
+    const app = new IgnitorFactory().create(fs.baseUrl).createApp('web')
 
     app.rcContents({
       assetsBundler: {

@@ -35,7 +35,7 @@ export type ConfigProvider<T> = {
 /**
  * Options accepted by ignitor
  */
-export type IgnitorOptions = { importer: Importer }
+export type IgnitorOptions = { importer?: Importer }
 
 /**
  * A list of known events. The interface must be extended in

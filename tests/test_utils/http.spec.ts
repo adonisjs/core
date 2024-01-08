@@ -25,18 +25,7 @@ test.group('Test utils | Http', () => {
       server.close()
     })
 
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -53,18 +42,7 @@ test.group('Test utils | Http', () => {
       server.close()
     })
 
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -79,18 +57,7 @@ test.group('Test utils | Http', () => {
   })
 
   test('share HTTP server instance with AdonisJS server class', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -117,18 +84,7 @@ test.group('Test utils | Http', () => {
     process.env.HOST = 'localhost'
     process.env.PORT = String(await getPort())
 
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -152,18 +108,7 @@ test.group('Test utils | Http', () => {
       server.close()
     })
 
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -178,18 +123,7 @@ test.group('Test utils | Http', () => {
   })
 
   test('create HTTP context', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -201,18 +135,7 @@ test.group('Test utils | Http', () => {
   })
 
   test('create HTTP context with custom req and res object', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['../../../providers/app_provider.js', '../../../providers/hash_provider.js'],
-        },
-      })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()

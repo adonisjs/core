@@ -19,7 +19,7 @@ const BASE_PATH = fileURLToPath(BASE_URL)
 
 test.group('Make validator', () => {
   test('prepare validator stub', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()
@@ -35,7 +35,7 @@ test.group('Make validator', () => {
   })
 
   test('prepare validator stub for a resource', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()

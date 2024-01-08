@@ -36,11 +36,7 @@ test.group('Providers', () => {
           ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('web')
     await app.init()
@@ -71,11 +67,7 @@ test.group('Providers', () => {
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('web')
     await app.init()
@@ -201,11 +193,7 @@ test.group('Providers', () => {
           ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('repl')
     await app.init()
@@ -238,11 +226,7 @@ test.group('Providers', () => {
         }),
       })
       .withCoreConfig()
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('repl')
     await app.init()

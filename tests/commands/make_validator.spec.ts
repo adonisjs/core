@@ -14,9 +14,7 @@ import MakeValidator from '../../commands/make/validator.js'
 
 test.group('Make validator', () => {
   test('create validator file', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -38,9 +36,7 @@ test.group('Make validator', () => {
   })
 
   test('create validator file for a resource', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

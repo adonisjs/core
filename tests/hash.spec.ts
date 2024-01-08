@@ -86,11 +86,7 @@ test.group('Hash | defineConfig', () => {
 test.group('Hash | provider', () => {
   test('create instance of drivers registered in config file', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: ['../providers/app_provider.js', '../providers/hash_provider.js'],
-        },
-      })
+      .withCoreProviders()
       .merge({
         config: {
           hash: defineConfig({
@@ -101,7 +97,7 @@ test.group('Hash | provider', () => {
           }),
         },
       })
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('web')
     await app.init()

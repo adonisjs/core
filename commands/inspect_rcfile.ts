@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import lodash from '@poppinss/utils/lodash'
 import { BaseCommand } from '../modules/ace/main.js'
 
 /**
@@ -18,26 +17,30 @@ export default class InspectRCFile extends BaseCommand {
   static description = 'Inspect the RC file with its default values'
 
   async run() {
-    const rcContents = lodash.omit(this.app.rcFile, ['raw'])
-
-    rcContents.providers = rcContents.providers?.map((provider) => {
-      return {
-        ...provider,
-        file: provider.file.toString(),
-      }
-    })
-
-    rcContents.preloads = rcContents.preloads?.map((preload) => {
-      return {
-        ...preload,
-        file: preload.file.toString(),
-      }
-    })
-
-    rcContents.commands = rcContents.commands?.map((command) => {
-      return command.toString()
-    })
-
-    this.logger.log(JSON.stringify(rcContents, null, 2))
+    const { raw, providers, preloads, commands, ...rest } = this.app.rcFile
+    this.logger.log(
+      JSON.stringify(
+        {
+          ...rest,
+          providers: providers.map((provider) => {
+            return {
+              ...provider,
+              file: provider.file.toString(),
+            }
+          }),
+          preloads: preloads.map((preload) => {
+            return {
+              ...preload,
+              file: preload.file.toString(),
+            }
+          }),
+          commands: commands.map((command) => {
+            return command.toString()
+          }),
+        },
+        null,
+        2
+      )
+    )
   }
 }

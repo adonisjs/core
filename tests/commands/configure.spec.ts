@@ -20,9 +20,7 @@ test.group('Configure command | list dependencies', (group) => {
   group.each.disableTimeout()
 
   test('list development dependencies to install', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -62,9 +60,7 @@ test.group('Configure command | list dependencies', (group) => {
   })
 
   test('list development and prod dependencies to install', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -104,9 +100,7 @@ test.group('Configure command | list dependencies', (group) => {
   })
 
   test('list prod dependencies to install', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -361,9 +355,7 @@ test.group('Configure command | vinejs', (group) => {
   group.each.disableTimeout()
 
   test('register vinejs provider', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -390,9 +382,7 @@ test.group('Configure command | edge', (group) => {
   group.each.disableTimeout()
 
   test('register edge provider', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

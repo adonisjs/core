@@ -15,9 +15,7 @@ test.group('Codemods | environment variables', (group) => {
   group.tap((t) => t.timeout(60 * 1000))
 
   test('define env variables', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -40,9 +38,7 @@ test.group('Codemods | environment variables', (group) => {
   })
 
   test('do not define env variables when file does not exists', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -60,9 +56,7 @@ test.group('Codemods | environment variables', (group) => {
   })
 
   test('define env variables validations', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -96,9 +90,7 @@ test.group('Codemods | rcFile', (group) => {
   group.tap((t) => t.timeout(60 * 1000))
 
   test('update rcfile', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -128,9 +120,7 @@ test.group('Codemods | registerMiddleware', (group) => {
   group.tap((t) => t.timeout(60 * 1000))
 
   test('register middleware', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -155,9 +145,7 @@ test.group('Codemods | registerPolicies', (group) => {
   group.tap((t) => t.timeout(60 * 1000))
 
   test('register bouncer policies', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -182,9 +170,7 @@ test.group('Codemods | install packages', (group) => {
   group.tap((t) => t.timeout(60 * 1000))
 
   test('install packages', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
 
     await fs.createJson('tsconfig.json', {})
@@ -198,9 +184,7 @@ test.group('Codemods | install packages', (group) => {
   })
 
   test('install packages in verbose mode', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
 
     await fs.createJson('tsconfig.json', {})

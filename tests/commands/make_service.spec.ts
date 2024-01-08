@@ -14,9 +14,7 @@ import MakeService from '../../commands/make/service.js'
 
 test.group('Make service', () => {
   test('create service class', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

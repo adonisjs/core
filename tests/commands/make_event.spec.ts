@@ -14,9 +14,7 @@ import MakeEventCommand from '../../commands/make/event.js'
 
 test.group('Make event', () => {
   test('create event class', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

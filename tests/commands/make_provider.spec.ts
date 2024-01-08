@@ -17,9 +17,7 @@ test.group('Make provider', () => {
     await fs.createJson('tsconfig.json', {})
     await fs.create('adonisrc.ts', `export default defineConfig({})`)
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -51,9 +49,7 @@ test.group('Make provider', () => {
     await fs.createJson('tsconfig.json', {})
     await fs.create('adonisrc.ts', `export default defineConfig({})`)
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -84,9 +80,7 @@ test.group('Make provider', () => {
     await fs.createJson('tsconfig.json', {})
     await fs.create('adonisrc.ts', `export default defineConfig({})`)
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -113,9 +107,7 @@ test.group('Make provider', () => {
     await fs.createJson('tsconfig.json', {})
     await fs.create('adonisrc.ts', `export default defineConfig({})`)
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -149,9 +141,7 @@ test.group('Make provider', () => {
     await fs.createJson('tsconfig.json', {})
     await fs.create('adonisrc.ts', `export default defineConfig({})`)
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

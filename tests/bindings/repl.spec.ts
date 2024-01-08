@@ -22,15 +22,15 @@ test.group('Bindings | Repl', () => {
       .merge({
         rcFileContents: {
           providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-            '../providers/repl_provider.js',
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/hash_provider.js'),
+            () => import('../../providers/repl_provider.js'),
           ],
         },
       })
       .withCoreConfig()
       .create(BASE_URL, {
-        importer: (filePath) => {
+        importer(filePath: string) {
           return import(new URL(filePath, new URL('../', import.meta.url)).href)
         },
       })

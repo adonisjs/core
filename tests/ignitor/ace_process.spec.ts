@@ -27,14 +27,7 @@ test.group('Ignitor | Ace process', (group) => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
-        },
-      })
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
 
     let greetCommandExecuted = false
     class Greet extends BaseCommand {
@@ -63,14 +56,7 @@ test.group('Ignitor | Ace process', (group) => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
-        },
-      })
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
 
     let greetCommandExecuted = false
     class Greet extends BaseCommand {
@@ -104,14 +90,7 @@ test.group('Ignitor | Ace process', (group) => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
-        },
-      })
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
 
     class Greet extends BaseCommand {
       static commandName: string = 'greet'
@@ -137,14 +116,7 @@ test.group('Ignitor | Ace process', (group) => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
-        },
-      })
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
 
     class Greet extends BaseCommand {
       static commandName: string = 'greet'
@@ -169,14 +141,7 @@ test.group('Ignitor | Ace process', (group) => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
-        },
-      })
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
 
     let greetCommandExecuted = false
     class Greet extends BaseCommand {
@@ -215,14 +180,7 @@ test.group('Ignitor | Ace process', (group) => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
-        },
-      })
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
 
     let greetCommandExecuted = false
     class Greet extends BaseCommand {
@@ -263,14 +221,7 @@ test.group('Ignitor | Ace process', (group) => {
       await ignitor.terminate()
     })
 
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
-        },
-      })
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreProviders().withCoreConfig().create(BASE_URL)
 
     class CustomRepl extends BaseCommand {
       static commandName: string = 'repl'

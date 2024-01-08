@@ -17,9 +17,7 @@ const BASE_URL = new URL('./tmp/', import.meta.url)
 
 test.group('Kernel', () => {
   test('create kernel instance with global flags', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -45,9 +43,7 @@ test.group('Kernel', () => {
   })
 
   test('turn off colors when --no-ansi flag is mentioned', async () => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -60,9 +56,7 @@ test.group('Kernel', () => {
   })
 
   test('turn off colors when --no-ansi flag is mentioned', async () => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -75,9 +69,7 @@ test.group('Kernel', () => {
   })
 
   test('turn on colors when --ansi flag is mentioned', async () => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -90,9 +82,7 @@ test.group('Kernel', () => {
   })
 
   test('display command help when --help flag is mentioned', async () => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()

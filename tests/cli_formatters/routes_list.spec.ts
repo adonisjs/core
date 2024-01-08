@@ -99,18 +99,7 @@ async function registerRoutes(app: ApplicationService) {
 
 test.group('Formatters | List routes | toJSON', () => {
   test('format routes as JSON', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -242,18 +231,7 @@ test.group('Formatters | List routes | toJSON', () => {
   })
 
   test('show HEAD routes', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -390,18 +368,7 @@ test.group('Formatters | List routes | toJSON', () => {
   })
 
   test('format routes as ANSI list', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -449,18 +416,7 @@ test.group('Formatters | List routes | toJSON', () => {
   })
 
   test('format routes as ANSI table', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -526,18 +482,7 @@ test.group('Formatters | List routes | toJSON', () => {
 
 test.group('Formatters | List routes | filters', () => {
   test('show routes that has one or more middleware', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -601,18 +546,7 @@ test.group('Formatters | List routes | filters', () => {
   })
 
   test('show routes that has zero middleware', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -719,18 +653,7 @@ test.group('Formatters | List routes | filters', () => {
   })
 
   test('show routes that has specific middleware', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -783,18 +706,7 @@ test.group('Formatters | List routes | filters', () => {
   })
 
   test('combine middleware and ignoreMiddleware filters', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -837,18 +749,7 @@ test.group('Formatters | List routes | filters', () => {
   })
 
   test('show routes by controller name', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -891,18 +792,7 @@ test.group('Formatters | List routes | filters', () => {
   })
 
   test('show routes by route name', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -956,18 +846,7 @@ test.group('Formatters | List routes | filters', () => {
   })
 
   test('show routes by pattern name', async ({ assert, fs }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .merge({
-        rcFileContents: {
-          providers: ['./providers/app_provider.js', './providers/hash_provider.js'],
-        },
-      })
-      .create(fs.baseUrl, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../../', import.meta.url)).href)
-        },
-      })
+    const ignitor = new IgnitorFactory().withCoreConfig().withCoreProviders().create(fs.baseUrl)
 
     const app = ignitor.createApp('console')
     await app.init()

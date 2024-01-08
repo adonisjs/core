@@ -8,13 +8,13 @@
  */
 
 import { Ignitor } from '../../src/ignitor/main.js'
+import type { ProviderNode } from '../../types/app.js'
 import { drivers } from '../../modules/hash/define_config.js'
 import { defineConfig as defineHttpConfig } from '../../modules/http/main.js'
 import type { ApplicationService, IgnitorOptions } from '../../src/types.js'
 import { defineConfig as defineLoggerConfig } from '../../modules/logger.js'
 import { defineConfig as defineHashConfig } from '../../modules/hash/main.js'
 import { defineConfig as defineBodyParserConfig } from '../../modules/bodyparser/main.js'
-import { ProviderNode } from '@adonisjs/application/types'
 
 type FactoryParameters = {
   rcFileContents: Record<string, any>
@@ -113,7 +113,7 @@ export class IgnitorFactory {
   /**
    * Create ignitor instance
    */
-  create(appRoot: URL, options: IgnitorOptions): Ignitor {
+  create(appRoot: URL, options?: IgnitorOptions): Ignitor {
     return new Ignitor(appRoot, options).tap((app) => {
       app.booted(async () => {
         for (let action of this.#preloadActions) {

@@ -21,19 +21,12 @@ test.group('Bindings | Edge', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-            '../providers/edge_provider.js',
-          ],
+          providers: [() => import('../../providers/edge_provider.js')],
         },
       })
+      .withCoreProviders()
       .withCoreConfig()
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -56,20 +49,12 @@ test.group('Bindings | Edge', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-
-            '../providers/edge_provider.js',
-          ],
+          providers: [() => import('../../providers/edge_provider.js')],
         },
       })
+      .withCoreProviders()
       .withCoreConfig()
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
