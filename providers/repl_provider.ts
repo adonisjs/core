@@ -9,10 +9,10 @@
 
 import { join } from 'node:path'
 import { homedir } from 'node:os'
+import { fsImportAll } from '@poppinss/utils'
 
 import { Repl } from '../modules/repl.js'
 import type { ApplicationService, ContainerBindings } from '../src/types.js'
-import { fsImportAll } from '@poppinss/utils'
 
 /**
  * Resolves a container binding and sets it on the REPL
@@ -148,17 +148,11 @@ export default class ReplServiceProvider {
         async () => {
           const { default: isModule } = await import('../src/helpers/is.js')
           const { default: stringModule } = await import('../src/helpers/string.js')
-          const { base64, cuid, fsReadAll, slash, parseImports } = await import(
-            '../src/helpers/main.js'
-          )
+          const helpers = await import('../src/helpers/main.js')
           repl.server!.context.helpers = {
             string: stringModule,
             is: isModule,
-            base64,
-            cuid,
-            fsReadAll,
-            slash,
-            parseImports,
+            ...helpers,
           }
 
           repl.notify(
