@@ -44,7 +44,7 @@ export type IgnitorOptions = { importer?: Importer }
  */
 export interface EventsList extends HttpServerEvents {
   'container_binding:resolved': ContainerResolveEventData<ContainerBindings>
-  'http:server_ready': { port: number; host: string }
+  'http:server_ready': { port: number; host: string; duration: [number, number] }
 }
 
 /**
