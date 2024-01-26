@@ -55,7 +55,8 @@
     "./logger": "./build/modules/logger.js",
     "./repl": "./build/modules/repl.js",
     "./package.json": "./package.json",
-    "./exceptions": "./build/src/exceptions.js"
+    "./exceptions": "./build/src/exceptions.js",
+    "./test_utils": "./build/src/test_utils/main.js"
   },
   "scripts": {
     "pretest": "npm run lint",
