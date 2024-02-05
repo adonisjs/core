@@ -23,6 +23,7 @@ test.group('Make controller', () => {
 
     const { contents } = await new StubsFactory().prepare('make/controller/main.stub', {
       entity: ace.app.generators.createEntity('user'),
+      singular: false,
     })
 
     await assert.fileEquals('app/controllers/users_controller.ts', contents)
@@ -66,6 +67,7 @@ test.group('Make controller', () => {
 
     const { contents } = await new StubsFactory().prepare('make/controller/resource.stub', {
       entity: ace.app.generators.createEntity('user'),
+      singular: false,
     })
 
     await assert.fileEquals('app/controllers/users_controller.ts', contents)
@@ -88,6 +90,7 @@ test.group('Make controller', () => {
 
     const { contents } = await new StubsFactory().prepare('make/controller/api.stub', {
       entity: ace.app.generators.createEntity('user'),
+      singular: false,
     })
 
     await assert.fileEquals('app/controllers/users_controller.ts', contents)
@@ -113,6 +116,7 @@ test.group('Make controller', () => {
 
     const { contents } = await new StubsFactory().prepare('make/controller/api.stub', {
       entity: ace.app.generators.createEntity('user'),
+      singular: false,
     })
 
     await assert.fileEquals('app/controllers/users_controller.ts', contents)
@@ -145,6 +149,7 @@ test.group('Make controller', () => {
 
     const { contents } = await new StubsFactory().prepare('make/controller/actions.stub', {
       entity: ace.app.generators.createEntity('user'),
+      singular: false,
       actions: ['index', 'show', 'deleteProfile'],
     })
 
@@ -174,6 +179,7 @@ test.group('Make controller', () => {
 
     const { contents } = await new StubsFactory().prepare('make/controller/actions.stub', {
       entity: ace.app.generators.createEntity('user'),
+      singular: false,
       actions: ['index', 'show', 'deleteProfile'],
     })
 
@@ -208,6 +214,7 @@ test.group('Make controller', () => {
 
     const { contents } = await new StubsFactory().prepare('make/controller/actions.stub', {
       entity: ace.app.generators.createEntity('user'),
+      singular: false,
       actions: ['index', 'show', 'deleteProfile'],
     })
 
@@ -224,6 +231,105 @@ test.group('Make controller', () => {
       },
       {
         message: 'green(DONE:)    create app/controllers/users_controller.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('create singular controller', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakeControllerCommand, ['user', '-s'])
+    await command.exec()
+
+    const { contents } = await new StubsFactory().prepare('make/controller/main.stub', {
+      entity: ace.app.generators.createEntity('user'),
+      singular: true,
+    })
+
+    await assert.fileEquals('app/controllers/user_controller.ts', contents)
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/controllers/user_controller.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('create singular resource controller', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakeControllerCommand, ['user', '--resource', '-s'])
+    await command.exec()
+
+    const { contents } = await new StubsFactory().prepare('make/controller/resource.stub', {
+      entity: ace.app.generators.createEntity('user'),
+      singular: true,
+    })
+
+    await assert.fileEquals('app/controllers/user_controller.ts', contents)
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/controllers/user_controller.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('create singular controller with actions', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakeControllerCommand, [
+      'user',
+      'index',
+      'show',
+      'delete-profile',
+      '-s',
+    ])
+    await command.exec()
+
+    const { contents } = await new StubsFactory().prepare('make/controller/actions.stub', {
+      entity: ace.app.generators.createEntity('user'),
+      actions: ['index', 'show', 'deleteProfile'],
+      singular: true,
+    })
+
+    await assert.fileEquals('app/controllers/user_controller.ts', contents)
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/controllers/user_controller.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('create singular api controller', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakeControllerCommand, ['user', '--api', '-s'])
+    await command.exec()
+
+    const { contents } = await new StubsFactory().prepare('make/controller/api.stub', {
+      entity: ace.app.generators.createEntity('user'),
+      singular: true,
+    })
+
+    await assert.fileEquals('app/controllers/user_controller.ts', contents)
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/controllers/user_controller.ts',
         stream: 'stdout',
       },
     ])

@@ -29,6 +29,7 @@ test.group('Make controller', () => {
     })
     const { contents, destination } = await stub.prepare({
       entity: app.generators.createEntity('user'),
+      singular: false,
     })
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
@@ -47,6 +48,7 @@ test.group('Make controller', () => {
     })
     const { contents, destination } = await stub.prepare({
       entity: app.generators.createEntity('user'),
+      singular: false,
     })
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
@@ -72,6 +74,7 @@ test.group('Make controller', () => {
     })
     const { contents, destination } = await stub.prepare({
       entity: app.generators.createEntity('user'),
+      singular: false,
     })
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
@@ -97,6 +100,7 @@ test.group('Make controller', () => {
     })
     const { contents, destination } = await stub.prepare({
       entity: app.generators.createEntity('user'),
+      singular: false,
       actions: ['index', 'show', 'deleteProfile'],
     })
 

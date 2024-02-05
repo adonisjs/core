@@ -94,6 +94,7 @@ export default class MakeController extends BaseCommand {
       flags: this.parsed.flags,
       actions: this.actions?.map((action) => string.camelCase(action)),
       entity: this.app.generators.createEntity(this.name),
+      singular: this.singular,
     })
   }
 }
