@@ -119,7 +119,10 @@ export class Codemods extends EventEmitter {
    * Returns the TsMorph project instance
    * See https://ts-morph.com/
    */
-  async getTsMorphProject() {
+  async getTsMorphProject(): Promise<
+    | InstanceType<typeof import('@adonisjs/assembler/code_transformer').CodeTransformer>['project']
+    | undefined
+  > {
     const transformer = await this.#getCodeTransformer()
     if (!transformer) {
       this.#cliLogger.warning(
