@@ -135,7 +135,7 @@ export class Codemods extends EventEmitter {
    * Define validations for the environment variables
    */
   async defineEnvValidations(validations: EnvValidationNode) {
-    const transformer = await this.getCodeTransformer()
+    const transformer = await this.#getCodeTransformer()
     if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "start/env.ts" file. Install "@adonisjs/assembler" to modify source files'
@@ -157,7 +157,7 @@ export class Codemods extends EventEmitter {
    * Define validations for the environment variables
    */
   async registerMiddleware(stack: 'server' | 'router' | 'named', middleware: MiddlewareNode[]) {
-    const transformer = await this.getCodeTransformer()
+    const transformer = await this.#getCodeTransformer()
     if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "start/kernel.ts" file. Install "@adonisjs/assembler" to modify source files'
@@ -181,7 +181,7 @@ export class Codemods extends EventEmitter {
    * file.
    */
   async registerPolicies(policies: BouncerPolicyNode[]) {
-    const transformer = await this.getCodeTransformer()
+    const transformer = await this.#getCodeTransformer()
     if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "app/policies/main.ts" file. Install "@adonisjs/assembler" to modify source files'
@@ -203,7 +203,7 @@ export class Codemods extends EventEmitter {
    * Update RCFile
    */
   async updateRcFile(...params: Parameters<CodeTransformer['updateRcFile']>) {
-    const transformer = await this.getCodeTransformer()
+    const transformer = await this.#getCodeTransformer()
     if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "adonisrc.ts" file. Install "@adonisjs/assembler" to modify source files'
@@ -225,7 +225,7 @@ export class Codemods extends EventEmitter {
    * Register a new Vite plugin in the `vite.config.ts` file
    */
   async registerVitePlugin(...params: Parameters<CodeTransformer['addVitePlugin']>) {
-    const transformer = await this.getCodeTransformer()
+    const transformer = await this.#getCodeTransformer()
     if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "vite.config.ts" file. Install "@adonisjs/assembler" to modify source files'
@@ -247,7 +247,7 @@ export class Codemods extends EventEmitter {
    * Register a new Japa plugin in the `tests/bootstrap.ts` file
    */
   async registerJapaPlugin(...params: Parameters<CodeTransformer['addJapaPlugin']>) {
-    const transformer = await this.getCodeTransformer()
+    const transformer = await this.#getCodeTransformer()
     if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "tests/bootstrap.ts" file. Install "@adonisjs/assembler" to modify source files'
