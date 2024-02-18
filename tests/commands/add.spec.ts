@@ -9,13 +9,14 @@
 
 import { join } from 'node:path'
 import { test } from '@japa/runner'
-import { fileURLToPath } from 'node:url'
 import { ListLoader } from '@adonisjs/ace'
 import type { FileSystem } from '@japa/file-system'
 
 import Add from '../../commands/add.js'
 import Configure from '../../commands/configure.js'
 import { AceFactory } from '../../factories/core/ace.js'
+
+const VERBOSE = !!process.env.CI
 
 /**
  * Setup a fake adonis project in the file system
@@ -74,7 +75,9 @@ test.group('Install', (group) => {
     ace.ui.switchMode('raw')
     ace.prompt.trap('install').accept()
 
-    const command = await ace.create(Add, [join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo')])
+    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     await assert.fileIsNotEmpty('package-lock.json')
@@ -94,7 +97,9 @@ test.group('Install', (group) => {
     ace.ui.switchMode('raw')
     ace.prompt.trap('install').accept()
 
-    const command = await ace.create(Add, [join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo')])
+    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     await assert.fileIsNotEmpty('pnpm-lock.yaml')
@@ -114,7 +119,8 @@ test.group('Install', (group) => {
     ace.ui.switchMode('raw')
     ace.prompt.trap('install').accept()
 
-    const command = await ace.create(Add, [join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo')])
+    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    command.verbose = VERBOSE
     command.packageManager = 'pnpm'
 
     await command.exec()
@@ -136,7 +142,9 @@ test.group('Install', (group) => {
     ace.ui.switchMode('raw')
     ace.prompt.trap('install').accept()
 
-    const command = await ace.create(Add, [join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo')])
+    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     await assert.fileContains('package.json', 'foo')
@@ -156,10 +164,9 @@ test.group('Install', (group) => {
     ace.ui.switchMode('raw')
     ace.prompt.trap('install').accept()
 
-    const command = await ace.create(Add, [
-      join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo'),
-      '-D',
-    ])
+    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href, '-D'])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     const pkgJson = await fs.contentsJson('package.json')
@@ -186,17 +193,19 @@ test.group('Install', (group) => {
     ace.prompt.trap('install').accept()
 
     const command = await ace.create(Add, [
-      join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo'),
+      new URL('node_modules/foo', fs.baseUrl).href,
       '--foo',
       '--auth=session',
       '-x',
     ])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     const logs = command.logger.getLogs()
 
     assert.deepInclude(logs, {
-      message: { foo: 'true', auth: 'session', x: 'true' },
+      message: { foo: 'true', auth: 'session', x: 'true', verbose: VERBOSE },
       stream: 'stdout',
     })
   })
@@ -221,7 +230,9 @@ test.group('Install', (group) => {
     ace.ui.switchMode('raw')
     ace.prompt.trap('install').accept()
 
-    const command = await ace.create(Add, [join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo')])
+    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     await assert.fileContains('adonisrc.ts', '@adonisjs/cache/cache_provider')
@@ -242,8 +253,10 @@ test.group('Install', (group) => {
     ace.prompt.trap('install').accept()
 
     const command = await ace.create(Add, [
-      join(fileURLToPath(fs.baseUrl), 'node_modules', 'inexistent'),
+      new URL('node_modules/inexistent', fs.baseUrl).toString(),
     ])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     command.assertExitCode(1)
@@ -263,7 +276,9 @@ test.group('Install', (group) => {
     ace.ui.switchMode('raw')
     ace.prompt.trap('install').accept()
 
-    const command = await ace.create(Add, [join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo')])
+    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     command.assertExitCode(1)
@@ -283,6 +298,8 @@ test.group('Install', (group) => {
     ace.prompt.trap('install').accept()
 
     const command = await ace.create(Add, ['edge'])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     await assert.fileContains('package.json', 'edge.js')
@@ -301,6 +318,8 @@ test.group('Install', (group) => {
     ace.prompt.trap('install').accept()
 
     const command = await ace.create(Add, ['vinejs'])
+    command.verbose = VERBOSE
+
     await command.exec()
 
     await assert.fileContains('package.json', '@vinejs/vine')
