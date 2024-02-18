@@ -142,6 +142,65 @@ test.group('Install', (group) => {
     await assert.fileContains('package.json', 'foo')
   })
 
+  test('should install dev dependency', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+    })
+
+    await setupProject(fs, 'npm')
+    await setupPackage(fs)
+
+    await ace.app.init()
+
+    ace.addLoader(new ListLoader([Configure]))
+    ace.ui.switchMode('raw')
+    ace.prompt.trap('install').accept()
+
+    const command = await ace.create(Add, [
+      join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo'),
+      '-D',
+    ])
+    await command.exec()
+
+    const pkgJson = await fs.contentsJson('package.json')
+    assert.deepEqual(pkgJson.devDependencies, { test: 'file:node_modules/foo' })
+  })
+
+  test('pass unknown args to configure', async ({ fs, assert }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+    })
+
+    await setupProject(fs, 'npm')
+    await setupPackage(
+      fs,
+      `
+        command.logger.log(command.parsedFlags)
+      `
+    )
+
+    await ace.app.init()
+
+    ace.addLoader(new ListLoader([Configure]))
+    ace.ui.switchMode('raw')
+    ace.prompt.trap('install').accept()
+
+    const command = await ace.create(Add, [
+      join(fileURLToPath(fs.baseUrl), 'node_modules', 'foo'),
+      '--foo',
+      '--auth=session',
+      '-x',
+    ])
+    await command.exec()
+
+    const logs = command.logger.getLogs()
+
+    assert.deepInclude(logs, {
+      message: { foo: 'true', auth: 'session', x: 'true' },
+      stream: 'stdout',
+    })
+  })
+
   test('should configure package', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
@@ -239,7 +298,6 @@ test.group('Install', (group) => {
 
     await ace.app.init()
     ace.addLoader(new ListLoader([Configure]))
-    // ace.ui.switchMode('raw')
     ace.prompt.trap('install').accept()
 
     const command = await ace.create(Add, ['vinejs'])

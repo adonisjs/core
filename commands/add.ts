@@ -32,7 +32,7 @@ export default class Add extends BaseCommand {
   @flags.string({ description: 'Select the package manager you want to use' })
   declare packageManager?: 'npm' | 'pnpm' | 'yarn'
 
-  @flags.boolean({ description: 'Should we install the package as a dev dependency' })
+  @flags.boolean({ description: 'Should we install the package as a dev dependency', alias: 'D' })
   declare dev?: boolean
 
   @flags.boolean({ description: 'Forcefully overwrite existing files' })
@@ -56,10 +56,18 @@ export default class Add extends BaseCommand {
    * Configure the package by delegating the work to the `node ace configure` command
    */
   async #configurePackage() {
+    /**
+     * Sending unknown flags to the configure command
+     */
+    const flagValueArray = this.parsed.unknownFlags
+      .filter((flag) => !!this.parsed.flags[flag])
+      .map((flag) => `--${flag}=${this.parsed.flags[flag]}`)
+
     const configureArgs = [
       this.name,
       this.force ? '--force' : undefined,
       this.verbose ? '--verbose' : undefined,
+      ...flagValueArray,
     ].filter(Boolean) as string[]
 
     return await this.kernel.exec('configure', configureArgs)
