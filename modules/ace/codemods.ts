@@ -70,8 +70,7 @@ export class Codemods extends EventEmitter {
       }
 
       return this.#codeTransformer
-    } catch (error) {
-      console.error(error)
+    } catch {
       return null
     }
   }
