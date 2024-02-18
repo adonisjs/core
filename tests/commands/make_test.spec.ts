@@ -16,10 +16,10 @@ import { IgnitorFactory } from '../../factories/core/ignitor.js'
 test.group('Make test', () => {
   test('--suite flag: make inside suite directory', async ({ assert, fs }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
       .withCoreConfig()
       .merge({
         rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
           tests: {
             suites: [
               {
@@ -30,9 +30,7 @@ test.group('Make test', () => {
           },
         },
       })
-      .create(fs.baseUrl, {
-        importer: (filePath) => import(filePath),
-      })
+      .create(fs.baseUrl)
 
     const ace = await new AceFactory().make(ignitor)
     ace.ui.switchMode('raw')
@@ -58,11 +56,13 @@ test.group('Make test', () => {
 
   test('--suite flag: show error when mentioned suite does not exists', async ({ assert, fs }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
-      .withCoreConfig()
-      .create(fs.baseUrl, {
-        importer: (filePath) => import(filePath),
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
       })
+      .withCoreConfig()
+      .create(fs.baseUrl)
 
     const ace = await new AceFactory().make(ignitor)
     ace.ui.switchMode('raw')
@@ -84,10 +84,10 @@ test.group('Make test', () => {
     fs,
   }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
       .withCoreConfig()
       .merge({
         rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
           tests: {
             suites: [
               {
@@ -98,9 +98,7 @@ test.group('Make test', () => {
           },
         },
       })
-      .create(fs.baseUrl, {
-        importer: (filePath) => import(filePath),
-      })
+      .create(fs.baseUrl)
 
     const ace = await new AceFactory().make(ignitor)
     ace.ui.switchMode('raw')
@@ -129,10 +127,10 @@ test.group('Make test', () => {
     fs,
   }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
       .withCoreConfig()
       .merge({
         rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
           tests: {
             suites: [
               {
@@ -147,9 +145,7 @@ test.group('Make test', () => {
           },
         },
       })
-      .create(fs.baseUrl, {
-        importer: (filePath) => import(filePath),
-      })
+      .create(fs.baseUrl)
 
     const ace = await new AceFactory().make(ignitor)
     ace.ui.switchMode('raw')
@@ -184,10 +180,10 @@ test.group('Make test', () => {
     fs,
   }) => {
     const ignitor = new IgnitorFactory()
-      .withCoreProviders()
       .withCoreConfig()
       .merge({
         rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
           tests: {
             suites: [
               {
@@ -198,9 +194,7 @@ test.group('Make test', () => {
           },
         },
       })
-      .create(fs.baseUrl, {
-        importer: (filePath) => import(filePath),
-      })
+      .create(fs.baseUrl)
 
     const ace = await new AceFactory().make(ignitor)
     ace.ui.switchMode('raw')

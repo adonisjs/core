@@ -8,6 +8,7 @@
  */
 
 import { Ignitor } from '../../src/ignitor/main.js'
+import type { ProviderNode } from '../../types/app.js'
 import { drivers } from '../../modules/hash/define_config.js'
 import { defineConfig as defineHttpConfig } from '../../modules/http/main.js'
 import type { ApplicationService, IgnitorOptions } from '../../src/types.js'
@@ -43,12 +44,14 @@ export class IgnitorFactory {
   /**
    * Merge core providers with user defined providers
    */
-  #mergeCoreProviders(providers?: string[]) {
-    return [
-      '@adonisjs/core/providers/app_provider',
-      '@adonisjs/core/providers/hash_provider',
-      '@adonisjs/core/providers/repl_provider',
-    ].concat(providers || [])
+  #mergeCoreProviders(providers?: ProviderNode['file'][]): ProviderNode['file'][] {
+    const coreProviders: ProviderNode['file'][] = [
+      () => import('@adonisjs/core/providers/app_provider'),
+      () => import('@adonisjs/core/providers/hash_provider'),
+      () => import('@adonisjs/core/providers/repl_provider'),
+    ]
+
+    return coreProviders.concat(providers || [])
   }
 
   /**
@@ -110,7 +113,7 @@ export class IgnitorFactory {
   /**
    * Create ignitor instance
    */
-  create(appRoot: URL, options: IgnitorOptions): Ignitor {
+  create(appRoot: URL, options?: IgnitorOptions): Ignitor {
     return new Ignitor(appRoot, options).tap((app) => {
       app.booted(async () => {
         for (let action of this.#preloadActions) {

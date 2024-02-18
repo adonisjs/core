@@ -7,4 +7,9 @@
  * file that was distributed with this source code.
  */
 
-export * from '@adonisjs/bodyparser/types'
+export {
+  assertExists,
+  assertNotNull,
+  assertIsDefined,
+  assertUnreachable,
+} from '@poppinss/utils/assert'

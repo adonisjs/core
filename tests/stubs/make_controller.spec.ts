@@ -19,7 +19,7 @@ const BASE_PATH = fileURLToPath(BASE_URL)
 
 test.group('Make controller', () => {
   test('prepare controller stub', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()
@@ -29,6 +29,7 @@ test.group('Make controller', () => {
     })
     const { contents, destination } = await stub.prepare({
       entity: app.generators.createEntity('user'),
+      singular: false,
     })
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
@@ -37,7 +38,7 @@ test.group('Make controller', () => {
   })
 
   test('prepare resourceful controller stub', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()
@@ -47,6 +48,7 @@ test.group('Make controller', () => {
     })
     const { contents, destination } = await stub.prepare({
       entity: app.generators.createEntity('user'),
+      singular: false,
     })
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
@@ -62,7 +64,7 @@ test.group('Make controller', () => {
   })
 
   test('prepare resourceful api controller stub', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()
@@ -72,6 +74,7 @@ test.group('Make controller', () => {
     })
     const { contents, destination } = await stub.prepare({
       entity: app.generators.createEntity('user'),
+      singular: false,
     })
 
     assert.equal(destination, join(BASE_PATH, 'app/controllers/users_controller.ts'))
@@ -87,7 +90,7 @@ test.group('Make controller', () => {
   })
 
   test('prepare actions controller stub', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()
@@ -97,6 +100,7 @@ test.group('Make controller', () => {
     })
     const { contents, destination } = await stub.prepare({
       entity: app.generators.createEntity('user'),
+      singular: false,
       actions: ['index', 'show', 'deleteProfile'],
     })
 

@@ -32,7 +32,7 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
@@ -42,7 +42,7 @@ test.group('Ignitor | Http server process', () => {
           return 'hello world'
         })
       })
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     await ignitor.httpServer().start()
 
@@ -60,7 +60,7 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
@@ -70,7 +70,7 @@ test.group('Ignitor | Http server process', () => {
           return 'hello world'
         })
       })
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     await ignitor.httpServer().start()
 
@@ -92,11 +92,11 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     ignitor.tap((application) => {
       app = application
@@ -125,11 +125,11 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     await new Promise<void>((resolve) => {
       nodeServer.listen(Number(process.env.PORT), process.env.HOST, () => {
@@ -157,11 +157,11 @@ test.group('Ignitor | Http server process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     ignitor.tap((application) => {
       app = application

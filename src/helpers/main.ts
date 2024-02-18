@@ -8,13 +8,17 @@
  */
 
 export { default as parseImports } from 'parse-imports'
-export { createId as cuid } from '@paralleldrive/cuid2'
+export { createId as cuid, isCuid } from '@paralleldrive/cuid2'
 export {
   slash,
   base64,
   compose,
+  Secret,
+  joinToURL,
   fsReadAll,
   safeEqual,
+  getDirname,
+  getFilename,
   fsImportAll,
   MessageBuilder,
 } from '@poppinss/utils'

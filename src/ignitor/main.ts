@@ -46,7 +46,7 @@ export class Ignitor {
    */
   #tapCallbacks: Set<(app: ApplicationService) => void> = new Set()
 
-  constructor(appRoot: URL, options: IgnitorOptions) {
+  constructor(appRoot: URL, options: IgnitorOptions = {}) {
     this.#appRoot = appRoot
     this.#options = options
   }

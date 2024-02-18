@@ -21,23 +21,23 @@ export default class MakeController extends BaseCommand {
   @args.string({ description: 'The name of the controller' })
   declare name: string
 
-  @args.spread({ description: 'Method names to pre-define on the controller', required: false })
+  @args.spread({ description: 'Create controller with custom method names', required: false })
   declare actions?: string[]
 
   @flags.boolean({
-    description: 'Convert controller class and file name to its singular form',
-    alias: 'r',
+    description: 'Generate controller in singular form',
+    alias: 's',
   })
   declare singular: boolean
 
   @flags.boolean({
-    description: 'Generate controller with resource actions',
+    description: 'Generate controller with methods to perform CRUD actions on a resource',
     alias: 'r',
   })
   declare resource: boolean
 
   @flags.boolean({
-    description: 'Generate controller with api resource actions',
+    description: 'Generate resourceful controller with the "edit" and the "create" methods',
     alias: 'a',
   })
   declare api: boolean
@@ -94,6 +94,7 @@ export default class MakeController extends BaseCommand {
       flags: this.parsed.flags,
       actions: this.actions?.map((action) => string.camelCase(action)),
       entity: this.app.generators.createEntity(this.name),
+      singular: this.singular,
     })
   }
 }

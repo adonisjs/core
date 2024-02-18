@@ -18,7 +18,7 @@ import { createAceKernel } from '../../modules/ace/create_kernel.js'
  */
 export class AceFactory {
   async make(ignitor: Ignitor): Promise<Kernel>
-  async make(appRoot: URL, options: IgnitorOptions): Promise<Kernel>
+  async make(appRoot: URL, options?: IgnitorOptions): Promise<Kernel>
   async make(ignitorOrAppRoot: URL | Ignitor, options?: IgnitorOptions): Promise<Kernel> {
     if (ignitorOrAppRoot instanceof Ignitor) {
       const app = ignitorOrAppRoot.createApp('console')

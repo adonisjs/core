@@ -20,7 +20,7 @@ export default class MakeTest extends BaseCommand {
   @args.string({ description: 'Name of the test file' })
   declare name: string
 
-  @flags.string({ description: 'The suite for which to create the test file' })
+  @flags.string({ description: 'The suite for which to create the test file', alias: 's' })
   declare suite?: string
 
   /**

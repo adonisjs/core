@@ -97,7 +97,7 @@ export class HttpServerProcess {
     app: ApplicationService,
     logger: LoggerService,
     emitter: EmitterService,
-    payload: { host: string; port: number; duration?: [number, number] }
+    payload: { host: string; port: number; duration: [number, number] }
   ) {
     /**
      * Notify parent process

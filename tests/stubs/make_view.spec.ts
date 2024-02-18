@@ -19,7 +19,7 @@ const BASE_PATH = fileURLToPath(BASE_URL)
 
 test.group('Make View', () => {
   test('prepare view stub', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()

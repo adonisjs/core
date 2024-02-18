@@ -22,18 +22,13 @@ test.group('Bindings | Edge', () => {
       .merge({
         rcFileContents: {
           providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-            '../providers/edge_provider.js',
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
           ],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -57,19 +52,13 @@ test.group('Bindings | Edge', () => {
       .merge({
         rcFileContents: {
           providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-
-            '../providers/edge_provider.js',
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
           ],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, new URL('../', import.meta.url)).href)
-        },
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()

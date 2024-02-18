@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { slash } from '@poppinss/utils'
+import { extname, relative } from 'node:path'
 import type { AppEnvironments } from '@adonisjs/application/types'
 
 import { stubsRoot } from '../../stubs/main.js'
@@ -25,22 +27,23 @@ export default class MakePreload extends BaseCommand {
   @args.string({ description: 'Name of the preload file' })
   declare name: string
 
+  @flags.boolean({
+    description: 'Auto register the preload file inside the .adonisrc.ts file',
+    showNegatedVariantInHelp: true,
+    alias: 'r',
+  })
+  declare register?: boolean
+
   @flags.array({
     description: `Define the preload file's environment. Accepted values are "${ALLOWED_ENVIRONMENTS}"`,
+    alias: 'e',
   })
-  declare environments: AllowedAppEnvironments
+  declare environments?: AllowedAppEnvironments
 
   /**
    * The stub to use for generating the preload file
    */
-  protected stubPath: string = 'make/preload_file/main.stub'
-
-  /**
-   * Check if the mentioned environments are valid
-   */
-  #isValidEnvironment(environment: string[]): environment is AllowedAppEnvironments {
-    return !environment.find((one) => !ALLOWED_ENVIRONMENTS.includes(one as any))
-  }
+  protected stubPath: string = 'make/preload/main.stub'
 
   /**
    * Validate the environments flag passed by the user
@@ -50,37 +53,13 @@ export default class MakePreload extends BaseCommand {
       return true
     }
 
-    return this.#isValidEnvironment(this.environments)
-  }
-
-  /**
-   * Prompt for the environments
-   */
-  async #promptForEnvironments(): Promise<AllowedAppEnvironments> {
-    const selectedEnvironments = await this.prompt.multiple(
-      'Select the environment(s) in which you want to load this file',
-      [
-        { name: 'all', message: 'Load file in all environments' },
-        { name: 'console', message: 'Environment for ace commands' },
-        { name: 'repl', message: 'Environment for the REPL session' },
-        { name: 'web', message: 'Environment for HTTP requests' },
-        { name: 'test', message: 'Environment for the test process' },
-      ] as const
-    )
-
-    if (selectedEnvironments.includes('all')) {
-      return ['web', 'console', 'test', 'repl']
-    }
-
-    return selectedEnvironments as AllowedAppEnvironments
+    return this.environments.every((one) => ALLOWED_ENVIRONMENTS.includes(one))
   }
 
   /**
    * Run command
    */
   async run() {
-    let environments: AllowedAppEnvironments = this.environments
-
     /**
      * Ensure the environments are valid when provided via flag
      */
@@ -92,25 +71,39 @@ export default class MakePreload extends BaseCommand {
     }
 
     /**
-     * Prompt for the environments when not defined
+     * Display prompt to know if we should register the preload
+     * file inside the ".adonisrc.ts" file.
      */
-    if (!environments) {
-      environments = await this.#promptForEnvironments()
+    if (this.register === undefined) {
+      this.register = await this.prompt.confirm(
+        'Do you want to register the preload file in .adonisrc.ts file?'
+      )
     }
 
     const codemods = await this.createCodemods()
-    const output = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
+    const { destination } = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
       flags: this.parsed.flags,
       entity: this.app.generators.createEntity(this.name),
     })
 
     /**
-     * Registering the preload file with the `adonisrc.js` file. We register
-     * the relative path, since we cannot be sure about aliases to exist.
+     * Do not register when prompt has been denied or "--no-register"
+     * flag was used
      */
-    const preloadImportPath = `./${output.relativeFileName.replace(/(\.js|\.ts)$/, '')}.js`
+    if (!this.register) {
+      return
+    }
+
+    /**
+     * Creative relative path for the preload file from
+     * the "./start" directory
+     */
+    const preloadFileRelativePath = slash(
+      relative(this.app.startPath(), destination).replace(extname(destination), '')
+    )
+
     await codemods.updateRcFile((rcFile) => {
-      rcFile.addPreloadFile(preloadImportPath, environments)
+      rcFile.addPreloadFile(`#start/${preloadFileRelativePath}`, this.environments)
     })
   }
 }

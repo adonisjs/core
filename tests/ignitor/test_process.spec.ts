@@ -21,12 +21,11 @@ test.group('Ignitor | Test process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
-
+      .create(BASE_URL)
     await ignitor.testRunner().run(() => {})
     assert.equal(ignitor.getApp()?.getEnvironment(), 'test')
     assert.equal(ignitor.getApp()?.getState(), 'ready')
@@ -40,11 +39,11 @@ test.group('Ignitor | Test process', () => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     await ignitor
       .testRunner()

@@ -19,7 +19,7 @@ const BASE_PATH = fileURLToPath(BASE_URL)
 
 test.group('Make listener', () => {
   test('prepare listener stub', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()
@@ -35,7 +35,7 @@ test.group('Make listener', () => {
   })
 
   test('prepare listener stub for an event', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()

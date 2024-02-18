@@ -16,7 +16,7 @@ import is from '@sindresorhus/is'
  */
 const types = {
   lookup: is,
-  isNull: is.null_,
+  isNull: is.null,
   isBoolean: is.boolean,
   isBuffer: is.buffer,
   isNumber: is.number,
@@ -27,8 +27,8 @@ const types = {
   isArray: is.array,
   isRegexp: is.regExp,
   isError: is.error,
-  isFunction: is.function_,
-  isClass: is.class_,
+  isFunction: is.function,
+  isClass: is.class,
   isInteger: is.integer,
   isFloat(value: number): value is number {
     return value !== (value | 0)

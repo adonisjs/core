@@ -1,5 +1,5 @@
-{{#var controllerName = generators.controllerName(entity.name)}}
-{{#var controllerFileName = generators.controllerFileName(entity.name)}}
+{{#var controllerName = generators.controllerName(entity.name, singular)}}
+{{#var controllerFileName = generators.controllerFileName(entity.name, singular)}}
 {{{
   exports({
     to: app.httpControllersPath(entity.path, controllerFileName)

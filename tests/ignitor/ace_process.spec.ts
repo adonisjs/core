@@ -30,11 +30,11 @@ test.group('Ignitor | Ace process', (group) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     let greetCommandExecuted = false
     class Greet extends BaseCommand {
@@ -66,11 +66,11 @@ test.group('Ignitor | Ace process', (group) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     let greetCommandExecuted = false
     class Greet extends BaseCommand {
@@ -107,11 +107,11 @@ test.group('Ignitor | Ace process', (group) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     class Greet extends BaseCommand {
       static commandName: string = 'greet'
@@ -140,11 +140,11 @@ test.group('Ignitor | Ace process', (group) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     class Greet extends BaseCommand {
       static commandName: string = 'greet'
@@ -172,11 +172,11 @@ test.group('Ignitor | Ace process', (group) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     let greetCommandExecuted = false
     class Greet extends BaseCommand {
@@ -218,11 +218,11 @@ test.group('Ignitor | Ace process', (group) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     let greetCommandExecuted = false
     class Greet extends BaseCommand {
@@ -266,11 +266,11 @@ test.group('Ignitor | Ace process', (group) => {
     const ignitor = new IgnitorFactory()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [() => import('../../providers/app_provider.js')],
         },
       })
       .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+      .create(BASE_URL)
 
     class CustomRepl extends BaseCommand {
       static commandName: string = 'repl'

@@ -19,11 +19,11 @@ const BASE_PATH = fileURLToPath(BASE_URL)
 
 test.group('Make preload file', () => {
   test('prepare preload file stub', async ({ assert }) => {
-    const app = new AppFactory().create(BASE_URL, () => {})
+    const app = new AppFactory().create(BASE_URL)
     await app.init()
 
     const stubs = await app.stubs.create()
-    const stub = await stubs.build('make/preload_file/main.stub', {
+    const stub = await stubs.build('make/preload/main.stub', {
       source: stubsRoot,
     })
     const { destination } = await stub.prepare({

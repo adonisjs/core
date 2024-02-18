@@ -18,9 +18,7 @@ const BASE_URL = new URL('./tmp/', import.meta.url)
 
 test.group('Base command', () => {
   test('infer staysAlive and startApp flags from command options', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -44,9 +42,7 @@ test.group('Base command', () => {
   })
 
   test('execute command template methods', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -80,9 +76,7 @@ test.group('Base command', () => {
   })
 
   test('do not run template methods when do not exists', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -104,9 +98,7 @@ test.group('Base command', () => {
   })
 
   test('fail when prepare method raises exception', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -131,9 +123,7 @@ test.group('Base command', () => {
   })
 
   test('fail when interact method raises exception', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -158,9 +148,7 @@ test.group('Base command', () => {
   })
 
   test('fail when run method raises exception', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -185,9 +173,7 @@ test.group('Base command', () => {
   })
 
   test('do not print errors when completed method handles exception', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -215,9 +201,7 @@ test.group('Base command', () => {
   })
 
   test('print error when completed method does not handles exception', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -246,9 +230,7 @@ test.group('Base command', () => {
   })
 
   test('throw exception when completed method raises exception', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()
@@ -267,9 +249,7 @@ test.group('Base command', () => {
   })
 
   test('call app terminate when main command terminate method is called', async () => {
-    const ignitor = new IgnitorFactory()
-      .withCoreConfig()
-      .create(BASE_URL, { importer: (filePath) => import(filePath) })
+    const ignitor = new IgnitorFactory().withCoreConfig().create(BASE_URL)
 
     const app = ignitor.createApp('console')
     await app.init()

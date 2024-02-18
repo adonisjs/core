@@ -25,14 +25,13 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+      .create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -66,14 +65,13 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+      .create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -100,14 +98,13 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+      .create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -133,14 +130,13 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+      .create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -173,14 +169,13 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+      .create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -221,14 +216,13 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+      .create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()
@@ -274,14 +268,13 @@ test.group('Request validator', () => {
       .withCoreConfig()
       .merge({
         rcFileContents: {
-          providers: ['../../providers/app_provider.js', '../../providers/hash_provider.js'],
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
         },
       })
-      .create(BASE_URL, {
-        importer: (filePath) => {
-          return import(new URL(filePath, BASE_URL).href)
-        },
-      })
+      .create(BASE_URL)
 
     const testUtils = new TestUtilsFactory().create(ignitor)
     await testUtils.app.init()

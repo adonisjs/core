@@ -16,9 +16,7 @@ test.group('Generate key', () => {
     await fs.create('.env', '')
     await fs.create('.env.example', '')
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -33,9 +31,7 @@ test.group('Generate key', () => {
     await fs.create('.env', '')
     await fs.create('.env.example', '')
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -63,9 +59,7 @@ test.group('Generate key', () => {
 
     process.env.NODE_ENV = 'production'
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 
@@ -93,9 +87,7 @@ test.group('Generate key', () => {
 
     process.env.NODE_ENV = 'production'
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
+    const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
     ace.ui.switchMode('raw')
 

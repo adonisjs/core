@@ -22,15 +22,15 @@ test.group('Bindings | Repl', () => {
       .merge({
         rcFileContents: {
           providers: [
-            '../providers/app_provider.js',
-            '../providers/hash_provider.js',
-            '../providers/repl_provider.js',
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/hash_provider.js'),
+            () => import('../../providers/repl_provider.js'),
           ],
         },
       })
       .withCoreConfig()
       .create(BASE_URL, {
-        importer: (filePath) => {
+        importer(filePath: string) {
           return import(new URL(filePath, new URL('../', import.meta.url)).href)
         },
       })
@@ -83,5 +83,17 @@ test.group('Bindings | Repl', () => {
 
     const router = await methods.make.handler(repl, 'router')
     assert.deepEqual(router, await app.container.make('router'))
+
+    const exportedMods = await methods.importAll.handler(repl, '../../../factories')
+    assert.properties(exportedMods, [
+      'core',
+      'app',
+      'bodyparser',
+      'encryption',
+      'events',
+      'hash',
+      'logger',
+      'http',
+    ])
   })
 })

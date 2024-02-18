@@ -13,12 +13,12 @@ import type { Emitter } from '../modules/events.js'
 import type { Kernel } from '../modules/ace/main.js'
 import type { Application } from '../modules/app.js'
 import type { TestUtils } from './test_utils/main.js'
+import type { HttpServerEvents } from '../types/http.js'
 import type { LoggerManager } from '../modules/logger.js'
 import type { HashManager } from '../modules/hash/main.js'
 import type { Encryption } from '../modules/encryption.js'
 import type { ManagerDriverFactory } from '../types/hash.js'
 import type { Router, Server } from '../modules/http/main.js'
-import type { HttpRequestFinishedPayload } from '../types/http.js'
 import type { ContainerResolveEventData } from '../types/container.js'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.js'
 
@@ -35,17 +35,16 @@ export type ConfigProvider<T> = {
 /**
  * Options accepted by ignitor
  */
-export type IgnitorOptions = { importer: Importer }
+export type IgnitorOptions = { importer?: Importer }
 
 /**
  * A list of known events. The interface must be extended in
  * user land code or packages to register events and their
  * types.
  */
-export interface EventsList {
-  'container:resolved': ContainerResolveEventData<ContainerBindings>
-  'http:request_handled': HttpRequestFinishedPayload
-  'http:server_ready': { port: number; host: string }
+export interface EventsList extends HttpServerEvents {
+  'container_binding:resolved': ContainerResolveEventData<ContainerBindings>
+  'http:server_ready': { port: number; host: string; duration: [number, number] }
 }
 
 /**

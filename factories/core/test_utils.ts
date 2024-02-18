@@ -17,7 +17,7 @@ import { TestUtils } from '../../src/test_utils/main.js'
  */
 export class TestUtilsFactory {
   create(ignitor: Ignitor): TestUtils
-  create(appRoot: URL, options: IgnitorOptions): TestUtils
+  create(appRoot: URL, options?: IgnitorOptions): TestUtils
   create(ignitorOrAppRoot: URL | Ignitor, options?: IgnitorOptions): TestUtils {
     if (ignitorOrAppRoot instanceof Ignitor) {
       return new TestUtils(ignitorOrAppRoot.createApp('test'))

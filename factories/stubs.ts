@@ -27,7 +27,7 @@ export class StubsFactory {
    * Returns an instance of application
    */
   #getApp() {
-    return this.#parameters.app || new AppFactory().create(new URL('./', import.meta.url), () => {})
+    return this.#parameters.app || new AppFactory().create(new URL('./', import.meta.url))
   }
 
   /**
