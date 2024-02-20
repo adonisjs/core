@@ -31,7 +31,8 @@ export default class MakeController extends BaseCommand {
   declare singular: boolean
 
   @flags.boolean({
-    description: 'Generate resourceful controller with methods to perform CRUD actions on a resource',
+    description:
+      'Generate resourceful controller with methods to perform CRUD actions on a resource',
     alias: 'r',
   })
   declare resource: boolean
