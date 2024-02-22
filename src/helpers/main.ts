@@ -22,4 +22,5 @@ export {
   fsImportAll,
   MessageBuilder,
 } from '@poppinss/utils'
+export type { Opaque } from '@poppinss/utils/types'
 export { parseBindingReference } from './parse_binding_reference.js'
