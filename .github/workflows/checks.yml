@@ -4,7 +4,7 @@ on:
   - pull_request
 jobs:
   test:
-    uses: adonisjs/core/.github/workflows/test.yml@next
+    uses: adonisjs/core/.github/workflows/test.yml
     with:
       install-pnpm: true
 
