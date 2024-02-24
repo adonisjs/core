@@ -222,7 +222,11 @@ test.group('Serve command', () => {
     )
   })
 
-  test('do not attempt to serve assets when --no-assets flag is used', async ({ fs, cleanup }) => {
+  test('do not attempt to serve assets when --no-assets flag is used', async ({
+    assert,
+    fs,
+    cleanup,
+  }) => {
     await fs.create('bin/server.js', '')
     await fs.create(
       'node_modules/ts-node/package.json',
@@ -253,6 +257,47 @@ test.group('Serve command', () => {
     cleanup(() => command.devServer.close())
     await command.exec()
     await sleep(600)
+
+    assert.notExists(
+      ace.ui.logger.getLogs().find((log) => {
+        return log.message.match(/starting "vite" dev server/)
+      })
+    )
+  })
+
+  test('do not launch assets bundler when disabled in rc file', async ({ fs, cleanup, assert }) => {
+    await fs.create('bin/server.js', '')
+    await fs.create(
+      'node_modules/ts-node/package.json',
+      JSON.stringify({
+        name: 'ts-node',
+        exports: {
+          './esm': './esm.js',
+        },
+      })
+    )
+    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('vite.config.js', '')
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(filePath)
+      },
+    })
+
+    ace.app.rcFile.assetsBundler = false
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
+    await command.exec()
+    await sleep(600)
+
+    assert.notExists(
+      ace.ui.logger.getLogs().find((log) => {
+        return log.message.match(/starting "vite" dev server/)
+      })
+    )
   })
 
   test('correctly pass hooks to the DevServer', async ({ assert, fs, cleanup }) => {
