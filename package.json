@@ -3,7 +3,7 @@
   "description": "Core of AdonisJS",
   "version": "6.2.3",
   "engines": {
-    "node": ">=18.16.0"
+    "node": ">=20.6.0"
   },
   "main": "build/index.js",
   "type": "module",
