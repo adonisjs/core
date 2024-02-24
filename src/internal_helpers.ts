@@ -49,6 +49,10 @@ function generateJsFilenames(filename: string) {
 export async function detectAssetsBundler(
   app: ApplicationService
 ): Promise<RcFile['assetsBundler']> {
+  if (app.rcFile.assetsBundler === false) {
+    return false
+  }
+
   if (app.rcFile.assetsBundler) {
     return app.rcFile.assetsBundler
   }
