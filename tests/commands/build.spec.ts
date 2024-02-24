@@ -351,4 +351,54 @@ test.group('Build command', (group) => {
       })
     )
   })
+
+  test('correctly pass hooks to the bundler', async ({ assert, fs }) => {
+    assert.plan(2)
+
+    await fs.create(
+      'tsconfig.json',
+      JSON.stringify({
+        include: ['**/*'],
+        exclude: [],
+        compilerOptions: {
+          target: 'ESNext',
+          module: 'NodeNext',
+          lib: ['ESNext'],
+          strict: true,
+          noUnusedLocals: true,
+        },
+      })
+    )
+
+    await fs.create('adonisrc.ts', `export default {}`)
+    await fs.create('index.ts', '')
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => {
+        return import(filePath)
+      },
+    })
+
+    ace.app.rcFile.unstable_assembler = {
+      onBuildCompleted: [
+        async () => ({
+          default: async () => {
+            assert.isTrue(true)
+          },
+        }),
+      ],
+      onBuildStarting: [
+        async () => ({
+          default: async () => {
+            assert.isTrue(true)
+          },
+        }),
+      ],
+    }
+
+    ace.ui.switchMode('normal')
+
+    const command = await ace.create(Build, [])
+    await command.exec()
+  })
 })
