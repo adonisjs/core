@@ -222,10 +222,7 @@ test.group('Serve command', () => {
     )
   })
 
-  test('do not attempt to serve assets when --no-assets flag is used', async ({
-    fs,
-    cleanup,
-  }) => {
+  test('do not attempt to serve assets when --no-assets flag is used', async ({ fs, cleanup }) => {
     await fs.create('bin/server.js', '')
     await fs.create(
       'node_modules/ts-node/package.json',
