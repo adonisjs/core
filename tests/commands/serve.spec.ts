@@ -223,7 +223,6 @@ test.group('Serve command', () => {
   })
 
   test('do not attempt to serve assets when --no-assets flag is used', async ({
-    assert,
     fs,
     cleanup,
   }) => {
