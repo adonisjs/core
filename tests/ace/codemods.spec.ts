@@ -11,6 +11,35 @@ import { test } from '@japa/runner'
 import { Codemods } from '../../modules/ace/codemods.js'
 import { AceFactory } from '../../factories/core/ace.js'
 
+test.group('Codemods', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('get ts morph project', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    const project = await codemods.getTsMorphProject()
+
+    assert.exists(project)
+  })
+
+  test('reuse the same CodeTransformer instance', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    const project1 = await codemods.getTsMorphProject()
+    const project2 = await codemods.getTsMorphProject()
+
+    assert.deepEqual(project1, project2)
+  })
+})
+
 test.group('Codemods | environment variables', (group) => {
   group.tap((t) => t.timeout(60 * 1000))
 

@@ -27,15 +27,9 @@ import type { Application } from '../app.js'
  */
 export class Codemods extends EventEmitter {
   /**
-   * Flag to know if assembler is installed as a
-   * peer dependency or not.
-   */
-  #isAssemblerInstalled?: boolean
-
-  /**
    * Reference to lazily imported assembler code transformer
    */
-  #codeTransformer?: typeof import('@adonisjs/assembler/code_transformer')
+  #codeTransformer?: CodeTransformer
 
   /**
    * Reference to AdonisJS application
@@ -65,12 +59,19 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Lazily imports assembler
+   * - Lazily import the code transformer
+   * - Return a fresh or reused instance of the code transformer
    */
-  async #importAssembler() {
-    if (this.#isAssemblerInstalled === undefined) {
-      this.#codeTransformer = await import('@adonisjs/assembler/code_transformer')
-      this.#isAssemblerInstalled = !!this.#codeTransformer
+  async #getCodeTransformer() {
+    try {
+      if (!this.#codeTransformer) {
+        const { CodeTransformer } = await import('@adonisjs/assembler/code_transformer')
+        this.#codeTransformer = new CodeTransformer(this.#app.appRoot)
+      }
+
+      return this.#codeTransformer
+    } catch {
+      return null
     }
   }
 
@@ -114,20 +115,37 @@ export class Codemods extends EventEmitter {
   }
 
   /**
+   * Returns the TsMorph project instance
+   * See https://ts-morph.com/
+   */
+  async getTsMorphProject(): Promise<
+    | InstanceType<typeof import('@adonisjs/assembler/code_transformer').CodeTransformer>['project']
+    | undefined
+  > {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
+      this.#cliLogger.warning(
+        'Cannot create CodeTransformer. Install "@adonisjs/assembler" to modify source files'
+      )
+      return
+    }
+
+    return transformer.project
+  }
+
+  /**
    * Define validations for the environment variables
    */
   async defineEnvValidations(validations: EnvValidationNode) {
-    await this.#importAssembler()
-    if (!this.#codeTransformer) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "start/env.ts" file. Install "@adonisjs/assembler" to modify source files'
       )
       return
     }
 
-    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
     const action = this.#cliLogger.action('update start/env.ts file')
-
     try {
       await transformer.defineEnvValidations(validations)
       action.succeeded()
@@ -141,17 +159,15 @@ export class Codemods extends EventEmitter {
    * Define validations for the environment variables
    */
   async registerMiddleware(stack: 'server' | 'router' | 'named', middleware: MiddlewareNode[]) {
-    await this.#importAssembler()
-    if (!this.#codeTransformer) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "start/kernel.ts" file. Install "@adonisjs/assembler" to modify source files'
       )
       return
     }
 
-    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
     const action = this.#cliLogger.action('update start/kernel.ts file')
-
     try {
       await transformer.addMiddlewareToStack(stack, middleware)
       action.succeeded()
@@ -167,17 +183,15 @@ export class Codemods extends EventEmitter {
    * file.
    */
   async registerPolicies(policies: BouncerPolicyNode[]) {
-    await this.#importAssembler()
-    if (!this.#codeTransformer) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "app/policies/main.ts" file. Install "@adonisjs/assembler" to modify source files'
       )
       return
     }
 
-    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
     const action = this.#cliLogger.action('update app/policies/main.ts file')
-
     try {
       await transformer.addPolicies(policies)
       action.succeeded()
@@ -191,15 +205,14 @@ export class Codemods extends EventEmitter {
    * Update RCFile
    */
   async updateRcFile(...params: Parameters<CodeTransformer['updateRcFile']>) {
-    await this.#importAssembler()
-    if (!this.#codeTransformer) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "adonisrc.ts" file. Install "@adonisjs/assembler" to modify source files'
       )
       return
     }
 
-    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
     const action = this.#cliLogger.action('update adonisrc.ts file')
     try {
       await transformer.updateRcFile(...params)
@@ -214,15 +227,14 @@ export class Codemods extends EventEmitter {
    * Register a new Vite plugin in the `vite.config.ts` file
    */
   async registerVitePlugin(...params: Parameters<CodeTransformer['addVitePlugin']>) {
-    await this.#importAssembler()
-    if (!this.#codeTransformer) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "vite.config.ts" file. Install "@adonisjs/assembler" to modify source files'
       )
       return
     }
 
-    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
     const action = this.#cliLogger.action('update vite.config.ts file')
     try {
       await transformer.addVitePlugin(...params)
@@ -237,15 +249,14 @@ export class Codemods extends EventEmitter {
    * Register a new Japa plugin in the `tests/bootstrap.ts` file
    */
   async registerJapaPlugin(...params: Parameters<CodeTransformer['addJapaPlugin']>) {
-    await this.#importAssembler()
-    if (!this.#codeTransformer) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
       this.#cliLogger.warning(
         'Cannot update "tests/bootstrap.ts" file. Install "@adonisjs/assembler" to modify source files'
       )
       return
     }
 
-    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
     const action = this.#cliLogger.action('update tests/bootstrap.ts file')
     try {
       await transformer.addJapaPlugin(...params)
@@ -286,13 +297,13 @@ export class Codemods extends EventEmitter {
    * ```
    */
   async installPackages(packages: { name: string; isDevDependency: boolean }[]) {
-    await this.#importAssembler()
+    const transformer = await this.#getCodeTransformer()
     const appPath = this.#app.makePath()
     const colors = this.#cliLogger.getColors()
     const devDependencies = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
     const dependencies = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
 
-    if (!this.#codeTransformer) {
+    if (!transformer) {
       this.#cliLogger.warning(
         'Cannot install packages. Install "@adonisjs/assembler" or manually install following packages'
       )
@@ -301,7 +312,6 @@ export class Codemods extends EventEmitter {
       return
     }
 
-    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
     const packageManager = await transformer.detectPackageManager(appPath)
 
     const spinner = this.#cliLogger.await(
@@ -354,10 +364,8 @@ export class Codemods extends EventEmitter {
     const dependencies = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
 
     let packageManager: string | null = null
-    if (this.#codeTransformer) {
-      const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
-      packageManager = await transformer.detectPackageManager(appPath)
-    }
+    const transformer = await this.#getCodeTransformer()
+    if (transformer) packageManager = await transformer.detectPackageManager(appPath)
 
     this.#cliLogger.log('Please install following packages')
     this.#cliLogger.log(
