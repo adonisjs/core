@@ -105,6 +105,10 @@ export default class Build extends BaseCommand {
     const bundler = new assembler.Bundler(this.app.appRoot, ts, {
       assets: await this.#getAssetsBundlerConfig(),
       metaFiles: this.app.rcFile.metaFiles,
+      hooks: {
+        onBuildStarting: this.app.rcFile.unstable_assembler?.onBuildStarting,
+        onBuildCompleted: this.app.rcFile.unstable_assembler?.onBuildCompleted,
+      }
     })
 
     /**
