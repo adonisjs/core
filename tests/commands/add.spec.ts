@@ -205,7 +205,7 @@ test.group('Install', (group) => {
     const logs = command.logger.getLogs()
 
     assert.deepInclude(logs, {
-      message: { foo: 'true', auth: 'session', x: 'true', verbose: VERBOSE },
+      message: { foo: 'true', auth: 'session', x: 'true', ...(VERBOSE ? { verbose: true } : {}) },
       stream: 'stdout',
     })
   })
