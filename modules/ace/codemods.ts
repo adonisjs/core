@@ -211,7 +211,53 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Generats the stub
+   * Register a new Vite plugin in the `vite.config.ts` file
+   */
+  async registerVitePlugin(...params: Parameters<CodeTransformer['addVitePlugin']>) {
+    await this.#importAssembler()
+    if (!this.#codeTransformer) {
+      this.#cliLogger.warning(
+        'Cannot update "vite.config.ts" file. Install "@adonisjs/assembler" to modify source files'
+      )
+      return
+    }
+
+    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
+    const action = this.#cliLogger.action('update vite.config.ts file')
+    try {
+      await transformer.addVitePlugin(...params)
+      action.succeeded()
+    } catch (error) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
+  }
+
+  /**
+   * Register a new Japa plugin in the `tests/bootstrap.ts` file
+   */
+  async registerJapaPlugin(...params: Parameters<CodeTransformer['addJapaPlugin']>) {
+    await this.#importAssembler()
+    if (!this.#codeTransformer) {
+      this.#cliLogger.warning(
+        'Cannot update "tests/bootstrap.ts" file. Install "@adonisjs/assembler" to modify source files'
+      )
+      return
+    }
+
+    const transformer = new this.#codeTransformer.CodeTransformer(this.#app.appRoot)
+    const action = this.#cliLogger.action('update tests/bootstrap.ts file')
+    try {
+      await transformer.addJapaPlugin(...params)
+      action.succeeded()
+    } catch (error) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
+  }
+
+  /**
+   * Generate the stub
    */
   async makeUsingStub(stubsRoot: string, stubPath: string, stubState: Record<string, any>) {
     const stubs = await this.#app.stubs.create()

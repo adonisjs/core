@@ -166,6 +166,62 @@ test.group('Codemods | registerPolicies', (group) => {
   })
 })
 
+test.group('Codemods | registerVitePlugin', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('register vite plugin', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.createJson('package.json', {})
+    await fs.create('vite.config.ts', 'export default { plugins: [] }')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.registerVitePlugin('vue()', [
+      { identifier: 'vue', module: '@vitejs/plugin-vue', isNamed: false },
+    ])
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update vite.config.ts file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('vite.config.ts', 'vue()')
+  })
+})
+
+test.group('Codemods | registerJapaPlugin', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('register japa plugin', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.createJson('package.json', {})
+    await fs.create('tests/bootstrap.ts', 'export const plugins = []')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.registerJapaPlugin('apiClient()', [
+      { identifier: 'apiClient', module: '@japa/api-client', isNamed: true },
+    ])
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update tests/bootstrap.ts file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('tests/bootstrap.ts', 'apiClient()')
+  })
+})
+
 test.group('Codemods | install packages', (group) => {
   group.tap((t) => t.timeout(60 * 1000))
 
