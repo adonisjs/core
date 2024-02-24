@@ -108,7 +108,7 @@ export default class Build extends BaseCommand {
       hooks: {
         onBuildStarting: this.app.rcFile.unstable_assembler?.onBuildStarting,
         onBuildCompleted: this.app.rcFile.unstable_assembler?.onBuildCompleted,
-      }
+      },
     })
 
     /**

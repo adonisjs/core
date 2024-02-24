@@ -259,12 +259,15 @@ test.group('Serve command', () => {
     await sleep(600)
   })
 
-  test('correctly pass hooks to the devserver', async ({ assert, fs, cleanup  }) => {
+  test('correctly pass hooks to the DevServer', async ({ assert, fs, cleanup }) => {
     assert.plan(1)
 
-    await fs.create('bin/server.js', `
+    await fs.create(
+      'bin/server.js',
+      `
       process.send({ isAdonisJS: true, environment: 'web' });
-    `)
+    `
+    )
     await fs.create(
       'node_modules/ts-node/package.json',
       JSON.stringify({
@@ -281,8 +284,8 @@ test.group('Serve command', () => {
     ace.app.rcFile.unstable_assembler = {
       onDevServerStarted: [
         async () => ({
-          default: async () => assert.isTrue(true)
-        })
+          default: async () => assert.isTrue(true),
+        }),
       ],
     }
 

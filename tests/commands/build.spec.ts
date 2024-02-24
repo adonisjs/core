@@ -384,15 +384,15 @@ test.group('Build command', (group) => {
         async () => ({
           default: async () => {
             assert.isTrue(true)
-          }
-        })
+          },
+        }),
       ],
       onBuildStarting: [
         async () => ({
           default: async () => {
             assert.isTrue(true)
-          }
-        })
+          },
+        }),
       ],
     }
 
