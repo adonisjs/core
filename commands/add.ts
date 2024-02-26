@@ -17,7 +17,7 @@ import { args, BaseCommand, flags } from '../modules/ace/main.js'
  * in one go.
  */
 export default class Add extends BaseCommand {
-  static commandName = 'install'
+  static commandName = 'add'
   static description = 'Install and configure a package'
   static options: CommandOptions = {
     allowUnknownFlags: true,
