@@ -61,13 +61,13 @@ export default class Add extends BaseCommand {
      */
     const flagValueArray = this.parsed.unknownFlags
       .filter((flag) => !!this.parsed.flags[flag])
-      .map((flag) => `--${flag}=${this.parsed.flags[flag]}`)
+      .map((flag) => [`--${flag}`, this.parsed.flags[flag].toString()])
 
     const configureArgs = [
       this.name,
       this.force ? '--force' : undefined,
       this.verbose ? '--verbose' : undefined,
-      ...flagValueArray,
+      ...flagValueArray.flat(),
     ].filter(Boolean) as string[]
 
     return await this.kernel.exec('configure', configureArgs)
