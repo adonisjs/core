@@ -68,7 +68,7 @@
     "compile": "npm run clean && tsc",
     "postcompile": "npm run copy:templates && npm run index:commands",
     "build": "npm run compile",
-    "release": "np",
+    "release": "npx release-it",
     "version": "npm run build",
     "prepublishOnly": "npm run build",
     "lint": "eslint . --ext=.ts",
@@ -108,8 +108,8 @@
     "get-port": "^7.1.0",
     "github-label-sync": "^2.3.1",
     "husky": "^9.0.11",
-    "np": "^10.0.2",
     "prettier": "^3.2.5",
+    "release-it": "^17.1.1",
     "sinon": "^17.0.1",
     "supertest": "^6.3.4",
     "test-console": "^2.0.0",
@@ -194,11 +194,17 @@
     "access": "public",
     "tag": "latest"
   },
-  "np": {
-    "message": "chore(release): %s",
-    "tag": "latest",
-    "branch": "main",
-    "anyBranch": false
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): ${version}",
+      "tagAnnotation": "v${version}",
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true,
+      "releaseName": "v${version}",
+      "web": true
+    }
   },
   "c8": {
     "reporter": [
