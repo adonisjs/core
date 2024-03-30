@@ -144,7 +144,7 @@
   },
   "peerDependencies": {
     "@adonisjs/assembler": "^7.1.0",
-    "@vinejs/vine": "^1.7.0",
+    "@vinejs/vine": "^1.7.0 | ^2.0.0",
     "argon2": "^0.31.1",
     "bcrypt": "^5.1.1",
     "edge.js": "^6.0.1"
