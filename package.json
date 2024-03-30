@@ -95,7 +95,7 @@
     "@types/sinon": "^17.0.3",
     "@types/supertest": "^6.0.2",
     "@types/test-console": "^2.0.3",
-    "@vinejs/vine": "^2.0.0",
+    "@vinejs/vine": "^1.7.0",
     "argon2": "^0.40.1",
     "bcrypt": "^5.1.1",
     "c8": "^9.1.0",
@@ -144,7 +144,7 @@
   },
   "peerDependencies": {
     "@adonisjs/assembler": "^7.1.0",
-    "@vinejs/vine": "^1.7.0 || ^2.0.0",
+    "@vinejs/vine": "^1.7.0",
     "argon2": "^0.31.2 || ^0.40.0",
     "bcrypt": "^5.1.1",
     "edge.js": "^6.0.1"
