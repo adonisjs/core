@@ -121,6 +121,7 @@ export default class Serve extends BaseCommand {
       hooks: {
         onDevServerStarted: this.app.rcFile.unstable_assembler?.onDevServerStarted,
         onSourceFileChanged: this.app.rcFile.unstable_assembler?.onSourceFileChanged,
+        onHttpServerMessage: this.app.rcFile.unstable_assembler?.onHttpServerMessage,
       },
     })
 
