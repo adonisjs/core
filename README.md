@@ -28,7 +28,7 @@
       Guides
     </a>
     <span> | </span>
-    <a href=".github/CONTRIBUTING.md">
+    <a href="https://github.com/adonisjs/.github/blob/main/docs/CONTRIBUTING.md">
       Contributing
     </a>
   </h3>
