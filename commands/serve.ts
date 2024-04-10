@@ -28,6 +28,11 @@ export default class Serve extends BaseCommand {
     '{{ binaryName }} serve --watch',
     '```',
     '',
+    'You can also start the server with HMR support using the following command.',
+    '```',
+    '{{ binaryName }} serve --hmr',
+    '```',
+    '',
     'The assets bundler dev server runs automatically after detecting vite config or webpack config files',
     'You may pass vite CLI args using the --assets-args command line flag.',
     '```',
@@ -40,6 +45,9 @@ export default class Serve extends BaseCommand {
   }
 
   declare devServer: DevServer
+
+  @flags.boolean({ description: 'Start the server with HMR support' })
+  declare hmr?: boolean
 
   @flags.boolean({
     description: 'Watch filesystem and restart the HTTP server on file change',
@@ -112,7 +120,14 @@ export default class Serve extends BaseCommand {
       return
     }
 
+    if (this.watch && this.hmr) {
+      this.logger.error('Cannot use --watch and --hmr flags together. Choose one of them')
+      this.exitCode = 1
+      return
+    }
+
     this.devServer = new assembler.DevServer(this.app.appRoot, {
+      hmr: this.hmr === true ? true : false,
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: [],
