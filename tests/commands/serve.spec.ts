@@ -337,4 +337,22 @@ test.group('Serve command', () => {
     await command.exec()
     await sleep(1200)
   })
+
+  test('error if --hmr and --watch are used together', async ({ assert, fs, cleanup }) => {
+    await fs.create('node_modules/ts-node/esm.js', '')
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Serve, ['--hmr', '--watch', '--no-clear'])
+    await command.exec()
+
+    assert.equal(command.exitCode, 1)
+    assert.lengthOf(ace.ui.logger.getLogs(), 1)
+    assert.equal(ace.ui.logger.getLogs()[0].stream, 'stderr')
+    assert.match(ace.ui.logger.getLogs()[0].message, /Cannot use --watch and --hmr flags together/)
+  })
 })
