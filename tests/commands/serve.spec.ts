@@ -338,7 +338,7 @@ test.group('Serve command', () => {
     await sleep(1200)
   })
 
-  test('error if --unstable-hmr and --watch are used together', async ({ assert, fs, cleanup }) => {
+  test('error if --unstable-hmr and --watch are used together', async ({ assert, fs }) => {
     await fs.create('node_modules/ts-node/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
