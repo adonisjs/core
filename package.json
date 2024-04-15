@@ -79,7 +79,7 @@
     "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^7.4.0",
+    "@adonisjs/assembler": "^7.5.0",
     "@adonisjs/eslint-config": "^1.3.0",
     "@adonisjs/prettier-config": "^1.3.0",
     "@adonisjs/tsconfig": "^1.3.0",
@@ -143,7 +143,7 @@
     "youch-terminal": "^2.2.3"
   },
   "peerDependencies": {
-    "@adonisjs/assembler": "^7.1.0",
+    "@adonisjs/assembler": "^7.5.0",
     "@vinejs/vine": "^2.0.0",
     "argon2": "^0.31.2 || ^0.40.0",
     "bcrypt": "^5.1.1",
