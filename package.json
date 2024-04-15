@@ -103,7 +103,7 @@
     "cross-env": "^7.0.3",
     "del-cli": "^5.1.0",
     "edge.js": "^6.0.2",
-    "eslint": "^9.0.0",
+    "eslint": "^8.57.0",
     "execa": "^8.0.1",
     "get-port": "^7.1.0",
     "github-label-sync": "^2.3.1",
