@@ -76,6 +76,7 @@
     "format": "prettier --write .",
     "sync-labels": "github-label-sync --labels .github/labels.json adonisjs/core",
     "quick:test": "node --loader=ts-node/esm --enable-source-maps --experimental-import-meta-resolve bin/test.ts --force-exit",
+    "citgm": "cross-env FORCE_COLOR=0 node --loader=ts-node/esm --experimental-import-meta-resolve bin/test.ts --force-exit",
     "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
   "devDependencies": {
