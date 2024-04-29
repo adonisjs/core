@@ -101,16 +101,16 @@ export class Codemods extends EventEmitter {
   /**
    * Define one or more environment variables
    */
-  async defineEnvVariables(
-    environmentVariables: Record<string, number | string | boolean>,
-    options?: { withEmptyExampleValue?: boolean }
+  async defineEnvVariables<T extends Record<string, number | string | boolean>>(
+    environmentVariables: T,
+    options?: { omitFromExample?: Array<keyof T> }
   ) {
     const editor = new EnvEditor(this.#app.appRoot)
     await editor.load()
 
     Object.keys(environmentVariables).forEach((key) => {
       const value = environmentVariables[key]
-      editor.add(key, value, options?.withEmptyExampleValue)
+      editor.add(key, value, options?.omitFromExample?.includes(key))
     })
 
     await editor.save()

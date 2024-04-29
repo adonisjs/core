@@ -78,7 +78,10 @@ test.group('Codemods | environment variables', (group) => {
     await fs.create('.env.example', '')
 
     const codemods = new Codemods(ace.app, ace.ui.logger)
-    await codemods.defineEnvVariables({ SECRET_VALUE: 'secret' }, { withEmptyExampleValue: true })
+    await codemods.defineEnvVariables(
+      { SECRET_VALUE: 'secret' },
+      { omitFromExample: ['SECRET_VALUE'] }
+    )
     await assert.fileContains('.env', 'SECRET_VALUE=secret')
     await assert.fileContains('.env.example', 'SECRET_VALUE=')
   })

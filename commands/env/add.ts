@@ -100,7 +100,7 @@ export default class EnvAdd extends BaseCommand {
     const transformedName = stringHelpers.snakeCase(this.name).toUpperCase()
     await codemods.defineEnvVariables(
       { [transformedName]: this.value },
-      { withEmptyExampleValue: true }
+      { omitFromExample: [transformedName] }
     )
 
     /**
