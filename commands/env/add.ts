@@ -8,8 +8,8 @@
  */
 
 import { CommandOptions } from '../../types/ace.js'
-import { args, BaseCommand, flags } from '../../modules/ace/main.js'
 import stringHelpers from '../../src/helpers/string.js'
+import { args, BaseCommand, flags } from '../../modules/ace/main.js'
 
 const ALLOWED_TYPES = ['string', 'boolean', 'number', 'enum'] as const
 type AllowedTypes = (typeof ALLOWED_TYPES)[number]
@@ -98,8 +98,10 @@ export default class EnvAdd extends BaseCommand {
      */
     const codemods = await this.createCodemods()
     const transformedName = stringHelpers.snakeCase(this.name).toUpperCase()
-
-    await codemods.defineEnvVariables({ [transformedName]: this.value })
+    await codemods.defineEnvVariables(
+      { [transformedName]: this.value },
+      { withEmptyExampleValue: true }
+    )
 
     /**
      * Add the environment variable to the `start/env.ts` file

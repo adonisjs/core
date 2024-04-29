@@ -30,7 +30,7 @@ test.group('Env Add command', () => {
     await command.exec()
 
     await assert.fileContains('.env', 'VARIABLE=value')
-    await assert.fileContains('.env.example', 'VARIABLE=value')
+    await assert.fileContains('.env.example', 'VARIABLE=')
     await assert.fileContains('./start/env.ts', 'VARIABLE: Env.schema.string()')
   })
 
@@ -52,7 +52,7 @@ test.group('Env Add command', () => {
     await command.exec()
 
     await assert.fileContains('.env', 'STRIPE_API_KEY=value')
-    await assert.fileContains('.env.example', 'STRIPE_API_KEY=value')
+    await assert.fileContains('.env.example', 'STRIPE_API_KEY=')
     await assert.fileContains('./start/env.ts', 'STRIPE_API_KEY: Env.schema.string()')
   })
 
@@ -80,7 +80,7 @@ test.group('Env Add command', () => {
     await command.exec()
 
     await assert.fileContains('.env', 'VARIABLE=bar')
-    await assert.fileContains('.env.example', 'VARIABLE=bar')
+    await assert.fileContains('.env.example', 'VARIABLE=')
     await assert.fileContains(
       './start/env.ts',
       "VARIABLE: Env.schema.enum(['foo', 'bar'] as const)"
@@ -110,7 +110,7 @@ test.group('Env Add command', () => {
     await command.exec()
 
     await assert.fileContains('.env', 'MY_VARIABLE_NAME=my_value')
-    await assert.fileContains('.env.example', 'MY_VARIABLE_NAME=my_value')
+    await assert.fileContains('.env.example', 'MY_VARIABLE_NAME=')
     await assert.fileContains('./start/env.ts', 'MY_VARIABLE_NAME: Env.schema.string()')
   })
 })

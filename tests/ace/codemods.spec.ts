@@ -66,6 +66,23 @@ test.group('Codemods | environment variables', (group) => {
     await assert.fileContains('.env', 'CORS_ENABLED=true')
   })
 
+  test('do not insert env value in .env.example if specified', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    /**
+     * Creating .env file so that we can update it.
+     */
+    await fs.create('.env', '')
+    await fs.create('.env.example', '')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.defineEnvVariables({ SECRET_VALUE: 'secret' }, { withEmptyExampleValue: true })
+    await assert.fileContains('.env', 'SECRET_VALUE=secret')
+    await assert.fileContains('.env.example', 'SECRET_VALUE=')
+  })
+
   test('do not define env variables when file does not exists', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl)
     await ace.app.init()
