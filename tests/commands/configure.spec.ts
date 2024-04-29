@@ -346,7 +346,7 @@ test.group('Configure command | run', (group) => {
     assert.equal(command.exitCode, 1)
     assert.deepInclude(
       lastLog.message,
-      '[ red(error) ] Command failed with exit code 1: npm install -D is-odd@15.0.0'
+      '[ red(error) ] npm install -D is-odd@15.0.0 exited with a status of 1.'
     )
   })
 })
