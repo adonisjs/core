@@ -123,7 +123,7 @@
     "@adonisjs/bodyparser": "^10.0.2",
     "@adonisjs/config": "^5.0.2",
     "@adonisjs/encryption": "^6.0.2",
-    "@adonisjs/env": "^6.0.1",
+    "@adonisjs/env": "^6.1.0",
     "@adonisjs/events": "^9.0.2",
     "@adonisjs/fold": "^10.1.2",
     "@adonisjs/hash": "^9.0.3",
