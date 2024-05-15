@@ -21,7 +21,7 @@ const VERBOSE = !!process.env.CI
 /**
  * Setup a fake adonis project in the file system
  */
-async function setupProject(fs: FileSystem, pkgManager?: 'npm' | 'pnpm' | 'yarn') {
+async function setupProject(fs: FileSystem, pkgManager?: 'npm' | 'pnpm' | 'yarn' | 'yarn@berry') {
   await fs.create(
     'package.json',
     JSON.stringify({ type: 'module', name: 'test', dependencies: {} })
@@ -29,7 +29,7 @@ async function setupProject(fs: FileSystem, pkgManager?: 'npm' | 'pnpm' | 'yarn'
 
   if (pkgManager === 'pnpm') {
     await fs.create('pnpm-lock.yaml', '')
-  } else if (pkgManager === 'yarn') {
+  } else if (pkgManager === 'yarn' || pkgManager === 'yarn@berry') {
     await fs.create('yarn.lock', '')
   } else {
     await fs.create('package-lock.json', '')
