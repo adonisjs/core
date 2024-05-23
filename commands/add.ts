@@ -30,7 +30,7 @@ export default class Add extends BaseCommand {
   declare verbose?: boolean
 
   @flags.string({ description: 'Select the package manager you want to use' })
-  declare packageManager?: 'npm' | 'pnpm' | 'yarn'
+  declare packageManager?: 'npm' | 'pnpm' | 'yarn' | 'yarn@berry'
 
   @flags.boolean({ description: 'Should we install the package as a dev dependency', alias: 'D' })
   declare dev?: boolean
@@ -45,8 +45,8 @@ export default class Add extends BaseCommand {
     const pkgManager =
       this.packageManager || (await detectPackageManager(this.app.makePath())) || 'npm'
 
-    if (['npm', 'pnpm', 'yarn'].includes(pkgManager)) {
-      return pkgManager as 'npm' | 'pnpm' | 'yarn'
+    if (['npm', 'pnpm', 'yarn', 'yarn@berry'].includes(pkgManager)) {
+      return pkgManager as 'npm' | 'pnpm' | 'yarn' | 'yarn@berry'
     }
 
     throw new Error('Invalid package manager. Must be one of npm, pnpm or yarn')

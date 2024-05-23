@@ -89,6 +89,7 @@ export class Codemods extends EventEmitter {
 
     switch (packageManager) {
       case 'yarn':
+      case 'yarn@berry':
         return `${colors.yellow(`yarn add${devFlag}`)} ${packages.join(' ')}`
       case 'pnpm':
         return `${colors.yellow(`pnpm add${devFlag}`)} ${packages.join(' ')}`

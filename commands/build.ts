@@ -38,7 +38,7 @@ export default class Build extends BaseCommand {
   @flags.string({
     description: 'Define the package manager to copy the appropriate lock file',
   })
-  declare packageManager?: 'npm' | 'pnpm' | 'yarn' | 'bun'
+  declare packageManager?: 'npm' | 'pnpm' | 'yarn' | 'yarn@berry' | 'bun'
 
   @flags.boolean({
     description: 'Build frontend assets',
