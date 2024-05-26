@@ -129,7 +129,11 @@ export default class Add extends BaseCommand {
     const cmd = colors.grey(`${this.packageManager} add ${this.dev ? '-D ' : ''}${this.name}`)
     this.logger.info(`Installing the package using the following command : ${cmd}`)
 
-    const shouldInstall = await this.prompt.confirm('Continue ?', { name: 'install' })
+    const shouldInstall = await this.prompt.confirm('Continue ?', {
+      name: 'install',
+      default: true,
+    })
+
     if (!shouldInstall) {
       this.logger.info('Installation cancelled')
       return
