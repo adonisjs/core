@@ -80,7 +80,7 @@
     "index:commands": "node --loader=ts-node/esm toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^7.6.1",
+    "@adonisjs/assembler": "^7.7.0",
     "@adonisjs/eslint-config": "^1.3.0",
     "@adonisjs/prettier-config": "^1.3.0",
     "@adonisjs/tsconfig": "^1.3.0",
@@ -119,7 +119,7 @@
   },
   "dependencies": {
     "@adonisjs/ace": "^13.0.0",
-    "@adonisjs/application": "^8.2.2",
+    "@adonisjs/application": "^8.3.1",
     "@adonisjs/bodyparser": "^10.0.2",
     "@adonisjs/config": "^5.0.2",
     "@adonisjs/encryption": "^6.0.2",
