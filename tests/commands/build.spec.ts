@@ -379,7 +379,7 @@ test.group('Build command', (group) => {
       },
     })
 
-    ace.app.rcFile.unstable_assembler = {
+    ace.app.rcFile.hooks = {
       onBuildCompleted: [
         async () => ({
           default: async () => {

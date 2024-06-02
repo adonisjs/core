@@ -134,9 +134,8 @@ export default class Serve extends BaseCommand {
       assets: await this.#getAssetsBundlerConfig(),
       metaFiles: this.app.rcFile.metaFiles,
       hooks: {
-        onDevServerStarted: this.app.rcFile.unstable_assembler?.onDevServerStarted,
-        onSourceFileChanged: this.app.rcFile.unstable_assembler?.onSourceFileChanged,
-        onHttpServerMessage: this.app.rcFile.unstable_assembler?.onHttpServerMessage,
+        onDevServerStarted: this.app.rcFile.hooks?.onDevServerStarted,
+        onSourceFileChanged: this.app.rcFile.hooks?.onSourceFileChanged,
       },
     })
 

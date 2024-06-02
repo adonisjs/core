@@ -322,7 +322,7 @@ test.group('Serve command', () => {
       importer: (filePath) => import(filePath),
     })
 
-    ace.app.rcFile.unstable_assembler = {
+    ace.app.rcFile.hooks = {
       onDevServerStarted: [
         async () => ({
           default: async () => assert.isTrue(true),
