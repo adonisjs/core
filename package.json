@@ -56,7 +56,8 @@
     "./repl": "./build/modules/repl.js",
     "./package.json": "./package.json",
     "./exceptions": "./build/src/exceptions.js",
-    "./test_utils": "./build/src/test_utils/main.js"
+    "./test_utils": "./build/src/test_utils/main.js",
+    "./health": "./build/modules/health.js"
   },
   "scripts": {
     "pretest": "npm run lint",
@@ -127,6 +128,7 @@
     "@adonisjs/events": "^9.0.2",
     "@adonisjs/fold": "^10.1.2",
     "@adonisjs/hash": "^9.0.3",
+    "@adonisjs/health": "^1.0.0",
     "@adonisjs/http-server": "^7.2.3",
     "@adonisjs/logger": "^6.0.3",
     "@adonisjs/repl": "^4.0.1",
