@@ -1,0 +1,21 @@
+{{#var controllerName = generators.controllerName(entity.name, false)}}
+{{#var controllerFileName = generators.controllerFileName(entity.name, false)}}
+{{{
+  exports({
+    to: app.httpControllersPath(entity.path, controllerFileName)
+  })
+}}}
+import { healthChecks } from '#start/health'
+import type { HttpContext } from '@adonisjs/core/http'
+
+export default class {{ controllerName }} {
+  async handle({ response }: HttpContext) {
+    const report = await healthChecks.run()
+
+    if (report.isHealthy) {
+      return response.ok(report)
+    }
+
+    return response.serviceUnavailable(report)
+  }
+}

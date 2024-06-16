@@ -107,6 +107,10 @@ export default class Configure extends BaseCommand {
       flags: this.parsed.flags,
       entity: this.app.generators.createEntity('health'),
     })
+    await codemods.makeUsingStub(stubsRoot, 'make/health/controller.stub', {
+      flags: this.parsed.flags,
+      entity: this.app.generators.createEntity('health_checks'),
+    })
   }
 
   /**

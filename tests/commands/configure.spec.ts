@@ -432,12 +432,21 @@ test.group('Configure command | health checks', (group) => {
         message: 'green(DONE:)    create start/health.ts',
         stream: 'stdout',
       },
+      {
+        message: 'green(DONE:)    create app/controllers/health_checks_controller.ts',
+        stream: 'stdout',
+      },
     ])
 
     await assert.fileContains('start/health.ts', [
       'new DiskSpaceHealthCheck()',
       'new MemoryHeapHealthCheck()',
       'export const healthChecks = ',
+    ])
+    await assert.fileContains('app/controllers/health_checks_controller.ts', [
+      `import { healthChecks } from '#start/health'`,
+      'const report = await healthChecks.run()',
+      'export default class HealthChecksController',
     ])
   })
 })
