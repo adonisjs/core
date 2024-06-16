@@ -411,3 +411,33 @@ test.group('Configure command | edge', (group) => {
     )
   })
 })
+
+test.group('Configure command | health checks', (group) => {
+  group.each.disableTimeout()
+
+  test('create start/health file with some default checks', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', 'export default defineConfig({})')
+
+    const command = await ace.create(Configure, ['health_checks'])
+
+    await command.run()
+
+    assert.deepEqual(command.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create start/health.ts',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('start/health.ts', [
+      'new DiskSpaceHealthCheck()',
+      'new MemoryHeapHealthCheck()',
+      'export const healthChecks = ',
+    ])
+  })
+})

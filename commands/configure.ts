@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { stubsRoot } from '../stubs/main.js'
 import type { CommandOptions } from '../types/ace.js'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
 
@@ -98,6 +99,17 @@ export default class Configure extends BaseCommand {
   }
 
   /**
+   * Configure health checks
+   */
+  async #configureHealthChecks() {
+    const codemods = await this.createCodemods()
+    await codemods.makeUsingStub(stubsRoot, 'make/health/main.stub', {
+      flags: this.parsed.flags,
+      entity: this.app.generators.createEntity('health'),
+    })
+  }
+
+  /**
    * Creates codemods as per configure command options
    */
   async createCodemods() {
@@ -116,6 +128,9 @@ export default class Configure extends BaseCommand {
     }
     if (this.name === 'edge') {
       return this.#configureEdge()
+    }
+    if (this.name === 'health_checks') {
+      return this.#configureHealthChecks()
     }
 
     const packageExports = await this.#getPackageSource(this.name)
