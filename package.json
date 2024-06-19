@@ -91,8 +91,8 @@
     "@japa/expect-type": "^2.0.2",
     "@japa/file-system": "^2.3.0",
     "@japa/runner": "^3.1.4",
-    "@swc/core": "^1.6.0",
-    "@types/node": "^20.14.2",
+    "@swc/core": "^1.6.1",
+    "@types/node": "^20.14.5",
     "@types/pretty-hrtime": "^1.0.3",
     "@types/sinon": "^17.0.3",
     "@types/supertest": "^6.0.2",
@@ -119,7 +119,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@adonisjs/ace": "^13.0.1",
+    "@adonisjs/ace": "^13.1.0",
     "@adonisjs/application": "^8.3.1",
     "@adonisjs/bodyparser": "^10.0.2",
     "@adonisjs/config": "^5.0.2",
@@ -128,7 +128,7 @@
     "@adonisjs/events": "^9.0.2",
     "@adonisjs/fold": "^10.1.2",
     "@adonisjs/hash": "^9.0.3",
-    "@adonisjs/health": "^1.1.0",
+    "@adonisjs/health": "^2.0.0",
     "@adonisjs/http-server": "^7.2.3",
     "@adonisjs/logger": "^6.0.3",
     "@adonisjs/repl": "^4.0.1",
@@ -220,5 +220,6 @@
       "factories/**",
       ".yalc/**"
     ]
-  }
+  },
+  "packageManager": "pnpm@9.2.0+sha512.98a80fd11c2e7096747762304106432b3ddc67dcf54b5a8c01c93f68a2cd5e05e6821849522a06fb76284d41a2660d5e334f2ee3bbf29183bf2e739b1dafa771"
 }

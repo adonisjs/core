@@ -4,13 +4,9 @@
     to: app.startPath(entity.path, preloadFileName)
   })
 }}}
-import {
-  HealthChecks,
-  DiskSpaceHealthCheck,
-  MemoryHeapHealthCheck,
-} from '@adonisjs/core/health'
+import { HealthChecks, DiskSpaceCheck, MemoryHeapCheck } from '@adonisjs/core/health'
 
 export const healthChecks = new HealthChecks().register([
-  new DiskSpaceHealthCheck(),
-  new MemoryHeapHealthCheck(),
+  new DiskSpaceCheck(),
+  new MemoryHeapCheck(),
 ])
