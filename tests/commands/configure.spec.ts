@@ -439,8 +439,8 @@ test.group('Configure command | health checks', (group) => {
     ])
 
     await assert.fileContains('start/health.ts', [
-      'new DiskSpaceHealthCheck()',
-      'new MemoryHeapHealthCheck()',
+      'new DiskSpaceCheck()',
+      'new MemoryHeapCheck()',
       'export const healthChecks = ',
     ])
     await assert.fileContains('app/controllers/health_checks_controller.ts', [
