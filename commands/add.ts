@@ -12,6 +12,8 @@ import { detectPackageManager, installPackage } from '@antfu/install-pkg'
 import { CommandOptions } from '../types/ace.js'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
 
+const KNOWN_PACKAGE_MANAGERS = ['npm', 'pnpm', 'bun', 'yarn', 'yarn@berry', 'pnpm@6'] as const
+
 /**
  * The install command is used to `npm install` and `node ace configure` a new package
  * in one go.
@@ -30,7 +32,7 @@ export default class Add extends BaseCommand {
   declare verbose?: boolean
 
   @flags.string({ description: 'Select the package manager you want to use' })
-  declare packageManager?: 'npm' | 'pnpm' | 'bun' | 'yarn' | 'yarn@berry'
+  declare packageManager?: (typeof KNOWN_PACKAGE_MANAGERS)[number]
 
   @flags.boolean({ description: 'Should we install the package as a dev dependency', alias: 'D' })
   declare dev?: boolean
@@ -45,8 +47,8 @@ export default class Add extends BaseCommand {
     const pkgManager =
       this.packageManager || (await detectPackageManager(this.app.makePath())) || 'npm'
 
-    if (['npm', 'pnpm', 'yarn', 'yarn@berry'].includes(pkgManager)) {
-      return pkgManager as 'npm' | 'pnpm' | 'bun' | 'yarn' | 'yarn@berry'
+    if (KNOWN_PACKAGE_MANAGERS.includes(pkgManager)) {
+      return pkgManager
     }
 
     throw new Error('Invalid package manager. Must be one of npm, pnpm, bun or yarn')
