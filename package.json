@@ -169,7 +169,12 @@
       "optional": true
     }
   },
-  "author": "virk,adonisjs",
+  "author": "Harminder Virk <virk@adonisjs.com>",
+  "contributors": [
+    "Romain Lanz <romain.lanz@pm.me>",
+    "Julien Ripouteau <julien@ripouteau.com>",
+    "Michaël Zasso"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/adonisjs/core#readme",
   "repository": {
