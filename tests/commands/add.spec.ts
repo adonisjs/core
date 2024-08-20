@@ -260,7 +260,7 @@ test.group('Install', (group) => {
     await command.exec()
 
     command.assertExitCode(1)
-    command.assertLogMatches(/pnpm install.*inexistent exited/)
+    command.assertLogMatches(/Process exited with non-zero status/)
   })
 
   test('display error if configure fail', async ({ fs }) => {
