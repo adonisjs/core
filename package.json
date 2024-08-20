@@ -132,7 +132,7 @@
     "@adonisjs/http-server": "^7.2.3",
     "@adonisjs/logger": "^6.0.3",
     "@adonisjs/repl": "^4.0.1",
-    "@antfu/install-pkg": "^0.3.3",
+    "@antfu/install-pkg": "^0.4.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@poppinss/macroable": "^1.0.2",
     "@poppinss/utils": "^6.7.3",
