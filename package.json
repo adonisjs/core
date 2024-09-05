@@ -91,6 +91,7 @@
     "@japa/expect-type": "^2.0.2",
     "@japa/file-system": "^2.3.0",
     "@japa/runner": "^3.1.4",
+    "@release-it/conventional-changelog": "^8.0.1",
     "@swc/core": "^1.7.23",
     "@types/node": "^22.5.4",
     "@types/pretty-hrtime": "^1.0.3",
@@ -189,33 +190,9 @@
     "framework",
     "mvc"
   ],
-  "eslintConfig": {
-    "extends": "@adonisjs/eslint-config/package"
-  },
-  "prettier": "@adonisjs/prettier-config",
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
   "publishConfig": {
-    "access": "public",
-    "tag": "latest"
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore(release): ${version}",
-      "tagAnnotation": "v${version}",
-      "tagName": "v${version}"
-    },
-    "hooks": {
-      "after:init": "npm test"
-    },
-    "github": {
-      "release": true,
-      "releaseName": "v${version}",
-      "web": true
-    }
+    "provenance": true,
+    "access": "public"
   },
   "c8": {
     "reporter": [
@@ -228,5 +205,35 @@
       "factories/**",
       ".yalc/**"
     ]
-  }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release-it": {
+    "git": {
+      "requireCleanWorkingDir": true,
+      "requireUpstream": true,
+      "commitMessage": "chore(release): ${version}",
+      "tagAnnotation": "v${version}",
+      "push": true,
+      "tagName": "v${version}"
+    },
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "publish": true,
+      "skipChecks": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": {
+          "name": "angular"
+        }
+      }
+    }
+  },
+  "prettier": "@adonisjs/prettier-config"
 }
