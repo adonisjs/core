@@ -278,11 +278,14 @@ test.group('Install', (group) => {
 
     const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
     command.verbose = VERBOSE
+    ace.errorHandler.render = async function (error: Error) {
+      command.logger.fatal(error)
+    }
 
     await command.exec()
 
     command.assertExitCode(1)
-    command.assertLogMatches(/Invalid configure/)
+    command.assertLogMatches(/Unable to configure/)
   })
 
   test('configure edge', async ({ assert, fs }) => {

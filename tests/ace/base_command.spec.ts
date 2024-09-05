@@ -112,6 +112,9 @@ test.group('Base command', () => {
 
     const kernel = createAceKernel(app)
     kernel.ui.switchMode('raw')
+    kernel.errorHandler.render = async function (error: Error) {
+      command.logger.fatal(error)
+    }
 
     const command = await kernel.create(MakeController, [])
     await command.exec()
@@ -137,6 +140,9 @@ test.group('Base command', () => {
 
     const kernel = createAceKernel(app)
     kernel.ui.switchMode('raw')
+    kernel.errorHandler.render = async function (error: Error) {
+      command.logger.fatal(error)
+    }
 
     const command = await kernel.create(MakeController, [])
     await command.exec()
@@ -162,6 +168,9 @@ test.group('Base command', () => {
 
     const kernel = createAceKernel(app)
     kernel.ui.switchMode('raw')
+    kernel.errorHandler.render = async function (error: Error) {
+      command.logger.fatal(error)
+    }
 
     const command = await kernel.create(MakeController, [])
     await command.exec()
@@ -219,6 +228,9 @@ test.group('Base command', () => {
 
     const kernel = createAceKernel(app)
     kernel.ui.switchMode('raw')
+    kernel.errorHandler.render = async function (error: Error) {
+      command.logger.fatal(error)
+    }
 
     const command = await kernel.create(MakeController, [])
     await command.exec()

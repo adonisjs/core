@@ -10,6 +10,7 @@
 import { stubsRoot } from '../stubs/main.js'
 import type { CommandOptions } from '../types/ace.js'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
+import { RuntimeException } from '@poppinss/utils'
 
 /**
  * The configure command is used to configure packages after installation
@@ -165,6 +166,12 @@ export default class Configure extends BaseCommand {
     /**
      * Run instructions
      */
-    await packageExports.configure(this)
+    try {
+      await packageExports.configure(this)
+    } catch (error) {
+      throw new RuntimeException(`Unable to configure package "${this.name}"`, {
+        cause: error,
+      })
+    }
   }
 }
