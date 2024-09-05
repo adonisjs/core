@@ -108,7 +108,7 @@ export class BaseCommand extends AceBaseCommand {
       : false
 
     if (this.error && !errorHandled) {
-      this.logger.fatal(this.error)
+      await this.kernel.errorHandler.render(this.error, this.kernel)
     }
 
     return this.result
