@@ -310,13 +310,13 @@ test.group('Serve command', () => {
     `
     )
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
         name: 'ts-node',
-        exports: { './esm': './esm.js' },
+        exports: { './register/esm': './esm.js' },
       })
     )
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
@@ -339,7 +339,7 @@ test.group('Serve command', () => {
   })
 
   test('error if --hmr and --watch are used together', async ({ assert, fs }) => {
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),

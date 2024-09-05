@@ -138,15 +138,15 @@ test.group('Test command', () => {
   test('show error when configured assets bundler is missing', async ({ assert, fs, cleanup }) => {
     await fs.create('bin/server.js', '')
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
-        name: 'ts-node',
+        name: 'ts-node-maintained',
         exports: {
-          './esm': './esm.js',
+          './register/esm': './esm.js',
         },
       })
     )
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -186,15 +186,15 @@ test.group('Test command', () => {
   }) => {
     await fs.create('bin/test.js', '')
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
-        name: 'ts-node',
+        name: 'ts-node-maintained',
         exports: {
-          './esm': './esm.js',
+          './register/esm': './esm.js',
         },
       })
     )
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -223,15 +223,15 @@ test.group('Test command', () => {
   }) => {
     await fs.create('bin/test.js', '')
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
-        name: 'ts-node',
+        name: 'ts-node-maintained',
         exports: {
-          './esm': './esm.js',
+          './register/esm': './esm.js',
         },
       })
     )
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -276,16 +276,16 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
-        name: 'ts-node',
+        name: 'ts-node-maintained',
         exports: {
-          './esm': './esm.js',
+          './register/esm': './esm.js',
         },
       })
     )
 
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -340,15 +340,15 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
-        name: 'ts-node',
+        name: 'ts-node-maintained',
         exports: {
-          './esm': './esm.js',
+          './register/esm': './esm.js',
         },
       })
     )
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -390,15 +390,15 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
-        name: 'ts-node',
+        name: 'ts-node-maintained',
         exports: {
-          './esm': './esm.js',
+          './register/esm': './esm.js',
         },
       })
     )
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -447,15 +447,15 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
-        name: 'ts-node',
+        name: 'ts-node-maintained',
         exports: {
-          './esm': './esm.js',
+          './register/esm': './esm.js',
         },
       })
     )
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -505,16 +505,16 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'node_modules/ts-node/package.json',
+      'node_modules/ts-node-maintained/package.json',
       JSON.stringify({
-        name: 'ts-node',
+        name: 'ts-node-maintained',
         exports: {
-          './esm': './esm.js',
+          './register/esm': './esm.js',
         },
       })
     )
 
-    await fs.create('node_modules/ts-node/esm.js', '')
+    await fs.create('node_modules/ts-node-maintained/esm.js', '')
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {

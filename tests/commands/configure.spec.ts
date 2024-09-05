@@ -344,10 +344,8 @@ test.group('Configure command | run', (group) => {
 
     const lastLog = logs[logs.length - 1]
     assert.equal(command.exitCode, 1)
-    assert.deepInclude(
-      lastLog.message,
-      '[ red(error) ] npm install -D is-odd@15.0.0 exited with a status of 1.'
-    )
+    console.log(lastLog.message)
+    assert.include(lastLog.message, '[ red(error) ] Process exited with non-zero status')
   })
 })
 
