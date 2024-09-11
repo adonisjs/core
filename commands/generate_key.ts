@@ -43,7 +43,7 @@ export default class GenerateKey extends BaseCommand {
 
     if (writeToFile) {
       const editor = await EnvEditor.create(this.app.appRoot)
-      editor.add('APP_KEY', secureKey)
+      editor.add('APP_KEY', secureKey, true)
       await editor.save()
       this.logger.action('add APP_KEY to .env').succeeded()
     } else {
