@@ -24,12 +24,17 @@ export default class GenerateKey extends BaseCommand {
   })
   declare show: boolean
 
+  @flags.string()
+  declare env: string
+
   @flags.boolean({
     description: 'Force update .env file in production environment',
   })
   declare force: boolean
 
   async run() {
+    const withEmptyExampleValue = this.env === 'production'
+
     let writeToFile = process.env.NODE_ENV !== 'production'
     if (this.force) {
       writeToFile = true
@@ -43,7 +48,7 @@ export default class GenerateKey extends BaseCommand {
 
     if (writeToFile) {
       const editor = await EnvEditor.create(this.app.appRoot)
-      editor.add('APP_KEY', secureKey)
+      editor.add('APP_KEY', secureKey, withEmptyExampleValue)
       await editor.save()
       this.logger.action('add APP_KEY to .env').succeeded()
     } else {
