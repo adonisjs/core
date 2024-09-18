@@ -10,9 +10,10 @@
 import { Config } from '../modules/config.js'
 import { Logger } from '../modules/logger.js'
 import { Application } from '../modules/app.js'
-import { BaseEvent, Emitter } from '../modules/events.js'
+import { Dumper } from '../modules/dumper/dumper.js'
 import { Encryption } from '../modules/encryption.js'
 import { Router, Server } from '../modules/http/main.js'
+import { BaseEvent, Emitter } from '../modules/events.js'
 import type { ApplicationService, LoggerService } from '../src/types.js'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
 
@@ -139,11 +140,34 @@ export default class AppServiceProvider {
   }
 
   /**
+   * Registeres singleton instance of the "Dumper" module configured
+   * via the "config/app.ts" file.
+   */
+  protected registerDumper() {
+    this.app.container.singleton(Dumper, async () => {
+      const config = this.app.config.get<any>('app.dumper', {})
+      const dumper = new Dumper(this.app)
+
+      if (config.html) {
+        dumper.configureHtmlOutput(config.html)
+      }
+      if (config.console) {
+        dumper.configureAnsiOutput(config.console)
+      }
+
+      return dumper
+    })
+
+    this.app.container.alias('dumper', Dumper)
+  }
+
+  /**
    * Registers bindings
    */
   register() {
     this.registerApp()
     this.registerAce()
+    this.registerDumper()
     this.registerLoggerManager()
     this.registerLogger()
     this.registerConfig()

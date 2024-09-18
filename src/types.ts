@@ -14,6 +14,7 @@ import type { Kernel } from '../modules/ace/main.js'
 import type { Application } from '../modules/app.js'
 import type { TestUtils } from './test_utils/main.js'
 import type { HttpServerEvents } from '../types/http.js'
+import type { Dumper } from '../modules/dumper/dumper.js'
 import type { LoggerManager } from '../modules/logger.js'
 import type { HashManager } from '../modules/hash/main.js'
 import type { Encryption } from '../modules/encryption.js'
@@ -121,6 +122,7 @@ export interface HashService
  */
 export interface ContainerBindings {
   ace: Kernel
+  dumper: Dumper
   app: ApplicationService
   logger: LoggerService
   config: ApplicationService['config']

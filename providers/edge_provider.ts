@@ -44,6 +44,7 @@ export default class EdgeServiceProvider {
   async boot() {
     const app = this.app
     const router = await this.app.container.make('router')
+    const dumper = await this.app.container.make('dumper')
 
     function edgeConfigResolver(key: string, defaultValue?: any) {
       return app.config.get(key, defaultValue)
@@ -73,6 +74,8 @@ export default class EdgeServiceProvider {
     })
     edge.global('app', app)
     edge.global('config', edgeConfigResolver)
+    edge.global('dd', (value: unknown) => dumper.dd(value))
+    edge.global('dump', (value: unknown) => dumper.dumpToHtml(value))
 
     /**
      * Creating a isolated instance of edge renderer

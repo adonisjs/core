@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-export { default as parseImports } from 'parse-imports'
+export { parseImports } from 'parse-imports'
 export { createId as cuid, isCuid } from '@paralleldrive/cuid2'
 export {
   slash,

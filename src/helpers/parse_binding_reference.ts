@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import parseImports from 'parse-imports'
+import { parseImports } from 'parse-imports'
 import { LazyImport, Constructor } from '../../types/http.js'
 
 /**

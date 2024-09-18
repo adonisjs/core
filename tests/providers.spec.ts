@@ -21,6 +21,7 @@ import { Hash, HashManager } from '../modules/hash/main.js'
 import { Logger, LoggerManager } from '../modules/logger.js'
 import { IgnitorFactory } from '../factories/core/ignitor.js'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
+import { defineConfig as defineDumperConfig } from '../modules/dumper/define_config.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
@@ -49,6 +50,7 @@ test.group('Providers', () => {
     assert.isTrue(app.container.hasBinding('emitter'))
     assert.isTrue(app.container.hasBinding('encryption'))
     assert.isTrue(app.container.hasBinding('hash'))
+    assert.isTrue(app.container.hasBinding('dumper'))
     assert.isTrue(app.container.hasBinding('server'))
     assert.isTrue(app.container.hasBinding('router'))
     assert.isTrue(app.container.hasBinding('testUtils'))
@@ -84,6 +86,7 @@ test.group('Providers', () => {
     const { default: aceService } = await import('../services/ace.js')
     const { default: testUtils } = await import('../services/test_utils.js')
     const { default: repl } = await import('../services/repl.js')
+    const { dd } = await import('../services/dumper.js')
 
     assert.instanceOf(aceService, Kernel)
     assert.strictEqual(app, appService)
@@ -96,6 +99,8 @@ test.group('Providers', () => {
     assert.instanceOf(serverService, Server)
     assert.instanceOf(testUtils, TestUtils)
     assert.instanceOf(repl, Repl)
+    assert.isFunction(dd)
+    assert.throws(() => dd('d'), 'Dump and Die exception')
   })
 
   test('construct bodyparser middleware using the container', async ({ assert }) => {
@@ -219,5 +224,42 @@ test.group('Providers', () => {
     const app = ignitor.createApp('repl')
     await app.init()
     await app.boot()
+  })
+
+  test('configure dumper using config/app file', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/repl_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .merge({
+        config: {
+          app: {
+            dumper: defineDumperConfig({
+              html: {
+                maxArrayLength: 1,
+              },
+              console: {
+                maxArrayLength: 1,
+              },
+            }),
+          },
+        },
+      })
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('web')
+    await app.init()
+    await app.boot()
+
+    const dumper = await app.container.make('dumper')
+    assert.include(dumper.dumpToAnsi([1, 2, 3]), '[...2 more items]')
+    assert.include(dumper.dumpToHtml([1, 2, 3]), '[...2 more items]')
   })
 })
