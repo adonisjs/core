@@ -68,10 +68,20 @@ test.group('Dumper', () => {
       dumper.dd({ hello: 'world' })
     } catch (error) {
       await error.render(error, ace)
+
       assert.lengthOf(ace.ui.logger.getLogs(), 1)
       assert.include(
         ace.ui.logger.getLogs()[0].message,
-        "\x1B[33m{\x1B[39m\n  \x1B[34mhello\x1B[39m: \x1B[32m'world'\x1B[39m,\n\x1B[33m}\x1B[39m"
+        dumper.dumpToAnsi(
+          { hello: 'world' },
+          {
+            title: 'DUMP DIE',
+            source: {
+              location: import.meta.filename,
+              line: 68,
+            },
+          }
+        )
       )
     }
   })
