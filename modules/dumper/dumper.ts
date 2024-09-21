@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { styleText } from 'node:util'
+import useColors from '@poppinss/colors'
 import { dump as consoleDump } from '@poppinss/dumper/console'
 import type { HTMLDumpConfig } from '@poppinss/dumper/html/types'
 import type { ConsoleDumpConfig } from '@poppinss/dumper/console/types'
@@ -15,6 +15,8 @@ import { createScript, createStyleSheet, dump } from '@poppinss/dumper/html'
 
 import type { Application } from '../app.js'
 import { E_DUMP_DIE_EXCEPTION } from './errors.js'
+
+const colors = useColors.ansi()
 
 const DUMP_TITLE_STYLES = `
 .adonisjs-dump-header {
@@ -215,7 +217,7 @@ export class Dumper {
     /**
      * Styled heading with background color and bold text
      */
-    const heading = styleText('bgRed', styleText('bold', `${title}${whiteSpace}${link}`))
+    const heading = colors.bgRed().bold(`${title}${whiteSpace}${link}`)
 
     return `${heading}\n${consoleDump(value, this.#consoleConfig)}`
   }
