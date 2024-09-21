@@ -8,11 +8,13 @@
  */
 
 import { test } from '@japa/runner'
+import { fileURLToPath } from 'node:url'
 import { AppFactory } from '@adonisjs/application/factories'
-import { Dumper } from '../../modules/dumper/dumper.js'
-import { E_DUMP_DIE_EXCEPTION } from '../../modules/dumper/errors.js'
 import { HttpContextFactory } from '@adonisjs/http-server/factories'
+
+import { Dumper } from '../../modules/dumper/dumper.js'
 import { AceFactory } from '../../factories/core/ace.js'
+import { E_DUMP_DIE_EXCEPTION } from '../../modules/dumper/errors.js'
 
 test.group('Dumper', () => {
   test('dump and die', ({ fs }) => {
@@ -77,8 +79,8 @@ test.group('Dumper', () => {
           {
             title: 'DUMP DIE',
             source: {
-              location: import.meta.filename,
-              line: 68,
+              location: fileURLToPath(new URL('', import.meta.url)),
+              line: 70,
             },
           }
         )
