@@ -212,7 +212,8 @@ export class Dumper {
      * Whitespace between the title and the link to align them
      * on each side of x axis
      */
-    const whiteSpace = new Array(columns - link.length - title.length - 4).join(' ')
+    const whiteSpaceLength = columns - link.length - title.length - 4
+    const whiteSpace = new Array(whiteSpaceLength <= 0 ? 1 : whiteSpaceLength).join(' ')
 
     /**
      * Styled heading with background color and bold text
