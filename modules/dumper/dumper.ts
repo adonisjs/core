@@ -213,6 +213,7 @@ export class Dumper {
      * on each side of x axis
      */
     const whiteSpaceLength = columns - link.length - title.length - 4
+    console.log({ whiteSpaceLength, new: whiteSpaceLength <= 0 ? 1 : whiteSpaceLength })
     const whiteSpace = new Array(whiteSpaceLength <= 0 ? 1 : whiteSpaceLength).join(' ')
 
     /**
