@@ -212,6 +212,7 @@ export class Dumper {
      * Whitespace between the title and the link to align them
      * on each side of x axis
      */
+    console.log({ columns })
     const whiteSpaceLength = Number.isNaN(columns) ? 1 : columns - link.length - title.length - 4
     const whiteSpace = new Array(whiteSpaceLength <= 0 ? 1 : whiteSpaceLength).join(' ')
 
