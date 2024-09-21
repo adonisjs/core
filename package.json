@@ -131,7 +131,7 @@
     "@adonisjs/env": "^6.1.0",
     "@adonisjs/events": "^9.0.2",
     "@adonisjs/fold": "^10.1.2",
-    "@adonisjs/hash": "^9.0.4",
+    "@adonisjs/hash": "^9.0.5",
     "@adonisjs/health": "^2.0.0",
     "@adonisjs/http-server": "^7.2.3",
     "@adonisjs/logger": "^6.0.3",
