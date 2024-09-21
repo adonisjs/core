@@ -71,6 +71,20 @@ test.group('Dumper', () => {
     } catch (error) {
       await error.render(error, ace)
 
+      console.log(ace.ui.logger.getLogs()[0].message)
+      console.log(
+        dumper.dumpToAnsi(
+          { hello: 'world' },
+          {
+            title: 'DUMP DIE',
+            source: {
+              location: fileURLToPath(new URL('', import.meta.url)),
+              line: 70,
+            },
+          }
+        )
+      )
+
       assert.lengthOf(ace.ui.logger.getLogs(), 1)
       assert.include(
         ace.ui.logger.getLogs()[0].message,
