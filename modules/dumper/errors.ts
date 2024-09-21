@@ -12,11 +12,8 @@ import { parse } from 'error-stack-parser-es'
 import type { Kernel } from '@adonisjs/core/ace'
 import { Exception } from '@poppinss/utils/exception'
 import type { HttpContext } from '@adonisjs/core/http'
-import type { ApplicationService } from '@adonisjs/core/types'
 
 import type { Dumper } from './dumper.js'
-
-const IDE = process.env.ADONIS_IDE ?? process.env.EDITOR ?? ''
 
 /**
  * DumpDie exception is raised by the "dd" function. It will
@@ -27,41 +24,28 @@ class DumpDieException extends Exception {
   static status: number = 500
   static code: string = 'E_DUMP_DIE_EXCEPTION'
 
-  #app: ApplicationService
+  declare fileName: string
+  declare lineNumber: number
+
   #dumper: Dumper
   #traceSourceIndex: number = 1
-
-  /**
-   * A collections of known editors to create URLs to open
-   * them
-   */
-  #editors: Record<string, string> = {
-    textmate: 'txmt://open?url=file://%f&line=%l',
-    macvim: 'mvim://open?url=file://%f&line=%l',
-    emacs: 'emacs://open?url=file://%f&line=%l',
-    sublime: 'subl://open?url=file://%f&line=%l',
-    phpstorm: 'phpstorm://open?file=%f&line=%l',
-    atom: 'atom://core/open/file?filename=%f&line=%l',
-    vscode: 'vscode://file/%f:%l',
-  }
-
   value: unknown
 
-  constructor(value: unknown, dumper: Dumper, app: ApplicationService) {
+  constructor(value: unknown, dumper: Dumper) {
     super('Dump and Die exception')
     this.#dumper = dumper
-    this.#app = app
     this.value = value
   }
 
   /**
-   * Returns the link to open the file using dd inside one
-   * of the known code editors
+   * Returns the source file and line number location for the error
    */
-  #getEditorLink(): { href: string; text: string } | undefined {
-    const editorURL = this.#editors[IDE] || IDE
-    if (!editorURL) {
-      return
+  #getErrorSource(): { location: string; line: number } | undefined {
+    if (this.fileName && this.lineNumber) {
+      return {
+        location: this.fileName,
+        line: this.lineNumber,
+      }
     }
 
     const source = parse(this)[this.#traceSourceIndex]
@@ -70,8 +54,8 @@ class DumpDieException extends Exception {
     }
 
     return {
-      href: editorURL.replace('%f', source.fileName).replace('%l', String(source.lineNumber)),
-      text: `${this.#app.relativePath(source.fileName)}:${source.lineNumber}`,
+      location: source.fileName,
+      line: source.lineNumber,
     }
   }
 
@@ -94,11 +78,12 @@ class DumpDieException extends Exception {
    * Handler called by the AdonisJS HTTP exception handler
    */
   async handle(error: DumpDieException, ctx: HttpContext) {
-    const link = this.#getEditorLink()
+    const source = this.#getErrorSource()
+
     /**
      * Comes from the shield package
      */
-    const cspNonce = 'nonce' in ctx.response ? ctx.response.nonce : undefined
+    const cspNonce = 'nonce' in ctx.response ? (ctx.response.nonce as string) : undefined
 
     ctx.response
       .status(500)
@@ -111,13 +96,7 @@ class DumpDieException extends Exception {
           `${this.#dumper.getHeadElements(cspNonce)}` +
           '</head>' +
           '<body>' +
-          '<div class="adonisjs-dump-header">' +
-          '<span class="adonisjs-dump-header-title">DUMP DIE</span>' +
-          (link
-            ? `<a href="${link.href}" class="adonisjs-dump-header-source">${link.text}</a>`
-            : '') +
-          '</div>' +
-          `${this.#dumper.dumpToHtml(error.value, cspNonce)}` +
+          `${this.#dumper.dumpToHtml(error.value, { cspNonce, source, title: 'DUMP DIE' })}` +
           '</body>' +
           '</html>'
       )
@@ -127,14 +106,16 @@ class DumpDieException extends Exception {
    * Handler called by the AdonisJS Ace kernel
    */
   async render(error: DumpDieException, kernel: Kernel) {
-    kernel.ui.logger.log(this.#dumper.dumpToAnsi(error.value))
+    const source = this.#getErrorSource()
+    kernel.ui.logger.log(this.#dumper.dumpToAnsi(error.value, { source, title: 'DUMP DIE' }))
   }
 
   /**
    * Custom output for the Node.js util inspect
    */
   [inspect.custom]() {
-    return this.#dumper.dumpToAnsi(this.value)
+    const source = this.#getErrorSource()
+    return this.#dumper.dumpToAnsi(this.value, { source, title: 'DUMP DIE' })
   }
 }
 

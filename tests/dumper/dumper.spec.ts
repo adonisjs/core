@@ -58,6 +58,7 @@ test.group('Dumper', () => {
   })
 
   test('render dump as ansi output', async ({ fs, assert }) => {
+    assert.plan(2)
     const app = new AppFactory().create(fs.baseUrl)
     const ace = await new AceFactory().make(fs.baseUrl)
     ace.ui.switchMode('raw')
@@ -67,13 +68,11 @@ test.group('Dumper', () => {
       dumper.dd({ hello: 'world' })
     } catch (error) {
       await error.render(error, ace)
-      assert.deepEqual(ace.ui.logger.getLogs(), [
-        {
-          message:
-            "\x1B[33m{\x1B[39m\n  \x1B[34mhello\x1B[39m: \x1B[32m'world'\x1B[39m,\n\x1B[33m}\x1B[39m",
-          stream: 'stdout',
-        },
-      ])
+      assert.lengthOf(ace.ui.logger.getLogs(), 1)
+      assert.include(
+        ace.ui.logger.getLogs()[0].message,
+        "\x1B[33m{\x1B[39m\n  \x1B[34mhello\x1B[39m: \x1B[32m'world'\x1B[39m,\n\x1B[33m}\x1B[39m"
+      )
     }
   })
 })

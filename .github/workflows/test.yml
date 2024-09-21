@@ -20,25 +20,25 @@ jobs:
         node-version: [20.10.0, 21.x]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install pnpm
-      if: ${{ inputs.install-pnpm }}
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8.6.3
+      - name: Install pnpm
+        if: ${{ inputs.install-pnpm }}
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.3
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run tests
-      run: npm test
+      - name: Run tests
+        run: npm test
 
   test_windows:
     if: ${{ !inputs.disable-windows }}
@@ -48,22 +48,22 @@ jobs:
         node-version: [20.10.0, 21.x]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install pnpm
-      if: ${{ inputs.install-pnpm }}
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8.6.3
+      - name: Install pnpm
+        if: ${{ inputs.install-pnpm }}
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.6.3
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run tests
-      run: npm test
+      - name: Run tests
+        run: npm test

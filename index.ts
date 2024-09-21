@@ -38,6 +38,11 @@ export const errors: typeof encryptionErrors &
  * Youch terminal
  */
 export async function prettyPrintError(error: any) {
+  if (error && typeof error === 'object' && error.code === 'E_DUMP_DIE_EXCEPTION') {
+    console.error(error)
+    return
+  }
+
   // @ts-expect-error
   const { default: youchTerminal } = await import('youch-terminal')
   const { default: Youch } = await import('youch')

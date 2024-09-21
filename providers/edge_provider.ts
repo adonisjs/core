@@ -9,6 +9,7 @@
 
 import edge, { type Edge } from 'edge.js'
 import type { ApplicationService } from '../src/types.js'
+import { pluginEdgeDumper } from '../modules/dumper/plugins/edge.js'
 import { BriskRoute, HttpContext, type Route, type Router } from '../modules/http/main.js'
 
 declare module '@adonisjs/core/http' {
@@ -74,8 +75,6 @@ export default class EdgeServiceProvider {
     })
     edge.global('app', app)
     edge.global('config', edgeConfigResolver)
-    edge.global('dd', (value: unknown) => dumper.dd(value))
-    edge.global('dump', (value: unknown) => dumper.dumpToHtml(value))
 
     /**
      * Creating a isolated instance of edge renderer
@@ -99,5 +98,7 @@ export default class EdgeServiceProvider {
         return view.render(template, data)
       })
     })
+
+    edge.use(pluginEdgeDumper(dumper))
   }
 }
