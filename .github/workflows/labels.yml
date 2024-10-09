@@ -1,0 +1,15 @@
+name: Sync labels
+on:
+  workflow_dispatch:
+permissions:
+  issues: write
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EndBug/label-sync@v2
+        with:
+          config-file: 'https://raw.githubusercontent.com/thetutlage/static/main/labels.yml'
+          delete-other-labels: true
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -77,7 +77,6 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "sync-labels": "github-label-sync --labels .github/labels.json adonisjs/core",
     "quick:test": "node --import=ts-node-maintained/register/esm --enable-source-maps --experimental-import-meta-resolve bin/test.ts --force-exit",
     "citgm": "cross-env FORCE_COLOR=0 node --import=ts-node-maintained/register/esm --experimental-import-meta-resolve bin/test.ts --force-exit",
     "index:commands": "node --import=ts-node-maintained/register/esm toolkit/main.js index build/commands"
