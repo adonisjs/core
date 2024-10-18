@@ -297,7 +297,7 @@ export class Codemods extends EventEmitter {
    * name like :
    *
    * ```
-   * this.installPackages(['@adonisjs/lucid@next', '@adonisjs/auth@3.0.0'])
+   * this.installPackages([{ name: '@adonisjs/lucid@next', isDevDependency: false }])
    * ```
    */
   async installPackages(packages: { name: string; isDevDependency: boolean }[]) {
