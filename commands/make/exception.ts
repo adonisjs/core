@@ -9,6 +9,7 @@
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, BaseCommand } from '../../modules/ace/main.js'
+import { CommandOptions } from '../../types/ace.js'
 
 /**
  * Make a new exception class
@@ -16,6 +17,10 @@ import { args, BaseCommand } from '../../modules/ace/main.js'
 export default class MakeException extends BaseCommand {
   static commandName = 'make:exception'
   static description = 'Create a new custom exception class'
+
+  static options: CommandOptions = {
+    allowUnknownFlags: true,
+  }
 
   @args.string({ description: 'Name of the exception' })
   declare name: string

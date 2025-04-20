@@ -10,6 +10,7 @@
 import string from '@poppinss/utils/string'
 import { stubsRoot } from '../../stubs/main.js'
 import { args, flags, BaseCommand } from '../../modules/ace/main.js'
+import { CommandOptions } from '../../types/ace.js'
 
 /**
  * The make controller command to create an HTTP controller
@@ -17,6 +18,10 @@ import { args, flags, BaseCommand } from '../../modules/ace/main.js'
 export default class MakeController extends BaseCommand {
   static commandName = 'make:controller'
   static description = 'Create a new HTTP controller class'
+
+  static options: CommandOptions = {
+    allowUnknownFlags: true,
+  }
 
   @args.string({ description: 'The name of the controller' })
   declare name: string

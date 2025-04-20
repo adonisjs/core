@@ -9,6 +9,7 @@
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, flags, BaseCommand } from '../../modules/ace/main.js'
+import { CommandOptions } from '../../types/ace.js'
 
 /**
  * The make listener command to create a class based event
@@ -17,6 +18,10 @@ import { args, flags, BaseCommand } from '../../modules/ace/main.js'
 export default class MakeListener extends BaseCommand {
   static commandName = 'make:listener'
   static description = 'Create a new event listener class'
+
+  static options: CommandOptions = {
+    allowUnknownFlags: true,
+  }
 
   @args.string({ description: 'Name of the event listener' })
   declare name: string

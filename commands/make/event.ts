@@ -9,6 +9,7 @@
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, BaseCommand } from '../../modules/ace/main.js'
+import { CommandOptions } from '../../types/ace.js'
 
 /**
  * The make event command to create a class based event
@@ -16,6 +17,10 @@ import { args, BaseCommand } from '../../modules/ace/main.js'
 export default class MakeEvent extends BaseCommand {
   static commandName = 'make:event'
   static description = 'Create a new event class'
+
+  static options: CommandOptions = {
+    allowUnknownFlags: true,
+  }
 
   @args.string({ description: 'Name of the event' })
   declare name: string

@@ -9,6 +9,7 @@
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, flags, BaseCommand } from '../../modules/ace/main.js'
+import { CommandOptions } from '../../types/ace.js'
 
 /**
  * Make a new VineJS validator
@@ -16,6 +17,10 @@ import { args, flags, BaseCommand } from '../../modules/ace/main.js'
 export default class MakeValidator extends BaseCommand {
   static commandName = 'make:validator'
   static description = 'Create a new file to define VineJS validators'
+
+  static options: CommandOptions = {
+    allowUnknownFlags: true,
+  }
 
   @args.string({ description: 'Name of the validator file' })
   declare name: string

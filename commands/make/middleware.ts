@@ -13,6 +13,7 @@ import { basename, extname, relative } from 'node:path'
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, BaseCommand, flags } from '../../modules/ace/main.js'
+import { CommandOptions } from '../../types/ace.js'
 
 /**
  * The make middleware command to create a new middleware
@@ -21,6 +22,10 @@ import { args, BaseCommand, flags } from '../../modules/ace/main.js'
 export default class MakeMiddleware extends BaseCommand {
   static commandName = 'make:middleware'
   static description = 'Create a new middleware class for HTTP requests'
+
+  static options: CommandOptions = {
+    allowUnknownFlags: true,
+  }
 
   @args.string({ description: 'Name of the middleware' })
   declare name: string

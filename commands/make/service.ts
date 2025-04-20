@@ -9,6 +9,7 @@
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, BaseCommand } from '../../modules/ace/main.js'
+import { CommandOptions } from '../../types/ace.js'
 
 /**
  * Make a new service class
@@ -16,6 +17,10 @@ import { args, BaseCommand } from '../../modules/ace/main.js'
 export default class MakeService extends BaseCommand {
   static commandName = 'make:service'
   static description = 'Create a new service class'
+
+  static options: CommandOptions = {
+    allowUnknownFlags: true,
+  }
 
   @args.string({ description: 'Name of the service' })
   declare name: string
