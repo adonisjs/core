@@ -59,7 +59,8 @@
     "./package.json": "./package.json",
     "./exceptions": "./build/src/exceptions.js",
     "./test_utils": "./build/src/test_utils/main.js",
-    "./health": "./build/modules/health.js"
+    "./health": "./build/modules/health.js",
+    "./vine": "./build/src/vine.js"
   },
   "scripts": {
     "pretest": "npm run lint",
