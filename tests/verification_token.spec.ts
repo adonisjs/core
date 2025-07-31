@@ -8,7 +8,8 @@
  */
 
 import timekeeper from 'timekeeper'
-import { Secret, base64 } from '@poppinss/utils'
+import { Secret } from '@poppinss/utils'
+import base64 from '@poppinss/utils/base64'
 import { getActiveTest, test } from '@japa/runner'
 
 import { VerificationToken } from '../src/helpers/verification_token.js'

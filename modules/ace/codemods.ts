@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { slash } from '@poppinss/utils'
 import { EventEmitter } from 'node:events'
 import { EnvEditor } from '@adonisjs/env/editor'
 import type { UIPrimitives } from '@adonisjs/ace/types'
@@ -19,6 +18,7 @@ import type {
 } from '@adonisjs/assembler/types'
 
 import type { Application } from '../app.js'
+import stringHelpers from '../../src/helpers/string.ts'
 
 /**
  * Codemods to modify AdonisJS source files. The codemod APIs relies on
@@ -122,10 +122,7 @@ export class Codemods extends EventEmitter {
    * Returns the TsMorph project instance
    * See https://ts-morph.com/
    */
-  async getTsMorphProject(): Promise<
-    | InstanceType<typeof import('@adonisjs/assembler/code_transformer').CodeTransformer>['project']
-    | undefined
-  > {
+  async getTsMorphProject(): Promise<CodeTransformer['project'] | undefined> {
     const transformer = await this.#getCodeTransformer()
     if (!transformer) {
       this.#cliLogger.warning(
@@ -279,7 +276,7 @@ export class Codemods extends EventEmitter {
     const stub = await stubs.build(stubPath, { source: stubsRoot })
     const output = await stub.generate({ force: this.overwriteExisting, ...stubState })
 
-    const entityFileName = slash(this.#app.relativePath(output.destination))
+    const entityFileName = stringHelpers.toUnixSlash(this.#app.relativePath(output.destination))
     const result = { ...output, relativeFileName: entityFileName }
 
     if (output.status === 'skipped') {

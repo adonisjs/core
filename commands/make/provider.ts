@@ -7,11 +7,11 @@
  * file that was distributed with this source code.
  */
 
-import { slash } from '@poppinss/utils'
 import { extname, relative } from 'node:path'
 
 import { stubsRoot } from '../../stubs/main.js'
 import type { AppEnvironments } from '../../types/app.js'
+import stringHelpers from '../../src/helpers/string.ts'
 import { args, BaseCommand, flags } from '../../modules/ace/main.js'
 
 const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnvironments[]
@@ -94,7 +94,7 @@ export default class MakeProvider extends BaseCommand {
      * Creative relative path for the provider file from
      * the "./start" directory
      */
-    const providerRelativePath = slash(
+    const providerRelativePath = stringHelpers.toUnixSlash(
       relative(this.app.providersPath(), destination).replace(extname(destination), '')
     )
 

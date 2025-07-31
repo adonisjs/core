@@ -8,11 +8,11 @@
  */
 
 import stringWidth from 'string-width'
-import type { RouteJSON } from '../../types/http.js'
 import type { UIPrimitives } from '../../types/ace.js'
 import { cliHelpers } from '../../modules/ace/main.js'
 import { type Router } from '../../modules/http/main.js'
-import { parseBindingReference } from '../../src/helpers/main.js'
+import { middlewareInfo, routeInfo } from '@adonisjs/http-server/helpers'
+import type { MiddlewareHandlerInfo, RouteHandlerInfo, RouteJSON } from '../../types/http.js'
 
 /**
  * Shape of the serialized route specific to the formatter
@@ -21,10 +21,8 @@ type SerializedRoute = {
   name: string
   pattern: string
   methods: string[]
-  middleware: string[]
-  handler:
-    | { type: 'closure'; name: string; args?: string }
-    | { type: 'controller'; moduleNameOrPath: string; method: string }
+  middleware: MiddlewareHandlerInfo[]
+  handler: RouteHandlerInfo
 }
 
 /**
@@ -92,7 +90,7 @@ export class RoutesListFormatter {
           return route.middleware.length > 0
         }
 
-        return route.middleware.includes(name)
+        return route.middleware.find((middleware) => middleware.name === name)
       })
     }
 
@@ -106,7 +104,7 @@ export class RoutesListFormatter {
           return route.middleware.length === 0
         }
 
-        return !route.middleware.includes(name)
+        return !route.middleware.find((middleware) => middleware.name === name)
       })
     }
 
@@ -149,48 +147,6 @@ export class RoutesListFormatter {
   }
 
   /**
-   * Serialize route middleware to an array of names
-   */
-  #serializeMiddleware(middleware: RouteJSON['middleware']): string[] {
-    return [...middleware.all()].reduce<string[]>((result, one) => {
-      if (typeof one === 'function') {
-        result.push(one.name || 'closure')
-        return result
-      }
-
-      if ('name' in one && one.name) {
-        result.push(one.name)
-      }
-
-      return result
-    }, [])
-  }
-
-  /**
-   * Serialize route handler reference to display object
-   */
-  async #serializeHandler(handler: RouteJSON['handler']): Promise<SerializedRoute['handler']> {
-    /**
-     * Value is a controller reference
-     */
-    if ('reference' in handler) {
-      return {
-        type: 'controller' as const,
-        ...(await parseBindingReference(handler.reference)),
-      }
-    }
-
-    /**
-     * Value is an inline closure
-     */
-    return {
-      type: 'closure' as const,
-      name: handler.name || 'closure',
-      args: 'listArgs' in handler ? String(handler.listArgs) : undefined,
-    }
-  }
-
-  /**
    * Serializes routes JSON to an object that can be used for pretty printing
    */
   async #serializeRoute(route: RouteJSON): Promise<SerializedRoute> {
@@ -199,12 +155,18 @@ export class RoutesListFormatter {
       methods = methods.filter((method) => method !== 'HEAD')
     }
 
+    const middlewareList = await Promise.all(
+      [...route.middleware.all()].map((middleware) => {
+        return middlewareInfo(middleware)
+      })
+    )
+
     return {
       name: route.name || '',
       pattern: route.pattern,
       methods: methods,
-      handler: await this.#serializeHandler(route.handler),
-      middleware: this.#serializeMiddleware(route.middleware),
+      handler: await routeInfo(route),
+      middleware: middlewareList.filter((info) => info.type !== 'global'),
     }
   }
 
@@ -273,13 +235,18 @@ export class RoutesListFormatter {
    */
   #formatMiddleware(route: SerializedRoute, mode: 'normal' | 'compact' = 'normal') {
     if (mode === 'compact' && route.middleware.length > 3) {
-      const firstMiddleware = route.middleware[0]
-      const secondMiddleware = route.middleware[1]
+      const firstMiddleware = route.middleware[0].name
+      const secondMiddleware = route.middleware[1].name
       const diff = route.middleware.length - 2
       return this.#colors.dim(`${firstMiddleware}, ${secondMiddleware}, and ${diff} more`)
     }
 
-    return this.#colors.dim(`${route.middleware.filter((one) => one).join(', ')}`)
+    return this.#colors.dim(
+      `${route.middleware
+        .map((one) => one.name)
+        .filter((one) => one)
+        .join(', ')}`
+    )
   }
 
   /**

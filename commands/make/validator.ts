@@ -9,7 +9,7 @@
 
 import { stubsRoot } from '../../stubs/main.js'
 import { args, flags, BaseCommand } from '../../modules/ace/main.js'
-import { CommandOptions } from '../../types/ace.js'
+import { type CommandOptions } from '../../types/ace.js'
 
 /**
  * Make a new VineJS validator

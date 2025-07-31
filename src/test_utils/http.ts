@@ -10,7 +10,12 @@
 import debug from '../debug.js'
 import type { TestUtils } from './main.js'
 import type { Server as NodeHttpsServer } from 'node:https'
-import { IncomingMessage, ServerResponse, Server as NodeHttpServer, createServer } from 'node:http'
+import {
+  type IncomingMessage,
+  type ServerResponse,
+  type Server as NodeHttpServer,
+  createServer,
+} from 'node:http'
 
 /**
  * Http server utils are used to start the AdonisJS HTTP server

@@ -10,6 +10,7 @@
 import { test } from '@japa/runner'
 import Test from '../../commands/test.js'
 import { AceFactory } from '../../factories/core/ace.js'
+import { setupTypeScriptProject } from '../helpers.ts'
 
 const sleep = (duration: number) => new Promise((resolve) => setTimeout(resolve, duration))
 
@@ -107,158 +108,6 @@ test.group('Test command', () => {
     assert.equal(command.exitCode, 1)
   })
 
-  test('do not fail in watch mode when ts-node is missing', async ({ assert, fs, cleanup }) => {
-    await fs.create(
-      'tsconfig.json',
-      JSON.stringify({
-        include: ['**/*'],
-        exclude: [],
-      })
-    )
-
-    await fs.create('index.ts', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-    await ace.app.init()
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Test, ['--no-clear'])
-    cleanup(() => command.testsRunner.close())
-    command.watch = true
-    await command.exec()
-
-    await sleep(600)
-    assert.equal(command.exitCode, 0)
-  })
-
-  test('show error when configured assets bundler is missing', async ({ assert, fs, cleanup }) => {
-    await fs.create('bin/server.js', '')
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node-maintained',
-        exports: {
-          './register/esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.app.rcFile.assetsBundler = {
-      name: 'vite',
-      devServer: { command: 'vite' },
-      build: { command: 'vite build' },
-    }
-
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Test, ['--no-clear'])
-    cleanup(() => command.testsRunner.close())
-    await command.exec()
-    await sleep(600)
-
-    assert.exists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/starting "vite" dev server/)
-      })
-    )
-    assert.exists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/unable to connect to "vite" dev server/)
-      })
-    )
-  })
-
-  test('do not attempt to serve assets when assets bundler is not configured', async ({
-    assert,
-    fs,
-    cleanup,
-  }) => {
-    await fs.create('bin/test.js', '')
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node-maintained',
-        exports: {
-          './register/esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Test, ['--no-clear'])
-    cleanup(() => command.testsRunner.close())
-    await command.exec()
-    await sleep(600)
-
-    assert.notExists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/starting "vite" dev server/)
-      })
-    )
-  })
-
-  test('do not attempt to serve assets when --no-assets flag is used', async ({
-    assert,
-    fs,
-    cleanup,
-  }) => {
-    await fs.create('bin/test.js', '')
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node-maintained',
-        exports: {
-          './register/esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.app.rcFile.assetsBundler = {
-      name: 'vite',
-      build: { command: 'vite build' },
-      devServer: { command: 'vite' },
-    }
-
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Test, ['--no-assets', '--no-clear'])
-    cleanup(() => command.testsRunner.close())
-    await command.exec()
-    await sleep(600)
-
-    assert.notExists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/starting "vite" dev server/)
-      })
-    )
-  })
-
   test('pass filters to bin/test.js script', async ({ assert, fs, cleanup }) => {
     await fs.create(
       'package.json',
@@ -268,24 +117,14 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'bin/test.js',
+      'bin/test.ts',
       `
       import { writeFile } from 'node:fs/promises'
       await writeFile('argv.json', JSON.stringify(process.argv.splice(2), null, 2))
     `
     )
 
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node-maintained',
-        exports: {
-          './register/esm': './esm.js',
-        },
-      })
-    )
-
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
+    await setupTypeScriptProject()
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -332,23 +171,14 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'bin/test.js',
+      'bin/test.ts',
       `
       import { writeFile } from 'node:fs/promises'
       await writeFile('argv.json', JSON.stringify(process.argv.splice(2), null, 2))
     `
     )
 
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node-maintained',
-        exports: {
-          './register/esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
+    await setupTypeScriptProject()
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -382,23 +212,14 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'bin/test.js',
+      'bin/test.ts',
       `
       import { writeFile } from 'node:fs/promises'
       await writeFile('argv.json', JSON.stringify(process.argv.splice(2), null, 2))
     `
     )
 
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node-maintained',
-        exports: {
-          './register/esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
+    await setupTypeScriptProject()
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -439,23 +260,14 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'bin/test.js',
+      'bin/test.ts',
       `
       import { writeFile } from 'node:fs/promises'
       await writeFile('argv.json', JSON.stringify(process.argv.splice(2), null, 2))
     `
     )
 
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node-maintained',
-        exports: {
-          './register/esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
+    await setupTypeScriptProject()
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {
@@ -497,24 +309,14 @@ test.group('Test command', () => {
     )
 
     await fs.create(
-      'bin/test.js',
+      'bin/test.ts',
       `
       import { writeFile } from 'node:fs/promises'
       await writeFile('argv.json', JSON.stringify(process.argv.splice(2), null, 2))
     `
     )
 
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node-maintained',
-        exports: {
-          './register/esm': './esm.js',
-        },
-      })
-    )
-
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
+    await setupTypeScriptProject()
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => {

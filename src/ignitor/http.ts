@@ -8,10 +8,15 @@
  */
 
 import type { Server as NodeHttpsServer } from 'node:https'
-import { IncomingMessage, ServerResponse, Server as NodeHttpServer, createServer } from 'node:http'
+import {
+  type IncomingMessage,
+  type ServerResponse,
+  type Server as NodeHttpServer,
+  createServer,
+} from 'node:http'
 
 import debug from '../debug.js'
-import { Ignitor } from './main.js'
+import { type Ignitor } from './main.js'
 import type { ApplicationService, EmitterService, LoggerService } from '../types.js'
 
 /**

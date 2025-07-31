@@ -7,6 +7,4 @@
  * file that was distributed with this source code.
  */
 
-import { getDirname } from '@poppinss/utils'
-
-export const stubsRoot = getDirname(import.meta.url)
+export const stubsRoot = import.meta.dirname

@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { ApplicationService, ConfigProvider } from './types.js'
+import { type ApplicationService, type ConfigProvider } from './types.js'
 
 /**
  * Helper to create config provider and resolve config from

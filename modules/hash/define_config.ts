@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { InvalidArgumentsException } from '@poppinss/utils'
+import { InvalidArgumentsException } from '@poppinss/utils/exception'
 
 import debug from '../../src/debug.js'
 import type { Argon } from './drivers/argon.js'

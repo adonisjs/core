@@ -43,10 +43,11 @@ export async function prettyPrintError(error: any) {
     return
   }
 
-  // @ts-expect-error
-  const { default: youchTerminal } = await import('youch-terminal')
-  const { default: Youch } = await import('youch')
-
-  const youch = new Youch(error, {})
-  console.error(youchTerminal(await youch.toJSON(), { displayShortPath: true }))
+  try {
+    const { Youch } = await import('youch')
+    const youch = new Youch()
+    console.error(await youch.toANSI(error))
+  } catch {
+    console.error(error)
+  }
 }

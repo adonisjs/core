@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { Ignitor } from './main.js'
+import { type Ignitor } from './main.ts'
 import type { ApplicationService } from '../types.js'
 
 /**

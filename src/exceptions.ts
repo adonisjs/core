@@ -12,4 +12,4 @@ export {
   createError,
   RuntimeException,
   InvalidArgumentsException,
-} from '@poppinss/utils'
+} from '@poppinss/utils/exception'

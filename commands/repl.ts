@@ -8,7 +8,7 @@
  */
 
 import { BaseCommand } from '../modules/ace/main.js'
-import { CommandOptions } from '../types/ace.js'
+import { type CommandOptions } from '../types/ace.js'
 
 /**
  * The ReplCommand class is used to start the Repl server

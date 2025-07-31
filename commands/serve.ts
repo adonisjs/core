@@ -10,7 +10,7 @@
 import type { DevServer } from '@adonisjs/assembler'
 import type { CommandOptions } from '../types/ace.js'
 import { BaseCommand, flags } from '../modules/ace/main.js'
-import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
+import { importAssembler, importTypeScript } from '../src/internal_helpers.js'
 
 /**
  * Serve command is used to run the AdonisJS HTTP server during development. The
@@ -65,18 +65,6 @@ export default class Serve extends BaseCommand {
   })
   declare clear?: boolean
 
-  @flags.boolean({
-    description: 'Start assets bundler dev server',
-    showNegatedVariantInHelp: true,
-    default: true,
-  })
-  declare assets?: boolean
-
-  @flags.array({
-    description: 'Define CLI arguments to pass to the assets bundler',
-  })
-  declare assetsArgs?: string[]
-
   /**
    * Log a development dependency is missing
    */
@@ -90,23 +78,6 @@ export default class Serve extends BaseCommand {
         'If you are running your application in production, then use "node bin/server.js" command to start the HTTP server',
       ].join('\n')
     )
-  }
-
-  /**
-   * Returns the assets bundler config
-   */
-  async #getAssetsBundlerConfig() {
-    const assetsBundler = await detectAssetsBundler(this.app)
-    return assetsBundler
-      ? {
-          enabled: this.assets === false ? false : true,
-          driver: assetsBundler.name,
-          cmd: assetsBundler.devServer.command,
-          args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
-        }
-      : {
-          enabled: false as const,
-        }
   }
 
   /**
@@ -131,19 +102,15 @@ export default class Serve extends BaseCommand {
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: [],
-      assets: await this.#getAssetsBundlerConfig(),
       metaFiles: this.app.rcFile.metaFiles,
-      hooks: {
-        onDevServerStarted: this.app.rcFile.hooks?.onDevServerStarted,
-        onSourceFileChanged: this.app.rcFile.hooks?.onSourceFileChanged,
-      },
+      hooks: this.app.rcFile.hooks,
     })
 
     /**
      * Share command logger with assembler, so that CLI flags like --no-ansi has
      * similar impact for assembler logs as well.
      */
-    this.devServer.setLogger(this.logger)
+    this.devServer.ui.logger = this.logger
 
     /**
      * Exit command when the dev server is closed
@@ -161,20 +128,20 @@ export default class Serve extends BaseCommand {
       this.terminate()
     })
 
+    const ts = await importTypeScript(this.app)
+    if (!ts) {
+      this.#logMissingDevelopmentDependency('typescript')
+      this.exitCode = 1
+      return
+    }
+
     /**
      * Start the development server
      */
     if (this.watch) {
-      const ts = await importTypeScript(this.app)
-      if (!ts) {
-        this.#logMissingDevelopmentDependency('typescript')
-        this.exitCode = 1
-        return
-      }
-
       await this.devServer.startAndWatch(ts, { poll: this.poll || false })
     } else {
-      await this.devServer.start()
+      await this.devServer.start(ts)
     }
   }
 }

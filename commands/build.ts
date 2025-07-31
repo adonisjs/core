@@ -8,7 +8,7 @@
  */
 
 import { BaseCommand, flags } from '../modules/ace/main.js'
-import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
+import { importAssembler, importTypeScript } from '../src/internal_helpers.js'
 
 /**
  * Create the production build by compiling TypeScript source and the
@@ -40,18 +40,6 @@ export default class Build extends BaseCommand {
   })
   declare packageManager?: 'npm' | 'pnpm' | 'yarn' | 'yarn@berry' | 'bun'
 
-  @flags.boolean({
-    description: 'Build frontend assets',
-    showNegatedVariantInHelp: true,
-    default: true,
-  })
-  declare assets?: boolean
-
-  @flags.array({
-    description: 'Define CLI arguments to pass to the assets bundler',
-  })
-  declare assetsArgs?: string[]
-
   /**
    * Log a development dependency is missing
    */
@@ -65,23 +53,6 @@ export default class Build extends BaseCommand {
         'If you are using the build command inside a CI or with a deployment platform, make sure the NODE_ENV is set to "development"',
       ].join('\n')
     )
-  }
-
-  /**
-   * Returns the assets bundler config
-   */
-  async #getAssetsBundlerConfig() {
-    const assetsBundler = await detectAssetsBundler(this.app)
-    return assetsBundler
-      ? {
-          enabled: this.assets === false ? false : true,
-          driver: assetsBundler.name,
-          cmd: assetsBundler.build.command,
-          args: (assetsBundler.build.args || []).concat(this.assetsArgs || []),
-        }
-      : {
-          enabled: false as const,
-        }
   }
 
   /**
@@ -103,19 +74,15 @@ export default class Build extends BaseCommand {
     }
 
     const bundler = new assembler.Bundler(this.app.appRoot, ts, {
-      assets: await this.#getAssetsBundlerConfig(),
       metaFiles: this.app.rcFile.metaFiles,
-      hooks: {
-        onBuildStarting: this.app.rcFile.hooks?.onBuildStarting,
-        onBuildCompleted: this.app.rcFile.hooks?.onBuildCompleted,
-      },
+      hooks: this.app.rcFile.hooks,
     })
 
     /**
      * Share command logger with assembler, so that CLI flags like --no-ansi has
      * similar impact for assembler logs as well.
      */
-    bundler.setLogger(this.logger)
+    bundler.ui.logger = this.logger
 
     /**
      * Bundle project for production

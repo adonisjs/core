@@ -96,7 +96,10 @@ async function registerRoutes(app: ApplicationService) {
     .as('articles.show')
     .domain('blog.adonisjs.com')
 
-  router.on('/blog').redirect('/articles')
+  /**
+   * The redirect method is now typed
+   */
+  ;(router.on('/blog').redirect as any)('/articles')
 }
 
 test.group('Formatters | List routes | toJSON', () => {
@@ -117,139 +120,213 @@ test.group('Formatters | List routes | toJSON', () => {
 
     const router = await app.container.make('router')
     const formatter = new RoutesListFormatter(router, createAceKernel(app).ui, {}, {})
-    assert.deepEqual(await formatter.formatAsJSON(), [
-      {
-        domain: 'root',
-        routes: [
-          {
-            name: '',
-            pattern: '/',
-            methods: ['GET'],
-            handler: {
-              type: 'closure',
-              name: 'closure',
-              args: undefined,
+    assert.snapshot(await formatter.formatAsJSON()).matchInline(`
+      [
+        {
+          "domain": "root",
+          "routes": [
+            {
+              "handler": {
+                "args": undefined,
+                "name": "closure",
+                "type": "closure",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [],
+              "name": "",
+              "pattern": "/",
             },
-            middleware: [],
-          },
-          {
-            name: '',
-            pattern: '/files/:directory/*',
-            methods: ['GET'],
-            handler: {
-              type: 'closure',
-              name: 'closure',
-              args: undefined,
+            {
+              "handler": {
+                "args": undefined,
+                "name": "closure",
+                "type": "closure",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [],
+              "name": "",
+              "pattern": "/files/:directory/*",
             },
-            middleware: [],
-          },
-          {
-            name: 'home',
-            pattern: '/home',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/home_controller',
-              method: 'handle',
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "#controllers/home_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [],
+              "name": "home",
+              "pattern": "/home",
             },
-            middleware: [],
-          },
-          {
-            name: 'about',
-            pattern: '/about',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'AboutController',
-              method: 'handle',
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "AboutController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "about",
+              "pattern": "/about",
             },
-            middleware: ['closure'],
-          },
-          {
-            name: 'contact.store',
-            pattern: '/contact',
-            methods: ['POST'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/contacts_controller',
-              method: 'store',
+            {
+              "handler": {
+                "method": "store",
+                "moduleNameOrPath": "#controllers/contacts_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "POST",
+              ],
+              "middleware": [],
+              "name": "contact.store",
+              "pattern": "/contact",
             },
-            middleware: [],
-          },
-          {
-            name: 'contact.create',
-            pattern: '/contact',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/contacts_controller',
-              method: 'create',
+            {
+              "handler": {
+                "method": "create",
+                "moduleNameOrPath": "#controllers/contacts_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [],
+              "name": "contact.create",
+              "pattern": "/contact",
             },
-            middleware: [],
-          },
-          {
-            name: '',
-            pattern: '/users',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'UsersController',
-              method: 'handle',
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "UsersController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "name": "canViewUsers",
+                  "type": "closure",
+                },
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "",
+              "pattern": "/users",
             },
-            middleware: ['auth', 'canViewUsers', 'closure'],
-          },
-          {
-            name: '',
-            pattern: '/payments',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/payments_controller',
-              method: 'index',
+            {
+              "handler": {
+                "method": "index",
+                "moduleNameOrPath": "#controllers/payments_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "#middleware/acl_middleware",
+                  "name": "acl",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "signed",
+                  "name": "signed",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "throttle",
+                  "name": "throttle",
+                  "type": "named",
+                },
+              ],
+              "name": "",
+              "pattern": "/payments",
             },
-            middleware: ['auth', 'acl', 'signed', 'throttle'],
-          },
-          {
-            handler: {
-              args: '/articles',
-              name: 'redirectsToRoute',
-              type: 'closure',
+            {
+              "handler": {
+                "args": "/articles",
+                "name": "redirectsToRoute",
+                "type": "closure",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [],
+              "name": "",
+              "pattern": "/blog",
             },
-            methods: ['GET'],
-            middleware: [],
-            name: '',
-            pattern: '/blog',
-          },
-        ],
-      },
-      {
-        domain: 'blog.adonisjs.com',
-        routes: [
-          {
-            pattern: '/articles',
-            name: 'articles',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/articles_controller',
-              method: 'index',
+          ],
+        },
+        {
+          "domain": "blog.adonisjs.com",
+          "routes": [
+            {
+              "handler": {
+                "method": "index",
+                "moduleNameOrPath": "#controllers/articles_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [],
+              "name": "articles",
+              "pattern": "/articles",
             },
-            middleware: [],
-          },
-          {
-            pattern: '/articles/:id/:slug?',
-            name: 'articles.show',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/articles_controller',
-              method: 'show',
+            {
+              "handler": {
+                "method": "show",
+                "moduleNameOrPath": "#controllers/articles_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [],
+              "name": "articles.show",
+              "pattern": "/articles/:id/:slug?",
             },
-            middleware: [],
-          },
-        ],
-      },
-    ])
+          ],
+        },
+      ]
+    `)
   })
 
   test('show HEAD routes', async ({ assert, fs }) => {
@@ -274,139 +351,223 @@ test.group('Formatters | List routes | toJSON', () => {
       { displayHeadRoutes: true },
       {}
     )
-    assert.deepEqual(await formatter.formatAsJSON(), [
-      {
-        domain: 'root',
-        routes: [
-          {
-            name: '',
-            pattern: '/',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'closure',
-              name: 'closure',
-              args: undefined,
+    assert.snapshot(await formatter.formatAsJSON()).matchInline(`
+      [
+        {
+          "domain": "root",
+          "routes": [
+            {
+              "handler": {
+                "args": undefined,
+                "name": "closure",
+                "type": "closure",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [],
+              "name": "",
+              "pattern": "/",
             },
-            middleware: [],
-          },
-          {
-            name: '',
-            pattern: '/files/:directory/*',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'closure',
-              name: 'closure',
-              args: undefined,
+            {
+              "handler": {
+                "args": undefined,
+                "name": "closure",
+                "type": "closure",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [],
+              "name": "",
+              "pattern": "/files/:directory/*",
             },
-            middleware: [],
-          },
-          {
-            name: 'home',
-            pattern: '/home',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/home_controller',
-              method: 'handle',
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "#controllers/home_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [],
+              "name": "home",
+              "pattern": "/home",
             },
-            middleware: [],
-          },
-          {
-            name: 'about',
-            pattern: '/about',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'AboutController',
-              method: 'handle',
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "AboutController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "about",
+              "pattern": "/about",
             },
-            middleware: ['closure'],
-          },
-          {
-            name: 'contact.store',
-            pattern: '/contact',
-            methods: ['POST'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/contacts_controller',
-              method: 'store',
+            {
+              "handler": {
+                "method": "store",
+                "moduleNameOrPath": "#controllers/contacts_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "POST",
+              ],
+              "middleware": [],
+              "name": "contact.store",
+              "pattern": "/contact",
             },
-            middleware: [],
-          },
-          {
-            name: 'contact.create',
-            pattern: '/contact',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/contacts_controller',
-              method: 'create',
+            {
+              "handler": {
+                "method": "create",
+                "moduleNameOrPath": "#controllers/contacts_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [],
+              "name": "contact.create",
+              "pattern": "/contact",
             },
-            middleware: [],
-          },
-          {
-            name: '',
-            pattern: '/users',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'UsersController',
-              method: 'handle',
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "UsersController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "name": "canViewUsers",
+                  "type": "closure",
+                },
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "",
+              "pattern": "/users",
             },
-            middleware: ['auth', 'canViewUsers', 'closure'],
-          },
-          {
-            name: '',
-            pattern: '/payments',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/payments_controller',
-              method: 'index',
+            {
+              "handler": {
+                "method": "index",
+                "moduleNameOrPath": "#controllers/payments_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "#middleware/acl_middleware",
+                  "name": "acl",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "signed",
+                  "name": "signed",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "throttle",
+                  "name": "throttle",
+                  "type": "named",
+                },
+              ],
+              "name": "",
+              "pattern": "/payments",
             },
-            middleware: ['auth', 'acl', 'signed', 'throttle'],
-          },
-          {
-            handler: {
-              args: '/articles',
-              name: 'redirectsToRoute',
-              type: 'closure',
+            {
+              "handler": {
+                "args": "/articles",
+                "name": "redirectsToRoute",
+                "type": "closure",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [],
+              "name": "",
+              "pattern": "/blog",
             },
-            methods: ['GET', 'HEAD'],
-            middleware: [],
-            name: '',
-            pattern: '/blog',
-          },
-        ],
-      },
-      {
-        domain: 'blog.adonisjs.com',
-        routes: [
-          {
-            pattern: '/articles',
-            name: 'articles',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/articles_controller',
-              method: 'index',
+          ],
+        },
+        {
+          "domain": "blog.adonisjs.com",
+          "routes": [
+            {
+              "handler": {
+                "method": "index",
+                "moduleNameOrPath": "#controllers/articles_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [],
+              "name": "articles",
+              "pattern": "/articles",
             },
-            middleware: [],
-          },
-          {
-            pattern: '/articles/:id/:slug?',
-            name: 'articles.show',
-            methods: ['GET', 'HEAD'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/articles_controller',
-              method: 'show',
+            {
+              "handler": {
+                "method": "show",
+                "moduleNameOrPath": "#controllers/articles_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+                "HEAD",
+              ],
+              "middleware": [],
+              "name": "articles.show",
+              "pattern": "/articles/:id/:slug?",
             },
-            middleware: [],
-          },
-        ],
-      },
-    ])
+          ],
+        },
+      ]
+    `)
   })
 
   test('format routes as ANSI list', async ({ assert, fs }) => {
@@ -567,50 +728,108 @@ test.group('Formatters | List routes | filters', () => {
       }
     )
 
-    assert.deepEqual(await formatter.formatAsJSON(), [
-      {
-        domain: 'root',
-        routes: [
-          {
-            name: 'about',
-            pattern: '/about',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'AboutController',
-              method: 'handle',
+    assert.snapshot(await formatter.formatAsJSON()).matchInline(`
+      [
+        {
+          "domain": "root",
+          "routes": [
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "AboutController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "about",
+              "pattern": "/about",
             },
-            middleware: ['closure'],
-          },
-          {
-            name: '',
-            pattern: '/users',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'UsersController',
-              method: 'handle',
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "UsersController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "name": "canViewUsers",
+                  "type": "closure",
+                },
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "",
+              "pattern": "/users",
             },
-            middleware: ['auth', 'canViewUsers', 'closure'],
-          },
-          {
-            name: '',
-            pattern: '/payments',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/payments_controller',
-              method: 'index',
+            {
+              "handler": {
+                "method": "index",
+                "moduleNameOrPath": "#controllers/payments_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "#middleware/acl_middleware",
+                  "name": "acl",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "signed",
+                  "name": "signed",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "throttle",
+                  "name": "throttle",
+                  "type": "named",
+                },
+              ],
+              "name": "",
+              "pattern": "/payments",
             },
-            middleware: ['auth', 'acl', 'signed', 'throttle'],
-          },
-        ],
-      },
-      {
-        domain: 'blog.adonisjs.com',
-        routes: [],
-      },
-    ])
+          ],
+        },
+        {
+          "domain": "blog.adonisjs.com",
+          "routes": [],
+        },
+      ]
+    `)
   })
 
   test('show routes that has zero middleware', async ({ assert, fs }) => {
@@ -765,39 +984,90 @@ test.group('Formatters | List routes | filters', () => {
       }
     )
 
-    assert.deepEqual(await formatter.formatAsJSON(), [
-      {
-        domain: 'root',
-        routes: [
-          {
-            name: '',
-            pattern: '/users',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'UsersController',
-              method: 'handle',
+    assert.snapshot(await formatter.formatAsJSON()).matchInline(`
+      [
+        {
+          "domain": "root",
+          "routes": [
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "UsersController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "name": "canViewUsers",
+                  "type": "closure",
+                },
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "",
+              "pattern": "/users",
             },
-            middleware: ['auth', 'canViewUsers', 'closure'],
-          },
-          {
-            name: '',
-            pattern: '/payments',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: '#controllers/payments_controller',
-              method: 'index',
+            {
+              "handler": {
+                "method": "index",
+                "moduleNameOrPath": "#controllers/payments_controller",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "#middleware/acl_middleware",
+                  "name": "acl",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "signed",
+                  "name": "signed",
+                  "type": "named",
+                },
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "throttle",
+                  "name": "throttle",
+                  "type": "named",
+                },
+              ],
+              "name": "",
+              "pattern": "/payments",
             },
-            middleware: ['auth', 'acl', 'signed', 'throttle'],
-          },
-        ],
-      },
-      {
-        domain: 'blog.adonisjs.com',
-        routes: [],
-      },
-    ])
+          ],
+        },
+        {
+          "domain": "blog.adonisjs.com",
+          "routes": [],
+        },
+      ]
+    `)
   })
 
   test('combine middleware and ignoreMiddleware filters', async ({ assert, fs }) => {
@@ -826,28 +1096,48 @@ test.group('Formatters | List routes | filters', () => {
       }
     )
 
-    assert.deepEqual(await formatter.formatAsJSON(), [
-      {
-        domain: 'root',
-        routes: [
-          {
-            name: '',
-            pattern: '/users',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'UsersController',
-              method: 'handle',
+    assert.snapshot(await formatter.formatAsJSON()).matchInline(`
+      [
+        {
+          "domain": "root",
+          "routes": [
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "UsersController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "name": "canViewUsers",
+                  "type": "closure",
+                },
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "",
+              "pattern": "/users",
             },
-            middleware: ['auth', 'canViewUsers', 'closure'],
-          },
-        ],
-      },
-      {
-        domain: 'blog.adonisjs.com',
-        routes: [],
-      },
-    ])
+          ],
+        },
+        {
+          "domain": "blog.adonisjs.com",
+          "routes": [],
+        },
+      ]
+    `)
   })
 
   test('show routes by controller name', async ({ assert, fs }) => {
@@ -876,28 +1166,48 @@ test.group('Formatters | List routes | filters', () => {
       }
     )
 
-    assert.deepEqual(await formatter.formatAsJSON(), [
-      {
-        domain: 'root',
-        routes: [
-          {
-            name: '',
-            pattern: '/users',
-            methods: ['GET'],
-            handler: {
-              type: 'controller',
-              moduleNameOrPath: 'UsersController',
-              method: 'handle',
+    assert.snapshot(await formatter.formatAsJSON()).matchInline(`
+      [
+        {
+          "domain": "root",
+          "routes": [
+            {
+              "handler": {
+                "method": "handle",
+                "moduleNameOrPath": "UsersController",
+                "type": "controller",
+              },
+              "methods": [
+                "GET",
+              ],
+              "middleware": [
+                {
+                  "args": undefined,
+                  "method": "handle",
+                  "moduleNameOrPath": "auth",
+                  "name": "auth",
+                  "type": "named",
+                },
+                {
+                  "name": "canViewUsers",
+                  "type": "closure",
+                },
+                {
+                  "name": "closure",
+                  "type": "closure",
+                },
+              ],
+              "name": "",
+              "pattern": "/users",
             },
-            middleware: ['auth', 'canViewUsers', 'closure'],
-          },
-        ],
-      },
-      {
-        domain: 'blog.adonisjs.com',
-        routes: [],
-      },
-    ])
+          ],
+        },
+        {
+          "domain": "blog.adonisjs.com",
+          "routes": [],
+        },
+      ]
+    `)
   })
 
   test('show routes by route name', async ({ assert, fs }) => {

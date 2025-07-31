@@ -8,7 +8,7 @@
  */
 
 import { test } from '@japa/runner'
-import { FieldContext } from '@vinejs/vine/types'
+import { type FieldContext } from '@vinejs/vine/types'
 import vine, { SimpleErrorReporter, SimpleMessagesProvider } from '@vinejs/vine'
 
 import { RequestValidator } from '../modules/http/main.js'

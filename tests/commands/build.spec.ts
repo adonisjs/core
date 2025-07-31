@@ -223,50 +223,6 @@ test.group('Build command', (group) => {
     await assert.fileExists('build/adonisrc.js')
   })
 
-  test('show error when configured assets bundler is missing', async ({ assert, fs }) => {
-    await fs.create(
-      'tsconfig.json',
-      JSON.stringify({
-        include: ['**/*'],
-        exclude: [],
-        compilerOptions: {
-          target: 'ESNext',
-          module: 'NodeNext',
-          lib: ['ESNext'],
-          strict: true,
-          noUnusedLocals: true,
-        },
-      })
-    )
-
-    await fs.create('adonisrc.ts', `export default {}`)
-    await fs.create('index.ts', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.app.rcFile.assetsBundler = {
-      name: 'vite',
-      devServer: { command: 'vite' },
-      build: { command: 'vite build' },
-    }
-
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Build, [])
-    await command.exec()
-
-    assert.equal(command.exitCode, 1)
-    assert.exists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/compiling frontend assets/)
-      })
-    )
-  })
-
   test('do not attempt to build assets when assets bundler is not configured', async ({
     assert,
     fs,
@@ -308,50 +264,6 @@ test.group('Build command', (group) => {
     )
   })
 
-  test('do not attempt to build assets when --no-assets flag is used', async ({ assert, fs }) => {
-    await fs.create(
-      'tsconfig.json',
-      JSON.stringify({
-        include: ['**/*'],
-        exclude: [],
-        compilerOptions: {
-          target: 'ESNext',
-          module: 'NodeNext',
-          lib: ['ESNext'],
-          strict: true,
-          noUnusedLocals: true,
-        },
-      })
-    )
-
-    await fs.create('adonisrc.ts', `export default {}`)
-    await fs.create('index.ts', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.app.rcFile.assetsBundler = {
-      name: 'vite',
-      devServer: { command: 'vite' },
-      build: { command: 'vite build' },
-    }
-
-    ace.ui.switchMode('normal')
-
-    const command = await ace.create(Build, ['--no-assets'])
-    await command.exec()
-
-    assert.equal(command.exitCode, 0)
-    assert.notExists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/compiling frontend assets/)
-      })
-    )
-  })
-
   test('correctly pass hooks to the bundler', async ({ assert, fs }) => {
     assert.plan(2)
 
@@ -380,14 +292,14 @@ test.group('Build command', (group) => {
     })
 
     ace.app.rcFile.hooks = {
-      onBuildCompleted: [
+      buildFinished: [
         async () => ({
           default: async () => {
             assert.isTrue(true)
           },
         }),
       ],
-      onBuildStarting: [
+      buildStarting: [
         async () => ({
           default: async () => {
             assert.isTrue(true)

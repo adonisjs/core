@@ -8,7 +8,7 @@
  */
 
 import { Kernel as AceKernel } from '@adonisjs/ace'
-import { BaseCommand, ListCommand } from './commands.js'
+import { type BaseCommand, ListCommand } from './commands.js'
 import type { ApplicationService } from '../../src/types.js'
 
 /**

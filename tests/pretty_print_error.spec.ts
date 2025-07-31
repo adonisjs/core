@@ -17,6 +17,6 @@ test.group('Pretty print error', () => {
       await prettyPrintError(new Error('Something went wrong'))
     })
 
-    assert.match(output[0].trim(), /\[31mError: Something went wrong/)
+    assert.match(output[0].trim(), /\[31mℹ Error: Something went wrong/)
   })
 })

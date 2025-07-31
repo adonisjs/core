@@ -72,7 +72,7 @@ test.group('Bindings | Edge', () => {
     router.on('/').render('welcome', { username: 'virk' })
     router.commit()
 
-    const route = router.match('/', 'GET')
+    const route = router.match('/', 'GET', false)
     const ctx = new HttpContextFactory().create()
 
     await route?.route.execute(route.route, app.container.createResolver(), ctx, () => {})

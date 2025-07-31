@@ -7,11 +7,11 @@
  * file that was distributed with this source code.
  */
 
-import { slash } from '@poppinss/utils'
 import { extname, relative } from 'node:path'
 import type { AppEnvironments } from '@adonisjs/application/types'
 
 import { stubsRoot } from '../../stubs/main.js'
+import stringHelpers from '../../src/helpers/string.ts'
 import { args, flags, BaseCommand } from '../../modules/ace/main.js'
 
 const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnvironments[]
@@ -98,7 +98,7 @@ export default class MakePreload extends BaseCommand {
      * Creative relative path for the preload file from
      * the "./start" directory
      */
-    const preloadFileRelativePath = slash(
+    const preloadFileRelativePath = stringHelpers.toUnixSlash(
       relative(this.app.startPath(), destination).replace(extname(destination), '')
     )
 

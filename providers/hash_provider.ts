@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { RuntimeException } from '@poppinss/utils'
+import { RuntimeException } from '@poppinss/utils/exception'
 
 import { Hash } from '../modules/hash/main.js'
 import { configProvider } from '../src/config_provider.js'

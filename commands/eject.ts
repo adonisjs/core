@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { slash } from '@poppinss/utils'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
+import stringHelpers from '../src/helpers/string.ts'
 
 /**
  * The eject command is used to eject templates to the user
@@ -34,7 +34,7 @@ export default class Eject extends BaseCommand {
     })
 
     copied.forEach((stubPath) => {
-      this.logger.success(`eject ${slash(this.app.relativePath(stubPath))}`)
+      this.logger.success(`eject ${stringHelpers.toUnixSlash(this.app.relativePath(stubPath))}`)
     })
   }
 }

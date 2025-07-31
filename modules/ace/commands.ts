@@ -9,7 +9,7 @@
 
 import { BaseCommand as AceBaseCommand, ListCommand as AceListCommand } from '@adonisjs/ace'
 
-import { Kernel } from './kernel.js'
+import { type Kernel } from './kernel.js'
 import type { ApplicationService } from '../../src/types.js'
 import type { CommandOptions, ParsedOutput, UIPrimitives } from '../../types/ace.js'
 

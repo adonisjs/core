@@ -11,7 +11,7 @@ import type { TestRunner } from '@adonisjs/assembler'
 
 import type { CommandOptions } from '../types/ace.js'
 import { BaseCommand, flags, args } from '../modules/ace/main.js'
-import { detectAssetsBundler, importAssembler, importTypeScript } from '../src/internal_helpers.js'
+import { importAssembler, importTypeScript } from '../src/internal_helpers.js'
 
 /**
  * Test command is used to run tests with optional file watcher. Under the
@@ -71,18 +71,6 @@ export default class Test extends BaseCommand {
   })
   declare clear?: boolean
 
-  @flags.boolean({
-    description: 'Start assets bundler dev server.',
-    showNegatedVariantInHelp: true,
-    default: true,
-  })
-  declare assets?: boolean
-
-  @flags.array({
-    description: 'Define CLI arguments to pass to the assets bundler',
-  })
-  declare assetsArgs?: string[]
-
   /**
    * Log a development dependency is missing
    */
@@ -126,23 +114,6 @@ export default class Test extends BaseCommand {
   }
 
   /**
-   * Returns the assets bundler config
-   */
-  async #getAssetsBundlerConfig() {
-    const assetsBundler = await detectAssetsBundler(this.app)
-    return assetsBundler
-      ? {
-          enabled: this.assets === false ? false : true,
-          driver: assetsBundler.name,
-          cmd: assetsBundler.devServer.command,
-          args: (assetsBundler.devServer.args || []).concat(this.assetsArgs || []),
-        }
-      : {
-          enabled: false as const,
-        }
-  }
-
-  /**
    * Runs tests
    */
   async run() {
@@ -159,7 +130,6 @@ export default class Test extends BaseCommand {
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: this.#getPassthroughFlags(),
-      assets: await this.#getAssetsBundlerConfig(),
       filters: {
         suites: this.suites,
         files: this.files,
@@ -180,6 +150,7 @@ export default class Test extends BaseCommand {
       env: {
         NODE_ENV: 'test',
       },
+      hooks: this.app.rcFile.hooks,
       metaFiles: this.app.rcFile.metaFiles,
     })
 
@@ -187,7 +158,7 @@ export default class Test extends BaseCommand {
      * Share command logger with assembler, so that CLI flags like --no-ansi has
      * similar impact for assembler logs as well.
      */
-    this.testsRunner.setLogger(this.logger)
+    this.testsRunner.ui.logger = this.logger
 
     /**
      * Exit command when the test runner is closed

@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { ConsoleDumpConfig } from '@poppinss/dumper/console/types'
-import { HTMLDumpConfig } from '@poppinss/dumper/html/types'
+import { type ConsoleDumpConfig } from '@poppinss/dumper/console/types'
+import { type HTMLDumpConfig } from '@poppinss/dumper/html/types'
 
 /**
  * Define config for the dumper service exported by

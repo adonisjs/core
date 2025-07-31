@@ -7,10 +7,11 @@
  * file that was distributed with this source code.
  */
 
+import { RuntimeException } from '@poppinss/utils/exception'
+
 import { stubsRoot } from '../stubs/main.js'
 import type { CommandOptions } from '../types/ace.js'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
-import { RuntimeException } from '@poppinss/utils'
 
 /**
  * The configure command is used to configure packages after installation

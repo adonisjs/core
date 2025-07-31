@@ -9,7 +9,8 @@
 
 import { createHash } from 'node:crypto'
 import string from '@poppinss/utils/string'
-import { base64, safeEqual, Secret } from '@poppinss/utils'
+import { safeEqual, Secret } from '@poppinss/utils'
+import base64 from '@poppinss/utils/base64'
 
 /**
  * Verification token class can be used to create tokens publicly

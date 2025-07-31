@@ -10,6 +10,7 @@
 import { test } from '@japa/runner'
 import Serve from '../../commands/serve.js'
 import { AceFactory } from '../../factories/core/ace.js'
+import { setupTypeScriptProject } from '../helpers.ts'
 
 const sleep = (duration: number) => new Promise((resolve) => setTimeout(resolve, duration))
 
@@ -108,231 +109,30 @@ test.group('Serve command', () => {
     assert.equal(command.exitCode, 1)
   })
 
-  test('do not fail in watch mode when ts-node is missing', async ({ assert, fs, cleanup }) => {
-    await fs.create(
-      'tsconfig.json',
-      JSON.stringify({
-        include: ['**/*'],
-        exclude: [],
-      })
-    )
-
-    await fs.create('index.ts', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-    await ace.app.init()
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Serve, ['--no-clear'])
-    cleanup(() => command.devServer.close())
-    command.watch = true
-    await command.exec()
-
-    await sleep(600)
-
-    /**
-     * In watch mode, we wait for errors to be fixed and then
-     * re-start the process
-     */
-    assert.equal(command.exitCode, 0)
-  })
-
-  test('show error when configured assets bundler is missing', async ({ assert, fs, cleanup }) => {
-    await fs.create('bin/server.js', '')
-    await fs.create(
-      'node_modules/ts-node/package.json',
-      JSON.stringify({
-        name: 'ts-node',
-        exports: {
-          './esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node/esm.js', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.app.rcFile.assetsBundler = {
-      name: 'vite',
-      devServer: { command: 'vite' },
-      build: { command: 'vite build' },
-    }
-
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Serve, ['--no-clear'])
-    cleanup(() => command.devServer.close())
-    await command.exec()
-    await sleep(600)
-
-    assert.exists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/starting "vite" dev server/)
-      })
-    )
-    assert.exists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/unable to connect to "vite" dev server/)
-      })
-    )
-  })
-
-  test('do not attempt to serve assets when assets bundler is not configured', async ({
-    assert,
-    fs,
-    cleanup,
-  }) => {
-    await fs.create('bin/server.js', '')
-    await fs.create(
-      'node_modules/ts-node/package.json',
-      JSON.stringify({
-        name: 'ts-node',
-        exports: {
-          './esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node/esm.js', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Serve, ['--no-clear'])
-    cleanup(() => command.devServer.close())
-    await command.exec()
-    await sleep(600)
-
-    assert.notExists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/starting "vite" dev server/)
-      })
-    )
-  })
-
-  test('do not attempt to serve assets when --no-assets flag is used', async ({
-    assert,
-    fs,
-    cleanup,
-  }) => {
-    await fs.create('bin/server.js', '')
-    await fs.create(
-      'node_modules/ts-node/package.json',
-      JSON.stringify({
-        name: 'ts-node',
-        exports: {
-          './esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node/esm.js', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.app.rcFile.assetsBundler = {
-      name: 'vite',
-      devServer: { command: 'vite' },
-      build: { command: 'vite build' },
-    }
-
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Serve, ['--no-assets', '--no-clear'])
-    cleanup(() => command.devServer.close())
-    await command.exec()
-    await sleep(600)
-
-    assert.notExists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/starting "vite" dev server/)
-      })
-    )
-  })
-
-  test('do not launch assets bundler when disabled in rc file', async ({ fs, cleanup, assert }) => {
-    await fs.create('bin/server.js', '')
-    await fs.create(
-      'node_modules/ts-node/package.json',
-      JSON.stringify({
-        name: 'ts-node',
-        exports: {
-          './esm': './esm.js',
-        },
-      })
-    )
-    await fs.create('node_modules/ts-node/esm.js', '')
-    await fs.create('vite.config.js', '')
-
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        return import(filePath)
-      },
-    })
-
-    ace.app.rcFile.assetsBundler = false
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Serve, ['--no-clear'])
-    cleanup(() => command.devServer.close())
-    await command.exec()
-    await sleep(600)
-
-    assert.notExists(
-      ace.ui.logger.getLogs().find((log) => {
-        return log.message.match(/starting "vite" dev server/)
-      })
-    )
-  })
-
   test('correctly pass hooks to the DevServer', async ({ assert, fs, cleanup }) => {
     assert.plan(1)
+    await fs.create('bin/server.ts', `process.send({ isAdonisJS: true, environment: 'web' });`)
 
-    await fs.create(
-      'bin/server.js',
-      `
-      process.send({ isAdonisJS: true, environment: 'web' });
-    `
-    )
-    await fs.create(
-      'node_modules/ts-node-maintained/package.json',
-      JSON.stringify({
-        name: 'ts-node',
-        exports: { './register/esm': './esm.js' },
-      })
-    )
-    await fs.create('node_modules/ts-node-maintained/esm.js', '')
+    await setupTypeScriptProject()
 
     const ace = await new AceFactory().make(fs.baseUrl, {
       importer: (filePath) => import(filePath),
     })
 
     ace.app.rcFile.hooks = {
-      onDevServerStarted: [
+      devServerStarted: [
         async () => ({
-          default: async () => assert.isTrue(true),
+          default: async () => {
+            console.log('ere>')
+            assert.isTrue(true)
+          },
         }),
       ],
     }
 
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Serve, ['--no-assets', '--no-clear'])
+    const command = await ace.create(Serve, ['--no-clear'])
     cleanup(() => command.devServer.close())
     await command.exec()
     await sleep(1200)

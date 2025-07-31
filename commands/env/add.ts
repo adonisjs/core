@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { CommandOptions } from '../../types/ace.js'
+import { type CommandOptions } from '../../types/ace.js'
 import stringHelpers from '../../src/helpers/string.js'
 import { args, BaseCommand, flags } from '../../modules/ace/main.js'
 

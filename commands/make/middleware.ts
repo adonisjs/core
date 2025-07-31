@@ -7,13 +7,13 @@
  * file that was distributed with this source code.
  */
 
-import { slash } from '@poppinss/utils'
 import string from '@poppinss/utils/string'
 import { basename, extname, relative } from 'node:path'
 
 import { stubsRoot } from '../../stubs/main.js'
+import { type CommandOptions } from '../../types/ace.js'
+import stringHelpers from '../../src/helpers/string.ts'
 import { args, BaseCommand, flags } from '../../modules/ace/main.js'
-import { CommandOptions } from '../../types/ace.js'
 
 /**
  * The make middleware command to create a new middleware
@@ -76,7 +76,7 @@ export default class MakeMiddleware extends BaseCommand {
      * Creative relative path for the middleware file from
      * the "./app/middleware" directory
      */
-    const middlewareRelativePath = slash(
+    const middlewareRelativePath = stringHelpers.toUnixSlash(
       relative(this.app.middlewarePath(), destination).replace(extname(destination), '')
     )
 

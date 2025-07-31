@@ -9,7 +9,7 @@
 
 import { join } from 'node:path'
 import { homedir } from 'node:os'
-import { fsImportAll } from '@poppinss/utils'
+import { fsImportAll } from '@poppinss/utils/fs'
 
 import { Repl } from '../modules/repl.js'
 import type { ApplicationService, ContainerBindings } from '../src/types.js'
