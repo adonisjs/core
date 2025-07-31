@@ -12,4 +12,6 @@ export type CommandOptions = BaseCommandOptions & {
   startApp?: boolean
 }
 
+export type AceCommandTracingData = {}
+
 export * from '@adonisjs/ace/types'

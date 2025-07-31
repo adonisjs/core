@@ -7,8 +7,9 @@
  * file that was distributed with this source code.
  */
 
-export { Kernel } from './kernel.js'
-export { BaseCommand, ListCommand } from './commands.js'
+export { Kernel } from './kernel.ts'
+export * as tracingChannels from './tracing_channels.ts'
+export { BaseCommand, ListCommand } from './commands.ts'
 export {
   args,
   flags,
