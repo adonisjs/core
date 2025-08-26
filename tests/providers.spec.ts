@@ -77,18 +77,19 @@ test.group('Providers', () => {
     await app.init()
     await app.boot()
 
-    const { default: appService } = await import('../services/app.js')
-    const { default: configService } = await import('../services/config.js')
-    const { default: emitterService } = await import('../services/emitter.js')
-    const { default: encryptionService } = await import('../services/encryption.js')
-    const { default: hashService } = await import('../services/hash.js')
-    const { default: loggerService } = await import('../services/logger.js')
-    const { default: routerService } = await import('../services/router.js')
-    const { default: serverService } = await import('../services/server.js')
-    const { default: aceService } = await import('../services/ace.js')
-    const { default: testUtils } = await import('../services/test_utils.js')
-    const { default: repl } = await import('../services/repl.js')
-    const { dd } = await import('../services/dumper.js')
+    const { default: appService } = await import('../services/app.ts')
+    const { default: configService } = await import('../services/config.ts')
+    const { default: emitterService } = await import('../services/emitter.ts')
+    const { default: encryptionService } = await import('../services/encryption.ts')
+    const { default: hashService } = await import('../services/hash.ts')
+    const { default: loggerService } = await import('../services/logger.ts')
+    const { default: routerService } = await import('../services/router.ts')
+    const { default: serverService } = await import('../services/server.ts')
+    const { default: aceService } = await import('../services/ace.ts')
+    const { default: testUtils } = await import('../services/test_utils.ts')
+    const { default: repl } = await import('../services/repl.ts')
+    const { dd } = await import('../services/dumper.ts')
+    const { urlFor, signedUrlFor } = await import('../services/url_builder.ts')
 
     assert.instanceOf(aceService, Kernel)
     assert.strictEqual(app, appService)
@@ -102,6 +103,8 @@ test.group('Providers', () => {
     assert.instanceOf(testUtils, TestUtils)
     assert.instanceOf(repl, Repl)
     assert.isFunction(dd)
+    assert.strictEqual(urlFor, routerService.urlBuilder.urlFor)
+    assert.strictEqual(signedUrlFor, routerService.urlBuilder.signedUrlFor)
     assert.throws(() => dd('d'), 'Dump and Die exception')
   })
 
@@ -303,7 +306,8 @@ test.group('Providers', () => {
     await assert.fileContains('.adonisjs/server/routes.d.ts', [
       `import '@adonisjs/core/types/http'`,
       `declare module '@adonisjs/core/types/http' {`,
-      `export interface RoutesList {`,
+      '  type ScannedRoutes = {',
+      `export interface RoutesList extends ScannedRoutes {}`,
       `'ALL': {`,
       'users.index',
       'posts.index',

@@ -179,9 +179,10 @@ export default class AppServiceProvider {
         `import '@adonisjs/core/types/http'`,
         '',
         `declare module '@adonisjs/core/types/http' {`,
-        '  export interface RoutesList {',
+        '  type ScannedRoutes = {',
         types,
         '  }',
+        'export interface RoutesList extends ScannedRoutes {}',
         '}',
       ].join('\n')
     )

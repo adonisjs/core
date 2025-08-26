@@ -13,7 +13,14 @@ import type { Emitter } from '../modules/events.ts'
 import type { Kernel } from '../modules/ace/main.ts'
 import type { Application } from '../modules/app.ts'
 import type { TestUtils } from './test_utils/main.ts'
-import type { HttpServerEvents } from '../types/http.ts'
+import type {
+  HttpServerEvents,
+  LookupList,
+  RoutesList,
+  SignedURLOptions,
+  UrlFor,
+  URLOptions,
+} from '../types/http.ts'
 import type { Dumper } from '../modules/dumper/dumper.ts'
 import type { LoggerManager } from '../modules/logger.ts'
 import type { HashManager } from '../modules/hash/main.ts'
@@ -107,6 +114,29 @@ export interface HttpServerService extends Server {}
  * Http server service added to the container as a singleton
  */
 export interface HttpRouterService extends Router {}
+
+/**
+ * Hash service is a singleton instance of the HashManager
+ * registered in the container
+ */
+export interface HashService
+  extends HashManager<
+    HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
+  > {}
+
+/**
+ * Url builder service offers a type-safe API for creating URLs
+ * for pre-registered routes
+ */
+export interface UrlBuilderService
+  extends UrlFor<RoutesList extends LookupList ? RoutesList : never, URLOptions> {}
+
+/**
+ * Url builder service offers a type-safe API for creating signed URLs
+ * for pre-registered routes
+ */
+export interface SignedUrlBuilderService
+  extends UrlFor<RoutesList extends LookupList ? RoutesList : never, SignedURLOptions> {}
 
 /**
  * Hash service is a singleton instance of the HashManager

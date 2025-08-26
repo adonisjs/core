@@ -129,7 +129,7 @@
     "@adonisjs/fold": "^11.0.0-next.0",
     "@adonisjs/hash": "^10.0.0-next.0",
     "@adonisjs/health": "^2.0.0",
-    "@adonisjs/http-server": "^8.0.0-next.4",
+    "@adonisjs/http-server": "^8.0.0-next.5",
     "@adonisjs/logger": "^7.0.0-next.1",
     "@adonisjs/repl": "^5.0.0-next.0",
     "@antfu/install-pkg": "^1.1.0",
