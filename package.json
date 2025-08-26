@@ -82,31 +82,31 @@
     "index:commands": "node --import=@poppinss/ts-exec toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.2",
-    "@adonisjs/eslint-config": "^3.0.0-next.0",
+    "@adonisjs/assembler": "^8.0.0-next.4",
+    "@adonisjs/eslint-config": "^3.0.0-next.1",
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/tsconfig": "^2.0.0-next.0",
     "@japa/assert": "^4.1.1",
     "@japa/expect-type": "^2.0.3",
     "@japa/file-system": "^2.3.2",
-    "@japa/runner": "^4.3.0",
+    "@japa/runner": "^4.4.0",
     "@japa/snapshot": "^2.0.9",
-    "@poppinss/ts-exec": "^1.4.0",
+    "@poppinss/ts-exec": "^1.4.1",
     "@release-it/conventional-changelog": "^10.0.1",
-    "@types/node": "^24.1.0",
+    "@types/node": "^24.3.0",
     "@types/pretty-hrtime": "^1.0.3",
     "@types/sinon": "^17.0.4",
     "@types/supertest": "^6.0.3",
     "@types/test-console": "^2.0.3",
     "@vinejs/vine": "^3.0.1",
-    "argon2": "^0.43.1",
+    "argon2": "^0.44.0",
     "bcrypt": "^6.0.0",
     "c8": "^10.1.3",
     "copyfiles": "^2.4.1",
     "cross-env": "^10.0.0",
     "del-cli": "^6.0.0",
     "edge.js": "^6.3.0",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "execa": "^9.6.0",
     "get-port": "^7.1.0",
     "prettier": "^3.6.2",
@@ -115,22 +115,23 @@
     "supertest": "^7.1.4",
     "test-console": "^2.0.0",
     "timekeeper": "^2.3.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2",
+    "youch": "^4.1.0-beta.11"
   },
   "dependencies": {
     "@adonisjs/ace": "^14.0.1-next.0",
-    "@adonisjs/application": "^9.0.0-next.2",
+    "@adonisjs/application": "^9.0.0-next.3",
     "@adonisjs/bodyparser": "^11.0.0-next.0",
-    "@adonisjs/config": "^5.0.3",
+    "@adonisjs/config": "^6.0.0-next.0",
     "@adonisjs/encryption": "^7.0.0-next.0",
-    "@adonisjs/env": "^6.2.0",
+    "@adonisjs/env": "^7.0.0-next.0",
     "@adonisjs/events": "^10.1.0-next.1",
     "@adonisjs/fold": "^11.0.0-next.0",
-    "@adonisjs/hash": "^9.1.1",
+    "@adonisjs/hash": "^10.0.0-next.0",
     "@adonisjs/health": "^2.0.0",
-    "@adonisjs/http-server": "^8.0.0-next.0",
+    "@adonisjs/http-server": "^8.0.0-next.3",
     "@adonisjs/logger": "^7.0.0-next.1",
-    "@adonisjs/repl": "^4.1.0",
+    "@adonisjs/repl": "^5.0.0-next.0",
     "@antfu/install-pkg": "^1.1.0",
     "@poppinss/colors": "^4.1.5",
     "@poppinss/dumper": "^0.6.4",
@@ -147,7 +148,8 @@
     "@vinejs/vine": "^3.0.0",
     "argon2": "^0.43.0",
     "bcrypt": "^6.0.0",
-    "edge.js": "^6.2.0"
+    "edge.js": "^6.2.0",
+    "youch": "^4.1.0-beta.11"
   },
   "peerDependenciesMeta": {
     "argon2": {
@@ -163,6 +165,9 @@
       "optional": true
     },
     "edge.js": {
+      "optional": true
+    },
+    "youch": {
       "optional": true
     }
   },
