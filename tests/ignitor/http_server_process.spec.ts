@@ -11,13 +11,20 @@ import getPort from 'get-port'
 import supertest from 'supertest'
 import { test } from '@japa/runner'
 import { createServer } from 'node:http'
+import { fileURLToPath } from 'node:url'
 
 import type { ApplicationService } from '../../src/types.ts'
 import { IgnitorFactory } from '../../factories/core/ignitor.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
+const BASE_PATH = fileURLToPath(BASE_URL)
 
-test.group('Ignitor | Http server process', () => {
+test.group('Ignitor | Http server process', (group) => {
+  group.each.setup(($test) => {
+    $test.context.fs.basePath = BASE_PATH
+    $test.context.fs.baseUrl = BASE_URL
+  })
+
   test('start http server using the http server process', async ({ assert, cleanup }) => {
     cleanup(async () => {
       delete process.env.HOST

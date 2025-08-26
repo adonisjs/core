@@ -223,8 +223,10 @@ export default class AppServiceProvider {
   async ready() {
     if (!this.app.inProduction) {
       const router = await this.app.container.make('router')
-      await this.generateRoutesJSONFile(router)
-      await this.generateRoutesTypes(router)
+      if (router.commited) {
+        await this.generateRoutesJSONFile(router)
+        await this.generateRoutesTypes(router)
+      }
     }
   }
 }
