@@ -9,13 +9,13 @@
 
 import { test } from '@japa/runner'
 
-import { Argon } from '../modules/hash/drivers/argon.js'
-import type { ApplicationService } from '../src/types.js'
-import { Bcrypt } from '../modules/hash/drivers/bcrypt.js'
-import { drivers } from '../modules/hash/define_config.js'
-import { Scrypt } from '../modules/hash/drivers/scrypt.js'
-import { IgnitorFactory } from '../factories/core/ignitor.js'
-import { Hash, HashManager, defineConfig } from '../modules/hash/main.js'
+import { Argon } from '../modules/hash/drivers/argon.ts'
+import type { ApplicationService } from '../src/types.ts'
+import { Bcrypt } from '../modules/hash/drivers/bcrypt.ts'
+import { drivers } from '../modules/hash/define_config.ts'
+import { Scrypt } from '../modules/hash/drivers/scrypt.ts'
+import { IgnitorFactory } from '../factories/core/ignitor.ts'
+import { Hash, HashManager, defineConfig } from '../modules/hash/main.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

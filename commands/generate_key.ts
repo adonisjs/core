@@ -9,7 +9,7 @@
 
 import string from '@poppinss/utils/string'
 import { EnvEditor } from '@adonisjs/env/editor'
-import { BaseCommand, flags } from '../modules/ace/main.js'
+import { BaseCommand, flags } from '../modules/ace/main.ts'
 
 /**
  * The generate key command is used to generate the app key

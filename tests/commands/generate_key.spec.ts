@@ -8,8 +8,8 @@
  */
 
 import { test } from '@japa/runner'
-import GenerateKey from '../../commands/generate_key.js'
-import { AceFactory } from '../../factories/core/ace.js'
+import GenerateKey from '../../commands/generate_key.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
 
 test.group('Generate key', () => {
   test('create key and write it to .env file', async ({ assert, fs }) => {

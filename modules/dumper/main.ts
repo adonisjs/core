@@ -7,6 +7,6 @@
  * file that was distributed with this source code.
  */
 
-export * as errors from './errors.js'
-export { Dumper } from './dumper.js'
-export { defineConfig } from './define_config.js'
+export * as errors from './errors.ts'
+export { Dumper } from './dumper.ts'
+export { defineConfig } from './define_config.ts'

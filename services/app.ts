@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import type { ApplicationService } from '../src/types.js'
+import type { ApplicationService } from '../src/types.ts'
 
 let app: ApplicationService
 

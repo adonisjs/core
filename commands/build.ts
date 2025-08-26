@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { BaseCommand, flags } from '../modules/ace/main.js'
-import { importAssembler, importTypeScript } from '../src/internal_helpers.js'
+import { BaseCommand, flags } from '../modules/ace/main.ts'
+import { importAssembler, importTypeScript } from '../src/internal_helpers.ts'
 
 /**
  * Create the production build by compiling TypeScript source and the

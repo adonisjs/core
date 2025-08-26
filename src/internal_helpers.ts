@@ -9,7 +9,7 @@
 
 import type typescript from 'typescript'
 import type * as Assembler from '@adonisjs/assembler'
-import { type ApplicationService } from './types.js'
+import { type ApplicationService } from './types.ts'
 
 /**
  * Imports assembler optionally

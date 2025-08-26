@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { type CommandOptions } from '../../types/ace.js'
-import stringHelpers from '../../src/helpers/string.js'
-import { args, BaseCommand, flags } from '../../modules/ace/main.js'
+import { type CommandOptions } from '../../types/ace.ts'
+import stringHelpers from '../../src/helpers/string.ts'
+import { args, BaseCommand, flags } from '../../modules/ace/main.ts'
 
 const ALLOWED_TYPES = ['string', 'boolean', 'number', 'enum'] as const
 type AllowedTypes = (typeof ALLOWED_TYPES)[number]

@@ -11,9 +11,9 @@ import { test } from '@japa/runner'
 import { type FieldContext } from '@vinejs/vine/types'
 import vine, { SimpleErrorReporter, SimpleMessagesProvider } from '@vinejs/vine'
 
-import { RequestValidator } from '../modules/http/main.js'
-import { IgnitorFactory } from '../factories/core/ignitor.js'
-import { TestUtilsFactory } from '../factories/core/test_utils.js'
+import { RequestValidator } from '../modules/http/main.ts'
+import { IgnitorFactory } from '../factories/core/ignitor.ts'
+import { TestUtilsFactory } from '../factories/core/test_utils.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

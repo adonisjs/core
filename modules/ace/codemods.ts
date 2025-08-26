@@ -17,7 +17,7 @@ import type {
   BouncerPolicyNode,
 } from '@adonisjs/assembler/types'
 
-import type { Application } from '../app.js'
+import type { Application } from '../app.ts'
 import stringHelpers from '../../src/helpers/string.ts'
 
 /**

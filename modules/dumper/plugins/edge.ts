@@ -8,7 +8,7 @@
  */
 
 import { type Edge, Template } from 'edge.js'
-import { type Dumper } from '../dumper.js'
+import { type Dumper } from '../dumper.ts'
 
 /**
  * Returns an edge plugin that integrates with a given

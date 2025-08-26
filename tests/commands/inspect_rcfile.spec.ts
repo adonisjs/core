@@ -8,8 +8,8 @@
  */
 
 import { test } from '@japa/runner'
-import { AceFactory } from '../../factories/core/ace.js'
-import InspectRCFile from '../../commands/inspect_rcfile.js'
+import { AceFactory } from '../../factories/core/ace.ts'
+import InspectRCFile from '../../commands/inspect_rcfile.ts'
 
 test.group('Inspect RCFile', () => {
   test('inspect rcfile contents', async ({ assert, fs }) => {

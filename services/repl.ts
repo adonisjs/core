@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import app from './app.js'
-import type { Repl } from '../modules/repl.js'
+import app from './app.ts'
+import type { Repl } from '../modules/repl.ts'
 
 let repl: Repl
 

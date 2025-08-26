@@ -13,4 +13,4 @@
  */
 import '@adonisjs/bodyparser'
 export * from '@adonisjs/http-server'
-export { RequestValidator } from './request_validator.js'
+export { RequestValidator } from './request_validator.ts'

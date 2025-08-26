@@ -8,9 +8,9 @@
  */
 
 import type { DevServer } from '@adonisjs/assembler'
-import type { CommandOptions } from '../types/ace.js'
-import { BaseCommand, flags } from '../modules/ace/main.js'
-import { importAssembler, importTypeScript } from '../src/internal_helpers.js'
+import type { CommandOptions } from '../types/ace.ts'
+import { BaseCommand, flags } from '../modules/ace/main.ts'
+import { importAssembler, importTypeScript } from '../src/internal_helpers.ts'
 
 /**
  * Serve command is used to run the AdonisJS HTTP server during development. The

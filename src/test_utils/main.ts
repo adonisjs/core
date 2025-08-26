@@ -11,9 +11,9 @@ import { Socket } from 'node:net'
 import Macroable from '@poppinss/macroable'
 import { IncomingMessage, ServerResponse } from 'node:http'
 
-import { HttpServerUtils } from './http.js'
-import type { ApplicationService } from '../types.js'
-import { CookieClient, type HttpContext } from '../../modules/http/main.js'
+import { HttpServerUtils } from './http.ts'
+import type { ApplicationService } from '../types.ts'
+import { CookieClient, type HttpContext } from '../../modules/http/main.ts'
 
 /**
  * Test utils has a collection of helper methods to make testing

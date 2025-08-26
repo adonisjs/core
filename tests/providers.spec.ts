@@ -8,22 +8,24 @@
  */
 
 import { test } from '@japa/runner'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from '@adonisjs/application'
 
-import { Repl } from '../modules/repl.js'
-import { Config } from '../modules/config.js'
-import { Emitter } from '../modules/events.js'
-import { Kernel } from '../modules/ace/kernel.js'
-import { TestUtils } from '../src/test_utils/main.js'
-import { Encryption } from '../modules/encryption.js'
-import { Router, Server } from '../modules/http/main.js'
-import { Hash, HashManager } from '../modules/hash/main.js'
-import { Logger, LoggerManager } from '../modules/logger.js'
-import { IgnitorFactory } from '../factories/core/ignitor.js'
-import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
-import { defineConfig as defineDumperConfig } from '../modules/dumper/define_config.js'
+import { Repl } from '../modules/repl.ts'
+import { Config } from '../modules/config.ts'
+import { Emitter } from '../modules/events.ts'
+import { Kernel } from '../modules/ace/kernel.ts'
+import { TestUtils } from '../src/test_utils/main.ts'
+import { Encryption } from '../modules/encryption.ts'
+import { Router, Server } from '../modules/http/main.ts'
+import { Hash, HashManager } from '../modules/hash/main.ts'
+import { Logger, LoggerManager } from '../modules/logger.ts'
+import { IgnitorFactory } from '../factories/core/ignitor.ts'
+import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
+import { defineConfig as defineDumperConfig } from '../modules/dumper/define_config.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
+const BASE_PATH = fileURLToPath(BASE_URL)
 
 test.group('Providers', () => {
   test('ensure all providers have been registered', async ({ assert }) => {
@@ -261,5 +263,50 @@ test.group('Providers', () => {
     const dumper = await app.container.make('dumper')
     assert.include(dumper.dumpToAnsi([1, 2, 3]), '[...2 more items]')
     assert.include(dumper.dumpToHtml([1, 2, 3]), '[...2 more items]')
+  })
+
+  test('generate routes JSON and types file once app is ready', async ({ assert, fs }) => {
+    fs.baseUrl = BASE_URL
+    fs.basePath = BASE_PATH
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/repl_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('web')
+    await app.init()
+    await app.boot()
+
+    const router = await app.container.make('router')
+    const PostsController = () => import('#controllers/posts_controller' as any)
+
+    router.get('/', () => {})
+    router.resource('users', '#controllers/users_controllers')
+    router.resource('posts', PostsController)
+    router.commit()
+
+    await app.start(() => {})
+
+    await assert.fileContains('.adonisjs/client/routes.json', [
+      `"importExpression": "()=>import('#controllers/posts_controller')"`,
+      `"importExpression": "#controllers/users_controllers"`,
+    ])
+    await assert.fileContains('.adonisjs/server/routes.d.ts', [
+      `import '@adonisjs/core/types/http'`,
+      `declare module '@adonisjs/core/types/http' {`,
+      `export interface RoutesList {`,
+      `'ALL': {`,
+      'users.index',
+      'posts.index',
+    ])
   })
 })

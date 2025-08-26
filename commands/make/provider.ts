@@ -9,10 +9,10 @@
 
 import { extname, relative } from 'node:path'
 
-import { stubsRoot } from '../../stubs/main.js'
-import type { AppEnvironments } from '../../types/app.js'
+import { stubsRoot } from '../../stubs/main.ts'
+import type { AppEnvironments } from '../../types/app.ts'
 import stringHelpers from '../../src/helpers/string.ts'
-import { args, BaseCommand, flags } from '../../modules/ace/main.js'
+import { args, BaseCommand, flags } from '../../modules/ace/main.ts'
 
 const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnvironments[]
 type AllowedAppEnvironments = typeof ALLOWED_ENVIRONMENTS

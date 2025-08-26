@@ -13,8 +13,8 @@ import type { HTMLDumpConfig } from '@poppinss/dumper/html/types'
 import type { ConsoleDumpConfig } from '@poppinss/dumper/console/types'
 import { createScript, createStyleSheet, dump } from '@poppinss/dumper/html'
 
-import type { Application } from '../app.js'
-import { E_DUMP_DIE_EXCEPTION } from './errors.js'
+import type { Application } from '../app.ts'
+import { E_DUMP_DIE_EXCEPTION } from './errors.ts'
 
 const colors = useColors.ansi()
 

@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import app from './app.js'
-import type { Kernel } from '../modules/ace/main.js'
+import app from './app.ts'
+import type { Kernel } from '../modules/ace/main.ts'
 
 let ace: Kernel
 

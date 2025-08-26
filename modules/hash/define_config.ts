@@ -9,18 +9,18 @@
 
 import { InvalidArgumentsException } from '@poppinss/utils/exception'
 
-import debug from '../../src/debug.js'
-import type { Argon } from './drivers/argon.js'
-import type { Scrypt } from './drivers/scrypt.js'
-import type { Bcrypt } from './drivers/bcrypt.js'
-import type { ConfigProvider } from '../../src/types.js'
-import { configProvider } from '../../src/config_provider.js'
+import debug from '../../src/debug.ts'
+import type { Argon } from './drivers/argon.ts'
+import type { Scrypt } from './drivers/scrypt.ts'
+import type { Bcrypt } from './drivers/bcrypt.ts'
+import type { ConfigProvider } from '../../src/types.ts'
+import { configProvider } from '../../src/config_provider.ts'
 import type {
   ArgonConfig,
   BcryptConfig,
   ScryptConfig,
   ManagerDriverFactory,
-} from '../../types/hash.js'
+} from '../../types/hash.ts'
 
 /**
  * Resolved config from the config provider will be

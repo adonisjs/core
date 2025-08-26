@@ -7,11 +7,11 @@
  * file that was distributed with this source code.
  */
 
-import { IgnitorFactory } from './ignitor.js'
-import { Ignitor } from '../../src/ignitor/main.js'
-import type { IgnitorOptions } from '../../src/types.js'
-import type { Kernel } from '../../modules/ace/kernel.js'
-import { createAceKernel } from '../../modules/ace/create_kernel.js'
+import { IgnitorFactory } from './ignitor.ts'
+import { Ignitor } from '../../src/ignitor/main.ts'
+import type { IgnitorOptions } from '../../src/types.ts'
+import type { Kernel } from '../../modules/ace/kernel.ts'
+import { createAceKernel } from '../../modules/ace/create_kernel.ts'
 
 /**
  * Creates an instance of Ace kernel

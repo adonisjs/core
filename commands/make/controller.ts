@@ -8,9 +8,9 @@
  */
 
 import string from '@poppinss/utils/string'
-import { stubsRoot } from '../../stubs/main.js'
-import { args, flags, BaseCommand } from '../../modules/ace/main.js'
-import { type CommandOptions } from '../../types/ace.js'
+import { stubsRoot } from '../../stubs/main.ts'
+import { args, flags, BaseCommand } from '../../modules/ace/main.ts'
+import { type CommandOptions } from '../../types/ace.ts'
 
 /**
  * The make controller command to create an HTTP controller

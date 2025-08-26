@@ -8,9 +8,9 @@
  */
 
 import { Vine } from '@vinejs/vine'
-import type { ApplicationService } from '../src/types.js'
-import { Request, RequestValidator } from '../modules/http/main.js'
-import { type FileRuleValidationOptions, VineMultipartFile } from '../src/vine.js'
+import type { ApplicationService } from '../src/types.ts'
+import { Request, RequestValidator } from '../modules/http/main.ts'
+import { type FileRuleValidationOptions, VineMultipartFile } from '../src/vine.ts'
 
 /**
  * Extend VineJS

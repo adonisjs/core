@@ -8,11 +8,11 @@
  */
 
 import stringWidth from 'string-width'
-import type { UIPrimitives } from '../../types/ace.js'
-import { cliHelpers } from '../../modules/ace/main.js'
-import { type Router } from '../../modules/http/main.js'
+import type { UIPrimitives } from '../../types/ace.ts'
+import { cliHelpers } from '../../modules/ace/main.ts'
+import { type Router } from '../../modules/http/main.ts'
 import { middlewareInfo, routeInfo } from '@adonisjs/http-server/helpers'
-import type { MiddlewareHandlerInfo, RouteHandlerInfo, RouteJSON } from '../../types/http.js'
+import type { MiddlewareHandlerInfo, RouteHandlerInfo, RouteJSON } from '../../types/http.ts'
 
 /**
  * Shape of the serialized route specific to the formatter

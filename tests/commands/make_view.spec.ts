@@ -9,9 +9,9 @@
 
 import { test } from '@japa/runner'
 
-import MakeView from '../../commands/make/view.js'
-import { StubsFactory } from '../../factories/stubs.js'
-import { AceFactory } from '../../factories/core/ace.js'
+import MakeView from '../../commands/make/view.ts'
+import { StubsFactory } from '../../factories/stubs.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
 
 test.group('Make view', () => {
   test('create view template', async ({ assert, fs }) => {

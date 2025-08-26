@@ -9,8 +9,8 @@
 
 import { AppFactory } from '@adonisjs/application/factories'
 
-import { stubsRoot } from '../index.js'
-import type { ApplicationService } from '../src/types.js'
+import { stubsRoot } from '../index.ts'
+import type { ApplicationService } from '../src/types.ts'
 
 type FactoryParameters = {
   app: ApplicationService

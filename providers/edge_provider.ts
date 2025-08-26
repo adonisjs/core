@@ -8,9 +8,9 @@
  */
 
 import edge, { type Edge } from 'edge.js'
-import type { ApplicationService } from '../src/types.js'
-import { pluginEdgeDumper } from '../modules/dumper/plugins/edge.js'
-import { BriskRoute, HttpContext, type Route, type Router } from '../modules/http/main.js'
+import type { ApplicationService } from '../src/types.ts'
+import { pluginEdgeDumper } from '../modules/dumper/plugins/edge.ts'
+import { BriskRoute, HttpContext, type Route, type Router } from '../modules/http/main.ts'
 
 declare module '@adonisjs/core/http' {
   interface HttpContext {

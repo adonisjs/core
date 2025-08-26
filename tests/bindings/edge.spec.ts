@@ -11,8 +11,8 @@ import edge from 'edge.js'
 import { test } from '@japa/runner'
 
 import '../../providers/edge_provider.js'
-import { HttpContextFactory } from '../../factories/http.js'
-import { IgnitorFactory } from '../../factories/core/ignitor.js'
+import { HttpContextFactory } from '../../factories/http.ts'
+import { IgnitorFactory } from '../../factories/core/ignitor.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

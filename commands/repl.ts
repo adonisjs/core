@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { BaseCommand } from '../modules/ace/main.js'
-import { type CommandOptions } from '../types/ace.js'
+import { BaseCommand } from '../modules/ace/main.ts'
+import { type CommandOptions } from '../types/ace.ts'
 
 /**
  * The ReplCommand class is used to start the Repl server

@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import app from './app.js'
-import type { EmitterService } from '../src/types.js'
+import app from './app.ts'
+import type { EmitterService } from '../src/types.ts'
 
 let emitter: EmitterService
 

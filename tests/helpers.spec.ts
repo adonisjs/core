@@ -9,7 +9,7 @@
 
 import { test } from '@japa/runner'
 import StringBuilder from '@poppinss/utils/string_builder'
-import stringHelpers from '../src/helpers/string.js'
+import stringHelpers from '../src/helpers/string.ts'
 
 test.group('String helpers', () => {
   test('check if string is empty', ({ assert }) => {

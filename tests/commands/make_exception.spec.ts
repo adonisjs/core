@@ -8,9 +8,9 @@
  */
 
 import { test } from '@japa/runner'
-import { AceFactory } from '../../factories/core/ace.js'
-import { StubsFactory } from '../../factories/stubs.js'
-import MakeException from '../../commands/make/exception.js'
+import { AceFactory } from '../../factories/core/ace.ts'
+import { StubsFactory } from '../../factories/stubs.ts'
+import MakeException from '../../commands/make/exception.ts'
 
 test.group('Make exception command', () => {
   test('create exception class', async ({ assert, fs }) => {

@@ -7,14 +7,14 @@
  * file that was distributed with this source code.
  */
 
-import { Ignitor } from '../../src/ignitor/main.js'
-import type { ProviderNode } from '../../types/app.js'
-import { drivers } from '../../modules/hash/define_config.js'
-import { defineConfig as defineHttpConfig } from '../../modules/http/main.js'
-import type { ApplicationService, IgnitorOptions } from '../../src/types.js'
-import { defineConfig as defineLoggerConfig } from '../../modules/logger.js'
-import { defineConfig as defineHashConfig } from '../../modules/hash/main.js'
-import { defineConfig as defineBodyParserConfig } from '../../modules/bodyparser/main.js'
+import { Ignitor } from '../../src/ignitor/main.ts'
+import type { ProviderNode } from '../../types/app.ts'
+import { drivers } from '../../modules/hash/define_config.ts'
+import { defineConfig as defineHttpConfig } from '../../modules/http/main.ts'
+import type { ApplicationService, IgnitorOptions } from '../../src/types.ts'
+import { defineConfig as defineLoggerConfig } from '../../modules/logger.ts'
+import { defineConfig as defineHashConfig } from '../../modules/hash/main.ts'
+import { defineConfig as defineBodyParserConfig } from '../../modules/bodyparser/main.ts'
 
 type FactoryParameters = {
   rcFileContents: Record<string, any>

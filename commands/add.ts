@@ -9,8 +9,8 @@
 
 import { detectPackageManager, installPackage } from '@antfu/install-pkg'
 
-import { type CommandOptions } from '../types/ace.js'
-import { args, BaseCommand, flags } from '../modules/ace/main.js'
+import { type CommandOptions } from '../types/ace.ts'
+import { args, BaseCommand, flags } from '../modules/ace/main.ts'
 
 const KNOWN_PACKAGE_MANAGERS = ['npm', 'pnpm', 'bun', 'yarn', 'yarn@berry', 'pnpm@6'] as const
 

@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import debug from '../debug.js'
-import type { TestUtils } from './main.js'
+import debug from '../debug.ts'
+import type { TestUtils } from './main.ts'
 import type { Server as NodeHttpsServer } from 'node:https'
 import {
   type IncomingMessage,

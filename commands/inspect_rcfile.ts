@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { BaseCommand } from '../modules/ace/main.js'
+import { BaseCommand } from '../modules/ace/main.ts'
 
 /**
  * Prints the RcFile file contents to the terminal

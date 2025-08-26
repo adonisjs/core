@@ -8,9 +8,9 @@
  */
 
 import { test } from '@japa/runner'
-import { AceFactory } from '../../factories/core/ace.js'
-import { StubsFactory } from '../../factories/stubs.js'
-import MakeValidator from '../../commands/make/validator.js'
+import { AceFactory } from '../../factories/core/ace.ts'
+import { StubsFactory } from '../../factories/stubs.ts'
+import MakeValidator from '../../commands/make/validator.ts'
 
 test.group('Make validator', () => {
   test('create validator file', async ({ assert, fs }) => {

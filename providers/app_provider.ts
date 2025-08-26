@@ -7,15 +7,18 @@
  * file that was distributed with this source code.
  */
 
-import { Config } from '../modules/config.js'
-import { Logger } from '../modules/logger.js'
-import { Application } from '../modules/app.js'
-import { Dumper } from '../modules/dumper/dumper.js'
-import { Encryption } from '../modules/encryption.js'
-import { Router, Server } from '../modules/http/main.js'
-import { BaseEvent, Emitter } from '../modules/events.js'
-import type { ApplicationService, LoggerService } from '../src/types.js'
-import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.js'
+import { dirname } from 'node:path'
+import { mkdir, writeFile } from 'node:fs/promises'
+
+import { Config } from '../modules/config.ts'
+import { Logger } from '../modules/logger.ts'
+import { Application } from '../modules/app.ts'
+import { Dumper } from '../modules/dumper/dumper.ts'
+import { Encryption } from '../modules/encryption.ts'
+import { Router, Server } from '../modules/http/main.ts'
+import { BaseEvent, Emitter } from '../modules/events.ts'
+import type { ApplicationService, LoggerService } from '../src/types.ts'
+import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
 
 /**
  * The Application Service provider registers all the baseline
@@ -162,6 +165,40 @@ export default class AppServiceProvider {
   }
 
   /**
+   * Generates the types needed by the URL builder and writes
+   * them to the ".adonisjs/server/routes.d.ts" file
+   */
+  protected async generateRoutesTypes(router: Router) {
+    const types = router.generateTypes(4)
+    const outputPath = this.app.makePath('.adonisjs/server/routes.d.ts')
+
+    await mkdir(dirname(outputPath), { recursive: true })
+    await writeFile(
+      outputPath,
+      [
+        `import '@adonisjs/core/types/http'`,
+        '',
+        `declare module '@adonisjs/core/types/http' {`,
+        '  export interface RoutesList {',
+        types,
+        '  }',
+        '}',
+      ].join('\n')
+    )
+  }
+
+  /**
+   * Generates the routes JSON needed by the client integration
+   */
+  protected async generateRoutesJSONFile(router: Router) {
+    const routes = router.toJSON()
+    const outputPath = this.app.makePath('.adonisjs/client/routes.json')
+
+    await mkdir(dirname(outputPath), { recursive: true })
+    await writeFile(outputPath, JSON.stringify(routes, null, 2))
+  }
+
+  /**
    * Registers bindings
    */
   register() {
@@ -181,5 +218,13 @@ export default class AppServiceProvider {
 
   async boot() {
     BaseEvent.useEmitter(await this.app.container.make('emitter'))
+  }
+
+  async ready() {
+    if (!this.app.inProduction) {
+      const router = await this.app.container.make('router')
+      await this.generateRoutesJSONFile(router)
+      await this.generateRoutesTypes(router)
+    }
   }
 }

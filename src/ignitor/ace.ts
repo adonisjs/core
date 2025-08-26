@@ -8,7 +8,7 @@
  */
 
 import { type Ignitor } from './main.ts'
-import type { ApplicationService } from '../types.js'
+import type { ApplicationService } from '../types.ts'
 
 /**
  * The Ace process is used to start the application in the

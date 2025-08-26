@@ -9,9 +9,9 @@
 
 import { RuntimeException } from '@poppinss/utils/exception'
 
-import { Hash } from '../modules/hash/main.js'
-import { configProvider } from '../src/config_provider.js'
-import type { ApplicationService } from '../src/types.js'
+import { Hash } from '../modules/hash/main.ts'
+import { configProvider } from '../src/config_provider.ts'
+import type { ApplicationService } from '../src/types.ts'
 
 /**
  * Registers the passwords hasher with the container

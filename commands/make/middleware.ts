@@ -10,10 +10,10 @@
 import string from '@poppinss/utils/string'
 import { basename, extname, relative } from 'node:path'
 
-import { stubsRoot } from '../../stubs/main.js'
-import { type CommandOptions } from '../../types/ace.js'
+import { stubsRoot } from '../../stubs/main.ts'
+import { type CommandOptions } from '../../types/ace.ts'
 import stringHelpers from '../../src/helpers/string.ts'
-import { args, BaseCommand, flags } from '../../modules/ace/main.js'
+import { args, BaseCommand, flags } from '../../modules/ace/main.ts'
 
 /**
  * The make middleware command to create a new middleware

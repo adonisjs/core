@@ -13,7 +13,7 @@ import type { Kernel } from '@adonisjs/core/ace'
 import { Exception } from '@poppinss/utils/exception'
 import type { HttpContext } from '@adonisjs/core/http'
 
-import type { Dumper } from './dumper.js'
+import type { Dumper } from './dumper.ts'
 
 /**
  * DumpDie exception is raised by the "dd" function. It will

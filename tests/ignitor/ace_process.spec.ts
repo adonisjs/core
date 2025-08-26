@@ -8,10 +8,10 @@
  */
 
 import { test } from '@japa/runner'
-import { ListLoader } from '../../modules/ace/main.js'
-import type { CommandOptions } from '../../types/ace.js'
-import { BaseCommand } from '../../modules/ace/commands.js'
-import { IgnitorFactory } from '../../factories/core/ignitor.js'
+import { ListLoader } from '../../modules/ace/main.ts'
+import type { CommandOptions } from '../../types/ace.ts'
+import { BaseCommand } from '../../modules/ace/commands.ts'
+import { IgnitorFactory } from '../../factories/core/ignitor.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

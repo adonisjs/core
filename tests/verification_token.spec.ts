@@ -12,7 +12,7 @@ import { Secret } from '@poppinss/utils'
 import base64 from '@poppinss/utils/base64'
 import { getActiveTest, test } from '@japa/runner'
 
-import { VerificationToken } from '../src/helpers/verification_token.js'
+import { VerificationToken } from '../src/helpers/verification_token.ts'
 
 function freezeTime() {
   const t = getActiveTest()

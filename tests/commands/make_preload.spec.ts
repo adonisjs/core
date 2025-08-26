@@ -8,9 +8,9 @@
  */
 
 import { test } from '@japa/runner'
-import { StubsFactory } from '../../factories/stubs.js'
-import { AceFactory } from '../../factories/core/ace.js'
-import MakePreload from '../../commands/make/preload.js'
+import { StubsFactory } from '../../factories/stubs.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
+import MakePreload from '../../commands/make/preload.ts'
 
 test.group('Make preload file', () => {
   test('create a preload file for all environments', async ({ assert, fs }) => {

@@ -11,8 +11,8 @@ import { join } from 'node:path'
 import { homedir } from 'node:os'
 import { fsImportAll } from '@poppinss/utils/fs'
 
-import { Repl } from '../modules/repl.js'
-import type { ApplicationService, ContainerBindings } from '../src/types.js'
+import { Repl } from '../modules/repl.ts'
+import type { ApplicationService, ContainerBindings } from '../src/types.ts'
 
 /**
  * Resolves a container binding and sets it on the REPL

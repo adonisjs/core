@@ -8,9 +8,9 @@
  */
 
 import { test } from '@japa/runner'
-import { AceFactory } from '../../factories/core/ace.js'
-import { StubsFactory } from '../../factories/stubs.js'
-import MakeControllerCommand from '../../commands/make/controller.js'
+import { AceFactory } from '../../factories/core/ace.ts'
+import { StubsFactory } from '../../factories/stubs.ts'
+import MakeControllerCommand from '../../commands/make/controller.ts'
 
 test.group('Make controller', () => {
   test('create controller', async ({ assert, fs }) => {

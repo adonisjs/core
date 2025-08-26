@@ -8,9 +8,9 @@
  */
 
 import { test } from '@japa/runner'
-import { AceFactory } from '../../factories/core/ace.js'
-import { StubsFactory } from '../../factories/stubs.js'
-import MakeEventCommand from '../../commands/make/event.js'
+import { AceFactory } from '../../factories/core/ace.ts'
+import { StubsFactory } from '../../factories/stubs.ts'
+import MakeEventCommand from '../../commands/make/event.ts'
 
 test.group('Make event', () => {
   test('create event class', async ({ assert, fs }) => {

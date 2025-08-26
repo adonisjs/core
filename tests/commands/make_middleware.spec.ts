@@ -8,9 +8,9 @@
  */
 
 import { test } from '@japa/runner'
-import { AceFactory } from '../../factories/core/ace.js'
-import { StubsFactory } from '../../factories/stubs.js'
-import MakeMiddleware from '../../commands/make/middleware.js'
+import { AceFactory } from '../../factories/core/ace.ts'
+import { StubsFactory } from '../../factories/stubs.ts'
+import MakeMiddleware from '../../commands/make/middleware.ts'
 
 test.group('Make middleware', (group) => {
   group.tap((t) => t.disableTimeout())

@@ -15,10 +15,10 @@ import type {
   MessagesProviderContact,
 } from '@vinejs/vine/types'
 
-import type { HttpContext } from './main.js'
-import type { FeatureFlags } from '../app.js'
-import type { ExperimentalFlagsList } from '../../types/app.js'
-import type { RequestValidationOptions } from '../../types/http.js'
+import type { HttpContext } from './main.ts'
+import type { FeatureFlags } from '../app.ts'
+import type { ExperimentalFlagsList } from '../../types/app.ts'
+import type { RequestValidationOptions } from '../../types/http.ts'
 
 /**
  * Request validator is used validate HTTP request data using

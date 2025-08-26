@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import app from './app.js'
-import type { LoggerService } from '../src/types.js'
+import app from './app.ts'
+import type { LoggerService } from '../src/types.ts'
 
 let logger: LoggerService
 

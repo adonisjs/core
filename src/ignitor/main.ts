@@ -7,14 +7,14 @@
  * file that was distributed with this source code.
  */
 
-import debug from '../debug.js'
-import { AceProcess } from './ace.js'
-import { TestRunnerProcess } from './test.js'
-import { HttpServerProcess } from './http.js'
-import { setApp } from '../../services/app.js'
-import { Application } from '../../modules/app.js'
-import type { AppEnvironments } from '../../types/app.js'
-import type { ApplicationService, IgnitorOptions } from '../types.js'
+import debug from '../debug.ts'
+import { AceProcess } from './ace.ts'
+import { TestRunnerProcess } from './test.ts'
+import { HttpServerProcess } from './http.ts'
+import { setApp } from '../../services/app.ts'
+import { Application } from '../../modules/app.ts'
+import type { AppEnvironments } from '../../types/app.ts'
+import type { ApplicationService, IgnitorOptions } from '../types.ts'
 
 /**
  * Ignitor is used to instantiate an AdonisJS application in different

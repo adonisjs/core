@@ -9,9 +9,9 @@
 
 import sinon from 'sinon'
 import { test } from '@japa/runner'
-import { HelpCommand } from '../../modules/ace/main.js'
-import { IgnitorFactory } from '../../factories/core/ignitor.js'
-import { createAceKernel } from '../../modules/ace/create_kernel.js'
+import { HelpCommand } from '../../modules/ace/main.ts'
+import { IgnitorFactory } from '../../factories/core/ignitor.ts'
+import { createAceKernel } from '../../modules/ace/create_kernel.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

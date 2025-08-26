@@ -8,8 +8,8 @@
  */
 
 import { test } from '@japa/runner'
-import EnvAdd from '../../commands/env/add.js'
-import { AceFactory } from '../../factories/core/ace.js'
+import EnvAdd from '../../commands/env/add.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
 
 test.group('Env Add command', () => {
   test('add new env variable to the different files', async ({ assert, fs }) => {

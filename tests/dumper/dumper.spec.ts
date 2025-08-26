@@ -12,9 +12,9 @@ import { fileURLToPath } from 'node:url'
 import { AppFactory } from '@adonisjs/application/factories'
 import { HttpContextFactory } from '@adonisjs/http-server/factories'
 
-import { Dumper } from '../../modules/dumper/dumper.js'
-import { AceFactory } from '../../factories/core/ace.js'
-import { E_DUMP_DIE_EXCEPTION } from '../../modules/dumper/errors.js'
+import { Dumper } from '../../modules/dumper/dumper.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
+import { E_DUMP_DIE_EXCEPTION } from '../../modules/dumper/errors.ts'
 
 test.group('Dumper', () => {
   test('dump and die', ({ fs }) => {

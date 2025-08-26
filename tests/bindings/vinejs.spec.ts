@@ -10,7 +10,7 @@
 import vine from '@vinejs/vine'
 import { test } from '@japa/runner'
 
-import { MultipartFileFactory } from '../../factories/bodyparser.js'
+import { MultipartFileFactory } from '../../factories/bodyparser.ts'
 import '../../providers/vinejs_provider.js'
 
 test.group('Bindings | VineJS', () => {

@@ -9,9 +9,9 @@
 
 import { RuntimeException } from '@poppinss/utils/exception'
 
-import { stubsRoot } from '../stubs/main.js'
-import type { CommandOptions } from '../types/ace.js'
-import { args, BaseCommand, flags } from '../modules/ace/main.js'
+import { stubsRoot } from '../stubs/main.ts'
+import type { CommandOptions } from '../types/ace.ts'
+import { args, BaseCommand, flags } from '../modules/ace/main.ts'
 
 /**
  * The configure command is used to configure packages after installation

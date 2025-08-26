@@ -8,8 +8,8 @@
  */
 
 import { test } from '@japa/runner'
-import { Codemods } from '../../modules/ace/codemods.js'
-import { AceFactory } from '../../factories/core/ace.js'
+import { Codemods } from '../../modules/ace/codemods.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
 
 test.group('Codemods', (group) => {
   group.tap((t) => t.timeout(60 * 1000))

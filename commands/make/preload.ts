@@ -10,9 +10,9 @@
 import { extname, relative } from 'node:path'
 import type { AppEnvironments } from '@adonisjs/application/types'
 
-import { stubsRoot } from '../../stubs/main.js'
+import { stubsRoot } from '../../stubs/main.ts'
 import stringHelpers from '../../src/helpers/string.ts'
-import { args, flags, BaseCommand } from '../../modules/ace/main.js'
+import { args, flags, BaseCommand } from '../../modules/ace/main.ts'
 
 const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnvironments[]
 type AllowedAppEnvironments = typeof ALLOWED_ENVIRONMENTS

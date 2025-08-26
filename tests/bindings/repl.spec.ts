@@ -9,10 +9,10 @@
 
 import { test } from '@japa/runner'
 
-import is from '../../src/helpers/is.js'
-import stringHelpers from '../../src/helpers/string.js'
-import { IgnitorFactory } from '../../factories/core/ignitor.js'
-import AppServiceProvider from '../../providers/app_provider.js'
+import is from '../../src/helpers/is.ts'
+import stringHelpers from '../../src/helpers/string.ts'
+import { IgnitorFactory } from '../../factories/core/ignitor.ts'
+import AppServiceProvider from '../../providers/app_provider.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 

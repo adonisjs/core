@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { stubsRoot } from '../../stubs/main.js'
-import { args, flags, BaseCommand } from '../../modules/ace/main.js'
+import { stubsRoot } from '../../stubs/main.ts'
+import { args, flags, BaseCommand } from '../../modules/ace/main.ts'
 
 /**
  * Make a new test file

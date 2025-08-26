@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import app from './app.js'
-import type { ApplicationService } from '../src/types.js'
+import app from './app.ts'
+import type { ApplicationService } from '../src/types.ts'
 
 let config: ApplicationService['config']
 

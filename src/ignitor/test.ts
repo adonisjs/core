@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { type Ignitor } from './main.js'
-import type { ApplicationService } from '../types.js'
+import { type Ignitor } from './main.ts'
+import type { ApplicationService } from '../types.ts'
 
 /**
  * The Test runner process is used to start the tests runner process

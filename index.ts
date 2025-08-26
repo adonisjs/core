@@ -13,10 +13,10 @@ import { errors as appErrors } from '@adonisjs/application'
 import { errors as encryptionErrors } from '@adonisjs/encryption'
 import { errors as httpServerErrors } from '@adonisjs/http-server'
 
-export { stubsRoot } from './stubs/main.js'
-export { inject } from './modules/container.js'
-export { Ignitor } from './src/ignitor/main.js'
-export { configProvider } from './src/config_provider.js'
+export { stubsRoot } from './stubs/main.ts'
+export { inject } from './modules/container.ts'
+export { Ignitor } from './src/ignitor/main.ts'
+export { configProvider } from './src/config_provider.ts'
 
 /**
  * Aggregated errors from all modules.

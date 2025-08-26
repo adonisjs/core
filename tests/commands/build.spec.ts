@@ -10,8 +10,8 @@
 import ts from 'typescript'
 import { execa } from 'execa'
 import { test } from '@japa/runner'
-import Build from '../../commands/build.js'
-import { AceFactory } from '../../factories/core/ace.js'
+import Build from '../../commands/build.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
 
 test.group('Build command', (group) => {
   group.tap((t) => t.timeout(30 * 1000))

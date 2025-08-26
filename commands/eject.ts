@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { args, BaseCommand, flags } from '../modules/ace/main.js'
+import { args, BaseCommand, flags } from '../modules/ace/main.ts'
 import stringHelpers from '../src/helpers/string.ts'
 
 /**

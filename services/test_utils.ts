@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import app from './app.js'
-import type { TestUtils } from '../src/test_utils/main.js'
+import app from './app.ts'
+import type { TestUtils } from '../src/test_utils/main.ts'
 
 let testUtils: TestUtils
 

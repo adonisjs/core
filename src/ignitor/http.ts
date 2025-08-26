@@ -15,9 +15,9 @@ import {
   createServer,
 } from 'node:http'
 
-import debug from '../debug.js'
-import { type Ignitor } from './main.js'
-import type { ApplicationService, EmitterService, LoggerService } from '../types.js'
+import debug from '../debug.ts'
+import { type Ignitor } from './main.ts'
+import type { ApplicationService, EmitterService, LoggerService } from '../types.ts'
 
 /**
  * The HTTP server process is used to start the application in the

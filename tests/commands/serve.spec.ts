@@ -8,8 +8,8 @@
  */
 
 import { test } from '@japa/runner'
-import Serve from '../../commands/serve.js'
-import { AceFactory } from '../../factories/core/ace.js'
+import Serve from '../../commands/serve.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
 import { setupTypeScriptProject } from '../helpers.ts'
 
 const sleep = (duration: number) => new Promise((resolve) => setTimeout(resolve, duration))

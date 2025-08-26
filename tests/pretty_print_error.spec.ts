@@ -9,7 +9,7 @@
 
 import { test } from '@japa/runner'
 import testConsole from 'test-console'
-import { prettyPrintError } from '../index.js'
+import { prettyPrintError } from '../index.ts'
 
 test.group('Pretty print error', () => {
   test('pretty print an error using youch', async ({ assert }) => {

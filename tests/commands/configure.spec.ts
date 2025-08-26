@@ -10,8 +10,8 @@
 import { join } from 'node:path'
 import { test } from '@japa/runner'
 import { fileURLToPath } from 'node:url'
-import Configure from '../../commands/configure.js'
-import { AceFactory } from '../../factories/core/ace.js'
+import Configure from '../../commands/configure.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 const BASE_PATH = fileURLToPath(BASE_URL)

@@ -7,21 +7,21 @@
  * file that was distributed with this source code.
  */
 
-import type { Repl } from '../modules/repl.js'
-import type { Importer } from '../types/app.js'
-import type { Emitter } from '../modules/events.js'
-import type { Kernel } from '../modules/ace/main.js'
-import type { Application } from '../modules/app.js'
-import type { TestUtils } from './test_utils/main.js'
-import type { HttpServerEvents } from '../types/http.js'
-import type { Dumper } from '../modules/dumper/dumper.js'
-import type { LoggerManager } from '../modules/logger.js'
-import type { HashManager } from '../modules/hash/main.js'
-import type { Encryption } from '../modules/encryption.js'
-import type { ManagerDriverFactory } from '../types/hash.js'
-import type { Router, Server } from '../modules/http/main.js'
-import type { ContainerResolveEventData } from '../types/container.js'
-import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.js'
+import type { Repl } from '../modules/repl.ts'
+import type { Importer } from '../types/app.ts'
+import type { Emitter } from '../modules/events.ts'
+import type { Kernel } from '../modules/ace/main.ts'
+import type { Application } from '../modules/app.ts'
+import type { TestUtils } from './test_utils/main.ts'
+import type { HttpServerEvents } from '../types/http.ts'
+import type { Dumper } from '../modules/dumper/dumper.ts'
+import type { LoggerManager } from '../modules/logger.ts'
+import type { HashManager } from '../modules/hash/main.ts'
+import type { Encryption } from '../modules/encryption.ts'
+import type { ManagerDriverFactory } from '../types/hash.ts'
+import type { Router, Server } from '../modules/http/main.ts'
+import type { ContainerResolveEventData } from '../types/container.ts'
+import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.ts'
 
 /**
  * A config provider waits for the application to get booted

@@ -9,8 +9,8 @@
  * file that was distributed with this source code.
  */
 
-import IndexCommand from './commands/index_commands.js'
 import { Kernel, ListLoader, HelpCommand } from '@adonisjs/ace'
+import IndexCommand from './commands/index_commands.ts'
 
 const kernel = Kernel.create()
 kernel.addLoader(new ListLoader([IndexCommand]))

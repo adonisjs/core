@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import app from './app.js'
-import type { Dumper } from '../modules/dumper/dumper.js'
+import app from './app.ts'
+import type { Dumper } from '../modules/dumper/dumper.ts'
 
 let dumper: Dumper
 

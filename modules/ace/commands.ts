@@ -9,9 +9,9 @@
 
 import { BaseCommand as AceBaseCommand, ListCommand as AceListCommand } from '@adonisjs/ace'
 
-import { type Kernel } from './kernel.js'
-import type { ApplicationService } from '../../src/types.js'
-import type { CommandOptions, ParsedOutput, UIPrimitives } from '../../types/ace.js'
+import { type Kernel } from './kernel.ts'
+import type { ApplicationService } from '../../src/types.ts'
+import type { CommandOptions, ParsedOutput, UIPrimitives } from '../../types/ace.ts'
 import { aceCommand } from './tracing_channels.ts'
 
 /**

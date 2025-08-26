@@ -12,9 +12,9 @@ import { test } from '@japa/runner'
 import { ListLoader } from '@adonisjs/ace'
 import type { FileSystem } from '@japa/file-system'
 
-import Add from '../../commands/add.js'
-import Configure from '../../commands/configure.js'
-import { AceFactory } from '../../factories/core/ace.js'
+import Add from '../../commands/add.ts'
+import Configure from '../../commands/configure.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
 
 const VERBOSE = !!process.env.CI
 

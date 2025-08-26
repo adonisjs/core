@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import type { CommandOptions } from '../../types/ace.js'
-import { args, BaseCommand, flags } from '../../modules/ace/main.js'
-import { RoutesListFormatter } from '../../src/cli_formatters/routes_list.js'
+import type { CommandOptions } from '../../types/ace.ts'
+import { args, BaseCommand, flags } from '../../modules/ace/main.ts'
+import { RoutesListFormatter } from '../../src/cli_formatters/routes_list.ts'
 
 /**
  * The list routes command is used to view the list of registered routes

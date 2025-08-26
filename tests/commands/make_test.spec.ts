@@ -8,10 +8,10 @@
  */
 
 import { test } from '@japa/runner'
-import MakeTest from '../../commands/make/test.js'
-import { StubsFactory } from '../../factories/stubs.js'
-import { AceFactory } from '../../factories/core/ace.js'
-import { IgnitorFactory } from '../../factories/core/ignitor.js'
+import MakeTest from '../../commands/make/test.ts'
+import { StubsFactory } from '../../factories/stubs.ts'
+import { AceFactory } from '../../factories/core/ace.ts'
+import { IgnitorFactory } from '../../factories/core/ignitor.ts'
 
 test.group('Make test', () => {
   test('--suite flag: make inside suite directory', async ({ assert, fs }) => {

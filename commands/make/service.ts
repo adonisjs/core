@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { stubsRoot } from '../../stubs/main.js'
-import { args, BaseCommand } from '../../modules/ace/main.js'
-import { type CommandOptions } from '../../types/ace.js'
+import { stubsRoot } from '../../stubs/main.ts'
+import { args, BaseCommand } from '../../modules/ace/main.ts'
+import { type CommandOptions } from '../../types/ace.ts'
 
 /**
  * Make a new service class

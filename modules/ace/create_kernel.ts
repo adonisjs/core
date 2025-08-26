@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { Kernel } from './main.js'
-import type { ApplicationService } from '../../src/types.js'
-import { FsLoader, HelpCommand, type BaseCommand } from '../../modules/ace/main.js'
+import { Kernel } from './main.ts'
+import type { ApplicationService } from '../../src/types.ts'
+import { FsLoader, HelpCommand, type BaseCommand } from '../../modules/ace/main.ts'
 
 /**
  * We abstract the logic for creating the ace kernel in this

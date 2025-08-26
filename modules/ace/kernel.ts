@@ -8,8 +8,8 @@
  */
 
 import { Kernel as AceKernel } from '@adonisjs/ace'
-import { type BaseCommand, ListCommand } from './commands.js'
-import type { ApplicationService } from '../../src/types.js'
+import { type BaseCommand, ListCommand } from './commands.ts'
+import type { ApplicationService } from '../../src/types.ts'
 
 /**
  * The base command to create custom ace commands. The AdonisJS base commands

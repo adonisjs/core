@@ -7,6 +7,6 @@
  * file that was distributed with this source code.
  */
 
-export { AceFactory } from './ace.js'
-export { IgnitorFactory } from './ignitor.js'
-export { TestUtilsFactory } from './test_utils.js'
+export { AceFactory } from './ace.ts'
+export { IgnitorFactory } from './ignitor.ts'
+export { TestUtilsFactory } from './test_utils.ts'

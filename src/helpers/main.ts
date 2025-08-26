@@ -11,5 +11,5 @@ export { fsReadAll, fsImportAll } from '@poppinss/utils/fs'
 export { default as base64 } from '@poppinss/utils/base64'
 export { compose, Secret, safeEqual, MessageBuilder } from '@poppinss/utils'
 
-export { VerificationToken } from './verification_token.js'
+export { VerificationToken } from './verification_token.ts'
 export { middlewareInfo, routeInfo } from '@adonisjs/http-server/helpers'
