@@ -1,0 +1,26 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "@adonisjs/core",
+  "includeVersion": true,
+  "excludeExternals": true,
+  "entryPoints": [
+    "./index.ts",
+    "./commands/**/*.ts",
+    "./factories/**/*.ts",
+    "./modules/**/*.ts",
+    "./providers/**/*.ts",
+    "./services/**/*.ts",
+    "./src/types.ts",
+    "./src/helpers/main.ts",
+    "./src/exceptions.ts",
+    "./src/test_utils/main.ts",
+    "./src/vine.ts",
+    "./stubs/main.ts"
+  ],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "readme": "none",
+  "gitRevision": "main",
+  "sort": ["source-order"]
+}

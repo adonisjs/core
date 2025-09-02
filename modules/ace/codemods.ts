@@ -15,6 +15,7 @@ import type {
   MiddlewareNode,
   EnvValidationNode,
   BouncerPolicyNode,
+  SupportedPackageManager,
 } from '@adonisjs/assembler/types'
 
 import type { Application } from '../app.ts'
@@ -297,7 +298,10 @@ export class Codemods extends EventEmitter {
    * this.installPackages([{ name: '@adonisjs/lucid@next', isDevDependency: false }])
    * ```
    */
-  async installPackages(packages: { name: string; isDevDependency: boolean }[]) {
+  async installPackages(
+    packages: { name: string; isDevDependency: boolean }[],
+    packageManager?: SupportedPackageManager | 'pnpm@6' | 'deno'
+  ): Promise<boolean> {
     const transformer = await this.#getCodeTransformer()
     const appPath = this.#app.makePath()
     const colors = this.#cliLogger.getColors()
@@ -310,14 +314,11 @@ export class Codemods extends EventEmitter {
       )
       this.#cliLogger.log(`devDependencies: ${devDependencies.join(',')}`)
       this.#cliLogger.log(`dependencies: ${dependencies.join(',')}`)
-      return
+      return false
     }
 
-    const packageManager = await transformer.detectPackageManager(appPath)
-
-    const spinner = this.#cliLogger.await(
-      `installing dependencies using ${packageManager || 'npm'} `
-    )
+    packageManager = packageManager ?? (await transformer.detectPackageManager(appPath)) ?? 'npm'
+    const spinner = this.#cliLogger.await(`installing dependencies using ${packageManager} `)
 
     const silentLogs = !this.verboseInstallOutput
     if (silentLogs) {
@@ -325,15 +326,22 @@ export class Codemods extends EventEmitter {
     }
 
     try {
-      await transformer.installPackage(dependencies, {
-        cwd: appPath,
-        silent: silentLogs,
-      })
-      await transformer.installPackage(devDependencies, {
-        dev: true,
-        cwd: appPath,
-        silent: silentLogs,
-      })
+      if (dependencies.length) {
+        await transformer.installPackage(dependencies, {
+          cwd: appPath,
+          silent: silentLogs,
+          packageManager,
+        })
+      }
+
+      if (devDependencies.length) {
+        await transformer.installPackage(devDependencies, {
+          dev: true,
+          cwd: appPath,
+          silent: silentLogs,
+          packageManager,
+        })
+      }
 
       if (silentLogs) {
         spinner.stop()
@@ -346,6 +354,7 @@ export class Codemods extends EventEmitter {
       this.#cliLogger.log(
         dependencies.map((dependency) => `    ${colors.dim('prod')} ${dependency} `).join('\n')
       )
+      return true
     } catch (error) {
       if (silentLogs) {
         spinner.update('unable to install dependencies')
@@ -353,6 +362,7 @@ export class Codemods extends EventEmitter {
       }
       this.#cliLogger.fatal(error)
       this.emit('error', error)
+      return false
     }
   }
 

@@ -9,11 +9,11 @@
 
 import { inspect } from 'node:util'
 import { parse } from 'error-stack-parser-es'
-import type { Kernel } from '@adonisjs/core/ace'
 import { Exception } from '@poppinss/utils/exception'
-import type { HttpContext } from '@adonisjs/core/http'
 
 import type { Dumper } from './dumper.ts'
+import type { Kernel } from '../ace/kernel.ts'
+import type { HttpContext } from '../http/main.ts'
 
 /**
  * DumpDie exception is raised by the "dd" function. It will

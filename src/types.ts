@@ -116,15 +116,6 @@ export interface HttpServerService extends Server {}
 export interface HttpRouterService extends Router {}
 
 /**
- * Hash service is a singleton instance of the HashManager
- * registered in the container
- */
-export interface HashService
-  extends HashManager<
-    HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
-  > {}
-
-/**
  * Url builder service offers a type-safe API for creating URLs
  * for pre-registered routes
  */

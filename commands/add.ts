@@ -7,12 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { detectPackageManager, installPackage } from '@antfu/install-pkg'
-
 import { type CommandOptions } from '../types/ace.ts'
 import { args, BaseCommand, flags } from '../modules/ace/main.ts'
-
-const KNOWN_PACKAGE_MANAGERS = ['npm', 'pnpm', 'bun', 'yarn', 'yarn@berry', 'pnpm@6'] as const
+import { type SupportedPackageManager } from '@adonisjs/assembler/types'
 
 /**
  * The install command is used to `npm install` and `node ace configure` a new package
@@ -31,30 +28,14 @@ export default class Add extends BaseCommand {
   @flags.boolean({ description: 'Display logs in verbose mode' })
   declare verbose?: boolean
 
-  @flags.string({ description: 'Select the package manager you want to use' })
-  declare packageManager?: (typeof KNOWN_PACKAGE_MANAGERS)[number]
+  @flags.string({ description: 'Define the package manager you want to use' })
+  declare packageManager?: SupportedPackageManager
 
   @flags.boolean({ description: 'Should we install the package as a dev dependency', alias: 'D' })
   declare dev?: boolean
 
   @flags.boolean({ description: 'Forcefully overwrite existing files' })
   declare force?: boolean
-
-  /**
-   * Detect the package manager to use
-   */
-  async #getPackageManager() {
-    const packageManager =
-      this.packageManager || (await detectPackageManager(this.app.makePath())) || 'npm'
-
-    if (
-      KNOWN_PACKAGE_MANAGERS.some((knownPackageManager) => knownPackageManager === packageManager)
-    ) {
-      return packageManager as (typeof KNOWN_PACKAGE_MANAGERS)[number] | undefined
-    }
-
-    throw new Error('Invalid package manager. Must be one of npm, pnpm, bun or yarn')
-  }
 
   /**
    * Configure the package by delegating the work to the `node ace configure` command
@@ -78,45 +59,9 @@ export default class Add extends BaseCommand {
   }
 
   /**
-   * Install the package using the selected package manager
-   */
-  async #installPackage(npmPackageName: string) {
-    const colors = this.colors
-    const spinner = this.logger
-      .await(`installing ${colors.green(this.name)} using ${colors.grey(this.packageManager!)}`)
-      .start()
-
-    spinner.start()
-
-    try {
-      await installPackage(npmPackageName, {
-        dev: this.dev,
-        silent: this.verbose === true ? false : true,
-        cwd: this.app.makePath(),
-        packageManager: this.packageManager,
-      })
-
-      spinner.update('package installed successfully')
-      spinner.stop()
-
-      return true
-    } catch (error) {
-      spinner.update('unable to install the package')
-      spinner.stop()
-
-      this.logger.fatal(error)
-      this.exitCode = 1
-      return false
-    }
-  }
-
-  /**
    * Run method is invoked by ace automatically
    */
   async run() {
-    const colors = this.colors
-    this.packageManager = await this.#getPackageManager()
-
     /**
      * Handle special packages to configure
      */
@@ -128,25 +73,14 @@ export default class Add extends BaseCommand {
     }
 
     /**
-     * Prompt the user to confirm the installation
-     */
-    const cmd = colors.grey(`${this.packageManager} add ${this.dev ? '-D ' : ''}${this.name}`)
-    this.logger.info(`Installing the package using the following command : ${cmd}`)
-
-    const shouldInstall = await this.prompt.confirm('Continue ?', {
-      name: 'install',
-      default: true,
-    })
-
-    if (!shouldInstall) {
-      this.logger.info('Installation cancelled')
-      return
-    }
-
-    /**
      * Install package
      */
-    const pkgWasInstalled = await this.#installPackage(npmPackageName)
+    const codemods = await this.createCodemods()
+    codemods.verboseInstallOutput = !!this.verbose
+    const pkgWasInstalled = await codemods.installPackages(
+      [{ name: npmPackageName, isDevDependency: !!this.dev }],
+      this.packageManager
+    )
     if (!pkgWasInstalled) {
       return
     }
@@ -157,9 +91,9 @@ export default class Add extends BaseCommand {
     const { exitCode } = await this.#configurePackage()
     this.exitCode = exitCode
     if (exitCode === 0) {
-      this.logger.success(`Installed and configured ${colors.green(this.name)}`)
+      this.logger.success(`Installed and configured ${this.colors.green(this.name)}`)
     } else {
-      this.logger.fatal(`Unable to configure ${colors.green(this.name)}`)
+      this.logger.fatal(`Unable to configure ${this.colors.green(this.name)}`)
     }
   }
 }
