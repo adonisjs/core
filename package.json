@@ -82,7 +82,7 @@
     "index:commands": "node --import=@poppinss/ts-exec toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.6",
+    "@adonisjs/assembler": "^8.0.0-next.7",
     "@adonisjs/eslint-config": "^3.0.0-next.1",
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/tsconfig": "^2.0.0-next.0",
@@ -120,7 +120,7 @@
   },
   "dependencies": {
     "@adonisjs/ace": "^14.0.1-next.1",
-    "@adonisjs/application": "^9.0.0-next.4",
+    "@adonisjs/application": "^9.0.0-next.5",
     "@adonisjs/bodyparser": "^11.0.0-next.1",
     "@adonisjs/config": "^6.0.0-next.1",
     "@adonisjs/encryption": "^7.0.0-next.1",

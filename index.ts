@@ -17,6 +17,7 @@ export { stubsRoot } from './stubs/main.ts'
 export { inject } from './modules/container.ts'
 export { Ignitor } from './src/ignitor/main.ts'
 export { configProvider } from './src/config_provider.ts'
+export { indexEntities } from './src/assembler_hooks/index_entities.ts'
 
 /**
  * Aggregated errors from all modules.

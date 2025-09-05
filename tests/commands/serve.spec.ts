@@ -11,6 +11,7 @@ import { test } from '@japa/runner'
 import Serve from '../../commands/serve.ts'
 import { AceFactory } from '../../factories/core/ace.ts'
 import { setupTypeScriptProject } from '../helpers.ts'
+import { indexEntities } from '../../src/assembler_hooks/index_entities.ts'
 
 const sleep = (duration: number) => new Promise((resolve) => setTimeout(resolve, duration))
 
@@ -123,7 +124,6 @@ test.group('Serve command', () => {
       devServerStarted: [
         async () => ({
           default: async () => {
-            console.log('ere>')
             assert.isTrue(true)
           },
         }),
@@ -154,5 +154,67 @@ test.group('Serve command', () => {
     assert.lengthOf(ace.ui.logger.getLogs(), 1)
     assert.equal(ace.ui.logger.getLogs()[0].stream, 'stderr')
     assert.match(ace.ui.logger.getLogs()[0].message, /Cannot use --watch and --hmr flags together/)
+  })
+
+  test('generate barrel file for controllers, events and listeners', async ({
+    assert,
+    fs,
+    cleanup,
+  }) => {
+    await fs.create('bin/server.ts', `process.send({ isAdonisJS: true, environment: 'web' });`)
+    await setupTypeScriptProject()
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+
+    ace.app.rcFile.hooks = {
+      init: [indexEntities()],
+    }
+
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
+    await command.exec()
+
+    assert.snapshot(await fs.contents('.adonisjs/server/controllers.ts')).matchInline(`
+      "export const controllers = {
+      }"
+    `)
+    assert.snapshot(await fs.contents('.adonisjs/server/events.ts')).matchInline(`
+      "export const events = {
+      }"
+    `)
+    assert.snapshot(await fs.contents('.adonisjs/server/listeners.ts')).matchInline(`
+      "export const listeners = {
+      }"
+    `)
+  })
+
+  test('disable listeners and events barrel file generation', async ({ assert, fs, cleanup }) => {
+    await fs.create('bin/server.ts', `process.send({ isAdonisJS: true, environment: 'web' });`)
+    await setupTypeScriptProject()
+
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+
+    ace.app.rcFile.hooks = {
+      init: [indexEntities({ events: { enabled: false }, listeners: { enabled: false } })],
+    }
+
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
+    await command.exec()
+
+    assert.snapshot(await fs.contents('.adonisjs/server/controllers.ts')).matchInline(`
+      "export const controllers = {
+      }"
+    `)
+    await assert.fileNotExists('.adonisjs/server/events.ts')
+    await assert.fileNotExists('.adonisjs/server/listeners.ts')
   })
 })
