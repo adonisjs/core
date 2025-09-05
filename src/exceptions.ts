@@ -15,7 +15,7 @@
  * @example
  * // Creating a custom exception
  * import { Exception } from '@adonisjs/core/exceptions'
- * 
+ *
  * class ValidationException extends Exception {
  *   static status = 422
  *   static code = 'E_VALIDATION_FAILURE'
@@ -24,7 +24,7 @@
  * @example
  * // Using createError to create custom error classes
  * import { createError } from '@adonisjs/core/exceptions'
- * 
+ *
  * const UserNotFound = createError('User not found', 'E_USER_NOT_FOUND', 404)
  * throw new UserNotFound()
  */

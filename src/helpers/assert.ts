@@ -15,7 +15,7 @@
  * @example
  * // Type-safe null checking
  * import { assertExists } from '@adonisjs/core/helpers'
- * 
+ *
  * function processUser(user: User | null) {
  *   assertExists(user) // TypeScript now knows user is not null
  *   console.log(user.name) // Safe to access properties
@@ -24,7 +24,7 @@
  * @example
  * // Exhaustiveness checking in switch statements
  * import { assertUnreachable } from '@adonisjs/core/helpers'
- * 
+ *
  * function handleStatus(status: 'pending' | 'completed') {
  *   switch (status) {
  *     case 'pending': return 'Processing...'

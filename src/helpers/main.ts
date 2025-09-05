@@ -15,14 +15,14 @@
  * @example
  * // File system utilities
  * import { fsReadAll, fsImportAll } from '@adonisjs/core/helpers'
- * 
+ *
  * const files = await fsReadAll(url('app/controllers'))
  * const modules = await fsImportAll(url('app/events'))
  *
  * @example
  * // Cryptographic utilities
  * import { base64, safeEqual, Secret } from '@adonisjs/core/helpers'
- * 
+ *
  * const encoded = base64.encode('sensitive data')
  * const isEqual = safeEqual(hash1, hash2)
  * const secret = new Secret('my-secret-key')
@@ -30,7 +30,7 @@
  * @example
  * // HTTP server helpers
  * import { middlewareInfo, routeInfo } from '@adonisjs/core/helpers'
- * 
+ *
  * const middleware = middlewareInfo('cors', () => {})
  * const route = routeInfo('users.show', '/users/:id')
  */

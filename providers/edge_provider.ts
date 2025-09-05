@@ -33,14 +33,43 @@ declare module '@adonisjs/core/http' {
 /**
  * The Edge service provider configures Edge to work within
  * an AdonisJS application environment
+ *
+ * This provider integrates EdgeJS template engine with AdonisJS by:
+ * - Mounting the views directory
+ * - Configuring template caching for production
+ * - Adding global helpers for route generation
+ * - Creating isolated renderer instances for HTTP contexts
+ * - Adding render macro to BriskRoute for template rendering
+ *
+ * @example
+ * const provider = new EdgeServiceProvider(app)
+ * await provider.boot()
  */
 export default class EdgeServiceProvider {
+  /**
+   * Edge service provider constructor
+   *
+   * Sets the usingEdgeJS flag to true to indicate EdgeJS is being used.
+   *
+   * @param app - The application service instance
+   */
   constructor(protected app: ApplicationService) {
     this.app.usingEdgeJS = true
   }
 
   /**
    * Bridge AdonisJS and Edge
+   *
+   * Configures EdgeJS integration by:
+   * - Setting up template mounting and caching
+   * - Defining global helpers (route, signedRoute, app, config)
+   * - Adding view getter to HttpContext for isolated rendering
+   * - Adding render macro to BriskRoute
+   * - Registering dumper plugin
+   *
+   * @example
+   * await provider.boot()
+   * // Now edge templates can use {{ route('home') }} helper
    */
   async boot() {
     const app = this.app

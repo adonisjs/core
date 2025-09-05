@@ -296,7 +296,7 @@ export class Dumper {
    * ```ts
    * // This will dump the user object and terminate the application
    * dumper.dd(user)
-   * 
+   *
    * // This will never execute
    * console.log('This line will not run')
    * ```

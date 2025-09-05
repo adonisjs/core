@@ -31,9 +31,9 @@ import StringBuilder from '@poppinss/utils/string_builder'
 const stringHelpers: typeof string & {
   /**
    * Creates an instance of the StringBuilder for efficient string concatenation.
-   * 
+   *
    * @param value - Initial string value or existing StringBuilder instance
-   * 
+   *
    * @example
    * const builder = stringHelpers.create('Hello')
    * builder.append(' ').append('World')
@@ -44,7 +44,7 @@ const stringHelpers: typeof string & {
   /**
    * Convert a number to its ordinal form (1st, 2nd, 3rd, etc.).
    * Alias for the `ordinal` method from @poppinss/utils.
-   * 
+   *
    * @example
    * stringHelpers.ordinalize(1)  // '1st'
    * stringHelpers.ordinalize(22) // '22nd'
@@ -54,7 +54,7 @@ const stringHelpers: typeof string & {
   /**
    * Convert a string to a readable sentence format.
    * Alias for the `sentence` method from @poppinss/utils.
-   * 
+   *
    * @example
    * stringHelpers.toSentence('hello_world') // 'Hello world'
    * stringHelpers.toSentence('firstName')   // 'First name'
@@ -64,7 +64,7 @@ const stringHelpers: typeof string & {
   /**
    * Generate a cryptographically secure random string of specified length.
    * Alias for the `random` method from @poppinss/utils.
-   * 
+   *
    * @example
    * stringHelpers.generateRandom(16) // 'a1b2c3d4e5f6g7h8'
    * stringHelpers.generateRandom(32) // Long random string
@@ -73,12 +73,12 @@ const stringHelpers: typeof string & {
 
   /**
    * Convert high-resolution time difference to a human-readable format.
-   * 
+   *
    * @param time - High-resolution time tuple from process.hrtime()
    * @param options - Formatting options
    * @param options.verbose - Use verbose format (e.g., '1 second' vs '1s')
    * @param options.precise - Show precise decimal places
-   * 
+   *
    * @example
    * const start = process.hrtime()
    * // ... some operation
@@ -93,9 +93,9 @@ const stringHelpers: typeof string & {
 
   /**
    * Check if a string is empty or contains only whitespace characters.
-   * 
+   *
    * @param value - The string to check
-   * 
+   *
    * @example
    * stringHelpers.isEmpty('')      // true
    * stringHelpers.isEmpty('   ')   // true
@@ -105,15 +105,15 @@ const stringHelpers: typeof string & {
 
   /**
    * Escape HTML entities to prevent XSS attacks and display HTML safely.
-   * 
+   *
    * @param value - The string to escape
    * @param options - Escaping options
    * @param options.encodeSymbols - Whether to encode symbols as HTML entities
-   * 
+   *
    * @example
    * stringHelpers.escapeHTML('<script>alert("xss")</script>')
    * // '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
-   * 
+   *
    * @example
    * stringHelpers.escapeHTML('© 2023', { encodeSymbols: true })
    * // '&copy; 2023'
@@ -122,14 +122,14 @@ const stringHelpers: typeof string & {
 
   /**
    * Encode Unicode symbols and special characters as HTML entities.
-   * 
+   *
    * @param value - The string containing symbols to encode
    * @param options - Encoding options from the 'he' library
-   * 
+   *
    * @example
    * stringHelpers.encodeSymbols('© 2023 AdonisJS ™')
    * // '&copy; 2023 AdonisJS &trade;'
-   * 
+   *
    * @example
    * stringHelpers.encodeSymbols('Café', { decimal: true })
    * // 'Caf&#233;'

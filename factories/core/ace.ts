@@ -23,11 +23,11 @@ import { createAceKernel } from '../../modules/ace/create_kernel.ts'
  * // Create from URL
  * const aceFactory = new AceFactory()
  * const kernel = await aceFactory.make(new URL('../', import.meta.url))
- * 
+ *
  * // Create from existing ignitor
  * const ignitor = new Ignitor(appRoot)
  * const kernel = await aceFactory.make(ignitor)
- * 
+ *
  * // Run commands
  * await kernel.handle(['make:controller', 'UserController'])
  * ```
@@ -35,13 +35,13 @@ import { createAceKernel } from '../../modules/ace/create_kernel.ts'
 export class AceFactory {
   /**
    * Create an Ace kernel from an existing Ignitor instance
-   * 
+   *
    * @param ignitor - Existing Ignitor instance
    */
   async make(ignitor: Ignitor): Promise<Kernel>
   /**
    * Create an Ace kernel from application root URL
-   * 
+   *
    * @param appRoot - Application root directory URL
    * @param options - Optional Ignitor configuration options
    */

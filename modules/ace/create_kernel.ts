@@ -26,7 +26,7 @@ import { FsLoader, HelpCommand, type BaseCommand } from '../../modules/ace/main.
  * ```ts
  * const app = new Application(new URL('../', import.meta.url))
  * const kernel = createAceKernel(app)
- * 
+ *
  * // Run a specific command
  * await kernel.handle(['make:controller', 'UserController'])
  * ```

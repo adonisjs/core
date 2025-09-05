@@ -35,12 +35,41 @@ declare module '@adonisjs/core/http' {
 /**
  * The Application Service provider registers all the baseline
  * features required to run the framework.
+ *
+ * This provider handles the registration of core services including:
+ * - Application instance
+ * - Logger and logger manager
+ * - Configuration
+ * - Event emitter
+ * - Encryption service
+ * - HTTP server and router
+ * - Body parser middleware
+ * - Dumper for debugging
+ * - Test utilities and ACE kernel
+ *
+ * @example
+ * const provider = new AppServiceProvider(app)
+ * provider.register()
+ * await provider.boot()
+ * await provider.ready()
  */
 export default class AppServiceProvider {
+  /**
+   * Application service provider constructor
+   *
+   * @param app - The application service instance
+   */
   constructor(protected app: ApplicationService) {}
 
   /**
    * Registers test utils with the container
+   *
+   * Creates a singleton binding for 'testUtils' that lazily imports
+   * and instantiates the TestUtils class when first accessed.
+   *
+   * @example
+   * const testUtils = await app.container.make('testUtils')
+   * testUtils.createHttpContext()
    */
   protected registerTestUtils() {
     this.app.container.singleton('testUtils', async () => {
@@ -51,6 +80,13 @@ export default class AppServiceProvider {
 
   /**
    * Registers ace with the container
+   *
+   * Creates a singleton binding for 'ace' that lazily creates
+   * the ACE kernel for command-line interface functionality.
+   *
+   * @example
+   * const ace = await app.container.make('ace')
+   * await ace.exec('make:controller', ['UserController'])
    */
   protected registerAce() {
     this.app.container.singleton('ace', async () => {
@@ -61,6 +97,13 @@ export default class AppServiceProvider {
 
   /**
    * Registers the application to the container
+   *
+   * Binds the application instance as both a class binding and an alias.
+   * This allows access to the app instance throughout the container.
+   *
+   * @example
+   * const app = await container.make('app')
+   * const appPath = app.makePath('tmp')
    */
   protected registerApp() {
     this.app.container.singleton(Application, () => this.app)
@@ -69,6 +112,13 @@ export default class AppServiceProvider {
 
   /**
    * Registers the logger class to resolve the default logger
+   *
+   * Creates a singleton binding for the Logger class that resolves
+   * the default logger instance from the logger manager.
+   *
+   * @example
+   * const logger = await container.make(Logger)
+   * logger.info('Application started')
    */
   protected registerLogger() {
     this.app.container.singleton(Logger, async (resolver) => {
@@ -79,6 +129,13 @@ export default class AppServiceProvider {
 
   /**
    * Registers the logger manager to the container
+   *
+   * Creates a singleton binding for 'logger' that instantiates
+   * the LoggerManager with configuration from config/logger.ts
+   *
+   * @example
+   * const loggerManager = await container.make('logger')
+   * const fileLogger = loggerManager.use('file')
    */
   protected registerLoggerManager() {
     this.app.container.singleton('logger', async () => {
@@ -90,6 +147,13 @@ export default class AppServiceProvider {
 
   /**
    * Registers the config to the container
+   *
+   * Binds the application's config instance as both a class binding
+   * and an alias, allowing access to configuration values.
+   *
+   * @example
+   * const config = await container.make('config')
+   * const appKey = config.get('app.appKey')
    */
   protected registerConfig() {
     this.app.container.singleton(Config, () => this.app.config)
@@ -98,6 +162,13 @@ export default class AppServiceProvider {
 
   /**
    * Registers emitter service to the container
+   *
+   * Creates a singleton binding for the event emitter that handles
+   * application-wide event dispatching and listening.
+   *
+   * @example
+   * const emitter = await container.make('emitter')
+   * emitter.emit('user:created', { userId: 123 })
    */
   protected registerEmitter() {
     this.app.container.singleton(Emitter, async () => {
@@ -108,6 +179,13 @@ export default class AppServiceProvider {
 
   /**
    * Register the encryption service to the container
+   *
+   * Creates a singleton binding for the encryption service using
+   * the app key from configuration for encryption/decryption operations.
+   *
+   * @example
+   * const encryption = await container.make('encryption')
+   * const encrypted = encryption.encrypt('sensitive data')
    */
   protected registerEncryption() {
     this.app.container.singleton(Encryption, () => {
@@ -119,6 +197,14 @@ export default class AppServiceProvider {
 
   /**
    * Registers the HTTP server with the container as a singleton
+   *
+   * Creates a singleton binding for the HTTP server that handles
+   * incoming requests, with dependencies on encryption, emitter,
+   * logger, and HTTP configuration.
+   *
+   * @example
+   * const server = await container.make('server')
+   * server.start()
    */
   protected registerServer() {
     this.app.container.singleton(Server, async (resolver) => {
@@ -134,6 +220,13 @@ export default class AppServiceProvider {
 
   /**
    * Registers router with the container as a singleton
+   *
+   * Creates a singleton binding for the router by getting it from
+   * the HTTP server instance. The router handles URL routing.
+   *
+   * @example
+   * const router = await container.make('router')
+   * router.get('/', ({ response }) => response.send('Hello'))
    */
   protected registerRouter() {
     this.app.container.singleton(Router, async (resolver) => {
@@ -146,6 +239,13 @@ export default class AppServiceProvider {
   /**
    * Self construct bodyparser middleware class, since it needs
    * config that cannot be resolved by the container
+   *
+   * Binds the BodyParserMiddleware with bodyparser configuration
+   * and experimental flags for parsing request bodies.
+   *
+   * @example
+   * const middleware = await container.make(BodyParserMiddleware)
+   * await middleware.handle(ctx, next)
    */
   protected registerBodyParserMiddleware() {
     this.app.container.bind(BodyParserMiddleware, () => {
@@ -157,6 +257,13 @@ export default class AppServiceProvider {
   /**
    * Registeres singleton instance of the "Dumper" module configured
    * via the "config/app.ts" file.
+   *
+   * The dumper is used for debugging and variable inspection with
+   * configurable HTML and console output formats.
+   *
+   * @example
+   * const dumper = await container.make('dumper')
+   * dumper.dump({ user: { name: 'John' } })
    */
   protected registerDumper() {
     this.app.container.singleton(Dumper, async () => {
@@ -179,6 +286,15 @@ export default class AppServiceProvider {
   /**
    * Generates the types needed by the URL builder and writes
    * them to the ".adonisjs/server/routes.d.ts" file
+   *
+   * This method scans registered routes and generates TypeScript
+   * types for type-safe URL generation in development.
+   *
+   * @param router - The router instance to generate types from
+   *
+   * @example
+   * await generateRoutesTypes(router)
+   * // Creates .adonisjs/server/routes.d.ts with route types
    */
   protected async generateRoutesTypes(router: Router) {
     const types = router.generateTypes(4)
@@ -202,6 +318,15 @@ export default class AppServiceProvider {
 
   /**
    * Generates the routes JSON needed by the client integration
+   *
+   * Exports all registered routes as JSON for client-side
+   * applications that need route information.
+   *
+   * @param router - The router instance to export routes from
+   *
+   * @example
+   * await generateRoutesJSONFile(router)
+   * // Creates .adonisjs/client/routes.json
    */
   protected async generateRoutesJSONFile(router: Router) {
     const routes = router.toJSON()
@@ -213,6 +338,13 @@ export default class AppServiceProvider {
 
   /**
    * Registers bindings
+   *
+   * Called during the application bootstrap phase to register
+   * all core service bindings with the IoC container.
+   *
+   * @example
+   * const provider = new AppServiceProvider(app)
+   * provider.register() // Registers all core services
    */
   register() {
     this.registerApp()
@@ -229,6 +361,16 @@ export default class AppServiceProvider {
     this.registerBodyParserMiddleware()
   }
 
+  /**
+   * Boot the service provider
+   *
+   * Called after all providers have been registered. Sets up
+   * event emitter for BaseEvent and adds transform macro to HttpContext.
+   *
+   * @example
+   * await provider.boot()
+   * // Now HttpContext has transform method available
+   */
   async boot() {
     BaseEvent.useEmitter(await this.app.container.make('emitter'))
     HttpContext.macro('transform', function (this: HttpContext, data, transformer, variant) {
@@ -236,6 +378,16 @@ export default class AppServiceProvider {
     })
   }
 
+  /**
+   * Called when the application is ready
+   *
+   * In non-production environments, generates route types and
+   * JSON files for development tooling when router is committed.
+   *
+   * @example
+   * await provider.ready()
+   * // Route types and JSON generated in development
+   */
   async ready() {
     if (!this.app.inProduction) {
       const router = await this.app.container.make('router')

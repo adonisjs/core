@@ -23,7 +23,7 @@ import type { CommandOptions, ParsedOutput, UIPrimitives } from '../../types/ace
  * export default class MakeUser extends BaseCommand {
  *   static commandName = 'make:user'
  *   static description = 'Create a new user'
- *   
+ *
  *   async run() {
  *     this.logger.info('Creating user...')
  *     // Command implementation

@@ -128,7 +128,7 @@ export function defineConfig<
  *   default: 'bcrypt',
  *   list: {
  *     bcrypt: drivers.bcrypt({ rounds: 12 }),
- *     argon2: drivers.argon2({ 
+ *     argon2: drivers.argon2({
  *       variant: 'id',
  *       memory: 65536,
  *       time: 3,

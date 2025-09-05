@@ -16,7 +16,7 @@ import is from '@sindresorhus/is'
  * @example
  * // Basic type checking
  * import { is } from '@adonisjs/core/helpers'
- * 
+ *
  * if (is.string(value)) {
  *   // TypeScript knows value is string
  *   console.log(value.toUpperCase())
@@ -25,7 +25,7 @@ import is from '@sindresorhus/is'
  * @example
  * // Complex type checking
  * import { is } from '@adonisjs/core/helpers'
- * 
+ *
  * is.array(value) && is.nonEmptyArray(value)
  * is.plainObject(obj) && is.hasProperty(obj, 'name')
  * is.number(num) && is.integer(num) && is.positive(num)

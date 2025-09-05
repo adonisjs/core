@@ -20,14 +20,14 @@ import type { ApplicationService } from '../../src/types.ts'
  * ```ts
  * const app = new Application(new URL('../', import.meta.url))
  * const kernel = new Kernel(app)
- * 
+ *
  * await kernel.handle(['make:controller', 'UserController'])
  * ```
  */
 export class Kernel extends AceKernel<typeof BaseCommand> {
   /**
    * Create a new Ace kernel instance
-   * 
+   *
    * @param app - The AdonisJS application instance
    */
   constructor(public app: ApplicationService) {

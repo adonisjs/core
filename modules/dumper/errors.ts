@@ -24,7 +24,7 @@ import type { HttpContext } from '../http/main.ts'
  * ```ts
  * // This will dump the user object and terminate
  * dumper.dd(user)
- * 
+ *
  * // In HTTP context: sends HTML dump to browser
  * // In CLI context: prints ANSI dump to console
  * ```

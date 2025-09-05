@@ -12,12 +12,12 @@ import is from '@sindresorhus/is'
 /**
  * @deprecated
  * Use "is" helpers instead. The types helpers exist for backward compatibility.
- * 
+ *
  * @example
  * // Instead of using types helpers (deprecated)
  * types.isString('hello')
  * types.isNumber(42)
- * 
+ *
  * @example
  * // Use the new "is" helpers
  * import { is } from '@adonisjs/core/helpers'
@@ -117,10 +117,10 @@ const types = {
 
   /**
    * Check if a number is a float (has decimal places).
-   * 
+   *
    * @param value - The number to check
    * @deprecated Use is.decimal or custom logic instead
-   * 
+   *
    * @example
    * types.isFloat(3.14) // true
    * types.isFloat(42)   // false
@@ -131,15 +131,15 @@ const types = {
 
   /**
    * Check if a value represents a decimal number with specific decimal places.
-   * 
+   *
    * @param value - The value to check (string or number)
    * @param options - Options for decimal validation
    * @param options.decimalPlaces - Regex pattern for allowed decimal places (default: '1,')
    * @deprecated Use a validation library like Vine or custom logic instead
-   * 
+   *
    * @example
    * types.isDecimal('3.14')     // true
-   * types.isDecimal('42.0')     // true  
+   * types.isDecimal('42.0')     // true
    * types.isDecimal('42')       // false
    * types.isDecimal('3.141', { decimalPlaces: '1,3' }) // true
    */

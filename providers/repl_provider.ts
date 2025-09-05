@@ -17,6 +17,17 @@ import type { ApplicationService, ContainerBindings } from '../src/types.ts'
 /**
  * Resolves a container binding and sets it on the REPL
  * context
+ *
+ * This helper function makes a service from the container and
+ * adds it to the REPL context with a notification message.
+ *
+ * @param app - The application service instance
+ * @param repl - The REPL instance to add the binding to
+ * @param binding - The container binding key to resolve
+ *
+ * @example
+ * await resolveBindingForRepl(app, repl, 'router')
+ * // Now 'router' variable is available in REPL
  */
 async function resolveBindingForRepl(
   app: ApplicationService,
@@ -31,11 +42,39 @@ async function resolveBindingForRepl(
   )
 }
 
+/**
+ * REPL Service Provider configures the interactive Node.js REPL
+ * for AdonisJS applications
+ *
+ * This provider sets up:
+ * - REPL instance with history file support
+ * - Helper methods for importing modules and making container bindings
+ * - Quick access methods for loading common services (app, router, etc.)
+ * - Utility methods for development and debugging
+ *
+ * @example
+ * const provider = new ReplServiceProvider(app)
+ * provider.register()
+ * await provider.boot()
+ */
 export default class ReplServiceProvider {
+  /**
+   * REPL service provider constructor
+   *
+   * @param app - The application service instance
+   */
   constructor(protected app: ApplicationService) {}
 
   /**
    * Registers the REPL binding
+   *
+   * Creates a singleton binding for the REPL with history file
+   * support in the user's home directory.
+   *
+   * @example
+   * const provider = new ReplServiceProvider(app)
+   * provider.register()
+   * const repl = await app.container.make('repl')
    */
   register() {
     this.app.container.singleton(Repl, async () => {
@@ -48,6 +87,17 @@ export default class ReplServiceProvider {
 
   /**
    * Registering REPL bindings during provider boot
+   *
+   * Adds helper methods to the REPL instance including:
+   * - importDefault: Import default export from modules
+   * - importAll: Import all files from a directory
+   * - make: Create instances using container.make
+   * - load* methods: Quick access to common services
+   * - loadHelpers: Load utility helper functions
+   *
+   * @example
+   * await provider.boot()
+   * // REPL now has helper methods available
    */
   async boot() {
     this.app.container.resolving('repl', (repl) => {

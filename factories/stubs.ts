@@ -26,14 +26,14 @@ type FactoryParameters = {
  * @example
  * ```ts
  * const stubsFactory = new StubsFactory()
- * 
+ *
  * // Prepare a controller stub
  * const preparedStub = await stubsFactory.prepare('controller.stub', {
  *   filename: 'UserController',
  *   entity: { name: 'User' },
  *   resourceful: true
  * })
- * 
+ *
  * console.log(preparedStub.contents)
  * ```
  */
@@ -85,7 +85,7 @@ export class StubsFactory {
    *   },
    *   resourceful: true
    * })
-   * 
+   *
    * // Access the processed stub content
    * console.log(preparedStub.contents)
    * ```

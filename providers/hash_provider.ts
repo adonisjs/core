@@ -15,13 +15,35 @@ import type { ApplicationService } from '../src/types.ts'
 
 /**
  * Registers the passwords hasher with the container
+ *
+ * This provider sets up password hashing functionality by:
+ * - Registering the HashManager with configuration from config/hash.ts
+ * - Providing a Hash class that uses the default hasher
+ * - Supporting multiple hashing drivers (bcrypt, argon2, etc.)
+ *
+ * @example
+ * const provider = new HashServiceProvider(app)
+ * provider.register()
+ * const hash = await app.container.make('hash')
  */
 export default class HashServiceProvider {
+  /**
+   * Hash service provider constructor
+   *
+   * @param app - The application service instance
+   */
   constructor(protected app: ApplicationService) {}
 
   /**
    * Registering the hash class to resolve an instance with the
    * default hasher.
+   *
+   * Creates a singleton binding for the Hash class that resolves
+   * the default hasher from the hash manager.
+   *
+   * @example
+   * const hash = await container.make(Hash)
+   * const hashed = await hash.make('password')
    */
   protected registerHash() {
     this.app.container.singleton(Hash, async (resolver) => {
@@ -32,6 +54,14 @@ export default class HashServiceProvider {
 
   /**
    * Registers the hash manager with the container
+   *
+   * Creates a singleton binding for 'hash' that instantiates
+   * the HashManager with configuration from config/hash.ts file.
+   * Throws an error if the configuration is invalid.
+   *
+   * @example
+   * const hashManager = await container.make('hash')
+   * const bcryptHasher = hashManager.use('bcrypt')
    */
   protected registerHashManager() {
     this.app.container.singleton('hash', async () => {
@@ -54,6 +84,13 @@ export default class HashServiceProvider {
 
   /**
    * Registers bindings
+   *
+   * Called during the application bootstrap phase to register
+   * the hash manager and hash class with the IoC container.
+   *
+   * @example
+   * const provider = new HashServiceProvider(app)
+   * provider.register() // Registers hash services
    */
   register() {
     this.registerHashManager()

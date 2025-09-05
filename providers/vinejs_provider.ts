@@ -29,14 +29,41 @@ declare module '@adonisjs/core/http' {
 }
 
 /**
- * The Edge service provider configures Edge to work within
- * an AdonisJS application environment
+ * The VineJS service provider integrates VineJS validation
+ * library with AdonisJS application environment
+ *
+ * This provider sets up:
+ * - File validation rule for multipart file uploads
+ * - Request validation macro for easy validation in HTTP contexts
+ * - Extension of VineJS with AdonisJS-specific validation features
+ *
+ * @example
+ * const provider = new VineJSServiceProvider(app)
+ * provider.boot()
+ * // Now Request has validateUsing method
  */
 export default class VineJSServiceProvider {
+  /**
+   * VineJS service provider constructor
+   *
+   * Sets the usingVineJS flag to true to indicate VineJS is being used.
+   *
+   * @param app - The application service instance
+   */
   constructor(protected app: ApplicationService) {
     this.app.usingVineJS = true
   }
 
+  /**
+   * Boot the VineJS service provider
+   *
+   * Extends VineJS with file validation macro and adds validateUsing
+   * method to the Request class for easy validation in HTTP contexts.
+   *
+   * @example
+   * provider.boot()
+   * // Now vine.file() and request.validateUsing() are available
+   */
   boot() {
     const experimentalFlags = this.app.experimentalFlags
 

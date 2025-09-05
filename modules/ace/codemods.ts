@@ -32,13 +32,13 @@ import stringHelpers from '../../src/helpers/string.ts'
  * @example
  * ```ts
  * const codemods = new Codemods(app, logger)
- * 
+ *
  * // Generate a controller from a stub
  * await codemods.makeUsingStub(stubsRoot, 'controller.stub', {
  *   filename: 'UserController',
  *   entity: { name: 'User' }
  * })
- * 
+ *
  * // Install packages
  * await codemods.installPackages([
  *   { name: '@adonisjs/lucid', isDevDependency: false }

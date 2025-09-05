@@ -35,7 +35,7 @@ type FactoryParameters = {
  *     // Custom initialization logic
  *   })
  *   .create(new URL('../', import.meta.url))
- * 
+ *
  * const app = ignitor.createApp('web')
  * await app.boot()
  * ```
