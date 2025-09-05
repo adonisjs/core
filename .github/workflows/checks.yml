@@ -5,7 +5,7 @@ on:
   - workflow_call
 jobs:
   test:
-    uses: adonisjs/core/.github/workflows/test.yml
+    uses: adonisjs/core/.github/workflows/test.yml@7.x
     with:
       install-pnpm: true
 
