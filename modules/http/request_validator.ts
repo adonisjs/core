@@ -76,7 +76,7 @@ export class RequestValidator {
    *     name: vine.string().minLength(3)
    *   })
    * )
-   * 
+   *
    * const data = await request.validateUsing(createUserValidator, {
    *   errorReporter: () => vine.errors.SimpleErrorReporter,
    *   messagesProvider: customMessages

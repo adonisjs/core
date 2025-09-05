@@ -23,6 +23,7 @@ import { Logger, LoggerManager } from '../modules/logger.ts'
 import { IgnitorFactory } from '../factories/core/ignitor.ts'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
 import { defineConfig as defineDumperConfig } from '../modules/dumper/define_config.ts'
+import { HttpContext } from '@adonisjs/http-server'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 const BASE_PATH = fileURLToPath(BASE_URL)
@@ -312,5 +313,22 @@ test.group('Providers', () => {
       'users.index',
       'posts.index',
     ])
+  })
+
+  test('add transform method to HTTP context', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: defineConfig({
+          providers: [() => import('../providers/app_provider.js')],
+        }),
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('repl')
+    await app.init()
+    await app.boot()
+
+    assert.isFunction(HttpContext.prototype.transform)
   })
 })

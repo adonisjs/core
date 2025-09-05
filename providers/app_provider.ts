@@ -14,11 +14,23 @@ import { Config } from '../modules/config.ts'
 import { Logger } from '../modules/logger.ts'
 import { Application } from '../modules/app.ts'
 import { Dumper } from '../modules/dumper/dumper.ts'
+import { HttpContext } from '../modules/http/main.ts'
 import { Encryption } from '../modules/encryption.ts'
 import { Router, Server } from '../modules/http/main.ts'
 import { BaseEvent, Emitter } from '../modules/events.ts'
+import { transform } from '../modules/transformers/main.ts'
+import { type TransformFn } from '../types/transformers.ts'
 import type { ApplicationService, LoggerService } from '../src/types.ts'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
+
+/**
+ * Extend HTTP request class with the transform method
+ */
+declare module '@adonisjs/core/http' {
+  export interface HttpContext {
+    transform: TransformFn
+  }
+}
 
 /**
  * The Application Service provider registers all the baseline
@@ -170,7 +182,7 @@ export default class AppServiceProvider {
    */
   protected async generateRoutesTypes(router: Router) {
     const types = router.generateTypes(4)
-    const outputPath = this.app.makePath('.adonisjs/server/routes.d.ts')
+    const outputPath = this.app.generatedServerPath('routes.d.ts')
 
     await mkdir(dirname(outputPath), { recursive: true })
     await writeFile(
@@ -219,6 +231,9 @@ export default class AppServiceProvider {
 
   async boot() {
     BaseEvent.useEmitter(await this.app.container.make('emitter'))
+    HttpContext.macro('transform', function (this: HttpContext, data, transformer, variant) {
+      return transform(data, transformer, variant, this.containerResolver) as any
+    })
   }
 
   async ready() {
