@@ -11,7 +11,7 @@ import type { TestRunner } from '@adonisjs/assembler'
 
 import type { CommandOptions } from '../types/ace.ts'
 import { BaseCommand, flags, args } from '../modules/ace/main.ts'
-import { importAssembler, importTypeScript } from '../src/internal_helpers.ts'
+import { importAssembler, importTypeScript } from '../src/utils.ts'
 
 /**
  * Test command is used to run tests with optional file watcher. Under the

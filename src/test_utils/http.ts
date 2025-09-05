@@ -19,17 +19,36 @@ import {
 
 /**
  * Http server utils are used to start the AdonisJS HTTP server
- * during testing
+ * during testing. It provides methods to start and stop the server
+ * for integration testing.
+ *
+ * @example
+ * const testUtils = new TestUtils(app)
+ * const httpUtils = testUtils.httpServer()
+ *
+ * const closeServer = await httpUtils.start()
+ * // Make HTTP requests to test endpoints
+ * await closeServer() // Clean up
  */
 export class HttpServerUtils {
+  /**
+   * Reference to the test utils instance
+   */
   #utils: TestUtils
 
+  /**
+   * Creates a new HttpServerUtils instance
+   *
+   * @param utils - The test utils instance
+   */
   constructor(utils: TestUtils) {
     this.#utils = utils
   }
 
   /**
    * Starts the http server a given host and port
+   *
+   * @param nodeHttpServer - The Node.js HTTP server instance
    */
   #listen(
     nodeHttpServer: NodeHttpsServer | NodeHttpServer
@@ -53,6 +72,8 @@ export class HttpServerUtils {
   /**
    * Testing hook to start the HTTP server to listen for new request.
    * The return value is a function to close the HTTP server.
+   *
+   * @param serverCallback - Optional callback to create custom HTTP server instance
    */
   async start(
     serverCallback?: (

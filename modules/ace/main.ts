@@ -8,7 +8,6 @@
  */
 
 export { Kernel } from './kernel.ts'
-export * as tracingChannels from './tracing_channels.ts'
 export { BaseCommand, ListCommand } from './commands.ts'
 export {
   args,
@@ -20,4 +19,5 @@ export {
   cliHelpers,
   HelpCommand,
   IndexGenerator,
+  tracingChannels,
 } from '@adonisjs/ace'

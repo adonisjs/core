@@ -30,10 +30,32 @@ type SerializedRoute = {
  * with pretty output.
  *
  * The decisions of colors, padding, alignment are all handled by the lists formatter
+ *
+ * @example
+ * const formatter = new RoutesListFormatter(router, ui, {
+ *   displayHeadRoutes: false,
+ *   maxPrettyPrintWidth: 120
+ * }, {
+ *   match: 'api',
+ *   middleware: ['auth']
+ * })
+ *
+ * const ansiOutput = await formatter.formatAsAnsiList()
  */
 export class RoutesListFormatter {
+  /**
+   * Router instance containing all registered routes
+   */
   #router: Router
+
+  /**
+   * Colors utility for ANSI formatting
+   */
   #colors: UIPrimitives['colors']
+
+  /**
+   * Table utility for creating formatted tables
+   */
   #table: UIPrimitives['table']
 
   /**
@@ -53,6 +75,14 @@ export class RoutesListFormatter {
     ignoreMiddleware?: string[]
   }
 
+  /**
+   * Creates a new instance of the routes list formatter
+   *
+   * @param router - Router instance containing routes to format
+   * @param ui - UI primitives for colors and table formatting
+   * @param options - Display options for route formatting
+   * @param filters - Filters to apply when displaying routes
+   */
   constructor(
     router: Router,
     ui: UIPrimitives,

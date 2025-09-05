@@ -21,7 +21,13 @@ import type { ApplicationService, EmitterService, LoggerService } from '../types
 
 /**
  * The HTTP server process is used to start the application in the
- * web environment.
+ * web environment. It creates and manages the Node.js HTTP server
+ * instance, handling lifecycle events and monitoring.
+ *
+ * @example
+ * const ignitor = new Ignitor()
+ * const httpProcess = new HttpServerProcess(ignitor)
+ * await httpProcess.start()
  */
 export class HttpServerProcess {
   /**
@@ -29,6 +35,11 @@ export class HttpServerProcess {
    */
   #ignitor: Ignitor
 
+  /**
+   * Creates a new HTTP server process instance
+   *
+   * @param ignitor - The ignitor instance used to create and manage the app
+   */
   constructor(ignitor: Ignitor) {
     this.#ignitor = ignitor
   }
@@ -122,6 +133,8 @@ export class HttpServerProcess {
 
   /**
    * Start the HTTP server by wiring up the application
+   *
+   * @param serverCallback - Optional callback to create custom HTTP server instance
    */
   async start(
     serverCallback?: (

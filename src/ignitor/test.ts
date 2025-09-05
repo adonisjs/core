@@ -11,7 +11,21 @@ import { type Ignitor } from './main.ts'
 import type { ApplicationService } from '../types.ts'
 
 /**
- * The Test runner process is used to start the tests runner process
+ * The Test runner process is used to start the tests runner process.
+ * It provides lifecycle hooks for configuring the test environment
+ * and running tests within the AdonisJS application context.
+ *
+ * @example
+ * const ignitor = new Ignitor()
+ * const testProcess = new TestRunnerProcess(ignitor)
+ *
+ * await testProcess
+ *   .configure((app) => {
+ *     // Configure test environment
+ *   })
+ *   .run(async (app) => {
+ *     // Run your tests
+ *   })
  */
 export class TestRunnerProcess {
   /**
@@ -25,6 +39,11 @@ export class TestRunnerProcess {
    */
   #configureCallback: (app: ApplicationService) => Promise<void> | void = () => {}
 
+  /**
+   * Creates a new test runner process instance
+   *
+   * @param ignitor - The ignitor instance used to create and manage the app
+   */
   constructor(ignitor: Ignitor) {
     this.#ignitor = ignitor
   }
@@ -32,6 +51,8 @@ export class TestRunnerProcess {
   /**
    * Register a callback that runs after booting the AdonisJS app
    * and just before the provider's ready hook
+   *
+   * @param callback - Configuration callback function
    */
   configure(callback: (app: ApplicationService) => Promise<void> | void): this {
     this.#configureCallback = callback
@@ -40,6 +61,8 @@ export class TestRunnerProcess {
 
   /**
    * Runs a callback after starting the app
+   *
+   * @param callback - Test execution callback function
    */
   async run(callback: (app: ApplicationService) => Promise<void> | void) {
     const app = this.#ignitor.createApp('test')

@@ -17,7 +17,16 @@ import base64 from '@poppinss/utils/base64'
  * shareable tokens while storing the token hash within the database.
  *
  * This class is used by the Auth and the Persona packages to manage
- * tokens
+ * tokens for authentication and authorization purposes.
+ *
+ * @example
+ * class UserToken extends VerificationToken {
+ *   constructor(user: User, secret: Secret<string>) {
+ *     super()
+ *     this.tokenableId = user.id
+ *     this.computeValue(secret)
+ *   }
+ * }
  */
 export abstract class VerificationToken {
   /**
@@ -26,6 +35,8 @@ export abstract class VerificationToken {
    *
    * Returns null when unable to decode the token because of
    * invalid format or encoding.
+   *
+   * @param value - The token string to decode
    */
   static decode(value: string): null | { identifier: string; secret: Secret<string> } {
     /**
@@ -62,6 +73,10 @@ export abstract class VerificationToken {
   /**
    * Creates a transient token that can be shared with the persistence
    * layer.
+   *
+   * @param userId - The user ID for whom the token is being created
+   * @param size - The size of the random token seed
+   * @param expiresIn - Token expiration time (string like '2h' or number in seconds)
    */
   static createTransientToken(
     userId: string | number | BigInt,
@@ -80,6 +95,8 @@ export abstract class VerificationToken {
 
   /**
    * Creates a secret opaque token and its hash.
+   *
+   * @param size - The length of the random token to generate
    */
   static seed(size: number) {
     const seed = string.random(size)
@@ -122,6 +139,8 @@ export abstract class VerificationToken {
   /**
    * Compute the value property using the given secret. You can
    * get secret via the static "createTransientToken" method.
+   *
+   * @param secret - The secret value to compute the public token value from
    */
   protected computeValue(secret: Secret<string>) {
     this.value = new Secret(
@@ -140,6 +159,8 @@ export abstract class VerificationToken {
 
   /**
    * Verifies the value of a token against the pre-defined hash
+   *
+   * @param secret - The secret to verify against the stored hash
    */
   verify(secret: Secret<string>): boolean {
     const newHash = createHash('sha256').update(secret.release()).digest('hex')

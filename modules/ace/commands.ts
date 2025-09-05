@@ -12,7 +12,6 @@ import { BaseCommand as AceBaseCommand, ListCommand as AceListCommand } from '@a
 import { type Kernel } from './kernel.ts'
 import type { ApplicationService } from '../../src/types.ts'
 import type { CommandOptions, ParsedOutput, UIPrimitives } from '../../types/ace.ts'
-import { aceCommand } from './tracing_channels.ts'
 
 /**
  * The base command to create custom ace commands. The AdonisJS base commands
@@ -79,7 +78,7 @@ export class BaseCommand extends AceBaseCommand {
   /**
    * Executes the lifecycle hooks and the run method from the command
    */
-  async execCommand() {
+  async exec() {
     this.hydrate()
 
     try {
@@ -113,22 +112,6 @@ export class BaseCommand extends AceBaseCommand {
     }
 
     return this.result
-  }
-
-  /**
-   * Executes the command
-   */
-  async exec() {
-    return aceCommand.tracePromise(
-      this.execCommand,
-      {
-        name: this.commandName,
-        args: this.parsed,
-        error: this.error,
-        isMain: this.isMain,
-      },
-      this
-    )
   }
 
   /**

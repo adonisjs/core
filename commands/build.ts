@@ -8,7 +8,7 @@
  */
 
 import { BaseCommand, flags } from '../modules/ace/main.ts'
-import { importAssembler, importTypeScript } from '../src/internal_helpers.ts'
+import { importAssembler, importTypeScript } from '../src/utils.ts'
 
 /**
  * Create the production build by compiling TypeScript source and the

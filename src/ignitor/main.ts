@@ -18,7 +18,20 @@ import type { ApplicationService, IgnitorOptions } from '../types.ts'
 
 /**
  * Ignitor is used to instantiate an AdonisJS application in different
- * known environments.
+ * known environments. It serves as the main entry point for creating
+ * and managing application processes.
+ *
+ * @example
+ * const ignitor = new Ignitor(new URL(import.meta.url))
+ *
+ * // For HTTP server
+ * await ignitor.httpServer().start()
+ *
+ * // For CLI commands
+ * await ignitor.ace().handle(process.argv.slice(2))
+ *
+ * // For tests
+ * await ignitor.testRunner().run(() => {})
  */
 export class Ignitor {
   /**
@@ -46,6 +59,12 @@ export class Ignitor {
    */
   #tapCallbacks: Set<(app: ApplicationService) => void> = new Set()
 
+  /**
+   * Creates a new Ignitor instance
+   *
+   * @param appRoot - The root URL of the application
+   * @param options - Configuration options for the ignitor
+   */
   constructor(appRoot: URL, options: IgnitorOptions = {}) {
     this.#appRoot = appRoot
     this.#options = options
@@ -69,6 +88,8 @@ export class Ignitor {
 
   /**
    * Create an instance of AdonisJS application
+   *
+   * @param environment - The environment in which to create the app (web, console, test, repl)
    */
   createApp(environment: AppEnvironments) {
     debug('creating application instance')
@@ -81,6 +102,8 @@ export class Ignitor {
 
   /**
    * Tap to access the application class instance.
+   *
+   * @param callback - Callback function to execute when app is created
    */
   tap(callback: (app: ApplicationService) => void): this {
     this.#tapCallbacks.add(callback)

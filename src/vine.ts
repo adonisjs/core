@@ -75,17 +75,39 @@ const isMultipartFile = vine.createRule<FileRuleValidationOptions>((file, option
 
 /**
  * Represents a multipart file uploaded via multipart/form-data HTTP
- * request.
+ * request. This class extends VineJS's BaseLiteralType to provide
+ * specialized validation for uploaded files.
+ *
+ * @example
+ * const fileSchema = vine.object({
+ *   avatar: vine.file({
+ *     size: '2mb',
+ *     extnames: ['jpg', 'png']
+ *   })
+ * })
  */
 export class VineMultipartFile extends BaseLiteralType<
   MultipartFile,
   MultipartFile,
   MultipartFile
 > {
+  /**
+   * Private validation options for file validation
+   */
   #validationOptions?: FileRuleValidationOptions;
 
+  /**
+   * Symbol identifier for multipart file subtype
+   */
   [MULTIPART_FILE] = 'multipartFile'
 
+  /**
+   * Creates a new VineMultipartFile instance
+   *
+   * @param validationOptions - File validation options like size limits and allowed extensions
+   * @param options - Field options from VineJS
+   * @param validations - Array of validation functions to apply
+   */
   constructor(
     validationOptions?: FileRuleValidationOptions,
     options?: FieldOptions,
@@ -95,6 +117,10 @@ export class VineMultipartFile extends BaseLiteralType<
     this.#validationOptions = validationOptions
   }
 
+  /**
+   * Creates a clone of the current VineMultipartFile instance
+   * with the same validation options and configurations
+   */
   clone() {
     return new VineMultipartFile(
       this.#validationOptions,

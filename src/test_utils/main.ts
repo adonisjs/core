@@ -17,9 +17,20 @@ import { CookieClient, type HttpContext } from '../../modules/http/main.ts'
 
 /**
  * Test utils has a collection of helper methods to make testing
- * experience great for AdonisJS applications
+ * experience great for AdonisJS applications. It provides utilities
+ * for HTTP testing, context creation, and cookie handling.
+ *
+ * @example
+ * const testUtils = new TestUtils(app)
+ * await testUtils.boot()
+ *
+ * const ctx = await testUtils.createHttpContext()
+ * const httpUtils = testUtils.httpServer()
  */
 export class TestUtils extends Macroable {
+  /**
+   * Flag to track if test utils have been booted
+   */
   #booted: boolean = false
 
   /**
@@ -29,8 +40,16 @@ export class TestUtils extends Macroable {
     return this.#booted
   }
 
+  /**
+   * Cookie client instance for handling cookies in tests
+   */
   declare cookies: CookieClient
 
+  /**
+   * Creates a new TestUtils instance
+   *
+   * @param app - The application service instance
+   */
   constructor(public app: ApplicationService) {
     super()
   }
@@ -56,6 +75,8 @@ export class TestUtils extends Macroable {
 
   /**
    * Create an instance of HTTP context for testing
+   *
+   * @param options - Options for creating HTTP context with custom req/res objects
    */
   async createHttpContext(
     options: { req?: IncomingMessage; res?: ServerResponse } = {}

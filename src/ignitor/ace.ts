@@ -12,7 +12,18 @@ import type { ApplicationService } from '../types.ts'
 
 /**
  * The Ace process is used to start the application in the
- * console environment.
+ * console environment. It manages the Ace kernel lifecycle
+ * and command execution.
+ *
+ * @example
+ * const ignitor = new Ignitor()
+ * const aceProcess = new AceProcess(ignitor)
+ *
+ * await aceProcess
+ *   .configure((app) => {
+ *     // Configure ace kernel
+ *   })
+ *   .handle(['make:controller', 'UserController'])
  */
 export class AceProcess {
   /**
@@ -26,6 +37,11 @@ export class AceProcess {
    */
   #configureCallback: (app: ApplicationService) => Promise<void> | void = () => {}
 
+  /**
+   * Creates a new Ace process instance
+   *
+   * @param ignitor - The ignitor instance used to create and manage the app
+   */
   constructor(ignitor: Ignitor) {
     this.#ignitor = ignitor
   }
@@ -33,6 +49,8 @@ export class AceProcess {
   /**
    * Register a callback that can be used to configure the ace
    * kernel before the handle method is called
+   *
+   * @param callback - Configuration callback function
    */
   configure(callback: (app: ApplicationService) => Promise<void> | void): this {
     this.#configureCallback = callback
@@ -42,6 +60,8 @@ export class AceProcess {
   /**
    * Handles the command line arguments and executes
    * the matching ace commands
+   *
+   * @param argv - Command line arguments array
    */
   async handle(argv: string[]) {
     const app = this.#ignitor.createApp('console')
