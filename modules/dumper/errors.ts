@@ -16,9 +16,18 @@ import type { Kernel } from '../ace/kernel.ts'
 import type { HttpContext } from '../http/main.ts'
 
 /**
- * DumpDie exception is raised by the "dd" function. It will
- * result in dumping the value in response to an HTTP
- * request or printing the value to the console
+ * DumpDie exception raised by the "dd" (dump and die) function.
+ * This special exception terminates execution while dumping the provided
+ * value as HTML (during HTTP requests) or ANSI (in console/CLI).
+ *
+ * @example
+ * ```ts
+ * // This will dump the user object and terminate
+ * dumper.dd(user)
+ * 
+ * // In HTTP context: sends HTML dump to browser
+ * // In CLI context: prints ANSI dump to console
+ * ```
  */
 class DumpDieException extends Exception {
   static status: number = 500
@@ -60,8 +69,10 @@ class DumpDieException extends Exception {
   }
 
   /**
-   * Set the index for the trace source. This is helpful when
-   * you build nested helpers on top of Die/Dump
+   * Set the stack trace index for determining the source location.
+   * This is useful when building nested helpers on top of dump/die functionality.
+   *
+   * @param index - Stack trace index (0 = current function, 1 = caller, etc.)
    */
   setTraceSourceIndex(index: number) {
     this.#traceSourceIndex = index
@@ -75,7 +86,12 @@ class DumpDieException extends Exception {
   report() {}
 
   /**
-   * Handler called by the AdonisJS HTTP exception handler
+   * HTTP exception handler that renders the dump as HTML output.
+   * This method is called automatically by AdonisJS when a DumpDieException
+   * is thrown during an HTTP request.
+   *
+   * @param error - The DumpDieException instance
+   * @param ctx - HTTP context for the current request
    */
   async handle(error: DumpDieException, ctx: HttpContext) {
     const source = this.#getErrorSource()
@@ -103,7 +119,12 @@ class DumpDieException extends Exception {
   }
 
   /**
-   * Handler called by the AdonisJS Ace kernel
+   * Ace command exception handler that renders the dump as ANSI output.
+   * This method is called automatically by the Ace kernel when a DumpDieException
+   * is thrown during command execution.
+   *
+   * @param error - The DumpDieException instance
+   * @param kernel - Ace kernel instance
    */
   async render(error: DumpDieException, kernel: Kernel) {
     const source = this.#getErrorSource()

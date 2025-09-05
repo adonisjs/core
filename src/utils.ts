@@ -12,7 +12,18 @@ import type * as Assembler from '@adonisjs/assembler'
 import { type ApplicationService } from './types.ts'
 
 /**
- * Imports assembler optionally
+ * Imports the AdonisJS assembler package optionally. This function attempts
+ * to import the assembler and returns undefined if it's not available,
+ * making it safe to use in environments where the assembler might not be installed.
+ *
+ * @param app - The application service instance used for importing the assembler
+ *
+ * @example
+ * const assembler = await importAssembler(app)
+ * if (assembler) {
+ *   // Use assembler functionality
+ *   const generator = new assembler.IndexGenerator()
+ * }
  */
 export async function importAssembler(
   app: ApplicationService
@@ -23,7 +34,19 @@ export async function importAssembler(
 }
 
 /**
- * Imports typescript optionally
+ * Imports the TypeScript compiler package optionally. This function attempts
+ * to import TypeScript and returns undefined if it's not available,
+ * making it safe to use in environments where TypeScript might not be installed.
+ *
+ * @param app - The application service instance used for importing TypeScript
+ *
+ * @example
+ * const ts = await importTypeScript(app)
+ * if (ts) {
+ *   // Use TypeScript compiler API
+ *   const program = ts.createProgram(['file.ts'], {})
+ *   const sourceFile = program.getSourceFile('file.ts')
+ * }
  */
 export async function importTypeScript(
   app: ApplicationService

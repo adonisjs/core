@@ -22,9 +22,28 @@ import type { Application } from '../app.ts'
 import stringHelpers from '../../src/helpers/string.ts'
 
 /**
- * Codemods to modify AdonisJS source files. The codemod APIs relies on
- * "@adonisjs/assembler" package and it must be installed as a dependency
- * inside user application.
+ * Codemods class for programmatically modifying AdonisJS source files.
+ * This class provides APIs to modify configuration files, register middleware,
+ * generate stubs, and install packages.
+ *
+ * The codemod APIs rely on the "@adonisjs/assembler" package, which must be
+ * installed as a dependency in the user application.
+ *
+ * @example
+ * ```ts
+ * const codemods = new Codemods(app, logger)
+ * 
+ * // Generate a controller from a stub
+ * await codemods.makeUsingStub(stubsRoot, 'controller.stub', {
+ *   filename: 'UserController',
+ *   entity: { name: 'User' }
+ * })
+ * 
+ * // Install packages
+ * await codemods.installPackages([
+ *   { name: '@adonisjs/lucid', isDevDependency: false }
+ * ])
+ * ```
  */
 export class Codemods extends EventEmitter {
   /**
@@ -101,7 +120,22 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Define one or more environment variables
+   * Define one or more environment variables in the .env file
+   *
+   * @param environmentVariables - Key-value pairs of environment variables
+   * @param options - Configuration options
+   * @param options.omitFromExample - Keys to exclude from .env.example file
+   *
+   * @example
+   * ```ts
+   * await codemods.defineEnvVariables({
+   *   DB_CONNECTION: 'mysql',
+   *   DB_HOST: 'localhost',
+   *   SECRET_KEY: 'abc123'
+   * }, {
+   *   omitFromExample: ['SECRET_KEY']
+   * })
+   * ```
    */
   async defineEnvVariables<T extends Record<string, number | string | boolean>>(
     environmentVariables: T,
@@ -120,8 +154,17 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Returns the TsMorph project instance
-   * See https://ts-morph.com/
+   * Returns the TsMorph project instance for advanced AST manipulations.
+   * See https://ts-morph.com/ for documentation.
+   *
+   * @example
+   * ```ts
+   * const project = await codemods.getTsMorphProject()
+   * if (project) {
+   *   const sourceFile = project.getSourceFile('app/controllers/user_controller.ts')
+   *   // Perform advanced AST operations
+   * }
+   * ```
    */
   async getTsMorphProject(): Promise<CodeTransformer['project'] | undefined> {
     const transformer = await this.#getCodeTransformer()
@@ -270,7 +313,24 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Generate the stub
+   * Generate a file using a stub template
+   *
+   * @param stubsRoot - Root directory containing stub files
+   * @param stubPath - Path to the specific stub file
+   * @param stubState - Template variables for stub generation
+   *
+   * @example
+   * ```ts
+   * const result = await codemods.makeUsingStub(
+   *   './stubs',
+   *   'controller.stub',
+   *   {
+   *     filename: 'UserController',
+   *     entity: { name: 'User', modelName: 'User' },
+   *     resourceful: true
+   *   }
+   * )
+   * ```
    */
   async makeUsingStub(stubsRoot: string, stubPath: string, stubState: Record<string, any>) {
     const stubs = await this.#app.stubs.create()

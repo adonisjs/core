@@ -14,10 +14,37 @@ import type { Kernel } from '../../modules/ace/kernel.ts'
 import { createAceKernel } from '../../modules/ace/create_kernel.ts'
 
 /**
- * Creates an instance of Ace kernel
+ * Factory for creating and configuring Ace command kernel instances.
+ * This factory provides a convenient way to create Ace kernels either from
+ * an existing Ignitor instance or by creating a new one from scratch.
+ *
+ * @example
+ * ```ts
+ * // Create from URL
+ * const aceFactory = new AceFactory()
+ * const kernel = await aceFactory.make(new URL('../', import.meta.url))
+ * 
+ * // Create from existing ignitor
+ * const ignitor = new Ignitor(appRoot)
+ * const kernel = await aceFactory.make(ignitor)
+ * 
+ * // Run commands
+ * await kernel.handle(['make:controller', 'UserController'])
+ * ```
  */
 export class AceFactory {
+  /**
+   * Create an Ace kernel from an existing Ignitor instance
+   * 
+   * @param ignitor - Existing Ignitor instance
+   */
   async make(ignitor: Ignitor): Promise<Kernel>
+  /**
+   * Create an Ace kernel from application root URL
+   * 
+   * @param appRoot - Application root directory URL
+   * @param options - Optional Ignitor configuration options
+   */
   async make(appRoot: URL, options?: IgnitorOptions): Promise<Kernel>
   async make(ignitorOrAppRoot: URL | Ignitor, options?: IgnitorOptions): Promise<Kernel> {
     if (ignitorOrAppRoot instanceof Ignitor) {

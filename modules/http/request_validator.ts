@@ -21,9 +21,17 @@ import type { ExperimentalFlagsList } from '../../types/app.ts'
 import type { RequestValidationOptions } from '../../types/http.ts'
 
 /**
- * Request validator is used validate HTTP request data using
- * VineJS validators. You may validate the request body,
- * files, cookies, and headers.
+ * Request validator for validating HTTP request data using VineJS validators.
+ * This class provides a convenient way to validate request body, files, cookies,
+ * headers, and URL parameters in AdonisJS applications.
+ *
+ * @example
+ * ```ts
+ * // Inside a controller method
+ * const data = await request.validateUsing(createUserValidator, {
+ *   messagesProvider: customMessages
+ * })
+ * ```
  */
 export class RequestValidator {
   #ctx: HttpContext
@@ -53,8 +61,27 @@ export class RequestValidator {
   static messagesProvider?: (_: HttpContext) => MessagesProviderContact
 
   /**
-   * The validate method can be used to validate the request
-   * data for the current request using VineJS validators
+   * Validate the current HTTP request data using a VineJS validator.
+   * This method automatically includes request body, files, URL parameters,
+   * headers, and cookies in the validation data.
+   *
+   * @param validator - VineJS validator instance
+   * @param options - Optional validation options including custom error reporters and messages
+   *
+   * @example
+   * ```ts
+   * const createUserValidator = vine.compile(
+   *   vine.object({
+   *     email: vine.string().email(),
+   *     name: vine.string().minLength(3)
+   *   })
+   * )
+   * 
+   * const data = await request.validateUsing(createUserValidator, {
+   *   errorReporter: () => vine.errors.SimpleErrorReporter,
+   *   messagesProvider: customMessages
+   * })
+   * ```
    */
   validateUsing<Schema extends SchemaTypes, MetaData extends undefined | Record<string, any>>(
     validator: VineValidator<Schema, MetaData>,

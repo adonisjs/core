@@ -22,7 +22,23 @@ type FactoryParameters = {
 }
 
 /**
- * Ignitor factory creates an instance of the AdonisJS ignitor
+ * Factory for creating and configuring AdonisJS Ignitor instances.
+ * This factory provides a fluent API to set up applications with core providers,
+ * configurations, and preload actions for testing and development scenarios.
+ *
+ * @example
+ * ```ts
+ * const ignitor = new IgnitorFactory()
+ *   .withCoreProviders()
+ *   .withCoreConfig()
+ *   .preload((app) => {
+ *     // Custom initialization logic
+ *   })
+ *   .create(new URL('../', import.meta.url))
+ * 
+ * const app = ignitor.createApp('web')
+ * await app.boot()
+ * ```
  */
 export class IgnitorFactory {
   #preloadActions: ((app: ApplicationService) => Promise<void> | void)[] = []
@@ -34,7 +50,18 @@ export class IgnitorFactory {
   #loadCoreProviders: boolean = false
 
   /**
-   * Define preload actions to run.
+   * Define preload actions to run during application initialization.
+   * These actions are executed after the application is booted.
+   *
+   * @param action - Function to execute during preload phase
+   *
+   * @example
+   * ```ts
+   * factory.preload((app) => {
+   *   // Register custom bindings
+   *   app.container.bind('customService', () => new CustomService())
+   * })
+   * ```
    */
   preload(action: (app: ApplicationService) => void | Promise<void>): this {
     this.#preloadActions.push(action)
@@ -55,7 +82,24 @@ export class IgnitorFactory {
   }
 
   /**
-   * Merge custom factory parameters
+   * Merge custom factory parameters with existing ones.
+   * This allows you to customize RC file contents and application configuration.
+   *
+   * @param params - Parameters to merge
+   * @param params.config - Application configuration to merge
+   * @param params.rcFileContents - RC file contents to merge
+   *
+   * @example
+   * ```ts
+   * factory.merge({
+   *   config: {
+   *     database: { connection: 'mysql' }
+   *   },
+   *   rcFileContents: {
+   *     commands: ['./commands/CustomCommand']
+   *   }
+   * })
+   * ```
    */
   merge(params: Partial<FactoryParameters>): this {
     if (params.config) {
@@ -73,7 +117,15 @@ export class IgnitorFactory {
   }
 
   /**
-   * Load core provider when booting the app
+   * Include core AdonisJS providers when booting the application.
+   * This adds essential providers like app, hash, and REPL providers.
+   *
+   * @example
+   * ```ts
+   * const ignitor = new IgnitorFactory()
+   *   .withCoreProviders()
+   *   .create(appRoot)
+   * ```
    */
   withCoreProviders(): this {
     this.#loadCoreProviders = true
@@ -81,8 +133,16 @@ export class IgnitorFactory {
   }
 
   /**
-   * Merge default config for the core features. A shallow merge
-   * is performed.
+   * Merge default configuration for core AdonisJS features.
+   * This includes configurations for HTTP, hash, logger, and bodyparser.
+   * A shallow merge is performed with existing config.
+   *
+   * @example
+   * ```ts
+   * const ignitor = new IgnitorFactory()
+   *   .withCoreConfig()
+   *   .create(appRoot)
+   * ```
    */
   withCoreConfig(): this {
     this.merge({
@@ -111,7 +171,18 @@ export class IgnitorFactory {
   }
 
   /**
-   * Create ignitor instance
+   * Create a configured Ignitor instance with all specified parameters.
+   *
+   * @param appRoot - Application root directory URL
+   * @param options - Optional Ignitor configuration options
+   *
+   * @example
+   * ```ts
+   * const ignitor = new IgnitorFactory()
+   *   .withCoreConfig()
+   *   .withCoreProviders()
+   *   .create(new URL('../', import.meta.url))
+   * ```
    */
   create(appRoot: URL, options?: IgnitorOptions): Ignitor {
     return new Ignitor(appRoot, options).tap((app) => {

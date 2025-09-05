@@ -12,13 +12,24 @@ import type { ApplicationService } from '../../src/types.ts'
 import { FsLoader, HelpCommand, type BaseCommand } from '../../modules/ace/main.ts'
 
 /**
- * We abstract the logic for creating the ace kernel in this
- * file. So that both the "console" environment and rest
- * of the environments can configure and use ace.
+ * Create and configure an Ace command kernel for AdonisJS applications.
+ * This function abstracts the kernel setup logic and can be used in different
+ * environments with appropriate configurations.
  *
- * - In console environment, ace manages the lifecycle of the process
- * - In other environments, ace can be pulled from the container to
- * run commands
+ * - In console environment, Ace manages the lifecycle of the process
+ * - In other environments, Ace can be pulled from the container to run commands
+ *
+ * @param app - The AdonisJS application service instance
+ * @param commandName - Optional specific command name for optimized loading
+ *
+ * @example
+ * ```ts
+ * const app = new Application(new URL('../', import.meta.url))
+ * const kernel = createAceKernel(app)
+ * 
+ * // Run a specific command
+ * await kernel.handle(['make:controller', 'UserController'])
+ * ```
  */
 export function createAceKernel(app: ApplicationService, commandName?: string) {
   const kernel = new Kernel(app)

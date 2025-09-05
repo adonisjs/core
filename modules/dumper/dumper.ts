@@ -126,7 +126,18 @@ export class Dumper {
   }
 
   /**
-   * Configure the HTML formatter output
+   * Configure the HTML formatter output options
+   *
+   * @param config - Configuration options for HTML dump formatting
+   *
+   * @example
+   * ```ts
+   * dumper.configureHtmlOutput({
+   *   showHidden: true,
+   *   depth: 5,
+   *   colors: false
+   * })
+   * ```
    */
   configureHtmlOutput(config: HTMLDumpConfig): this {
     this.#htmlConfig = config
@@ -134,7 +145,18 @@ export class Dumper {
   }
 
   /**
-   * Configure the ANSI formatter output
+   * Configure the ANSI formatter output options for console display
+   *
+   * @param config - Configuration options for ANSI console formatting
+   *
+   * @example
+   * ```ts
+   * dumper.configureAnsiOutput({
+   *   showHidden: true,
+   *   depth: 3,
+   *   collapse: ['Date', 'DateTime']
+   * })
+   * ```
    */
   configureAnsiOutput(config: ConsoleDumpConfig): this {
     this.#consoleConfig = config
@@ -142,8 +164,16 @@ export class Dumper {
   }
 
   /**
-   * Returns the style and the script elements for the
-   * HTML document
+   * Returns the style and script elements that need to be injected into
+   * the HTML document head for proper dump visualization
+   *
+   * @param cspNonce - Optional Content Security Policy nonce for inline scripts
+   *
+   * @example
+   * ```ts
+   * const headElements = dumper.getHeadElements('abc123')
+   * // Insert into your HTML head section
+   * ```
    */
   getHeadElements(cspNonce?: string): string {
     return (
@@ -158,7 +188,21 @@ export class Dumper {
   }
 
   /**
-   * Dump value to HTML ouput
+   * Dump a value to formatted HTML output
+   *
+   * @param value - The value to dump and inspect
+   * @param options - Options for HTML output formatting
+   * @param options.cspNonce - Optional Content Security Policy nonce
+   * @param options.title - Optional title to display in the dump header
+   * @param options.source - Optional source file information for editor links
+   *
+   * @example
+   * ```ts
+   * const htmlOutput = dumper.dumpToHtml(user, {
+   *   title: 'User Object',
+   *   source: { location: '/app/controllers/user.ts', line: 42 }
+   * })
+   * ```
    */
   dumpToHtml(
     value: unknown,
@@ -184,7 +228,21 @@ export class Dumper {
   }
 
   /**
-   * Dump value to ANSI output
+   * Dump a value to formatted ANSI output for console display
+   *
+   * @param value - The value to dump and inspect
+   * @param options - Options for ANSI output formatting
+   * @param options.title - Optional title to display in the dump header
+   * @param options.source - Optional source file information for editor links
+   *
+   * @example
+   * ```ts
+   * const ansiOutput = dumper.dumpToAnsi(user, {
+   *   title: 'User Debug',
+   *   source: { location: '/app/controllers/user.ts', line: 42 }
+   * })
+   * console.log(ansiOutput)
+   * ```
    */
   dumpToAnsi(
     value: unknown,
@@ -224,12 +282,24 @@ export class Dumper {
   }
 
   /**
-   * Dump values and die. The formatter will be picked
-   * based upon where your app is running.
+   * Dump values and die. This method dumps the provided value and then
+   * terminates the application. The output format is automatically chosen
+   * based on the execution context.
    *
-   * - During an HTTP request, the HTML output will be
-   *   sent to the server.
-   * - Otherwise the value will be logged in the console
+   * - During an HTTP request, HTML output will be sent to the browser
+   * - Otherwise the value will be logged to the console in ANSI format
+   *
+   * @param value - The value to dump before terminating
+   * @param traceSourceIndex - Stack trace index for source location (default: 1)
+   *
+   * @example
+   * ```ts
+   * // This will dump the user object and terminate the application
+   * dumper.dd(user)
+   * 
+   * // This will never execute
+   * console.log('This line will not run')
+   * ```
    */
   dd(value: unknown, traceSourceIndex: number = 1) {
     const error = new E_DUMP_DIE_EXCEPTION(value, this)

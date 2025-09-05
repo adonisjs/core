@@ -14,8 +14,22 @@ import type { ApplicationService } from '../../src/types.ts'
 import type { CommandOptions, ParsedOutput, UIPrimitives } from '../../types/ace.ts'
 
 /**
- * The base command to create custom ace commands. The AdonisJS base commands
- * receives the application instance
+ * The base command class for creating custom Ace commands in AdonisJS applications.
+ * This class extends the base Ace command with AdonisJS-specific functionality like
+ * dependency injection and application lifecycle management.
+ *
+ * @example
+ * ```ts
+ * export default class MakeUser extends BaseCommand {
+ *   static commandName = 'make:user'
+ *   static description = 'Create a new user'
+ *   
+ *   async run() {
+ *     this.logger.info('Creating user...')
+ *     // Command implementation
+ *   }
+ * }
+ * ```
  */
 export class BaseCommand extends AceBaseCommand {
   static options: CommandOptions = {}
@@ -39,7 +53,17 @@ export class BaseCommand extends AceBaseCommand {
   }
 
   /**
-   * Creates the codemods module to modify source files
+   * Creates the codemods module to modify source files programmatically.
+   * This method provides access to AST-based code transformations.
+   *
+   * @example
+   * ```ts
+   * const codemods = await this.createCodemods()
+   * await codemods.makeUsingStub(stubsRoot, 'controller.stub', {
+   *   filename: 'UserController',
+   *   entity: { name: 'User' }
+   * })
+   * ```
    */
   async createCodemods() {
     const { Codemods } = await import('./codemods.js')
@@ -115,10 +139,19 @@ export class BaseCommand extends AceBaseCommand {
   }
 
   /**
-   * Terminate the app. A command should prefer calling this method
-   * over the "app.terminate", because this method only triggers
-   * app termination when the current command is in the charge
-   * of the process.
+   * Terminate the application gracefully. This method should be preferred over
+   * calling `app.terminate()` directly as it only triggers termination when
+   * the current command is the main command responsible for the process.
+   *
+   * @example
+   * ```ts
+   * export default class SomeCommand extends BaseCommand {
+   *   async run() {
+   *     // Do some work
+   *     await this.terminate()
+   *   }
+   * }
+   * ```
    */
   async terminate() {
     if (this.kernel.getMainCommand() === this) {
@@ -128,7 +161,8 @@ export class BaseCommand extends AceBaseCommand {
 }
 
 /**
- * The List command is used to display a list of commands
+ * The List command is used to display a list of available commands.
+ * This command extends the base Ace ListCommand with AdonisJS-specific functionality.
  */
 export class ListCommand extends AceListCommand implements BaseCommand {
   static options: CommandOptions = {}
@@ -152,7 +186,8 @@ export class ListCommand extends AceListCommand implements BaseCommand {
   }
 
   /**
-   * Creates the codemods module to modify source files
+   * Creates the codemods module to modify source files programmatically.
+   * This method provides access to AST-based code transformations.
    */
   async createCodemods() {
     const { Codemods } = await import('./codemods.js')

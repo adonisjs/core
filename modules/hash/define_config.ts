@@ -36,7 +36,31 @@ type ResolvedConfig<
 }
 
 /**
- * Define config for the hash service.
+ * Define config for the hash service. This function creates a configuration
+ * provider that lazily imports and resolves hash drivers when needed.
+ *
+ * @param config - Configuration object containing default hasher and list of hashers
+ * @param config.default - Optional default hasher name (must exist in the list)
+ * @param config.list - Record of hasher configurations or config providers
+ *
+ * @example
+ * ```ts
+ * const hashConfig = defineConfig({
+ *   default: 'scrypt',
+ *   list: {
+ *     scrypt: drivers.scrypt({
+ *       cost: 16384,
+ *       blockSize: 8,
+ *       parallelization: 1,
+ *       saltSize: 16,
+ *       keyLength: 64,
+ *     }),
+ *     bcrypt: drivers.bcrypt({
+ *       rounds: 10,
+ *     })
+ *   }
+ * })
+ * ```
  */
 export function defineConfig<
   KnownHashers extends Record<string, ManagerDriverFactory | ConfigProvider<ManagerDriverFactory>>,
@@ -92,11 +116,32 @@ export function defineConfig<
 }
 
 /**
- * Helpers to configure drivers inside the config file. The
- * drivers will be imported and constructed lazily.
+ * Helpers to configure drivers inside the config file. These functions create
+ * configuration providers that lazily import and instantiate hash drivers.
  *
  * - Import happens when you first use the hash module
  * - Construction of drivers happens when you first use a driver
+ *
+ * @example
+ * ```ts
+ * const hashConfig = defineConfig({
+ *   default: 'bcrypt',
+ *   list: {
+ *     bcrypt: drivers.bcrypt({ rounds: 12 }),
+ *     argon2: drivers.argon2({ 
+ *       variant: 'id',
+ *       memory: 65536,
+ *       time: 3,
+ *       parallelism: 4
+ *     }),
+ *     scrypt: drivers.scrypt({
+ *       cost: 16384,
+ *       blockSize: 8,
+ *       parallelization: 1
+ *     })
+ *   }
+ * })
+ * ```
  */
 export const drivers: {
   argon2: (config: ArgonConfig) => ConfigProvider<() => Argon>
