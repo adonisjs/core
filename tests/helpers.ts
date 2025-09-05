@@ -70,12 +70,12 @@ export async function setupProject(
  */
 export async function setupPackage(fs: FileSystem, configureContent?: string) {
   await fs.create(
-    'node_modules/foo/package.json',
-    JSON.stringify({ type: 'module', name: 'test', main: 'index.js', dependencies: {} })
+    'packages/foo/package.json',
+    JSON.stringify({ type: 'module', name: '@adonisjs/foo', main: 'index.js', dependencies: {} })
   )
 
   await fs.create(
-    'node_modules/foo/index.js',
+    'packages/foo/index.js',
     `export const stubsRoot = './'
      export async function configure(command) { ${configureContent} }`
   )

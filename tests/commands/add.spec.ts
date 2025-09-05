@@ -21,9 +21,9 @@ const VERBOSE = !!process.env.CI
 test.group('Install', (group) => {
   group.tap((t) => t.disableTimeout())
 
-  test('detect correct pkg manager ( npm )', async ({ assert, fs }) => {
+  test('install packages using npm', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
     await setupProject(fs, 'npm')
@@ -34,7 +34,7 @@ test.group('Install', (group) => {
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    const command = await ace.create(Add, ['./packages/foo'])
     command.verbose = VERBOSE
 
     await command.exec()
@@ -42,9 +42,9 @@ test.group('Install', (group) => {
     await assert.fileIsNotEmpty('package-lock.json')
   })
 
-  test('detect correct pkg manager ( pnpm )', async ({ assert, fs }) => {
+  test('install package using pnpm', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
     await setupProject(fs, 'pnpm')
@@ -55,7 +55,7 @@ test.group('Install', (group) => {
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    const command = await ace.create(Add, ['./packages/foo'])
     command.verbose = VERBOSE
 
     await command.exec()
@@ -63,9 +63,9 @@ test.group('Install', (group) => {
     await assert.fileIsNotEmpty('pnpm-lock.yaml')
   })
 
-  test('use specific package manager', async ({ assert, fs }) => {
+  test('explicitly set the package manager to pnpm', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
     await setupProject(fs, 'npm')
@@ -76,7 +76,7 @@ test.group('Install', (group) => {
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    const command = await ace.create(Add, ['./packages/foo'])
     command.verbose = VERBOSE
     command.packageManager = 'pnpm'
 
@@ -85,9 +85,9 @@ test.group('Install', (group) => {
     await assert.fileIsNotEmpty('pnpm-lock.yaml')
   })
 
-  test('should install dependency', async ({ assert, fs }) => {
+  test('install dependencies', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
     await setupProject(fs, 'npm')
@@ -98,17 +98,17 @@ test.group('Install', (group) => {
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    const command = await ace.create(Add, ['./packages/foo'])
     command.verbose = VERBOSE
 
     await command.exec()
 
-    await assert.fileContains('package.json', 'foo')
+    await assert.fileContains('package.json', '@adonisjs/foo')
   })
 
-  test('should install dev dependency', async ({ assert, fs }) => {
+  test('install dev dependencies', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
     await setupProject(fs, 'npm')
@@ -119,39 +119,29 @@ test.group('Install', (group) => {
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href, '-D'])
+    const command = await ace.create(Add, ['./packages/foo', '-D'])
     command.verbose = VERBOSE
 
     await command.exec()
 
     const pkgJson = await fs.contentsJson('package.json')
-    assert.deepEqual(pkgJson.devDependencies, { test: 'file:node_modules/foo' })
+    assert.deepEqual(pkgJson.devDependencies, { '@adonisjs/foo': 'file:packages/foo' })
   })
 
   test('pass unknown args to configure', async ({ fs, assert }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
     await setupProject(fs, 'npm')
-    await setupPackage(
-      fs,
-      `
-        command.logger.log(command.parsedFlags)
-      `
-    )
+    await setupPackage(fs, `command.logger.log(command.parsedFlags)`)
 
     await ace.app.init()
 
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [
-      new URL('node_modules/foo', fs.baseUrl).href,
-      '--foo',
-      '--auth=session',
-      '-x',
-    ])
+    const command = await ace.create(Add, ['./packages/foo', '--foo', '--auth=session', '-x'])
     command.verbose = VERBOSE
 
     await command.exec()
@@ -164,12 +154,12 @@ test.group('Install', (group) => {
     })
   })
 
-  test('should configure package', async ({ assert, fs }) => {
+  test('configure package', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
-    await setupProject(fs, 'pnpm')
+    await setupProject(fs, 'npm')
     await setupPackage(
       fs,
       ` const codemods = await command.createCodemods()
@@ -183,7 +173,7 @@ test.group('Install', (group) => {
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    const command = await ace.create(Add, ['./packages/foo'])
     command.verbose = VERBOSE
 
     await command.exec()
@@ -193,10 +183,10 @@ test.group('Install', (group) => {
 
   test('display error and stop if package install fail', async ({ fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
-    await setupProject(fs, 'pnpm')
+    await setupProject(fs, 'npm')
     await setupPackage(fs)
 
     await ace.app.init()
@@ -204,9 +194,7 @@ test.group('Install', (group) => {
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [
-      new URL('node_modules/inexistent', fs.baseUrl).toString(),
-    ])
+    const command = await ace.create(Add, ['./packages/nonexistent'])
     command.verbose = VERBOSE
 
     await command.exec()
@@ -215,19 +203,19 @@ test.group('Install', (group) => {
     command.assertLogMatches(/Process exited with non-zero status/)
   })
 
-  test('display error if configure fail', async ({ fs }) => {
+  test('display error if configure command fails', async ({ fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(filePath, `index.js?${Math.random()}`)),
+      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
     })
 
-    await setupProject(fs, 'pnpm')
+    await setupProject(fs, 'npm')
     await setupPackage(fs, 'throw new Error("Invalid configure")')
 
     await ace.app.init()
     ace.addLoader(new ListLoader([Configure]))
     ace.ui.switchMode('raw')
 
-    const command = await ace.create(Add, [new URL('node_modules/foo', fs.baseUrl).href])
+    const command = await ace.create(Add, ['./packages/foo'])
     command.verbose = VERBOSE
     ace.errorHandler.render = async function (error: Error) {
       command.logger.fatal(error)
@@ -244,7 +232,7 @@ test.group('Install', (group) => {
       importer: (filePath) => import(filePath),
     })
 
-    await setupProject(fs, 'pnpm')
+    await setupProject(fs, 'npm')
 
     await ace.app.init()
     ace.addLoader(new ListLoader([Configure]))
@@ -264,7 +252,7 @@ test.group('Install', (group) => {
       importer: (filePath) => import(filePath),
     })
 
-    await setupProject(fs, 'pnpm')
+    await setupProject(fs, 'npm')
 
     await ace.app.init()
     ace.addLoader(new ListLoader([Configure]))
