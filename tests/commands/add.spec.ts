@@ -17,13 +17,18 @@ import { AceFactory } from '../../factories/core/ace.ts'
 import { setupPackage, setupProject } from '../helpers.ts'
 
 const VERBOSE = !!process.env.CI
+const createFileImporter = (baseUrl: URL) => {
+  return function (folder: string) {
+    return import(new URL(`${folder}/index.js?${Math.random()}`, baseUrl).toString())
+  }
+}
 
 test.group('Install', (group) => {
   group.tap((t) => t.disableTimeout())
 
   test('install packages using npm', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'npm')
@@ -44,7 +49,7 @@ test.group('Install', (group) => {
 
   test('install package using pnpm', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'pnpm')
@@ -65,7 +70,7 @@ test.group('Install', (group) => {
 
   test('explicitly set the package manager to pnpm', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'npm')
@@ -87,7 +92,7 @@ test.group('Install', (group) => {
 
   test('install dependencies', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'npm')
@@ -108,7 +113,7 @@ test.group('Install', (group) => {
 
   test('install dev dependencies', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'npm')
@@ -130,7 +135,7 @@ test.group('Install', (group) => {
 
   test('pass unknown args to configure', async ({ fs, assert }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'npm')
@@ -156,7 +161,7 @@ test.group('Install', (group) => {
 
   test('configure package', async ({ assert, fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'npm')
@@ -183,7 +188,7 @@ test.group('Install', (group) => {
 
   test('display error and stop if package install fail', async ({ fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'npm')
@@ -205,7 +210,7 @@ test.group('Install', (group) => {
 
   test('display error if configure command fails', async ({ fs }) => {
     const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(join(fs.basePath, filePath, `index.js?${Math.random()}`)),
+      importer: createFileImporter(fs.baseUrl),
     })
 
     await setupProject(fs, 'npm')
