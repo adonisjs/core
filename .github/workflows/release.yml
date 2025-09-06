@@ -30,7 +30,7 @@ jobs:
 
       - run: npm install
 
-      - run: npm run release major -- --ci --preRelease=next
+      - run: npm run release -- --ci --preRelease=next
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

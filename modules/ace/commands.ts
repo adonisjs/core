@@ -194,10 +194,6 @@ export class ListCommand extends AceListCommand implements BaseCommand {
     return new Codemods(this.app, this.logger)
   }
 
-  async execCommand(): Promise<any> {
-    return this.exec()
-  }
-
   /**
    * Terminate the app. A command should prefer calling this method
    * over the "app.terminate", because this method only triggers
