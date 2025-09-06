@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import { join } from 'node:path'
 import { test } from '@japa/runner'
 import { ListLoader } from '@adonisjs/ace'
 
