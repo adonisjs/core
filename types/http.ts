@@ -9,6 +9,7 @@
 
 export * from '@adonisjs/http-server/types'
 import type { ValidationOptions } from '@vinejs/vine/types'
+export type { InferRouteParams } from '@poppinss/utils/types'
 
 /**
  * Validation options accepted by the "request.validateUsing" method
