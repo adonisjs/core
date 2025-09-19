@@ -8,7 +8,7 @@
  */
 
 import { stubsRoot } from '../../stubs/main.ts'
-import { args, flags, BaseCommand } from '../../modules/ace/main.ts'
+import { args, BaseCommand } from '../../modules/ace/main.ts'
 import { type CommandOptions } from '../../types/ace.ts'
 
 /**

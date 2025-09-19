@@ -8,11 +8,8 @@
  */
 
 import { test } from '@japa/runner'
-import { ListLoader } from '../../modules/ace/main.ts'
 import { AceFactory } from '../../factories/core/ace.ts'
 import { StubsFactory } from '../../factories/stubs.ts'
-import MakeEventCommand from '../../commands/make/event.ts'
-import MakeListenerCommand from '../../commands/make/listener.ts'
 import MakeTransformer from '../../commands/make/transformer.ts'
 
 test.group('Make transformer', () => {
