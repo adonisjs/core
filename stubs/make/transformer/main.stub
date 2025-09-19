@@ -1,0 +1,18 @@
+{{#var transformerName = generators.transformerName(entity.name)}}
+{{#var transformerFileName = generators.transformerFileName(entity.name)}}
+{{#var modelName = generators.modelName(model.name)}}
+{{#var modelFileName = generators.modelFileName(model.name)}}
+{{#var modelImportPath = generators.importPath('#models', model.path, modelFileName.replace(/\.ts$/, ''))}}
+{{{
+  exports({
+    to: app.transformersPath(entity.path, transformerFileName)
+  })
+}}}
+import { BaseTransformer } from '@adonisjs/core/transformers'
+import {{ modelName }} from '{{ modelImportPath }}'
+
+export default class {{ transformerName }} extends BaseTransformer<{{modelName}}> {
+  toObject() {
+    return this.pick(this.resource, ['id'])
+  }
+}
