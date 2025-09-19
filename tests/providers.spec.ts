@@ -10,6 +10,7 @@
 import { test } from '@japa/runner'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from '@adonisjs/application'
+import { HttpContextFactory } from '@adonisjs/http-server/factories'
 
 import { Repl } from '../modules/repl.ts'
 import { Config } from '../modules/config.ts'
@@ -23,7 +24,6 @@ import { Logger, LoggerManager } from '../modules/logger.ts'
 import { IgnitorFactory } from '../factories/core/ignitor.ts'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
 import { defineConfig as defineDumperConfig } from '../modules/dumper/define_config.ts'
-import { HttpContext } from '@adonisjs/http-server'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 const BASE_PATH = fileURLToPath(BASE_URL)
@@ -329,6 +329,8 @@ test.group('Providers', () => {
     await app.init()
     await app.boot()
 
-    assert.isFunction(HttpContext.prototype.serialize)
+    const { serialize } = new HttpContextFactory().create()
+    assert.isFunction(serialize)
+    assert.deepEqual(await serialize({}), {})
   })
 })
