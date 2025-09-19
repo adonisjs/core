@@ -10,6 +10,8 @@
 import { test } from '@japa/runner'
 import { Kernel } from '@adonisjs/ace'
 import { IndexGenerator } from '@adonisjs/assembler/index_generator'
+
+import stringHelpers from '../src/helpers/string.ts'
 import { indexEntities } from '../src/assembler_hooks/index_entities.ts'
 
 test.group('Index generator', () => {
@@ -20,7 +22,7 @@ test.group('Index generator', () => {
     await fs.create('app/controllers/users_controller.ts', '')
     await fs.create('app/controllers/blog/posts_controller.ts', '')
 
-    const generator = new IndexGenerator(fs.basePath, cliUi.logger)
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
     const indexer = indexEntities({
       controllers: {
         enabled: true,
@@ -59,7 +61,7 @@ test.group('Index generator', () => {
     await fs.create('app/events/user_registered.ts', '')
     await fs.create('app/events/billing/invoice_created.ts', '')
 
-    const generator = new IndexGenerator(fs.basePath, cliUi.logger)
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
     const indexer = indexEntities({
       controllers: {
         enabled: false,
@@ -96,7 +98,7 @@ test.group('Index generator', () => {
     await fs.create('app/listeners/send_welcome_email.ts', '')
     await fs.create('app/listeners/billing/send_invoice.ts', '')
 
-    const generator = new IndexGenerator(fs.basePath, cliUi.logger)
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
     const indexer = indexEntities({
       controllers: {
         enabled: false,
@@ -135,7 +137,7 @@ test.group('Index generator', () => {
     await fs.create('app/transformers/user_transformer.ts', '')
     await fs.create('app/transformers/blog/post_transformer.ts', '')
 
-    const generator = new IndexGenerator(fs.basePath, cliUi.logger)
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
     const indexer = indexEntities({
       controllers: {
         enabled: false,
