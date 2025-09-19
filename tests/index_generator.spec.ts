@@ -42,8 +42,8 @@ test.group('Index generator', () => {
     await assert.fileExists('.adonisjs/server/controllers.ts')
     await assert.fileContains('.adonisjs/server/controllers.ts', [
       `export const controllers = {`,
-      `'Users': () => import('#controllers/users_controller')`,
-      `'Posts': () => import('#controllers/blog/posts_controller')`,
+      `Users: () => import('#controllers/users_controller')`,
+      `Posts: () => import('#controllers/blog/posts_controller')`,
     ])
     assert.isDefined(
       cliUi.logger
@@ -81,8 +81,8 @@ test.group('Index generator', () => {
     await assert.fileExists('.adonisjs/server/events.ts')
     await assert.fileContains('.adonisjs/server/events.ts', [
       `export const events = {`,
-      `'UserRegistered': () => import('#events/user_registered')`,
-      `'InvoiceCreated': () => import('#events/billing/invoice_created')`,
+      `UserRegistered: () => import('#events/user_registered')`,
+      `InvoiceCreated: () => import('#events/billing/invoice_created')`,
     ])
     assert.isDefined(
       cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/server/events.ts'))
@@ -118,8 +118,8 @@ test.group('Index generator', () => {
     await assert.fileExists('.adonisjs/server/listeners.ts')
     await assert.fileContains('.adonisjs/server/listeners.ts', [
       `export const listeners = {`,
-      `'SendWelcomeEmail': () => import('#listeners/send_welcome_email')`,
-      `'SendInvoice': () => import('#listeners/billing/send_invoice')`,
+      `SendWelcomeEmail: () => import('#listeners/send_welcome_email')`,
+      `SendInvoice: () => import('#listeners/billing/send_invoice')`,
     ])
     assert.isDefined(
       cliUi.logger
