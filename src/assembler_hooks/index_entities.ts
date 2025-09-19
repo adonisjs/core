@@ -16,21 +16,6 @@ import { type CommonHooks } from '@adonisjs/assembler/types'
  * index files that export all modules from specified directories.
  *
  * @param {IndexEntitiesConfig} entities - Configuration object for entities indexing
- * @param {object} [entities.events] - Configuration for events indexing
- * @param {boolean} [entities.events.enabled=true] - Whether to enable events indexing
- * @param {string} [entities.events.source='app/events'] - Source directory for events
- * @param {string} [entities.events.importAlias='#events'] - Import alias for events
- * @param {string} [entities.events.glob] - Glob pattern for matching event files
- * @param {object} [entities.listeners] - Configuration for listeners indexing
- * @param {boolean} [entities.listeners.enabled=true] - Whether to enable listeners indexing
- * @param {string} [entities.listeners.source='app/listeners'] - Source directory for listeners
- * @param {string} [entities.listeners.importAlias='#listeners'] - Import alias for listeners
- * @param {string} [entities.listeners.glob] - Glob pattern for matching listener files
- * @param {object} [entities.controllers] - Configuration for controllers indexing
- * @param {boolean} [entities.controllers.enabled=true] - Whether to enable controllers indexing
- * @param {string} [entities.controllers.source='app/controllers'] - Source directory for controllers
- * @param {string} [entities.controllers.importAlias='#controllers'] - Import alias for controllers
- * @param {string} [entities.controllers.glob] - Glob pattern for matching controller files
  *
  * @example
  * // Basic usage with default configuration

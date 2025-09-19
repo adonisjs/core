@@ -329,6 +329,6 @@ test.group('Providers', () => {
     await app.init()
     await app.boot()
 
-    assert.isFunction(HttpContext.prototype.transform)
+    assert.isFunction(HttpContext.prototype.serialize)
   })
 })

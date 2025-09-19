@@ -18,8 +18,8 @@ import { HttpContext } from '../modules/http/main.ts'
 import { Encryption } from '../modules/encryption.ts'
 import { Router, Server } from '../modules/http/main.ts'
 import { BaseEvent, Emitter } from '../modules/events.ts'
-import { transform } from '../modules/transformers/main.ts'
-import { type TransformFn } from '../types/transformers.ts'
+import { serialize } from '../modules/transformers/main.ts'
+import { type SerializeFn } from '../types/transformers.ts'
 import type { ApplicationService, LoggerService } from '../src/types.ts'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
 
@@ -28,7 +28,7 @@ import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts
  */
 declare module '@adonisjs/core/http' {
   export interface HttpContext {
-    transform: TransformFn
+    serialize: SerializeFn
   }
 }
 
@@ -373,9 +373,12 @@ export default class AppServiceProvider {
    */
   async boot() {
     BaseEvent.useEmitter(await this.app.container.make('emitter'))
-    HttpContext.macro('transform', function (this: HttpContext, data, transformer, variant) {
-      return transform(data, transformer, variant, this.containerResolver) as any
-    })
+    HttpContext.instanceProperty(
+      'serialize',
+      function (this: HttpContext, ...args: Parameters<SerializeFn>) {
+        return serialize(...args) as any
+      }
+    )
   }
 
   /**
