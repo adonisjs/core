@@ -145,6 +145,12 @@ const stringHelpers: typeof string & {
     return new StringBuilder(value)
   },
 
+  /**
+   * Formats Node.js hrtime output into a human-readable string.
+   *
+   * @param time - Tuple of [seconds, nanoseconds] from process.hrtime()
+   * @param options - Formatting options for output style and precision
+   */
   prettyHrTime(time, options) {
     return prettyHrTime(time, options)
   },

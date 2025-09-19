@@ -9,6 +9,7 @@
 
 import type typescript from 'typescript'
 import type * as Assembler from '@adonisjs/assembler'
+import { type RecursiveFileTree } from '@adonisjs/assembler/types'
 import { type ApplicationService } from './types.ts'
 
 /**
@@ -54,4 +55,65 @@ export async function importTypeScript(
   try {
     return await app.importDefault('typescript')
   } catch {}
+}
+
+/**
+ * Outputs transformer data objects by generating TypeScript type definitions
+ * for all transformers in the provided file tree. This function creates
+ * InferData types for each transformer and organizes them in namespaces.
+ *
+ * @param transformersList - A recursive file tree containing transformer file paths
+ * @param buffer - The file buffer to write the generated types to
+ *
+ * @example
+ * const transformersList = {
+ *   User: '#app/transformers/user_transformer',
+ *   Auth: {
+ *     Login: '#app/transformers/auth/login_transformer'
+ *   }
+ * }
+ * await outputTransformerDataObjects(transformersList, buffer)
+ * // Generates:
+ * // export namespace Data {
+ * //   export type User = InferData<UserTransformer>
+ * //   export namespace Auth {
+ * //     export type Login = InferData<AuthLoginTransformer>
+ * //   }
+ * // }
+ */
+export async function outputTransformerDataObjects(
+  transformersList: RecursiveFileTree,
+  buffer: Assembler.FileBuffer
+) {
+  const importsBuffer = buffer.create()
+  importsBuffer.write(`import { InferData } from '@adonisjs/core/types/transformers'`)
+
+  buffer.writeLine(importsBuffer)
+  buffer.write('export namespace Data {').indent()
+
+  /**
+   * Recursively generates namespace tree structure for transformers.
+   * Creates nested namespaces for directory structures and type exports
+   * for individual transformer files.
+   *
+   * @param input - The current level of the file tree to process
+   * @param parents - Array of parent namespace names for import naming
+   */
+  function generateNamespaceTree(input: RecursiveFileTree, parents: string[]) {
+    Object.keys(input).forEach((key) => {
+      const value = input[key]
+      if (typeof value === 'string') {
+        const importName = `${parents.join()}${key}Transformer`
+        importsBuffer.write(`import ${importName} from '${value}'`)
+        buffer.write(`export type ${key} = InferData<${importName}>`)
+      } else {
+        buffer.write(`export namespace ${key} {`).indent()
+        generateNamespaceTree(value, [...parents, key])
+        buffer.dedent().write(`}`)
+      }
+    })
+  }
+
+  generateNamespaceTree(transformersList, [])
+  buffer.dedent().write('}')
 }

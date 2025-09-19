@@ -7,8 +7,10 @@
  * file that was distributed with this source code.
  */
 
-import { type IndexEntitiesConfig } from '../types.ts'
 import { type CommonHooks } from '@adonisjs/assembler/types'
+import stringHelpers from '../helpers/string.ts'
+import { type IndexEntitiesConfig } from '../types.ts'
+import { outputTransformerDataObjects } from '../utils.ts'
 
 /**
  * Configures the IndexGenerator to create barrel files for "controllers", "events",
@@ -43,7 +45,7 @@ import { type CommonHooks } from '@adonisjs/assembler/types'
  *   }
  * })
  */
-export function indexEntities(entities: IndexEntitiesConfig = {}): CommonHooks['init'][number] {
+export function indexEntities(entities: IndexEntitiesConfig = {}) {
   const events = Object.assign(
     { enabled: true, source: 'app/events', importAlias: '#events' },
     entities.events
@@ -55,6 +57,10 @@ export function indexEntities(entities: IndexEntitiesConfig = {}): CommonHooks['
   const controllers = Object.assign(
     { enabled: true, source: 'app/controllers', importAlias: '#controllers' },
     entities.controllers
+  )
+  const transformers = Object.assign(
+    { enabled: false, source: 'app/transformers', importAlias: '#transformers' },
+    entities.transformers
   )
 
   return {
@@ -92,6 +98,29 @@ export function indexEntities(entities: IndexEntitiesConfig = {}): CommonHooks['
           output: '.adonisjs/server/controllers.ts',
         })
       }
+
+      if (transformers.enabled) {
+        indexGenerator.add('transformers', {
+          source: transformers.source,
+          glob: transformers.glob,
+          as(vfs, buffer, __, helpers) {
+            const transformersList = vfs.asTree({
+              transformKey(key) {
+                const segments = key.split('/')
+                const baseName = segments.pop()!
+                return [
+                  ...segments.map((segment) => stringHelpers.pascalCase(segment)),
+                  stringHelpers.create(baseName).removeSuffix('transformer').pascalCase(),
+                ].join('/')
+              },
+              transformValue: helpers.toImportPath,
+            })
+            outputTransformerDataObjects(transformersList, buffer)
+          },
+          importAlias: transformers.importAlias,
+          output: '.adonisjs/client/data.d.ts',
+        })
+      }
     },
-  }
+  } satisfies CommonHooks['init'][number]
 }

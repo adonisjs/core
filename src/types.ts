@@ -398,4 +398,10 @@ export type IndexEntitiesConfig = {
     /** Glob patterns for matching event files */
     glob?: string[]
   }
+  transformers?: {
+    enabled?: boolean
+    source?: string
+    importAlias?: string
+    glob?: string[]
+  }
 }
