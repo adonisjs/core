@@ -12,24 +12,42 @@ import { args, BaseCommand, flags } from '../../modules/ace/main.ts'
 import { RoutesListFormatter } from '../../src/cli_formatters/routes_list.ts'
 
 /**
- * The list routes command is used to view the list of registered routes
+ * Command to display a list of all registered routes in the application.
+ * Supports filtering by keywords, middleware, and output formatting options.
+ * Routes can be displayed as a formatted list, table, or JSON.
+ *
+ * @example
+ * ```
+ * ace list:routes
+ * ace list:routes user
+ * ace list:routes --middleware=auth
+ * ace list:routes --ignore-middleware=guest
+ * ace list:routes --json
+ * ace list:routes --table
+ * ```
  */
 export default class ListRoutes extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'list:routes'
+
+  /**
+   * The command description
+   */
   static description =
     'List application routes. This command will boot the application in the console environment'
 
   /**
-   * Making sure to start the application so that the routes are
-   * imported
+   * Command options configuration.
+   * Requires the application to be started so routes are loaded.
    */
   static options: CommandOptions = {
     startApp: true,
   }
 
   /**
-   * The match filter is used to find route by name, pattern and controller name that
-   * includes the match keyword
+   * Keyword to match against route names, patterns, and controller names
    */
   @args.string({
     description:
@@ -39,7 +57,7 @@ export default class ListRoutes extends BaseCommand {
   declare match: string
 
   /**
-   * The middleware flag searches for the routes using all the mentioned middleware
+   * Filter routes that include all specified middleware names
    */
   @flags.array({
     description:
@@ -48,7 +66,7 @@ export default class ListRoutes extends BaseCommand {
   declare middleware: string[]
 
   /**
-   * The ignoreMiddleware flag searches for the routes not using all the mentioned middleware
+   * Filter routes that do not include all specified middleware names
    */
   @flags.array({
     description:
@@ -57,17 +75,22 @@ export default class ListRoutes extends BaseCommand {
   declare ignoreMiddleware: string[]
 
   /**
-   * The json flag is used to view list of routes as a JSON string.
+   * Output routes as JSON format
    */
   @flags.boolean({ description: 'Get routes list as a JSON string' })
   declare json: boolean
 
   /**
-   * The table flag is used to view list of routes as a classic CLI table
+   * Output routes as a CLI table format
    */
   @flags.boolean({ description: 'View list of routes as a table' })
   declare table: boolean
 
+  /**
+   * Execute the command to list application routes.
+   * Creates a formatter with the specified filters and outputs routes
+   * in the requested format (JSON, table, or formatted list).
+   */
   async run() {
     const router = await this.app.container.make('router')
     const formatter = new RoutesListFormatter(

@@ -18,18 +18,41 @@ import { args, BaseCommand, flags } from '../../modules/ace/main.ts'
 /**
  * The make middleware command to create a new middleware
  * class.
+ *
+ * @example
+ * ```
+ * ace make:middleware Auth
+ * ace make:middleware Auth --stack=server
+ * ace make:middleware Auth --stack=named
+ * ace make:middleware Auth --stack=router
+ * ```
  */
 export default class MakeMiddleware extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:middleware'
+  /**
+   * The command description
+   */
   static description = 'Create a new middleware class for HTTP requests'
 
+  /**
+   * Command options configuration
+   */
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
 
+  /**
+   * Name of the middleware
+   */
   @args.string({ description: 'Name of the middleware' })
   declare name: string
 
+  /**
+   * The stack in which to register the middleware
+   */
   @flags.string({ description: 'The stack in which to register the middleware', alias: 's' })
   declare stack?: 'server' | 'named' | 'router'
 

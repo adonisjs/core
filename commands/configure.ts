@@ -14,24 +14,47 @@ import type { CommandOptions } from '../types/ace.ts'
 import { args, BaseCommand, flags } from '../modules/ace/main.ts'
 
 /**
- * The configure command is used to configure packages after installation
+ * Command to configure packages after installation by running their configuration hooks.
+ * Supports built-in configurations for VineJS, Edge, and health checks, or can execute
+ * custom configure functions exported by packages.
+ *
+ * @example
+ * ```
+ * ace configure @adonisjs/lucid
+ * ace configure vinejs
+ * ace configure edge
+ * ace configure health_checks
+ * ace configure @adonisjs/auth --force --verbose
+ * ```
  */
 export default class Configure extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'configure'
+
+  /**
+   * The command description
+   */
   static description = 'Configure a package after it has been installed'
+
+  /**
+   * Command options configuration.
+   * Allows unknown flags to be passed to package configure functions.
+   */
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
 
   /**
-   * Exposing all flags from the protected property "parsed"
+   * Expose all flags from the protected property "parsed" for access by package configure functions
    */
   get parsedFlags() {
     return this.parsed.flags
   }
 
   /**
-   * Exposing all args from the protected property "parsed"
+   * Expose all arguments from the protected property "parsed" for access by package configure functions
    */
   get parsedArgs() {
     return this.parsed._
@@ -44,25 +67,29 @@ export default class Configure extends BaseCommand {
   declare name: string
 
   /**
-   * Turn on verbose mode for packages installation
+   * Enable verbose logging during package installation and configuration
    */
   @flags.boolean({ description: 'Display logs in verbose mode', alias: 'v' })
   declare verbose?: boolean
 
   /**
-   * Forcefully overwrite existing files.
+   * Forcefully overwrite existing files during configuration
    */
   @flags.boolean({ description: 'Forcefully overwrite existing files', alias: 'f' })
   declare force?: boolean
 
   /**
-   * The root of the stubs directory. The value is defined after we import
-   * the package
+   * The root directory path of the package's stubs.
+   * Set automatically when the package exports a stubsRoot property.
    */
   declare stubsRoot: string
 
   /**
-   * Returns the package main exports
+   * Import and return the main exports of a package.
+   * Returns null if the package is not found, rethrows other errors.
+   *
+   * @param packageName - The name of the package to import
+   * @returns The package exports or null if not found
    */
   async #getPackageSource(packageName: string) {
     try {
@@ -80,7 +107,7 @@ export default class Configure extends BaseCommand {
   }
 
   /**
-   * Registers VineJS provider
+   * Configure VineJS validation library by registering its provider in the RC file
    */
   async #configureVineJS() {
     const codemods = await this.createCodemods()
@@ -90,7 +117,7 @@ export default class Configure extends BaseCommand {
   }
 
   /**
-   * Registers Edge provider
+   * Configure Edge template engine by registering its provider and adding view meta files
    */
   async #configureEdge() {
     const codemods = await this.createCodemods()
@@ -101,7 +128,7 @@ export default class Configure extends BaseCommand {
   }
 
   /**
-   * Configure health checks
+   * Configure health checks feature by generating the main health file and controller
    */
   async #configureHealthChecks() {
     const codemods = await this.createCodemods()
@@ -116,7 +143,8 @@ export default class Configure extends BaseCommand {
   }
 
   /**
-   * Creates codemods as per configure command options
+   * Create a codemods instance configured with command options.
+   * Sets overwrite and verbose flags based on command arguments.
    */
   async createCodemods() {
     const codemods = await super.createCodemods()
@@ -126,7 +154,8 @@ export default class Configure extends BaseCommand {
   }
 
   /**
-   * Run method is invoked by ace automatically
+   * Execute the configure command. Handles built-in configurations for VineJS, Edge,
+   * and health checks, or imports and executes the configure function from the specified package.
    */
   async run() {
     if (this.name === 'vinejs') {

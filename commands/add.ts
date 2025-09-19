@@ -14,26 +14,58 @@ import { type SupportedPackageManager } from '@adonisjs/assembler/types'
 /**
  * The install command is used to `npm install` and `node ace configure` a new package
  * in one go.
+ *
+ * @example
+ * ```
+ * ace add @adonisjs/lucid
+ * ace add @adonisjs/session --dev
+ * ace add vinejs --force
+ * ace add edge --package-manager=pnpm
+ * ```
  */
 export default class Add extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'add'
+  /**
+   * The command description
+   */
   static description = 'Install and configure a package'
+  /**
+   * Command options configuration
+   */
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
 
+  /**
+   * Package name to install and configure
+   */
   @args.string({ description: 'Package name' })
   declare name: string
 
+  /**
+   * Display logs in verbose mode
+   */
   @flags.boolean({ description: 'Display logs in verbose mode' })
   declare verbose?: boolean
 
+  /**
+   * Define the package manager you want to use
+   */
   @flags.string({ description: 'Define the package manager you want to use' })
   declare packageManager?: SupportedPackageManager
 
+  /**
+   * Should we install the package as a dev dependency
+   */
   @flags.boolean({ description: 'Should we install the package as a dev dependency', alias: 'D' })
   declare dev?: boolean
 
+  /**
+   * Forcefully overwrite existing files
+   */
   @flags.boolean({ description: 'Forcefully overwrite existing files' })
   declare force?: boolean
 

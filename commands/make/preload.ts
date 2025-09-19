@@ -18,15 +18,39 @@ const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnv
 type AllowedAppEnvironments = typeof ALLOWED_ENVIRONMENTS
 
 /**
- * Make a new preload file
+ * Command to create a new preload file in the start directory.
+ * Preload files are executed during application startup and can be used
+ * to set up global configurations, register global bindings, or perform
+ * application-wide initialization tasks.
+ *
+ * @example
+ * ```
+ * ace make:preload routes
+ * ace make:preload database --register
+ * ace make:preload events --no-register
+ * ace make:preload kernel --environments=web,console
+ * ```
  */
 export default class MakePreload extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:preload'
+
+  /**
+   * The command description
+   */
   static description = 'Create a new preload file inside the start directory'
 
+  /**
+   * Name of the preload file to create
+   */
   @args.string({ description: 'Name of the preload file' })
   declare name: string
 
+  /**
+   * Automatically register the preload file in the .adonisrc.ts file
+   */
   @flags.boolean({
     description: 'Auto register the preload file inside the .adonisrc.ts file',
     showNegatedVariantInHelp: true,
@@ -34,6 +58,9 @@ export default class MakePreload extends BaseCommand {
   })
   declare register?: boolean
 
+  /**
+   * Application environments where the preload file should be loaded
+   */
   @flags.array({
     description: `Define the preload file's environment. Accepted values are "${ALLOWED_ENVIRONMENTS}"`,
     alias: 'e',
@@ -41,12 +68,14 @@ export default class MakePreload extends BaseCommand {
   declare environments?: AllowedAppEnvironments
 
   /**
-   * The stub to use for generating the preload file
+   * The stub template file to use for generating the preload file
    */
   protected stubPath: string = 'make/preload/main.stub'
 
   /**
-   * Validate the environments flag passed by the user
+   * Validate that all specified environments are valid application environments.
+   *
+   * @returns True if all environments are valid or none specified, false otherwise
    */
   #isEnvironmentsFlagValid() {
     if (!this.environments || !this.environments.length) {
@@ -57,7 +86,8 @@ export default class MakePreload extends BaseCommand {
   }
 
   /**
-   * Run command
+   * Execute the command to create a new preload file.
+   * Validates inputs, generates the preload file, and optionally registers it in .adonisrc.ts.
    */
   async run() {
     /**

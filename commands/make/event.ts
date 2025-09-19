@@ -12,24 +12,51 @@ import { args, BaseCommand } from '../../modules/ace/main.ts'
 import { type CommandOptions } from '../../types/ace.ts'
 
 /**
- * The make event command to create a class based event
+ * Command to create a new event class.
+ * Events are data objects that encapsulate information about something
+ * that happened in your application and can be dispatched to listeners.
+ *
+ * @example
+ * ```
+ * ace make:event UserRegistered
+ * ace make:event OrderCompleted
+ * ace make:event EmailSent
+ * ```
  */
 export default class MakeEvent extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:event'
+
+  /**
+   * The command description
+   */
   static description = 'Create a new event class'
 
+  /**
+   * Command options configuration.
+   * Allows unknown flags to be passed through.
+   */
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
 
+  /**
+   * Name of the event class to create
+   */
   @args.string({ description: 'Name of the event' })
   declare name: string
 
   /**
-   * The stub to use for generating the event
+   * The stub template file to use for generating the event class
    */
   protected stubPath: string = 'make/event/main.stub'
 
+  /**
+   * Execute the command to create a new event class.
+   * Generates the event file with proper event structure.
+   */
   async run() {
     const codemods = await this.createCodemods()
     await codemods.makeUsingStub(stubsRoot, this.stubPath, {

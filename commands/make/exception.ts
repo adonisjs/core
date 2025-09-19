@@ -12,24 +12,51 @@ import { args, BaseCommand } from '../../modules/ace/main.ts'
 import { type CommandOptions } from '../../types/ace.ts'
 
 /**
- * Make a new exception class
+ * Command to create a new custom exception class.
+ * Custom exceptions allow you to define specific error types for your application
+ * with custom error messages, status codes, and error handling logic.
+ *
+ * @example
+ * ```
+ * ace make:exception ValidationException
+ * ace make:exception UnauthorizedException
+ * ace make:exception ResourceNotFoundException
+ * ```
  */
 export default class MakeException extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:exception'
+
+  /**
+   * The command description
+   */
   static description = 'Create a new custom exception class'
 
+  /**
+   * Command options configuration.
+   * Allows unknown flags to be passed through.
+   */
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
 
+  /**
+   * Name of the exception class to create
+   */
   @args.string({ description: 'Name of the exception' })
   declare name: string
 
   /**
-   * The stub to use for generating the command class
+   * The stub template file to use for generating the exception class
    */
   protected stubPath: string = 'make/exception/main.stub'
 
+  /**
+   * Execute the command to create a new custom exception class.
+   * Generates the exception file with proper error handling structure.
+   */
   async run() {
     const codemods = await this.createCodemods()
     await codemods.makeUsingStub(stubsRoot, this.stubPath, {

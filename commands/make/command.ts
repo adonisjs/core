@@ -12,20 +12,44 @@ import { args } from '../../modules/ace/main.ts'
 import { BaseCommand } from '../../modules/ace/main.ts'
 
 /**
- * Make a new ace command
+ * Command to create a new Ace command class.
+ * Ace commands are CLI commands that can be executed via the `ace` binary,
+ * allowing you to create custom functionality for your application's command line interface.
+ *
+ * @example
+ * ```
+ * ace make:command SendEmails
+ * ace make:command ProcessPayments
+ * ace make:command GenerateReports
+ * ace make:command CleanupFiles
+ * ```
  */
 export default class MakeCommand extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:command'
+
+  /**
+   * The command description
+   */
   static description = 'Create a new ace command class'
 
+  /**
+   * Name of the command class to create
+   */
   @args.string({ description: 'Name of the command' })
   declare name: string
 
   /**
-   * The stub to use for generating the command class
+   * The stub template file to use for generating the command class
    */
   protected stubPath: string = 'make/command/main.stub'
 
+  /**
+   * Execute the command to create a new Ace command class.
+   * Generates the command file with proper CLI command structure.
+   */
   async run() {
     const codemods = await this.createCodemods()
     await codemods.makeUsingStub(stubsRoot, this.stubPath, {

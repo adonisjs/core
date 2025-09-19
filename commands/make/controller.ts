@@ -14,27 +14,57 @@ import { type CommandOptions } from '../../types/ace.ts'
 
 /**
  * The make controller command to create an HTTP controller
+ *
+ * @example
+ * ```
+ * ace make:controller User
+ * ace make:controller User store update
+ * ace make:controller User --resource
+ * ace make:controller User --api
+ * ace make:controller User --singular
+ * ```
  */
 export default class MakeController extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:controller'
+  /**
+   * The command description
+   */
   static description = 'Create a new HTTP controller class'
 
+  /**
+   * Command options configuration
+   */
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
 
+  /**
+   * The name of the controller
+   */
   @args.string({ description: 'The name of the controller' })
   declare name: string
 
+  /**
+   * Create controller with custom method names
+   */
   @args.spread({ description: 'Create controller with custom method names', required: false })
   declare actions?: string[]
 
+  /**
+   * Generate controller in singular form
+   */
   @flags.boolean({
     description: 'Generate controller in singular form',
     alias: 's',
   })
   declare singular: boolean
 
+  /**
+   * Generate resourceful controller with methods to perform CRUD actions on a resource
+   */
   @flags.boolean({
     description:
       'Generate resourceful controller with methods to perform CRUD actions on a resource',
@@ -42,6 +72,9 @@ export default class MakeController extends BaseCommand {
   })
   declare resource: boolean
 
+  /**
+   * Generate resourceful controller without the "edit" and the "create" methods
+   */
   @flags.boolean({
     description: 'Generate resourceful controller without the "edit" and the "create" methods',
     alias: 'a',

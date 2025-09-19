@@ -13,15 +13,34 @@ import { type CommandOptions } from '../../types/ace.ts'
 
 /**
  * Make a new service class
+ *
+ * @example
+ * ```
+ * ace make:service UserService
+ * ace make:service AuthService
+ * ace make:service User/ProfileService
+ * ```
  */
 export default class MakeService extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:service'
+  /**
+   * The command description
+   */
   static description = 'Create a new service class'
 
+  /**
+   * Command options configuration
+   */
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
 
+  /**
+   * Name of the service
+   */
   @args.string({ description: 'Name of the service' })
   declare name: string
 

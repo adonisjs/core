@@ -15,28 +15,63 @@ const ALLOWED_TYPES = ['string', 'boolean', 'number', 'enum'] as const
 type AllowedTypes = (typeof ALLOWED_TYPES)[number]
 
 /**
- * The env:add command is used to add a new environment variable to the
- * `.env`, `.env.example` and `start/env.ts` files.
+ * Command to add a new environment variable to the application.
+ * Updates .env, .env.example, and start/env.ts files with the new variable,
+ * including appropriate validation schema based on the variable type.
+ *
+ * @example
+ * ```
+ * ace env:add
+ * ace env:add DATABASE_URL postgres://localhost:5432/mydb
+ * ace env:add API_KEY secret --type=string
+ * ace env:add PORT 3333 --type=number
+ * ace env:add DEBUG true --type=boolean
+ * ace env:add LOG_LEVEL info --type=enum --enum-values=debug,info,warn,error
+ * ```
  */
 export default class EnvAdd extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'env:add'
+
+  /**
+   * The command description
+   */
   static description = 'Add a new environment variable'
+
+  /**
+   * Command options configuration.
+   * Allows unknown flags to be passed through.
+   */
   static options: CommandOptions = {
     allowUnknownFlags: true,
   }
 
+  /**
+   * Environment variable name (will be converted to SCREAMING_SNAKE_CASE)
+   */
   @args.string({
     description: 'Variable name. Will be converted to screaming snake case',
     required: false,
   })
   declare name: string
 
+  /**
+   * Environment variable value
+   */
   @args.string({ description: 'Variable value', required: false })
   declare value: string
 
+  /**
+   * Data type of the environment variable (string, boolean, number, enum)
+   */
   @flags.string({ description: 'Type of the variable' })
   declare type: AllowedTypes
 
+  /**
+   * Allowed values for enum type variables
+   */
   @flags.array({
     description: 'Allowed values for the enum type in a comma-separated list',
     default: [''],
@@ -45,12 +80,18 @@ export default class EnvAdd extends BaseCommand {
   declare enumValues: string[]
 
   /**
-   * Validate the type flag passed by the user
+   * Validate that the provided type is one of the allowed types.
+   *
+   * @returns True if the type is valid, false otherwise
    */
   #isTypeFlagValid() {
     return ALLOWED_TYPES.includes(this.type)
   }
 
+  /**
+   * Execute the command to add a new environment variable.
+   * Prompts for missing values, validates inputs, and updates all relevant files.
+   */
   async run() {
     /**
      * Prompt for missing name

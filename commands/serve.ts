@@ -16,12 +16,30 @@ import { importAssembler, importTypeScript } from '../src/utils.ts'
  * Serve command is used to run the AdonisJS HTTP server during development. The
  * command under the hood runs the "bin/server.ts" file and watches for file
  * system changes
+ *
+ * @example
+ * ```
+ * ace serve
+ * ace serve --watch
+ * ace serve --hmr
+ * ace serve --poll
+ * ace serve --no-clear
+ * ```
  */
 export default class Serve extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'serve'
+  /**
+   * The command description
+   */
   static description =
     'Start the development HTTP server along with the file watcher to perform restarts on file change'
 
+  /**
+   * Help text for the command
+   */
   static help = [
     'Start the development server with file watcher using the following command.',
     '```',
@@ -40,24 +58,42 @@ export default class Serve extends BaseCommand {
     '```',
   ]
 
+  /**
+   * Command options configuration
+   */
   static options: CommandOptions = {
     staysAlive: true,
   }
 
+  /**
+   * The development server instance
+   */
   declare devServer: DevServer
 
+  /**
+   * Start the server with HMR support
+   */
   @flags.boolean({ description: 'Start the server with HMR support' })
   declare hmr?: boolean
 
+  /**
+   * Watch filesystem and restart the HTTP server on file change
+   */
   @flags.boolean({
     description: 'Watch filesystem and restart the HTTP server on file change',
     alias: 'w',
   })
   declare watch?: boolean
 
+  /**
+   * Use polling to detect filesystem changes
+   */
   @flags.boolean({ description: 'Use polling to detect filesystem changes', alias: 'p' })
   declare poll?: boolean
 
+  /**
+   * Clear the terminal for new logs after file change
+   */
   @flags.boolean({
     description: 'Clear the terminal for new logs after file change',
     showNegatedVariantInHelp: true,
@@ -67,6 +103,8 @@ export default class Serve extends BaseCommand {
 
   /**
    * Log a development dependency is missing
+   *
+   * @param dependency - The name of the missing dependency
    */
   #logMissingDevelopmentDependency(dependency: string) {
     this.logger.error(

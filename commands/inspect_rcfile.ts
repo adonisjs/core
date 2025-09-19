@@ -10,12 +10,31 @@
 import { BaseCommand } from '../modules/ace/main.ts'
 
 /**
- * Prints the RcFile file contents to the terminal
+ * Command to inspect and display the AdonisJS RC file contents with default values.
+ * The RC file contains configuration for providers, preloads, commands, and other
+ * application settings. This command formats and displays the contents in a readable JSON format.
+ *
+ * @example
+ * ```
+ * ace inspect:rcfile
+ * ```
  */
 export default class InspectRCFile extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'inspect:rcfile'
+
+  /**
+   * The command description
+   */
   static description = 'Inspect the RC file with its default values'
 
+  /**
+   * Execute the command to display RC file contents.
+   * Transforms provider, preload, and command entries to display their file paths
+   * as strings and formats the output as readable JSON.
+   */
   async run() {
     const { raw, providers, preloads, commands, ...rest } = this.app.rcFile
     this.logger.log(

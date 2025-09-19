@@ -18,15 +18,38 @@ const ALLOWED_ENVIRONMENTS = ['web', 'console', 'test', 'repl'] satisfies AppEnv
 type AllowedAppEnvironments = typeof ALLOWED_ENVIRONMENTS
 
 /**
- * Make a new provider class
+ * Command to create a new service provider class.
+ * Service providers are used to register bindings, configure services,
+ * and bootstrap application components during startup.
+ *
+ * @example
+ * ```
+ * ace make:provider AuthProvider
+ * ace make:provider DatabaseProvider --register
+ * ace make:provider AppProvider --no-register
+ * ace make:provider CacheProvider --environments=web,console
+ * ```
  */
 export default class MakeProvider extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:provider'
+
+  /**
+   * The command description
+   */
   static description = 'Create a new service provider class'
 
+  /**
+   * Name of the service provider to create
+   */
   @args.string({ description: 'Name of the provider' })
   declare name: string
 
+  /**
+   * Automatically register the provider in the .adonisrc.ts file
+   */
   @flags.boolean({
     description: 'Auto register the provider inside the .adonisrc.ts file',
     showNegatedVariantInHelp: true,
@@ -34,6 +57,9 @@ export default class MakeProvider extends BaseCommand {
   })
   declare register?: boolean
 
+  /**
+   * Application environments where the provider should be loaded
+   */
   @flags.array({
     description: `Define the provider environment. Accepted values are "${ALLOWED_ENVIRONMENTS}"`,
     alias: 'e',
@@ -41,12 +67,14 @@ export default class MakeProvider extends BaseCommand {
   declare environments?: AllowedAppEnvironments
 
   /**
-   * The stub to use for generating the provider class
+   * The stub template file to use for generating the provider class
    */
   protected stubPath: string = 'make/provider/main.stub'
 
   /**
-   * Validate the environments flag passed by the user
+   * Validate that all specified environments are valid application environments.
+   *
+   * @returns True if all environments are valid or none specified, false otherwise
    */
   #isEnvironmentsFlagValid() {
     if (!this.environments || !this.environments.length) {
@@ -55,6 +83,10 @@ export default class MakeProvider extends BaseCommand {
     return this.environments.every((one) => ALLOWED_ENVIRONMENTS.includes(one))
   }
 
+  /**
+   * Execute the command to create a new service provider.
+   * Validates inputs, generates the provider file, and optionally registers it in .adonisrc.ts.
+   */
   async run() {
     /**
      * Ensure the environments are valid when provided via flag

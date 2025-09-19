@@ -11,20 +11,44 @@ import { stubsRoot } from '../../stubs/main.ts'
 import { args, BaseCommand } from '../../modules/ace/main.ts'
 
 /**
- * Make a new EdgeJS template file
+ * Command to create a new Edge.js template file.
+ * Edge templates are used for rendering HTML views in your web application,
+ * supporting layouts, partials, components, and template inheritance.
+ *
+ * @example
+ * ```
+ * ace make:view home
+ * ace make:view users/profile
+ * ace make:view components/navbar
+ * ace make:view layouts/app
+ * ```
  */
 export default class MakeView extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:view'
+
+  /**
+   * The command description
+   */
   static description = 'Create a new Edge.js template file'
 
+  /**
+   * Name of the template file to create
+   */
   @args.string({ description: 'Name of the template' })
   declare name: string
 
   /**
-   * The stub to use for generating the template
+   * The stub template file to use for generating the Edge template
    */
   protected stubPath: string = 'make/view/main.stub'
 
+  /**
+   * Execute the command to create a new Edge.js template file.
+   * Generates the template file in the views directory.
+   */
   async run() {
     const codemods = await this.createCodemods()
     await codemods.makeUsingStub(stubsRoot, this.stubPath, {

@@ -11,25 +11,51 @@ import { stubsRoot } from '../../stubs/main.ts'
 import { args, flags, BaseCommand } from '../../modules/ace/main.ts'
 
 /**
- * Make a new test file
+ * Command to create a new Japa test file.
+ * Supports multiple test suites and automatically detects or prompts for
+ * the appropriate suite and directory based on application configuration.
+ *
+ * @example
+ * ```
+ * ace make:test UserController
+ * ace make:test UserModel --suite=unit
+ * ace make:test AuthService --suite=integration
+ * ```
  */
 export default class MakeTest extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'make:test'
+
+  /**
+   * The command description
+   */
   static description = 'Create a new Japa test file'
 
+  /**
+   * Name of the test file to create
+   */
   @args.string({ description: 'Name of the test file' })
   declare name: string
 
+  /**
+   * Test suite name where the test file should be created
+   */
   @flags.string({ description: 'The suite for which to create the test file', alias: 's' })
   declare suite?: string
 
   /**
-   * The stub to use for generating the test file
+   * The stub template file to use for generating the test file
    */
   protected stubPath: string = 'make/test/main.stub'
 
   /**
-   * Returns the suite name for creating the test file
+   * Determine the test suite name for creating the test file.
+   * Uses the provided suite flag, or automatically selects if only one suite exists,
+   * or prompts the user to choose from available suites.
+   *
+   * @returns The name of the selected test suite
    */
   async #getSuite(): Promise<string> {
     if (this.suite) {
@@ -62,7 +88,11 @@ export default class MakeTest extends BaseCommand {
   }
 
   /**
-   * Returns the directory path for the selected suite.
+   * Determine the directory path for the test file within the selected suite.
+   * Automatically selects if only one directory exists, otherwise prompts the user.
+   *
+   * @param directories - Array of available directories for the suite
+   * @returns The selected directory path
    */
   async #getSuiteDirectory(directories: string[]): Promise<string> {
     if (directories.length === 1) {
@@ -77,7 +107,10 @@ export default class MakeTest extends BaseCommand {
   }
 
   /**
-   * Find suite info from the rcFile file
+   * Find suite configuration from the RC file by name.
+   *
+   * @param suiteName - The name of the suite to find
+   * @returns The suite configuration or undefined if not found
    */
   #findSuite(suiteName: string) {
     return this.app.rcFile.tests.suites.find((suite) => {
@@ -86,7 +119,9 @@ export default class MakeTest extends BaseCommand {
   }
 
   /**
-   * Executed by ace
+   * Execute the command to create a new test file.
+   * Validates the suite exists, prompts for missing information,
+   * and generates the test file in the appropriate location.
    */
   async run() {
     const suite = this.#findSuite(await this.#getSuite())

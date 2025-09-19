@@ -14,16 +14,35 @@ import { BaseCommand, flags } from '../modules/ace/main.ts'
 /**
  * The generate key command is used to generate the app key
  * and write it inside the .env file.
+ *
+ * @example
+ * ```
+ * ace generate:key
+ * ace generate:key --show
+ * ace generate:key --force
+ * ```
  */
 export default class GenerateKey extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'generate:key'
+  /**
+   * The command description
+   */
   static description = 'Generate a cryptographically secure random application key'
 
+  /**
+   * Display the key on the terminal, instead of writing it to .env file
+   */
   @flags.boolean({
     description: 'Display the key on the terminal, instead of writing it to .env file',
   })
   declare show: boolean
 
+  /**
+   * Force update .env file in production environment
+   */
   @flags.boolean({
     description: 'Force update .env file in production environment',
   })

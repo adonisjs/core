@@ -13,12 +13,28 @@ import { importAssembler, importTypeScript } from '../src/utils.ts'
 /**
  * Create the production build by compiling TypeScript source and the
  * frontend assets
+ *
+ * @example
+ * ```
+ * ace build
+ * ace build --ignore-ts-errors
+ * ace build --package-manager=pnpm
+ * ```
  */
 export default class Build extends BaseCommand {
+  /**
+   * The command name
+   */
   static commandName = 'build'
+  /**
+   * The command description
+   */
   static description =
     'Build application for production by compiling frontend assets and TypeScript source to JavaScript'
 
+  /**
+   * Help text for the command
+   */
   static help = [
     'Create the production build using the following command.',
     '```',
@@ -32,9 +48,15 @@ export default class Build extends BaseCommand {
     '```',
   ]
 
+  /**
+   * Ignore TypeScript errors and continue with the build process
+   */
   @flags.boolean({ description: 'Ignore TypeScript errors and continue with the build process' })
   declare ignoreTsErrors?: boolean
 
+  /**
+   * Define the package manager to copy the appropriate lock file
+   */
   @flags.string({
     description: 'Define the package manager to copy the appropriate lock file',
   })
@@ -42,6 +64,8 @@ export default class Build extends BaseCommand {
 
   /**
    * Log a development dependency is missing
+   *
+   * @param dependency - The name of the missing dependency
    */
   #logMissingDevelopmentDependency(dependency: string) {
     this.logger.error(
