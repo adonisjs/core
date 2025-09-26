@@ -283,7 +283,7 @@ test.group('Codemods | install packages', (group) => {
     await fs.create('app/policies/main.ts', 'export const policies = {}')
 
     const codemods = new Codemods(ace.app, ace.ui.logger)
-    await codemods.installPackages([{ name: '@adonisjs/assembler@next', isDevDependency: true }])
+    await codemods.installPackages([{ name: '@adonisjs/assembler', isDevDependency: true }])
 
     await assert.dirExists('node_modules/@adonisjs/assembler')
   })
@@ -298,7 +298,7 @@ test.group('Codemods | install packages', (group) => {
 
     const codemods = new Codemods(ace.app, ace.ui.logger)
     codemods.verboseInstallOutput = true
-    await codemods.installPackages([{ name: '@adonisjs/assembler@next', isDevDependency: true }])
+    await codemods.installPackages([{ name: '@adonisjs/assembler', isDevDependency: true }])
 
     await assert.dirExists('node_modules/@adonisjs/assembler')
   })

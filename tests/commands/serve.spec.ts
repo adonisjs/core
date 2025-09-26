@@ -183,7 +183,9 @@ test.group('Serve command', () => {
       }"
     `)
     assert.snapshot(await fs.contents('.adonisjs/server/events.ts')).matchInline(`
-      "export const events = {
+      "
+
+      export const events = {
       }"
     `)
     assert.snapshot(await fs.contents('.adonisjs/server/listeners.ts')).matchInline(`
