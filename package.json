@@ -84,7 +84,7 @@
     "index:commands": "node --import=@poppinss/ts-exec toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.9",
+    "@adonisjs/assembler": "^8.0.0-next.10",
     "@adonisjs/eslint-config": "^3.0.0-next.1",
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/tsconfig": "^2.0.0-next.0",
@@ -123,7 +123,7 @@
   },
   "dependencies": {
     "@adonisjs/ace": "^14.0.1-next.1",
-    "@adonisjs/application": "^9.0.0-next.8",
+    "@adonisjs/application": "^9.0.0-next.9",
     "@adonisjs/bodyparser": "^11.0.0-next.1",
     "@adonisjs/config": "^6.0.0-next.1",
     "@adonisjs/encryption": "^7.0.0-next.1",
@@ -148,7 +148,7 @@
     "string-width": "^8.1.0"
   },
   "peerDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.6",
+    "@adonisjs/assembler": "^8.0.0-next.10",
     "@vinejs/vine": "^3.0.0",
     "argon2": "^0.43.0",
     "bcrypt": "^6.0.0",
