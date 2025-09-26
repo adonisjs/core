@@ -82,9 +82,11 @@ test.group('Index generator', () => {
 
     await assert.fileExists('.adonisjs/server/events.ts')
     await assert.fileContains('.adonisjs/server/events.ts', [
+      `import BillingInvoiceCreated from '#events/billing/invoice_created'`,
+      `import UserRegistered from '#events/user_registered'`,
       `export const events = {`,
-      `UserRegistered: () => import('#events/user_registered')`,
-      `InvoiceCreated: () => import('#events/billing/invoice_created')`,
+      `UserRegistered: UserRegistered`,
+      `InvoiceCreated: BillingInvoiceCreated`,
     ])
     assert.isDefined(
       cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/server/events.ts'))
