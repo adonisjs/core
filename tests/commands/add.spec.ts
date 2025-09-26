@@ -269,4 +269,25 @@ test.group('Install', (group) => {
     await assert.fileContains('package.json', '@vinejs/vine')
     await assert.fileContains('adonisrc.ts', '@adonisjs/core/providers/vinejs_provider')
   })
+
+  test('install adonisjs dependencies as next version', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: createFileImporter(fs.baseUrl),
+    })
+
+    await setupProject(fs, 'npm')
+    await setupPackage(fs)
+
+    await ace.app.init()
+
+    ace.addLoader(new ListLoader([Configure]))
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Add, ['@adonisjs/fold'])
+    command.verbose = VERBOSE
+
+    await command.exec()
+
+    await assert.fileContains('package.json', /"@adonisjs\/fold":"\^[\d.]+\-next/)
+  })
 })
