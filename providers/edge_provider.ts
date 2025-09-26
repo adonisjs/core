@@ -95,6 +95,7 @@ export default class EdgeServiceProvider {
 
     /**
      * Define Edge global helpers
+     * @deprecated
      */
     edge.global('route', function (...args: Parameters<Router['makeUrl']>) {
       return router.makeUrl(...args)
@@ -104,6 +105,16 @@ export default class EdgeServiceProvider {
     })
     edge.global('app', app)
     edge.global('config', edgeConfigResolver)
+
+    /**
+     * Route helpers
+     */
+    edge.global('urlFor', function (...args: any[]) {
+      return (router.urlBuilder.urlFor as any)(...args)
+    })
+    edge.global('signedUrlFor', function (...args: any[]) {
+      return (router.urlBuilder.signedUrlFor as any)(...args)
+    })
 
     /**
      * Creating a isolated instance of edge renderer
