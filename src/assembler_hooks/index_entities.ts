@@ -68,6 +68,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
       if (events.enabled) {
         indexGenerator.add('events', {
           source: events.source,
+          disableLazyImports: true,
           glob: events.glob,
           as: 'barrelFile',
           exportName: 'events',
