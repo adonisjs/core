@@ -159,15 +159,24 @@ test.group('Index generator', () => {
     await generator.generate()
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
-    await assert.fileContains('.adonisjs/client/data.d.ts', [
-      `import { InferData } from '@adonisjs/core/types/transformers'`,
-      `import BlogPostTransformer from '#transformers/blog/post_transformer'`,
-      `import UserTransformer from '#transformers/user_transformer'`,
-      `export namespace Data {`,
-      `export type Post = InferData<BlogPostTransformer>`,
-      `export namespace Blog {`,
-      `export type User = InferData<UserTransformer>`,
-    ])
+    assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
+      "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
+      import BlogPostTransformer from '#transformers/blog/post_transformer'
+      import UserTransformer from '#transformers/user_transformer'
+
+      export namespace Data {
+        export namespace Blog {
+          export type Post = InferData<BlogPostTransformer>
+          export namespace Post {
+            export type Variants = InferVariants<BlogPostTransformer>
+          }
+        }
+        export type User = InferData<UserTransformer>
+        export namespace User {
+          export type Variants = InferVariants<UserTransformer>
+        }
+      }"
+    `)
     assert.isDefined(
       cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/client/data.d.ts'))
     )

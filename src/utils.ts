@@ -86,7 +86,9 @@ export async function outputTransformerDataObjects(
   buffer: Assembler.FileBuffer
 ) {
   const importsBuffer = buffer.create()
-  importsBuffer.write(`import { InferData } from '@adonisjs/core/types/transformers'`)
+  importsBuffer.write(
+    `import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'`
+  )
 
   buffer.writeLine(importsBuffer)
   buffer.write('export namespace Data {').indent()
@@ -106,6 +108,9 @@ export async function outputTransformerDataObjects(
         const importName = `${parents.join()}${key}Transformer`
         importsBuffer.write(`import ${importName} from '${value}'`)
         buffer.write(`export type ${key} = InferData<${importName}>`)
+        buffer.write(`export namespace ${key} {`).indent()
+        buffer.write(`export type Variants = InferVariants<${importName}>`)
+        buffer.dedent().write('}')
       } else {
         buffer.write(`export namespace ${key} {`).indent()
         generateNamespaceTree(value, [...parents, key])
