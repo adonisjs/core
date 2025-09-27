@@ -400,6 +400,7 @@ export type IndexEntitiesConfig = {
   }
   transformers?: {
     enabled?: boolean
+    withSharedProps?: boolean
     source?: string
     importAlias?: string
     glob?: string[]

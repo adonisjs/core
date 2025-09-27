@@ -83,12 +83,17 @@ export async function importTypeScript(
  */
 export async function outputTransformerDataObjects(
   transformersList: RecursiveFileTree,
-  buffer: Assembler.FileBuffer
+  buffer: Assembler.FileBuffer,
+  withSharedProps: boolean
 ) {
   const importsBuffer = buffer.create()
   importsBuffer.write(
     `import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'`
   )
+
+  if (withSharedProps) {
+    importsBuffer.write(`import type { InferSharedProps } from '@adonisjs/inertia/types'`)
+  }
 
   buffer.writeLine(importsBuffer)
   buffer.write('export namespace Data {').indent()
@@ -120,5 +125,11 @@ export async function outputTransformerDataObjects(
   }
 
   generateNamespaceTree(transformersList, [])
+
+  if (withSharedProps) {
+    importsBuffer.write(`import type InertiaMiddleware from '#middleware/inertia_middleware'`)
+    buffer.write('export type SharedProps = InferSharedProps<InertiaMiddleware>')
+  }
+
   buffer.dedent().write('}')
 }

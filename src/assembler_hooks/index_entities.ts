@@ -59,7 +59,12 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
     entities.controllers
   )
   const transformers = Object.assign(
-    { enabled: false, source: 'app/transformers', importAlias: '#transformers' },
+    {
+      enabled: false,
+      source: 'app/transformers',
+      importAlias: '#transformers',
+      withSharedProps: false,
+    },
     entities.transformers
   )
 
@@ -116,7 +121,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
               },
               transformValue: helpers.toImportPath,
             })
-            outputTransformerDataObjects(transformersList, buffer)
+            outputTransformerDataObjects(transformersList, buffer, transformers.withSharedProps)
           },
           importAlias: transformers.importAlias,
           output: '.adonisjs/client/data.d.ts',
