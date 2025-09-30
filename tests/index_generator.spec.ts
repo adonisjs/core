@@ -161,8 +161,8 @@ test.group('Index generator', () => {
     await assert.fileExists('.adonisjs/client/data.d.ts')
     assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
       "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
-      import BlogPostTransformer from '#transformers/blog/post_transformer'
-      import UserTransformer from '#transformers/user_transformer'
+      import type BlogPostTransformer from '#transformers/blog/post_transformer'
+      import type UserTransformer from '#transformers/user_transformer'
 
       export namespace Data {
         export namespace Blog {
@@ -213,8 +213,8 @@ test.group('Index generator', () => {
     assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
       "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
       import type { InferSharedProps } from '@adonisjs/inertia/types'
-      import BlogPostTransformer from '#transformers/blog/post_transformer'
-      import UserTransformer from '#transformers/user_transformer'
+      import type BlogPostTransformer from '#transformers/blog/post_transformer'
+      import type UserTransformer from '#transformers/user_transformer'
       import type InertiaMiddleware from '#middleware/inertia_middleware'
 
       export namespace Data {
