@@ -20,6 +20,7 @@ import { Router, Server } from '../modules/http/main.ts'
 import { BaseEvent, Emitter } from '../modules/events.ts'
 import { serialize } from '../modules/transformers/main.ts'
 import { type SerializeFn } from '../types/transformers.ts'
+import { type ContainerResolver } from '../modules/container.ts'
 import type { ApplicationService, LoggerService } from '../src/types.ts'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
 
@@ -375,8 +376,8 @@ export default class AppServiceProvider {
     BaseEvent.useEmitter(await this.app.container.make('emitter'))
     HttpContext.instanceProperty(
       'serialize',
-      function (this: HttpContext, ...args: Parameters<SerializeFn>) {
-        return serialize(...args) as any
+      function (this: HttpContext, value: any, container?: ContainerResolver<any>) {
+        return serialize(value, container ?? this.containerResolver) as any
       }
     )
   }
