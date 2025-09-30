@@ -132,7 +132,7 @@
     "@adonisjs/fold": "^11.0.0-next.2",
     "@adonisjs/hash": "^10.0.0-next.1",
     "@adonisjs/health": "^3.0.0-next.0",
-    "@adonisjs/http-server": "^8.0.0-next.7",
+    "@adonisjs/http-server": "^8.0.0-next.8",
     "@adonisjs/http-transformers": "^1.4.0",
     "@adonisjs/logger": "^7.1.0-next.0",
     "@adonisjs/repl": "^5.0.0-next.0",

@@ -49,7 +49,7 @@ export { default as base64 } from '@poppinss/utils/base64'
  * Core utilities including function composition, secret management,
  * safe equality comparison, and message building.
  */
-export { compose, Secret, safeEqual, MessageBuilder } from '@poppinss/utils'
+export { compose, Secret, safeEqual, MessageBuilder, defineStaticProperty } from '@poppinss/utils'
 
 /**
  * Verification token utility for creating secure tokens.
