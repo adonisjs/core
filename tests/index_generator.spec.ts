@@ -175,7 +175,8 @@ test.group('Index generator', () => {
         export namespace User {
           export type Variants = InferVariants<UserTransformer>
         }
-      }"
+      }
+      "
     `)
     assert.isDefined(
       cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/client/data.d.ts'))
@@ -229,7 +230,8 @@ test.group('Index generator', () => {
           export type Variants = InferVariants<UserTransformer>
         }
         export type SharedProps = InferSharedProps<InertiaMiddleware>
-      }"
+      }
+      "
     `)
     assert.isDefined(
       cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/client/data.d.ts'))

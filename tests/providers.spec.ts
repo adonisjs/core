@@ -309,7 +309,7 @@ test.group('Providers', () => {
       `declare module '@adonisjs/core/types/http' {`,
       '  type ScannedRoutes = {',
       `export interface RoutesList extends ScannedRoutes {}`,
-      `'ALL': {`,
+      `ALL: {`,
       'users.index',
       'posts.index',
     ])

@@ -179,18 +179,16 @@ test.group('Serve command', () => {
     await command.exec()
 
     assert.snapshot(await fs.contents('.adonisjs/server/controllers.ts')).matchInline(`
-      "export const controllers = {
-      }"
+      "export const controllers = {}
+      "
     `)
     assert.snapshot(await fs.contents('.adonisjs/server/events.ts')).matchInline(`
+      "export const events = {}
       "
-
-      export const events = {
-      }"
     `)
     assert.snapshot(await fs.contents('.adonisjs/server/listeners.ts')).matchInline(`
-      "export const listeners = {
-      }"
+      "export const listeners = {}
+      "
     `)
   })
 
@@ -213,8 +211,8 @@ test.group('Serve command', () => {
     await command.exec()
 
     assert.snapshot(await fs.contents('.adonisjs/server/controllers.ts')).matchInline(`
-      "export const controllers = {
-      }"
+      "export const controllers = {}
+      "
     `)
     await assert.fileNotExists('.adonisjs/server/events.ts')
     await assert.fileNotExists('.adonisjs/server/listeners.ts')

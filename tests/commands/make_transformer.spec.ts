@@ -27,8 +27,6 @@ test.group('Make transformer', () => {
     })
 
     await assert.fileEquals('app/transformers/user_transformer.ts', contents)
-    console.log(contents)
-
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
         message: 'green(DONE:)    create app/transformers/user_transformer.ts',
