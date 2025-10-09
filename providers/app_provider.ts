@@ -311,7 +311,7 @@ export default class AppServiceProvider {
         '  type ScannedRoutes = {',
         types,
         '  }',
-        'export interface RoutesList extends ScannedRoutes {}',
+        '  export interface RoutesList extends ScannedRoutes {}',
         '}',
       ].join('\n')
     )
