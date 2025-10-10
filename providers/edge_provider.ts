@@ -12,6 +12,7 @@ import { type URLOptions } from '../types/http.ts'
 import type { ApplicationService } from '../src/types.ts'
 import { pluginEdgeDumper } from '../modules/dumper/plugins/edge.ts'
 import { BriskRoute, HttpContext, Qs, type Route, type Router } from '../modules/http/main.ts'
+import { type ClientRouteJSON } from '@adonisjs/http-server/client/url_builder'
 
 declare module '@adonisjs/core/http' {
   interface HttpContext {
@@ -85,6 +86,26 @@ export default class EdgeServiceProvider {
       return app.config.has(key)
     }
 
+    function clientRoutes() {
+      const routes = router.toJSON()
+      return Object.keys(routes).reduce<Record<string, ClientRouteJSON[]>>((result, domain) => {
+        result[domain] = routes[domain].reduce<ClientRouteJSON[]>((routesResult, route) => {
+          if (!route.name) {
+            return routesResult
+          }
+          routesResult.push({
+            domain: route.domain,
+            methods: route.methods,
+            pattern: route.pattern,
+            tokens: route.tokens,
+            name: route.name,
+          })
+          return routesResult
+        }, [])
+        return result
+      }, {})
+    }
+
     /**
      * Mount the default disk
      */
@@ -105,8 +126,15 @@ export default class EdgeServiceProvider {
     edge.global('signedRoute', function (...args: Parameters<Router['makeSignedUrl']>) {
       return router.makeSignedUrl(...args)
     })
+
     edge.global('app', app)
     edge.global('config', edgeConfigResolver)
+    edge.global('routes', function () {
+      return clientRoutes()
+    })
+    edge.global('routesJSON', function () {
+      return JSON.stringify(clientRoutes())
+    })
 
     /**
      * Route helpers

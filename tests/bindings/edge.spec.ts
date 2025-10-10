@@ -177,4 +177,35 @@ test.group('Bindings | Edge', () => {
       },
     })
   })
+
+  test('share routes with names with edge', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+
+    const UsersController = () => import('#controllers/users_controller' as any)
+
+    const router = await app.container.make('router')
+    router.get('/users/:id', () => {})
+    router.get('/users', [UsersController, 'index'])
+    router.commit()
+
+    assert
+      .snapshot(edge.globals.routesJSON())
+      .matchInline(
+        '"{\\"root\\":[{\\"domain\\":\\"root\\",\\"methods\\":[\\"GET\\",\\"HEAD\\"],\\"pattern\\":\\"/users\\",\\"tokens\\":[{\\"old\\":\\"/users\\",\\"type\\":0,\\"val\\":\\"users\\",\\"end\\":\\"\\"}],\\"name\\":\\"users.index\\"}]}"'
+      )
+  })
 })
