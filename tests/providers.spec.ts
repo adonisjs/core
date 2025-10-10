@@ -269,7 +269,7 @@ test.group('Providers', () => {
     assert.include(dumper.dumpToHtml([1, 2, 3]), '[...2 more items]')
   })
 
-  test('generate routes JSON and types file once app is ready', async ({ assert, fs }) => {
+  test('generate routes types file once app is ready', async ({ assert, fs }) => {
     fs.baseUrl = BASE_URL
     fs.basePath = BASE_PATH
 
@@ -300,15 +300,11 @@ test.group('Providers', () => {
 
     await app.start(() => {})
 
-    await assert.fileContains('.adonisjs/client/routes.json', [
-      `"importExpression": "()=>import('#controllers/posts_controller')"`,
-      `"importExpression": "#controllers/users_controllers"`,
-    ])
     await assert.fileContains('.adonisjs/server/routes.d.ts', [
       `import '@adonisjs/core/types/http'`,
       `declare module '@adonisjs/core/types/http' {`,
-      '  type ScannedRoutes = {',
       `export interface RoutesList extends ScannedRoutes {}`,
+      'export type ScannedRoutes = {',
       `ALL: {`,
       'users.index',
       'posts.index',

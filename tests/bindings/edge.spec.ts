@@ -11,6 +11,7 @@ import edge from 'edge.js'
 import { test } from '@japa/runner'
 
 import '../../providers/edge_provider.js'
+import { Qs } from '../../modules/http/main.ts'
 import { HttpContextFactory } from '../../factories/http.ts'
 import { IgnitorFactory } from '../../factories/core/ignitor.ts'
 
@@ -38,6 +39,7 @@ test.group('Bindings | Edge', () => {
     assert.isTrue(edge.globals.config.has('app.appKey'))
     assert.isFalse(edge.globals.config.has('foobar'))
     assert.strictEqual(edge.globals.app, app)
+    assert.instanceOf(edge.globals.qs, Qs)
 
     const router = await app.container.make('router')
     router.get('/users/:id', () => {})
@@ -77,5 +79,59 @@ test.group('Bindings | Edge', () => {
 
     await route?.route.execute(route.route, app.container.createResolver(), ctx, () => {})
     assert.equal(ctx.response.getBody(), 'Hello virk')
+  })
+
+  test('make form action using formAttributes helper', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+
+    const router = await app.container.make('router')
+    router.get('/users/:id', () => {}).as('users.show')
+    router.commit()
+
+    assert.deepEqual(edge.globals.formAttributes('users.show', 'get', { id: 1 }), {
+      action: '/users/1',
+      method: 'GET',
+    })
+  })
+
+  test('make action via method spoofing', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+
+    const router = await app.container.make('router')
+    router.put('/users/:id', () => {}).as('users.update')
+    router.commit()
+
+    assert.deepEqual(edge.globals.formAttributes('users.update', 'put', { id: 1 }), {
+      action: '/users/1?_method=PUT',
+      method: 'POST',
+    })
   })
 })

@@ -55,8 +55,3 @@ export { compose, Secret, safeEqual, MessageBuilder, defineStaticProperty } from
  * Verification token utility for creating secure tokens.
  */
 export { VerificationToken } from './verification_token.ts'
-
-/**
- * HTTP server helper functions for middleware and route information.
- */
-export { middlewareInfo, routeInfo } from '@adonisjs/http-server/helpers'

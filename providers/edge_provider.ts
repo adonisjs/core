@@ -8,9 +8,10 @@
  */
 
 import edge, { type Edge } from 'edge.js'
+import { type URLOptions } from '../types/http.ts'
 import type { ApplicationService } from '../src/types.ts'
 import { pluginEdgeDumper } from '../modules/dumper/plugins/edge.ts'
-import { BriskRoute, HttpContext, type Route, type Router } from '../modules/http/main.ts'
+import { BriskRoute, HttpContext, Qs, type Route, type Router } from '../modules/http/main.ts'
 
 declare module '@adonisjs/core/http' {
   interface HttpContext {
@@ -73,6 +74,7 @@ export default class EdgeServiceProvider {
    */
   async boot() {
     const app = this.app
+    const qs = new Qs(app.config.get<any>('app.http.qs', {}))
     const router = await this.app.container.make('router')
     const dumper = await this.app.container.make('dumper')
 
@@ -115,6 +117,31 @@ export default class EdgeServiceProvider {
     edge.global('signedUrlFor', function (...args: any[]) {
       return (router.urlBuilder.signedUrlFor as any)(...args)
     })
+
+    /**
+     * Sharing qs parser with templates
+     */
+    edge.global('qs', qs)
+
+    edge.global(
+      'formAttributes',
+      function (route: string, method: string, params: any, options: URLOptions) {
+        options = options ?? {}
+        method = method.toUpperCase()
+        const original = method
+
+        if (method !== 'GET' && method !== 'POST') {
+          method = 'POST'
+          const queryString = { _method: original, ...options.qs }
+          options = { ...options, qs: queryString }
+        }
+
+        return {
+          action: (router.urlBuilder.urlFor as any)(route, params, options),
+          method,
+        }
+      }
+    )
 
     /**
      * Creating a isolated instance of edge renderer

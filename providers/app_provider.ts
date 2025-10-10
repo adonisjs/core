@@ -298,43 +298,30 @@ export default class AppServiceProvider {
    * // Creates .adonisjs/server/routes.d.ts with route types
    */
   protected async generateRoutesTypes(router: Router) {
-    const types = router.generateTypes(4)
-    const outputPath = this.app.generatedServerPath('routes.d.ts')
+    try {
+      const types = router.generateTypes(2)
+      const outputPath = this.app.generatedServerPath('routes.d.ts')
 
-    await mkdir(dirname(outputPath), { recursive: true })
-    await writeFile(
-      outputPath,
-      [
-        `import '@adonisjs/core/types/http'`,
-        '',
-        `declare module '@adonisjs/core/types/http' {`,
-        '  type ScannedRoutes = {',
-        types,
-        '  }',
-        '  export interface RoutesList extends ScannedRoutes {}',
-        '}',
-      ].join('\n')
-    )
-  }
-
-  /**
-   * Generates the routes JSON needed by the client integration
-   *
-   * Exports all registered routes as JSON for client-side
-   * applications that need route information.
-   *
-   * @param router - The router instance to export routes from
-   *
-   * @example
-   * await generateRoutesJSONFile(router)
-   * // Creates .adonisjs/client/routes.json
-   */
-  protected async generateRoutesJSONFile(router: Router) {
-    const routes = router.toJSON()
-    const outputPath = this.app.makePath('.adonisjs/client/routes.json')
-
-    await mkdir(dirname(outputPath), { recursive: true })
-    await writeFile(outputPath, JSON.stringify(routes, null, 2))
+      await mkdir(dirname(outputPath), { recursive: true })
+      await writeFile(
+        outputPath,
+        [
+          `import '@adonisjs/core/types/http'`,
+          '',
+          'export type ScannedRoutes = {',
+          types,
+          '}',
+          `declare module '@adonisjs/core/types/http' {`,
+          '  export interface RoutesList extends ScannedRoutes {}',
+          '}',
+        ].join('\n')
+      )
+    } catch (error) {
+      console.error(
+        "Unable to generate routes types file due to the following error. This won't impact the dev-server"
+      )
+      console.error(error)
+    }
   }
 
   /**
@@ -396,8 +383,17 @@ export default class AppServiceProvider {
     if (!this.app.inProduction) {
       const router = await this.app.container.make('router')
       if (router.commited) {
-        await this.generateRoutesJSONFile(router)
         await this.generateRoutesTypes(router)
+        process.once('message', (message) => {
+          if (
+            message &&
+            typeof message === 'object' &&
+            'purpose' in message &&
+            message.purpose === 'shareRoutes'
+          ) {
+            this.app.notify({ isAdonisJS: true, routes: router.toJSON() })
+          }
+        })
       }
     }
   }
