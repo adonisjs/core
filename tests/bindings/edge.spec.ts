@@ -134,4 +134,47 @@ test.group('Bindings | Edge', () => {
       method: 'POST',
     })
   })
+
+  test('make action via method spoofing and append to existing query string', async ({
+    assert,
+  }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+
+    const router = await app.container.make('router')
+    router.put('/users/:id', () => {}).as('users.update')
+    router.commit()
+    const options = {
+      qs: {
+        view: 'card',
+      },
+    }
+
+    assert.deepEqual(edge.globals.formAttributes('users.update', 'put', { id: 1 }, options), {
+      action: '/users/1?_method=PUT&view=card',
+      method: 'POST',
+    })
+
+    /**
+     * Making sure we do not mutate the options internally
+     */
+    assert.deepEqual(options, {
+      qs: {
+        view: 'card',
+      },
+    })
+  })
 })

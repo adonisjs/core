@@ -126,18 +126,31 @@ export default class EdgeServiceProvider {
     edge.global(
       'formAttributes',
       function (route: string, method: string, params: any, options: URLOptions) {
+        /**
+         * Normalize method and keep a reference to the original method
+         */
         options = options ?? {}
         method = method.toUpperCase()
         const original = method
 
+        /**
+         * If method if not GET and POST, then use the querystring _method
+         * to and force update the method to "POST"
+         */
         if (method !== 'GET' && method !== 'POST') {
           method = 'POST'
-          const queryString = { _method: original, ...options.qs }
-          options = { ...options, qs: queryString }
+          options = { ...options, qs: { _method: original, ...options.qs } }
         }
 
+        const { action } = (router.urlBuilder.urlFor.method as any)(
+          original,
+          route,
+          params,
+          options
+        ).form
+
         return {
-          action: (router.urlBuilder.urlFor as any)(route, params, options),
+          action,
           method,
         }
       }
