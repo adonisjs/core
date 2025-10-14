@@ -179,7 +179,19 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Define validations for the environment variables
+   * Define validations for the environment variables in the start/env.ts file.
+   * This method updates the environment validation schema using the assembler.
+   *
+   * @param validations - Validation schema node for environment variables
+   *
+   * @example
+   * ```ts
+   * await codemods.defineEnvValidations({
+   *   NODE_ENV: 'Env.schema.enum(["development", "production", "test"] as const)',
+   *   PORT: 'Env.schema.number()',
+   *   HOST: 'Env.schema.string({ format: "host" })'
+   * })
+   * ```
    */
   async defineEnvValidations(validations: EnvValidationNode) {
     const transformer = await this.#getCodeTransformer()
@@ -201,7 +213,21 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Define validations for the environment variables
+   * Register middleware in the start/kernel.ts file.
+   * This method adds middleware to the specified stack (server, router, or named).
+   *
+   * @param stack - The middleware stack to register to ('server' | 'router' | 'named')
+   * @param middleware - Array of middleware nodes to register
+   *
+   * @example
+   * ```ts
+   * await codemods.registerMiddleware('server', [
+   *   {
+   *     name: 'cors',
+   *     path: '@adonisjs/cors/cors_middleware'
+   *   }
+   * ])
+   * ```
    */
   async registerMiddleware(stack: 'server' | 'router' | 'named', middleware: MiddlewareNode[]) {
     const transformer = await this.#getCodeTransformer()
@@ -223,9 +249,21 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Register bouncer policies to the list of policies
-   * collection exported from the "app/policies/main.ts"
-   * file.
+   * Register bouncer policies to the list of policies collection exported from
+   * the "app/policies/main.ts" file. This method adds new policy definitions
+   * to the policies export.
+   *
+   * @param policies - Array of policy nodes to register
+   *
+   * @example
+   * ```ts
+   * await codemods.registerPolicies([
+   *   {
+   *     name: 'UserPolicy',
+   *     path: '#policies/user_policy'
+   *   }
+   * ])
+   * ```
    */
   async registerPolicies(policies: BouncerPolicyNode[]) {
     const transformer = await this.#getCodeTransformer()
@@ -247,7 +285,18 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Update RCFile
+   * Update the adonisrc.ts file with new configuration settings.
+   * This method allows modification of the AdonisJS runtime configuration.
+   *
+   * @param params - Parameters for updating the RC file (varies based on update type)
+   *
+   * @example
+   * ```ts
+   * await codemods.updateRcFile((rcFile) => {
+   *   rcFile.addCommand('make:custom')
+   *   rcFile.addPreloadFile('#app/events/main')
+   * })
+   * ```
    */
   async updateRcFile(...params: Parameters<CodeTransformer['updateRcFile']>) {
     const transformer = await this.#getCodeTransformer()
@@ -269,7 +318,19 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Register a new Vite plugin in the `vite.config.ts` file
+   * Register a new Vite plugin in the vite.config.ts file.
+   * This method adds plugin configuration to the Vite build configuration.
+   *
+   * @param params - Parameters for adding the Vite plugin (varies based on plugin type)
+   *
+   * @example
+   * ```ts
+   * await codemods.registerVitePlugin({
+   *   name: 'vue',
+   *   import: 'import vue from "@vitejs/plugin-vue"',
+   *   options: '()'
+   * })
+   * ```
    */
   async registerVitePlugin(...params: Parameters<CodeTransformer['addVitePlugin']>) {
     const transformer = await this.#getCodeTransformer()
@@ -291,7 +352,18 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Register a new Japa plugin in the `tests/bootstrap.ts` file
+   * Register a new Japa plugin in the tests/bootstrap.ts file.
+   * This method adds plugin configuration to the test runner setup.
+   *
+   * @param params - Parameters for adding the Japa plugin (varies based on plugin type)
+   *
+   * @example
+   * ```ts
+   * await codemods.registerJapaPlugin({
+   *   name: 'expect',
+   *   import: 'import { expect } from "@japa/expect"'
+   * })
+   * ```
    */
   async registerJapaPlugin(...params: Parameters<CodeTransformer['addJapaPlugin']>) {
     const transformer = await this.#getCodeTransformer()
@@ -350,12 +422,19 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * Install packages using the correct package manager
-   * You can specify version of each package by setting it in the
-   * name like :
+   * Install packages using the detected or specified package manager.
+   * Automatically detects npm, yarn, or pnpm and installs dependencies accordingly.
+   * You can specify version of each package by setting it in the name like '@adonisjs/lucid@next'.
    *
-   * ```
-   * this.installPackages([{ name: '@adonisjs/lucid@next', isDevDependency: false }])
+   * @param packages - Array of packages with their dependency type
+   * @param packageManager - Optional package manager to use (auto-detected if not provided)
+   *
+   * @example
+   * ```ts
+   * const success = await codemods.installPackages([
+   *   { name: '@adonisjs/lucid', isDevDependency: false },
+   *   { name: '@types/node', isDevDependency: true }
+   * ])
    * ```
    */
   async installPackages(
@@ -435,7 +514,23 @@ export class Codemods extends EventEmitter {
   }
 
   /**
-   * List the packages one should install before using the packages
+   * List the packages that should be installed manually.
+   * This method displays installation commands for different package managers
+   * when automatic installation is not available or desired.
+   *
+   * @param packages - Array of packages with their dependency type
+   *
+   * @example
+   * ```ts
+   * await codemods.listPackagesToInstall([
+   *   { name: '@adonisjs/lucid', isDevDependency: false },
+   *   { name: '@types/node', isDevDependency: true }
+   * ])
+   * // Output:
+   * // Please install following packages
+   * // npm i -D @types/node
+   * // npm i @adonisjs/lucid
+   * ```
    */
   async listPackagesToInstall(packages: { name: string; isDevDependency: boolean }[]) {
     const appPath = this.#app.makePath()

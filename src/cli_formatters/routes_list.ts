@@ -105,7 +105,9 @@ export class RoutesListFormatter {
   }
 
   /**
-   * Test if a route clears the applied filters
+   * Test if a route clears the applied filters based on middleware, name, pattern, and handler.
+   * 
+   * @param route - The serialized route to test against filters
    */
   #isAllowedByFilters(route: SerializedRoute) {
     let allowRoute = true
@@ -177,7 +179,10 @@ export class RoutesListFormatter {
   }
 
   /**
-   * Serializes routes JSON to an object that can be used for pretty printing
+   * Serializes routes JSON to an object that can be used for pretty printing.
+   * Converts RouteJSON into a format suitable for display and filtering.
+   * 
+   * @param route - The route JSON object to serialize
    */
   async #serializeRoute(route: RouteJSON): Promise<SerializedRoute> {
     let methods = route.methods
@@ -201,14 +206,18 @@ export class RoutesListFormatter {
   }
 
   /**
-   * Formats the route method for the ansi list and table
+   * Formats the route method for the ansi list and table with dim styling.
+   * 
+   * @param method - The HTTP method to format (GET, POST, etc.)
    */
   #formatRouteMethod(method: string) {
     return this.#colors.dim(method)
   }
 
   /**
-   * Formats route pattern for the ansi list and table
+   * Formats route pattern for the ansi list and table with colored parameters and route name.
+   * 
+   * @param route - The serialized route containing pattern and name information
    */
   #formatRoutePattern(route: SerializedRoute) {
     const pattern = this.#router
@@ -236,7 +245,9 @@ export class RoutesListFormatter {
   }
 
   /**
-   * Formats controller name for the ansi list and table
+   * Formats controller name for the ansi list and table with cyan coloring.
+   * 
+   * @param route - The serialized route containing handler information
    */
   #formatControllerName(route: SerializedRoute) {
     return route.handler.type === 'controller'
@@ -245,7 +256,9 @@ export class RoutesListFormatter {
   }
 
   /**
-   * Formats action name for the ansi list and table
+   * Formats action name for the ansi list and table with cyan coloring and arguments.
+   * 
+   * @param route - The serialized route containing handler information
    */
   #formatAction(route: SerializedRoute) {
     if (route.handler.type === 'controller') {
@@ -261,7 +274,10 @@ export class RoutesListFormatter {
   }
 
   /**
-   * Formats route middleware for the ansi list and table
+   * Formats route middleware for the ansi list and table with optional compacting.
+   * 
+   * @param route - The serialized route containing middleware information
+   * @param mode - Display mode: 'normal' shows all middleware, 'compact' truncates long lists
    */
   #formatMiddleware(route: SerializedRoute, mode: 'normal' | 'compact' = 'normal') {
     if (mode === 'compact' && route.middleware.length > 3) {

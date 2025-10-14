@@ -102,13 +102,23 @@ export class Dumper {
     vscode: 'vscode://file/%f:%l',
   }
 
+  /**
+   * Creates a new Dumper instance
+   *
+   * @param app - The AdonisJS application instance
+   */
   constructor(app: Application<any>) {
     this.#app = app
   }
 
   /**
    * Returns the link to open the file using dd inside one
-   * of the known code editors
+   * of the known code editors. Constructs a URL that can be used
+   * to open the file at a specific line in supported editors.
+   *
+   * @param source - Optional source file information
+   * @param source.location - The file path to open
+   * @param source.line - The line number to jump to
    */
   #getEditorLink(source?: {
     location: string

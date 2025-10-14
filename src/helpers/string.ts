@@ -155,10 +155,22 @@ const stringHelpers: typeof string & {
     return prettyHrTime(time, options)
   },
 
+  /**
+   * Check if a string is empty or contains only whitespace characters.
+   * 
+   * @param value - The string to check for emptiness
+   */
   isEmpty(value: string): boolean {
     return value.trim().length === 0
   },
 
+  /**
+   * Escape HTML entities to prevent XSS attacks and display HTML safely.
+   * 
+   * @param value - The string containing HTML to escape
+   * @param options - Optional configuration for escaping behavior
+   * @param options.encodeSymbols - Whether to also encode Unicode symbols as HTML entities
+   */
   escapeHTML(value: string, options?: { encodeSymbols?: boolean }): string {
     value = he.escape(value)
     if (options && options.encodeSymbols) {
@@ -167,6 +179,12 @@ const stringHelpers: typeof string & {
     return value
   },
 
+  /**
+   * Encode Unicode symbols and special characters as HTML entities.
+   * 
+   * @param value - The string containing symbols to encode
+   * @param options - Encoding options from the 'he' library
+   */
   encodeSymbols(value: string, options?: EncodeOptions): string {
     return he.encode(value, options)
   },
