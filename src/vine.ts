@@ -23,7 +23,7 @@ export type FileRuleValidationOptions =
 /**
  * Checks if the value is an instance of multipart file from bodyparser.
  * Used internally for type guarding in file validation.
- * 
+ *
  * @param file - The value to check for MultipartFile instance
  */
 function isBodyParserFile(file: unknown): file is MultipartFile {
@@ -31,9 +31,9 @@ function isBodyParserFile(file: unknown): file is MultipartFile {
 }
 
 /**
- * VineJS validation rule that validates the file to be an instance of BodyParser 
+ * VineJS validation rule that validates the file to be an instance of BodyParser
  * MultipartFile class and applies size/extension validation if configured.
- * 
+ *
  * @param file - The file value to validate
  * @param options - Validation options for file size and extensions
  * @param field - The field context from VineJS validation
@@ -45,7 +45,7 @@ const isMultipartFile = vine.createRule<FileRuleValidationOptions>((file, option
    */
   if (!isBodyParserFile(file)) {
     field.report('The {{ field }} must be a file', 'file', field)
-    return
+    return false
   }
 
   const validationOptions = typeof options === 'function' ? options(field) : options
@@ -77,6 +77,8 @@ const isMultipartFile = vine.createRule<FileRuleValidationOptions>((file, option
   file.errors.forEach((error) => {
     field.report(error.message, `file.${error.type}`, field, validationOptions)
   })
+
+  return file.isValid
 })
 
 /**
@@ -119,8 +121,9 @@ export class VineMultipartFile extends BaseLiteralType<
     options?: FieldOptions,
     validations?: Validation<any>[]
   ) {
-    super(options, validations || [isMultipartFile(validationOptions || {})])
+    super(options, validations || [])
     this.#validationOptions = validationOptions
+    this.dataTypeValidator = isMultipartFile(validationOptions || {})
   }
 
   /**

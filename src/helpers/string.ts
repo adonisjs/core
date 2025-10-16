@@ -157,7 +157,7 @@ const stringHelpers: typeof string & {
 
   /**
    * Check if a string is empty or contains only whitespace characters.
-   * 
+   *
    * @param value - The string to check for emptiness
    */
   isEmpty(value: string): boolean {
@@ -166,7 +166,7 @@ const stringHelpers: typeof string & {
 
   /**
    * Escape HTML entities to prevent XSS attacks and display HTML safely.
-   * 
+   *
    * @param value - The string containing HTML to escape
    * @param options - Optional configuration for escaping behavior
    * @param options.encodeSymbols - Whether to also encode Unicode symbols as HTML entities
@@ -181,7 +181,7 @@ const stringHelpers: typeof string & {
 
   /**
    * Encode Unicode symbols and special characters as HTML entities.
-   * 
+   *
    * @param value - The string containing symbols to encode
    * @param options - Encoding options from the 'he' library
    */

@@ -46,7 +46,7 @@ export class HttpServerProcess {
 
   /**
    * Calling this method closes the underlying HTTP server gracefully.
-   * 
+   *
    * @param nodeHttpServer - The Node.js HTTP or HTTPS server instance to close
    */
   #close(nodeHttpServer: NodeHttpsServer | NodeHttpServer): Promise<void> {
@@ -59,7 +59,7 @@ export class HttpServerProcess {
   /**
    * Monitors the app and the server to close the HTTP server when
    * either one of them goes down. Sets up event listeners for graceful shutdown.
-   * 
+   *
    * @param nodeHttpServer - The Node.js HTTP or HTTPS server instance to monitor
    * @param app - The application service instance
    * @param logger - The logger service for error reporting
@@ -91,7 +91,7 @@ export class HttpServerProcess {
 
   /**
    * Starts the HTTP server on a given host and port using environment variables.
-   * 
+   *
    * @param nodeHttpServer - The Node.js HTTP or HTTPS server instance to start listening
    */
   #listen(
@@ -116,7 +116,7 @@ export class HttpServerProcess {
   /**
    * Notifies the app and the parent process that the HTTP server is ready.
    * Sends notifications through multiple channels: parent process, logger, and event emitter.
-   * 
+   *
    * @param app - The application service instance for parent process notification
    * @param logger - The logger service for console output
    * @param emitter - The event emitter for app-level notifications

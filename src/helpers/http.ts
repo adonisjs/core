@@ -22,7 +22,7 @@
  * @example
  * // Access all HTTP helpers
  * import * as httpHelpers from '@adonisjs/core/helpers/http'
- * 
+ *
  * // Use any helper from the http-server package
  * const routeData = httpHelpers.routeInfo('api.posts', '/api/posts')
  */

@@ -106,7 +106,7 @@ export class RoutesListFormatter {
 
   /**
    * Test if a route clears the applied filters based on middleware, name, pattern, and handler.
-   * 
+   *
    * @param route - The serialized route to test against filters
    */
   #isAllowedByFilters(route: SerializedRoute) {
@@ -181,7 +181,7 @@ export class RoutesListFormatter {
   /**
    * Serializes routes JSON to an object that can be used for pretty printing.
    * Converts RouteJSON into a format suitable for display and filtering.
-   * 
+   *
    * @param route - The route JSON object to serialize
    */
   async #serializeRoute(route: RouteJSON): Promise<SerializedRoute> {
@@ -207,7 +207,7 @@ export class RoutesListFormatter {
 
   /**
    * Formats the route method for the ansi list and table with dim styling.
-   * 
+   *
    * @param method - The HTTP method to format (GET, POST, etc.)
    */
   #formatRouteMethod(method: string) {
@@ -216,7 +216,7 @@ export class RoutesListFormatter {
 
   /**
    * Formats route pattern for the ansi list and table with colored parameters and route name.
-   * 
+   *
    * @param route - The serialized route containing pattern and name information
    */
   #formatRoutePattern(route: SerializedRoute) {
@@ -246,7 +246,7 @@ export class RoutesListFormatter {
 
   /**
    * Formats controller name for the ansi list and table with cyan coloring.
-   * 
+   *
    * @param route - The serialized route containing handler information
    */
   #formatControllerName(route: SerializedRoute) {
@@ -257,7 +257,7 @@ export class RoutesListFormatter {
 
   /**
    * Formats action name for the ansi list and table with cyan coloring and arguments.
-   * 
+   *
    * @param route - The serialized route containing handler information
    */
   #formatAction(route: SerializedRoute) {
@@ -275,7 +275,7 @@ export class RoutesListFormatter {
 
   /**
    * Formats route middleware for the ansi list and table with optional compacting.
-   * 
+   *
    * @param route - The serialized route containing middleware information
    * @param mode - Display mode: 'normal' shows all middleware, 'compact' truncates long lists
    */
