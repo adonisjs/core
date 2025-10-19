@@ -384,16 +384,7 @@ export default class AppServiceProvider {
       const router = await this.app.container.make('router')
       if (router.commited) {
         await this.generateRoutesTypes(router)
-        process.once('message', (message) => {
-          if (
-            message &&
-            typeof message === 'object' &&
-            'purpose' in message &&
-            message.purpose === 'shareRoutes'
-          ) {
-            this.app.notify({ isAdonisJS: true, routes: router.toJSON() })
-          }
-        })
+        this.app.notify({ isAdonisJS: true, routes: JSON.stringify(router.toJSON()) })
       }
     }
   }
