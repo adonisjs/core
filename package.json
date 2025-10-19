@@ -1,7 +1,7 @@
 {
   "name": "@adonisjs/core",
   "description": "Core of AdonisJS",
-  "version": "7.0.0-next.6",
+  "version": "7.0.0-next.7",
   "engines": {
     "node": ">=24.0.0"
   },
