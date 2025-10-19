@@ -299,7 +299,7 @@ export default class AppServiceProvider {
    */
   protected async generateRoutesTypes(router: Router) {
     try {
-      const types = router.generateTypes(2)
+      const { routes, imports, types } = router.generateTypes(2)
       const outputPath = this.app.generatedServerPath('routes.d.ts')
 
       await mkdir(dirname(outputPath), { recursive: true })
@@ -307,9 +307,12 @@ export default class AppServiceProvider {
         outputPath,
         [
           `import '@adonisjs/core/types/http'`,
+          ...imports,
+          '',
+          ...types,
           '',
           'export type ScannedRoutes = {',
-          types,
+          routes,
           '}',
           `declare module '@adonisjs/core/types/http' {`,
           '  export interface RoutesList extends ScannedRoutes {}',

@@ -300,15 +300,69 @@ test.group('Providers', () => {
 
     await app.start(() => {})
 
-    await assert.fileContains('.adonisjs/server/routes.d.ts', [
-      `import '@adonisjs/core/types/http'`,
-      `declare module '@adonisjs/core/types/http' {`,
-      `export interface RoutesList extends ScannedRoutes {}`,
-      'export type ScannedRoutes = {',
-      `ALL: {`,
-      'users.index',
-      'posts.index',
-    ])
+    assert.snapshot(await fs.contents('.adonisjs/server/routes.d.ts')).matchInline(`
+      "import '@adonisjs/core/types/http'
+
+      type ParamValue = string | number | bigint | boolean
+
+      export type ScannedRoutes = {
+        ALL: {
+          'users.index': { paramsTuple?: []; params?: {} }
+          'users.create': { paramsTuple?: []; params?: {} }
+          'users.store': { paramsTuple?: []; params?: {} }
+          'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'users.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'users.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.index': { paramsTuple?: []; params?: {} }
+          'posts.create': { paramsTuple?: []; params?: {} }
+          'posts.store': { paramsTuple?: []; params?: {} }
+          'posts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+        }
+        GET: {
+          'users.index': { paramsTuple?: []; params?: {} }
+          'users.create': { paramsTuple?: []; params?: {} }
+          'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'users.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.index': { paramsTuple?: []; params?: {} }
+          'posts.create': { paramsTuple?: []; params?: {} }
+          'posts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+        }
+        HEAD: {
+          'users.index': { paramsTuple?: []; params?: {} }
+          'users.create': { paramsTuple?: []; params?: {} }
+          'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'users.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.index': { paramsTuple?: []; params?: {} }
+          'posts.create': { paramsTuple?: []; params?: {} }
+          'posts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.edit': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+        }
+        POST: {
+          'users.store': { paramsTuple?: []; params?: {} }
+          'posts.store': { paramsTuple?: []; params?: {} }
+        }
+        PUT: {
+          'users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+        }
+        PATCH: {
+          'users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+        }
+        DELETE: {
+          'users.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+          'posts.destroy': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+        }
+      }
+      declare module '@adonisjs/core/types/http' {
+        export interface RoutesList extends ScannedRoutes {}
+      }"
+    `)
   })
 
   test('add transform method to HTTP context', async ({ assert }) => {
