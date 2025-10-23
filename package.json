@@ -54,6 +54,7 @@
     "./env/editor": "./build/modules/env/editor.js",
     "./events": "./build/modules/events.js",
     "./http": "./build/modules/http/main.js",
+    "./http/url_builder_client": "./build/modules/http/url_builder_client.js",
     "./logger": "./build/modules/logger.js",
     "./repl": "./build/modules/repl.js",
     "./transformers": "./build/modules/transformers/main.js",
