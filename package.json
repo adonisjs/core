@@ -125,7 +125,7 @@
   "dependencies": {
     "@adonisjs/ace": "^14.0.1-next.2",
     "@adonisjs/application": "^9.0.0-next.9",
-    "@adonisjs/bodyparser": "^11.0.0-next.1",
+    "@adonisjs/bodyparser": "^11.0.0-next.2",
     "@adonisjs/config": "^6.0.0-next.1",
     "@adonisjs/encryption": "^7.0.0-next.1",
     "@adonisjs/env": "^7.0.0-next.1",
@@ -135,7 +135,7 @@
     "@adonisjs/health": "^3.0.0-next.0",
     "@adonisjs/http-server": "^8.0.0-next.12",
     "@adonisjs/http-transformers": "^1.5.0",
-    "@adonisjs/logger": "^7.1.0-next.1",
+    "@adonisjs/logger": "^7.1.0-next.2",
     "@adonisjs/repl": "^5.0.0-next.0",
     "@poppinss/colors": "^4.1.5",
     "@poppinss/dumper": "^0.6.4",
