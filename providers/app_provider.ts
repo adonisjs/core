@@ -249,7 +249,7 @@ export default class AppServiceProvider {
    * await middleware.handle(ctx, next)
    */
   protected registerBodyParserMiddleware() {
-    this.app.container.bind(BodyParserMiddleware, () => {
+    this.app.container.singleton(BodyParserMiddleware, () => {
       const config = this.app.config.get<any>('bodyparser')
       return new BodyParserMiddleware(config, this.app.experimentalFlags)
     })
