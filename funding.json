@@ -1,0 +1,176 @@
+{
+  "version": "v1.0.0",
+  "entity": {
+    "type": "individual",
+    "role": "owner",
+    "name": "Harminder Virk",
+    "email": "virk@adonisjs.com",
+    "description": "Hi 👋 I'm Harminder Virk, the creator of a family of open-source tools loved by the Node.js community — including AdonisJS, VineJS, Japa, Edge, Lucid ORM, and Youch.\n\nI pour my heart into building tools that make developers' lives easier — from crafting elegant APIs to sweating the little details that improve your everyday workflow. My goal is to provide you with strong, reliable building blocks, so you can focus on shipping great products instead of fighting with your stack.\n\nBy sponsoring my work, you're helping me keep these projects fast, stable, and well-maintained, while also making room for new ideas that could become your next favorite tool. ❤️\n\nCurrent focus\n\n- AdonisJS v7\n- Improving E2E type-safety in AdonisJS applications\n- Isomorphic VineJS (Validation library)\n- Lucid Rewrite (ORM)\nAdonisJS Plus (Sponsors can access Plus at a discounted rate)",
+    "webpageUrl": {
+      "url": "https://adonisjs.com"
+    }
+  },
+  "projects": [
+    {
+      "guid": "adonisjs",
+      "name": "AdonisJS",
+      "description": "AdonisJS is a fully typed TypeScript framework that includes everything you need to build robust applications. ORM, authentication, caching, rate limiter, file uploads, and support for testing - all in a single cohesive package",
+      "webpageUrl": {
+        "url": "https://adonisjs.com"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/adonisjs/core"
+      },
+      "licenses": ["MIT"],
+      "tags": [
+        "web-framework",
+        "batteries-included",
+        "fullstack",
+        "typescript",
+        "nodejs",
+        "javascript"
+      ]
+    },
+    {
+      "guid": "japa",
+      "name": "Japa",
+      "description": "Japa is a testing framework for Node.js that focuses primarily on testing backend applications. Japa does not require using any build tools and is significantly smaller and faster than Jest and Vitest",
+      "webpageUrl": {
+        "url": "https://japa.dev"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/japa/runner"
+      },
+      "licenses": ["MIT"],
+      "tags": ["testing", "nodejs", "typescript", "javascript"]
+    },
+    {
+      "guid": "vinejs",
+      "name": "VineJS",
+      "description": "VineJS is a fast and type-safe validation library for Node.js, designed for validating form data and JSON payloads. It offers 50+ built-in rules, 12 schema types, customizable error messages, and first-class support for extending with custom rules or schema types — all while being one of the fastest libraries in the Node.js ecosystem.",
+      "webpageUrl": {
+        "url": "https://vinejs.dev"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/vinejs/vine"
+      },
+      "licenses": ["MIT"],
+      "tags": ["validation", "validator", "javascript", "nodejs", "typescript"]
+    },
+    {
+      "guid": "edgejs",
+      "name": "EdgeJS",
+      "description": "Edge is a simple, Modern, and batteries included template engine for Node.js. In the age of frontend frameworks, Edge allows you to embrace the simplicity of server-side templates.",
+      "webpageUrl": {
+        "url": "https://edgejs.dev"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/edge-js/edge"
+      },
+      "licenses": ["MIT"],
+      "tags": ["templating", "template-engine", "nodejs", "javascript"]
+    },
+    {
+      "guid": "youch",
+      "name": "Youch",
+      "description": "Youch is an error-parsing library that pretty prints JavaScript errors on a web page or the terminal.",
+      "webpageUrl": {
+        "url": "https://github.com/poppinss/youch"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/poppinss/youch"
+      },
+      "licenses": ["MIT"],
+      "tags": ["error-parser", "error-printer", "pretty-print", "javascript", "typescript"]
+    }
+  ],
+  "funding": {
+    "channels": [
+      {
+        "guid": "gh-sponsors",
+        "type": "payment-provider",
+        "address": "https://github.com/sponsors/thetutlage",
+        "description": "Support me through GitHub Sponsors"
+      },
+      {
+        "guid": "my-paypal",
+        "type": "payment-provider",
+        "address": "https://paypal.me/adonisjs",
+        "description": "Support me through Paypal. Supports various payment options"
+      }
+    ],
+    "plans": [
+      {
+        "guid": "fan",
+        "status": "active",
+        "name": "AdonisJS fan",
+        "description": "You have directly benefited from my work and want to support me continue working on AdonisJS and other related packages.",
+        "amount": 5,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": ["gh-sponsors", "my-paypal"]
+      },
+      {
+        "guid": "insiders-individual",
+        "status": "active",
+        "name": "Insiders program - Individual",
+        "description": "All sponsors under this tier are automatically invited to the Insiders program, which provides them with exclusive benefits.\n\n- Open-source packages: Gain early access to alpha release packages with complete documentation, allowing you to provide feedback and influence features before public release.\n- Example projects: Get early access to the source code of production-ready example apps built using AdonisJS. Ask questions around the design decisions, or contribute features to it.",
+        "amount": 19,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": ["gh-sponsors", "my-paypal"]
+      },
+      {
+        "guid": "insiders-team",
+        "status": "active",
+        "name": "Insiders program - Teams",
+        "description": "Access to Insiders benefits for your entire team (upto 10 members). Along with that you will have access to the following benefits\n\n- Prominent logo placement on the AdonisJS website homepage\n- Featured announcement across AdonisJS social and newsletter channels\n- Thank-you highlight on AdonisJS social channels",
+        "amount": 499,
+        "currency": "USD",
+        "frequency": "monthly",
+        "channels": ["gh-sponsors", "my-paypal"]
+      },
+      {
+        "guid": "community",
+        "status": "active",
+        "name": "Community Sponsor",
+        "description": "Community Sponsors are companies and teams who use AdonisJS and want to give back to the tools they depend on. Every contribution helps sustain development and community support.\n\nBenefits:\n\n- Prominent logo placement on the AdonisJS website homepage\n- Thank-you highlight on AdonisJS social channels",
+        "amount": 1000,
+        "currency": "USD",
+        "frequency": "yearly",
+        "channels": ["gh-sponsors", "my-paypal"]
+      },
+      {
+        "guid": "core",
+        "status": "active",
+        "name": "Core Sponsor",
+        "description": "Core Sponsors ensure AdonisJS continues to grow and remain dependable for production use. Their support directly funds ongoing maintenance and new integrations.\n\nBenefits:\n\n- Prominent logo placement on the AdonisJS website homepage\n- Featured announcement across AdonisJS social and newsletter channels\n- Thank-you highlight on AdonisJS social channels",
+        "amount": 5000,
+        "currency": "USD",
+        "frequency": "yearly",
+        "channels": ["gh-sponsors", "my-paypal"]
+      },
+      {
+        "guid": "prime",
+        "status": "active",
+        "name": "Prime Sponsor",
+        "description": "Prime Sponsors help maintain the momentum behind AdonisJS, supporting consistent releases, improvements, and ecosystem maintenance.\n\nBenefits:\n\n- Logo featured on the AdonisJS sponsor page\n- Mention in annual sponsor announcement post\n- Invitations to private feedback sessions and early previews\n- Thank-you highlight on AdonisJS social channels",
+        "amount": 10000,
+        "currency": "USD",
+        "frequency": "yearly",
+        "channels": ["gh-sponsors", "my-paypal"]
+      },
+      {
+        "guid": "divine",
+        "status": "active",
+        "name": "Divine Sponsor",
+        "description": "Divine Sponsors play a foundational role in keeping the AdonisJS ecosystem strong and evolving. Their support enables full-time open-source work, new feature development, and community initiatives.\n\nBenefits:\n\n- Prominent logo placement on the AdonisJS website homepage\n- Featured announcement across AdonisJS social and newsletter channels\n- Priority access to roadmap insights and private technical sessions\n- Option to collaborate on ecosystem initiatives",
+        "amount": 25000,
+        "currency": "USD",
+        "frequency": "yearly",
+        "channels": ["gh-sponsors", "my-paypal"]
+      }
+    ],
+    "history": []
+  }
+}
