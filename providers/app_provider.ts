@@ -285,40 +285,47 @@ export default class AppServiceProvider {
   }
 
   /**
-   * Generates the types needed by the URL builder and writes
-   * them to the ".adonisjs/server/routes.d.ts" file
+   * Generates TypeScript type definitions and JSON representation of routes
    *
-   * This method scans registered routes and generates TypeScript
-   * types for type-safe URL generation in development.
+   * Creates route type definitions for better IDE support and a JSON file
+   * containing all registered routes. This is used in development mode for
+   * tooling integration and type-safety.
    *
-   * @param router - The router instance to generate types from
+   * @param router - The router instance containing registered routes
    *
    * @example
-   * await generateRoutesTypes(router)
-   * // Creates .adonisjs/server/routes.d.ts with route types
+   * const router = await container.make('router')
+   * await this.emitRoutes(router)
+   * // Generates .adonisjs/server/routes.d.ts and routes.json
    */
-  protected async generateRoutesTypes(router: Router) {
+  protected async emitRoutes(router: Router) {
     try {
       const { routes, imports, types } = router.generateTypes(2)
-      const outputPath = this.app.generatedServerPath('routes.d.ts')
+      const routesTypesPath = this.app.generatedServerPath('routes.d.ts')
+      const routesJsonPath = this.app.generatedServerPath('routes.json')
 
-      await mkdir(dirname(outputPath), { recursive: true })
-      await writeFile(
-        outputPath,
-        [
-          `import '@adonisjs/core/types/http'`,
-          ...imports,
-          '',
-          ...types,
-          '',
-          'export type ScannedRoutes = {',
-          routes,
-          '}',
-          `declare module '@adonisjs/core/types/http' {`,
-          '  export interface RoutesList extends ScannedRoutes {}',
-          '}',
-        ].join('\n')
-      )
+      await mkdir(dirname(routesTypesPath), { recursive: true })
+      await Promise.all([
+        writeFile(
+          routesTypesPath,
+          [
+            `import '@adonisjs/core/types/http'`,
+            ...imports,
+            '',
+            ...types,
+            '',
+            'export type ScannedRoutes = {',
+            routes,
+            '}',
+            `declare module '@adonisjs/core/types/http' {`,
+            '  export interface RoutesList extends ScannedRoutes {}',
+            '}',
+          ].join('\n')
+        ),
+        writeFile(routesJsonPath, JSON.stringify(router.toJSON())),
+      ])
+
+      this.app.notify({ isAdonisJS: true, routesFileLocation: routesJsonPath })
     } catch (error) {
       console.error(
         "Unable to generate routes types file due to the following error. This won't impact the dev-server"
@@ -386,8 +393,7 @@ export default class AppServiceProvider {
     if (!this.app.inProduction) {
       const router = await this.app.container.make('router')
       if (router.commited) {
-        await this.generateRoutesTypes(router)
-        this.app.notify({ isAdonisJS: true, routes: JSON.stringify(router.toJSON()) })
+        this.emitRoutes(router)
       }
     }
   }

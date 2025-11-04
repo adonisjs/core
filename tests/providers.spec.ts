@@ -9,6 +9,7 @@
 
 import { test } from '@japa/runner'
 import { fileURLToPath } from 'node:url'
+import { setTimeout } from 'node:timers/promises'
 import { defineConfig } from '@adonisjs/application'
 import { HttpContextFactory } from '@adonisjs/http-server/factories'
 
@@ -299,6 +300,7 @@ test.group('Providers', () => {
     router.commit()
 
     await app.start(() => {})
+    await setTimeout(3000)
 
     assert.snapshot(await fs.contents('.adonisjs/server/routes.d.ts')).matchInline(`
       "import '@adonisjs/core/types/http'
@@ -363,7 +365,7 @@ test.group('Providers', () => {
         export interface RoutesList extends ScannedRoutes {}
       }"
     `)
-  })
+  }).timeout(5000)
 
   test('add transform method to HTTP context', async ({ assert }) => {
     const ignitor = new IgnitorFactory()
