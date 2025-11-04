@@ -8,9 +8,9 @@
  */
 
 import type { DevServer } from '@adonisjs/assembler'
+import { importAssembler } from '../src/utils.ts'
 import type { CommandOptions } from '../types/ace.ts'
 import { BaseCommand, flags } from '../modules/ace/main.ts'
-import { importAssembler, importTypeScript } from '../src/utils.ts'
 
 /**
  * Serve command is used to run the AdonisJS HTTP server during development. The
@@ -166,20 +166,13 @@ export default class Serve extends BaseCommand {
       this.terminate()
     })
 
-    const ts = await importTypeScript(this.app)
-    if (!ts) {
-      this.#logMissingDevelopmentDependency('typescript')
-      this.exitCode = 1
-      return
-    }
-
     /**
      * Start the development server
      */
     if (this.watch) {
-      await this.devServer.startAndWatch(ts, { poll: this.poll || false })
+      await this.devServer.startAndWatch({ poll: this.poll || false })
     } else {
-      await this.devServer.start(ts)
+      await this.devServer.start()
     }
   }
 }

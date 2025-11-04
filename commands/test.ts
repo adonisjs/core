@@ -9,9 +9,9 @@
 
 import type { TestRunner } from '@adonisjs/assembler'
 
+import { importAssembler } from '../src/utils.ts'
 import type { CommandOptions } from '../types/ace.ts'
 import { BaseCommand, flags, args } from '../modules/ace/main.ts'
-import { importAssembler, importTypeScript } from '../src/utils.ts'
 
 /**
  * Command to run application tests using the Japa test runner.
@@ -250,14 +250,7 @@ export default class Test extends BaseCommand {
      * Start the test runner in watch mode
      */
     if (this.watch) {
-      const ts = await importTypeScript(this.app)
-      if (!ts) {
-        this.#logMissingDevelopmentDependency('typescript')
-        this.exitCode = 1
-        return
-      }
-
-      await this.testsRunner.runAndWatch(ts, { poll: this.poll || false })
+      await this.testsRunner.runAndWatch({ poll: this.poll || false })
     } else {
       await this.testsRunner.run()
     }
