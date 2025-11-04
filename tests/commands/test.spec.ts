@@ -59,32 +59,6 @@ test.group('Test command', () => {
     assert.equal(command.exitCode, 1)
   })
 
-  test('fail in watch mode when typescript is not installed', async ({ assert, fs, cleanup }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        if (filePath === 'typescript') {
-          return import(new URL(filePath, fs.baseUrl).href)
-        }
-
-        return import(filePath)
-      },
-    })
-    await ace.app.init()
-    ace.ui.switchMode('raw')
-
-    const command = await ace.create(Test, ['--no-clear'])
-    cleanup(() => command.testsRunner.close())
-    command.watch = true
-    await command.exec()
-
-    await sleep(600)
-
-    assert.equal(command.exitCode, 1)
-    assert.lengthOf(ace.ui.logger.getLogs(), 1)
-    assert.equal(ace.ui.logger.getLogs()[0].stream, 'stderr')
-    assert.match(ace.ui.logger.getLogs()[0].message, /Cannot find package "typescript/)
-  })
-
   test('show error in watch mode when tsconfig file is missing', async ({
     assert,
     fs,

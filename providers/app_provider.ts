@@ -393,7 +393,7 @@ export default class AppServiceProvider {
     if (!this.app.inProduction) {
       const router = await this.app.container.make('router')
       if (router.commited) {
-        this.emitRoutes(router)
+        await this.emitRoutes(router)
       }
     }
   }
