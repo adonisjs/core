@@ -124,7 +124,7 @@
   },
   "dependencies": {
     "@adonisjs/ace": "^14.0.1-next.2",
-    "@adonisjs/application": "^9.0.0-next.9",
+    "@adonisjs/application": "^9.0.0-next.10",
     "@adonisjs/bodyparser": "^11.0.0-next.2",
     "@adonisjs/config": "^6.0.0-next.1",
     "@adonisjs/encryption": "^7.0.0-next.1",
