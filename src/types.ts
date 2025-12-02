@@ -160,8 +160,9 @@ export type InferHashers<T extends ConfigProvider<{ list: Record<string, Manager
  *   }
  * }
  */
-export interface ApplicationService
-  extends Application<ContainerBindings extends Record<any, any> ? ContainerBindings : never> {}
+export interface ApplicationService extends Application<
+  ContainerBindings extends Record<any, any> ? ContainerBindings : never
+> {}
 
 /**
  * Logger service is a singleton logger instance registered
@@ -176,8 +177,9 @@ export interface ApplicationService
  *   }
  * }
  */
-export interface LoggerService
-  extends LoggerManager<LoggersList extends Record<string, LoggerConfig> ? LoggersList : never> {}
+export interface LoggerService extends LoggerManager<
+  LoggersList extends Record<string, LoggerConfig> ? LoggersList : never
+> {}
 
 /**
  * Emitter service is a singleton emitter instance registered
@@ -255,8 +257,10 @@ export interface HttpRouterService extends Router {}
  *   }
  * }
  */
-export interface UrlBuilderService
-  extends UrlFor<RoutesList extends LookupList ? RoutesList : never, URLOptions> {}
+export interface UrlBuilderService extends UrlFor<
+  RoutesList extends LookupList ? RoutesList : never,
+  URLOptions
+> {}
 
 /**
  * Url builder service offers a type-safe API for creating signed URLs
@@ -274,8 +278,10 @@ export interface UrlBuilderService
  *   }
  * }
  */
-export interface SignedUrlBuilderService
-  extends UrlFor<RoutesList extends LookupList ? RoutesList : never, SignedURLOptions> {}
+export interface SignedUrlBuilderService extends UrlFor<
+  RoutesList extends LookupList ? RoutesList : never,
+  SignedURLOptions
+> {}
 
 /**
  * Hash service is a singleton instance of the HashManager
@@ -291,10 +297,9 @@ export interface SignedUrlBuilderService
  *   }
  * }
  */
-export interface HashService
-  extends HashManager<
-    HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
-  > {}
+export interface HashService extends HashManager<
+  HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
+> {}
 
 /**
  * A list of known container bindings. This interface defines
