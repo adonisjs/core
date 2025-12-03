@@ -8,17 +8,9 @@
   "main": "build/index.js",
   "type": "module",
   "files": [
-    "build/modules",
-    "build/commands",
-    "build/providers",
-    "build/services",
-    "build/factories",
-    "build/toolkit",
-    "build/types",
-    "build/src",
-    "build/stubs",
-    "build/index.d.ts",
-    "build/index.js"
+    "build",
+    "!build/bin",
+    "!build/tests"
   ],
   "bin": {
     "adonis-kit": "./build/toolkit/main.js"
@@ -68,7 +60,7 @@
     "pretest": "npm run lint",
     "test": "cross-env NODE_DEBUG=adonisjs:core c8 npm run quick:test",
     "clean": "del-cli build",
-    "copy:templates": "copyfiles \"stubs/**/**/*.stub\" build",
+    "copy:templates": "copyfiles \"stubs/**/**/*.stub\" --up=1 build",
     "precompile": "npm run lint",
     "compile": "npm run clean && tsdown && tsc --emitDeclarationOnly --declaration",
     "postcompile": "npm run copy:templates && npm run index:commands",
@@ -231,6 +223,7 @@
       "factories/core/main.ts",
       "factories/**/*.ts",
       "src/types.ts",
+      "toolkit/main.ts",
       "types/**/*.ts",
       "services/**/*.ts",
       "providers/**/*.ts",
