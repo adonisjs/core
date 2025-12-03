@@ -9,7 +9,7 @@
 
 import { Vine } from '@vinejs/vine'
 import type { ApplicationService } from '../src/types.ts'
-import { Request, RequestValidator } from '../modules/http/main.ts'
+import { HttpRequest, RequestValidator } from '../modules/http/main.ts'
 import { type FileRuleValidationOptions, VineMultipartFile } from '../src/vine.ts'
 
 /**
@@ -25,7 +25,7 @@ declare module '@vinejs/vine' {
  * Extend HTTP request class
  */
 declare module '@adonisjs/core/http' {
-  interface Request extends RequestValidator {}
+  interface HttpRequest extends RequestValidator {}
 }
 
 /**
@@ -79,7 +79,7 @@ export default class VineJSServiceProvider {
      * The validate method can be used to validate the request
      * data for the current request using VineJS validators
      */
-    Request.macro('validateUsing', function (this: Request, ...args) {
+    HttpRequest.macro('validateUsing', function (this: HttpRequest, ...args) {
       return new RequestValidator(this.ctx!, experimentalFlags).validateUsing(...args)
     })
   }
