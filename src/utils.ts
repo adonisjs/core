@@ -110,7 +110,7 @@ export async function outputTransformerDataObjects(
     Object.keys(input).forEach((key) => {
       const value = input[key]
       if (typeof value === 'string') {
-        const importName = `${parents.join()}${key}Transformer`
+        const importName = `${parents.join('')}${key}Transformer`
         importsBuffer.write(`import type ${importName} from '${value}'`)
         buffer.write(`export type ${key} = InferData<${importName}>`)
         buffer.write(`export namespace ${key} {`).indent()

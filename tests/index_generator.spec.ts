@@ -237,4 +237,58 @@ test.group('Index generator', () => {
       cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/client/data.d.ts'))
     )
   })
+
+  test('generate transformers index with deeply nested directories', async ({ assert, fs }) => {
+    const cliUi = Kernel.create().ui
+    cliUi.switchMode('raw')
+
+    await fs.create('app/transformers/identity/auth/login_transformer.ts', '')
+    await fs.create('app/transformers/billing/invoices/invoice_transformer.ts', '')
+
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
+    const indexer = indexEntities({
+      controllers: {
+        enabled: false,
+      },
+      events: {
+        enabled: false,
+      },
+      listeners: {
+        enabled: false,
+      },
+      transformers: {
+        enabled: true,
+      },
+    })
+
+    indexer.run({} as any, generator)
+    await generator.generate()
+
+    await assert.fileExists('.adonisjs/client/data.d.ts')
+    assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
+      "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
+      import type BillingInvoicesInvoiceTransformer from '#transformers/billing/invoices/invoice_transformer'
+      import type IdentityAuthLoginTransformer from '#transformers/identity/auth/login_transformer'
+
+      export namespace Data {
+        export namespace Billing {
+          export namespace Invoices {
+            export type Invoice = InferData<BillingInvoicesInvoiceTransformer>
+            export namespace Invoice {
+              export type Variants = InferVariants<BillingInvoicesInvoiceTransformer>
+            }
+          }
+        }
+        export namespace Identity {
+          export namespace Auth {
+            export type Login = InferData<IdentityAuthLoginTransformer>
+            export namespace Login {
+              export type Variants = InferVariants<IdentityAuthLoginTransformer>
+            }
+          }
+        }
+      }
+      "
+    `)
+  })
 })
