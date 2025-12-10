@@ -291,4 +291,109 @@ test.group('Index generator', () => {
       "
     `)
   })
+
+  test('skip segments from controllers index with module-based folder structure', async ({
+    assert,
+    fs,
+  }) => {
+    const cliUi = Kernel.create().ui
+    cliUi.switchMode('raw')
+
+    await fs.create('app/identity/controllers/auth_controller.ts', '')
+    await fs.create('app/identity/controllers/users_controller.ts', '')
+    await fs.create('app/billing/controllers/invoices_controller.ts', '')
+
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
+    const indexer = indexEntities({
+      controllers: {
+        enabled: true,
+        source: 'app',
+        glob: ['**/controllers/*_controller.ts'],
+        importAlias: '#app',
+      },
+      events: {
+        enabled: false,
+      },
+      listeners: {
+        enabled: false,
+      },
+      transformers: {
+        enabled: false,
+      },
+    })
+
+    indexer.run({} as any, generator)
+    await generator.generate()
+
+    await assert.fileExists('.adonisjs/server/controllers.ts')
+    assert.snapshot(await fs.contents('.adonisjs/server/controllers.ts')).matchInline(`
+      "export const controllers = {
+        billing: {
+          Invoices: () => import('#app/billing/controllers/invoices_controller'),
+        },
+        identity: {
+          Auth: () => import('#app/identity/controllers/auth_controller'),
+          Users: () => import('#app/identity/controllers/users_controller'),
+        },
+      }
+      "
+    `)
+    await assert.fileNotContains('.adonisjs/server/controllers.ts', [`controllers: {`])
+  })
+
+  test('skip segments from transformers index with module-based folder structure', async ({
+    assert,
+    fs,
+  }) => {
+    const cliUi = Kernel.create().ui
+    cliUi.switchMode('raw')
+
+    await fs.create('app/identity/transformers/user_transformer.ts', '')
+    await fs.create('app/billing/transformers/invoice_transformer.ts', '')
+
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
+    const indexer = indexEntities({
+      controllers: {
+        enabled: false,
+      },
+      events: {
+        enabled: false,
+      },
+      listeners: {
+        enabled: false,
+      },
+      transformers: {
+        enabled: true,
+        source: 'app',
+        glob: ['**/transformers/*_transformer.ts'],
+        importAlias: '#app',
+      },
+    })
+
+    indexer.run({} as any, generator)
+    await generator.generate()
+
+    await assert.fileExists('.adonisjs/client/data.d.ts')
+    assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
+      "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
+      import type BillingInvoiceTransformer from '#app/billing/transformers/invoice_transformer'
+      import type IdentityUserTransformer from '#app/identity/transformers/user_transformer'
+
+      export namespace Data {
+        export namespace Billing {
+          export type Invoice = InferData<BillingInvoiceTransformer>
+          export namespace Invoice {
+            export type Variants = InferVariants<BillingInvoiceTransformer>
+          }
+        }
+        export namespace Identity {
+          export type User = InferData<IdentityUserTransformer>
+          export namespace User {
+            export type Variants = InferVariants<IdentityUserTransformer>
+          }
+        }
+      }
+      "
+    `)
+  })
 })

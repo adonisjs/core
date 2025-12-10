@@ -380,6 +380,8 @@ export type IndexEntitiesConfig = {
     importAlias?: string
     /** Glob patterns for matching controller files */
     glob?: string[]
+    /** Path segments to skip from generated keys. Defaults to ['controllers'] */
+    skipSegments?: string[]
   }
   /** Configuration for listeners indexing */
   listeners?: {
@@ -391,6 +393,8 @@ export type IndexEntitiesConfig = {
     importAlias?: string
     /** Glob patterns for matching listener files */
     glob?: string[]
+    /** Path segments to skip from generated keys. Defaults to ['listeners'] */
+    skipSegments?: string[]
   }
   /** Configuration for events indexing */
   events?: {
@@ -402,6 +406,8 @@ export type IndexEntitiesConfig = {
     importAlias?: string
     /** Glob patterns for matching event files */
     glob?: string[]
+    /** Path segments to skip from generated keys. Defaults to ['events'] */
+    skipSegments?: string[]
   }
   transformers?: {
     enabled?: boolean
@@ -409,5 +415,7 @@ export type IndexEntitiesConfig = {
     source?: string
     importAlias?: string
     glob?: string[]
+    /** Path segments to skip from generated keys. Defaults to ['transformers'] */
+    skipSegments?: string[]
   }
 }

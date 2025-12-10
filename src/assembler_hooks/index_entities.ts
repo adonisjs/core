@@ -47,15 +47,25 @@ import { outputTransformerDataObjects } from '../utils.ts'
  */
 export function indexEntities(entities: IndexEntitiesConfig = {}) {
   const events = Object.assign(
-    { enabled: true, source: 'app/events', importAlias: '#events' },
+    { enabled: true, source: 'app/events', importAlias: '#events', skipSegments: ['events'] },
     entities.events
   )
   const listeners = Object.assign(
-    { enabled: true, source: 'app/listeners', importAlias: '#listeners' },
+    {
+      enabled: true,
+      source: 'app/listeners',
+      importAlias: '#listeners',
+      skipSegments: ['listeners'],
+    },
     entities.listeners
   )
   const controllers = Object.assign(
-    { enabled: true, source: 'app/controllers', importAlias: '#controllers' },
+    {
+      enabled: true,
+      source: 'app/controllers',
+      importAlias: '#controllers',
+      skipSegments: ['controllers'],
+    },
     entities.controllers
   )
   const transformers = Object.assign(
@@ -64,6 +74,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
       source: 'app/transformers',
       importAlias: '#transformers',
       withSharedProps: false,
+      skipSegments: ['transformers'],
     },
     entities.transformers
   )
@@ -78,6 +89,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           as: 'barrelFile',
           exportName: 'events',
           importAlias: events.importAlias,
+          skipSegments: events.skipSegments,
           output: '.adonisjs/server/events.ts',
         })
       }
@@ -89,6 +101,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           as: 'barrelFile',
           exportName: 'listeners',
           importAlias: listeners.importAlias,
+          skipSegments: listeners.skipSegments,
           output: '.adonisjs/server/listeners.ts',
         })
       }
@@ -100,6 +113,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           as: 'barrelFile',
           exportName: 'controllers',
           importAlias: controllers.importAlias,
+          skipSegments: controllers.skipSegments,
           removeSuffix: 'controller',
           output: '.adonisjs/server/controllers.ts',
         })
@@ -112,8 +126,13 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           as(vfs, buffer, __, helpers) {
             const transformersList = vfs.asTree({
               transformKey(key) {
-                const segments = key.split('/')
+                let segments = key.split('/')
                 const baseName = segments.pop()!
+
+                if (transformers.skipSegments?.length) {
+                  segments = segments.filter((s) => !transformers.skipSegments!.includes(s))
+                }
+
                 return [
                   ...segments.map((segment) => stringHelpers.pascalCase(segment)),
                   stringHelpers.create(baseName).removeSuffix('transformer').pascalCase(),
