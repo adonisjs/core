@@ -77,7 +77,7 @@
     "index:commands": "node --import=@poppinss/ts-exec toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.19",
+    "@adonisjs/assembler": "^8.0.0-next.21",
     "@adonisjs/eslint-config": "^3.0.0-next.4",
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/tsconfig": "^2.0.0-next.3",
