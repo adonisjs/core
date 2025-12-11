@@ -47,7 +47,13 @@ import { outputTransformerDataObjects } from '../utils.ts'
  */
 export function indexEntities(entities: IndexEntitiesConfig = {}) {
   const events = Object.assign(
-    { enabled: true, source: 'app/events', importAlias: '#events', skipSegments: ['events'] },
+    {
+      enabled: true,
+      source: 'app/events',
+      importAlias: '#events',
+      skipSegments: ['events'],
+      output: '.adonisjs/server/events.ts',
+    },
     entities.events
   )
   const listeners = Object.assign(
@@ -56,6 +62,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
       source: 'app/listeners',
       importAlias: '#listeners',
       skipSegments: ['listeners'],
+      output: '.adonisjs/server/listeners.ts',
     },
     entities.listeners
   )
@@ -65,6 +72,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
       source: 'app/controllers',
       importAlias: '#controllers',
       skipSegments: ['controllers'],
+      output: '.adonisjs/server/controllers.ts',
     },
     entities.controllers
   )
@@ -75,9 +83,15 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
       importAlias: '#transformers',
       withSharedProps: false,
       skipSegments: ['transformers'],
+      output: '.adonisjs/client/data.d.ts',
     },
     entities.transformers
   )
+  const manifest = {
+    enabled: entities.manifest?.enabled === false ? false : transformers.enabled,
+    source: 'config',
+    output: '.adonisjs/client/manifest.d.ts',
+  }
 
   return {
     run(_, indexGenerator) {
@@ -90,7 +104,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           exportName: 'events',
           importAlias: events.importAlias,
           skipSegments: events.skipSegments,
-          output: '.adonisjs/server/events.ts',
+          output: events.output,
         })
       }
 
@@ -102,7 +116,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           exportName: 'listeners',
           importAlias: listeners.importAlias,
           skipSegments: listeners.skipSegments,
-          output: '.adonisjs/server/listeners.ts',
+          output: listeners.output,
         })
       }
 
@@ -115,7 +129,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           importAlias: controllers.importAlias,
           skipSegments: controllers.skipSegments,
           removeSuffix: 'controller',
-          output: '.adonisjs/server/controllers.ts',
+          output: controllers.output,
         })
       }
 
@@ -143,7 +157,21 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
             outputTransformerDataObjects(transformersList, buffer, transformers.withSharedProps)
           },
           importAlias: transformers.importAlias,
-          output: '.adonisjs/client/data.d.ts',
+          output: transformers.output,
+        })
+      }
+
+      if (manifest.enabled) {
+        indexGenerator.add('manifest', {
+          source: manifest.source,
+          as(vfs, buffer, __, helpers) {
+            const configFilesList = vfs.asList()
+            buffer.write(`/// <reference path="../../adonisrc.ts" />`)
+            Object.values(configFilesList).forEach((value) => {
+              buffer.write(`/// <reference path="${helpers.toImportPath(value)}" />`)
+            })
+          },
+          output: manifest.output,
         })
       }
     },

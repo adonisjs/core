@@ -409,6 +409,7 @@ export type IndexEntitiesConfig = {
     /** Path segments to skip from generated keys. Defaults to ['events'] */
     skipSegments?: string[]
   }
+  /** Configuration for transformers indexing */
   transformers?: {
     enabled?: boolean
     withSharedProps?: boolean
@@ -417,5 +418,8 @@ export type IndexEntitiesConfig = {
     glob?: string[]
     /** Path segments to skip from generated keys. Defaults to ['transformers'] */
     skipSegments?: string[]
+  }
+  manifest?: {
+    enabled?: boolean
   }
 }
