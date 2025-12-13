@@ -69,14 +69,29 @@ export async function setupProject(
  * Setup a fake package inside the node_modules directory
  */
 export async function setupPackage(fs: FileSystem, configureContent?: string) {
+  await setupNamedPackage(fs, { name: 'foo', configureContent })
+}
+
+/**
+ * Setup a fake package with a custom name inside the packages directory
+ */
+export async function setupNamedPackage(
+  fs: FileSystem,
+  options: { name: string; configureContent?: string }
+) {
   await fs.create(
-    'packages/foo/package.json',
-    JSON.stringify({ type: 'module', name: '@adonisjs/foo', main: 'index.js', dependencies: {} })
+    `packages/${options.name}/package.json`,
+    JSON.stringify({
+      type: 'module',
+      name: `@adonisjs/${options.name}`,
+      main: 'index.js',
+      dependencies: {},
+    })
   )
 
   await fs.create(
-    'packages/foo/index.js',
+    `packages/${options.name}/index.js`,
     `export const stubsRoot = './'
-     export async function configure(command) { ${configureContent} }`
+     export async function configure(command) { ${options.configureContent ?? ''} }`
   )
 }
