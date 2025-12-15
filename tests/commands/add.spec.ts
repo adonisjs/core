@@ -13,7 +13,7 @@ import { ListLoader } from '@adonisjs/ace'
 import Add from '../../commands/add.ts'
 import Configure from '../../commands/configure.ts'
 import { AceFactory } from '../../factories/core/ace.ts'
-import { setupPackage, setupProject } from '../helpers.ts'
+import { setupPackage, setupNamedPackage, setupProject } from '../helpers.ts'
 
 const VERBOSE = !!process.env.CI
 const createFileImporter = (baseUrl: URL) => {
@@ -289,5 +289,117 @@ test.group('Install', (group) => {
     await command.exec()
 
     await assert.fileContains('package.json', /"@adonisjs\/fold":"\^[\d.]+\-next/)
+  })
+
+  test('install and configure multiple packages', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: createFileImporter(fs.baseUrl),
+    })
+
+    await setupProject(fs, 'npm')
+    await setupNamedPackage(fs, {
+      name: 'foo',
+      configureContent: `
+        const codemods = await command.createCodemods()
+        await codemods.updateRcFile((rcFile) => {
+          rcFile.addProvider('@adonisjs/foo/foo_provider')
+        })
+      `,
+    })
+    await setupNamedPackage(fs, {
+      name: 'bar',
+      configureContent: `
+        const codemods = await command.createCodemods()
+        await codemods.updateRcFile((rcFile) => {
+          rcFile.addProvider('@adonisjs/bar/bar_provider')
+        })
+      `,
+    })
+
+    await ace.app.init()
+
+    ace.addLoader(new ListLoader([Configure]))
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Add, ['./packages/foo', './packages/bar'])
+    command.verbose = VERBOSE
+
+    await command.exec()
+
+    command.assertExitCode(0)
+    await assert.fileContains('package.json', '@adonisjs/foo')
+    await assert.fileContains('package.json', '@adonisjs/bar')
+    await assert.fileContains('adonisrc.ts', '@adonisjs/foo/foo_provider')
+    await assert.fileContains('adonisrc.ts', '@adonisjs/bar/bar_provider')
+    command.assertLogMatches(/Installed and configured/)
+  })
+
+  test('continue configuring other packages when one fails', async ({ fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: createFileImporter(fs.baseUrl),
+    })
+
+    await setupProject(fs, 'npm')
+    await setupNamedPackage(fs, {
+      name: 'foo',
+      configureContent: `throw new Error("Configure failed")`,
+    })
+    await setupNamedPackage(fs, {
+      name: 'bar',
+      configureContent: `
+        const codemods = await command.createCodemods()
+        await codemods.updateRcFile((rcFile) => {
+          rcFile.addProvider('@adonisjs/bar/bar_provider')
+        })
+      `,
+    })
+
+    await ace.app.init()
+
+    ace.addLoader(new ListLoader([Configure]))
+    ace.ui.switchMode('raw')
+    ace.errorHandler.render = async () => {}
+
+    const command = await ace.create(Add, ['./packages/foo', './packages/bar'])
+    command.verbose = VERBOSE
+
+    await command.exec()
+
+    command.assertExitCode(1)
+    command.assertLogMatches(/Unable to configure.*foo/)
+    command.assertLogMatches(/Installed and configured.*bar/)
+  })
+
+  test('pass unknown flags to all configure commands', async ({ fs, assert }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: createFileImporter(fs.baseUrl),
+    })
+
+    await setupProject(fs, 'npm')
+    await setupNamedPackage(fs, {
+      name: 'foo',
+      configureContent: `command.logger.log({ pkg: 'foo', flags: command.parsedFlags })`,
+    })
+    await setupNamedPackage(fs, {
+      name: 'bar',
+      configureContent: `command.logger.log({ pkg: 'bar', flags: command.parsedFlags })`,
+    })
+
+    await ace.app.init()
+
+    ace.addLoader(new ListLoader([Configure]))
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Add, ['./packages/foo', './packages/bar', '--auth=session'])
+    command.verbose = VERBOSE
+
+    await command.exec()
+
+    const logs = command.logger.getLogs()
+    const fooLog = logs.find((log: any) => log.message?.pkg === 'foo')
+    const barLog = logs.find((log: any) => log.message?.pkg === 'bar')
+
+    assert.equal((fooLog?.message as any)?.flags?.auth, 'session')
+    assert.equal((barLog?.message as any)?.flags?.auth, 'session')
   })
 })
