@@ -160,7 +160,8 @@ test.group('Index generator', () => {
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
     assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
-      "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
+      "/// <reference path=\\"./manifest.d.ts\\" />
+      import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
       import type BlogPostTransformer from '#transformers/blog/post_transformer'
       import type UserTransformer from '#transformers/user_transformer'
 
@@ -212,7 +213,8 @@ test.group('Index generator', () => {
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
     assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
-      "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
+      "/// <reference path=\\"./manifest.d.ts\\" />
+      import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
       import type { InferSharedProps } from '@adonisjs/inertia/types'
       import type BlogPostTransformer from '#transformers/blog/post_transformer'
       import type UserTransformer from '#transformers/user_transformer'
@@ -266,7 +268,8 @@ test.group('Index generator', () => {
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
     assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
-      "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
+      "/// <reference path=\\"./manifest.d.ts\\" />
+      import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
       import type BillingInvoicesInvoiceTransformer from '#transformers/billing/invoices/invoice_transformer'
       import type IdentityAuthLoginTransformer from '#transformers/identity/auth/login_transformer'
 
@@ -375,7 +378,8 @@ test.group('Index generator', () => {
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
     assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
-      "import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
+      "/// <reference path=\\"./manifest.d.ts\\" />
+      import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
       import type BillingInvoiceTransformer from '#app/billing/transformers/invoice_transformer'
       import type IdentityUserTransformer from '#app/identity/transformers/user_transformer'
 

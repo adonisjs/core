@@ -87,6 +87,7 @@ export async function outputTransformerDataObjects(
   withSharedProps: boolean
 ) {
   const importsBuffer = buffer.create()
+  importsBuffer.write(`/// <reference path="./manifest.d.ts" />`)
   importsBuffer.write(
     `import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'`
   )
