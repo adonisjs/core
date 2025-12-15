@@ -401,6 +401,32 @@ test.group('Index generator', () => {
     const cliUi = Kernel.create().ui
     cliUi.switchMode('raw')
 
+    await fs.create('config/app.ts', '') // ignored
+    await fs.create('config/hash.ts', '')
+    await fs.create('config/auth.ts', '') // ignored
+
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
+    const indexer = indexEntities({
+      transformers: {
+        enabled: true,
+      },
+    })
+
+    indexer.run({} as any, generator)
+    await generator.generate()
+
+    await assert.fileExists('.adonisjs/client/manifest.d.ts')
+    assert.snapshot(await fs.contents('.adonisjs/client/manifest.d.ts')).matchInline(`
+      "/// <reference path=\\"../../adonisrc.ts\\" />
+      /// <reference path=\\"../../config/auth.ts\\" />
+      "
+    `)
+  })
+
+  test('include all files', async ({ assert, fs }) => {
+    const cliUi = Kernel.create().ui
+    cliUi.switchMode('raw')
+
     await fs.create('config/app.ts', '')
     await fs.create('config/hash.ts', '')
     await fs.create('config/auth.ts', '')
@@ -409,6 +435,10 @@ test.group('Index generator', () => {
     const indexer = indexEntities({
       transformers: {
         enabled: true,
+      },
+      manifest: {
+        enabled: true,
+        include: [],
       },
     })
 

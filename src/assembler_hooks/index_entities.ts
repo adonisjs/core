@@ -91,6 +91,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
     enabled: entities.manifest?.enabled === false ? false : transformers.enabled,
     source: 'config',
     output: '.adonisjs/client/manifest.d.ts',
+    include: entities.manifest?.include ?? ['auth.ts'],
   }
 
   return {
@@ -164,6 +165,15 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
       if (manifest.enabled) {
         indexGenerator.add('manifest', {
           source: manifest.source,
+          filter: (filePath, isDirectory) => {
+            if (isDirectory) {
+              return true
+            }
+            if (!manifest.include?.length) {
+              return true
+            }
+            return !!manifest.include.find((include) => filePath.endsWith(include))
+          },
           as(vfs, buffer, __, helpers) {
             const configFilesList = vfs.asList()
             buffer.write(`/// <reference path="../../adonisrc.ts" />`)

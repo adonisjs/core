@@ -477,5 +477,6 @@ export type IndexEntitiesConfig = {
   manifest?: {
     /** Whether to enable manifest generation */
     enabled?: boolean
+    include?: string[]
   }
 }
