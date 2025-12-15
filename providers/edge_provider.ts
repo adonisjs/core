@@ -79,6 +79,15 @@ export default class EdgeServiceProvider {
     const router = await this.app.container.make('router')
     const dumper = await this.app.container.make('dumper')
 
+    /**
+     * Resolves configuration values for Edge templates
+     *
+     * Provides access to application configuration within templates.
+     * Includes a 'has' method to check for config key existence.
+     *
+     * @param key - The configuration key to retrieve
+     * @param defaultValue - Optional default value if key doesn't exist
+     */
     function edgeConfigResolver(key: string, defaultValue?: any) {
       return app.config.get(key, defaultValue)
     }
@@ -86,6 +95,13 @@ export default class EdgeServiceProvider {
       return app.config.has(key)
     }
 
+    /**
+     * Generates client-side route definitions for frontend use
+     *
+     * Transforms router definitions into a serializable format that
+     * can be used in client-side JavaScript for route generation.
+     * Only includes named routes.
+     */
     function clientRoutes() {
       const routes = router.toJSON()
       return Object.keys(routes).reduce<Record<string, ClientRouteJSON[]>>((result, domain) => {

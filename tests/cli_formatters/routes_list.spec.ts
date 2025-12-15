@@ -234,7 +234,7 @@ test.group('Formatters | List routes | toJSON', () => {
                   "type": "closure",
                 },
               ],
-              "name": "users.handle",
+              "name": "users",
               "pattern": "/users",
             },
             {
@@ -471,7 +471,7 @@ test.group('Formatters | List routes | toJSON', () => {
                   "type": "closure",
                 },
               ],
-              "name": "users.handle",
+              "name": "users",
               "pattern": "/users",
             },
             {
@@ -609,7 +609,7 @@ test.group('Formatters | List routes | toJSON', () => {
           `GET    /about (about) ........................... AboutController.handle                     closure`,
           `POST   /contact (contact.store) . #controllers/contacts_controller.store                            `,
           `GET    /contact (contact.create)  #controllers/contacts_controller.crea…                            `,
-          `GET    /users (users.handle) .................... UsersController.handle auth, canViewUsers, closure`,
+          `GET    /users (users) ........................... UsersController.handle auth, canViewUsers, closure`,
           `GET    /payments ................ #controllers/payments_controller.index       auth, acl, and 2 more`,
           `GET    /blog ..............................  redirectsToRoute(/articles)                            `,
         ],
@@ -687,7 +687,7 @@ test.group('Formatters | List routes | toJSON', () => {
         stream: 'stdout',
       },
       {
-        message: `dim(GET)|/users dim((users.handle)) | cyan(UsersController).cyan(handle)|dim(auth, canViewUsers, closure)`,
+        message: `dim(GET)|/users dim((users)) | cyan(UsersController).cyan(handle)|dim(auth, canViewUsers, closure)`,
         stream: 'stdout',
       },
       {
@@ -777,7 +777,7 @@ test.group('Formatters | List routes | filters', () => {
                   "type": "closure",
                 },
               ],
-              "name": "users.handle",
+              "name": "users",
               "pattern": "/users",
             },
             {
@@ -1015,7 +1015,7 @@ test.group('Formatters | List routes | filters', () => {
                   "type": "closure",
                 },
               ],
-              "name": "users.handle",
+              "name": "users",
               "pattern": "/users",
             },
             {
@@ -1127,7 +1127,7 @@ test.group('Formatters | List routes | filters', () => {
                   "type": "closure",
                 },
               ],
-              "name": "users.handle",
+              "name": "users",
               "pattern": "/users",
             },
           ],
@@ -1197,7 +1197,7 @@ test.group('Formatters | List routes | filters', () => {
                   "type": "closure",
                 },
               ],
-              "name": "users.handle",
+              "name": "users",
               "pattern": "/users",
             },
           ],

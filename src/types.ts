@@ -24,11 +24,12 @@ import type {
 import type { Dumper } from '../modules/dumper/dumper.ts'
 import type { LoggerManager } from '../modules/logger.ts'
 import type { HashManager } from '../modules/hash/main.ts'
-import type { Encryption } from '../modules/encryption.ts'
 import type { ManagerDriverFactory } from '../types/hash.ts'
 import type { Router, Server } from '../modules/http/main.ts'
+import type { EncryptionManager } from '../modules/encryption/main.ts'
 import type { ContainerResolveEventData } from '../types/container.ts'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.ts'
+import { type EncryptionDriverContract } from '../types/encryption.ts'
 
 /**
  * A config provider waits for the application to get booted
@@ -197,20 +198,68 @@ export interface LoggerService extends LoggerManager<
 export interface EmitterService extends Emitter<EventsList> {}
 
 /**
- * Encryption service is a singleton Encryption class instance
- * registered to the container. It provides encryption and decryption
- * functionality using the application's secret key.
+ * A list of known encryptors inferred from the user config.
+ * This interface should be extended in user code to register
+ * custom encryptors.
  *
  * @example
- * // Using encryption service
- * export default class PaymentController {
- *   async process({ encryption }: { encryption: EncryptionService }) {
- *     const encrypted = encryption.encrypt('sensitive-data')
- *     const decrypted = encryption.decrypt(encrypted)
+ * // Extending EncryptorsList in user code
+ * declare module '@adonisjs/core' {
+ *   interface EncryptorsList {
+ *     default: EncryptionConfig
+ *     secondary: EncryptionConfig
  *   }
  * }
  */
-export interface EncryptionService extends Encryption {}
+export interface EncryptorsList {}
+
+/**
+ * Configuration object for encryption drivers. Defines how encryption
+ * and decryption should be performed with support for key rotation.
+ *
+ * @example
+ * const config: EncryptionConfig = {
+ *   driver: (key) => new SecureEncryptor(key),
+ *   keys: [
+ *     'new-encryption-key',  // Used for encryption
+ *     'old-encryption-key'   // Used only for decryption
+ *   ]
+ * }
+ */
+export interface EncryptionConfig {
+  /**
+   * Factory function that creates a driver instance for a given key
+   * @param key - The encryption key to use
+   */
+  driver: (key: string) => EncryptionDriverContract
+
+  /**
+   * List of keys to use for encryption/decryption.
+   * The first key is used for encryption, all keys are tried for decryption.
+   */
+  keys: string[]
+}
+
+/**
+ * Encryption service is a singleton instance of the EncryptionManager
+ * registered in the container. It provides encryption and decryption
+ * functionality with support for multiple encryptors.
+ *
+ * @example
+ * // Using encryption service in a controller
+ * export default class TokenController {
+ *   async generate({ encryption }: { encryption: EncryptionService }) {
+ *     const encrypted = encryption.encrypt('sensitive-data')
+ *     const decrypted = encryption.decrypt(encrypted)
+ *
+ *     // Using a specific encryptor
+ *     const secondaryEncrypted = encryption.use('secondary').encrypt('data')
+ *   }
+ * }
+ */
+export interface EncryptionService extends EncryptionManager<
+  EncryptorsList extends Record<string, EncryptionConfig> ? EncryptorsList : never
+> {}
 
 /**
  * Http server service added to the container as a singleton.
@@ -411,15 +460,22 @@ export type IndexEntitiesConfig = {
   }
   /** Configuration for transformers indexing */
   transformers?: {
+    /** Whether to enable transformers indexing */
     enabled?: boolean
+    /** Whether to include shared props in transformers */
     withSharedProps?: boolean
+    /** Source directory for transformers */
     source?: string
+    /** Import alias for transformers */
     importAlias?: string
+    /** Glob patterns for matching transformer files */
     glob?: string[]
     /** Path segments to skip from generated keys. Defaults to ['transformers'] */
     skipSegments?: string[]
   }
+  /** Configuration for manifest generation */
   manifest?: {
+    /** Whether to enable manifest generation */
     enabled?: boolean
   }
 }

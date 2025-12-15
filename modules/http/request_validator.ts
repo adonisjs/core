@@ -16,8 +16,6 @@ import type {
 } from '@vinejs/vine/types'
 
 import type { HttpContext } from './main.ts'
-import type { FeatureFlags } from '../app.ts'
-import type { ExperimentalFlagsList } from '../../types/app.ts'
 import type { RequestValidationOptions } from '../../types/http.ts'
 
 /**
@@ -35,11 +33,9 @@ import type { RequestValidationOptions } from '../../types/http.ts'
  */
 export class RequestValidator {
   #ctx: HttpContext
-  #experimentalFlags?: FeatureFlags<ExperimentalFlagsList>
 
-  constructor(ctx: HttpContext, experimentalFlags?: FeatureFlags<ExperimentalFlagsList>) {
+  constructor(ctx: HttpContext) {
     this.#ctx = ctx
-    this.#experimentalFlags = experimentalFlags
   }
 
   /**
@@ -106,12 +102,7 @@ export class RequestValidator {
       validatorOptions.messagesProvider = RequestValidator.messagesProvider(this.#ctx)
     }
 
-    const requestBody = this.#experimentalFlags?.enabled('mergeMultipartFieldsAndFiles')
-      ? this.#ctx.request.all()
-      : {
-          ...this.#ctx.request.all(),
-          ...this.#ctx.request.allFiles(),
-        }
+    const requestBody = this.#ctx.request.all()
 
     /**
      * Data to validate

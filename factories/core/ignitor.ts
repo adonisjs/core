@@ -9,12 +9,16 @@
 
 import { Ignitor } from '../../src/ignitor/main.ts'
 import type { ProviderNode } from '../../types/app.ts'
-import { drivers } from '../../modules/hash/define_config.ts'
-import { defineConfig as defineHttpConfig } from '../../modules/http/main.ts'
+import { drivers as hashDrivers } from '../../modules/hash/define_config.ts'
 import type { ApplicationService, IgnitorOptions } from '../../src/types.ts'
 import { defineConfig as defineLoggerConfig } from '../../modules/logger.ts'
 import { defineConfig as defineHashConfig } from '../../modules/hash/main.ts'
+import { defineConfig as defineHttpConfig } from '../../modules/http/main.ts'
 import { defineConfig as defineBodyParserConfig } from '../../modules/bodyparser/main.ts'
+import {
+  defineConfig as defineEncryptionConfig,
+  drivers as encryptionDrivers,
+} from '../../modules/encryption/define_config.ts'
 
 type FactoryParameters = {
   rcFileContents: Record<string, any>
@@ -148,15 +152,24 @@ export class IgnitorFactory {
     this.merge({
       config: {
         app: {
-          appKey: 'averylongrandomsecretkey',
+          appUrl: 'http://localhost:3333',
           http: defineHttpConfig({}),
         },
         validator: {},
+        encryption: defineEncryptionConfig({
+          default: 'gcm',
+          list: {
+            gcm: encryptionDrivers.aes256gcm({
+              id: 'gcm',
+              keys: ['averylongrandomsecretkey'],
+            }),
+          },
+        }),
         bodyparser: defineBodyParserConfig({}),
         hash: defineHashConfig({
           default: 'scrypt',
           list: {
-            scrypt: drivers.scrypt({}),
+            scrypt: hashDrivers.scrypt({}),
           },
         }),
         logger: defineLoggerConfig({

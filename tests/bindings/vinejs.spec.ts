@@ -10,17 +10,42 @@
 import vine from '@vinejs/vine'
 import { test } from '@japa/runner'
 
+import { IgnitorFactory } from '../../factories/core/ignitor.ts'
 import { MultipartFileFactory } from '../../factories/bodyparser.ts'
-import '../../providers/vinejs_provider.js'
 
-test.group('Bindings | VineJS', () => {
+const BASE_URL = new URL('./tmp/', import.meta.url)
+
+test.group('Bindings | VineJS', (group) => {
+  group.setup(async () => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/hash_provider.js'),
+            () => import('../../providers/vinejs_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL, {
+        importer(filePath: string) {
+          return import(new URL(filePath, new URL('../', import.meta.url)).href)
+        },
+      })
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+  })
+
   test('clone schema type', async ({ assert }) => {
     const file = vine.file()
     assert.notStrictEqual(file, file.clone())
   })
 
   test('raise error when value is not a file', async ({ assert }) => {
-    const validator = vine.compile(
+    const validator = vine.create(
       vine.object({
         avatar: vine.file(),
       })
@@ -42,7 +67,7 @@ test.group('Bindings | VineJS', () => {
   })
 
   test('raise error when file size is greater than the allowed size', async ({ assert }) => {
-    const validator = vine.compile(
+    const validator = vine.create(
       vine.object({
         avatar: vine.file({ size: '2mb' }),
       })
@@ -71,7 +96,7 @@ test.group('Bindings | VineJS', () => {
   })
 
   test('raise error when file extension is not allowed', async ({ assert }) => {
-    const validator = vine.compile(
+    const validator = vine.create(
       vine.object({
         avatar: vine.file({ extnames: ['jpg'] }),
       })
@@ -101,7 +126,7 @@ test.group('Bindings | VineJS', () => {
   })
 
   test('compute file options lazily', async ({ assert }) => {
-    const validator = vine.compile(
+    const validator = vine.create(
       vine.object({
         avatar: vine.file(() => {
           return { extnames: ['jpg'] }
@@ -133,7 +158,7 @@ test.group('Bindings | VineJS', () => {
   })
 
   test('pass validation when file is valid', async ({ assert }) => {
-    const validator = vine.compile(
+    const validator = vine.create(
       vine.object({
         avatar: vine.file(() => {
           return { extnames: ['jpg'] }

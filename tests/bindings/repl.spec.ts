@@ -38,7 +38,6 @@ test.group('Bindings | Repl', () => {
     const app = ignitor.createApp('console')
     await app.init()
     await app.boot()
-    app.makeURL()
 
     /**
      * Setting up REPL with fake server

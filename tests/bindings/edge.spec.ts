@@ -35,8 +35,8 @@ test.group('Bindings | Edge', () => {
     await app.init()
     await app.boot()
 
-    assert.equal(edge.globals.config('app.appKey'), 'averylongrandomsecretkey')
-    assert.isTrue(edge.globals.config.has('app.appKey'))
+    assert.equal(edge.globals.config('app.appUrl'), 'http://localhost:3333')
+    assert.isTrue(edge.globals.config.has('app.appUrl'))
     assert.isFalse(edge.globals.config.has('foobar'))
     assert.strictEqual(edge.globals.app, app)
     assert.instanceOf(edge.globals.qs, Qs)

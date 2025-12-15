@@ -18,11 +18,11 @@ import { Config } from '../modules/config.ts'
 import { Emitter } from '../modules/events.ts'
 import { Kernel } from '../modules/ace/kernel.ts'
 import { TestUtils } from '../src/test_utils/main.ts'
-import { Encryption } from '../modules/encryption.ts'
 import { Router, Server } from '../modules/http/main.ts'
 import { Hash, HashManager } from '../modules/hash/main.ts'
 import { Logger, LoggerManager } from '../modules/logger.ts'
 import { IgnitorFactory } from '../factories/core/ignitor.ts'
+import { Encryption, EncryptionManager } from '../modules/encryption/main.ts'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
 import { defineConfig as defineDumperConfig } from '../modules/dumper/define_config.ts'
 
@@ -97,7 +97,7 @@ test.group('Providers', () => {
     assert.strictEqual(app, appService)
     assert.instanceOf(configService, Config)
     assert.instanceOf(emitterService, Emitter)
-    assert.instanceOf(encryptionService, Encryption)
+    assert.instanceOf(encryptionService, EncryptionManager)
     assert.instanceOf(hashService, HashManager)
     assert.instanceOf(loggerService, LoggerManager)
     assert.instanceOf(routerService, Router)
@@ -155,6 +155,31 @@ test.group('Providers', () => {
     const hash = await app.container.make(Hash)
     assert.instanceOf(hash, Hash)
     assert.strictEqual(hash, hashManger.use())
+  })
+
+  test('construct Encryption class using the container', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/hash_provider.js'),
+            () => import('../providers/repl_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('web')
+    await app.init()
+    await app.boot()
+
+    const encryptionManager = await app.container.make('encryption')
+
+    const encryption = await app.container.make(Encryption)
+    assert.instanceOf(encryption, Encryption)
+    assert.strictEqual(encryption, encryptionManager.use())
   })
 
   test('construct Logger class using the container', async ({ assert }) => {

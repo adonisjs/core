@@ -15,9 +15,11 @@ import { Logger } from '../modules/logger.ts'
 import { Application } from '../modules/app.ts'
 import { Dumper } from '../modules/dumper/dumper.ts'
 import { HttpContext } from '../modules/http/main.ts'
-import { Encryption } from '../modules/encryption.ts'
+import { RuntimeException } from '../src/exceptions.ts'
 import { Router, Server } from '../modules/http/main.ts'
 import { BaseEvent, Emitter } from '../modules/events.ts'
+import { Encryption } from '../modules/encryption/main.ts'
+import { configProvider } from '../src/config_provider.ts'
 import { serialize } from '../modules/transformers/main.ts'
 import { type SerializeFn } from '../types/transformers.ts'
 import { type ContainerResolver } from '../modules/container.ts'
@@ -179,21 +181,38 @@ export default class AppServiceProvider {
   }
 
   /**
-   * Register the encryption service to the container
+   * Registers the encryption service with the container
    *
-   * Creates a singleton binding for the encryption service using
-   * the app key from configuration for encryption/decryption operations.
+   * Creates singleton bindings for both the encryption manager and
+   * the default encryption instance. Resolves configuration from
+   * config/encryption.ts file.
    *
    * @example
    * const encryption = await container.make('encryption')
-   * const encrypted = encryption.encrypt('sensitive data')
+   * const encrypted = encryption.encrypt('secret-data')
    */
   protected registerEncryption() {
-    this.app.container.singleton(Encryption, () => {
-      const appKey = this.app.config.get<string>('app.appKey')
-      return new Encryption({ secret: appKey })
+    this.app.container.singleton('encryption', async () => {
+      const encryptionConfigProvider = this.app.config.get('encryption')
+
+      /**
+       * Resolve config from the provider
+       */
+      const config = await configProvider.resolve<any>(this.app, encryptionConfigProvider)
+      if (!config) {
+        throw new RuntimeException(
+          'Invalid "config/encryption.ts" file. Make sure you are using the "defineConfig" method'
+        )
+      }
+
+      const { EncryptionManager } = await import('../modules/encryption/main.js')
+      return new EncryptionManager(config)
     })
-    this.app.container.alias('encryption', Encryption)
+
+    this.app.container.singleton(Encryption, async (resolver) => {
+      const encryptionManager = await resolver.make('encryption')
+      return encryptionManager.use()
+    })
   }
 
   /**
@@ -209,7 +228,7 @@ export default class AppServiceProvider {
    */
   protected registerServer() {
     this.app.container.singleton(Server, async (resolver) => {
-      const encryption = await resolver.make('encryption')
+      const encryption = await resolver.make(Encryption)
       const emitter = await resolver.make('emitter')
       const logger = await resolver.make('logger')
       const config = this.app.config.get<any>('app.http')

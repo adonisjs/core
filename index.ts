@@ -10,7 +10,7 @@
 import { errors as aceErrors } from '@adonisjs/ace'
 import { errors as envErrors } from '@adonisjs/env'
 import { errors as appErrors } from '@adonisjs/application'
-import { errors as encryptionErrors } from '@adonisjs/encryption'
+import { errors as encryptionErrors } from '@boringnode/encryption'
 import { errors as httpServerErrors } from '@adonisjs/http-server'
 
 export { stubsRoot } from './stubs/main.ts'
