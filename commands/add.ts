@@ -75,8 +75,12 @@ export default class Add extends BaseCommand {
    * Resolve the npm package name from the user-provided name
    */
   #resolveNpmPackageName(name: string): string {
-    if (name === 'vinejs') return '@vinejs/vine'
-    if (name === 'edge') return 'edge.js'
+    if (name === 'vinejs') {
+      return '@vinejs/vine'
+    }
+    if (name === 'edge') {
+      return 'edge.js'
+    }
 
     return name
   }
@@ -113,11 +117,14 @@ export default class Add extends BaseCommand {
      */
     const codemods = await this.createCodemods()
     codemods.verboseInstallOutput = !!this.verbose
-    const pkgWasInstalled = await codemods.installPackages(
+
+    const packagesWereInstalled = await codemods.installPackages(
       packages.map((pkg) => ({ name: pkg.npmName, isDevDependency: !!this.dev })),
       this.packageManager
     )
-    if (!pkgWasInstalled) return
+    if (!packagesWereInstalled) {
+      return
+    }
 
     /**
      * Configure each package sequentially
@@ -146,7 +153,9 @@ export default class Add extends BaseCommand {
       this.exitCode = 1
       for (const pkg of failed) {
         this.logger.error(`Unable to configure ${this.colors.green(pkg.name)}`)
-        if (pkg.error) await prettyPrintError(pkg.error.cause || pkg.error)
+        if (pkg.error) {
+          await prettyPrintError(pkg.error.cause || pkg.error)
+        }
       }
     }
   }
