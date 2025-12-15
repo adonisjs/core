@@ -13,6 +13,7 @@ import { IncomingMessage, ServerResponse } from 'node:http'
 
 import { HttpServerUtils } from './http.ts'
 import type { ApplicationService } from '../types.ts'
+import { Encryption } from '../../modules/encryption/main.ts'
 import { CookieClient, type HttpContext } from '../../modules/http/main.ts'
 
 /**
@@ -61,7 +62,7 @@ export class TestUtils extends Macroable {
   async boot() {
     if (!this.isBooted) {
       this.#booted = true
-      this.cookies = new CookieClient(await this.app.container.make('encryption'))
+      this.cookies = new CookieClient(await this.app.container.make(Encryption))
     }
   }
 
