@@ -215,6 +215,22 @@ export default class ReplServiceProvider {
           description: 'Load "helpers" module in the REPL context',
         }
       )
+
+      repl.addMethod(
+        'loadUrlBuilder',
+        async () => {
+          const router = await this.app.container.make('router')
+          repl.server!.context.urlBuilder = router.urlBuilder
+          repl.notify(
+            `Loaded "urlBuilder" service. You can access it using the "${repl.colors.underline(
+              'urlBuilder'
+            )}" variable`
+          )
+        },
+        {
+          description: 'Load "urlBuilder" service in the REPL context',
+        }
+      )
     })
   }
 }

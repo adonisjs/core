@@ -77,11 +77,14 @@ test.group('Bindings | Repl', () => {
     assert.deepEqual(repl.server!.context.helpers.string, stringHelpers)
     assert.deepEqual(repl.server!.context.helpers.is, is)
 
+    await methods.loadUrlBuilder.handler(repl)
+    const router = await app.container.make('router')
+    assert.strictEqual(repl.server!.context.urlBuilder, router.urlBuilder)
+
     const output = await methods.importDefault.handler(repl, '../providers/app_provider.js')
     assert.deepEqual(output, AppServiceProvider)
 
-    const router = await methods.make.handler(repl, 'router')
-    assert.deepEqual(router, await app.container.make('router'))
+    assert.deepEqual(await methods.make.handler(repl, 'router'), await app.container.make('router'))
 
     const exportedMods = await methods.importAll.handler(repl, '../../../factories')
     assert.properties(exportedMods, [
