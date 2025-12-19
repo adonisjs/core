@@ -9,9 +9,10 @@
 
 import debug from '../../src/debug.ts'
 import { configProvider } from '../../src/config_provider.ts'
-import { type EncryptionConfig, type ConfigProvider } from '../../src/types.ts'
+import { type ConfigProvider } from '../../src/types.ts'
 
 import {
+  type EncryptionConfig,
   type AES256CBCDriverConfig,
   type AES256GCMDriverConfig,
   type ChaCha20Poly1305DriverConfig,
