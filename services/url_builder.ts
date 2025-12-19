@@ -8,10 +8,10 @@
  */
 
 import app from './app.ts'
-import type { SignedUrlBuilderService, UrlBuilderService } from '../src/types.ts'
+import type { UrlBuilderSignedUrlFor, UrlBuilderUrlFor } from '../src/types.ts'
 
-let urlFor: UrlBuilderService
-let signedUrlFor: SignedUrlBuilderService
+let urlFor: UrlBuilderUrlFor
+let signedUrlFor: UrlBuilderSignedUrlFor
 
 /**
  * Returns a singleton instance of the router class from

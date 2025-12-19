@@ -26,10 +26,10 @@ import type { LoggerManager } from '../modules/logger.ts'
 import type { HashManager } from '../modules/hash/main.ts'
 import type { ManagerDriverFactory } from '../types/hash.ts'
 import type { Router, Server } from '../modules/http/main.ts'
+import { type EncryptionConfig } from '../types/encryption.ts'
 import type { EncryptionManager } from '../modules/encryption/main.ts'
 import type { ContainerResolveEventData } from '../types/container.ts'
 import type { LoggerConfig, LoggerManagerConfig } from '../types/logger.ts'
-import { type EncryptionDriverContract } from '../types/encryption.ts'
 
 /**
  * A config provider waits for the application to get booted
@@ -138,66 +138,6 @@ export type InferHashers<T extends ConfigProvider<{ list: Record<string, Manager
   Awaited<ReturnType<T['resolver']>>['list']
 
 /**
- * ----------------------------------------------------------------
- * Container services
- * -----------------------------------------------------------------
- *
- * Types for the container singleton services. Defining them
- * upfront so that we do not have to define them in
- * multiple places.
- */
-
-/**
- * Application service is a singleton resolved from
- * the container. It provides access to the core application
- * instance with all registered bindings.
- *
- * @example
- * // Accessing application service in a controller
- * export default class HomeController {
- *   async index({ app }: { app: ApplicationService }) {
- *     const version = app.version
- *     const env = app.env.get('NODE_ENV')
- *   }
- * }
- */
-export interface ApplicationService extends Application<
-  ContainerBindings extends Record<any, any> ? ContainerBindings : never
-> {}
-
-/**
- * Logger service is a singleton logger instance registered
- * to the container. It provides access to configured loggers.
- *
- * @example
- * // Using logger service in a controller
- * export default class UserController {
- *   async store({ logger }: { logger: LoggerService }) {
- *     logger.info('Creating new user')
- *     logger.use('file').error('Failed to create user')
- *   }
- * }
- */
-export interface LoggerService extends LoggerManager<
-  LoggersList extends Record<string, LoggerConfig> ? LoggersList : never
-> {}
-
-/**
- * Emitter service is a singleton emitter instance registered
- * to the container. It provides type-safe event emission and listening.
- *
- * @example
- * // Using emitter service to emit events
- * export default class UserController {
- *   async store({ emitter }: { emitter: EmitterService }) {
- *     const user = await User.create(data)
- *     emitter.emit('user:created', { user })
- *   }
- * }
- */
-export interface EmitterService extends Emitter<EventsList> {}
-
-/**
  * A list of known encryptors inferred from the user config.
  * This interface should be extended in user code to register
  * custom encryptors.
@@ -214,48 +154,53 @@ export interface EmitterService extends Emitter<EventsList> {}
 export interface EncryptorsList {}
 
 /**
- * Configuration object for encryption drivers. Defines how encryption
- * and decryption should be performed with support for key rotation.
+ * Utility type to infer encryptors configurations from a config provider.
  *
- * @example
- * const config: EncryptionConfig = {
- *   driver: (key) => new SecureEncryptor(key),
- *   keys: [
- *     'new-encryption-key',  // Used for encryption
- *     'old-encryption-key'   // Used only for decryption
- *   ]
- * }
+ * @template T - The config provider type that resolves to an object with a 'list' property
  */
-export interface EncryptionConfig {
-  /**
-   * Factory function that creates a driver instance for a given key
-   * @param key - The encryption key to use
-   */
-  driver: (key: string) => EncryptionDriverContract
+export type InferEncryptors<
+  T extends ConfigProvider<{
+    list: Record<string, EncryptionConfig>
+  }>,
+> = Awaited<ReturnType<T['resolver']>>['list']
 
-  /**
-   * List of keys to use for encryption/decryption.
-   * The first key is used for encryption, all keys are tried for decryption.
-   */
-  keys: string[]
-}
+/**
+ * ----------------------------------------------------------------
+ * Container services
+ * -----------------------------------------------------------------
+ *
+ * Types for the container singleton services. Defining them
+ * upfront so that we do not have to define them in
+ * multiple places.
+ */
+
+/**
+ * Application service is a singleton resolved from
+ * the container. It provides access to the core application
+ * instance with all registered bindings.
+ */
+export interface ApplicationService extends Application<
+  ContainerBindings extends Record<any, any> ? ContainerBindings : never
+> {}
+
+/**
+ * Logger service is a singleton logger instance registered
+ * to the container. It provides access to configured loggers.
+ */
+export interface LoggerService extends LoggerManager<
+  LoggersList extends Record<string, LoggerConfig> ? LoggersList : never
+> {}
+
+/**
+ * Emitter service is a singleton emitter instance registered
+ * to the container. It provides type-safe event emission and listening.
+ */
+export interface EmitterService extends Emitter<EventsList> {}
 
 /**
  * Encryption service is a singleton instance of the EncryptionManager
  * registered in the container. It provides encryption and decryption
  * functionality with support for multiple encryptors.
- *
- * @example
- * // Using encryption service in a controller
- * export default class TokenController {
- *   async generate({ encryption }: { encryption: EncryptionService }) {
- *     const encrypted = encryption.encrypt('sensitive-data')
- *     const decrypted = encryption.decrypt(encrypted)
- *
- *     // Using a specific encryptor
- *     const secondaryEncrypted = encryption.use('secondary').encrypt('data')
- *   }
- * }
  */
 export interface EncryptionService extends EncryptionManager<
   EncryptorsList extends Record<string, EncryptionConfig> ? EncryptorsList : never
@@ -265,15 +210,6 @@ export interface EncryptionService extends EncryptionManager<
  * Http server service added to the container as a singleton.
  * It provides access to the HTTP server instance for handling
  * requests and responses.
- *
- * @example
- * // Accessing server service in middleware
- * export default class CustomMiddleware {
- *   async handle({ server }: { server: HttpServerService }, next: NextFn) {
- *     console.log('Server listening on:', server.getPort())
- *     return next()
- *   }
- * }
  */
 export interface HttpServerService extends Server {}
 
@@ -281,14 +217,6 @@ export interface HttpServerService extends Server {}
  * Http router service added to the container as a singleton.
  * It provides access to the application's router for defining
  * and managing routes.
- *
- * @example
- * // Using router service to define routes programmatically
- * export default class RouteProvider {
- *   boot({ router }: { router: HttpRouterService }) {
- *     router.get('/api/health', () => ({ status: 'ok' }))
- *   }
- * }
  */
 export interface HttpRouterService extends Router {}
 
@@ -296,17 +224,8 @@ export interface HttpRouterService extends Router {}
  * Url builder service offers a type-safe API for creating URLs
  * for pre-registered routes. It ensures type safety when building
  * URLs with parameters.
- *
- * @example
- * // Using URL builder service
- * export default class PostController {
- *   async show({ urlBuilder }: { urlBuilder: UrlBuilderService }) {
- *     const postUrl = urlBuilder.make('posts.show', { id: 1 })
- *     const userUrl = urlBuilder.make('users.profile', { username: 'john' })
- *   }
- * }
  */
-export interface UrlBuilderService extends UrlFor<
+export interface UrlBuilderUrlFor extends UrlFor<
   RoutesList extends LookupList ? RoutesList : never,
   URLOptions
 > {}
@@ -315,19 +234,8 @@ export interface UrlBuilderService extends UrlFor<
  * Url builder service offers a type-safe API for creating signed URLs
  * for pre-registered routes. Signed URLs include a signature that prevents
  * tampering and can have expiration times.
- *
- * @example
- * // Using signed URL builder service
- * export default class FileController {
- *   async getDownloadUrl({ signedUrlBuilder }: { signedUrlBuilder: SignedUrlBuilderService }) {
- *     const signedUrl = signedUrlBuilder.make('files.download',
- *       { id: 1 },
- *       { expiresIn: '1h' }
- *     )
- *   }
- * }
  */
-export interface SignedUrlBuilderService extends UrlFor<
+export interface UrlBuilderSignedUrlFor extends UrlFor<
   RoutesList extends LookupList ? RoutesList : never,
   SignedURLOptions
 > {}
@@ -336,15 +244,6 @@ export interface SignedUrlBuilderService extends UrlFor<
  * Hash service is a singleton instance of the HashManager
  * registered in the container. It provides password hashing
  * and verification functionality.
- *
- * @example
- * // Using hash service for password management
- * export default class AuthController {
- *   async register({ hash }: { hash: HashService }) {
- *     const hashedPassword = await hash.make('user-password')
- *     const isValid = await hash.verify(hashedPassword, 'user-password')
- *   }
- * }
  */
 export interface HashService extends HashManager<
   HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
@@ -354,16 +253,6 @@ export interface HashService extends HashManager<
  * A list of known container bindings. This interface defines
  * all the services that are registered in the IoC container
  * and available for dependency injection.
- *
- * @example
- * // Accessing container bindings in a service
- * export default class UserService {
- *   constructor(
- *     private logger: LoggerService,
- *     private hash: HashService,
- *     private emitter: EmitterService
- *   ) {}
- * }
  */
 export interface ContainerBindings {
   /** Ace command-line kernel */

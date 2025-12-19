@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { type EncryptionDriverContract } from '@boringnode/encryption/types'
+
 /**
  * Contract that all encryption drivers must implement.
  *
@@ -50,3 +52,30 @@ export type { AES256GCMDriverConfig } from '@boringnode/encryption/drivers/aes_2
  * for decryption (allowing for key rotation).
  */
 export type { ChaCha20Poly1305DriverConfig } from '@boringnode/encryption/drivers/chacha20_poly1305'
+
+/**
+ * Configuration object for encryption drivers. Defines how encryption
+ * and decryption should be performed with support for key rotation.
+ *
+ * @example
+ * const config: EncryptionConfig = {
+ *   driver: (key) => new SecureEncryptor(key),
+ *   keys: [
+ *     'new-encryption-key',  // Used for encryption
+ *     'old-encryption-key'   // Used only for decryption
+ *   ]
+ * }
+ */
+export interface EncryptionConfig {
+  /**
+   * Factory function that creates a driver instance for a given key
+   * @param key - The encryption key to use
+   */
+  driver: (key: string) => EncryptionDriverContract
+
+  /**
+   * List of keys to use for encryption/decryption.
+   * The first key is used for encryption, all keys are tried for decryption.
+   */
+  keys: string[]
+}
