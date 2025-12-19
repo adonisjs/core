@@ -38,7 +38,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/server/controllers.ts')
@@ -77,7 +77,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/server/events.ts')
@@ -116,7 +116,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/server/listeners.ts')
@@ -155,7 +155,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
@@ -208,7 +208,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
@@ -263,7 +263,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
@@ -325,7 +325,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/server/controllers.ts')
@@ -373,7 +373,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/client/data.d.ts')
@@ -416,7 +416,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/client/manifest.d.ts')
@@ -446,7 +446,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileExists('.adonisjs/client/manifest.d.ts')
@@ -477,7 +477,7 @@ test.group('Index generator', () => {
       },
     })
 
-    indexer.run({} as any, generator)
+    indexer.run({} as any, {} as any, generator)
     await generator.generate()
 
     await assert.fileNotExists('.adonisjs/client/manifest.d.ts')
