@@ -95,7 +95,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
   }
 
   return {
-    run(_, indexGenerator) {
+    run(_, __, indexGenerator) {
       if (events.enabled) {
         indexGenerator.add('events', {
           source: events.source,
@@ -138,7 +138,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
         indexGenerator.add('transformers', {
           source: transformers.source,
           glob: transformers.glob,
-          as(vfs, buffer, __, helpers) {
+          as(vfs, buffer, ___, helpers) {
             const transformersList = vfs.asTree({
               transformKey(key) {
                 let segments = key.split('/')
@@ -174,7 +174,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
             }
             return !!manifest.include.find((include) => filePath.endsWith(include))
           },
-          as(vfs, buffer, __, helpers) {
+          as(vfs, buffer, ___, helpers) {
             const configFilesList = vfs.asList()
             buffer.write(`/// <reference path="../../adonisrc.ts" />`)
             Object.values(configFilesList).forEach((value) => {
