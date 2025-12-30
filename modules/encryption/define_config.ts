@@ -211,7 +211,7 @@ export const drivers: {
   aes256cbc: (config) => {
     return configProvider.create(async () => {
       const { AES256CBC } = await import('./drivers/aes_256_cbc.ts')
-      debug('configuring chacha20 encryption driver')
+      debug('configuring aes256cbc encryption driver')
       return {
         driver: (key: string) => new AES256CBC({ id: config.id, key }),
         keys: config.keys,
@@ -222,7 +222,7 @@ export const drivers: {
   aes256gcm: (config) => {
     return configProvider.create(async () => {
       const { AES256GCM } = await import('./drivers/aes_256_gcm.ts')
-      debug('configuring chacha20 encryption driver')
+      debug('configuring aes256gcm encryption driver')
       return {
         driver: (key: string) => new AES256GCM({ id: config.id, key }),
         keys: config.keys,
