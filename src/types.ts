@@ -76,15 +76,17 @@ export type InferHashers<T extends ConfigProvider<{ list: Record<string, Manager
  * Application service is a singleton resolved from
  * the container
  */
-export interface ApplicationService
-  extends Application<ContainerBindings extends Record<any, any> ? ContainerBindings : never> {}
+export interface ApplicationService extends Application<
+  ContainerBindings extends Record<any, any> ? ContainerBindings : never
+> {}
 
 /**
  * Logger service is a singleton logger instance registered
  * to the container.
  */
-export interface LoggerService
-  extends LoggerManager<LoggersList extends Record<string, LoggerConfig> ? LoggersList : never> {}
+export interface LoggerService extends LoggerManager<
+  LoggersList extends Record<string, LoggerConfig> ? LoggersList : never
+> {}
 
 /**
  * Emitter service is a singleton emitter instance registered
@@ -112,10 +114,9 @@ export interface HttpRouterService extends Router {}
  * Hash service is a singleton instance of the HashManager
  * registered in the container
  */
-export interface HashService
-  extends HashManager<
-    HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
-  > {}
+export interface HashService extends HashManager<
+  HashersList extends Record<string, ManagerDriverFactory> ? HashersList : never
+> {}
 
 /**
  * A list of known container bindings.
