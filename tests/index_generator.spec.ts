@@ -407,7 +407,7 @@ test.group('Index generator', () => {
 
     await fs.create('config/app.ts', '') // ignored
     await fs.create('config/hash.ts', '')
-    await fs.create('config/auth.ts', '') // ignored
+    await fs.create('config/auth.ts', '')
 
     const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
     const indexer = indexEntities({
@@ -423,6 +423,7 @@ test.group('Index generator', () => {
     assert.snapshot(await fs.contents('.adonisjs/client/manifest.d.ts')).matchInline(`
       "/// <reference path=\\"../../adonisrc.ts\\" />
       /// <reference path=\\"../../config/auth.ts\\" />
+      /// <reference path=\\"../../config/hash.ts\\" />
       "
     `)
   })
@@ -442,7 +443,7 @@ test.group('Index generator', () => {
       },
       manifest: {
         enabled: true,
-        include: [],
+        exclude: [],
       },
     })
 

@@ -91,7 +91,18 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
     enabled: entities.manifest?.enabled === false ? false : transformers.enabled,
     source: 'config',
     output: '.adonisjs/client/manifest.d.ts',
-    include: entities.manifest?.include ?? ['auth.ts'],
+    exclude: entities.manifest?.exclude ?? [
+      'app.ts',
+      'bodyparser.ts',
+      'cors.ts',
+      'database.ts',
+      'encryption.ts',
+      'inertia.ts',
+      'session.ts',
+      'shield.ts',
+      'static.ts',
+      'vite.ts',
+    ],
   }
 
   return {
@@ -169,10 +180,10 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
             if (isDirectory) {
               return true
             }
-            if (!manifest.include?.length) {
+            if (!manifest.exclude?.length) {
               return true
             }
-            return !!manifest.include.find((include) => filePath.endsWith(include))
+            return !manifest.exclude.find((include) => filePath.endsWith(include))
           },
           as(vfs, buffer, ___, helpers) {
             const configFilesList = vfs.asList()
