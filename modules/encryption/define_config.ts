@@ -12,11 +12,11 @@ import { configProvider } from '../../src/config_provider.ts'
 import { type ConfigProvider } from '../../src/types.ts'
 
 import {
-  type EncryptionConfig,
   type AES256CBCDriverConfig,
   type AES256GCMDriverConfig,
   type ChaCha20Poly1305DriverConfig,
 } from '../../types/encryption.ts'
+import { type EncryptionConfig } from '../../types/encryption.ts'
 import { InvalidArgumentsException } from '../../src/exceptions.ts'
 
 /**
@@ -202,7 +202,7 @@ export const drivers: {
       const { ChaCha20Poly1305 } = await import('./drivers/chacha20_poly1305.ts')
       debug('configuring chacha20 encryption driver')
       return {
-        driver: (key: string) => new ChaCha20Poly1305({ id: config.id, key }),
+        driver: (key) => new ChaCha20Poly1305({ id: config.id, key }),
         keys: config.keys,
       }
     })
@@ -213,7 +213,7 @@ export const drivers: {
       const { AES256CBC } = await import('./drivers/aes_256_cbc.ts')
       debug('configuring aes256cbc encryption driver')
       return {
-        driver: (key: string) => new AES256CBC({ id: config.id, key }),
+        driver: (key) => new AES256CBC({ id: config.id, key }),
         keys: config.keys,
       }
     })
@@ -224,7 +224,7 @@ export const drivers: {
       const { AES256GCM } = await import('./drivers/aes_256_gcm.ts')
       debug('configuring aes256gcm encryption driver')
       return {
-        driver: (key: string) => new AES256GCM({ id: config.id, key }),
+        driver: (key) => new AES256GCM({ id: config.id, key }),
         keys: config.keys,
       }
     })
