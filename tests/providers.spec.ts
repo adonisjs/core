@@ -11,7 +11,6 @@ import { test } from '@japa/runner'
 import { fileURLToPath } from 'node:url'
 import { setTimeout } from 'node:timers/promises'
 import { defineConfig } from '@adonisjs/application'
-import { HttpContextFactory } from '@adonisjs/http-server/factories'
 
 import { Repl } from '../modules/repl.ts'
 import { Config } from '../modules/config.ts'
@@ -391,23 +390,4 @@ test.group('Providers', () => {
       }"
     `)
   }).timeout(5000)
-
-  test('add transform method to HTTP context', async ({ assert }) => {
-    const ignitor = new IgnitorFactory()
-      .merge({
-        rcFileContents: defineConfig({
-          providers: [() => import('../providers/app_provider.js')],
-        }),
-      })
-      .withCoreConfig()
-      .create(BASE_URL)
-
-    const app = ignitor.createApp('repl')
-    await app.init()
-    await app.boot()
-
-    const { serialize } = new HttpContextFactory().create()
-    assert.isFunction(serialize)
-    assert.deepEqual(await serialize({}), {})
-  })
 })

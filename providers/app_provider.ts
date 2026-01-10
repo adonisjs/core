@@ -14,26 +14,13 @@ import { Config } from '../modules/config.ts'
 import { Logger } from '../modules/logger.ts'
 import { Application } from '../modules/app.ts'
 import { Dumper } from '../modules/dumper/dumper.ts'
-import { HttpContext } from '../modules/http/main.ts'
 import { RuntimeException } from '../src/exceptions.ts'
 import { Router, Server } from '../modules/http/main.ts'
 import { BaseEvent, Emitter } from '../modules/events.ts'
 import { Encryption } from '../modules/encryption/main.ts'
 import { configProvider } from '../src/config_provider.ts'
-import { serialize } from '../modules/transformers/main.ts'
-import { type SerializeFn } from '../types/transformers.ts'
-import { type ContainerResolver } from '../modules/container.ts'
 import type { ApplicationService, LoggerService } from '../src/types.ts'
 import BodyParserMiddleware from '../modules/bodyparser/bodyparser_middleware.ts'
-
-/**
- * Extend HTTP request class with the transform method
- */
-declare module '@adonisjs/core/http' {
-  export interface HttpContext {
-    serialize: SerializeFn
-  }
-}
 
 /**
  * The Application Service provider registers all the baseline
@@ -390,12 +377,6 @@ export default class AppServiceProvider {
    */
   async boot() {
     BaseEvent.useEmitter(await this.app.container.make('emitter'))
-    HttpContext.instanceProperty(
-      'serialize',
-      function (this: HttpContext, value: any, container?: ContainerResolver<any>) {
-        return serialize(value, container ?? this.containerResolver) as any
-      }
-    )
   }
 
   /**
