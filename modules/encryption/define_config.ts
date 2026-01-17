@@ -15,6 +15,7 @@ import {
   type AES256CBCDriverConfig,
   type AES256GCMDriverConfig,
   type ChaCha20Poly1305DriverConfig,
+  type LegacyDriverConfig,
 } from '../../types/encryption.ts'
 import { type EncryptionConfig } from '../../types/encryption.ts'
 import { InvalidArgumentsException } from '../../src/exceptions.ts'
@@ -196,6 +197,26 @@ export const drivers: {
    * ```
    */
   aes256gcm: (config: AES256GCMDriverConfig) => ConfigProvider<EncryptionConfig>
+
+  /**
+   * Creates a Legacy encryption driver configuration.
+   *
+   * The Legacy driver maintains compatibility with the old AdonisJS v6
+   * encryption format. It uses AES-256-CBC with HMAC SHA-256.
+   *
+   * Use this driver to decrypt values encrypted with older versions
+   * of AdonisJS or when migrating to newer encryption drivers.
+   *
+   * @param config - The Legacy driver configuration
+   *
+   * @example
+   * ```ts
+   * drivers.legacy({
+   *   keys: [env.get('APP_KEY')]
+   * })
+   * ```
+   */
+  legacy: (config: LegacyDriverConfig) => ConfigProvider<EncryptionConfig>
 } = {
   chacha20: (config) => {
     return configProvider.create(async () => {
@@ -225,6 +246,17 @@ export const drivers: {
       debug('configuring aes256gcm encryption driver')
       return {
         driver: (key) => new AES256GCM({ id: config.id, key }),
+        keys: config.keys.filter((key) => !!key),
+      }
+    })
+  },
+
+  legacy: (config) => {
+    return configProvider.create(async () => {
+      const { Legacy } = await import('./drivers/legacy.ts')
+      debug('configuring legacy encryption driver')
+      return {
+        driver: (key) => new Legacy({ key }),
         keys: config.keys.filter((key) => !!key),
       }
     })

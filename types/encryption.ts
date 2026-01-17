@@ -50,3 +50,12 @@ export type { AES256GCMDriverConfig } from '@boringnode/encryption/drivers/aes_2
  * for decryption (allowing for key rotation).
  */
 export type { ChaCha20Poly1305DriverConfig } from '@boringnode/encryption/drivers/chacha20_poly1305'
+
+/**
+ * Configuration options for the Legacy encryption driver.
+ *
+ * The Legacy driver maintains compatibility with the old AdonisJS v6
+ * encryption format. It does not require a driver identifier since
+ * the legacy format doesn't include one.
+ */
+export type { LegacyDriverConfig } from '../modules/encryption/drivers/legacy.ts'
