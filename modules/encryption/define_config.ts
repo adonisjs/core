@@ -203,7 +203,7 @@ export const drivers: {
       debug('configuring chacha20 encryption driver')
       return {
         driver: (key) => new ChaCha20Poly1305({ id: config.id, key }),
-        keys: config.keys,
+        keys: config.keys.filter((key) => !!key),
       }
     })
   },
@@ -214,7 +214,7 @@ export const drivers: {
       debug('configuring aes256cbc encryption driver')
       return {
         driver: (key) => new AES256CBC({ id: config.id, key }),
-        keys: config.keys,
+        keys: config.keys.filter((key) => !!key),
       }
     })
   },
@@ -225,7 +225,7 @@ export const drivers: {
       debug('configuring aes256gcm encryption driver')
       return {
         driver: (key) => new AES256GCM({ id: config.id, key }),
-        keys: config.keys,
+        keys: config.keys.filter((key) => !!key),
       }
     })
   },
