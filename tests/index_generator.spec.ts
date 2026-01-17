@@ -50,7 +50,7 @@ test.group('Index generator', () => {
     assert.isDefined(
       cliUi.logger
         .getLogs()
-        .find(({ message }) => message.includes('.adonisjs/server/controllers.ts'))
+        .find(({ message }) => message.includes('[ blue(info) ] codegen: created'))
     )
   })
 
@@ -89,7 +89,9 @@ test.group('Index generator', () => {
       `InvoiceCreated: BillingInvoiceCreated`,
     ])
     assert.isDefined(
-      cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/server/events.ts'))
+      cliUi.logger
+        .getLogs()
+        .find(({ message }) => message.includes('[ blue(info) ] codegen: created'))
     )
   })
 
@@ -128,7 +130,7 @@ test.group('Index generator', () => {
     assert.isDefined(
       cliUi.logger
         .getLogs()
-        .find(({ message }) => message.includes('.adonisjs/server/listeners.ts'))
+        .find(({ message }) => message.includes('[ blue(info) ] codegen: created'))
     )
   })
 
@@ -180,7 +182,9 @@ test.group('Index generator', () => {
       "
     `)
     assert.isDefined(
-      cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/client/data.d.ts'))
+      cliUi.logger
+        .getLogs()
+        .find(({ message }) => message.includes('[ blue(info) ] codegen: created'))
     )
   })
 
@@ -236,7 +240,9 @@ test.group('Index generator', () => {
       "
     `)
     assert.isDefined(
-      cliUi.logger.getLogs().find(({ message }) => message.includes('.adonisjs/client/data.d.ts'))
+      cliUi.logger
+        .getLogs()
+        .find(({ message }) => message.includes('[ blue(info) ] codegen: created'))
     )
   })
 
