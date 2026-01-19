@@ -39,6 +39,10 @@ function isBodyParserFile(file: unknown): file is MultipartFile {
  * @param field - The field context from VineJS validation
  */
 const isMultipartFile = vine.createRule<FileRuleValidationOptions>((file, options, field) => {
+  if (!field.isDefined) {
+    return false
+  }
+
   /**
    * Report error when value is not a field multipart
    * file object
