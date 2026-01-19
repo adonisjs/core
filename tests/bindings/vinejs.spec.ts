@@ -178,4 +178,77 @@ test.group('Bindings | VineJS', (group) => {
     assert.equal(avatar.size, 4000000)
     assert.lengthOf(avatar.errors, 0)
   })
+
+  test('pass validation when file is null and marked as nullable', async ({ assert }) => {
+    const validator = vine.create(
+      vine.object({
+        avatar: vine
+          .file(() => {
+            return { extnames: ['jpg'] }
+          })
+          .nullable(),
+      })
+    )
+
+    const payload = await validator.validate({
+      avatar: null,
+    })
+    assert.isNull(payload.avatar)
+  })
+
+  test('pass validation when file is null and marked as optional', async ({ assert }) => {
+    const validator = vine.create(
+      vine.object({
+        avatar: vine
+          .file(() => {
+            return { extnames: ['jpg'] }
+          })
+          .optional(),
+      })
+    )
+
+    const payload = await validator.validate({
+      avatar: null,
+    })
+    assert.isUndefined(payload.avatar)
+  })
+
+  test('pass validation when file is missing and marked as optional', async ({ assert }) => {
+    const validator = vine.create(
+      vine.object({
+        avatar: vine
+          .file(() => {
+            return { extnames: ['jpg'] }
+          })
+          .optional(),
+      })
+    )
+
+    const payload = await validator.validate({})
+    assert.isUndefined(payload.avatar)
+  })
+
+  test('raise error when field is marked as nullable, but missing', async ({ assert }) => {
+    const validator = vine.create(
+      vine.object({
+        avatar: vine
+          .file(() => {
+            return { extnames: ['jpg'] }
+          })
+          .nullable(),
+      })
+    )
+
+    try {
+      await validator.validate({})
+    } catch (error) {
+      assert.deepEqual(error.messages, [
+        {
+          field: 'avatar',
+          message: 'The avatar field must be defined',
+          rule: 'required',
+        },
+      ])
+    }
+  })
 })
