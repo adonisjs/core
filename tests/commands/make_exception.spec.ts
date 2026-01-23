@@ -50,7 +50,10 @@ test.group('Make exception command', () => {
     ])
     await command.exec()
 
-    await assert.fileEquals('app/exceptions/unauthorized_exception.ts', `export class MyException {}`)
+    await assert.fileEquals(
+      'app/exceptions/unauthorized_exception.ts',
+      `export class MyException {}`
+    )
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
         message: 'green(DONE:)    create app/exceptions/unauthorized_exception.ts',
