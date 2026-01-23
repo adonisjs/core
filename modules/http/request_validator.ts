@@ -56,7 +56,7 @@ export class RequestValidator {
    */
   static messagesProvider?: (_: HttpContext) => MessagesProviderContact
 
-  private requestData() {
+  #requestData() {
     const requestBody = this.#ctx.request.all()
     return {
       ...requestBody,
@@ -66,7 +66,7 @@ export class RequestValidator {
     }
   }
 
-  private processValidatorOptions<MetaData extends undefined | Record<string, any>>(
+  #processValidatorOptions<MetaData extends undefined | Record<string, any>>(
     options: RequestValidationOptions<MetaData> | undefined
   ): RequestValidationOptions<any> {
     const validatorOptions: RequestValidationOptions<any> = options || {}
@@ -121,12 +121,12 @@ export class RequestValidator {
     /**
      * Process the validation options
      */
-    const validatorOptions = this.processValidatorOptions(options)
+    const validatorOptions = this.#processValidatorOptions(options)
 
     /**
      * Data to validate
      */
-    const data = validatorOptions.data || this.requestData()
+    const data = validatorOptions.data || this.#requestData()
 
     return validator.validate(data, validatorOptions as any)
   }
@@ -143,12 +143,12 @@ export class RequestValidator {
     /**
      * Process the validation options
      */
-    const validatorOptions = this.processValidatorOptions(options)
+    const validatorOptions = this.#processValidatorOptions(options)
 
     /**
      * Data to validate
      */
-    const data = validatorOptions.data || this.requestData()
+    const data = validatorOptions.data || this.#requestData()
 
     return validator.tryValidate(data, validatorOptions as any)
   }
