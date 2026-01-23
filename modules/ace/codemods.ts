@@ -389,6 +389,148 @@ export class Codemods extends EventEmitter {
   }
 
   /**
+   * Add a new validator file to the validators directory.
+   * This method creates a new validator file with the provided definition.
+   *
+   * @param params - Parameters for adding the validator
+   *
+   * @example
+   * ```ts
+   * await codemods.addValidator({
+   *   validatorFileName: 'create_user',
+   *   exportName: 'createUserValidator',
+   *   contents: 'export const createUserValidator = vine.compile(...)'
+   * })
+   * ```
+   */
+  async addValidator(...params: Parameters<CodeTransformer['addValidator']>) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
+      this.#cliLogger.warning(
+        'Cannot create validator file. Install "@adonisjs/assembler" to modify source files'
+      )
+      return
+    }
+
+    const action = this.#cliLogger.action('create validator file')
+    try {
+      await transformer.addValidator(...params)
+      action.succeeded()
+    } catch (error) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
+  }
+
+  /**
+   * Add a new rate limiter file to the limiters directory.
+   * This method creates a new limiter file with the provided definition.
+   *
+   * @param params - Parameters for adding the limiter
+   *
+   * @example
+   * ```ts
+   * await codemods.addLimiter({
+   *   limiterFileName: 'api_throttle',
+   *   exportName: 'apiThrottleLimiter',
+   *   contents: 'export const apiThrottleLimiter = limiter.define(...)'
+   * })
+   * ```
+   */
+  async addLimiter(...params: Parameters<CodeTransformer['addLimiter']>) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
+      this.#cliLogger.warning(
+        'Cannot create limiter file. Install "@adonisjs/assembler" to modify source files'
+      )
+      return
+    }
+
+    const action = this.#cliLogger.action('create limiter file')
+    try {
+      await transformer.addLimiter(...params)
+      action.succeeded()
+    } catch (error) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
+  }
+
+  /**
+   * Add mixins to a model class.
+   * This method adds mixin calls to the specified model file.
+   *
+   * @param params - Parameters for adding model mixins (modelFileName, mixins array)
+   *
+   * @example
+   * ```ts
+   * await codemods.addModelMixins('user', [
+   *   {
+   *     name: 'SoftDeletes',
+   *     importPath: '@adonisjs/lucid/mixins/soft_deletes',
+   *     importType: 'named'
+   *   }
+   * ])
+   * ```
+   */
+  async addModelMixins(...params: Parameters<CodeTransformer['addModelMixins']>) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
+      this.#cliLogger.warning(
+        'Cannot update model file. Install "@adonisjs/assembler" to modify source files'
+      )
+      return
+    }
+
+    const action = this.#cliLogger.action('update model file')
+    try {
+      await transformer.addModelMixins(...params)
+      action.succeeded()
+    } catch (error) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
+  }
+
+  /**
+   * Add a new method to an existing controller class.
+   * This method injects a new method into the specified controller file.
+   *
+   * @param params - Parameters for adding the controller method
+   *
+   * @example
+   * ```ts
+   * await codemods.addControllerMethod({
+   *   controllerFileName: 'users_controller',
+   *   className: 'UsersController',
+   *   name: 'destroy',
+   *   contents: 'async destroy({ params, response }: HttpContext) { ... }',
+   *   imports: [
+   *     { isType: false, isNamed: true, name: 'HttpContext', path: '@adonisjs/core/http' }
+   *   ]
+   * })
+   * ```
+   */
+  async addControllerMethod(...params: Parameters<CodeTransformer['addControllerMethod']>) {
+    const transformer = await this.#getCodeTransformer()
+    if (!transformer) {
+      this.#cliLogger.warning(
+        'Cannot update controller file. Install "@adonisjs/assembler" to modify source files'
+      )
+      return
+    }
+
+    const action = this.#cliLogger.action('update controller file')
+    try {
+      await transformer.addControllerMethod(...params)
+      action.succeeded()
+    } catch (error) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
+  }
+
+  /**
    * Generate a file using a stub template
    *
    * @param stubsRoot - Root directory containing stub files

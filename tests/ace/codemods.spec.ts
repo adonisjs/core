@@ -303,3 +303,139 @@ test.group('Codemods | install packages', (group) => {
     await assert.dirExists('node_modules/@adonisjs/assembler')
   })
 })
+
+test.group('Codemods | addValidator', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('add validator file', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addValidator({
+      validatorFileName: 'create_user.ts',
+      exportName: 'createUserValidator',
+      contents: 'export const createUserValidator = vine.compile(vine.object({}))',
+    })
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create validator file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileExists('app/validators/create_user.ts')
+    await assert.fileContains('app/validators/create_user.ts', 'createUserValidator')
+  })
+})
+
+test.group('Codemods | addLimiter', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('add limiter file', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addLimiter({
+      limiterFileName: 'limiter.ts',
+      exportName: 'apiThrottleLimiter',
+      contents: 'export const apiThrottleLimiter = limiter.define("api", () => {})',
+    })
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create limiter file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileExists('start/limiter.ts')
+    await assert.fileContains('start/limiter.ts', 'apiThrottleLimiter')
+  })
+})
+
+test.group('Codemods | addModelMixins', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('add mixins to model', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create(
+      'app/models/user.ts',
+      `import { BaseModel } from '@adonisjs/lucid/orm'
+export default class User extends BaseModel {}`
+    )
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addModelMixins('user.ts', [
+      {
+        name: 'SoftDeletes',
+        importPath: '@adonisjs/lucid/mixins/soft_deletes',
+        importType: 'named',
+      },
+    ])
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update model file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('app/models/user.ts', 'SoftDeletes')
+    await assert.fileContains('app/models/user.ts', '@adonisjs/lucid/mixins/soft_deletes')
+  })
+})
+
+test.group('Codemods | addControllerMethod', (group) => {
+  group.tap((t) => t.timeout(60 * 1000))
+
+  test('add method to controller', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create(
+      'app/controllers/users_controller.ts',
+      `export default class UsersController {
+  async index() {}
+}`
+    )
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addControllerMethod({
+      controllerFileName: 'users_controller.ts',
+      className: 'UsersController',
+      name: 'destroy',
+      contents: 'async destroy({ params }: HttpContext) { return params.id }',
+      imports: [
+        {
+          source: '@adonisjs/core/http',
+          typeImports: ['HttpContext'],
+        },
+      ],
+    })
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update controller file',
+        stream: 'stdout',
+      },
+    ])
+
+    await assert.fileContains('app/controllers/users_controller.ts', 'destroy')
+    await assert.fileContains('app/controllers/users_controller.ts', 'HttpContext')
+  })
+})
