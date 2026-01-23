@@ -8,7 +8,7 @@
  */
 
 import { stubsRoot } from '../../stubs/main.ts'
-import { args } from '../../modules/ace/main.ts'
+import { args, flags } from '../../modules/ace/main.ts'
 import { BaseCommand } from '../../modules/ace/main.ts'
 
 /**
@@ -42,6 +42,13 @@ export default class MakeCommand extends BaseCommand {
   declare name: string
 
   /**
+   * Read the contents from this file (if the flag exists) and use
+   * it as the raw contents
+   */
+  @flags.string({ description: 'Use the contents of the given file as the generated output' })
+  declare contentsFrom: string
+
+  /**
    * The stub template file to use for generating the command class
    */
   protected stubPath: string = 'make/command/main.stub'
@@ -52,9 +59,16 @@ export default class MakeCommand extends BaseCommand {
    */
   async run() {
     const codemods = await this.createCodemods()
-    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
-      flags: this.parsed.flags,
-      entity: this.app.generators.createEntity(this.name),
-    })
+    await codemods.makeUsingStub(
+      stubsRoot,
+      this.stubPath,
+      {
+        flags: this.parsed.flags,
+        entity: this.app.generators.createEntity(this.name),
+      },
+      {
+        contentsFromFile: this.contentsFrom,
+      }
+    )
   }
 }

@@ -67,6 +67,13 @@ export default class MakeProvider extends BaseCommand {
   declare environments?: AllowedAppEnvironments
 
   /**
+   * Read the contents from this file (if the flag exists) and use
+   * it as the raw contents
+   */
+  @flags.string({ description: 'Use the contents of the given file as the generated output' })
+  declare contentsFrom: string
+
+  /**
    * The stub template file to use for generating the provider class
    */
   protected stubPath: string = 'make/provider/main.stub'
@@ -109,10 +116,17 @@ export default class MakeProvider extends BaseCommand {
     }
 
     const codemods = await this.createCodemods()
-    const { destination } = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
-      flags: this.parsed.flags,
-      entity: this.app.generators.createEntity(this.name),
-    })
+    const { destination } = await codemods.makeUsingStub(
+      stubsRoot,
+      this.stubPath,
+      {
+        flags: this.parsed.flags,
+        entity: this.app.generators.createEntity(this.name),
+      },
+      {
+        contentsFromFile: this.contentsFrom,
+      }
+    )
 
     /**
      * Do not register when prompt has been denied or "--no-register"

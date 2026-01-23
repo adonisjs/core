@@ -8,7 +8,7 @@
  */
 
 import { stubsRoot } from '../../stubs/main.ts'
-import { args, BaseCommand } from '../../modules/ace/main.ts'
+import { args, flags, BaseCommand } from '../../modules/ace/main.ts'
 import { type CommandOptions } from '../../types/ace.ts'
 
 /**
@@ -50,6 +50,13 @@ export default class MakeTransformer extends BaseCommand {
   declare name: string
 
   /**
+   * Read the contents from this file (if the flag exists) and use
+   * it as the raw contents
+   */
+  @flags.string({ description: 'Use the contents of the given file as the generated output' })
+  declare contentsFrom: string
+
+  /**
    * The stub template file to use for generating the transformer class
    */
   protected stubPath: string = 'make/transformer/main.stub'
@@ -61,10 +68,17 @@ export default class MakeTransformer extends BaseCommand {
   async run() {
     const codemods = await this.createCodemods()
 
-    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
-      flags: this.parsed.flags,
-      entity: this.app.generators.createEntity(this.name),
-      model: this.app.generators.createEntity(this.name),
-    })
+    await codemods.makeUsingStub(
+      stubsRoot,
+      this.stubPath,
+      {
+        flags: this.parsed.flags,
+        entity: this.app.generators.createEntity(this.name),
+        model: this.app.generators.createEntity(this.name),
+      },
+      {
+        contentsFromFile: this.contentsFrom,
+      }
+    )
   }
 }

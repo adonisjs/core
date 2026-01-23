@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
 import { test } from '@japa/runner'
 import MakeTest from '../../commands/make/test.ts'
 import { StubsFactory } from '../../factories/stubs.ts'
@@ -222,5 +223,46 @@ test.group('Make test', () => {
       },
     ])
     await assert.fileEquals('features/tests/functional/posts/create.spec.ts', contents)
+  })
+
+  test('overwrite file contents', async ({ assert, fs }) => {
+    const ignitor = new IgnitorFactory()
+      .withCoreConfig()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+          tests: {
+            suites: [
+              {
+                name: 'functional',
+                files: ['tests/functional/**/*.spec.ts'],
+              },
+            ],
+          },
+        },
+      })
+      .create(fs.baseUrl)
+
+    const ace = await new AceFactory().make(ignitor)
+    ace.ui.switchMode('raw')
+
+    await fs.create('my-test.txt', 'export class MyTest {}')
+
+    const command = await ace.create(MakeTest, [
+      'posts/create',
+      '--suite',
+      'functional',
+      '--contents-from',
+      join(fs.basePath, 'my-test.txt'),
+    ])
+    await command.exec()
+
+    await assert.fileEquals('tests/functional/posts/create.spec.ts', `export class MyTest {}`)
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create tests/functional/posts/create.spec.ts',
+        stream: 'stdout',
+      },
+    ])
   })
 })

@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
 import { test } from '@japa/runner'
 import { AceFactory } from '../../factories/core/ace.ts'
 import { StubsFactory } from '../../factories/stubs.ts'
@@ -330,6 +331,29 @@ test.group('Make controller', () => {
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
         message: 'green(DONE:)    create app/controllers/user_controller.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('overwrite file contents', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.create('my-controller.txt', 'export class MyController {}')
+
+    const command = await ace.create(MakeControllerCommand, [
+      'user',
+      '--contents-from',
+      join(fs.basePath, 'my-controller.txt'),
+    ])
+    await command.exec()
+
+    await assert.fileEquals('app/controllers/users_controller.ts', `export class MyController {}`)
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/controllers/users_controller.ts',
         stream: 'stdout',
       },
     ])

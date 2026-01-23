@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
 import { test } from '@japa/runner'
 import { AceFactory } from '../../factories/core/ace.ts'
 import { StubsFactory } from '../../factories/stubs.ts'
@@ -135,6 +136,36 @@ test.group('Make middleware', (group) => {
         message:
           '[ red(error) ] Invalid middleware stack "foo". Select from "server, router, named"',
         stream: 'stderr',
+      },
+    ])
+  })
+
+  test('overwrite file contents', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('start/kernel.ts', 'server.use([])')
+    await fs.create('my-middleware.txt', 'export class MyMiddleware {}')
+
+    const command = await ace.create(MakeMiddleware, [
+      'auth',
+      '--stack=server',
+      '--contents-from',
+      join(fs.basePath, 'my-middleware.txt'),
+    ])
+    await command.exec()
+
+    await assert.fileEquals('app/middleware/auth_middleware.ts', `export class MyMiddleware {}`)
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/middleware/auth_middleware.ts',
+        stream: 'stdout',
+      },
+      {
+        message: 'green(DONE:)    update start/kernel.ts file',
+        stream: 'stdout',
       },
     ])
   })

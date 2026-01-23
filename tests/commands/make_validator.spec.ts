@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
 import { test } from '@japa/runner'
 import { AceFactory } from '../../factories/core/ace.ts'
 import { StubsFactory } from '../../factories/stubs.ts'
@@ -49,6 +50,29 @@ test.group('Make validator', () => {
 
     await assert.fileEquals('app/validators/invoice.ts', contents)
 
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create app/validators/invoice.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('overwrite file contents', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.create('my-validator.txt', 'export class MyValidator {}')
+
+    const command = await ace.create(MakeValidator, [
+      'invoice',
+      '--contents-from',
+      join(fs.basePath, 'my-validator.txt'),
+    ])
+    await command.exec()
+
+    await assert.fileEquals('app/validators/invoice.ts', `export class MyValidator {}`)
     assert.deepEqual(ace.ui.logger.getLogs(), [
       {
         message: 'green(DONE:)    create app/validators/invoice.ts',

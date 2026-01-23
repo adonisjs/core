@@ -58,6 +58,13 @@ export default class MakeListener extends BaseCommand {
   declare event: string
 
   /**
+   * Read the contents from this file (if the flag exists) and use
+   * it as the raw contents
+   */
+  @flags.string({ description: 'Use the contents of the given file as the generated output' })
+  declare contentsFrom: string
+
+  /**
    * The stub template file to use for generating the event listener
    */
   protected stubPath: string = 'make/listener/main.stub'
@@ -88,19 +95,33 @@ export default class MakeListener extends BaseCommand {
        */
       if (exitCode === 0) {
         const eventEntity = this.app.generators.createEntity(this.event)
-        await codemods.makeUsingStub(stubsRoot, this.stubPath, {
-          event: eventEntity,
-          flags: this.parsed.flags,
-          entity: this.app.generators.createEntity(this.name),
-        })
+        await codemods.makeUsingStub(
+          stubsRoot,
+          this.stubPath,
+          {
+            event: eventEntity,
+            flags: this.parsed.flags,
+            entity: this.app.generators.createEntity(this.name),
+          },
+          {
+            contentsFromFile: this.contentsFrom,
+          }
+        )
       }
 
       return
     }
 
-    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
-      flags: this.parsed.flags,
-      entity: this.app.generators.createEntity(this.name),
-    })
+    await codemods.makeUsingStub(
+      stubsRoot,
+      this.stubPath,
+      {
+        flags: this.parsed.flags,
+        entity: this.app.generators.createEntity(this.name),
+      },
+      {
+        contentsFromFile: this.contentsFrom,
+      }
+    )
   }
 }

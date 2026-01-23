@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
 import { test } from '@japa/runner'
 import { ListLoader } from '../../modules/ace/main.ts'
 import { AceFactory } from '../../factories/core/ace.ts'
@@ -64,6 +65,29 @@ test.group('Make listener', () => {
         message: 'green(DONE:)    create app/events/order_shipped.ts',
         stream: 'stdout',
       },
+      {
+        message: 'green(DONE:)    create app/listeners/send_email.ts',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('overwrite file contents', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.create('my-listener.txt', 'export class MyListener {}')
+
+    const command = await ace.create(MakeListenerCommand, [
+      'sendEmail',
+      '--contents-from',
+      join(fs.basePath, 'my-listener.txt'),
+    ])
+    await command.exec()
+
+    await assert.fileEquals('app/listeners/send_email.ts', `export class MyListener {}`)
+    assert.deepEqual(ace.ui.logger.getLogs(), [
       {
         message: 'green(DONE:)    create app/listeners/send_email.ts',
         stream: 'stdout',

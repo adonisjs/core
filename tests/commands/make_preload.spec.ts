@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
 import { test } from '@japa/runner'
 import { StubsFactory } from '../../factories/stubs.ts'
 import { AceFactory } from '../../factories/core/ace.ts'
@@ -138,5 +139,31 @@ test.group('Make preload file', () => {
     command.assertLog(
       '[ red(error) ] Invalid environment(s) "foo". Only "web,console,test,repl" are allowed'
     )
+  })
+
+  test('overwrite file contents', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+    await fs.create('my-preload.txt', 'export class MyPreload {}')
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakePreload, [
+      'app',
+      '--no-register',
+      '--contents-from',
+      join(fs.basePath, 'my-preload.txt'),
+    ])
+    await command.exec()
+
+    await assert.fileEquals('start/app.ts', `export class MyPreload {}`)
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create start/app.ts',
+        stream: 'stdout',
+      },
+    ])
   })
 })

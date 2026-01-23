@@ -46,6 +46,13 @@ export default class MakeTest extends BaseCommand {
   declare suite?: string
 
   /**
+   * Read the contents from this file (if the flag exists) and use
+   * it as the raw contents
+   */
+  @flags.string({ description: 'Use the contents of the given file as the generated output' })
+  declare contentsFrom: string
+
+  /**
    * The stub template file to use for generating the test file
    */
   protected stubPath: string = 'make/test/main.stub'
@@ -139,12 +146,19 @@ export default class MakeTest extends BaseCommand {
      * Generate entity
      */
     const codemods = await this.createCodemods()
-    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
-      flags: this.parsed.flags,
-      entity: this.app.generators.createEntity(this.name),
-      suite: {
-        directory: await this.#getSuiteDirectory(suite.directories),
+    await codemods.makeUsingStub(
+      stubsRoot,
+      this.stubPath,
+      {
+        flags: this.parsed.flags,
+        entity: this.app.generators.createEntity(this.name),
+        suite: {
+          directory: await this.#getSuiteDirectory(suite.directories),
+        },
       },
-    })
+      {
+        contentsFromFile: this.contentsFrom,
+      }
+    )
   }
 }

@@ -7,7 +7,9 @@
  * file that was distributed with this source code.
  */
 
+import { isAbsolute } from 'node:path'
 import { EventEmitter } from 'node:events'
+import { readFile } from 'node:fs/promises'
 import { EnvEditor } from '@adonisjs/env/editor'
 import type { UIPrimitives } from '@adonisjs/ace/types'
 import type { CodeTransformer } from '@adonisjs/assembler/code_transformer'
@@ -18,8 +20,10 @@ import type {
   SupportedPackageManager,
 } from '@adonisjs/assembler/types'
 
+import debug from '../../src/debug.ts'
 import type { Application } from '../app.ts'
 import stringHelpers from '../../src/helpers/string.ts'
+import { type GeneratedStub } from '../../types/app.ts'
 
 /**
  * Codemods class for programmatically modifying AdonisJS source files.
@@ -404,10 +408,42 @@ export class Codemods extends EventEmitter {
    * )
    * ```
    */
-  async makeUsingStub(stubsRoot: string, stubPath: string, stubState: Record<string, any>) {
+  async makeUsingStub(
+    stubsRoot: string,
+    stubPath: string,
+    stubState: Record<string, any>,
+    options?: {
+      contentsFromFile?: string
+    }
+  ): Promise<GeneratedStub> {
     const stubs = await this.#app.stubs.create()
     const stub = await stubs.build(stubPath, { source: stubsRoot })
+
+    /**
+     * Overwrite the contents of the stub output with the contents
+     * of the provided file.
+     */
+    if (options?.contentsFromFile) {
+      const source = isAbsolute(options.contentsFromFile)
+        ? options.contentsFromFile
+        : this.#app.makePath(options.contentsFromFile)
+
+      try {
+        debug('overwriting stub output with contents from file %s', source)
+        stub.replaceWith(await readFile(source, 'utf-8'))
+      } catch (error) {
+        if (error.code === 'ENOENT') {
+          throw new Error(
+            `Cannot replace stub output with "${options.contentsFromFile}" file contents as the file is missing`,
+            { cause: error }
+          )
+        }
+        throw error
+      }
+    }
+
     const output = await stub.generate({ force: this.overwriteExisting, ...stubState })
+    debug('generating file %O', output)
 
     const entityFileName = stringHelpers.toUnixSlash(this.#app.relativePath(output.destination))
     const result = { ...output, relativeFileName: entityFileName }

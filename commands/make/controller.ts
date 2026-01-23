@@ -82,6 +82,13 @@ export default class MakeController extends BaseCommand {
   declare api: boolean
 
   /**
+   * Read the contents from this file (if the flag exists) and use
+   * it as the raw contents
+   */
+  @flags.string({ description: 'Use the contents of the given file as the generated output' })
+  declare contentsFrom: string
+
+  /**
    * The stub to use for generating the controller
    */
   protected stubPath: string = 'make/controller/main.stub'
@@ -129,11 +136,18 @@ export default class MakeController extends BaseCommand {
 
   async run() {
     const codemods = await this.createCodemods()
-    await codemods.makeUsingStub(stubsRoot, this.stubPath, {
-      flags: this.parsed.flags,
-      actions: this.actions?.map((action) => string.camelCase(action)),
-      entity: this.app.generators.createEntity(this.name),
-      singular: this.singular,
-    })
+    await codemods.makeUsingStub(
+      stubsRoot,
+      this.stubPath,
+      {
+        flags: this.parsed.flags,
+        actions: this.actions?.map((action) => string.camelCase(action)),
+        entity: this.app.generators.createEntity(this.name),
+        singular: this.singular,
+      },
+      {
+        contentsFromFile: this.contentsFrom,
+      }
+    )
   }
 }

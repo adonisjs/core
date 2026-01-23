@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
 import { test } from '@japa/runner'
 import { AceFactory } from '../../factories/core/ace.ts'
 import MakeProvider from '../../commands/make/provider.ts'
@@ -154,6 +155,32 @@ test.group('Make provider', () => {
         message:
           '[ red(error) ] Invalid environment(s) "foo". Only "web,console,test,repl" are allowed',
         stream: 'stderr',
+      },
+    ])
+  })
+
+  test('overwrite file contents', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+    await fs.create('my-provider.txt', 'export class MyProvider {}')
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(MakeProvider, [
+      'app',
+      '--no-register',
+      '--contents-from',
+      join(fs.basePath, 'my-provider.txt'),
+    ])
+    await command.exec()
+
+    await assert.fileEquals('providers/app_provider.ts', `export class MyProvider {}`)
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    create providers/app_provider.ts',
+        stream: 'stdout',
       },
     ])
   })

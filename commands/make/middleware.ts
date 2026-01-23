@@ -57,6 +57,13 @@ export default class MakeMiddleware extends BaseCommand {
   declare stack?: 'server' | 'named' | 'router'
 
   /**
+   * Read the contents from this file (if the flag exists) and use
+   * it as the raw contents
+   */
+  @flags.string({ description: 'Use the contents of the given file as the generated output' })
+  declare contentsFrom: string
+
+  /**
    * The stub to use for generating the middleware
    */
   protected stubPath: string = 'make/middleware/main.stub'
@@ -90,10 +97,17 @@ export default class MakeMiddleware extends BaseCommand {
      * Create middleware
      */
     const codemods = await this.createCodemods()
-    const { destination } = await codemods.makeUsingStub(stubsRoot, this.stubPath, {
-      flags: this.parsed.flags,
-      entity: this.app.generators.createEntity(this.name),
-    })
+    const { destination } = await codemods.makeUsingStub(
+      stubsRoot,
+      this.stubPath,
+      {
+        flags: this.parsed.flags,
+        entity: this.app.generators.createEntity(this.name),
+      },
+      {
+        contentsFromFile: this.contentsFrom,
+      }
+    )
 
     /**
      * Creative relative path for the middleware file from
