@@ -173,9 +173,9 @@ test.group('Configure command | run', (group) => {
     await command.exec()
 
     command.assertLog(
-      '[ red(error) ] Cannot configure module "./dummy-pkg.js?v=1". The module does not export the configure hook'
+      '[ yellow(warn) ] Cannot configure module "./dummy-pkg.js?v=1". The module does not export the configure hook'
     )
-    assert.equal(command.exitCode, 1)
+    assert.equal(command.exitCode, 0)
   })
 
   test('run package configure method', async ({ assert, fs }) => {

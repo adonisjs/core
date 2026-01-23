@@ -179,10 +179,9 @@ export default class Configure extends BaseCommand {
      * Warn, there are not instructions to run
      */
     if (!packageExports.configure) {
-      this.logger.error(
+      this.logger.warning(
         `Cannot configure module "${this.name}". The module does not export the configure hook`
       )
-      this.exitCode = 1
       return
     }
 
