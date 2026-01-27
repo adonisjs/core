@@ -258,6 +258,48 @@ test.group('Ignitor | Ace process', (group) => {
     assert.equal(ignitor.getApp()?.getState(), 'terminated')
   })
 
+  test('set process.exitCode when staysAlive command calls app.terminate() during execution', async ({
+    cleanup,
+    assert,
+  }) => {
+    cleanup(async () => {
+      process.exitCode = undefined
+      await ignitor.terminate()
+    })
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    class Greet extends BaseCommand {
+      static commandName: string = 'greet'
+      static options = {
+        staysAlive: true,
+      }
+
+      async run() {
+        this.exitCode = 1
+        await this.app.terminate()
+      }
+    }
+
+    await ignitor
+      .ace()
+      .configure(async (app) => {
+        const kernel = await app.container.make('ace')
+        kernel.addLoader(new ListLoader([Greet]))
+      })
+      .handle(['greet'])
+
+    assert.equal(process.exitCode, 1)
+    assert.equal(ignitor.getApp()?.getState(), 'terminated')
+  })
+
   test('switch app environment to repl when running repl command', async ({ cleanup, assert }) => {
     cleanup(async () => {
       await ignitor.terminate()

@@ -94,6 +94,18 @@ export class AceProcess {
     await this.#configureCallback(app)
 
     /**
+     * Register terminating callback BEFORE handling the command.
+     * This ensures the callback is registered even if a staysAlive
+     * command calls app.terminate() during its execution.
+     */
+    app.terminating(() => {
+      const mainCommand = kernel.getMainCommand()
+      if (mainCommand?.staysAlive) {
+        process.exitCode = mainCommand.exitCode
+      }
+    })
+
+    /**
      * Handle command line args
      */
     await kernel.handle(argv)
@@ -106,10 +118,6 @@ export class AceProcess {
     if (!mainCommand || !mainCommand.staysAlive) {
       process.exitCode = kernel.exitCode
       await app.terminate()
-    } else {
-      app.terminating(() => {
-        process.exitCode = mainCommand.exitCode
-      })
     }
   }
 }
