@@ -8,8 +8,8 @@
  */
 
 import { BaseCommand } from '../../modules/ace/main.js'
-import { writeFile, readFile } from 'fs/promises'
-import { existsSync } from 'fs'
+import { writeFile, readFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 
 /**
  * Publish localization templates
