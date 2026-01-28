@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import type { VineValidator } from '@vinejs/vine'
+import type { ValidationError, VineValidator } from '@vinejs/vine'
 import type {
   Infer,
   SchemaTypes,
@@ -56,6 +56,39 @@ export class RequestValidator {
    */
   static messagesProvider?: (_: HttpContext) => MessagesProviderContact
 
+  #requestData() {
+    const requestBody = this.#ctx.request.all()
+    return {
+      ...requestBody,
+      params: this.#ctx.request.params(),
+      headers: this.#ctx.request.headers(),
+      cookies: this.#ctx.request.cookiesList(),
+    }
+  }
+
+  #processValidatorOptions<MetaData extends undefined | Record<string, any>>(
+    options: RequestValidationOptions<MetaData> | undefined
+  ): RequestValidationOptions<any> {
+    const validatorOptions: RequestValidationOptions<any> = options || {}
+
+    /**
+     * Assign request specific error reporter
+     */
+    if (RequestValidator.errorReporter && !validatorOptions.errorReporter) {
+      const errorReporter = RequestValidator.errorReporter(this.#ctx)
+      validatorOptions.errorReporter = () => errorReporter
+    }
+
+    /**
+     * Assign request specific messages provider
+     */
+    if (RequestValidator.messagesProvider && !validatorOptions.messagesProvider) {
+      validatorOptions.messagesProvider = RequestValidator.messagesProvider(this.#ctx)
+    }
+
+    return validatorOptions
+  }
+
   /**
    * Validate the current HTTP request data using a VineJS validator.
    * This method automatically includes request body, files, URL parameters,
@@ -85,35 +118,38 @@ export class RequestValidator {
       ? [options?: RequestValidationOptions<MetaData> | undefined]
       : [options: RequestValidationOptions<MetaData>]
   ): Promise<Infer<Schema>> {
-    const validatorOptions: RequestValidationOptions<any> = options || {}
-
     /**
-     * Assign request specific error reporter
+     * Process the validation options
      */
-    if (RequestValidator.errorReporter && !validatorOptions.errorReporter) {
-      const errorReporter = RequestValidator.errorReporter(this.#ctx)
-      validatorOptions.errorReporter = () => errorReporter
-    }
-
-    /**
-     * Assign request specific messages provider
-     */
-    if (RequestValidator.messagesProvider && !validatorOptions.messagesProvider) {
-      validatorOptions.messagesProvider = RequestValidator.messagesProvider(this.#ctx)
-    }
-
-    const requestBody = this.#ctx.request.all()
+    const validatorOptions = this.#processValidatorOptions(options)
 
     /**
      * Data to validate
      */
-    const data = validatorOptions.data || {
-      ...requestBody,
-      params: this.#ctx.request.params(),
-      headers: this.#ctx.request.headers(),
-      cookies: this.#ctx.request.cookiesList(),
-    }
+    const data = validatorOptions.data || this.#requestData()
 
     return validator.validate(data, validatorOptions as any)
+  }
+
+  async tryValidateUsing<
+    Schema extends SchemaTypes,
+    MetaData extends undefined | Record<string, any>,
+  >(
+    validator: VineValidator<Schema, MetaData>,
+    ...[options]: [undefined] extends MetaData
+      ? [options?: RequestValidationOptions<MetaData> | undefined]
+      : [options: RequestValidationOptions<MetaData>]
+  ): Promise<[ValidationError, null] | [null, Infer<Schema>]> {
+    /**
+     * Process the validation options
+     */
+    const validatorOptions = this.#processValidatorOptions(options)
+
+    /**
+     * Data to validate
+     */
+    const data = validatorOptions.data || this.#requestData()
+
+    return validator.tryValidate(data, validatorOptions as any)
   }
 }

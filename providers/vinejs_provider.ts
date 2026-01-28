@@ -80,5 +80,9 @@ export default class VineJSServiceProvider {
     HttpRequest.macro('validateUsing', function (this: HttpRequest, ...args) {
       return new RequestValidator(this.ctx!).validateUsing(...args)
     })
+
+    HttpRequest.macro('tryValidateUsing', function (this: HttpRequest, ...args) {
+      return new RequestValidator(this.ctx!).tryValidateUsing(...args)
+    })
   }
 }

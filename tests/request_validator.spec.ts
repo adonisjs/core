@@ -9,7 +9,7 @@
 
 import { test } from '@japa/runner'
 import { type FieldContext } from '@vinejs/vine/types'
-import vine, { SimpleErrorReporter, SimpleMessagesProvider } from '@vinejs/vine'
+import vine, { SimpleErrorReporter, SimpleMessagesProvider, ValidationError } from '@vinejs/vine'
 
 import { RequestValidator } from '../modules/http/main.ts'
 import { IgnitorFactory } from '../factories/core/ignitor.ts'
@@ -318,5 +318,163 @@ test.group('Request validator', () => {
         },
       ])
     }
+  })
+
+  test('try validate using')
+    .with([
+      { expectValid: true, body: { username: 'virk' } },
+      { expectValid: false, body: { foo: true } },
+    ])
+    .run(async ({ assert }, { expectValid, body }) => {
+      assert.plan(2)
+
+      const ignitor = new IgnitorFactory()
+        .withCoreConfig()
+        .merge({
+          rcFileContents: {
+            providers: [
+              () => import('../providers/app_provider.js'),
+              () => import('../providers/vinejs_provider.js'),
+            ],
+          },
+        })
+        .create(BASE_URL)
+
+      const testUtils = new TestUtilsFactory().create(ignitor)
+      await testUtils.app.init()
+      await testUtils.app.boot()
+      await testUtils.boot()
+
+      const ctx = await testUtils.createHttpContext()
+      const validator = vine.compile(
+        vine.object({
+          username: vine.string(),
+        })
+      )
+
+      ctx.request.setInitialBody(body)
+
+      const [error, data] = await ctx.request.tryValidateUsing(validator)
+
+      if (expectValid) {
+        assert.isNull(error)
+        assert.deepEqual(data, body)
+      } else {
+        assert.instanceOf(error, ValidationError)
+        assert.isNull(data)
+      }
+    })
+
+  test('try validate using with custom messages provider', async ({ assert, cleanup }) => {
+    assert.plan(3)
+
+    const ignitor = new IgnitorFactory()
+      .withCoreConfig()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
+        },
+      })
+      .create(BASE_URL)
+
+    const testUtils = new TestUtilsFactory().create(ignitor)
+    await testUtils.app.init()
+    await testUtils.app.boot()
+    await testUtils.boot()
+
+    const ctx = await testUtils.createHttpContext()
+    const validator = vine.compile(
+      vine.object({
+        username: vine.string(),
+      })
+    )
+
+    ctx.request.setInitialBody({ error: true })
+
+    RequestValidator.messagesProvider = () =>
+      new SimpleMessagesProvider(
+        {
+          required: 'The value is missing',
+        },
+        {}
+      )
+    cleanup(() => {
+      RequestValidator.messagesProvider = undefined
+    })
+
+    const [error, data] = await ctx.request.tryValidateUsing(validator)
+
+    assert.isNull(data)
+    assert.instanceOf(error, ValidationError)
+    assert.deepEqual(error!.messages, [
+      {
+        field: 'username',
+        message: 'The value is missing',
+        rule: 'required',
+      },
+    ])
+  })
+
+  test('try validate using with custom error reporter', async ({ assert, cleanup }) => {
+    assert.plan(3)
+
+    const ignitor = new IgnitorFactory()
+      .withCoreConfig()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../providers/app_provider.js'),
+            () => import('../providers/vinejs_provider.js'),
+          ],
+        },
+      })
+      .create(BASE_URL)
+
+    const testUtils = new TestUtilsFactory().create(ignitor)
+    await testUtils.app.init()
+    await testUtils.app.boot()
+    await testUtils.boot()
+
+    const ctx = await testUtils.createHttpContext()
+    const validator = vine.compile(
+      vine.object({
+        username: vine.string(),
+      })
+    )
+
+    ctx.request.setInitialBody({ error: true })
+
+    class MyErrorReporter extends SimpleErrorReporter {
+      report(
+        message: string,
+        rule: string,
+        field: FieldContext,
+        meta?: Record<string, any> | undefined
+      ): void {
+        return super.report(message, `validations.${rule}`, field, meta)
+      }
+    }
+
+    RequestValidator.errorReporter = () => {
+      return new MyErrorReporter()
+    }
+    cleanup(() => {
+      RequestValidator.errorReporter = undefined
+    })
+
+    const [error, data] = await ctx.request.tryValidateUsing(validator)
+
+    assert.isNull(data)
+    assert.instanceOf(error, ValidationError)
+    assert.deepEqual(error!.messages, [
+      {
+        field: 'username',
+        message: 'The username field must be defined',
+        rule: 'validations.required',
+      },
+    ])
   })
 })
