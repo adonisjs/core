@@ -1,5 +1,66 @@
 # @adonisjs/core
 
+**Featured sponsors**
+
+<table>
+
+<tr>
+<td>
+
+<a href="https://route4me.com/?utm_source=adonisjs.com">
+  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/route4me.jpg" />
+</a>
+
+</td>
+
+<td>
+
+<a href="https://ezycourse.com/?utm_source=adonisjs.com">
+  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/ezycourse.jpg" />
+</a>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+<a href="https://meteor.software/g6h?utm_source=adonisjs.com">
+  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/galaxy.jpg" />
+</a>
+
+</td>
+
+<td>
+
+<a href="https://www.testmuai.com/?utm_source=adonisjs.com">
+  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/testmu.jpg" />
+</a>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+<a href="https://relancer.com/?utm_source=adonisjs.com">
+  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/relancer.jpg" />
+</a>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+</table>
+
 ![](https://github.com/thetutlage/static/blob/main/sponsorkit/sponsors.png?raw=true)
 
 <hr>
