@@ -35,8 +35,8 @@
 
 <td>
 
-<a href="https://www.lambdatest.com/?utm_source=adonisjs.com">
-  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/lambdatest.jpg" />
+<a href="https://www.testmuai.com/?utm_source=adonisjs.com">
+  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/testmu.jpg" />
 </a>
 
 </td>
