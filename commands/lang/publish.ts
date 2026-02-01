@@ -8,8 +8,9 @@
  */
 
 import { BaseCommand, flags } from '../../modules/ace/main.js'
-import { writeFile, readFile } from 'node:fs/promises'
+import { writeFile, readFile, mkdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import { dirname } from 'node:path'
 
 /**
  * Publish localization templates
@@ -71,6 +72,7 @@ export default class MakeCommand extends BaseCommand {
       },
     }
 
+    await mkdir(dirname(destination), { recursive: true })
     await writeFile(destination, JSON.stringify(validatorMessages, null, 2))
 
     this.logger.success('Localization template published to resources/lang/en/validator.json')
