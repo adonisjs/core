@@ -69,10 +69,6 @@ test.group('Lang publish', () => {
 
     const json = await fs.contentsJson('resources/lang/en/validator.json')
     assert.property(json, 'other')
-    // Existing message should be preserved/override vine message if same key,
-    // OR vine message merged?
-    // Code says: ...messages, ...validatorMessages.shared?.messages
-    // So existing messages (validatorMessages.shared.messages) take precedence over vine (messages).
     assert.equal(json.shared.messages.required, 'foo')
 
     assert.deepEqual(ace.ui.logger.getLogs(), [
