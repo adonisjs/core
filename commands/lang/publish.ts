@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { BaseCommand } from '../../modules/ace/main.js'
+import { BaseCommand, flags } from '../../modules/ace/main.js'
 import { writeFile, readFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 
@@ -18,17 +18,29 @@ export default class MakeCommand extends BaseCommand {
   static commandName = 'lang:publish'
   static description = 'Eject localization templates to resources/lang/en directory'
 
+  @flags.boolean({ description: 'Merge with existing "validator.json" file' })
+  declare merge?: boolean
+
   async run() {
     let messages: any = {}
     try {
       const vine = await import('@vinejs/vine/defaults')
       messages = vine.messages
     } catch {
+      this.exitCode = 1
       this.logger.error('Vine is not installed. No localization templates to publish.')
       return
     }
 
     const destination = this.app.languageFilesPath('en', 'validator.json')
+
+    if (existsSync(destination) && !this.merge) {
+      this.exitCode = 1
+      this.logger.error(
+        'File "resources/lang/en/validator.json" already exists. Use "--merge" flag to update the file'
+      )
+      return
+    }
 
     let validatorMessages = {
       shared: {
@@ -40,9 +52,11 @@ export default class MakeCommand extends BaseCommand {
       try {
         validatorMessages = JSON.parse(await readFile(destination, 'utf-8'))
       } catch {
-        this.logger.warning(
+        this.exitCode = 1
+        this.logger.error(
           'Failed to parse existing validator.json. Overwriting with default contents.'
         )
+        return
       }
     }
 
