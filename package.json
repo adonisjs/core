@@ -80,7 +80,7 @@
     "index:commands": "node --import=@poppinss/ts-exec toolkit/main.js index build/commands"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.31",
+    "@adonisjs/assembler": "^8.0.0-next.32",
     "@adonisjs/eslint-config": "^3.0.0-next.9",
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/tsconfig": "^2.0.0-next.3",
@@ -91,7 +91,7 @@
     "@japa/snapshot": "^2.0.10",
     "@poppinss/ts-exec": "^1.4.3",
     "@release-it/conventional-changelog": "^10.0.4",
-    "@types/node": "^25.1.0",
+    "@types/node": "~24.10.11",
     "@types/pretty-hrtime": "^1.0.3",
     "@types/sinon": "^21.0.0",
     "@types/supertest": "^6.0.3",
@@ -114,7 +114,7 @@
     "supertest": "^7.2.2",
     "test-console": "^2.0.0",
     "timekeeper": "^2.3.1",
-    "tsdown": "^0.20.1",
+    "tsdown": "^0.20.3",
     "typedoc": "^0.28.16",
     "typescript": "^5.9.3",
     "youch": "^4.1.0-beta.13"
@@ -122,7 +122,7 @@
   "dependencies": {
     "@adonisjs/ace": "^14.0.1-next.4",
     "@adonisjs/application": "^9.0.0-next.15",
-    "@adonisjs/bodyparser": "^11.0.0-next.7",
+    "@adonisjs/bodyparser": "^11.0.0-next.9",
     "@adonisjs/config": "^6.1.0-next.0",
     "@adonisjs/env": "^7.0.0-next.3",
     "@adonisjs/events": "^10.1.0-next.4",
@@ -130,7 +130,7 @@
     "@adonisjs/hash": "^10.0.0-next.2",
     "@adonisjs/health": "^3.1.0-next.1",
     "@adonisjs/http-server": "^8.0.0-next.18",
-    "@adonisjs/http-transformers": "^2.1.0",
+    "@adonisjs/http-transformers": "^2.1.1",
     "@adonisjs/logger": "^7.1.0-next.3",
     "@adonisjs/repl": "^5.0.0-next.2",
     "@boringnode/encryption": "^0.2.5",
