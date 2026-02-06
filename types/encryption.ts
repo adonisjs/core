@@ -43,6 +43,13 @@ export type { AES256CBCDriverConfig } from '@boringnode/encryption/drivers/aes_2
 export type { AES256GCMDriverConfig } from '@boringnode/encryption/drivers/aes_256_gcm'
 
 /**
+ * Configuration options for the AES-SIV encryption driver.
+ *
+ * Includes the driver identifier and a single encryption key.
+ */
+export type { AESSIVDriverConfig } from '@boringnode/encryption/drivers/aes_siv'
+
+/**
  * Configuration options for the ChaCha20-Poly1305 encryption driver.
  *
  * Includes the driver identifier and a list of encryption keys.

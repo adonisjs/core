@@ -272,3 +272,23 @@ test.group('Legacy | defineConfig', () => {
     assert.deepEqual(config.list.legacy.keys, [SECRET_KEY])
   })
 })
+
+test.group('Legacy | blind indexes', () => {
+  test('throw when computing blind index', ({ assert }) => {
+    const encryption = new Legacy({ key: SECRET_KEY })
+
+    assert.throws(
+      () => encryption.blindIndex('foo@example.com', 'users.email'),
+      'Blind indexes are not supported by the legacy encryption driver'
+    )
+  })
+
+  test('throw when computing blind indexes', ({ assert }) => {
+    const encryption = new Legacy({ key: SECRET_KEY })
+
+    assert.throws(
+      () => encryption.blindIndexes('foo@example.com', 'users.email'),
+      'Blind indexes are not supported by the legacy encryption driver'
+    )
+  })
+})
