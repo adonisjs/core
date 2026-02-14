@@ -167,38 +167,44 @@ export default class EdgeServiceProvider {
      */
     edge.global('qs', qs)
 
-    edge.global(
-      'formAttributes',
-      function (route: string, method: string, params: any, options: URLOptions) {
-        /**
-         * Normalize method and keep a reference to the original method
-         */
-        options = options ?? {}
-        method = method.toUpperCase()
-        const original = method
+    edge.global('formAttributes', function (route: string, params: any, options: URLOptions) {
+      const matchingRoute = router.findOrFail(route)
 
-        /**
-         * If method if not GET and POST, then use the querystring _method
-         * to and force update the method to "POST"
-         */
-        if (method !== 'GET' && method !== 'POST') {
-          method = 'POST'
-          options = { ...options, qs: { _method: original, ...options.qs } }
-        }
+      /**
+       * Normalize method and keep a reference to the original method
+       */
+      options = options ?? {}
+      let method = matchingRoute.methods[0].toUpperCase()
+      const original = method
 
-        const { action } = (router.urlBuilder.urlFor.method as any)(
-          original,
-          route,
-          params,
-          options
-        ).form
-
-        return {
-          action,
-          method,
-        }
+      /**
+       * In case of HEAD, we must use the GET method
+       */
+      if (method === 'HEAD') {
+        method = 'GET'
       }
-    )
+
+      /**
+       * If method if not GET and POST, then use the querystring _method
+       * to and force update the method to "POST"
+       */
+      if (method !== 'GET' && method !== 'POST') {
+        method = 'POST'
+        options = { ...options, qs: { _method: original, ...options.qs } }
+      }
+
+      const { action } = (router.urlBuilder.urlFor.method as any)(
+        original,
+        route,
+        params,
+        options
+      ).form
+
+      return {
+        action,
+        method,
+      }
+    })
 
     /**
      * Creating a isolated instance of edge renderer

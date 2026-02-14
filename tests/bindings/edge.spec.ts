@@ -102,7 +102,7 @@ test.group('Bindings | Edge', () => {
     router.get('/users/:id', () => {}).as('users.show')
     router.commit()
 
-    assert.deepEqual(edge.globals.formAttributes('users.show', 'get', { id: 1 }), {
+    assert.deepEqual(edge.globals.formAttributes('users.show', { id: 1 }), {
       action: '/users/1',
       method: 'GET',
     })
@@ -129,7 +129,7 @@ test.group('Bindings | Edge', () => {
     router.put('/users/:id', () => {}).as('users.update')
     router.commit()
 
-    assert.deepEqual(edge.globals.formAttributes('users.update', 'put', { id: 1 }), {
+    assert.deepEqual(edge.globals.formAttributes('users.update', { id: 1 }), {
       action: '/users/1?_method=PUT',
       method: 'POST',
     })
@@ -163,7 +163,7 @@ test.group('Bindings | Edge', () => {
       },
     }
 
-    assert.deepEqual(edge.globals.formAttributes('users.update', 'put', { id: 1 }, options), {
+    assert.deepEqual(edge.globals.formAttributes('users.update', { id: 1 }, options), {
       action: '/users/1?_method=PUT&view=card',
       method: 'POST',
     })
