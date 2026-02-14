@@ -115,7 +115,7 @@
     "test-console": "^2.0.0",
     "timekeeper": "^2.3.1",
     "tsdown": "^0.20.3",
-    "typedoc": "^0.28.16",
+    "typedoc": "^0.28.17",
     "typescript": "^5.9.3",
     "youch": "^4.1.0-beta.13"
   },
@@ -130,7 +130,7 @@
     "@adonisjs/hash": "^10.0.0-next.2",
     "@adonisjs/health": "^3.1.0-next.1",
     "@adonisjs/http-server": "^8.0.0-next.18",
-    "@adonisjs/http-transformers": "^2.1.2",
+    "@adonisjs/http-transformers": "^2.2.0",
     "@adonisjs/logger": "^7.1.0-next.3",
     "@adonisjs/repl": "^5.0.0-next.2",
     "@boringnode/encryption": "^1.0.0",
