@@ -16,6 +16,7 @@ import type {
   EncryptOptions,
 } from '@boringnode/encryption/types'
 import { errors } from '@boringnode/encryption'
+import { E_LEGACY_BLIND_INDEX_NOT_SUPPORTED } from '../errors.ts'
 
 /**
  * Configuration for the Legacy encryption driver.
@@ -182,5 +183,19 @@ export class Legacy extends BaseDriver implements EncryptionDriverContract {
     } catch {
       return null
     }
+  }
+
+  /**
+   * Legacy driver does not support blind indexes.
+   */
+  blindIndex(_payload: any, _purpose: string): string {
+    throw new E_LEGACY_BLIND_INDEX_NOT_SUPPORTED()
+  }
+
+  /**
+   * Legacy driver does not support blind indexes.
+   */
+  blindIndexes(_payload: any, _purpose: string): string[] {
+    throw new E_LEGACY_BLIND_INDEX_NOT_SUPPORTED()
   }
 }

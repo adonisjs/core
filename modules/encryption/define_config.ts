@@ -12,6 +12,7 @@ import { configProvider } from '../../src/config_provider.ts'
 import { type ConfigProvider } from '../../src/types.ts'
 
 import {
+  type AESSIVDriverConfig,
   type AES256CBCDriverConfig,
   type AES256GCMDriverConfig,
   type ChaCha20Poly1305DriverConfig,
@@ -199,6 +200,21 @@ export const drivers: {
   aes256gcm: (config: AES256GCMDriverConfig) => ConfigProvider<EncryptionConfig>
 
   /**
+   * Creates an AES-SIV encryption driver configuration.
+   *
+   * @param config - The AES-SIV driver configuration
+   *
+   * @example
+   * ```ts
+   * drivers.aessiv({
+   *   id: 'app',
+   *   key: env.get('APP_KEY')
+   * })
+   * ```
+   */
+  aessiv: (config: AESSIVDriverConfig) => ConfigProvider<EncryptionConfig>
+
+  /**
    * Creates a Legacy encryption driver configuration.
    *
    * The Legacy driver maintains compatibility with the old AdonisJS v6
@@ -247,6 +263,17 @@ export const drivers: {
       return {
         driver: (key) => new AES256GCM({ id: config.id, key }),
         keys: config.keys.filter((key) => !!key),
+      }
+    })
+  },
+
+  aessiv: (config) => {
+    return configProvider.create(async () => {
+      const { AESSIV } = await import('./drivers/aes_siv.ts')
+      debug('configuring aessiv encryption driver')
+      return {
+        driver: (key) => new AESSIV({ id: config.id, key }),
+        keys: [config.key].filter((key) => !!key),
       }
     })
   },

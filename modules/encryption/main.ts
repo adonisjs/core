@@ -82,6 +82,11 @@ export { Hmac } from '@boringnode/encryption'
 export { BaseDriver } from '@boringnode/encryption'
 
 /**
+ * Encryption module specific exceptions.
+ */
+export { errors } from './errors.ts'
+
+/**
  * Defines the encryption configuration for the application.
  *
  * @see {defineConfig} in define_config.ts for detailed documentation
@@ -91,8 +96,8 @@ export { defineConfig } from './define_config.ts'
 /**
  * Collection of built-in encryption driver factory functions.
  *
- * Includes factories for ChaCha20-Poly1305, AES-256-CBC, and
- * AES-256-GCM encryption algorithms.
+ * Includes factories for ChaCha20-Poly1305, AES-256-CBC,
+ * AES-256-GCM, and AES-SIV encryption algorithms.
  *
  * @see {drivers} in define_config.ts for detailed documentation
  */
