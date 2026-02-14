@@ -10,9 +10,9 @@
 import { test } from '@japa/runner'
 import { setTimeout } from 'node:timers/promises'
 
+import type { ApplicationService } from '../../src/types.ts'
 import { Legacy, legacy } from '../../modules/encryption/drivers/legacy.ts'
 import { drivers, defineConfig } from '../../modules/encryption/define_config.ts'
-import type { ApplicationService } from '../../src/types.ts'
 
 const SECRET_KEY = 'averylongsecretkeythatshouldbe32'
 
@@ -279,7 +279,7 @@ test.group('Legacy | blind indexes', () => {
 
     assert.throws(
       () => encryption.blindIndex('foo@example.com', 'users.email'),
-      'Blind indexes are not supported by the legacy encryption driver'
+      'Blind indexes are not supported by the "legacy" encryption driver'
     )
   })
 
@@ -288,7 +288,7 @@ test.group('Legacy | blind indexes', () => {
 
     assert.throws(
       () => encryption.blindIndexes('foo@example.com', 'users.email'),
-      'Blind indexes are not supported by the legacy encryption driver'
+      'Blind indexes are not supported by the "legacy" encryption driver'
     )
   })
 })

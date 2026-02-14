@@ -7,16 +7,16 @@
  * file that was distributed with this source code.
  */
 
-import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
+import { errors } from '@boringnode/encryption'
 import { MessageBuilder, type Secret } from '@poppinss/utils'
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
 import { BaseDriver, Hmac, base64UrlDecode, base64UrlEncode } from '@boringnode/encryption'
 import type {
-  EncryptionDriverContract,
   CypherText,
   EncryptOptions,
+  EncryptionDriverContract,
 } from '@boringnode/encryption/types'
-import { errors } from '@boringnode/encryption'
-import { E_LEGACY_BLIND_INDEX_NOT_SUPPORTED } from '../errors.ts'
+import { E_BLIND_INDEX_NOT_SUPPORTED } from '../errors.ts'
 
 /**
  * Configuration for the Legacy encryption driver.
@@ -189,13 +189,13 @@ export class Legacy extends BaseDriver implements EncryptionDriverContract {
    * Legacy driver does not support blind indexes.
    */
   blindIndex(_payload: any, _purpose: string): string {
-    throw new E_LEGACY_BLIND_INDEX_NOT_SUPPORTED()
+    throw new E_BLIND_INDEX_NOT_SUPPORTED(['legacy'])
   }
 
   /**
    * Legacy driver does not support blind indexes.
    */
   blindIndexes(_payload: any, _purpose: string): string[] {
-    throw new E_LEGACY_BLIND_INDEX_NOT_SUPPORTED()
+    throw new E_BLIND_INDEX_NOT_SUPPORTED(['legacy'])
   }
 }

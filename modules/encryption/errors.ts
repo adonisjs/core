@@ -13,9 +13,9 @@ import { errors as boringnodeErrors } from '@boringnode/encryption'
 /**
  * Raised when attempting to compute blind indexes using the legacy driver.
  */
-export const E_LEGACY_BLIND_INDEX_NOT_SUPPORTED = createError(
-  'Blind indexes are not supported by the legacy encryption driver',
-  'E_LEGACY_BLIND_INDEX_NOT_SUPPORTED'
+export const E_BLIND_INDEX_NOT_SUPPORTED = createError<[string]>(
+  'Blind indexes are not supported by the "%s" encryption driver',
+  'E_BLIND_INDEX_NOT_SUPPORTED'
 )
 
 /**
@@ -23,5 +23,5 @@ export const E_LEGACY_BLIND_INDEX_NOT_SUPPORTED = createError(
  */
 export const errors = {
   ...boringnodeErrors,
-  E_LEGACY_BLIND_INDEX_NOT_SUPPORTED,
+  E_BLIND_INDEX_NOT_SUPPORTED,
 }
