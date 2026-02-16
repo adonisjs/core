@@ -31,6 +31,11 @@ import { outputTransformerDataObjects } from '../utils.ts'
  *     source: 'app/custom-events',
  *     importAlias: '#custom-events'
  *   },
+ *   assemblers: {
+ *     enabled: true,
+ *     withSharedProps: true,
+ *     inertiaMiddlewareImportPath: '#middleware/inertia_middleware'
+ *   },
  *   controllers: {
  *     enabled: false
  *   }
