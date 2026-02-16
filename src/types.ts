@@ -353,6 +353,7 @@ export type IndexEntitiesConfig = {
     enabled?: boolean
     /** Whether to include shared props in transformers */
     withSharedProps?: boolean
+    inertiaMiddlewareImportPath?: string
     /** Source directory for transformers */
     source?: string
     /** Import alias for transformers */

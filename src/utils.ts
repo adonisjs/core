@@ -84,7 +84,8 @@ export async function importTypeScript(
 export async function outputTransformerDataObjects(
   transformersList: RecursiveFileTree,
   buffer: Assembler.FileBuffer,
-  withSharedProps: boolean
+  withSharedProps: boolean,
+  inertiaMiddlewareImportPath: string = '#middleware/inertia_middleware'
 ) {
   const importsBuffer = buffer.create()
   importsBuffer.write(`/// <reference path="./manifest.d.ts" />`)
@@ -128,7 +129,7 @@ export async function outputTransformerDataObjects(
   generateNamespaceTree(transformersList, [])
 
   if (withSharedProps) {
-    importsBuffer.write(`import type InertiaMiddleware from '#middleware/inertia_middleware'`)
+    importsBuffer.write(`import type InertiaMiddleware from '${inertiaMiddlewareImportPath}'`)
     buffer.write('export type SharedProps = InferSharedProps<InertiaMiddleware>')
   }
 

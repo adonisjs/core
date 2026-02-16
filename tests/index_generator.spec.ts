@@ -246,6 +246,68 @@ test.group('Index generator', () => {
     )
   })
 
+  test('generate transformers index with shared props and custom inertia middleware import path', async ({
+    assert,
+    fs,
+  }) => {
+    const cliUi = Kernel.create().ui
+    cliUi.switchMode('raw')
+
+    await fs.create('app/transformers/user_transformer.ts', '')
+    await fs.create('app/transformers/blog/post_transformer.ts', '')
+
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
+    const indexer = indexEntities({
+      controllers: {
+        enabled: false,
+      },
+      events: {
+        enabled: false,
+      },
+      listeners: {
+        enabled: false,
+      },
+      transformers: {
+        enabled: true,
+        withSharedProps: true,
+        inertiaMiddlewareImportPath: '#core/middleware/inertia_middleware',
+      },
+    })
+
+    indexer.run({} as any, {} as any, generator)
+    await generator.generate()
+
+    await assert.fileExists('.adonisjs/client/data.d.ts')
+    assert.snapshot(await fs.contents('.adonisjs/client/data.d.ts')).matchInline(`
+      "/// <reference path=\\"./manifest.d.ts\\" />
+      import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
+      import type { InferSharedProps } from '@adonisjs/inertia/types'
+      import type BlogPostTransformer from '#transformers/blog/post_transformer'
+      import type UserTransformer from '#transformers/user_transformer'
+      import type InertiaMiddleware from '#core/middleware/inertia_middleware'
+
+      export namespace Data {
+        export namespace Blog {
+          export type Post = InferData<BlogPostTransformer>
+          export namespace Post {
+            export type Variants = InferVariants<BlogPostTransformer>
+          }
+        }
+        export type User = InferData<UserTransformer>
+        export namespace User {
+          export type Variants = InferVariants<UserTransformer>
+        }
+        export type SharedProps = InferSharedProps<InertiaMiddleware>
+      }
+      "
+    `)
+    assert.isDefined(
+      cliUi.logger
+        .getLogs()
+        .find(({ message }) => message.includes('[ blue(info) ] codegen: created'))
+    )
+  })
+
   test('generate transformers index with deeply nested directories', async ({ assert, fs }) => {
     const cliUi = Kernel.create().ui
     cliUi.switchMode('raw')
