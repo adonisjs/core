@@ -31,7 +31,7 @@ import { outputTransformerDataObjects } from '../utils.ts'
  *     source: 'app/custom-events',
  *     importAlias: '#custom-events'
  *   },
- *   assemblers: {
+ *   transformers: {
  *     enabled: true,
  *     withSharedProps: true,
  *     inertiaMiddlewareImportPath: '#middleware/inertia_middleware'
@@ -123,6 +123,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           importAlias: events.importAlias,
           skipSegments: events.skipSegments,
           output: events.output,
+          comment: true,
         })
       }
 
@@ -135,6 +136,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           importAlias: listeners.importAlias,
           skipSegments: listeners.skipSegments,
           output: listeners.output,
+          comment: true,
         })
       }
 
@@ -148,6 +150,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           skipSegments: controllers.skipSegments,
           removeSuffix: 'controller',
           output: controllers.output,
+          comment: true,
         })
       }
 
@@ -181,6 +184,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
           },
           importAlias: transformers.importAlias,
           output: transformers.output,
+          comment: true,
         })
       }
 
@@ -204,6 +208,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
             })
           },
           output: manifest.output,
+          comment: true,
         })
       }
     },
