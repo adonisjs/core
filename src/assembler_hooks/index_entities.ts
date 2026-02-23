@@ -31,6 +31,11 @@ import { outputTransformerDataObjects } from '../utils.ts'
  *     source: 'app/custom-events',
  *     importAlias: '#custom-events'
  *   },
+ *   assemblers: {
+ *     enabled: true,
+ *     withSharedProps: true,
+ *     inertiaMiddlewareImportPath: '#middleware/inertia_middleware'
+ *   },
  *   controllers: {
  *     enabled: false
  *   }
@@ -82,6 +87,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
       source: 'app/transformers',
       importAlias: '#transformers',
       withSharedProps: false,
+      inertiaMiddlewareImportPath: '#middleware/inertia_middleware',
       skipSegments: ['transformers'],
       output: '.adonisjs/client/data.d.ts',
     },
@@ -166,7 +172,12 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
               },
               transformValue: helpers.toImportPath,
             })
-            outputTransformerDataObjects(transformersList, buffer, transformers.withSharedProps)
+            outputTransformerDataObjects(
+              transformersList,
+              buffer,
+              transformers.withSharedProps,
+              transformers.inertiaMiddlewareImportPath
+            )
           },
           importAlias: transformers.importAlias,
           output: transformers.output,
