@@ -602,7 +602,7 @@ export class Codemods extends EventEmitter {
   /**
    * Install packages using the detected or specified package manager.
    * Automatically detects npm, yarn, or pnpm and installs dependencies accordingly.
-   * You can specify version of each package by setting it in the name like '@adonisjs/lucid@next'.
+   * You can specify version of each package by setting it in the name like '@adonisjs/lucid'.
    *
    * @param packages - Array of packages with their dependency type
    * @param packageManager - Optional package manager to use (auto-detected if not provided)
@@ -622,16 +622,8 @@ export class Codemods extends EventEmitter {
     const transformer = await this.#getCodeTransformer()
     const appPath = this.#app.makePath()
     const colors = this.#cliLogger.getColors()
-    const devDependencies = packages
-      .filter((pkg) => pkg.isDevDependency)
-      .map(({ name }) => {
-        return name.startsWith('@adonisjs/') ? `${name}@next` : name
-      })
-    const dependencies = packages
-      .filter((pkg) => !pkg.isDevDependency)
-      .map(({ name }) => {
-        return name.startsWith('@adonisjs/') ? `${name}@next` : name
-      })
+    const devDependencies = packages.filter((pkg) => pkg.isDevDependency)
+    const dependencies = packages.filter((pkg) => !pkg.isDevDependency)
 
     if (!transformer) {
       this.#cliLogger.warning(
