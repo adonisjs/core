@@ -622,8 +622,8 @@ export class Codemods extends EventEmitter {
     const transformer = await this.#getCodeTransformer()
     const appPath = this.#app.makePath()
     const colors = this.#cliLogger.getColors()
-    const devDependencies = packages.filter((pkg) => pkg.isDevDependency)
-    const dependencies = packages.filter((pkg) => !pkg.isDevDependency)
+    const devDependencies = packages.filter((pkg) => pkg.isDevDependency).map(({ name }) => name)
+    const dependencies = packages.filter((pkg) => !pkg.isDevDependency).map(({ name }) => name)
 
     if (!transformer) {
       this.#cliLogger.warning(
