@@ -9,7 +9,7 @@
 
 import { detectPackageManager, installPackage } from '@antfu/install-pkg'
 
-import { CommandOptions } from '../types/ace.js'
+import { type CommandOptions } from '../types/ace.js'
 import { args, BaseCommand, flags } from '../modules/ace/main.js'
 
 const KNOWN_PACKAGE_MANAGERS = ['npm', 'pnpm', 'bun', 'yarn', 'yarn@berry', 'pnpm@6'] as const
@@ -39,6 +39,50 @@ export default class Add extends BaseCommand {
 
   @flags.boolean({ description: 'Forcefully overwrite existing files' })
   declare force?: boolean
+
+  /**
+   * Extract the bare package name and version from a user-supplied
+   * package string. Scoped packages like "@adonisjs/auth@1.0.0"
+   * need special handling since the first "@" is part of the scope.
+   */
+  #extractPackageNameAndVersion(pkg: string): { name: string; version?: string } {
+    if (pkg.startsWith('@')) {
+      const secondAtIndex = pkg.indexOf('@', 1)
+      if (secondAtIndex === -1) {
+        return { name: pkg }
+      }
+      return { name: pkg.substring(0, secondAtIndex), version: pkg.substring(secondAtIndex + 1) }
+    }
+
+    const atIndex = pkg.indexOf('@')
+    if (atIndex === -1) {
+      return { name: pkg }
+    }
+    return { name: pkg.substring(0, atIndex), version: pkg.substring(atIndex + 1) }
+  }
+
+  #getPackageVersion(packageName: string) {
+    return {
+      '@adonisjs/inertia': '^3.1.1',
+      '@adonisjs/session': '^7.7.1',
+      '@adonisjs/transmit': '^2.0.2',
+      '@adonisjs/cache': '^1.3.1',
+      '@adonisjs/otel': '^1.2.0',
+      '@adonisjs/lock': '^1.1.1',
+      '@adonisjs/cors': '^2.2.1',
+      '@adonisjs/bouncer': '^3.1.6',
+      '@adonisjs/shield': '^8.2.0',
+      '@adonisjs/drive': '^3.4.1',
+      '@adonisjs/auth': '^9.6.0',
+      '@adonisjs/vite': '^4.0.0',
+      '@adonisjs/redis': '^9.2.0',
+      '@adonisjs/i18n': '^2.2.3',
+      '@adonisjs/ally': '^5.1.1',
+      '@adonisjs/limiter': '^2.4.0',
+      '@adonisjs/static': '^1.1.1',
+      '@adonisjs/lucid-slugify': '^3.0.0',
+    }[packageName]
+  }
 
   /**
    * Detect the package manager to use
@@ -81,6 +125,14 @@ export default class Add extends BaseCommand {
    * Install the package using the selected package manager
    */
   async #installPackage(npmPackageName: string) {
+    const { name, version } = this.#extractPackageNameAndVersion(npmPackageName)
+    const knownVersion = this.#getPackageVersion(name)
+    if (knownVersion) {
+      npmPackageName = `${name}@${knownVersion}`
+    } else if (version) {
+      npmPackageName = `${name}@${version}`
+    }
+
     const colors = this.colors
     const spinner = this.logger
       .await(`installing ${colors.green(this.name)} using ${colors.grey(this.packageManager!)}`)
