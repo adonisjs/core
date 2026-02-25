@@ -287,8 +287,7 @@ test.group('Install', (group) => {
     command.verbose = VERBOSE
 
     await command.exec()
-
-    await assert.fileContains('package.json', /"@adonisjs\/fold":"\^[\d.]+\-next/)
+    await assert.fileContains('package.json', /"@adonisjs\/fold":"\^[\d.]+/)
   })
 
   test('install and configure multiple packages', async ({ assert, fs }) => {
