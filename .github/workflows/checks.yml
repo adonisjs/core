@@ -10,7 +10,7 @@ jobs:
       install-pnpm: true
 
   lint:
-    uses: adonisjs/.github/.github/workflows/lint.yml@next
+    uses: adonisjs/.github/.github/workflows/lint.yml@main
 
   typecheck:
-    uses: adonisjs/.github/.github/workflows/typecheck.yml@next
+    uses: adonisjs/.github/.github/workflows/typecheck.yml@main
