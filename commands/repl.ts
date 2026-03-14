@@ -30,7 +30,8 @@ export default class ReplCommand extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Start a new REPL session'
+  static description =
+    'Start an interactive REPL session with the application booted and IoC container available'
 
   /**
    * Command options configuration.

@@ -32,7 +32,8 @@ export default class MakeException extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new custom exception class'
+  static description =
+    'Create a new custom exception class in app/exceptions with handle and report methods'
 
   /**
    * Command options configuration.

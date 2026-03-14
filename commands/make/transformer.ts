@@ -33,7 +33,8 @@ export default class MakeTransformer extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new transformer class'
+  static description =
+    'Create a new transformer class in app/transformers for serializing data in API responses'
 
   /**
    * Command options configuration.

@@ -38,7 +38,8 @@ export default class EnvAdd extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Add a new environment variable'
+  static description =
+    'Add a new environment variable to .env, .env.example, and its validation rule to start/env.ts'
 
   /**
    * Command options configuration.

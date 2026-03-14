@@ -33,7 +33,8 @@ export default class MakeValidator extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new file to define VineJS validators'
+  static description =
+    'Create a new VineJS validator file in app/validators. Use --resource to generate both create and update validation schemas'
 
   /**
    * Command options configuration.

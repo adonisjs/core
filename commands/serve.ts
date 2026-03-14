@@ -35,7 +35,7 @@ export default class Serve extends BaseCommand {
    * The command description
    */
   static description =
-    'Start the development HTTP server along with the file watcher to perform restarts on file change'
+    'Start the development HTTP server. Use --watch for auto-restart on file change or --hmr for hot module replacement'
 
   /**
    * Help text for the command

@@ -32,7 +32,7 @@ export default class MakeView extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new Edge.js template file'
+  static description = 'Create a new Edge.js template file in resources/views'
 
   /**
    * Name of the template file to create

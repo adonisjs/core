@@ -36,7 +36,7 @@ export default class ListRoutes extends BaseCommand {
    * The command description
    */
   static description =
-    'List application routes. This command will boot the application in the console environment'
+    'List all registered routes with their HTTP methods, URL patterns, handlers, and middleware'
 
   /**
    * Command options configuration.
@@ -87,6 +87,15 @@ export default class ListRoutes extends BaseCommand {
   declare table: boolean
 
   /**
+   * Output routes as JSONL (one JSON object per line), optimized for
+   * machine consumption by AI agents and CLI tools
+   */
+  @flags.boolean({
+    description: 'Get routes as JSONL, one JSON object per line (optimized for AI agents)',
+  })
+  declare jsonl: boolean
+
+  /**
    * Execute the command to list application routes.
    * Creates a formatter with the specified filters and outputs routes
    * in the requested format (JSON, table, or formatted list).
@@ -103,6 +112,19 @@ export default class ListRoutes extends BaseCommand {
         match: this.match,
       }
     )
+
+    /**
+     * Display as JSONL (one JSON object per line).
+     * Auto-selected when running inside an AI agent and no
+     * explicit format flag is provided.
+     */
+    if (this.jsonl || (!this.json && !this.table && this.app.runningInAIAgent)) {
+      const lines = await formatter.formatAsJSONL()
+      for (const line of lines) {
+        this.logger.log(line)
+      }
+      return
+    }
 
     /**
      * Display as JSON

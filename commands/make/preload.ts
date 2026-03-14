@@ -40,7 +40,8 @@ export default class MakePreload extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new preload file inside the start directory'
+  static description =
+    'Create a new preload file in start/ and optionally register it in adonisrc.ts. Preload files run during app boot'
 
   /**
    * Name of the preload file to create

@@ -33,7 +33,7 @@ export default class MakeCommand extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new ace command class'
+  static description = 'Create a new Ace CLI command class in commands/'
 
   /**
    * Name of the command class to create

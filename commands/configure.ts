@@ -36,7 +36,8 @@ export default class Configure extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Configure a package after it has been installed'
+  static description =
+    'Run the configure hook of an already-installed package. Use "add" command instead to both install and configure in one step'
 
   /**
    * Command options configuration.

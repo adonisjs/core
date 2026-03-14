@@ -28,7 +28,8 @@ export default class InspectRCFile extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Inspect the RC file with its default values'
+  static description =
+    'Display the resolved adonisrc.ts configuration as JSON, including providers, preloads, commands, and meta files'
 
   /**
    * Execute the command to display RC file contents.

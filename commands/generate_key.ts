@@ -30,7 +30,8 @@ export default class GenerateKey extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Generate a cryptographically secure random application key'
+  static description =
+    'Generate a cryptographically secure APP_KEY and write it to the .env file. Use --show to print without writing'
 
   /**
    * Display the key on the terminal, instead of writing it to .env file

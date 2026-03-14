@@ -377,6 +377,81 @@ export class RoutesListFormatter {
   }
 
   /**
+   * Formats middleware info into a compact string representation.
+   * Named middleware with args becomes "name:args", closures use their name as-is.
+   */
+  #formatMiddlewareAsString(middleware: MiddlewareHandlerInfo): string {
+    if (middleware.type === 'named' && middleware.args) {
+      return `${middleware.name}:${middleware.args}`
+    }
+    return middleware.name
+  }
+
+  /**
+   * Formats routes as JSONL (one JSON object per line). Each line is a
+   * self-contained route object with flattened domain, simplified handler,
+   * and middleware as a string array. Optimized for machine consumption
+   * by AI agents and CLI tools.
+   */
+  async formatAsJSONL(): Promise<string[]> {
+    const routes = this.#router.toJSON()
+    const domains = Object.keys(routes)
+    const lines: string[] = []
+
+    for (let domain of domains) {
+      for (let route of routes[domain]) {
+        const serializedRoute = await this.#serializeRoute(route)
+        if (!this.#isAllowedByFilters(serializedRoute)) {
+          continue
+        }
+
+        const handler =
+          serializedRoute.handler.type === 'controller'
+            ? {
+                type: 'controller' as const,
+                module: serializedRoute.handler.moduleNameOrPath,
+                method: serializedRoute.handler.method,
+              }
+            : {
+                type: serializedRoute.handler.name === 'redirectsToRoute'
+                  ? ('redirect' as const)
+                  : ('closure' as const),
+                name: serializedRoute.handler.name,
+                ...(serializedRoute.handler.args ? { args: serializedRoute.handler.args } : {}),
+              }
+
+        const middleware = serializedRoute.middleware.map((m) =>
+          this.#formatMiddlewareAsString(m)
+        )
+
+        for (let method of serializedRoute.methods) {
+          const entry: Record<string, unknown> = {
+            method,
+            pattern: serializedRoute.pattern,
+            handler,
+          }
+
+          if (serializedRoute.name) {
+            entry.name = serializedRoute.name
+          }
+
+          if (domain !== 'root') {
+            entry.domain = domain
+          }
+
+          if (middleware.length > 0) {
+            entry.middleware = middleware
+          }
+
+          lines.push(JSON.stringify(entry))
+        }
+      }
+    }
+
+    return lines
+  }
+
+  /**
    * Formats routes as an array of objects. Routes are grouped by
    * domain.
    */

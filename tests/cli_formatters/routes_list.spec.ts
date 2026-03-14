@@ -702,6 +702,259 @@ test.group('Formatters | List routes | toJSON', () => {
   })
 })
 
+test.group('Formatters | List routes | toJSONL', () => {
+  test('format routes as JSONL', async ({ assert, fs }) => {
+    const ignitor = new IgnitorFactory()
+      .withCoreConfig()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .create(fs.baseUrl)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+    await registerRoutes(app)
+
+    const router = await app.container.make('router')
+    const formatter = new RoutesListFormatter(router, createAceKernel(app).ui, {}, {})
+    const lines = await formatter.formatAsJSONL()
+    const parsed = lines.map((line) => JSON.parse(line))
+
+    assert.snapshot(parsed).matchInline(`
+      [
+        {
+          "handler": {
+            "name": "closure",
+            "type": "closure",
+          },
+          "method": "GET",
+          "pattern": "/",
+        },
+        {
+          "handler": {
+            "name": "closure",
+            "type": "closure",
+          },
+          "method": "GET",
+          "pattern": "/files/:directory/*",
+        },
+        {
+          "handler": {
+            "method": "handle",
+            "module": "#controllers/home_controller",
+            "type": "controller",
+          },
+          "method": "GET",
+          "name": "home",
+          "pattern": "/home",
+        },
+        {
+          "handler": {
+            "method": "handle",
+            "module": "AboutController",
+            "type": "controller",
+          },
+          "method": "GET",
+          "middleware": [
+            "closure",
+          ],
+          "name": "about",
+          "pattern": "/about",
+        },
+        {
+          "handler": {
+            "method": "store",
+            "module": "#controllers/contacts_controller",
+            "type": "controller",
+          },
+          "method": "POST",
+          "name": "contact.store",
+          "pattern": "/contact",
+        },
+        {
+          "handler": {
+            "method": "create",
+            "module": "#controllers/contacts_controller",
+            "type": "controller",
+          },
+          "method": "GET",
+          "name": "contact.create",
+          "pattern": "/contact",
+        },
+        {
+          "handler": {
+            "method": "handle",
+            "module": "UsersController",
+            "type": "controller",
+          },
+          "method": "GET",
+          "middleware": [
+            "auth",
+            "canViewUsers",
+            "closure",
+          ],
+          "name": "users",
+          "pattern": "/users",
+        },
+        {
+          "handler": {
+            "method": "index",
+            "module": "#controllers/payments_controller",
+            "type": "controller",
+          },
+          "method": "GET",
+          "middleware": [
+            "auth",
+            "acl",
+            "signed",
+            "throttle",
+          ],
+          "pattern": "/payments",
+        },
+        {
+          "handler": {
+            "args": "/articles",
+            "name": "redirectsToRoute",
+            "type": "redirect",
+          },
+          "method": "GET",
+          "pattern": "/blog",
+        },
+        {
+          "domain": "blog.adonisjs.com",
+          "handler": {
+            "method": "index",
+            "module": "#controllers/articles_controller",
+            "type": "controller",
+          },
+          "method": "GET",
+          "name": "articles",
+          "pattern": "/articles",
+        },
+        {
+          "domain": "blog.adonisjs.com",
+          "handler": {
+            "method": "show",
+            "module": "#controllers/articles_controller",
+            "type": "controller",
+          },
+          "method": "GET",
+          "name": "articles.show",
+          "pattern": "/articles/:id/:slug?",
+        },
+      ]
+    `)
+  })
+
+  test('each line is valid JSON', async ({ assert, fs }) => {
+    const ignitor = new IgnitorFactory()
+      .withCoreConfig()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .create(fs.baseUrl)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+    await registerRoutes(app)
+
+    const router = await app.container.make('router')
+    const formatter = new RoutesListFormatter(router, createAceKernel(app).ui, {}, {})
+    const lines = await formatter.formatAsJSONL()
+
+    for (const line of lines) {
+      assert.doesNotThrow(() => JSON.parse(line))
+    }
+  })
+
+  test('omits name, domain, and middleware when empty or default', async ({ assert, fs }) => {
+    const ignitor = new IgnitorFactory()
+      .withCoreConfig()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .create(fs.baseUrl)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+    await registerRoutes(app)
+
+    const router = await app.container.make('router')
+    const formatter = new RoutesListFormatter(router, createAceKernel(app).ui, {}, {})
+    const lines = await formatter.formatAsJSONL()
+
+    /**
+     * The root closure route "/" has no name, no middleware, and root domain.
+     * None of those keys should be present.
+     */
+    const rootRoute = JSON.parse(lines[0])
+    assert.notProperty(rootRoute, 'name')
+    assert.notProperty(rootRoute, 'domain')
+    assert.notProperty(rootRoute, 'middleware')
+  })
+
+  test('includes domain for non-root routes', async ({ assert, fs }) => {
+    const ignitor = new IgnitorFactory()
+      .withCoreConfig()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .create(fs.baseUrl)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+    await registerRoutes(app)
+
+    const router = await app.container.make('router')
+    const formatter = new RoutesListFormatter(router, createAceKernel(app).ui, {}, {})
+    const lines = await formatter.formatAsJSONL()
+    const parsed = lines.map((line) => JSON.parse(line))
+
+    const domainRoutes = parsed.filter((r) => r.domain === 'blog.adonisjs.com')
+    assert.lengthOf(domainRoutes, 2)
+  })
+
+  test('respects filters', async ({ assert, fs }) => {
+    const ignitor = new IgnitorFactory()
+      .withCoreConfig()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .create(fs.baseUrl)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+    await registerRoutes(app)
+
+    const router = await app.container.make('router')
+    const formatter = new RoutesListFormatter(
+      router,
+      createAceKernel(app).ui,
+      {},
+      { middleware: ['auth'] }
+    )
+    const lines = await formatter.formatAsJSONL()
+    const parsed = lines.map((line) => JSON.parse(line))
+
+    assert.isTrue(parsed.every((r) => r.middleware && r.middleware.includes('auth')))
+  })
+})
+
 test.group('Formatters | List routes | filters', () => {
   test('show routes that has one or more middleware', async ({ assert, fs }) => {
     const ignitor = new IgnitorFactory()

@@ -31,7 +31,8 @@ export default class MakeTest extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new Japa test file'
+  static description =
+    'Create a new Japa test file in tests/. Use --suite to specify the test suite (unit, functional, etc.)'
 
   /**
    * Name of the test file to create

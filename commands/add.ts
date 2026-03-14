@@ -33,7 +33,17 @@ export default class Add extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Install and configure one or more packages'
+  static description =
+    'Install and configure one or more AdonisJS packages. Runs npm install followed by the package configure hook'
+
+  static help = [
+    'Use this command instead of manually running npm install + configure separately.',
+    'Accepts shorthand names: "vinejs" for @vinejs/vine, "edge" for edge.js.',
+    '```',
+    '{{ binaryName }} add @adonisjs/lucid',
+    '{{ binaryName }} add @adonisjs/auth @adonisjs/session',
+    '```',
+  ]
   /**
    * Command options configuration
    */

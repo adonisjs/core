@@ -31,7 +31,8 @@ export default class Eject extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Eject scaffolding stubs to your application root'
+  static description =
+    'Copy scaffolding stubs from a package to your application for customization. Stubs are templates used by make:* commands'
 
   /**
    * Path to the stubs directory or a single stub file to eject

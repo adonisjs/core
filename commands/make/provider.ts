@@ -39,7 +39,8 @@ export default class MakeProvider extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new service provider class'
+  static description =
+    'Create a new service provider in providers/ and optionally register it in adonisrc.ts. Providers register IoC container bindings'
 
   /**
    * Name of the service provider to create

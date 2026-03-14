@@ -32,7 +32,8 @@ export default class MakeEvent extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new event class'
+  static description =
+    'Create a new event class in app/events. Events are dispatched via emitter and handled by listeners'
 
   /**
    * Command options configuration.

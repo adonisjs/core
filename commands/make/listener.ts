@@ -32,7 +32,8 @@ export default class MakeListener extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new event listener class'
+  static description =
+    'Create a new event listener class in app/listeners. Use --event to also generate the event class and bind them together'
 
   /**
    * Command options configuration.

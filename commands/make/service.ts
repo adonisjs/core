@@ -29,7 +29,8 @@ export default class MakeService extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new service class'
+  static description =
+    'Create a new service class in app/services. Services encapsulate reusable business logic outside of controllers'
 
   /**
    * Command options configuration

@@ -38,7 +38,8 @@ export default class Test extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Run tests along with the file watcher to re-run tests on file change'
+  static description =
+    'Run tests using Japa test runner. Supports filtering by suite, file, tag, and group. Use --watch for re-runs on file change'
 
   /**
    * Command options configuration.

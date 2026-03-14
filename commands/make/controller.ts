@@ -32,7 +32,8 @@ export default class MakeController extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new HTTP controller class'
+  static description =
+    'Create a new HTTP controller class in app/controllers. Use --resource for CRUD methods or --api for API-only CRUD (no create/edit)'
 
   /**
    * Command options configuration

@@ -35,7 +35,8 @@ export default class MakeMiddleware extends BaseCommand {
   /**
    * The command description
    */
-  static description = 'Create a new middleware class for HTTP requests'
+  static description =
+    'Create a new middleware class in app/middleware and register it in start/kernel.ts under the chosen stack (server, router, or named)'
 
   /**
    * Command options configuration
