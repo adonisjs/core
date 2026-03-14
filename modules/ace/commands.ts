@@ -186,6 +186,17 @@ export class ListCommand extends AceListCommand implements BaseCommand {
   }
 
   /**
+   * Auto-select JSON output when running inside an AI agent
+   * and no explicit format flag is provided.
+   */
+  async run() {
+    if (!this.json && this.app.runningInAIAgent) {
+      this.json = true
+    }
+    return super.run()
+  }
+
+  /**
    * Creates the codemods module to modify source files programmatically.
    * This method provides access to AST-based code transformations.
    */
