@@ -380,7 +380,7 @@ export class RoutesListFormatter {
    * Formats middleware info into a compact string representation.
    * Named middleware with args becomes "name:args", closures use their name as-is.
    */
-  #formatMiddlewareAsString(middleware: MiddlewareHandlerInfo): string {
+  #formatMiddlewareAsString(middleware: MiddlewareHandlerInfo): string | undefined {
     if (middleware.type === 'named' && middleware.args) {
       return `${middleware.name}:${middleware.args}`
     }
@@ -413,16 +413,17 @@ export class RoutesListFormatter {
                 method: serializedRoute.handler.method,
               }
             : {
-                type: serializedRoute.handler.name === 'redirectsToRoute'
-                  ? ('redirect' as const)
-                  : ('closure' as const),
+                type:
+                  serializedRoute.handler.name === 'redirectsToRoute'
+                    ? ('redirect' as const)
+                    : ('closure' as const),
                 name: serializedRoute.handler.name,
                 ...(serializedRoute.handler.args ? { args: serializedRoute.handler.args } : {}),
               }
 
-        const middleware = serializedRoute.middleware.map((m) =>
-          this.#formatMiddlewareAsString(m)
-        )
+        const middleware = serializedRoute.middleware
+          .map((m) => this.#formatMiddlewareAsString(m))
+          .filter((m) => !!m)
 
         for (let method of serializedRoute.methods) {
           const entry: Record<string, unknown> = {
