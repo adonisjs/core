@@ -94,7 +94,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
     entities.transformers
   )
   const manifest = {
-    enabled: entities.manifest?.enabled === false ? false : transformers.enabled,
+    enabled: entities.manifest?.enabled ?? transformers.enabled,
     source: 'config',
     output: '.adonisjs/client/manifest.d.ts',
     exclude: entities.manifest?.exclude ?? [
