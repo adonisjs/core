@@ -55,3 +55,9 @@ export { compose, Secret, safeEqual, MessageBuilder, defineStaticProperty } from
  * Verification token utility for creating secure tokens.
  */
 export { VerificationToken } from './verification_token.ts'
+
+/**
+ * Ensures a callback takes at least a minimum amount of time
+ * to prevent timing attacks.
+ */
+export { safeTiming } from './safe_timing.ts'
