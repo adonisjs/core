@@ -13,14 +13,10 @@ import vine from '@vinejs/vine'
  * Validator to validate the payload when creating
  * a new {{ validatorName }}.
  */
-export const {{ createAction }} = vine.compile(
-  vine.object({})
-)
+export const {{ createAction }} = vine.create({})
 
 /**
  * Validator to validate the payload when updating
  * an existing {{ validatorName }}.
  */
-export const {{ updateAction }} = vine.compile(
-  vine.object({})
-)
+export const {{ updateAction }} = vine.create({})
