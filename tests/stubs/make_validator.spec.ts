@@ -49,12 +49,8 @@ test.group('Make validator', () => {
     assert.equal(destination, join(BASE_PATH, 'app/validators/post.ts'))
     assert.match(contents, new RegExp("import vine from '@vinejs/vine'"))
     assert.includeMembers(contents.split('\n'), [
-      `export const createPostValidator = vine.compile(`,
-      `  vine.object({})`,
-      `)`,
-      `export const updatePostValidator = vine.compile(`,
-      `  vine.object({})`,
-      `)`,
+      `export const createPostValidator = vine.create({})`,
+      `export const updatePostValidator = vine.create({})`,
     ])
   })
 })
