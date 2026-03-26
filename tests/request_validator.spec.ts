@@ -24,7 +24,7 @@ const BASE_URL = new URL('./tmp/', import.meta.url)
 
 test.group('Request validator', () => {
   test('perform validation on request data using request validator', async ({ assert }) => {
-    assert.plan(1)
+    assert.plan(2)
 
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
@@ -61,7 +61,7 @@ test.group('Request validator', () => {
           {
             field: 'username',
             message: 'The username field must be defined',
-            rule: 'validations.required',
+            rule: 'required',
           },
         ])
       }
@@ -171,7 +171,7 @@ test.group('Request validator', () => {
   })
 
   test('pass metadata to validator', async ({ assert }) => {
-    assert.plan(1)
+    assert.plan(2)
 
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
@@ -221,7 +221,7 @@ test.group('Request validator', () => {
   })
 
   test('use custom messages provider', async ({ assert, cleanup }) => {
-    assert.plan(1)
+    assert.plan(2)
 
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
@@ -267,8 +267,8 @@ test.group('Request validator', () => {
         assert.deepEqual(error.messages, [
           {
             field: 'username',
-            message: 'The selected username is invalid',
-            rule: 'notIn',
+            message: 'The value is missing',
+            rule: 'required',
           },
         ])
       }
@@ -276,7 +276,7 @@ test.group('Request validator', () => {
   })
 
   test('use custom error reporter', async ({ assert, cleanup }) => {
-    assert.plan(1)
+    assert.plan(2)
 
     const ignitor = new IgnitorFactory()
       .withCoreConfig()
