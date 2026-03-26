@@ -38,6 +38,7 @@ export async function safeTiming<T>(
   minimumMs: number,
   callback: (timing: { returnEarly(): void }) => Promise<T>
 ): Promise<T> {
+  const startTime = performance.now()
   let shouldReturnEarly = false
   const timing = {
     returnEarly() {
@@ -45,7 +46,6 @@ export async function safeTiming<T>(
     },
   }
 
-  const startTime = performance.now()
   let result: T
   let caughtError: unknown
 
@@ -57,10 +57,14 @@ export async function safeTiming<T>(
 
   if (!shouldReturnEarly) {
     const remaining = minimumMs - (performance.now() - startTime)
-    if (remaining > 0) await setTimeout(remaining)
+    if (remaining > 0) {
+      await setTimeout(remaining)
+    }
   }
 
-  if (caughtError) throw caughtError
+  if (caughtError) {
+    throw caughtError
+  }
 
   return result!
 }
