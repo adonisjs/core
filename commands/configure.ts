@@ -96,7 +96,7 @@ export default class Configure extends BaseCommand {
     try {
       const packageExports = await this.app.import(packageName)
       return packageExports
-    } catch (error) {
+    } catch (error: any) {
       if (
         (error.code && error.code === 'ERR_MODULE_NOT_FOUND') ||
         error.message.startsWith('Cannot find module')

@@ -220,7 +220,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.defineEnvValidations(validations)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -256,7 +256,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.addMiddlewareToStack(stack, middleware)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -292,7 +292,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.addPolicies(policies)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -325,7 +325,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.updateRcFile(...params)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -359,7 +359,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.addVitePlugin(...params)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -392,7 +392,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.addJapaPlugin(...params)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -426,7 +426,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.addValidator(...params)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -460,7 +460,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.addLimiter(...params)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -496,7 +496,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.addModelMixins(...params)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -534,7 +534,7 @@ export class Codemods extends EventEmitter {
     try {
       await transformer.addControllerMethod(...params)
       action.succeeded()
-    } catch (error) {
+    } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
     }
@@ -583,7 +583,7 @@ export class Codemods extends EventEmitter {
       try {
         debug('overwriting stub output with contents from file %s', source)
         stub.replaceWith(await readFile(source, 'utf-8'))
-      } catch (error) {
+      } catch (error: any) {
         if (error.code === 'ENOENT') {
           throw new Error(
             `Cannot replace stub output with "${options.contentsFromFile}" file contents as the file is missing`,
@@ -682,7 +682,7 @@ export class Codemods extends EventEmitter {
         dependencies.map((dependency) => `    ${colors.dim('prod')} ${dependency} `).join('\n')
       )
       return true
-    } catch (error) {
+    } catch (error: any) {
       if (silentLogs) {
         spinner.update('unable to install dependencies')
         spinner.stop()

@@ -33,7 +33,7 @@ test.group('Dumper', () => {
 
     try {
       dumper.dd('hello')
-    } catch (error) {
+    } catch (error: any) {
       await error.handle(error, ctx)
       assert.include(ctx.response.getBody(), '<style id="dumper-styles">')
       assert.include(ctx.response.getBody(), '<script id="dumper-script">')
@@ -51,7 +51,7 @@ test.group('Dumper', () => {
 
     try {
       dumper.dd('hello')
-    } catch (error) {
+    } catch (error: any) {
       await error.handle(error, ctx)
       assert.include(ctx.response.getBody(), '<style id="dumper-styles">')
       assert.include(ctx.response.getBody(), '<script id="dumper-script" nonce="inline-code">')
@@ -68,7 +68,7 @@ test.group('Dumper', () => {
 
     try {
       dumper.dd({ hello: 'world' })
-    } catch (error) {
+    } catch (error: any) {
       await error.render(error, ace)
 
       assert.lengthOf(ace.ui.logger.getLogs(), 1)
