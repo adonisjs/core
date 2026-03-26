@@ -63,6 +63,12 @@ export default class Build extends BaseCommand {
   declare packageManager?: 'npm' | 'pnpm' | 'yarn' | 'yarn@berry' | 'bun'
 
   /**
+   * Define custom tsconfig path to be used during the build process
+   */
+  @flags.string({ description: 'Define the tsconfig path' })
+  declare tsconfig?: string
+
+  /**
    * Log a development dependency is missing
    *
    * @param dependency - The name of the missing dependency
@@ -112,7 +118,9 @@ export default class Build extends BaseCommand {
      * Bundle project for production
      */
     const stopOnError = this.ignoreTsErrors === true ? false : true
-    const builtSuccessfully = await bundler.bundle(stopOnError, this.packageManager)
+    const builtSuccessfully = await bundler.bundle(stopOnError, this.packageManager, {
+      tsconfigPath: this.tsconfig,
+    })
     if (!builtSuccessfully) {
       this.exitCode = 1
     }
