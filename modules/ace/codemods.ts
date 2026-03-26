@@ -83,6 +83,16 @@ export class Codemods extends EventEmitter {
   }
 
   /**
+   * Replace the logger used for all subsequent codemod
+   * operations. Useful to suppress output by passing a
+   * dummy logger when running inside a tasks manager.
+   */
+  useLogger(logger: UIPrimitives['logger']): this {
+    this.#cliLogger = logger
+    return this
+  }
+
+  /**
    * - Lazily import the code transformer
    * - Return a fresh or reused instance of the code transformer
    */
