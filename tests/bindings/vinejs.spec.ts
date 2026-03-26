@@ -55,7 +55,7 @@ test.group('Bindings | VineJS', (group) => {
       await validator.validate({
         avatar: 'foo',
       })
-    } catch (error) {
+    } catch (error: any) {
       assert.deepEqual(error.messages, [
         {
           field: 'avatar',
@@ -81,7 +81,7 @@ test.group('Bindings | VineJS', (group) => {
           })
           .create(),
       })
-    } catch (error) {
+    } catch (error: any) {
       assert.deepEqual(error.messages, [
         {
           field: 'avatar',
@@ -111,7 +111,7 @@ test.group('Bindings | VineJS', (group) => {
           })
           .create(),
       })
-    } catch (error) {
+    } catch (error: any) {
       assert.deepEqual(error.messages, [
         {
           field: 'avatar',
@@ -143,7 +143,7 @@ test.group('Bindings | VineJS', (group) => {
           })
           .create(),
       })
-    } catch (error) {
+    } catch (error: any) {
       assert.deepEqual(error.messages, [
         {
           field: 'avatar',
@@ -241,7 +241,7 @@ test.group('Bindings | VineJS', (group) => {
 
     try {
       await validator.validate({})
-    } catch (error) {
+    } catch (error: any) {
       assert.deepEqual(error.messages, [
         {
           field: 'avatar',

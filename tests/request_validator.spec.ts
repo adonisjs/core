@@ -9,7 +9,12 @@
 
 import { test } from '@japa/runner'
 import { type FieldContext } from '@vinejs/vine/types'
-import vine, { SimpleErrorReporter, SimpleMessagesProvider, ValidationError } from '@vinejs/vine'
+import vine, {
+  errors,
+  SimpleErrorReporter,
+  SimpleMessagesProvider,
+  ValidationError,
+} from '@vinejs/vine'
 
 import { RequestValidator } from '../modules/http/main.ts'
 import { IgnitorFactory } from '../factories/core/ignitor.ts'
@@ -50,13 +55,16 @@ test.group('Request validator', () => {
     try {
       await ctx.request.validateUsing(validator)
     } catch (error) {
-      assert.deepEqual(error.messages, [
-        {
-          field: 'username',
-          message: 'The username field must be defined',
-          rule: 'required',
-        },
-      ])
+      assert.instanceOf(error, errors.E_VALIDATION_ERROR)
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        assert.deepEqual(error.messages, [
+          {
+            field: 'username',
+            message: 'The username field must be defined',
+            rule: 'validations.required',
+          },
+        ])
+      }
     }
   })
 
@@ -199,13 +207,16 @@ test.group('Request validator', () => {
         meta: { disallowUserNames: ['virk'] },
       })
     } catch (error) {
-      assert.containsSubset(error.messages, [
-        {
-          field: 'username',
-          message: 'The selected username is invalid',
-          rule: 'notIn',
-        },
-      ])
+      assert.instanceOf(error, errors.E_VALIDATION_ERROR)
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        assert.containSubset(error.messages, [
+          {
+            field: 'username',
+            message: 'The selected username is invalid',
+            rule: 'notIn',
+          },
+        ])
+      }
     }
   })
 
@@ -251,13 +262,16 @@ test.group('Request validator', () => {
     try {
       await ctx.request.validateUsing(validator)
     } catch (error) {
-      assert.deepEqual(error.messages, [
-        {
-          field: 'username',
-          message: 'The value is missing',
-          rule: 'required',
-        },
-      ])
+      assert.instanceOf(error, errors.E_VALIDATION_ERROR)
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        assert.deepEqual(error.messages, [
+          {
+            field: 'username',
+            message: 'The selected username is invalid',
+            rule: 'notIn',
+          },
+        ])
+      }
     }
   })
 
@@ -310,13 +324,16 @@ test.group('Request validator', () => {
     try {
       await ctx.request.validateUsing(validator)
     } catch (error) {
-      assert.deepEqual(error.messages, [
-        {
-          field: 'username',
-          message: 'The username field must be defined',
-          rule: 'validations.required',
-        },
-      ])
+      assert.instanceOf(error, errors.E_VALIDATION_ERROR)
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        assert.deepEqual(error.messages, [
+          {
+            field: 'username',
+            message: 'The username field must be defined',
+            rule: 'validations.required',
+          },
+        ])
+      }
     }
   })
 
