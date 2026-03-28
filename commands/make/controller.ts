@@ -90,6 +90,12 @@ export default class MakeController extends BaseCommand {
   declare contentsFrom: string
 
   /**
+   * Forcefully overwrite existing files
+   */
+  @flags.boolean({ description: 'Forcefully overwrite existing files', alias: 'f' })
+  declare force: boolean
+
+  /**
    * The stub to use for generating the controller
    */
   protected stubPath: string = 'make/controller/main.stub'
@@ -137,6 +143,7 @@ export default class MakeController extends BaseCommand {
 
   async run() {
     const codemods = await this.createCodemods()
+    codemods.overwriteExisting = this.force === true
     await codemods.makeUsingStub(
       stubsRoot,
       this.stubPath,

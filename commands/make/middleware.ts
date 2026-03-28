@@ -65,6 +65,12 @@ export default class MakeMiddleware extends BaseCommand {
   declare contentsFrom: string
 
   /**
+   * Forcefully overwrite existing files
+   */
+  @flags.boolean({ description: 'Forcefully overwrite existing files', alias: 'f' })
+  declare force: boolean
+
+  /**
    * The stub to use for generating the middleware
    */
   protected stubPath: string = 'make/middleware/main.stub'
@@ -98,6 +104,7 @@ export default class MakeMiddleware extends BaseCommand {
      * Create middleware
      */
     const codemods = await this.createCodemods()
+    codemods.overwriteExisting = this.force === true
     const { destination } = await codemods.makeUsingStub(
       stubsRoot,
       this.stubPath,

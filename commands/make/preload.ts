@@ -76,6 +76,12 @@ export default class MakePreload extends BaseCommand {
   declare contentsFrom: string
 
   /**
+   * Forcefully overwrite existing files
+   */
+  @flags.boolean({ description: 'Forcefully overwrite existing files', alias: 'f' })
+  declare force: boolean
+
+  /**
    * The stub template file to use for generating the preload file
    */
   protected stubPath: string = 'make/preload/main.stub'
@@ -119,6 +125,7 @@ export default class MakePreload extends BaseCommand {
     }
 
     const codemods = await this.createCodemods()
+    codemods.overwriteExisting = this.force === true
     const { destination } = await codemods.makeUsingStub(
       stubsRoot,
       this.stubPath,

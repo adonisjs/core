@@ -66,6 +66,12 @@ export default class MakeListener extends BaseCommand {
   declare contentsFrom: string
 
   /**
+   * Forcefully overwrite existing files
+   */
+  @flags.boolean({ description: 'Forcefully overwrite existing files', alias: 'f' })
+  declare force: boolean
+
+  /**
    * The stub template file to use for generating the event listener
    */
   protected stubPath: string = 'make/listener/main.stub'
@@ -87,6 +93,7 @@ export default class MakeListener extends BaseCommand {
    */
   async run() {
     const codemods = await this.createCodemods()
+    codemods.overwriteExisting = this.force === true
 
     if (this.event) {
       const { exitCode } = await this.kernel.exec('make:event', [this.event])
