@@ -37,6 +37,7 @@ export type WebhookVerificationErrorCode =
   | 'invalid_timestamp'
   | 'timestamp_out_of_range'
   | 'invalid_signature_header'
+  | 'invalid_signed_payload'
   | 'signature_mismatch'
   | 'unsupported_signature'
 
@@ -126,6 +127,7 @@ const WEBHOOK_ERROR_MESSAGES: Record<WebhookVerificationErrorCode, string> = {
   invalid_timestamp: 'Invalid webhook timestamp.',
   timestamp_out_of_range: 'Webhook timestamp is outside the allowed tolerance.',
   invalid_signature_header: 'Invalid webhook signature header.',
+  invalid_signed_payload: 'Unable to build signed webhook payload.',
   signature_mismatch: 'Webhook signature does not match.',
   unsupported_signature: 'Webhook signature scheme is not supported.',
 }
@@ -209,12 +211,17 @@ export function createWebhookVerifier(options: WebhookVerifierOptions): WebhookV
       return { isValid: false, reason: 'invalid_signature_header', webhookId, timestamp }
     }
 
-    const signedPayload = options.buildSignedPayload({
-      payload,
-      headers: normalizedHeaders,
-      webhookId,
-      timestamp,
-    })
+    let signedPayload: string | Buffer
+    try {
+      signedPayload = options.buildSignedPayload({
+        payload,
+        headers: normalizedHeaders,
+        webhookId,
+        timestamp,
+      })
+    } catch {
+      return { isValid: false, reason: 'invalid_signed_payload', webhookId, timestamp }
+    }
 
     const signedPayloadBuffer = toBuffer(signedPayload)
     const expectedSignatures = keys.map((key) =>
@@ -414,10 +421,12 @@ function resolveKeyBytes(key: WebhookKey, format: 'raw' | 'base64' | 'hex'): Buf
 
 function resolveStandardKeys(secret: WebhookKey | WebhookKey[], format?: 'raw'): StandardKey[] {
   const secrets = Array.isArray(secret) ? secret : [secret]
+  const invalidSecretMessage =
+    'Invalid Standard Webhooks secret. Expected whsec_ base64 encoded key.'
 
   return secrets.map((entry) => {
     if (Buffer.isBuffer(entry)) {
-      return { type: 'hmac', key: entry }
+      return { type: 'hmac', key: assertNonEmptyKey(entry, invalidSecretMessage) }
     }
 
     const value = entry instanceof Secret ? entry.release() : entry
@@ -439,14 +448,28 @@ function resolveStandardKeys(secret: WebhookKey | WebhookKey[], format?: 'raw'):
     }
 
     if (format === 'raw') {
-      return { type: 'hmac', key: Buffer.from(secretValue) }
+      return {
+        type: 'hmac',
+        key: assertNonEmptyKey(Buffer.from(secretValue), invalidSecretMessage),
+      }
     }
 
     const stripped = secretValue.startsWith(STANDARD_SECRET_PREFIX)
       ? secretValue.slice(STANDARD_SECRET_PREFIX.length)
       : secretValue
-    return { type: 'hmac', key: Buffer.from(stripped, 'base64') }
+    return {
+      type: 'hmac',
+      key: assertNonEmptyKey(Buffer.from(stripped, 'base64'), invalidSecretMessage),
+    }
   })
+}
+
+function assertNonEmptyKey(key: Buffer, message: string): Buffer {
+  if (key.length === 0) {
+    throw new Error(message)
+  }
+
+  return key
 }
 
 function buildStandardSignedPayload(
