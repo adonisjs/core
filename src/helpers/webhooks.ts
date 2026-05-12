@@ -138,6 +138,17 @@ const STANDARD_SECRET_PREFIX = 'whsec_'
 const STANDARD_PUBLIC_PREFIX = 'whpk_'
 const ED25519_SPKI_PREFIX = Buffer.from('302a300506032b6570032100', 'hex')
 
+function wrapVerifyOrThrow(verify: WebhookVerifier['verify']) {
+  return (payload: WebhookPayload, headers: WebhookHeaders): WebhookVerificationSuccess => {
+    const result = verify(payload, headers)
+    if (!result.isValid) {
+      throw new WebhookVerificationError(result.reason!)
+    }
+
+    return result as WebhookVerificationSuccess
+  }
+}
+
 /**
  * Create a custom HMAC-based webhook verifier.
  */
@@ -225,19 +236,7 @@ export function createWebhookVerifier(options: WebhookVerifierOptions): WebhookV
     return { isValid: false, reason: 'signature_mismatch', webhookId, timestamp }
   }
 
-  const verifyOrThrow = (
-    payload: WebhookPayload,
-    headers: WebhookHeaders
-  ): WebhookVerificationSuccess => {
-    const result = verify(payload, headers)
-    if (!result.isValid) {
-      throw new WebhookVerificationError(result.reason!, WEBHOOK_ERROR_MESSAGES[result.reason!])
-    }
-
-    return result as WebhookVerificationSuccess
-  }
-
-  return { verify, verifyOrThrow }
+  return { verify, verifyOrThrow: wrapVerifyOrThrow(verify) }
 }
 
 /**
@@ -327,19 +326,7 @@ export function createStandardWebhookVerifier(
     return { isValid: false, reason: 'signature_mismatch', webhookId, timestamp }
   }
 
-  const verifyOrThrow = (
-    payload: WebhookPayload,
-    headers: WebhookHeaders
-  ): WebhookVerificationSuccess => {
-    const result = verify(payload, headers)
-    if (!result.isValid) {
-      throw new WebhookVerificationError(result.reason!, WEBHOOK_ERROR_MESSAGES[result.reason!])
-    }
-
-    return result as WebhookVerificationSuccess
-  }
-
-  return { verify, verifyOrThrow }
+  return { verify, verifyOrThrow: wrapVerifyOrThrow(verify) }
 }
 
 /**
@@ -436,7 +423,7 @@ function resolveStandardKeys(secret: WebhookKey | WebhookKey[], format?: 'raw'):
     const value = entry instanceof Secret ? entry.release() : entry
     const secretValue = String(value)
 
-    if (format !== 'raw' && secretValue.startsWith(STANDARD_PUBLIC_PREFIX)) {
+    if (secretValue.startsWith(STANDARD_PUBLIC_PREFIX)) {
       const rawPublicKey = Buffer.from(secretValue.slice(STANDARD_PUBLIC_PREFIX.length), 'base64')
       try {
         const spkiKey = Buffer.concat([ED25519_SPKI_PREFIX, rawPublicKey])
