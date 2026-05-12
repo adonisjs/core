@@ -438,10 +438,16 @@ function resolveStandardKeys(secret: WebhookKey | WebhookKey[], format?: 'raw'):
 
     if (format !== 'raw' && secretValue.startsWith(STANDARD_PUBLIC_PREFIX)) {
       const rawPublicKey = Buffer.from(secretValue.slice(STANDARD_PUBLIC_PREFIX.length), 'base64')
-      const spkiKey = Buffer.concat([ED25519_SPKI_PREFIX, rawPublicKey])
-      return {
-        type: 'ed25519',
-        key: createPublicKey({ key: spkiKey, format: 'der', type: 'spki' }),
+      try {
+        const spkiKey = Buffer.concat([ED25519_SPKI_PREFIX, rawPublicKey])
+        return {
+          type: 'ed25519',
+          key: createPublicKey({ key: spkiKey, format: 'der', type: 'spki' }),
+        }
+      } catch {
+        throw new Error(
+          'Invalid Standard Webhooks public key. Expected whpk_ base64 encoded ed25519 key.'
+        )
       }
     }
 
