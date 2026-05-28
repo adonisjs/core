@@ -3,6 +3,9 @@ on:
   - push
   - pull_request
   - workflow_call
+permissions:
+  contents: read
+
 jobs:
   test:
     uses: adonisjs/core/.github/workflows/test.yml@3605cb1dc67afb14f818a3d3a7214991d262c336 # 7.x
