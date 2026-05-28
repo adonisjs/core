@@ -5,12 +5,12 @@ on:
   - workflow_call
 jobs:
   test:
-    uses: adonisjs/core/.github/workflows/test.yml@7.x
+    uses: adonisjs/core/.github/workflows/test.yml@3605cb1dc67afb14f818a3d3a7214991d262c336 # 7.x
     with:
       install-pnpm: true
 
   lint:
-    uses: adonisjs/.github/.github/workflows/lint.yml@main
+    uses: adonisjs/.github/.github/workflows/lint.yml@7eeb68b240344601ced8ef4fbe0b4dd31df0760b # main
 
   typecheck:
-    uses: adonisjs/.github/.github/workflows/typecheck.yml@main
+    uses: adonisjs/.github/.github/workflows/typecheck.yml@7eeb68b240344601ced8ef4fbe0b4dd31df0760b # main
