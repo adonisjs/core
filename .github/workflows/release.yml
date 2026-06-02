@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: read
     uses: ./.github/workflows/checks.yml
+    secrets: inherit
 
   release:
     needs: checks
