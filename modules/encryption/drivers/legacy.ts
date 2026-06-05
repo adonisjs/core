@@ -7,9 +7,10 @@
  * file that was distributed with this source code.
  */
 
+import string from '@poppinss/utils/string'
 import { errors } from '@boringnode/encryption'
 import { MessageBuilder, type Secret } from '@poppinss/utils'
-import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
+import { createCipheriv, createDecipheriv } from 'node:crypto'
 import { BaseDriver, Hmac, base64UrlDecode, base64UrlEncode } from '@boringnode/encryption'
 import type {
   CypherText,
@@ -117,7 +118,14 @@ export class Legacy extends BaseDriver implements EncryptionDriverContract {
       actualPurpose = purpose
     }
 
-    const iv = randomBytes(16)
+    /**
+     * The IV is a random 16-character string (not raw bytes). The old
+     * AdonisJS v6 "@adonisjs/encryption" implementation generates the IV
+     * via `string.random(16)` and treats it as a utf-8 string throughout
+     * its encrypt/decrypt pipeline. We must mirror that exactly, otherwise
+     * values encrypted here cannot be decrypted by the old encrypter.
+     */
+    const iv = string.random(16)
 
     /**
      * Use the first 32 bytes of the key for AES-256

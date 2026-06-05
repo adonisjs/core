@@ -8,6 +8,7 @@
  */
 
 import { test } from '@japa/runner'
+import { Encryption } from '@adonisjs/encryption'
 import { setTimeout } from 'node:timers/promises'
 
 import type { ApplicationService } from '../../src/types.ts'
@@ -227,21 +228,31 @@ test.group('Legacy | factory', () => {
 })
 
 test.group('Legacy | backward compatibility', () => {
-  test('decrypt value encrypted with old AdonisJS v6 encryption', ({ assert }) => {
+  /**
+   * old encrypter -> Legacy driver
+   */
+  test('Legacy decrypts a value encrypted by the old AdonisJS v6 encrypter', ({ assert }) => {
     const encryption = new Legacy({ key: SECRET_KEY })
+    const oldEncryptor = new Encryption({ secret: SECRET_KEY })
 
-    const encryptedByOldSystem =
-      'WtKqAdiMsHKkm8NJ48U8elvrqqlNZF3gbPR0yHqdAEs.cGVBcldtc18tWDlzWHg0Zw.nBYFM-3atE7LnGlqIGTSybo-dv-HNPxnmmOmWzafZYA'
-    const decrypted = encryption.decrypt<string>(encryptedByOldSystem)
-
+    const decrypted = encryption.decrypt<string>(oldEncryptor.encrypt('test'))
     assert.equal(decrypted, 'test')
   })
 
-  test('decrypt value encrypted with old AdonisJS v6 encryption with purpose', ({ assert }) => {
+  test('Legacy decrypts non-string values encrypted by the old encrypter', ({ assert }) => {
     const encryption = new Legacy({ key: SECRET_KEY })
+    const oldEncryptor = new Encryption({ secret: SECRET_KEY })
 
-    const encryptedByOldSystem =
-      '7xxhKUhXeeZJ-CnNNh5TFuPQ0jbkhFoaU-YEQCm-vbzC2CQUKSSlvFnNak-ZP6Nt.UURhOWQzb0Fqajh2MU9YVQ.4ktctGpLDjBPWbLMO3zF2Q38Ta8b4UWT2oRETKKp0Dw'
+    const payload = { name: 'John', roles: ['admin', 'user'], age: 30, active: true }
+    const decrypted = encryption.decrypt<typeof payload>(oldEncryptor.encrypt(payload))
+    assert.deepEqual(decrypted, payload)
+  })
+
+  test('Legacy decrypts a value encrypted by the old encrypter with a purpose', ({ assert }) => {
+    const encryption = new Legacy({ key: SECRET_KEY })
+    const oldEncryptor = new Encryption({ secret: SECRET_KEY })
+
+    const encryptedByOldSystem = oldEncryptor.encrypt('test', undefined, 'blabla')
 
     const decrypted = encryption.decrypt<string>(encryptedByOldSystem, 'blabla')
     assert.equal(decrypted, 'test')
@@ -251,6 +262,75 @@ test.group('Legacy | backward compatibility', () => {
 
     const decryptedWrongPurpose = encryption.decrypt(encryptedByOldSystem, 'wrong')
     assert.isNull(decryptedWrongPurpose)
+  })
+
+  /**
+   * Legacy driver -> old encrypter (the drop-in replacement guarantee)
+   */
+  test('old AdonisJS v6 encrypter decrypts a value encrypted by the Legacy driver', ({
+    assert,
+  }) => {
+    const encryption = new Legacy({ key: SECRET_KEY })
+    const oldEncryptor = new Encryption({ secret: SECRET_KEY })
+
+    const decrypted = oldEncryptor.decrypt<string>(encryption.encrypt('test'))
+    assert.equal(decrypted, 'test')
+  })
+
+  test('old encrypter decrypts non-string values encrypted by the Legacy driver', ({ assert }) => {
+    const encryption = new Legacy({ key: SECRET_KEY })
+    const oldEncryptor = new Encryption({ secret: SECRET_KEY })
+
+    const payload = { name: 'John', roles: ['admin', 'user'], age: 30, active: true }
+    const decrypted = oldEncryptor.decrypt<typeof payload>(encryption.encrypt(payload))
+    assert.deepEqual(decrypted, payload)
+  })
+
+  test('old encrypter decrypts a value encrypted by the Legacy driver with a purpose', ({
+    assert,
+  }) => {
+    const encryption = new Legacy({ key: SECRET_KEY })
+    const oldEncryptor = new Encryption({ secret: SECRET_KEY })
+
+    const encryptedByLegacy = encryption.encrypt('test', undefined, 'blabla')
+
+    assert.equal(oldEncryptor.decrypt<string>(encryptedByLegacy, 'blabla'), 'test')
+    assert.isNull(oldEncryptor.decrypt(encryptedByLegacy))
+    assert.isNull(oldEncryptor.decrypt(encryptedByLegacy, 'wrong'))
+  })
+
+  /**
+   * The IV must be encoded the exact same way by both implementations: a
+   * random 16-character string whose base64url form decodes back to 16
+   * bytes. This is the property that makes the two encoders interchangeable.
+   */
+  test('Legacy driver encodes the IV in the same format as the old encrypter', ({ assert }) => {
+    const encryption = new Legacy({ key: SECRET_KEY })
+    const oldEncryptor = new Encryption({ secret: SECRET_KEY })
+
+    const decodeIv = (token: string) => {
+      const ivEncoded = token.split('.')[1]
+      return Buffer.from(
+        ivEncoded
+          .replace(/-/g, '+')
+          .replace(/_/g, '/')
+          .padEnd(Math.ceil(ivEncoded.length / 4) * 4, '='),
+        'base64'
+      )
+    }
+
+    const legacyIv = decodeIv(encryption.encrypt('test'))
+    const oldIv = decodeIv(oldEncryptor.encrypt('test'))
+
+    assert.lengthOf(legacyIv, 16)
+    assert.lengthOf(oldIv, 16)
+
+    /**
+     * Both IVs must be ASCII-safe so they survive the old encrypter's
+     * utf-8 round-trip during decryption.
+     */
+    assert.equal(legacyIv.toString('utf8'), legacyIv.toString('latin1'))
+    assert.equal(oldIv.toString('utf8'), oldIv.toString('latin1'))
   })
 })
 
