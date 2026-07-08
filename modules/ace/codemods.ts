@@ -627,7 +627,7 @@ export class Codemods extends EventEmitter {
    */
   async installPackages(
     packages: { name: string; isDevDependency: boolean }[],
-    packageManager?: SupportedPackageManager | 'pnpm@6' | 'deno'
+    packageManager?: SupportedPackageManager
   ): Promise<boolean> {
     const transformer = await this.#getCodeTransformer()
     const appPath = this.#app.makePath()

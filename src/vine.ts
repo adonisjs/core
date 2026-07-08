@@ -17,8 +17,7 @@ const MULTIPART_FILE: typeof symbols.SUBTYPE = symbols.SUBTYPE ?? Symbol.for('su
  * Validation options accepted by the "file" rule
  */
 export type FileRuleValidationOptions =
-  | Partial<FileValidationOptions>
-  | ((field: FieldContext) => Partial<FileValidationOptions>)
+  Partial<FileValidationOptions> | ((field: FieldContext) => Partial<FileValidationOptions>)
 
 /**
  * Checks if the value is an instance of multipart file from bodyparser.
