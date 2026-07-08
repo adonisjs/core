@@ -98,7 +98,7 @@ const isMultipartFile = vine.createRule<FileRuleValidationOptions>((file, option
  * })
  */
 export class VineMultipartFile extends BaseLiteralType<
-  MultipartFile,
+  MultipartFile | File | Blob,
   MultipartFile,
   MultipartFile
 > {

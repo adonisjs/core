@@ -8,10 +8,15 @@
  */
 
 import vine from '@vinejs/vine'
+import supertest from 'supertest'
 import { test } from '@japa/runner'
+import { createServer } from 'node:http'
+import type { InferInput, Infer } from '@vinejs/vine/types'
+import type { MultipartFile } from '@adonisjs/bodyparser/types'
 
 import { IgnitorFactory } from '../../factories/core/ignitor.ts'
-import { MultipartFileFactory } from '../../factories/bodyparser.ts'
+import { TestUtilsFactory } from '../../factories/core/test_utils.ts'
+import { MultipartFileFactory, BodyParserMiddlewareFactory } from '../../factories/bodyparser.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
@@ -250,5 +255,114 @@ test.group('Bindings | VineJS', (group) => {
         },
       ])
     }
+  })
+
+  test('infer File and Blob as valid input types for the file schema', ({ expectTypeOf }) => {
+    const schema = vine.object({
+      avatar: vine.file(),
+    })
+
+    /**
+     * InferInput represents what the client is allowed to send. A browser
+     * can only send a File or a Blob (via FormData), never a MultipartFile.
+     */
+    expectTypeOf<InferInput<typeof schema>['avatar']>().toEqualTypeOf<MultipartFile | File | Blob>()
+
+    /**
+     * Infer represents the validated value available on the server, which
+     * is always a MultipartFile created by the BodyParser.
+     */
+    expectTypeOf<Infer<typeof schema>['avatar']>().toEqualTypeOf<MultipartFile>()
+  })
+})
+
+test.group('Bindings | VineJS | multipart uploads over HTTP', (group) => {
+  let testUtils: ReturnType<InstanceType<typeof TestUtilsFactory>['create']>
+
+  group.each.setup(async () => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/hash_provider.js'),
+            () => import('../../providers/vinejs_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL, {
+        importer(filePath: string) {
+          return import(new URL(filePath, new URL('../', import.meta.url)).href)
+        },
+      })
+
+    testUtils = new TestUtilsFactory().create(ignitor)
+    await testUtils.app.init()
+    await testUtils.app.boot()
+    await testUtils.boot()
+  })
+
+  test('convert File and Blob sent over HTTP into MultipartFile instances', async ({ assert }) => {
+    const bodyParser = new BodyParserMiddlewareFactory().create()
+    const validator = vine.create(
+      vine.object({
+        avatar: vine.file(),
+        document: vine.file(),
+      })
+    )
+
+    let validated: Infer<typeof validator> | undefined
+    let serverError: any
+
+    /**
+     * The server parses the incoming multipart request using the BodyParser
+     * middleware and then validates it using the "vine.file" schema. This
+     * mirrors exactly what happens during a real request lifecycle.
+     */
+    const server = createServer(async (req, res) => {
+      const ctx = await testUtils.createHttpContext({ req, res })
+      try {
+        await bodyParser.handle(ctx, async () => {
+          validated = await validator.validate({
+            avatar: ctx.request.file('avatar'),
+            document: ctx.request.file('document'),
+          })
+        })
+      } catch (error) {
+        serverError = error
+      }
+      res.end('done')
+    })
+
+    /**
+     * Sending a File and a Blob over the wire the same way a browser would.
+     * A File carries a filename ("avatar.jpg"), whereas a Blob is sent without
+     * one (defaulting to "blob"), yet BodyParser converts both to a MultipartFile.
+     */
+    await supertest(server)
+      .post('/')
+      .attach('avatar', Buffer.from('hello avatar'), 'avatar.jpg')
+      .attach('document', Buffer.from('hello document'), 'blob')
+
+    assert.isUndefined(serverError)
+    assert.isDefined(validated)
+
+    /**
+     * The File uploaded under "avatar" is converted into a MultipartFile
+     */
+    assert.isTrue(validated!.avatar.isMultipartFile)
+    assert.equal(validated!.avatar.fieldName, 'avatar')
+    assert.equal(validated!.avatar.clientName, 'avatar.jpg')
+    assert.equal(validated!.avatar.size, Buffer.byteLength('hello avatar'))
+    assert.isTrue(validated!.avatar.isValid)
+
+    /**
+     * The Blob uploaded under "document" is also converted into a MultipartFile
+     */
+    assert.isTrue(validated!.document.isMultipartFile)
+    assert.equal(validated!.document.fieldName, 'document')
+    assert.equal(validated!.document.size, Buffer.byteLength('hello document'))
+    assert.isTrue(validated!.document.isValid)
   })
 })
