@@ -94,7 +94,9 @@ export async function outputTransformerDataObjects(
   )
 
   if (withSharedProps) {
-    importsBuffer.write(`import type { InferSharedProps } from '@adonisjs/inertia/types'`)
+    importsBuffer.write(
+      `import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'`
+    )
   }
 
   buffer.writeLine(importsBuffer)
@@ -131,6 +133,7 @@ export async function outputTransformerDataObjects(
   if (withSharedProps) {
     importsBuffer.write(`import type InertiaMiddleware from '${inertiaMiddlewareImportPath}'`)
     buffer.write('export type SharedProps = InferSharedProps<InertiaMiddleware>')
+    buffer.write('export type FlashMessages = InferFlashData<InertiaMiddleware>')
   }
 
   buffer.dedent().write('}')
