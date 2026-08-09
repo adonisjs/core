@@ -229,7 +229,7 @@ test.group('Index generator', () => {
 
       /// <reference path=\\"./manifest.d.ts\\" />
       import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
-      import type { InferSharedProps } from '@adonisjs/inertia/types'
+      import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'
       import type BlogPostTransformer from '#transformers/blog/post_transformer'
       import type UserTransformer from '#transformers/user_transformer'
       import type InertiaMiddleware from '#middleware/inertia_middleware'
@@ -246,6 +246,7 @@ test.group('Index generator', () => {
           export type Variants = InferVariants<UserTransformer>
         }
         export type SharedProps = InferSharedProps<InertiaMiddleware>
+        export type FlashMessages = InferFlashData<InertiaMiddleware>
       }
       "
     `)
@@ -296,7 +297,7 @@ test.group('Index generator', () => {
 
       /// <reference path=\\"./manifest.d.ts\\" />
       import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
-      import type { InferSharedProps } from '@adonisjs/inertia/types'
+      import type { InferSharedProps, InferFlashData } from '@adonisjs/inertia/types'
       import type BlogPostTransformer from '#transformers/blog/post_transformer'
       import type UserTransformer from '#transformers/user_transformer'
       import type InertiaMiddleware from '#core/middleware/inertia_middleware'
@@ -313,6 +314,7 @@ test.group('Index generator', () => {
           export type Variants = InferVariants<UserTransformer>
         }
         export type SharedProps = InferSharedProps<InertiaMiddleware>
+        export type FlashMessages = InferFlashData<InertiaMiddleware>
       }
       "
     `)
