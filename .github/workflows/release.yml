@@ -37,7 +37,7 @@ jobs:
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-      - run: npm install --ignore-scripts
+      - run: npm ci --ignore-scripts
 
       - run: npm audit signatures
 
