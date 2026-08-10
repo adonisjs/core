@@ -7,15 +7,13 @@
  * file that was distributed with this source code.
  */
 
-import { dirname } from 'node:path'
-import { mkdir, writeFile } from 'node:fs/promises'
-
 import { Config } from '../modules/config.ts'
 import { Logger } from '../modules/logger.ts'
 import { Application } from '../modules/app.ts'
 import { Dumper } from '../modules/dumper/dumper.ts'
 import { RuntimeException } from '../src/exceptions.ts'
 import { Router, Server } from '../modules/http/main.ts'
+import { emitRoutes as generateRouteTypes } from '../src/codegen/emit_routes.ts'
 import { BaseEvent, Emitter } from '../modules/events.ts'
 import { Encryption } from '../modules/encryption/main.ts'
 import { configProvider } from '../src/config_provider.ts'
@@ -306,32 +304,7 @@ export default class AppServiceProvider {
    */
   protected async emitRoutes(router: Router) {
     try {
-      const { routes, imports, types } = router.generateTypes(2)
-      const routesTypesPath = this.app.generatedServerPath('routes.d.ts')
-      const routesJsonPath = this.app.generatedServerPath('routes.json')
-
-      await mkdir(dirname(routesTypesPath), { recursive: true })
-      await Promise.all([
-        writeFile(
-          routesTypesPath,
-          [
-            `import '@adonisjs/core/types/http'`,
-            ...imports,
-            '',
-            ...types,
-            '',
-            'export type ScannedRoutes = {',
-            routes,
-            '}',
-            `declare module '@adonisjs/core/types/http' {`,
-            '  export interface RoutesList extends ScannedRoutes {}',
-            '}',
-          ].join('\n')
-        ),
-        writeFile(routesJsonPath, JSON.stringify(router.toJSON())),
-      ])
-
-      this.app.notify({ isAdonisJS: true, routesFileLocation: routesJsonPath })
+      await generateRouteTypes(this.app, router)
     } catch (error) {
       console.error(
         "Unable to generate routes types file due to the following error. This won't impact the dev-server"
