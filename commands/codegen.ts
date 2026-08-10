@@ -40,6 +40,19 @@ export default class Codegen extends BaseCommand {
   static description = 'Generate TypeScript type definitions and index files for the application'
 
   /**
+   * Help text for the command
+   */
+  static help = [
+    'Regenerate the application codegen files without starting the HTTP server.',
+    '',
+    'Useful in CI pipelines to keep the generated types up-to-date before',
+    'building or deploying the application, without committing them to git:',
+    '```',
+    '{{ binaryName }} codegen',
+    '```',
+  ]
+
+  /**
    * Command options configuration. Requires the application to be
    * booted so that all the preloads are loaded and the routes are
    * registered.
@@ -60,7 +73,7 @@ export default class Codegen extends BaseCommand {
         '',
         `The "${dependency}" package is a development dependency and therefore you should use the codegen command with development dependencies installed.`,
         '',
-        'If you are using the codegen command inside a CI or with a deployment platform, make sure the NODE_ENV is set to "development"',
+        'If you are using the codegen command inside a CI pipeline, make sure it runs after installing dependencies and before building or deploying the application.',
       ].join('\n')
     )
   }
