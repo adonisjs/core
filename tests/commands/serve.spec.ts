@@ -81,7 +81,7 @@ test.group('Serve command', () => {
   })
 
   test('correctly pass hooks to the DevServer', async ({ assert, fs, cleanup }) => {
-    assert.plan(1)
+    assert.plan(2)
     await fs.create('bin/server.ts', `process.send({ isAdonisJS: true, environment: 'web' });`)
 
     await setupTypeScriptProject()
@@ -90,7 +90,18 @@ test.group('Serve command', () => {
       importer: (filePath) => import(filePath),
     })
 
+    ace.app.rcFile.directories.httpControllers = 'src/infrastructure/api/http/controllers'
     ace.app.rcFile.hooks = {
+      init: [
+        {
+          run(parent) {
+            assert.equal(
+              (parent.options as any).directories.httpControllers,
+              'src/infrastructure/api/http/controllers'
+            )
+          },
+        },
+      ],
       devServerStarted: [
         async () => ({
           default: async () => {

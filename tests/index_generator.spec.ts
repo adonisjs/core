@@ -54,6 +54,46 @@ test.group('Index generator', () => {
     )
   })
 
+  test('generate controllers index from the configured directory', async ({ assert, fs }) => {
+    const cliUi = Kernel.create().ui
+    cliUi.switchMode('raw')
+
+    await fs.create('src/infrastructure/api/http/controllers/users_controller.ts', '')
+
+    const generator = new IndexGenerator(stringHelpers.toUnixSlash(fs.basePath), cliUi.logger)
+    const indexer = indexEntities({
+      controllers: {
+        enabled: true,
+      },
+      events: {
+        enabled: false,
+      },
+      listeners: {
+        enabled: false,
+      },
+      transformers: {
+        enabled: false,
+      },
+    })
+
+    indexer.run(
+      {
+        options: {
+          directories: {
+            httpControllers: 'src/infrastructure/api/http/controllers',
+          },
+        },
+      } as any,
+      {} as any,
+      generator
+    )
+    await generator.generate()
+
+    await assert.fileContains('.adonisjs/server/controllers.ts', [
+      `Users: () => import('#controllers/users_controller')`,
+    ])
+  })
+
   test('generate events index', async ({ assert, fs }) => {
     const cliUi = Kernel.create().ui
     cliUi.switchMode('raw')

@@ -265,7 +265,7 @@ test.group('Build command', (group) => {
   })
 
   test('correctly pass hooks to the bundler', async ({ assert, fs }) => {
-    assert.plan(2)
+    assert.plan(3)
 
     await fs.create(
       'tsconfig.json',
@@ -291,7 +291,18 @@ test.group('Build command', (group) => {
       },
     })
 
+    ace.app.rcFile.directories.httpControllers = 'src/infrastructure/api/http/controllers'
     ace.app.rcFile.hooks = {
+      init: [
+        {
+          run(parent) {
+            assert.equal(
+              (parent.options as any).directories.httpControllers,
+              'src/infrastructure/api/http/controllers'
+            )
+          },
+        },
+      ],
       buildFinished: [
         async () => ({
           default: async () => {

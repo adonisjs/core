@@ -8,9 +8,14 @@
  */
 
 import { type CommonHooks } from '@adonisjs/assembler/types'
+import { type DirectoriesNode } from '@adonisjs/application/types'
 import stringHelpers from '../helpers/string.ts'
 import { type IndexEntitiesConfig } from '../types.ts'
 import { outputTransformerDataObjects } from '../utils.ts'
+
+type AssemblerOptionsWithDirectories = {
+  directories?: Partial<DirectoriesNode>
+}
 
 /**
  * Configures the IndexGenerator to create barrel files for "controllers", "events",
@@ -74,7 +79,6 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
   const controllers = Object.assign(
     {
       enabled: true,
-      source: 'app/controllers',
       importAlias: '#controllers',
       skipSegments: ['controllers'],
       output: '.adonisjs/server/controllers.ts',
@@ -112,7 +116,11 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
   }
 
   return {
-    run(_, __, indexGenerator) {
+    run(parent, _, indexGenerator) {
+      const directories = (
+        parent.options as (typeof parent.options & AssemblerOptionsWithDirectories) | undefined
+      )?.directories
+
       if (events.enabled) {
         indexGenerator.add('events', {
           source: events.source,
@@ -142,7 +150,7 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
 
       if (controllers.enabled) {
         indexGenerator.add('controllers', {
-          source: controllers.source,
+          source: controllers.source ?? directories?.httpControllers ?? 'app/controllers',
           glob: controllers.glob,
           as: 'barrelFile',
           exportName: 'controllers',

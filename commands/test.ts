@@ -197,7 +197,7 @@ export default class Test extends BaseCommand {
       return
     }
 
-    this.testsRunner = new assembler.TestRunner(this.app.appRoot, {
+    const assemblerOptions = {
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: this.#getPassthroughFlags(),
@@ -223,7 +223,9 @@ export default class Test extends BaseCommand {
       },
       hooks: this.app.rcFile.hooks,
       metaFiles: this.app.rcFile.metaFiles,
-    })
+      directories: this.app.rcFile.directories,
+    }
+    this.testsRunner = new assembler.TestRunner(this.app.appRoot, assemblerOptions)
 
     /**
      * Share command logger with assembler, so that CLI flags like --no-ansi has

@@ -103,10 +103,12 @@ export default class Build extends BaseCommand {
       return
     }
 
-    const bundler = new assembler.Bundler(this.app.appRoot, ts, {
+    const assemblerOptions = {
       metaFiles: this.app.rcFile.metaFiles,
       hooks: this.app.rcFile.hooks,
-    })
+      directories: this.app.rcFile.directories,
+    }
+    const bundler = new assembler.Bundler(this.app.appRoot, ts, assemblerOptions)
 
     /**
      * Share command logger with assembler, so that CLI flags like --no-ansi has

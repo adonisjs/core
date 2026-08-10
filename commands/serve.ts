@@ -135,14 +135,16 @@ export default class Serve extends BaseCommand {
       return
     }
 
-    this.devServer = new assembler.DevServer(this.app.appRoot, {
+    const assemblerOptions = {
       hmr: this.hmr === true ? true : false,
       clearScreen: this.clear === false ? false : true,
       nodeArgs: this.parsed.nodeArgs,
       scriptArgs: [],
       metaFiles: this.app.rcFile.metaFiles,
       hooks: this.app.rcFile.hooks,
-    })
+      directories: this.app.rcFile.directories,
+    }
+    this.devServer = new assembler.DevServer(this.app.appRoot, assemblerOptions)
 
     /**
      * Share command logger with assembler, so that CLI flags like --no-ansi has

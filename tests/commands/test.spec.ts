@@ -275,6 +275,8 @@ test.group('Test command', () => {
   })
 
   test('pass all japa flags to the script', async ({ assert, fs, cleanup }) => {
+    assert.plan(2)
+
     await fs.create(
       'package.json',
       JSON.stringify({
@@ -299,6 +301,19 @@ test.group('Test command', () => {
     })
 
     ace.ui.switchMode('raw')
+    ace.app.rcFile.directories.httpControllers = 'src/infrastructure/api/http/controllers'
+    ace.app.rcFile.hooks = {
+      init: [
+        {
+          run(parent) {
+            assert.equal(
+              (parent.options as any).directories.httpControllers,
+              'src/infrastructure/api/http/controllers'
+            )
+          },
+        },
+      ],
+    }
     ace.app.rcFile.tests.suites = [
       {
         name: 'unit',
