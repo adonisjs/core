@@ -7,13 +7,15 @@
  * file that was distributed with this source code.
  */
 
+import { writeFile } from 'node:fs/promises'
+
 import { Config } from '../modules/config.ts'
 import { Logger } from '../modules/logger.ts'
 import { Application } from '../modules/app.ts'
+import { emitRouteTypes } from '../src/utils.ts'
 import { Dumper } from '../modules/dumper/dumper.ts'
 import { RuntimeException } from '../src/exceptions.ts'
 import { Router, Server } from '../modules/http/main.ts'
-import { emitRoutes as generateRouteTypes } from '../src/codegen/emit_routes.ts'
 import { BaseEvent, Emitter } from '../modules/events.ts'
 import { Encryption } from '../modules/encryption/main.ts'
 import { configProvider } from '../src/config_provider.ts'
@@ -304,7 +306,17 @@ export default class AppServiceProvider {
    */
   protected async emitRoutes(router: Router) {
     try {
-      await generateRouteTypes(this.app, router)
+      await emitRouteTypes(this.app, router)
+
+      /**
+       * The JSON file is how the routes are handed over to the assembler
+       * dev-server, which reads it and then removes it. The codegen command
+       * has no such need, since it passes the routes in memory
+       */
+      const routesJsonPath = this.app.generatedServerPath('routes.json')
+      await writeFile(routesJsonPath, JSON.stringify(router.toJSON()))
+
+      this.app.notify({ isAdonisJS: true, routesFileLocation: routesJsonPath })
     } catch (error) {
       console.error(
         "Unable to generate routes types file due to the following error. This won't impact the dev-server"

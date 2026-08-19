@@ -8,21 +8,17 @@
  */
 
 import { BaseCommand } from '../modules/ace/main.ts'
-import type { CommandOptions } from '../types/ace.ts'
-import { emitRoutes } from '../src/codegen/emit_routes.ts'
-import { generateIndexFiles } from '../src/codegen/indexes.ts'
+import { emitRouteTypes, importAssembler } from '../src/utils.ts'
 
 /**
- * Generate the application codegen files (TypeScript type definitions
- * and index files) without booting the HTTP server.
+ * Regenerate the contents of the ".adonisjs" directory without starting the
+ * HTTP server.
  *
- * The command generates the same files that are created automatically
- * when booting the application in development mode:
- *
- * - `.adonisjs/server/routes.d.ts` and `.adonisjs/server/routes.json`
- * - `.adonisjs/server/controllers.ts`, `.adonisjs/server/events.ts` and
- *   `.adonisjs/server/listeners.ts`
- * - Any other file registered by the "init" hooks of the application
+ * These files are otherwise generated as a side-effect of running the
+ * dev-server, the test runner or creating a build. This command performs the
+ * same work on its own, so the generated types can be refreshed
+ * deterministically. For example, inside a CI pipeline before typechecking or
+ * deploying the application.
  *
  * @example
  * ```
@@ -34,6 +30,7 @@ export default class Codegen extends BaseCommand {
    * The command name
    */
   static commandName = 'codegen'
+
   /**
    * The command description
    */
@@ -43,23 +40,17 @@ export default class Codegen extends BaseCommand {
    * Help text for the command
    */
   static help = [
-    'Regenerate the application codegen files without starting the HTTP server.',
-    '',
-    'Useful in CI pipelines to keep the generated types up-to-date before',
-    'building or deploying the application, without committing them to git:',
+    'Regenerate the codegen files without starting the HTTP server.',
     '```',
     '{{ binaryName }} codegen',
     '```',
+    '',
+    'Use it inside a CI pipeline to keep the generated types up-to-date before',
+    'typechecking or building the application, without committing them to git.',
+    '```',
+    'npm ci && {{ binaryName }} codegen && npm run typecheck',
+    '```',
   ]
-
-  /**
-   * Command options configuration. Requires the application to be
-   * booted so that all the preloads are loaded and the routes are
-   * registered.
-   */
-  static options: CommandOptions = {
-    startApp: true,
-  }
 
   /**
    * Log a development dependency is missing
@@ -73,32 +64,71 @@ export default class Codegen extends BaseCommand {
         '',
         `The "${dependency}" package is a development dependency and therefore you should use the codegen command with development dependencies installed.`,
         '',
-        'If you are using the codegen command inside a CI pipeline, make sure it runs after installing dependencies and before building or deploying the application.',
+        'If you are using the codegen command inside a CI or with a deployment platform, make sure it runs after installing the development dependencies.',
       ].join('\n')
     )
   }
 
   /**
-   * Generate the application codegen files
+   * Warm up the application and return the state the codegen needs from it.
+   *
+   * The app is assembled the way the web environment assembles it, since the
+   * generated files describe the app that serves requests. However, it is
+   * created in the "warmup" mode, so it never becomes ready and none of the
+   * long running side-effects registered by the providers kick in.
    */
-  async run() {
+  async #warmUpApp() {
+    this.app.setEnvironment('web')
+    this.app.setMode('warmup')
+
+    await this.app.boot()
+    await this.app.warmUp()
+
     /**
-     * Generate route types and JSON representation
+     * Commit the router, so the routes can be turned into their types and
+     * handed over to the assembler
      */
     const router = await this.app.container.make('router')
     router.commit()
-    await emitRoutes(this.app, router)
+
+    await emitRouteTypes(this.app, router)
 
     /**
-     * Generate the index files using the "init" hooks registered
-     * inside the application rc file
+     * The routes are round tripped through JSON, because that is how the
+     * dev-server hands them over to the assembler. The round trip drops the
+     * handler of the routes registered using a closure and strips the
+     * properties that cannot be serialized, so the assembler is given the exact
+     * same shape by both the paths
      */
-    const indexGenerator = await generateIndexFiles(this.app, this.ui)
-    if (!indexGenerator) {
+    return { routes: JSON.parse(JSON.stringify(router.toJSON())) }
+  }
+
+  /**
+   * Generate the codegen files
+   */
+  async run() {
+    const assembler = await importAssembler(this.app)
+    if (!assembler) {
       this.#logMissingDevelopmentDependency('@adonisjs/assembler')
       this.exitCode = 1
       return
     }
+
+    const codegen = new assembler.CodeGen(this.app.appRoot, {
+      hooks: this.app.rcFile.hooks,
+    })
+
+    /**
+     * Share command logger with assembler, so that CLI flags like --no-ansi has
+     * similar impact for assembler logs as well.
+     */
+    codegen.ui.logger = this.logger
+
+    /**
+     * The app is booted from within the callback, because its preload files
+     * import the index files the codegen writes before invoking it
+     */
+    await codegen.run(() => this.#warmUpApp())
 
     this.logger.success('Codegen files generated')
   }
