@@ -10,8 +10,9 @@
 import { test } from '@japa/runner'
 
 import Codegen from '../../commands/codegen.ts'
-import { AceFactory } from '../../factories/core/ace.ts'
+import { IgnitorFactory } from '../../factories/core/ignitor.ts'
 import type { ApplicationService } from '../../src/types.ts'
+import { createAceKernel } from '../../modules/ace/create_kernel.ts'
 import { indexEntities } from '../../src/assembler_hooks/index_entities.ts'
 
 const PKG_JSON = JSON.stringify({
@@ -20,18 +21,41 @@ const PKG_JSON = JSON.stringify({
   imports: { '#controllers/*': './app/controllers/*.js' },
 })
 
-test.group('Codegen command', () => {
-  test('show error when assembler is not installed', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        if (filePath === '@adonisjs/assembler') {
-          return import(new URL(filePath, fs.baseUrl).href)
-        }
-
-        return import(filePath)
+/**
+ * Creates an ace kernel for an app that has been initiated but not booted,
+ * since the codegen command boots the app by itself.
+ *
+ * The app provider is referenced using a relative path, because the
+ * "@adonisjs/core/providers/*" specifier resolves to the build output, which
+ * does not exist when the tests run from the source.
+ */
+async function createAce(fsBaseUrl: URL, importer: (filePath: string) => Promise<any>) {
+  const ignitor = new IgnitorFactory()
+    .withCoreConfig()
+    .merge({
+      rcFileContents: {
+        providers: [() => import('../../providers/app_provider.js')],
       },
     })
-    ace.ui.switchMode('raw')
+    .create(fsBaseUrl, { importer })
+
+  const app = ignitor.createApp('console')
+  await app.init()
+
+  const ace = createAceKernel(app)
+  ace.ui.switchMode('raw')
+  return ace
+}
+
+test.group('Codegen command', () => {
+  test('show error when assembler is not installed', async ({ assert, fs }) => {
+    const ace = await createAce(fs.baseUrl, (filePath) => {
+      if (filePath === '@adonisjs/assembler') {
+        return import(new URL(filePath, fs.baseUrl).href)
+      }
+
+      return import(filePath)
+    })
 
     const command = await ace.create(Codegen, [])
     await command.exec()
@@ -43,16 +67,13 @@ test.group('Codegen command', () => {
   })
 
   test('do not boot the app when assembler is missing', async ({ assert, fs }) => {
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => {
-        if (filePath === '@adonisjs/assembler') {
-          return import(new URL(filePath, fs.baseUrl).href)
-        }
+    const ace = await createAce(fs.baseUrl, (filePath) => {
+      if (filePath === '@adonisjs/assembler') {
+        return import(new URL(filePath, fs.baseUrl).href)
+      }
 
-        return import(filePath)
-      },
+      return import(filePath)
     })
-    ace.ui.switchMode('raw')
 
     const command = await ace.create(Codegen, [])
     await command.exec()
@@ -64,10 +85,7 @@ test.group('Codegen command', () => {
   test('warm up the app in the web environment', async ({ assert, fs }) => {
     await fs.create('package.json', PKG_JSON)
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
-    ace.ui.switchMode('raw')
+    const ace = await createAce(fs.baseUrl, (filePath) => import(filePath))
 
     const command = await ace.create(Codegen, [])
     await command.exec()
@@ -82,10 +100,7 @@ test.group('Codegen command', () => {
   test('generate the route types', async ({ assert, fs }) => {
     await fs.create('package.json', PKG_JSON)
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
-    ace.ui.switchMode('raw')
+    const ace = await createAce(fs.baseUrl, (filePath) => import(filePath))
 
     ace.app.rcFile.providers.push({
       environment: ['web'],
@@ -122,10 +137,7 @@ test.group('Codegen command', () => {
     await fs.create('package.json', PKG_JSON)
     await fs.create('app/controllers/users_controller.ts', '')
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
-    ace.ui.switchMode('raw')
+    const ace = await createAce(fs.baseUrl, (filePath) => import(filePath))
 
     ace.app.rcFile.hooks = {
       init: [indexEntities({ events: { enabled: false }, listeners: { enabled: false } })],
@@ -145,10 +157,7 @@ test.group('Codegen command', () => {
     await fs.create('package.json', PKG_JSON)
     await fs.create('app/controllers/users_controller.ts', '')
 
-    const ace = await new AceFactory().make(fs.baseUrl, {
-      importer: (filePath) => import(filePath),
-    })
-    ace.ui.switchMode('raw')
+    const ace = await createAce(fs.baseUrl, (filePath) => import(filePath))
 
     ace.app.rcFile.hooks = {
       init: [indexEntities({ events: { enabled: false }, listeners: { enabled: false } })],
