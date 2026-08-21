@@ -48,7 +48,7 @@ test.group('Ignitor | Test process', () => {
     await ignitor
       .testRunner()
       .configure((app) => {
-        assert.equal(app.getState(), 'booted')
+        assert.equal(app.getState(), 'warmed')
       })
       .run(() => {})
     assert.equal(ignitor.getApp()?.getEnvironment(), 'test')

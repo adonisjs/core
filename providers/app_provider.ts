@@ -7,12 +7,12 @@
  * file that was distributed with this source code.
  */
 
-import { dirname } from 'node:path'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { writeFile } from 'node:fs/promises'
 
 import { Config } from '../modules/config.ts'
 import { Logger } from '../modules/logger.ts'
 import { Application } from '../modules/app.ts'
+import { emitRouteTypes } from '../src/utils.ts'
 import { Dumper } from '../modules/dumper/dumper.ts'
 import { RuntimeException } from '../src/exceptions.ts'
 import { Router, Server } from '../modules/http/main.ts'
@@ -306,30 +306,15 @@ export default class AppServiceProvider {
    */
   protected async emitRoutes(router: Router) {
     try {
-      const { routes, imports, types } = router.generateTypes(2)
-      const routesTypesPath = this.app.generatedServerPath('routes.d.ts')
-      const routesJsonPath = this.app.generatedServerPath('routes.json')
+      await emitRouteTypes(this.app, router)
 
-      await mkdir(dirname(routesTypesPath), { recursive: true })
-      await Promise.all([
-        writeFile(
-          routesTypesPath,
-          [
-            `import '@adonisjs/core/types/http'`,
-            ...imports,
-            '',
-            ...types,
-            '',
-            'export type ScannedRoutes = {',
-            routes,
-            '}',
-            `declare module '@adonisjs/core/types/http' {`,
-            '  export interface RoutesList extends ScannedRoutes {}',
-            '}',
-          ].join('\n')
-        ),
-        writeFile(routesJsonPath, JSON.stringify(router.toJSON())),
-      ])
+      /**
+       * The JSON file is how the routes are handed over to the assembler
+       * dev-server, which reads it and then removes it. The codegen command
+       * has no such need, since it passes the routes in memory
+       */
+      const routesJsonPath = this.app.generatedServerPath('routes.json')
+      await writeFile(routesJsonPath, JSON.stringify(router.toJSON()))
 
       this.app.notify({ isAdonisJS: true, routesFileLocation: routesJsonPath })
     } catch (error) {

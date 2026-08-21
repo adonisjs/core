@@ -204,7 +204,7 @@ test.group('Install', (group) => {
     await command.exec()
 
     command.assertExitCode(1)
-    command.assertLogMatches(/Process exited with non-zero status/)
+    command.assertLogMatches(/exited with a non-zero status/)
   })
 
   test('display error if configure command fails', async ({ fs }) => {
