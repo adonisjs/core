@@ -50,7 +50,9 @@ import { outputTransformerDataObjects } from '../utils.ts'
  *   }
  * })
  */
-export function indexEntities(entities: IndexEntitiesConfig = {}) {
+export function indexEntities(
+  entities: IndexEntitiesConfig = {}
+): Extract<CommonHooks['init'][number], { run: any }> {
   const events = Object.assign(
     {
       enabled: true,
@@ -212,5 +214,5 @@ export function indexEntities(entities: IndexEntitiesConfig = {}) {
         })
       }
     },
-  } satisfies CommonHooks['init'][number]
+  }
 }
