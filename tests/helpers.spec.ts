@@ -48,6 +48,12 @@ test.group('Number helpers', () => {
     assert.isNull(numberHelpers.parse(Number.POSITIVE_INFINITY))
     assert.isNull(numberHelpers.parse('abc'))
   })
+
+  test('format a number', ({ assert }) => {
+    assert.equal(numberHelpers.format(12.3456), '12.35')
+    assert.equal(numberHelpers.format(12.3456, { digits: 1 }), '12.3')
+    assert.equal(numberHelpers.format(1500, { compact: true }), '1.5K')
+  })
 })
 
 test.group('String helpers', () => {

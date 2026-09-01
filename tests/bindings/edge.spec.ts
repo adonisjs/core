@@ -100,11 +100,11 @@ test.group('Bindings | Edge', () => {
     await app.boot()
 
     edge.registerTemplate('score', {
-      template: `{{ number.clamp(score, 0, 10) }} {{ number.between(score, 0, 10) }} {{ number.toFinite(raw, 0) }} {{ number.parse(valid) }}`,
+      template: `{{ number.clamp(score, 0, 10) }} {{ number.between(score, 0, 10) }} {{ number.toFinite(raw, 0) }} {{ number.parse(valid) }} {{ number.format(amount, { compact: true }) }}`,
     })
 
-    const html = await edge.render('score', { score: 15, raw: 'abc', valid: '8' })
-    assert.equal(html, '10 false 0 8')
+    const html = await edge.render('score', { score: 15, raw: 'abc', valid: '8', amount: 1500 })
+    assert.equal(html, '10 false 0 8 1.5K')
   })
 
   test('make form action using formAttributes helper', async ({ assert }) => {
