@@ -40,6 +40,7 @@ test.group('Bindings | Edge', () => {
     assert.isFalse(edge.globals.config.has('foobar'))
     assert.strictEqual(edge.globals.app, app)
     assert.instanceOf(edge.globals.qs, Qs)
+    assert.equal(edge.globals.number.clamp(15, 0, 10), 10)
 
     const router = await app.container.make('router')
     router.get('/users/:id', () => {})
@@ -79,6 +80,31 @@ test.group('Bindings | Edge', () => {
 
     await route?.route.execute(route.route, app.container.createResolver(), ctx, () => {})
     assert.equal(ctx.response.getBody(), 'Hello virk')
+  })
+
+  test('use number helpers inside templates', async ({ assert }) => {
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [
+            () => import('../../providers/app_provider.js'),
+            () => import('../../providers/edge_provider.js'),
+          ],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+    await app.boot()
+
+    edge.registerTemplate('score', {
+      template: `{{ number.clamp(score, 0, 10) }} {{ number.between(score, 0, 10) }} {{ number.toFinite(raw, 0) }} {{ number.parse(valid) }}`,
+    })
+
+    const html = await edge.render('score', { score: 15, raw: 'abc', valid: '8' })
+    assert.equal(html, '10 false 0 8')
   })
 
   test('make form action using formAttributes helper', async ({ assert }) => {

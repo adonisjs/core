@@ -10,6 +10,45 @@
 import { test } from '@japa/runner'
 import StringBuilder from '@poppinss/utils/string_builder'
 import stringHelpers from '../src/helpers/string.ts'
+import numberHelpers from '../src/helpers/number.ts'
+
+test.group('Number helpers', () => {
+  test('clamp value between min and max', ({ assert }) => {
+    assert.equal(numberHelpers.clamp(15, 0, 10), 10)
+    assert.equal(numberHelpers.clamp(-2, 0, 10), 0)
+    assert.equal(numberHelpers.clamp(5, 0, 10), 5)
+  })
+
+  test('check if number is between min and max', ({ assert }) => {
+    assert.isTrue(numberHelpers.between(5, 0, 10))
+    assert.isTrue(numberHelpers.between(0, 0, 10))
+    assert.isTrue(numberHelpers.between(10, 0, 10))
+    assert.isFalse(numberHelpers.between(-1, 0, 10))
+    assert.isFalse(numberHelpers.between(11, 0, 10))
+    assert.isTrue(numberHelpers.between(5, 10, 0))
+  })
+
+  test('convert value to a finite number', ({ assert }) => {
+    assert.equal(numberHelpers.toFinite(5), 5)
+    assert.equal(numberHelpers.toFinite('42'), 42)
+    assert.equal(numberHelpers.toFinite(Number.NaN), 0)
+    assert.equal(numberHelpers.toFinite(Number.POSITIVE_INFINITY), 0)
+    assert.equal(numberHelpers.toFinite(Number.NEGATIVE_INFINITY, 3), 3)
+    assert.equal(numberHelpers.toFinite('abc', 10), 10)
+    assert.equal(numberHelpers.toFinite(undefined), 0)
+  })
+
+  test('parse value into a finite number or null', ({ assert }) => {
+    assert.equal(numberHelpers.parse(5), 5)
+    assert.equal(numberHelpers.parse('42'), 42)
+    assert.isNull(numberHelpers.parse(''))
+    assert.isNull(numberHelpers.parse(null))
+    assert.isNull(numberHelpers.parse(undefined))
+    assert.isNull(numberHelpers.parse(Number.NaN))
+    assert.isNull(numberHelpers.parse(Number.POSITIVE_INFINITY))
+    assert.isNull(numberHelpers.parse('abc'))
+  })
+})
 
 test.group('String helpers', () => {
   test('check if string is empty', ({ assert }) => {
