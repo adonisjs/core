@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { prettyPrintError } from '../index.ts'
 import { type CommandOptions } from '../types/ace.ts'
+import { prettyPrintError } from '../src/ignitor/main.ts'
 import { args, BaseCommand, flags } from '../modules/ace/main.ts'
 import { type SupportedPackageManager } from '@adonisjs/assembler/types'
 

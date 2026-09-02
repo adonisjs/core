@@ -8,9 +8,8 @@
  */
 
 /**
- * Configuration module re-exports all functionality from @adonisjs/config.
- * This includes the Config class and related types for managing application
- * configuration files and environment-specific settings.
+ * Configuration module re-exports @adonisjs/config and the config provider
+ * helper used to defer configuration resolution until application boot.
  *
  * @example
  * // Import the Config class
@@ -23,5 +22,9 @@
  * @example
  * // Import configuration types
  * import type { ConfigProvider } from '@adonisjs/core/config'
+ *
+ * // Create a lazy configuration provider
+ * import { configProvider } from '@adonisjs/core/config'
  */
 export * from '@adonisjs/config'
+export { configProvider } from '../src/config_provider.ts'
