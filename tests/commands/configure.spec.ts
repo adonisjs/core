@@ -344,8 +344,7 @@ test.group('Configure command | run', (group) => {
 
     const lastLog = logs[logs.length - 1]
     assert.equal(command.exitCode, 1)
-    console.log(lastLog.message)
-    assert.include(lastLog.message, '[ red(error) ] Process exited with non-zero status')
+    assert.match(lastLog.message, /\[ red\(error\) \] The command .* exited with a non-zero status/)
   })
 })
 

@@ -7,10 +7,56 @@
  * file that was distributed with this source code.
  */
 
+import { dirname } from 'node:path'
 import type typescript from 'typescript'
+import { mkdir, writeFile } from 'node:fs/promises'
 import type * as Assembler from '@adonisjs/assembler'
 import { type RecursiveFileTree } from '@adonisjs/assembler/types'
+import { type Router } from '../modules/http/main.ts'
 import { type ApplicationService } from './types.ts'
+
+/**
+ * Writes the TypeScript type definitions for the registered routes.
+ *
+ * The generated file is consumed by the TypeScript compiler to type-check the
+ * route names and their params. It is emitted by the app provider when the app
+ * boots in development and by the codegen command, hence it lives here to keep
+ * both of them in sync.
+ *
+ * The routes must be committed before calling this method, otherwise the
+ * generated file will be missing them.
+ *
+ * @param app - The application service instance
+ * @param router - The router instance holding the committed routes
+ *
+ * @example
+ * const router = await app.container.make('router')
+ * router.commit()
+ * await emitRouteTypes(app, router)
+ * // Writes .adonisjs/server/routes.d.ts
+ */
+export async function emitRouteTypes(app: ApplicationService, router: Router): Promise<void> {
+  const { routes, imports, types } = router.generateTypes(2)
+  const routesTypesPath = app.generatedServerPath('routes.d.ts')
+
+  await mkdir(dirname(routesTypesPath), { recursive: true })
+  await writeFile(
+    routesTypesPath,
+    [
+      `import '@adonisjs/core/types/http'`,
+      ...imports,
+      '',
+      ...types,
+      '',
+      'export type ScannedRoutes = {',
+      routes,
+      '}',
+      `declare module '@adonisjs/core/types/http' {`,
+      '  export interface RoutesList extends ScannedRoutes {}',
+      '}',
+    ].join('\n')
+  )
+}
 
 /**
  * Imports the AdonisJS assembler package optionally. This function attempts
