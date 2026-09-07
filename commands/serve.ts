@@ -56,6 +56,13 @@ export default class Serve extends BaseCommand {
     '```',
     '{{ binaryName }} serve --assets-args="--debug --base=/public"',
     '```',
+    '',
+    'When running inside a git worktree, the server automatically uses a deterministic',
+    'port based on the worktree name, so multiple worktrees can run in parallel.',
+    'You may disable this behavior using the --no-worktree-port flag.',
+    '```',
+    '{{ binaryName }} serve --no-worktree-port',
+    '```',
   ]
 
   /**
@@ -102,6 +109,16 @@ export default class Serve extends BaseCommand {
   declare clear?: boolean
 
   /**
+   * Use a deterministic port based on the git worktree name
+   */
+  @flags.boolean({
+    description: 'Use a deterministic port based on the git worktree name',
+    showNegatedVariantInHelp: true,
+    default: true,
+  })
+  declare worktreePort: boolean
+
+  /**
    * Log a development dependency is missing
    *
    * @param dependency - The name of the missing dependency
@@ -133,6 +150,21 @@ export default class Serve extends BaseCommand {
       this.logger.error('Cannot use --watch and --hmr flags together. Choose one of them')
       this.exitCode = 1
       return
+    }
+
+    /**
+     * Use a deterministic port when running inside a git worktree, so that
+     * multiple worktrees of the same application can be started in parallel
+     * without port conflicts
+     */
+    if (this.worktreePort) {
+      const worktreePort = await this.getWorktreePort()
+      if (worktreePort) {
+        process.env.PORT = String(worktreePort.port)
+        this.logger.info(
+          `Using worktree "${worktreePort.worktree.name}" on port ${worktreePort.port}`
+        )
+      }
     }
 
     this.devServer = new assembler.DevServer(this.app.appRoot, {

@@ -7,8 +7,14 @@
  * file that was distributed with this source code.
  */
 
+import { join } from 'node:path'
+import { promisify } from 'node:util'
+import { mkdir } from 'node:fs/promises'
+import { execFile } from 'node:child_process'
 import { test } from '@japa/runner'
 import { type FileSystem } from '@japa/file-system'
+
+const execFileAsync = promisify(execFile)
 
 /**
  * Setup a TypeScript project by creating a "tsconfig.json" file and
@@ -37,6 +43,36 @@ export const setupTypeScriptProject = test.macro(async ({ context }) => {
 
   await fs.create('node_modules/@poppinss/ts-exec/index.js', '')
 })
+
+/**
+ * Creates a git repository with a linked worktree inside the file system
+ * root and returns the URL of the worktree directory.
+ */
+export async function setupGitWorktree(fs: FileSystem, worktreeName: string): Promise<URL> {
+  await mkdir(fs.basePath, { recursive: true })
+  await execFileAsync('git', ['init', 'main-repo'], { cwd: fs.basePath })
+
+  const mainRepoPath = join(fs.basePath, 'main-repo')
+  await execFileAsync(
+    'git',
+    [
+      '-c',
+      'user.name=AdonisJS',
+      '-c',
+      'user.email=test@adonisjs.com',
+      'commit',
+      '--allow-empty',
+      '-m',
+      'initial commit',
+    ],
+    { cwd: mainRepoPath }
+  )
+  await execFileAsync('git', ['worktree', 'add', join(fs.basePath, worktreeName)], {
+    cwd: mainRepoPath,
+  })
+
+  return new URL(`./${worktreeName}/`, fs.baseUrl)
+}
 
 /**
  * Setup a fake adonis project in the file system

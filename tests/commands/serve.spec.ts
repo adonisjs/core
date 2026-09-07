@@ -10,8 +10,9 @@
 import { test } from '@japa/runner'
 import Serve from '../../commands/serve.ts'
 import { AceFactory } from '../../factories/core/ace.ts'
-import { setupTypeScriptProject } from '../helpers.ts'
+import { setupGitWorktree, setupTypeScriptProject } from '../helpers.ts'
 import { indexEntities } from '../../src/assembler_hooks/index_entities.ts'
+import { computeWorktreePort } from '../../src/helpers/worktree.ts'
 
 const sleep = (duration: number) => new Promise((resolve) => setTimeout(resolve, duration))
 
@@ -206,5 +207,65 @@ test.group('Serve command', () => {
     `)
     await assert.fileNotExists('.adonisjs/server/events.ts')
     await assert.fileNotExists('.adonisjs/server/listeners.ts')
+  })
+
+  test('use a deterministic port when running inside a git worktree', async ({
+    assert,
+    fs,
+    cleanup,
+  }) => {
+    const worktreeUrl = await setupGitWorktree(fs, 'feature-login')
+    await fs.create(
+      'feature-login/bin/server.ts',
+      `process.send({ isAdonisJS: true, environment: 'web' });`
+    )
+    await fs.create('feature-login/.env', 'PORT=3333\n')
+    await fs.create('feature-login/tsconfig.json', JSON.stringify({ include: ['**/*'] }))
+    await fs.create(
+      'feature-login/node_modules/@poppinss/ts-exec/package.json',
+      JSON.stringify({
+        name: '@poppinss/ts-exec',
+        exports: { '.': './index.js' },
+      })
+    )
+    await fs.create('feature-login/node_modules/@poppinss/ts-exec/index.js', '')
+
+    const ace = await new AceFactory().make(worktreeUrl, {
+      importer: (filePath) => import(filePath),
+    })
+
+    ace.ui.switchMode('raw')
+
+    const originalPort = process.env.PORT
+    cleanup(() => {
+      if (originalPort === undefined) {
+        delete process.env.PORT
+      } else {
+        process.env.PORT = originalPort
+      }
+    })
+
+    const command = await ace.create(Serve, ['--no-clear'])
+    cleanup(() => command.devServer.close())
+    await command.exec()
+    await sleep(600)
+
+    const expectedPort = computeWorktreePort('feature-login', 3333)
+    assert.equal(Number(process.env.PORT), expectedPort)
+    assert.match(ace.ui.logger.getLogs()[0].message, new RegExp('Using worktree "feature-login"'))
+  })
+
+  test('do not override the port when not inside a git worktree', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl, {
+      importer: (filePath) => import(filePath),
+    })
+
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(Serve, ['--no-clear'])
+    await command.exec()
+    await sleep(600)
+
+    assert.isUndefined(process.env.PORT)
   })
 })

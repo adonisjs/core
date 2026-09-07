@@ -9,10 +9,12 @@
 
 import sinon from 'sinon'
 import { test } from '@japa/runner'
+import { setupGitWorktree } from '../helpers.ts'
 import { BaseCommand } from '../../modules/ace/main.ts'
 import { ListCommand } from '../../modules/ace/commands.ts'
 import { IgnitorFactory } from '../../factories/core/ignitor.ts'
 import { createAceKernel } from '../../modules/ace/create_kernel.ts'
+import { computeWorktreePort } from '../../src/helpers/worktree.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
@@ -258,6 +260,51 @@ test.group('Base command', () => {
     const command = await kernel.create(MakeController, [])
 
     await assert.rejects(() => command.exec(), 'completed failed')
+  })
+
+  test('get the worktree port when running inside a linked git worktree', async ({
+    assert,
+    fs,
+  }) => {
+    const worktreeUrl = await setupGitWorktree(fs, 'feature-login')
+    await fs.create('feature-login/.env', 'PORT=4000\n')
+
+    const ignitor = new IgnitorFactory().withCoreConfig().create(worktreeUrl)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+
+    class MakeController extends BaseCommand {
+      static commandName: string = 'make:controller'
+    }
+
+    const kernel = createAceKernel(app)
+    const command = await kernel.create(MakeController, [])
+
+    const worktreePort = await command.getWorktreePort()
+    assert.equal(worktreePort!.worktree.name, 'feature-login')
+    assert.equal(worktreePort!.port, computeWorktreePort('feature-login', 4000))
+  })
+
+  test('return null from getWorktreePort when not inside a linked git worktree', async ({
+    assert,
+    fs,
+  }) => {
+    await fs.create('.env', 'PORT=4000\n')
+
+    const ignitor = new IgnitorFactory().withCoreConfig().create(fs.baseUrl)
+
+    const app = ignitor.createApp('console')
+    await app.init()
+
+    class MakeController extends BaseCommand {
+      static commandName: string = 'make:controller'
+    }
+
+    const kernel = createAceKernel(app)
+    const command = await kernel.create(MakeController, [])
+
+    assert.isNull(await command.getWorktreePort())
   })
 
   test('call app terminate when main command terminate method is called', async () => {
