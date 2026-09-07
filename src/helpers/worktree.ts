@@ -8,9 +8,6 @@
  */
 
 import { createHash } from 'node:crypto'
-import { existsSync, statSync } from 'node:fs'
-import { basename, dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 
 import { EnvLoader, EnvParser } from '@adonisjs/env'
 
@@ -20,48 +17,6 @@ import { EnvLoader, EnvParser } from '@adonisjs/env'
  * so that the final port stays close to the base port.
  */
 const PORT_RANGE = 1000
-
-/**
- * Returns the name of the git worktree the application is running inside.
- * Returns "undefined" when the application is not running inside a linked
- * git worktree (for example the main checkout or a non-git directory).
- *
- * A linked git worktree is detected by looking for a ".git" file, since
- * git creates a file (and not a directory) at the root of linked worktrees
- * that points to the main repository. The worktree name is derived from
- * the name of the directory holding the ".git" file.
- *
- * @param appRoot - The application root directory URL
- *
- * @example
- * getWorktreeName(new URL('./', import.meta.url))
- * // Returns the directory name when running inside a linked worktree
- */
-export function getWorktreeName(appRoot: URL): string | undefined {
-  let currentPath = fileURLToPath(appRoot)
-
-  while (true) {
-    const gitPath = join(currentPath, '.git')
-    if (existsSync(gitPath)) {
-      /**
-       * A linked worktree has a ".git" file pointing to the main repository,
-       * while the main checkout has a ".git" directory
-       */
-      if (statSync(gitPath).isFile()) {
-        return basename(currentPath)
-      }
-
-      return undefined
-    }
-
-    const parentPath = dirname(currentPath)
-    if (parentPath === currentPath) {
-      return undefined
-    }
-
-    currentPath = parentPath
-  }
-}
 
 /**
  * Returns the base port defined inside the application dot-env files.
@@ -90,7 +45,7 @@ export async function getBasePort(appRoot: URL): Promise<number> {
  * Computes a deterministic port for a given worktree name by adding a
  * stable offset to the base port. The offset is derived from the hash of
  * the worktree name, therefore the same worktree name always resolves to
- * the same port.
+ * the same port, regardless of the machine or the worktree location.
  *
  * @param worktreeName - The name of the worktree
  * @param basePort - The base port defined in the application

@@ -7,40 +7,10 @@
  * file that was distributed with this source code.
  */
 
-import { basename } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { test } from '@japa/runner'
-import { getWorktreeName, getBasePort, computeWorktreePort } from '../../src/helpers/worktree.ts'
+import { getBasePort, computeWorktreePort } from '../../src/helpers/worktree.ts'
 
 test.group('Worktree port', () => {
-  test('return worktree name when running inside a linked git worktree', async ({ assert, fs }) => {
-    await fs.create('.git', 'gitdir: /path/to/main/.git/worktrees/feature-login\n')
-
-    assert.equal(getWorktreeName(fs.baseUrl), basename(fileURLToPath(fs.baseUrl)))
-  })
-
-  test('return undefined when running inside the main git checkout', async ({ assert, fs }) => {
-    await fs.create('.git/HEAD', 'ref: refs/heads/main\n')
-
-    assert.isUndefined(getWorktreeName(fs.baseUrl))
-  })
-
-  test('return undefined when not inside a git repository', async ({ assert, fs }) => {
-    assert.isUndefined(getWorktreeName(fs.baseUrl))
-  })
-
-  test('find the worktree name when the application is inside a nested directory', async ({
-    assert,
-    fs,
-  }) => {
-    await fs.create('.git', 'gitdir: /path/to/main/.git/worktrees/feature-login\n')
-    await fs.create('apps/api/.env', '')
-
-    const nestedAppRoot = new URL('./apps/api/', fs.baseUrl)
-
-    assert.equal(getWorktreeName(nestedAppRoot), basename(fileURLToPath(fs.baseUrl)))
-  })
-
   test('read the base port from the .env file', async ({ assert, fs }) => {
     await fs.create('.env', 'PORT=4000\n')
 

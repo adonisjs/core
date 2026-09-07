@@ -11,7 +11,6 @@ import type { DevServer } from '@adonisjs/assembler'
 import { importAssembler } from '../src/utils.ts'
 import type { CommandOptions } from '../types/ace.ts'
 import { BaseCommand, flags } from '../modules/ace/main.ts'
-import { getWorktreeName, getBasePort, computeWorktreePort } from '../src/helpers/worktree.ts'
 
 /**
  * Serve command is used to run the AdonisJS HTTP server during development. The
@@ -159,12 +158,12 @@ export default class Serve extends BaseCommand {
      * without port conflicts
      */
     if (this.worktreePort) {
-      const worktreeName = getWorktreeName(this.app.appRoot)
-      if (worktreeName) {
-        const basePort = await getBasePort(this.app.appRoot)
-        const port = computeWorktreePort(worktreeName, basePort)
-        process.env.PORT = String(port)
-        this.logger.info(`Using worktree "${worktreeName}" on port ${port}`)
+      const worktreePort = await this.getWorktreePort()
+      if (worktreePort) {
+        process.env.PORT = String(worktreePort.port)
+        this.logger.info(
+          `Using worktree "${worktreePort.worktree.name}" on port ${worktreePort.port}`
+        )
       }
     }
 
