@@ -10,6 +10,7 @@
 import edge, { type Edge } from 'edge.js'
 import { type URLOptions } from '../types/http.ts'
 import type { ApplicationService } from '../src/types.ts'
+import numberHelpers from '../src/helpers/number.ts'
 import { pluginEdgeDumper } from '../modules/dumper/plugins/edge.ts'
 import { BriskRoute, HttpContext, Qs, type Route, type Router } from '../modules/http/main.ts'
 import { type ClientRouteJSON } from '@adonisjs/http-server/client/url_builder'
@@ -145,6 +146,7 @@ export default class EdgeServiceProvider {
 
     edge.global('app', app)
     edge.global('config', edgeConfigResolver)
+    edge.global('number', numberHelpers)
     edge.global('routes', function () {
       return clientRoutes()
     })
