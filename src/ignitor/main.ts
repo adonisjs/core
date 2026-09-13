@@ -139,3 +139,22 @@ export class Ignitor {
     await this.#app?.terminate()
   }
 }
+
+/**
+ * Pretty prints an error with colorful output using
+ * Youch terminal
+ */
+export async function prettyPrintError(error: any) {
+  if (error && typeof error === 'object' && error.code === 'E_DUMP_DIE_EXCEPTION') {
+    console.error(error)
+    return
+  }
+
+  try {
+    const { Youch } = await import('youch')
+    const youch = new Youch()
+    console.error(await youch.toANSI(error))
+  } catch {
+    console.error(error)
+  }
+}
