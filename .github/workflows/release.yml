@@ -41,6 +41,12 @@ jobs:
 
       - run: npm audit signatures
 
+      - name: Verify build output
+        run: |
+          npm run build
+          test -f build/commands/main.js
+          test -f build/commands/commands.json
+
       - run: npm run release -- --ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

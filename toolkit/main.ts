@@ -31,3 +31,4 @@ kernel.on('help', async (command, $kernel, parsed) => {
 })
 
 await kernel.handle(process.argv.splice(2))
+process.exitCode = kernel.exitCode
