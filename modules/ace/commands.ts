@@ -7,11 +7,14 @@
  * file that was distributed with this source code.
  */
 
+import { fileURLToPath } from 'node:url'
+import { getGitWorktree, type GitWorktree } from '@poppinss/utils'
 import { BaseCommand as AceBaseCommand, ListCommand as AceListCommand } from '@adonisjs/ace'
 
 import { type Kernel } from './kernel.ts'
 import type { ApplicationService } from '../../src/types.ts'
 import type { CommandOptions, ParsedOutput, UIPrimitives } from '../../types/ace.ts'
+import { getBasePort, computeWorktreePort } from '../../src/helpers/worktree.ts'
 
 /**
  * The base command class for creating custom Ace commands in AdonisJS applications.
@@ -73,6 +76,36 @@ export class BaseCommand extends AceBaseCommand {
     })
 
     return codemods
+  }
+
+  /**
+   * Returns the linked git worktree in which the application is running,
+   * alongside a deterministic port computed from the worktree name. Returns
+   * "null" when the application is not running inside a linked git worktree
+   * (for example the main checkout or a non-git directory).
+   *
+   * The port is stable for a given worktree name and base port, so multiple
+   * worktrees of the same application can run in parallel without port
+   * conflicts. The base port is read from the application dot-env files
+   * (via the "PORT" variable), with 3333 as the fallback.
+   *
+   * @example
+   * ```ts
+   * const worktreePort = await this.getWorktreePort()
+   * if (worktreePort) {
+   *   console.log(worktreePort.worktree.name)
+   *   console.log(worktreePort.port)
+   * }
+   * ```
+   */
+  async getWorktreePort(): Promise<{ worktree: GitWorktree; port: number } | null> {
+    const worktree = await getGitWorktree(fileURLToPath(this.app.appRoot))
+    if (!worktree) {
+      return null
+    }
+
+    const basePort = await getBasePort(this.app.appRoot)
+    return { worktree, port: computeWorktreePort(worktree.name, basePort) }
   }
 
   /**
@@ -203,6 +236,21 @@ export class ListCommand extends AceListCommand implements BaseCommand {
   async createCodemods() {
     const { Codemods } = await import('./codemods.js')
     return new Codemods(this.app, this.logger)
+  }
+
+  /**
+   * Returns the linked git worktree in which the application is running,
+   * alongside a deterministic port computed from the worktree name. Returns
+   * "null" when the application is not running inside a linked git worktree.
+   */
+  async getWorktreePort(): Promise<{ worktree: GitWorktree; port: number } | null> {
+    const worktree = await getGitWorktree(fileURLToPath(this.app.appRoot))
+    if (!worktree) {
+      return null
+    }
+
+    const basePort = await getBasePort(this.app.appRoot)
+    return { worktree, port: computeWorktreePort(worktree.name, basePort) }
   }
 
   /**
