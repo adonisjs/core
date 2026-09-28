@@ -9,7 +9,7 @@
 
 import { isAbsolute } from 'node:path'
 import { EventEmitter } from 'node:events'
-import { readFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { EnvEditor } from '@adonisjs/env/editor'
 import type { UIPrimitives } from '@adonisjs/ace/types'
 import type { CodeTransformer } from '@adonisjs/assembler/code_transformer'
@@ -30,7 +30,7 @@ import { type GeneratedStub } from '../../types/app.ts'
  * This class provides APIs to modify configuration files, register middleware,
  * generate stubs, and install packages.
  *
- * The codemod APIs rely on the "@adonisjs/assembler" package, which must be
+ * AST-based codemods rely on the "@adonisjs/assembler" package, which must be
  * installed as a dependency in the user application.
  *
  * @example
@@ -165,6 +165,64 @@ export class Codemods extends EventEmitter {
 
     await editor.save()
     this.#cliLogger.action('update .env file').succeeded()
+  }
+
+  /**
+   * Add a subpath import to the application's package.json. Existing aliases
+   * are left unchanged, even when their target differs.
+   *
+   * @example
+   * ```ts
+   * await codemods.addImportAlias('#channels/*', './app/channels/*.js')
+   * ```
+   */
+  async addImportAlias(alias: string, target: string) {
+    const action = this.#cliLogger.action('update package.json file')
+    try {
+      const path = this.#app.makePath('package.json')
+      const contents = await readFile(path, 'utf-8')
+      const packageJson = JSON.parse(contents) as { imports?: Record<string, unknown> }
+      packageJson.imports ??= {}
+
+      if (Object.hasOwn(packageJson.imports, alias)) {
+        action.skipped(`import alias "${alias}" already exists`)
+        return
+      }
+
+      packageJson.imports[alias] = target
+      const indent = contents.match(/^([ \t]+)"[^"\n]+"\s*:/m)?.[1] ?? '  '
+      const newline = contents.includes('\r\n') ? '\r\n' : '\n'
+      const updated = JSON.stringify(packageJson, null, indent).replaceAll('\n', newline)
+      await writeFile(path, updated + (contents.endsWith('\n') ? newline : ''))
+      action.succeeded()
+    } catch (error: any) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
+  }
+
+  /**
+   * Create a directory relative to the application root, including missing parents.
+   * Leave an existing directory unchanged.
+   *
+   * @example
+   * ```ts
+   * await codemods.createDirectory('app/channels')
+   * ```
+   */
+  async createDirectory(directory: string) {
+    const action = this.#cliLogger.action(`create ${directory} directory`)
+    try {
+      const created = await mkdir(this.#app.makePath(directory), { recursive: true })
+      if (created) {
+        action.succeeded()
+      } else {
+        action.skipped('directory already exists')
+      }
+    } catch (error: any) {
+      this.emit('error', error)
+      action.failed(error.message)
+    }
   }
 
   /**
