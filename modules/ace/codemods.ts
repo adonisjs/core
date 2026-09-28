@@ -30,8 +30,9 @@ import { type GeneratedStub } from '../../types/app.ts'
  * This class provides APIs to modify configuration files, register middleware,
  * generate stubs, and install packages.
  *
- * AST-based codemods rely on the "@adonisjs/assembler" package, which must be
- * installed as a dependency in the user application.
+ * Some codemods, including installPackages, rely on the optional
+ * "@adonisjs/assembler" package. defineEnvVariables, makeUsingStub,
+ * addImportAlias, and createDirectory work without it.
  *
  * @example
  * ```ts
@@ -181,7 +182,10 @@ export class Codemods extends EventEmitter {
     try {
       const path = this.#app.makePath('package.json')
       const contents = await readFile(path, 'utf-8')
-      const packageJson = JSON.parse(contents) as { imports?: Record<string, unknown> }
+      const bom = contents.startsWith('\uFEFF') ? '\uFEFF' : ''
+      const packageJson = JSON.parse(contents.slice(bom.length)) as {
+        imports?: Record<string, unknown>
+      }
       packageJson.imports ??= {}
 
       if (Object.hasOwn(packageJson.imports, alias)) {
@@ -190,10 +194,11 @@ export class Codemods extends EventEmitter {
       }
 
       packageJson.imports[alias] = target
-      const indent = contents.match(/^([ \t]+)"[^"\n]+"\s*:/m)?.[1] ?? '  '
+      const indent =
+        contents.match(/^([ \t]+)"[^"\n]+"\s*:/m)?.[1] ?? (contents.includes('\n') ? '  ' : '')
       const newline = contents.includes('\r\n') ? '\r\n' : '\n'
       const updated = JSON.stringify(packageJson, null, indent).replaceAll('\n', newline)
-      await writeFile(path, updated + (contents.endsWith('\n') ? newline : ''))
+      await writeFile(path, bom + updated + (contents.endsWith('\n') ? newline : ''))
       action.succeeded()
     } catch (error: any) {
       this.emit('error', error)
