@@ -135,6 +135,145 @@ test.group('Codemods | environment variables', (group) => {
   })
 })
 
+test.group('Codemods | import aliases', () => {
+  test('add an alias alongside existing imports', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    ace.ui.switchMode('raw')
+    await fs.create(
+      'package.json',
+      '{\n  "name": "app",\n  "imports": {\n    "#models/*": "./app/models/*.js"\n  }\n}\n'
+    )
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addImportAlias('#channels/*', './app/channels/*.js')
+
+    await assert.fileEquals(
+      'package.json',
+      '{\n  "name": "app",\n  "imports": {\n    "#models/*": "./app/models/*.js",\n    "#channels/*": "./app/channels/*.js"\n  }\n}\n'
+    )
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      { message: 'green(DONE:)    update package.json file', stream: 'stdout' },
+    ])
+  })
+
+  test('create imports when missing and preserve indentation and line endings', async ({
+    assert,
+    fs,
+  }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    ace.ui.switchMode('raw')
+    await fs.create('package.json', '{\r\n\t"name": "app"\r\n}\r\n')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addImportAlias('#channels/*', './app/channels/*.js')
+
+    await assert.fileEquals(
+      'package.json',
+      '{\r\n\t"name": "app",\r\n\t"imports": {\r\n\t\t"#channels/*": "./app/channels/*.js"\r\n\t}\r\n}\r\n'
+    )
+  })
+
+  test('keep a minified package.json on one line', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    ace.ui.switchMode('raw')
+    await fs.create('package.json', '{"name":"app","imports":{"#models/*":"./app/models/*.js"}}')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addImportAlias('#channels/*', './app/channels/*.js')
+
+    await assert.fileEquals(
+      'package.json',
+      '{"name":"app","imports":{"#models/*":"./app/models/*.js","#channels/*":"./app/channels/*.js"}}'
+    )
+  })
+
+  test('read and preserve a package.json with a BOM', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    ace.ui.switchMode('raw')
+    await fs.create('package.json', '\uFEFF{\n  "name": "app"\n}\n')
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addImportAlias('#channels/*', './app/channels/*.js')
+
+    await assert.fileEquals(
+      'package.json',
+      '\uFEFF{\n  "name": "app",\n  "imports": {\n    "#channels/*": "./app/channels/*.js"\n  }\n}\n'
+    )
+  })
+
+  test('leave an existing alias untouched even if its target differs', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    ace.ui.switchMode('raw')
+    const contents = '{"imports":{"#channels/*":"./custom/*.js"}}'
+    await fs.create('package.json', contents)
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.addImportAlias('#channels/*', './app/channels/*.js')
+
+    await assert.fileEquals('package.json', contents)
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message:
+          'cyan(SKIPPED:) update package.json file dim((import alias "#channels/*" already exists))',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('report a missing package.json without creating it', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    ace.ui.switchMode('raw')
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    const errors: Error[] = []
+    codemods.on('error', (error) => errors.push(error))
+
+    await codemods.addImportAlias('#channels/*', './app/channels/*.js')
+
+    await assert.fileNotExists('package.json')
+    assert.lengthOf(errors, 1)
+    assert.match(errors[0].message, /ENOENT/)
+    assert.match(ace.ui.logger.getLogs()[0].message, /FAILED:[\s\S]*ENOENT/)
+  })
+})
+
+test.group('Codemods | directories', () => {
+  test('create a nested directory and skip it when it exists', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    ace.ui.switchMode('raw')
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+
+    await codemods.createDirectory('app/channels')
+    await assert.dirExists('app/channels')
+    await fs.create('app/channels/keep.ts', 'export {}')
+    await codemods.createDirectory('app/channels')
+    await assert.fileEquals('app/channels/keep.ts', 'export {}')
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      { message: 'green(DONE:)    create app/channels directory', stream: 'stdout' },
+      {
+        message: 'cyan(SKIPPED:) create app/channels directory dim((directory already exists))',
+        stream: 'stdout',
+      },
+    ])
+  })
+
+  test('report an existing file instead of treating it as a directory', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    ace.ui.switchMode('raw')
+    await fs.create('app/channels', 'not a directory')
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    const errors: Error[] = []
+    codemods.on('error', (error) => errors.push(error))
+
+    await codemods.createDirectory('app/channels')
+
+    await assert.fileEquals('app/channels', 'not a directory')
+    assert.lengthOf(errors, 1)
+    assert.match(errors[0].message, /EEXIST/)
+    assert.match(ace.ui.logger.getLogs()[0].message, /FAILED:[\s\S]*EEXIST/)
+  })
+})
+
 test.group('Codemods | rcFile', (group) => {
   group.tap((t) => t.timeout(60 * 1000))
 
