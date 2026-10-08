@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   test:
-    uses: adonisjs/core/.github/workflows/test.yml@0348a3b448fe91194d8ccf62d481b38ac9189176 # 7.x
+    uses: adonisjs/core/.github/workflows/test.yml@e3534b9d1b8a10cd7dea1b9847d781bf952143b8 # 7.x
     with:
       install-pnpm: true
 
