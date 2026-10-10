@@ -11,7 +11,7 @@ import { type CommandOptions } from '../../types/ace.ts'
 import stringHelpers from '../../src/helpers/string.ts'
 import { args, BaseCommand, flags } from '../../modules/ace/main.ts'
 
-const ALLOWED_TYPES = ['string', 'boolean', 'number', 'enum'] as const
+const ALLOWED_TYPES = ['string', 'secret', 'boolean', 'number', 'enum'] as const
 type AllowedTypes = (typeof ALLOWED_TYPES)[number]
 
 /**
@@ -23,7 +23,7 @@ type AllowedTypes = (typeof ALLOWED_TYPES)[number]
  * ```
  * ace env:add
  * ace env:add DATABASE_URL postgres://localhost:5432/mydb
- * ace env:add API_KEY secret --type=string
+ * ace env:add API_KEY secret --type=secret
  * ace env:add PORT 3333 --type=number
  * ace env:add DEBUG true --type=boolean
  * ace env:add LOG_LEVEL info --type=enum --enum-values=debug,info,warn,error
@@ -65,7 +65,7 @@ export default class EnvAdd extends BaseCommand {
   declare value: string
 
   /**
-   * Data type of the environment variable (string, boolean, number, enum)
+   * Data type of the environment variable (string, secret, boolean, number, enum)
    */
   @flags.string({ description: 'Type of the variable' })
   declare type: AllowedTypes
@@ -150,6 +150,7 @@ export default class EnvAdd extends BaseCommand {
      */
     const validation = {
       string: 'Env.schema.string()',
+      secret: 'Env.schema.secret()',
       number: 'Env.schema.number()',
       boolean: 'Env.schema.boolean()',
       enum: `Env.schema.enum(['${this.enumValues.join("','")}'] as const)`,

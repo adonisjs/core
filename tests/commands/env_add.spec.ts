@@ -34,6 +34,53 @@ test.group('Env Add command', () => {
     await assert.fileContains('./start/env.ts', 'VARIABLE: Env.schema.string()')
   })
 
+  test('add secret env variable using the type flag', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('.env', '')
+    await fs.create('.env.example', '')
+    await fs.create(
+      './start/env.ts',
+      `import { Env } from '@adonisjs/core/env'
+      export default await Env.create(new URL('../', import.meta.url), {})`
+    )
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(EnvAdd, ['api_key', 'my_secret', '--type=secret'])
+    await command.exec()
+
+    await assert.fileContains('.env', 'API_KEY=my_secret')
+    await assert.fileContains('.env.example', 'API_KEY=')
+    await assert.fileNotContains('.env.example', 'my_secret')
+    await assert.fileContains('./start/env.ts', 'API_KEY: Env.schema.secret()')
+  })
+
+  test('select secret type from the prompt', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('.env', '')
+    await fs.create('.env.example', '')
+    await fs.create(
+      './start/env.ts',
+      `import { Env } from '@adonisjs/core/env'
+      export default await Env.create(new URL('../', import.meta.url), {})`
+    )
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(EnvAdd, ['api_key', 'my_secret'])
+    command.prompt.trap('Select the variable type').replyWith('secret')
+    await command.exec()
+
+    await assert.fileContains('.env', 'API_KEY=my_secret')
+    await assert.fileContains('.env.example', 'API_KEY=')
+    await assert.fileNotContains('.env.example', 'my_secret')
+    await assert.fileContains('./start/env.ts', 'API_KEY: Env.schema.secret()')
+  })
+
   test('convert variable to screaming snake case', async ({ assert, fs }) => {
     await fs.createJson('tsconfig.json', {})
     await fs.create('.env', '')
