@@ -144,6 +144,7 @@ test.group('Codemods | environment variables', (group) => {
       'start/env.ts',
       `export default Env.create(new URL('./'), {
         SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const),
+        APP_KEY: Env.schema.secret(),
       })`
     )
 
@@ -151,9 +152,22 @@ test.group('Codemods | environment variables', (group) => {
     await codemods.defineEnvValidations({
       variables: {
         SESSION_DRIVER: `Env.schema.enum(['cookie', 'memory', 'redis'] as const)`,
+        APP_KEY: 'Env.schema.secret()',
         REDIS_HOST: 'Env.schema.string()',
       },
     })
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update start/env.ts file',
+        stream: 'stdout',
+      },
+      {
+        message:
+          '[ yellow(warn) ] SESSION_DRIVER validation already exists in start/env.ts and was not replaced',
+        stream: 'stdout',
+      },
+    ])
 
     await assert.fileContains(
       'start/env.ts',

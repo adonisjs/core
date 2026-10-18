@@ -258,7 +258,8 @@ export class Codemods extends EventEmitter {
   /**
    * Define validations for the environment variables in the start/env.ts file.
    * This method updates the environment validation schema using the assembler.
-   * Existing validations are replaced when "overwriteExisting" is true.
+   * Existing validations are replaced when "overwriteExisting" is true,
+   * otherwise they are kept and a warning is logged for each of them.
    *
    * @param validations - Validation schema node for environment variables
    *
@@ -282,11 +283,16 @@ export class Codemods extends EventEmitter {
 
     const action = this.#cliLogger.action('update start/env.ts file')
     try {
-      await transformer.defineEnvValidations({
+      const skipped = await transformer.defineEnvValidations({
         overwrite: this.overwriteExisting,
         ...validations,
       })
       action.succeeded()
+      for (const variable of skipped) {
+        this.#cliLogger.warning(
+          `${variable} validation already exists in start/env.ts and was not replaced`
+        )
+      }
     } catch (error: any) {
       this.emit('error', error)
       action.failed(error.message)
