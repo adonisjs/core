@@ -133,6 +133,71 @@ test.group('Codemods | environment variables', (group) => {
 
     await assert.fileContains('start/env.ts', 'CORS_MODE: Env.schema.string()')
   })
+
+  test('keep existing env validations', async ({ assert, fs }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create(
+      'start/env.ts',
+      `export default Env.create(new URL('./'), {
+        SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const),
+      })`
+    )
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    await codemods.defineEnvValidations({
+      variables: {
+        SESSION_DRIVER: `Env.schema.enum(['cookie', 'memory', 'redis'] as const)`,
+        REDIS_HOST: 'Env.schema.string()',
+      },
+    })
+
+    await assert.fileContains(
+      'start/env.ts',
+      `SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const)`
+    )
+    await assert.fileContains('start/env.ts', 'REDIS_HOST: Env.schema.string()')
+  })
+
+  test('replace existing env validations when overwriteExisting is true', async ({
+    assert,
+    fs,
+  }) => {
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    await fs.createJson('tsconfig.json', {})
+    await fs.create(
+      'start/env.ts',
+      `export default Env.create(new URL('./'), {
+        SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const),
+      })`
+    )
+
+    const codemods = new Codemods(ace.app, ace.ui.logger)
+    codemods.overwriteExisting = true
+    await codemods.defineEnvValidations({
+      variables: {
+        SESSION_DRIVER: `Env.schema.enum(['cookie', 'memory', 'redis'] as const)`,
+      },
+    })
+
+    assert.deepEqual(ace.ui.logger.getLogs(), [
+      {
+        message: 'green(DONE:)    update start/env.ts file',
+        stream: 'stdout',
+      },
+    ])
+    await assert.fileContains(
+      'start/env.ts',
+      `SESSION_DRIVER: Env.schema.enum(['cookie', 'memory', 'redis'] as const)`
+    )
+    await assert.fileNotContains('start/env.ts', `['cookie', 'memory'] as const`)
+  })
 })
 
 test.group('Codemods | import aliases', () => {

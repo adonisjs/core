@@ -67,8 +67,8 @@ export class Codemods extends EventEmitter {
   #cliLogger: UIPrimitives['logger']
 
   /**
-   * Overwrite existing files when generating files
-   * from stubs
+   * Overwrite existing files when generating files from stubs
+   * and replace existing validations in the start/env.ts file
    */
   overwriteExisting = false
 
@@ -258,6 +258,7 @@ export class Codemods extends EventEmitter {
   /**
    * Define validations for the environment variables in the start/env.ts file.
    * This method updates the environment validation schema using the assembler.
+   * Existing validations are replaced when "overwriteExisting" is true.
    *
    * @param validations - Validation schema node for environment variables
    *
@@ -281,7 +282,10 @@ export class Codemods extends EventEmitter {
 
     const action = this.#cliLogger.action('update start/env.ts file')
     try {
-      await transformer.defineEnvValidations(validations)
+      await transformer.defineEnvValidations({
+        overwrite: this.overwriteExisting,
+        ...validations,
+      })
       action.succeeded()
     } catch (error: any) {
       this.emit('error', error)
