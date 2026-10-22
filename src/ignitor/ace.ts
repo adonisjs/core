@@ -112,10 +112,10 @@ export class AceProcess {
 
     /**
      * Terminate the app when the command does not want to
-     * hold a long running process
+     * hold a long running process, or when it failed
      */
     const mainCommand = kernel.getMainCommand()
-    if (!mainCommand || !mainCommand.staysAlive) {
+    if (!mainCommand || !mainCommand.staysAlive || kernel.exitCode !== 0) {
       process.exitCode = kernel.exitCode
       await app.terminate()
     }

@@ -258,6 +258,44 @@ test.group('Ignitor | Ace process', (group) => {
     assert.equal(ignitor.getApp()?.getState(), 'terminated')
   })
 
+  test('terminate staysAlive command when executing hook fails', async ({ cleanup, assert }) => {
+    cleanup(async () => {
+      await ignitor.terminate()
+    })
+
+    const ignitor = new IgnitorFactory()
+      .merge({
+        rcFileContents: {
+          providers: [() => import('../../providers/app_provider.js')],
+        },
+      })
+      .withCoreConfig()
+      .create(BASE_URL)
+
+    class Greet extends BaseCommand {
+      static commandName: string = 'greet'
+      static options = {
+        staysAlive: true,
+      }
+
+      async run() {}
+    }
+
+    await ignitor
+      .ace()
+      .configure(async (app) => {
+        const kernel = await app.container.make('ace')
+        kernel.addLoader(new ListLoader([Greet]))
+        kernel.executing(() => {
+          throw new Error('Unable to start worker')
+        })
+      })
+      .handle(['greet'])
+
+    assert.equal(process.exitCode, 1)
+    assert.equal(ignitor.getApp()?.getState(), 'terminated')
+  })
+
   test('set process.exitCode when staysAlive command calls app.terminate() during execution', async ({
     cleanup,
     assert,
