@@ -5,6 +5,10 @@
 <table>
 
 <tr>
+<th colspan="2">Gold</th>
+</tr>
+
+<tr>
 <td colspan="2">
 
 <a href="https://encore.dev/?utm_source=adonisjs.com">
@@ -15,18 +19,22 @@
 </tr>
 
 <tr>
-<td>
+<th colspan="2">Bronze</th>
+</tr>
+
+<tr>
+<td align="center">
 
 <a href="https://route4me.com/?utm_source=adonisjs.com">
-  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/route4me.jpg" />
+  <img width="190" src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/route4me.jpg" />
 </a>
 
 </td>
 
-<td>
+<td align="center">
 
 <a href="https://ezycourse.com/?utm_source=adonisjs.com">
-  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/ezycourse.jpg" />
+  <img width="190" src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/ezycourse.jpg" />
 </a>
 
 </td>
@@ -35,18 +43,18 @@
 
 <tr>
 
-<td>
+<td align="center">
 
 <a href="https://meteor.software/g6h?utm_source=adonisjs.com">
-  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/galaxy.jpg" />
+  <img width="190" src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/galaxy.jpg" />
 </a>
 
 </td>
 
-<td>
+<td align="center">
 
 <a href="https://www.testmuai.com/?utm_source=adonisjs.com">
-  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/testmu.jpg" />
+  <img width="190" src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/testmu.jpg" />
 </a>
 
 </td>
@@ -55,10 +63,10 @@
 
 <tr>
 
-<td>
+<td align="center">
 
 <a href="https://relancer.com/?utm_source=adonisjs.com">
-  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/relancer.jpg" />
+  <img width="190" src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/relancer.jpg" />
 </a>
 
 </td>
