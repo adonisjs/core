@@ -61,3 +61,13 @@ export { VerificationToken } from './verification_token.ts'
  * to prevent timing attacks.
  */
 export { safeTiming } from './safe_timing.ts'
+
+/**
+ * Webhook signature verification helpers.
+ */
+export {
+  createWebhookVerifier,
+  createStandardWebhookVerifier,
+  parseStandardWebhookSignatures,
+  WebhookVerificationError,
+} from './webhooks.ts'
