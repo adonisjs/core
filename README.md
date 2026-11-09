@@ -5,6 +5,16 @@
 <table>
 
 <tr>
+<td colspan="2">
+
+<a href="https://encore.dev/?utm_source=adonisjs.com">
+  <img src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/encore.jpg" />
+</a>
+
+</td>
+</tr>
+
+<tr>
 <td>
 
 <a href="https://route4me.com/?utm_source=adonisjs.com">
