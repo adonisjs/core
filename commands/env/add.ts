@@ -75,7 +75,6 @@ export default class EnvAdd extends BaseCommand {
    */
   @flags.array({
     description: 'Allowed values for the enum type in a comma-separated list',
-    default: [''],
     required: false,
   })
   declare enumValues: string[]
@@ -122,9 +121,19 @@ export default class EnvAdd extends BaseCommand {
      * Prompt for missing enum values if the selected env type is `enum`
      */
     if (this.type === 'enum' && !this.enumValues) {
-      this.enumValues = await this.prompt.ask('Enter the enum values separated by a comma', {
-        result: (value) => value.split(',').map((one) => one.trim()),
-      })
+      this.enumValues = [await this.prompt.ask('Enter the enum values separated by a comma')]
+    }
+
+    /**
+     * The flag accepts a comma-separated list (for example
+     * "--enum-values=debug,info,warn"), so a single value may hold
+     * multiple allowed values. Split them, otherwise the generated
+     * validation rejects the value written to the ".env" file.
+     */
+    if (this.type === 'enum' && this.enumValues) {
+      this.enumValues = this.enumValues
+        .flatMap((value) => value.split(','))
+        .map((value) => value.trim())
     }
 
     /**
@@ -146,15 +155,20 @@ export default class EnvAdd extends BaseCommand {
     )
 
     /**
-     * Add the environment variable to the `start/env.ts` file
+     * Add the environment variable to the `start/env.ts` file.
+     *
+     * The enum validation is computed separately, because it is the only
+     * one built from the flag values.
      */
-    const validation = {
-      string: 'Env.schema.string()',
-      secret: 'Env.schema.secret()',
-      number: 'Env.schema.number()',
-      boolean: 'Env.schema.boolean()',
-      enum: `Env.schema.enum(['${this.enumValues.join("','")}'] as const)`,
-    }[this.type]
+    const validation =
+      this.type === 'enum'
+        ? `Env.schema.enum([${this.enumValues.map((value) => `'${value}'`).join(', ')}] as const)`
+        : {
+            string: 'Env.schema.string()',
+            secret: 'Env.schema.secret()',
+            number: 'Env.schema.number()',
+            boolean: 'Env.schema.boolean()',
+          }[this.type]
 
     await codemods.defineEnvValidations({ variables: { [transformedName]: validation } })
 
