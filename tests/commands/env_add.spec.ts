@@ -103,6 +103,34 @@ test.group('Env Add command', () => {
     await assert.fileContains('./start/env.ts', 'STRIPE_API_KEY: Env.schema.string()')
   })
 
+  test('add number and boolean env variables using the type flag', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('.env', '')
+    await fs.create('.env.example', '')
+    await fs.create(
+      './start/env.ts',
+      `import { Env } from '@adonisjs/core/env'
+      export default await Env.create(new URL('../', import.meta.url), {})`
+    )
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const portCommand = await ace.create(EnvAdd, ['port', '3333', '--type=number'])
+    await portCommand.exec()
+    portCommand.assertSucceeded()
+
+    const debugCommand = await ace.create(EnvAdd, ['debug', 'true', '--type=boolean'])
+    await debugCommand.exec()
+    debugCommand.assertSucceeded()
+
+    await assert.fileContains('.env', 'PORT=3333')
+    await assert.fileContains('.env', 'DEBUG=true')
+    await assert.fileContains('./start/env.ts', 'PORT: Env.schema.number()')
+    await assert.fileContains('./start/env.ts', 'DEBUG: Env.schema.boolean()')
+  })
+
   test('enum type with allowed values', async ({ assert, fs }) => {
     await fs.createJson('tsconfig.json', {})
     await fs.create('.env', '')
@@ -131,6 +159,69 @@ test.group('Env Add command', () => {
     await assert.fileContains(
       './start/env.ts',
       "VARIABLE: Env.schema.enum(['foo', 'bar'] as const)"
+    )
+  })
+
+  test('prompt for enum values when the enum-values flag is missing', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('.env', '')
+    await fs.create('.env.example', '')
+    await fs.create(
+      './start/env.ts',
+      `import { Env } from '@adonisjs/core/env'
+      export default await Env.create(new URL('../', import.meta.url), {})`
+    )
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(EnvAdd, ['log_level', 'info', '--type=enum'])
+    command.prompt.trap('Enter the enum values separated by a comma').replyWith('debug, info ,warn')
+    await command.exec()
+
+    command.assertSucceeded()
+    await assert.fileContains('.env', 'LOG_LEVEL=info')
+    await assert.fileContains('.env.example', 'LOG_LEVEL=')
+    await assert.fileContains(
+      './start/env.ts',
+      "LOG_LEVEL: Env.schema.enum(['debug', 'info', 'warn'] as const)"
+    )
+  })
+
+  test('do not prompt for enum values when the enum-values flag is repeated', async ({
+    assert,
+    fs,
+  }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('.env', '')
+    await fs.create('.env.example', '')
+    await fs.create(
+      './start/env.ts',
+      `import { Env } from '@adonisjs/core/env'
+      export default await Env.create(new URL('../', import.meta.url), {})`
+    )
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(EnvAdd, [
+      'log_level',
+      'info',
+      '--type=enum',
+      '--enum-values=debug',
+      '--enum-values=info',
+      '--enum-values=warn',
+    ])
+    command.prompt.trap('Enter the enum values separated by a comma').replyWith('error')
+    await command.exec()
+
+    command.assertSucceeded()
+    assert.isTrue(command.prompt.traps.prompts.has('Enter the enum values separated by a comma'))
+    await assert.fileContains(
+      './start/env.ts',
+      "LOG_LEVEL: Env.schema.enum(['debug', 'info', 'warn'] as const)"
     )
   })
 

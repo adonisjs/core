@@ -26,7 +26,7 @@ type AllowedTypes = (typeof ALLOWED_TYPES)[number]
  * ace env:add API_KEY secret --type=secret
  * ace env:add PORT 3333 --type=number
  * ace env:add DEBUG true --type=boolean
- * ace env:add LOG_LEVEL info --type=enum --enum-values=debug,info,warn,error
+ * ace env:add LOG_LEVEL info --type=enum --enum-values=debug --enum-values=info --enum-values=warn --enum-values=error
  * ```
  */
 export default class EnvAdd extends BaseCommand {
@@ -71,14 +71,14 @@ export default class EnvAdd extends BaseCommand {
   declare type: AllowedTypes
 
   /**
-   * Allowed values for enum type variables
+   * Allowed values for enum type variables. The flag is repeated
+   * for each value
    */
   @flags.array({
-    description: 'Allowed values for the enum type in a comma-separated list',
-    default: [''],
+    description: 'Allowed value for the enum type. Repeat the flag for each value',
     required: false,
   })
-  declare enumValues: string[]
+  declare enumValues?: string[]
 
   /**
    * Validate that the provided type is one of the allowed types.
@@ -148,13 +148,15 @@ export default class EnvAdd extends BaseCommand {
     /**
      * Add the environment variable to the `start/env.ts` file
      */
-    const validation = {
-      string: 'Env.schema.string()',
-      secret: 'Env.schema.secret()',
-      number: 'Env.schema.number()',
-      boolean: 'Env.schema.boolean()',
-      enum: `Env.schema.enum(['${this.enumValues.join("','")}'] as const)`,
-    }[this.type]
+    const validation =
+      this.type === 'enum'
+        ? `Env.schema.enum(['${this.enumValues!.join("','")}'] as const)`
+        : {
+            string: 'Env.schema.string()',
+            secret: 'Env.schema.secret()',
+            number: 'Env.schema.number()',
+            boolean: 'Env.schema.boolean()',
+          }[this.type]
 
     await codemods.defineEnvValidations({ variables: { [transformedName]: validation } })
 
