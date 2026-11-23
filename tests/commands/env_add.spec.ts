@@ -134,6 +134,64 @@ test.group('Env Add command', () => {
     )
   })
 
+  test('enum type with comma-separated allowed values', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('.env', '')
+    await fs.create('.env.example', '')
+    await fs.create(
+      './start/env.ts',
+      `import { Env } from '@adonisjs/core/env'
+      export default await Env.create(new URL('../', import.meta.url), {})`
+    )
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    /**
+     * The flag is documented as a comma-separated list
+     * @see commands/env/add.ts "ace env:add ... --enum-values=debug,info,warn,error"
+     */
+    const command = await ace.create(EnvAdd, [
+      'variable',
+      'bar',
+      '--type=enum',
+      '--enum-values=foo,bar',
+    ])
+    await command.exec()
+
+    await assert.fileContains('.env', 'VARIABLE=bar')
+    await assert.fileContains(
+      './start/env.ts',
+      "VARIABLE: Env.schema.enum(['foo', 'bar'] as const)"
+    )
+  })
+
+  test('prompt for enum values when --type=enum has no --enum-values', async ({ assert, fs }) => {
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('.env', '')
+    await fs.create('.env.example', '')
+    await fs.create(
+      './start/env.ts',
+      `import { Env } from '@adonisjs/core/env'
+      export default await Env.create(new URL('../', import.meta.url), {})`
+    )
+
+    const ace = await new AceFactory().make(fs.baseUrl)
+    await ace.app.init()
+    ace.ui.switchMode('raw')
+
+    const command = await ace.create(EnvAdd, ['variable', 'bar', '--type=enum'])
+    command.prompt.trap('Enter the enum values separated by a comma').replyWith('foo, bar')
+
+    await command.exec()
+
+    await assert.fileContains(
+      './start/env.ts',
+      "VARIABLE: Env.schema.enum(['foo', 'bar'] as const)"
+    )
+  })
+
   test('prompt when nothing is passed to the command', async ({ assert, fs }) => {
     await fs.createJson('tsconfig.json', {})
     await fs.create('.env', '')
