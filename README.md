@@ -71,7 +71,11 @@
 
 </td>
 
-<td>
+<td align="center">
+
+<a href="https://lfcarry.com/?utm_source=adonisjs.com">
+  <img width="190" src="https://raw.githubusercontent.com/thetutlage/static/refs/heads/main/featured_sponsors/logos/lfcarry.jpg" />
+</a>
 
 </td>
 
