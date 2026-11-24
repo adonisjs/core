@@ -30,7 +30,7 @@ export * from '@adonisjs/logger'
  *       enabled: true,
  *       name: env.get('APP_NAME'),
  *       level: env.get('LOG_LEVEL'),
- *       desination: !app.inProduction && (await syncDestination()),
+ *       destination: !app.inProduction && (await syncDestination()),
  *       transport: {
  *         targets: [targets.file({ destination: 1 })],
  *       },
@@ -42,7 +42,7 @@ export * from '@adonisjs/logger'
  */
 export async function syncDestination(
   options?: PrettyTargetOptions
-): Promise<LoggerConfig['desination']> {
+): Promise<LoggerConfig['destination']> {
   const { default: pinoPretty, isColorSupported } = await import('pino-pretty')
   return isColorSupported ? pinoPretty({ ...options, sync: true }) : destination(1)
 }
