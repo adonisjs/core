@@ -94,7 +94,7 @@ export class BaseCommand extends AceBaseCommand {
    * finishes or results in an error.
    *
    * You can access the command error using the `this.error` property.
-   * Returning `true` from completed method supresses the error
+   * Returning `true` from completed method suppresses the error
    * reporting to the kernel layer.
    */
   completed?(..._: any[]): any
