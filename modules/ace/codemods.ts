@@ -717,7 +717,12 @@ export class Codemods extends EventEmitter {
       return false
     }
 
-    packageManager = packageManager ?? (await transformer.detectPackageManager(appPath)) ?? 'npm'
+    /**
+     * "upm" is detected by "@antfu/install-pkg", but is not a package
+     * manager we support. Treat it as not detected.
+     */
+    const detected = await transformer.detectPackageManager(appPath)
+    packageManager = packageManager ?? (detected === 'upm' ? undefined : detected) ?? 'npm'
     const spinner = this.#cliLogger.await(`installing dependencies using ${packageManager} `)
 
     const silentLogs = !this.verboseInstallOutput
