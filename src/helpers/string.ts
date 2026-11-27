@@ -9,7 +9,8 @@
 
 import prettyHrTime from 'pretty-hrtime'
 import string from '@poppinss/utils/string'
-import he, { type EncodeOptions } from 'he'
+import * as he from 'he'
+import type { EncodeOptions } from 'he'
 import StringBuilder from '@poppinss/utils/string_builder'
 
 /**
